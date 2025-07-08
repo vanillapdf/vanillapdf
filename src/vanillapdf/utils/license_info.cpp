@@ -252,6 +252,12 @@ bool LicenseInfo::CheckSignature(
     const std::string& signing_certificate,
     MessageDigestAlgorithm digest_algorithm) {
 
+    // Make sure OpenSSL providers are initialized only once. Without this
+    // initialization OpenSSL may implicitly load fallback providers every
+    // time a certificate is parsed which results in small memory leaks
+    // reported by sanitizers.
+    MiscUtils::InitializeOpenSSL();
+
     auto signing_certificate_x509 = LoadCertificate(signing_certificate);
 
     SCOPE_GUARD([signing_certificate_x509]() { X509_free(signing_certificate_x509); });
