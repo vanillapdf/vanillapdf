@@ -161,7 +161,6 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
 
     assert(key != nullptr);
     assert(cert != nullptr);
-    assert(additional_certs != nullptr);
 
     SCOPE_GUARD([additional_certs]() { sk_X509_pop_free(additional_certs, X509_free); });
 
