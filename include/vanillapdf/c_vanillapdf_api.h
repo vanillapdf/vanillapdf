@@ -75,6 +75,7 @@
 #include "vanillapdf/utils/c_pdf_version.h"
 #include "vanillapdf/utils/c_library_info.h"
 #include "vanillapdf/utils/c_license_info.h"
+#include "vanillapdf/utils/c_misc_utils.h"
 #include "vanillapdf/utils/c_errors.h"
 #include "vanillapdf/utils/c_pkcs12_key.h"
 #include "vanillapdf/utils/c_signing_key.h"

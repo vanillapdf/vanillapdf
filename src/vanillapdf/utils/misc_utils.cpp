@@ -16,6 +16,13 @@
 
 namespace vanillapdf {
 
+#if defined(VANILLAPDF_HAVE_OPENSSL) && OPENSSL_VERSION_MAJOR >= 3
+static std::mutex g_openssl_lock;
+static bool g_openssl_initialized = false;
+static OSSL_PROVIDER* g_legacy_provider = nullptr;
+static OSSL_PROVIDER* g_default_provider = nullptr;
+#endif
+
 BufferPtr MiscUtils::ToBase64(const Buffer& value) {
 
     auto memory_bio = BIO_new(BIO_s_mem());
@@ -255,26 +262,23 @@ void MiscUtils::InitializeOpenSSL() {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    static bool initialized = false;
-    if (initialized) {
+    if (g_openssl_initialized) {
         return;
     }
-
-    static std::mutex openssl_lock;
-    std::lock_guard<std::mutex> lock(openssl_lock);
-    if (initialized) {
+    std::lock_guard<std::mutex> lock(g_openssl_lock);
+    if (g_openssl_initialized) {
         return;
     }
 
 #if OPENSSL_VERSION_MAJOR >= 3
 
-    auto legacy_provider = OSSL_PROVIDER_load(nullptr, "legacy");
-    if (legacy_provider == nullptr) {
+    g_legacy_provider = OSSL_PROVIDER_load(nullptr, "legacy");
+    if (g_legacy_provider == nullptr) {
         throw GeneralException("Failed to initialize legacy OSSL provider, " + GetLastOpensslError());
     }
 
-    auto default_provider = OSSL_PROVIDER_load(nullptr, "default");
-    if (default_provider == nullptr) {
+    g_default_provider = OSSL_PROVIDER_load(nullptr, "default");
+    if (g_default_provider == nullptr) {
         throw GeneralException("Failed to initialize default OSSL provider, " + GetLastOpensslError());
     }
 
@@ -282,7 +286,11 @@ void MiscUtils::InitializeOpenSSL() {
 
     OpenSSL_add_all_algorithms();
 
-    initialized = true;
+    g_openssl_initialized = true;
+
+#if OPENSSL_VERSION_MAJOR >= 3
+    std::atexit(MiscUtils::CleanupOpenSSL);
+#endif /* OPENSSL_VERSION_MAJOR >= 3 */
 
 #else
 
@@ -330,6 +338,39 @@ std::string MiscUtils::GetLastOpensslError() {
 #else
 
     throw NotSupportedException("This library was compiled without OpenSSL support");
+
+#endif
+
+}
+
+void MiscUtils::CleanupOpenSSL() {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL) && OPENSSL_VERSION_MAJOR >= 3
+
+    if (!g_openssl_initialized) {
+        return;
+    }
+    std::lock_guard<std::mutex> lock(g_openssl_lock);
+    if (!g_openssl_initialized) {
+        return;
+    }
+
+    if (g_legacy_provider != nullptr) {
+        OSSL_PROVIDER_unload(g_legacy_provider);
+        g_legacy_provider = nullptr;
+    }
+
+    if (g_default_provider != nullptr) {
+        OSSL_PROVIDER_unload(g_default_provider);
+        g_default_provider = nullptr;
+    }
+
+    OPENSSL_cleanup();
+    g_openssl_initialized = false;
+
+#else
+
+    // Ignore when OpenSSL support is disabled
 
 #endif
 
