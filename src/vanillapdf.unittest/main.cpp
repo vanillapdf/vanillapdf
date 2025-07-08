@@ -138,6 +138,7 @@ TEST(File, LoadEmptyError) {
     // This could cause the application to hang, so let's cover it in the test
     EXPECT_NE(File_Initialize(file), VANILLAPDF_ERROR_SUCCESS);
 
+    ASSERT_EQ(File_Release(file), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(InputOutputStream_Release(input_output_stream), VANILLAPDF_ERROR_SUCCESS);
 }
 
