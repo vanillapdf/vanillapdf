@@ -1,0 +1,53 @@
+name: Stack sanitizer check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 1'
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VCPKG_ROOT: external/vcpkg
+  VCPKG_DISABLE_METRICS: 1
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
+
+jobs:
+  ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/linux-x64-gcc/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-linux-x64-gcc-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-linux-x64-gcc-
+            vcpkg-${{ runner.os }}-
+
+      - name: Bootstrap vcpkg
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
+      - name: Configure
+        run: cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Debug -DVANILLAPDF_ENABLE_STACK_SANITIZER=ON
+
+      - name: Build
+        run: cmake --build --preset linux-x64-gcc
+
+      - name: Test
+        run: ctest --preset linux-x64-gcc --output-on-failure

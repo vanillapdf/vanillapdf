@@ -47,6 +47,9 @@ add_executable(vanillapdf.test
 # Configure default compilation parameters, strict warnings, config based definition for DEBUG/RELEASE, etc.
 vanillapdf_target_compile_defaults(vanillapdf.test)
 
+# Optional stack sanitizer
+enable_stack_sanitizer_for_target(vanillapdf.test)
+
 if(WIN32)
     # Copy DLL dependencies on windows to our build directory
     add_custom_command(
