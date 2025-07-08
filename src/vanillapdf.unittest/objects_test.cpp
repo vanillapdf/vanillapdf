@@ -316,6 +316,9 @@ TEST(DictionaryObject, TryFind) {
     EXPECT_EQ(object_found, true);
     EXPECT_EQ(found_object_reference, author_base_object);
 
+    // Release the found object reference
+    ASSERT_EQ(Object_Release(found_object_reference), VANILLAPDF_ERROR_SUCCESS);
+
     // Release the original inserted objects
     ASSERT_EQ(Object_Release(author_base_object), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(StringObject_Release(author_string_object), VANILLAPDF_ERROR_SUCCESS);
