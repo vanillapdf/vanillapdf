@@ -24,6 +24,7 @@ public:
     explicit PKCS12KeyImpl(const std::string& path);
     PKCS12KeyImpl(const std::string& path, const Buffer& password);
     PKCS12KeyImpl(const Buffer& data, const Buffer& password);
+    ~PKCS12KeyImpl();
 
     // IEncryptionKey
     BufferPtr Decrypt(const Buffer& data);
@@ -458,6 +459,10 @@ void PKCS12Key::PKCS12KeyImpl::SignCleanup() {
     }
 
 #endif
+}
+
+PKCS12Key::PKCS12KeyImpl::~PKCS12KeyImpl() {
+    SignCleanup();
 }
 
 } // vanillapdf

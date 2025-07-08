@@ -19,24 +19,31 @@ env:
   VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 jobs:
-  ubuntu:
+  sanitizer:
     runs-on: ubuntu-latest
+    env:
+      BUILD_PRESET: linux-x64-gcc
 
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev
+
       - name: Cache vcpkg
         uses: actions/cache@v4
         with:
           path: |
-            build/linux-x64-gcc/vcpkg_installed
+            build/${{ env.BUILD_PRESET }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-linux-x64-gcc-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ env.BUILD_PRESET }}-sanitizer-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-linux-x64-gcc-
+            vcpkg-${{ runner.os }}-${{ env.BUILD_PRESET }}-sanitizer-
             vcpkg-${{ runner.os }}-
 
       - name: Bootstrap vcpkg
@@ -44,10 +51,15 @@ jobs:
         shell: bash
 
       - name: Configure
-        run: cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Debug -DVANILLAPDF_ENABLE_STACK_SANITIZER=ON
+        run: |
+          cmake --preset ${{ env.BUILD_PRESET }} -DCMAKE_BUILD_TYPE=Debug \
+            -DVANILLAPDF_ENABLE_STACK_SANITIZER=ON \
+            -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+            -DVANILLAPDF_EXTERNAL_JPEG=ON \
+            -DVANILLAPDF_EXTERNAL_ZLIB=ON
 
       - name: Build
-        run: cmake --build --preset linux-x64-gcc
+        run: cmake --build --preset ${{ env.BUILD_PRESET }}
 
       - name: Test
-        run: ctest --preset linux-x64-gcc --output-on-failure
+        run: ctest --preset ${{ env.BUILD_PRESET }} --output-on-failure
