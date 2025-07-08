@@ -146,16 +146,24 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
     int buffer_length = ValueConvertUtils::SafeConvert<int>(data.size());
 
     BIO* bio = BIO_new_mem_buf(buffer_data, buffer_length);
+    SCOPE_GUARD([bio]() { BIO_free(bio); } );
+
     p12 = d2i_PKCS12_bio(bio, nullptr);
     if (nullptr == p12) {
         throw GeneralException("Could not parse der structure PKCS#12, " + MiscUtils::GetLastOpensslError());
     }
 
-    STACK_OF(X509) *additional_certs = NULL;
+    STACK_OF(X509) *additional_certs = nullptr;
     int parsed = PKCS12_parse(p12, password.data(), &key, &cert, &additional_certs);
     if (1 != parsed) {
         throw GeneralException("Could not parse PKCS#12, " + MiscUtils::GetLastOpensslError());
     }
+
+    assert(key != nullptr);
+    assert(cert != nullptr);
+    assert(additional_certs != nullptr);
+
+    SCOPE_GUARD([additional_certs]() { sk_X509_pop_free(additional_certs, X509_free); });
 
     auto additional_certs_size = sk_X509_num(additional_certs);
     for (decltype(additional_certs_size) i = 0; i < additional_certs_size; ++i) {
@@ -175,8 +183,6 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
 
         m_certificates->Append(additional_cert_data);
     }
-
-    sk_X509_pop_free(additional_certs, X509_free);
 }
 
 BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
