@@ -606,6 +606,9 @@ if(VANILLAPDF_ENABLE_COVERAGE)
     enable_coverage_for_target(vanillapdf)
 endif()
 
+# Optional stack sanitizer
+enable_stack_sanitizer_for_target(vanillapdf)
+
 # Update 30.04.2025
 # We have switched to vcpkg manifest mode, which makes sure all dependencies are automatically installed
 
