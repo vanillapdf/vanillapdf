@@ -21,6 +21,8 @@ TestEnvironment::~TestEnvironment() {
 
 void TestEnvironment::SetUp() {
 
+    ASSERT_EQ(MiscUtils_InitializeOpenSSL(), VANILLAPDF_ERROR_SUCCESS);
+
     BufferHandle* license_buffer = nullptr;
     boolean_type is_valid = VANILLAPDF_RV_FALSE;
     
@@ -36,4 +38,5 @@ void TestEnvironment::SetUp() {
 
 void TestEnvironment::TearDown() {
     ASSERT_EQ(Logging_Shutdown(), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(MiscUtils_CleanupOpenSSL(), VANILLAPDF_ERROR_SUCCESS);
 }

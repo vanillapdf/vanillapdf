@@ -24,6 +24,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_library_info.cpp
     implementation/utils/c_license_info.cpp
     implementation/utils/c_logging.cpp
+    implementation/utils/c_misc_utils.cpp
     implementation/utils/c_output_stream.cpp
     implementation/utils/c_memory_buffer_output_stream.cpp
     implementation/utils/c_pkcs12_key.cpp
