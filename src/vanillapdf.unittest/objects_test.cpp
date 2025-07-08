@@ -268,6 +268,7 @@ TEST(DictionaryObject, InsertOverwrite) {
     }
 
     // Release the check objects
+    ASSERT_EQ(Buffer_Release(check_string_buffer), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(LiteralStringObject_Release(check_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(StringObject_Release(check_string_object), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Object_Release(check_base_object), VANILLAPDF_ERROR_SUCCESS);
