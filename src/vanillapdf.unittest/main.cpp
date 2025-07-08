@@ -50,6 +50,7 @@ void CheckBaseFontRangeValue(BaseFontRangeHandle* font_range, const std::vector<
     }
 
     ASSERT_EQ(Buffer_Release(request_data), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(response_data), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(BaseFontRange, IncrementMapping) {
