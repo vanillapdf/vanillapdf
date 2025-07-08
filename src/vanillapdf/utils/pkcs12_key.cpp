@@ -335,7 +335,7 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
     }
 
     if (p7bio != nullptr) {
-        BIO_free(p7bio);
+        BIO_free_all(p7bio);
         p7bio = nullptr;
     }
 
@@ -454,7 +454,7 @@ void PKCS12Key::PKCS12KeyImpl::SignCleanup() {
     }
 
     if (nullptr != p7bio) {
-        BIO_free(p7bio);
+        BIO_free_all(p7bio);
         p7bio = nullptr;
     }
 
