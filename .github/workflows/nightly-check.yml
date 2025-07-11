@@ -100,6 +100,30 @@ jobs:
             platform: linux/arm64
             preset: linux-arm64-gcc
 
+          - name: fedora.41-x64
+            os: ubuntu-24.04
+            image: ghcr.io/vanillapdf/vanillapdf-fedora-amd64:41
+            platform: linux/amd64
+            preset: linux-x64-gcc
+
+          - name: fedora.41-arm64
+            os: ubuntu-24.04-arm
+            image: ghcr.io/vanillapdf/vanillapdf-fedora-arm64v8:41
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+
+          - name: fedora.42-x64
+            os: ubuntu-24.04
+            image: ghcr.io/vanillapdf/vanillapdf-fedora-amd64:42
+            platform: linux/amd64
+            preset: linux-x64-gcc
+
+          - name: fedora.42-arm64
+            os: ubuntu-24.04-arm
+            image: ghcr.io/vanillapdf/vanillapdf-fedora-arm64v8:42
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+
     container:
       image: ${{ matrix.config.image }}
       options: --platform=${{ matrix.config.platform }}

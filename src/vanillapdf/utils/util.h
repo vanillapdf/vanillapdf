@@ -2,6 +2,7 @@
 #define _UTIL_H
 
 #include <memory>
+#include <utility>
 
 namespace vanillapdf {
 
@@ -62,38 +63,44 @@ template <
 class AutoSubscribe {
 public:
     explicit AutoSubscribe(const T& observable, U* observer) : _observable(observable), _observer(observer) {
-        _observable->Subscribe(_observer);
+        if (_observer) {
+            _observable->Subscribe(_observer);
+        }
     }
 
     AutoSubscribe(const AutoSubscribe& rhs) = delete;
 
-    AutoSubscribe(AutoSubscribe&& rhs) {
-
-        // Unsubscribe the original objects
-        _observable->Unsubscribe(_observer);
-
-        // Move the data from the object that is being moved
-        _observable = rhs._observable;
-        _observer = rhs._observer;
-
-        // Subscribe to new objects
-        _observable->Subscribe(_observer);
+    // Moving simply transfers ownership of the subscription. The observer
+    // remains subscribed to the same observable and the moved-from instance no
+    // longer unsubscribes on destruction.
+    AutoSubscribe(AutoSubscribe&& rhs) noexcept
+        : _observable(std::move(rhs._observable)),
+          _observer(rhs._observer) {
+        rhs._observer = nullptr;
     }
 
     AutoSubscribe& operator=(const AutoSubscribe& rhs) = delete;
 
-    AutoSubscribe& operator=(AutoSubscribe&& rhs) {
-        AutoSubscribe(rhs).swap(*this);
+    AutoSubscribe& operator=(AutoSubscribe&& rhs) noexcept {
+        AutoSubscribe(std::move(rhs)).swap(*this);
         return *this;
     }
 
+    void swap(AutoSubscribe& rhs) noexcept {
+        using std::swap;
+        swap(_observable, rhs._observable);
+        swap(_observer, rhs._observer);
+    }
+
     ~AutoSubscribe() {
-        _observable->Unsubscribe(_observer);
+        if (_observer) {
+            _observable->Unsubscribe(_observer);
+        }
     }
 
 private:
-    T _observable;
-    U* _observer;
+    T _observable{};
+    U* _observer{nullptr};
 };
 
 #if (__cplusplus < 201402L) && !defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
