@@ -8,7 +8,7 @@
 #
 # Features:
 # - Applies DEBUG/RELEASE macros based on build configuration.
-# - Enables `/WX` or `-Werror` to treat warnings as errors for all build types.
+# - Enables `/WX` or `-Werror` to treat warnings as errors (except in Release).
 # - Enables strict warning levels for GCC/Clang.
 # - Disables known noisy or non-critical warnings for improved developer ergonomics.
 # - Configures MSVC CRT linkage via `CMAKE_MSVC_RUNTIME_LIBRARY`.
@@ -45,12 +45,19 @@ function(vanillapdf_target_compile_defaults TARGET)
 
     # Warnings as errors for MSVC
     if(CMAKE_C_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-        target_compile_options(${TARGET} PRIVATE /WX)
+        target_compile_options(${TARGET} PRIVATE
+            # MSVC: apply /WX for Debug and RelWithDebInfo
+            $<$<CONFIG:Debug>:/WX>
+            $<$<CONFIG:RelWithDebInfo>:/WX>
+        )
     endif()
 
     # Warnings as errors for GCC, Clang, AppleClang (C and C++)
     if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang|AppleClang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-        target_compile_options(${TARGET} PRIVATE -Werror)
+        target_compile_options(${TARGET} PRIVATE
+            $<$<CONFIG:Debug>:-Werror>
+            $<$<CONFIG:RelWithDebInfo>:-Werror>
+        )
     endif()
 
     # GCC/Clang warnings
