@@ -99,8 +99,8 @@ public:
     }
 
 private:
-    T _observable{};
-    U* _observer{nullptr};
+    T _observable;
+    U* _observer = nullptr;
 };
 
 #if (__cplusplus < 201402L) && !defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
