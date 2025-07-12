@@ -1,9 +1,22 @@
 name: Create GitHub Release
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'  # e.g., v2.0.0
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+      prerelease:
+        required: true
+        type: boolean
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag name (e.g. v1.2.3)"
+        required: true
+      prerelease:
+        description: "Set to true for prerelease"
+        required: true
 
 permissions:
   contents: write  # Required to create a release
@@ -19,26 +32,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Extract tag name and suffix
-        id: vars
-        run: |
-          TAG="${GITHUB_REF#refs/tags/}"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          VERSION="${TAG#v}"
-          EXTRA=""
-          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(.*)$ ]]; then
-            EXTRA="${BASH_REMATCH[1]}"
-          fi
-          if [[ -n "$EXTRA" ]]; then
-            echo "prerelease=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "prerelease=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Create release from tag
         env:
-          TAG: ${{ steps.vars.outputs.tag }}
-          PRERELEASE: ${{ steps.vars.outputs.prerelease }}
+          TAG: ${{ inputs.tag }}
+          PRERELEASE: ${{ inputs.prerelease }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         run: |

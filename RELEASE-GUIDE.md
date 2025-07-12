@@ -105,8 +105,21 @@ Use stable version by default:
 
 | Workflow                                           | Trigger                             | Version Source             | Publishes? |
 | -------------------------------------------------- | ----------------------------------- | -------------------------- | ---------- |
-| `publish-nuget-packages.yml`, `github-release.yml` | Tag: `v*` without prerelease suffix | `Directory.Packages.props` | ✅ Yes      |
-| `publish-nuget-packages.yml`, `github-release.yml` | Tag: `v*` with `-alpha/-beta/-rc`   | Tag version                | ✅ Yes      |
+| `release.yml` (calls packaging, pages, release) | Tag: `v*` | Manifest versions | ✅ Yes |
+
+### Syncing manifest versions
+
+Before tagging a release, run `scripts/sync_versions.sh <version>` to update
+`vcpkg.json` and `ports/vanillapdf/vcpkg.json` with the new version number.
+The release workflows will fail if these files do not match the tag.
+
+The `github-release.yml` workflow is invoked by `release.yml` with the tag and
+prerelease flag already provided, so version checks are centralized in
+`release.yml`.
+
+The `github-pages.yml` workflow runs on pushes and pull requests to ensure
+documentation builds cleanly. Actual deployment happens only when `release.yml`
+invokes it with deployment enabled.
 
 ---
 
@@ -134,4 +147,4 @@ fi
 
 ---
 
-*Last updated: 2025-06-17*
+*Last updated: 2025-07-09*
