@@ -106,6 +106,8 @@ jobs:
   github-pages:
     needs: production-gate
     uses: ./.github/workflows/github-pages.yml
+    with:
+      deploy: true
     secrets: inherit
   github-release:
     needs: production-gate

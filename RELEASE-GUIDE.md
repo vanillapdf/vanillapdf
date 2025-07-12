@@ -117,6 +117,10 @@ The `github-release.yml` workflow is invoked by `release.yml` with the tag and
 prerelease flag already provided, so version checks are centralized in
 `release.yml`.
 
+The `github-pages.yml` workflow runs on pushes and pull requests to ensure
+documentation builds cleanly. Actual deployment happens only when `release.yml`
+invokes it with deployment enabled.
+
 ---
 
 ## 🔧 Notes
