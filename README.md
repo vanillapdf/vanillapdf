@@ -189,7 +189,7 @@ Run `--help` for a complete list of supported commands.
 We welcome pull requests, feature proposals, and bug reports!
 
 - 📜 [Code of Conduct](CODE_OF_CONDUCT.md)
-- 🛠️ `CONTRIBUTING.md` (coming soon)
+- 🛠️ `CONTRIBUTING.md`
 
 ---
 
@@ -215,4 +215,4 @@ If you find Vanilla.PDF useful:
 
 - ⭐ Star the project
 - 🔗 Share it with your network
-- ☕ [Sponsor development](https://github.com/sponsors/vanillapdf) (coming soon)
+- ☕ [Sponsor development](https://github.com/sponsors/vanillapdf)
