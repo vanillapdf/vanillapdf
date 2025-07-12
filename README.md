@@ -37,15 +37,57 @@
 
 ## 📦 Installation Options
 
+Detailed setup instructions are available in the
+[installation guide](https://vanillapdf.github.io/vanillapdf/page_install.html).
+
 ### 🛠 Build from Source
 
 ```bash
 git clone https://github.com/vanillapdf/vanillapdf.git
 cd vanillapdf
-cmake --preset windows-x64-msvc-release
-cmake --build --preset windows-x64-msvc-release
-ctest --preset windows-x64-msvc-release  # Optional
+
+# Fetch the bundled vcpkg submodule (skip if VCPKG_ROOT points to an existing install)
+git submodule sync --recursive
+git submodule update --init --recursive
 ```
+
+To see which build presets are available run:
+
+```bash
+cmake --list-presets
+```
+
+```
+Available configure presets:
+  "windows-x86-ninja"
+  "windows-x64-ninja"
+  "default"
+  "linux-x64-gcc"
+  "linux-arm64-gcc"
+  "linux-x64-clang"
+  "linux-arm64-clang"
+  "linux-x64-musl"
+  "linux-arm64-musl"
+  "linux-arm-musl"
+  "macos-x64"
+  "macos-arm64"
+  "android-arm64"
+  "android-armv7"
+  "android-x86"
+  "android-x86_64"
+```
+
+Choose the preset matching your platform:
+
+```bash
+cmake --preset windows-x64-msvc-17
+cmake --build --preset windows-x64-msvc-17
+ctest --preset windows-x64-msvc-17  # Optional
+```
+
+The repository includes `external/vcpkg` as a submodule. Initializing the
+submodule is required unless you provide `VCPKG_ROOT` or pass your own
+`-DCMAKE_TOOLCHAIN_FILE` pointing to a preinstalled vcpkg.
 
 ### Install Dependencies with vcpkg
 
@@ -85,49 +127,8 @@ corresponding packages will not be installed by vcpkg and CMake will
 search for them on your system instead. The GTest and Benchmark options
 are only available when tests or benchmarks are enabled.
 
-### Building Debian Packages
-
-On Ubuntu systems you can install all required dependencies with apt and
-produce a `.deb` package directly:
-
-```bash
-sudo apt-get update
-sudo apt-get install libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev
-
-cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release \
-  -DVANILLAPDF_STANDALONE=ON \
-  -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
-  -DVANILLAPDF_EXTERNAL_JPEG=ON \
-  -DVANILLAPDF_EXTERNAL_OPENJPEG=OFF \
-  -DVANILLAPDF_EXTERNAL_ZLIB=ON \
-  -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
-  -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
-  -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF \
-  -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=OFF
-cmake --build --preset linux-x64-gcc --target package
-```
-
-### Building Homebrew Packages
-
-On macOS systems you can use Homebrew to install the required
-dependencies and generate a package:
-
-```bash
-brew install openssl@3 jpeg-turbo zlib
-
-cmake --preset macos-arm64 -DCMAKE_BUILD_TYPE=Release \
-  -DVANILLAPDF_STANDALONE=ON \
-  -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
-  -DVANILLAPDF_EXTERNAL_JPEG=ON \
-  -DVANILLAPDF_EXTERNAL_OPENJPEG=OFF \
-  -DVANILLAPDF_EXTERNAL_ZLIB=ON \
-  -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
-  -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
-  -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF \
-  -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=OFF
-
-cmake --build --preset macos-arm64 --target package
-```
+For instructions on generating Debian or Homebrew packages see the
+[packaging guide](https://vanillapdf.github.io/vanillapdf/page_packaging.html).
 
 ---
 

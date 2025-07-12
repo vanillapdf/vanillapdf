@@ -6,6 +6,7 @@ Getting started:
 
 <ul>
 <li>Section \ref page_install discusses how to download and install Vanilla.PDF for your platform
+<li>Section \ref page_packaging explains how to create installable packages
 <li>Section \ref page_interface_overview explains basic premises the whole interface is built upon
 <li>Section \ref page_pdf_course contains a very brief description of the PDF file format
 <li>Section \ref page_licensing tells how the product is licensed
