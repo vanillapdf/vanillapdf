@@ -63,7 +63,7 @@ error_type process_buffer(BufferHandle* buffer, int nested) {
     print_size = size > 20 ? 10 : size;
     size_converted = size;
 
-    local_string = (char*) calloc(sizeof(char), print_size + 1);
+    local_string = (char*) calloc(print_size + 1, sizeof(char));
     if (NULL == local_string) {
         unsigned long long print_size_converted = print_size;
         print_text("Could not allocate memory: %llu bytes\n", print_size_converted + 1);
@@ -485,7 +485,7 @@ error_type print_last_error() {
         return VANILLAPDF_TEST_ERROR_FAILURE;
     }
 
-    error_message = (char*) calloc(sizeof(char), error_message_length);
+    error_message = (char*) calloc(error_message_length, sizeof(char));
     if (NULL == error_message) {
         unsigned long long length_converted = error_message_length;
         print_text("Could not allocate memory: %llu bytes\n", length_converted);
