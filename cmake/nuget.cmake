@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.15)
+include(${CMAKE_CURRENT_LIST_DIR}/minimum_version.cmake)
+cmake_minimum_required(VERSION ${VANILLAPDF_MINIMUM_CMAKE_VERSION})
 
 # Configure NuGet project templates. This script can be included from a regular
 # build or executed directly via `cmake -P`. In both cases
