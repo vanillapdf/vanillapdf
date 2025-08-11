@@ -245,8 +245,9 @@ BufferPtr LiteralStringObject::GetRawValueDecoded() const {
         if (current == Delimiter::LEFT_PARENTHESIS) {
             nested_count++;
 
-            // TODO:
+            // TODO: Consider including wrapping parentheses in raw data for better PDF compliance
             // Wrapping parentheses are currently not included in the raw data
+            // This may need to be configurable based on PDF specification requirements
 
             // Do not include initial parenthesis in the result
             //if (nested_count == 1) {
@@ -256,8 +257,9 @@ BufferPtr LiteralStringObject::GetRawValueDecoded() const {
 
         if (current == Delimiter::RIGHT_PARENTHESIS) {
 
-            // TODO:
+            // TODO: Consider including wrapping parentheses in raw data for better PDF compliance  
             // Wrapping parentheses are currently not included in the raw data
+            // This may need to be configurable based on PDF specification requirements
 
             // Decrement the nested counter on the right parenthesis
             nested_count--;

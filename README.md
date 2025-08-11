@@ -19,7 +19,7 @@
 - 🛠️ **Advanced Editing**: Modify content streams, metadata, and page structure
 - 🔍 **PDF Parsing**: Inspect low-level internals like XRef tables and objects
 - 🔐 **Encryption & Permissions**: Work with standard PDF security models
-- 🧪 **Test Coverage**: Unit-tested core with CI pipelines and sanitizers (enable stack sanitizer in Debug builds with `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`)
+- 🧪 **Test Coverage**: Unit-tested core with CI pipelines and sanitizers (enable address sanitizer in Debug builds with `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`)
 - 🧰 **CLI Tools**: Batch-process PDFs directly from the terminal
 - ⚙️ **Cross-Platform**: Build on Windows, Linux, and macOS via CMakePresets
 - 📦 **Minimal Dependencies**: Statically linkable; vcpkg and Conan compatible

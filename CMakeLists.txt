@@ -39,6 +39,9 @@ endif()
 # Allow build configuration to link using static CRT, dynamic CRT link is default
 option(VANILLAPDF_USE_STATIC_CRT "Use static MSVC runtime (/MT) instead of dynamic (/MD)" OFF)
 
+# Option to enable JPX end decompress (may hang with some files)
+option(VANILLAPDF_ENABLE_JPX_END_DECOMPRESS "Enable opj_end_decompress call in JPX filter (may hang with some files)" OFF)
+
 # Option if the build should be static/dynamic link
 option(BUILD_SHARED_LIBS "Build vanillapdf as a shared library" ON)
 

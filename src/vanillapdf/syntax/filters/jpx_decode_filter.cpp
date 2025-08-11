@@ -116,10 +116,14 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
     SCOPE_GUARD([image]() { opj_image_destroy(image); });
 
-    // TODO: This code hangs the application in the unit tests
-    //if (!opj_end_decompress(codec, stream)) {
-    //    throw GeneralException("Failed to end JPEG2000 decompression");
-    //}
+    // Note: opj_end_decompress can hang in some cases with certain JPEG2000 files
+    // For now, we skip this call to avoid hanging, but this may leave some resources uncleaned
+    // TODO: Investigate alternative cleanup methods or OpenJPEG version that fixes this issue
+    #ifdef VANILLAPDF_ENABLE_JPX_END_DECOMPRESS
+    if (!opj_end_decompress(codec, stream)) {
+        spdlog::warn("Failed to properly end JPEG2000 decompression - continuing anyway");
+    }
+    #endif
 
     // JPEG decompression returned empty results
     if (image->comps == nullptr) {

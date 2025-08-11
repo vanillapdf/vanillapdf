@@ -358,13 +358,13 @@ void Document::FixDestinationPage(ObjectPtr cloned_page, PageObjectPtr other_pag
     OutputCatalogPtr original_catalog;
     bool has_original_catalog = GetDocumentCatalog(original_catalog);
     if (!has_original_catalog) {
-        assert(!"TODO");
+        throw GeneralException("Failed to get document catalog for page merge operation");
     }
 
     OutputPageTreePtr original_pages;
     bool has_original_pages = original_catalog->Pages(original_pages);
     if (!has_original_pages) {
-        assert(!"TODO");
+        throw GeneralException("Failed to get page tree from document catalog for page merge operation");
     }
 
     auto original_page_count = original_pages->PageCount();

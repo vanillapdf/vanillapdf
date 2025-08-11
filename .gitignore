@@ -20,3 +20,37 @@ CMakeSettings.json
 /*.nupkg
 /nuget/*.csproj
 /doc/doxyfile
+
+# Common IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+_deps/
+
+# Conan files
+conaninfo.txt
+conanbuildinfo.cmake
+conandata.yml

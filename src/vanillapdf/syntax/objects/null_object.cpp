@@ -37,9 +37,10 @@ void NullObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 
 NullObject* NullObject::Clone(void) const {
 
-    // TODO:
+    // TODO: Optimize null object cloning to reduce memory usage
     // In the document "(EN) Samsung UE75NU7172 Manual.pdf" there are so many null objects
     // The cloning of these objects takes up 2 GB RAM
+    // Consider implementing a singleton pattern or object pooling for null objects
 
     NullObjectPtr result(pdf_new NullObject(), false);
     CloneBaseProperties(result);

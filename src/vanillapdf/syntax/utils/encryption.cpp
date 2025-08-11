@@ -893,7 +893,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
     const EVP_MD* evp_md = nullptr;
     unsigned int expected_final_digest_size = 0;
 
-    BufferPtr decrypted_key;
+    BufferPtr decrypted_key = std::make_shared<Buffer>();
     if (length_bits == 256 && algorithm == EncryptionAlgorithm::AES) {
         evp_md = EVP_sha256();
         decrypted_key->resize(SHA256_DIGEST_LENGTH);

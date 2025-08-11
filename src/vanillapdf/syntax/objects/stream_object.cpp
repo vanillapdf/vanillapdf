@@ -519,14 +519,15 @@ BufferPtr StreamObject::EncryptStream(BufferPtr data, types::big_uint obj_number
 
     auto result = locked_file->EncryptStream(data, obj_number, generation_number);
 
-#ifdef DEBUG_ENCRYPTION
+#ifdef DEBUG
 
     auto verify_result = locked_file->DecryptStream(result, obj_number, generation_number);
     if (data != verify_result) {
-        assert(!"Stream encryption problem");
+        spdlog::error("Stream encryption verification failed for object {} generation {}", obj_number, generation_number);
+        throw GeneralException("Stream encryption verification failed");
     }
 
-#endif /* DEBUG_ENCRYPTION */
+#endif /* DEBUG */
 
     return result;
 }
@@ -545,14 +546,15 @@ BufferPtr StreamObject::EncryptData(BufferPtr data, types::big_uint obj_number, 
 
     auto result = locked_file->EncryptData(data, obj_number, generation_number, handler);
 
-#ifdef DEBUG_ENCRYPTION
+#ifdef DEBUG
 
     auto verify_result = locked_file->DecryptData(result, obj_number, generation_number, handler);
     if (data != verify_result) {
-        assert(!"Stream encryption problem");
+        spdlog::error("Data encryption verification failed for object {} generation {}", obj_number, generation_number);
+        throw GeneralException("Data encryption verification failed");
     }
 
-#endif /* DEBUG_ENCRYPTION */
+#endif /* DEBUG */
 
     return result;
 }

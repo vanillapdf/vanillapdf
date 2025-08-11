@@ -702,6 +702,12 @@ if (OPENJPEG_LIBRARIES)
     #set(VANILLAPDF_LIBS OpenJPEG::OpenJPEG ${VANILLAPDF_LIBS})
     target_link_libraries(vanillapdf PRIVATE ${OPENJPEG_LIBRARIES})
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_OPENJPEG)
+    
+    # Optional JPX end decompress (can hang with some files)
+    if(VANILLAPDF_ENABLE_JPX_END_DECOMPRESS)
+        target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_ENABLE_JPX_END_DECOMPRESS)
+    endif()
+    
     message(STATUS "openjpeg was found without specified version")
 else (OPENJPEG_LIBRARIES)
     message(WARNING "Compiling without openjpeg support. jpeg2000 decompression will become unavailable")

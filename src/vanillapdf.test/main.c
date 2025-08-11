@@ -165,9 +165,8 @@ int main(int argc, char *argv[]) {
         RETURN_ERROR_IF_NOT_SUCCESS(process_document_edit(document, password, cert_path, cert_password, 0));
     }
 
-    // TODO: This is still broken
     if (skip_incremental_save != VANILLAPDF_RV_TRUE) {
-        //RETURN_ERROR_IF_NOT_SUCCESS(process_document_save_incremental(document, 0));
+        RETURN_ERROR_IF_NOT_SUCCESS(process_document_save_incremental(document, password, cert_path, cert_password, 0));
     }
 
     RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));

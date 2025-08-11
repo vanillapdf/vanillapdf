@@ -88,7 +88,7 @@ void XrefUsedEntryBase::SetReference(ObjectPtr ref) {
     if (weak_ref_xref.IsActive() && !weak_ref_xref.IsEmpty()) {
         auto ref_xref = weak_ref_xref.GetReference();
 
-        // TODO:
+        // TODO: Handle hybrid XRef entries properly
         // This can happen with XRefStm for example, where one object has direct xref table entry
         // and also hybrid reference stream entry, described in section
         // 7.5.8.4 Compatibility with Applications That Do Not Support Compressed Reference Streams.
@@ -149,12 +149,12 @@ void XrefUsedEntryBase::ReleaseReference(bool check_object_xref) {
         if (weak_ref_entry.IsActive() && !weak_ref_entry.IsEmpty()) {
             auto ref_entry = weak_ref_entry.GetReference();
 
-            // TODO:
+            // TODO: Handle hybrid XRef entries properly (duplicate of above)
             // This can happen with XRefStm for example, where one object has direct xref table entry
             // and also hybrid reference stream entry, described in section
             // 7.5.8.4 Compatibility with Applications That Do Not Support Compressed Reference Streams.
             // We should probably keep 2 references to xref entry to accommodate this behavior.
-            // Since the time is ticking, let's create and issue in the tracker and keep the note here.
+            // Since the time is ticking, let's create an issue in the tracker and keep the note here.
             if (ref_entry != this) {
                 spdlog::warn("Object {} {} at {} has multiple xref entries",
                     ref_entry->GetObjectNumber(),

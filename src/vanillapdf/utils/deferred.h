@@ -511,7 +511,8 @@ void swap(Deferred<T>& lhs, Deferred<T>& rhs) {
     lhs.swap(rhs);
 }
 
-// TODO rework make_deferred to single function and user deferred_ptr_type as value
+// TODO: Rework make_deferred to use a single function template and utilize deferred_ptr_type as the value type
+// This would improve type safety and reduce template instantiation complexity
 
 template<typename T, typename... Parameters>
 Deferred<T> make_deferred(Parameters&&... p) {
