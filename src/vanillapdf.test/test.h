@@ -102,6 +102,7 @@ error_type process_page_annotations(PageAnnotationsHandle* obj, int nested);
 error_type process_annotation(AnnotationHandle* obj, int nested);
 error_type process_link_annotation(LinkAnnotationHandle* obj, int nested);
 error_type process_resource_dictionary(ResourceDictionaryHandle* obj, int nested);
+error_type process_unicode_character_map(UnicodeCharacterMapHandle* obj, int nested);
 error_type process_font_map(FontMapHandle* obj, int nested);
 error_type process_interactive_form(InteractiveFormHandle* obj, int nested);
 error_type process_field_collection(FieldCollectionHandle* obj, int nested);

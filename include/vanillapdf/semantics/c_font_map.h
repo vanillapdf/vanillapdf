@@ -25,6 +25,60 @@ extern "C"
     */
 
     /**
+    * \class FontMapIteratorHandle
+    * \extends IUnknownHandle
+    * \ingroup group_fonts
+    * \brief
+    * Iterator concept allowing to traverse over \ref FontMapHandle collection.
+    */
+
+    /**
+    * \memberof FontMapIteratorHandle
+    * @{
+    */
+
+    /**
+    * \brief Get key at iterator position
+    *
+    * Ensure the iterator is valid.
+    * \see \ref FontMapIterator_IsValid
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FontMapIterator_GetKey(FontMapIteratorHandle* handle, NameObjectHandle** result);
+
+    /**
+    * \brief Get value at iterator position
+    *
+    * Ensure the iterator is valid.
+    * \see \ref FontMapIterator_IsValid
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FontMapIterator_GetValue(FontMapIteratorHandle* handle, FontHandle** result);
+
+    /**
+    * \brief Determine if current position is valid
+    *
+    * Invalid position may mean that iterator moved past the end of the collection, as well as the collection was modified.
+    *
+    * Any other operation except \b THIS will fail on invalid iterator.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FontMapIterator_IsValid(FontMapIteratorHandle* handle, boolean_type* result);
+
+    /**
+    * \brief Advances iterator to the next position
+    *
+    * Ensure the iterator is valid.
+    * \see \ref FontMapIterator_IsValid
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FontMapIterator_Next(FontMapIteratorHandle* handle);
+
+    /**
+    * \copydoc IUnknown_Release
+    * \see \ref IUnknown_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FontMapIterator_Release(FontMapIteratorHandle* handle);
+
+    /** @} */
+
+    /**
     * \memberof FontMapHandle
     * @{
     */
@@ -38,6 +92,13 @@ extern "C"
     * \brief Find mapped value for key \p key_handle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle* handle, const NameObjectHandle* key_handle, FontHandle** result);
+
+    /**
+    * \brief Get collection iterator for enumerating all entries
+    *
+    * Modifying collection may invalidate this handle.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FontMap_GetIterator(FontMapHandle* handle, FontMapIteratorHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle

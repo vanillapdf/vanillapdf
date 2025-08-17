@@ -12,9 +12,38 @@ namespace semantics {
 
 class FontMap : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
+    class Iterator : public BaseIterator<syntax::DictionaryObject::const_iterator> {
+    public:
+        using BaseIterator<syntax::DictionaryObject::const_iterator>::BaseIterator;
+        typedef syntax::DictionaryObject::const_iterator IteratorT;
+
+        const Iterator& operator++() {
+            ++BaseIterator<syntax::DictionaryObject::const_iterator>::m_current;
+            return *this;
+        }
+
+        const Iterator operator++(int) {
+            Iterator temp(BaseIterator<syntax::DictionaryObject::const_iterator>::m_current,
+                BaseIterator<syntax::DictionaryObject::const_iterator>::m_invalid);
+            ++BaseIterator<syntax::DictionaryObject::const_iterator>::m_current;
+            return temp;
+        }
+
+        syntax::NameObjectPtr First() const {
+            return BaseIterator<syntax::DictionaryObject::const_iterator>::m_current->first;
+        }
+
+        FontPtr Second() const;
+    };
+
+    using IteratorPtr = DeferredIterator<Iterator>;
+
+public:
     explicit FontMap(syntax::DictionaryObjectPtr obj);
     bool Contains(const syntax::NameObject& name) const;
     FontPtr Find(const syntax::NameObject& name) const;
+    IteratorPtr Begin(void) const;
+    IteratorPtr End(void) const;
 };
 
 class FontBase : public HighLevelObject<syntax::DictionaryObjectPtr> {

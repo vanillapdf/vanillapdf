@@ -2,6 +2,7 @@
 #include "semantics/objects/font.h"
 
 #include "syntax/utils/name_constants.h"
+#include "syntax/objects/object_utils.h"
 
 namespace vanillapdf {
 namespace semantics {
@@ -31,6 +32,24 @@ bool FontMap::Contains(const syntax::NameObject& name) const {
 FontPtr FontMap::Find(const syntax::NameObject& name) const {
     auto dict = _obj->FindAs<syntax::DictionaryObjectPtr>(name);
     return FontBase::Create(dict);
+}
+
+FontPtr FontMap::Iterator::Second() const {
+    auto containable = BaseIterator<syntax::DictionaryObject::const_iterator>::m_current->second;
+    if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(containable)) {
+        throw GeneralException("Font value is not dictionary");
+    }
+
+    auto converted = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(containable);
+    return FontBase::Create(converted);
+}
+
+FontMap::IteratorPtr FontMap::Begin(void) const {
+    return make_deferred_iterator<FontMap::Iterator>(_obj->begin(), _obj->end());
+}
+
+FontMap::IteratorPtr FontMap::End(void) const {
+    return make_deferred_iterator<FontMap::Iterator>(_obj->end(), _obj->end());
 }
 
 FontBase* FontBase::Create(syntax::DictionaryObjectPtr root) {

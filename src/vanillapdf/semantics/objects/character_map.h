@@ -40,12 +40,11 @@ public:
     }
 
     BufferPtr GetMappedValue(BufferPtr key) const;
+    void Initialize() const;
 
 private:
     mutable contents::CharacterMapData m_data;
     mutable bool m_initialized = false;
-
-    void Initialize() const;
 };
 
 } // semantics

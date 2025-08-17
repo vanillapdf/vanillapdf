@@ -40,6 +40,87 @@ VANILLAPDF_API error_type CALLING_CONVENTION FontMap_Find(FontMapHandle* handle,
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION FontMap_GetIterator(FontMapHandle* handle, FontMapIteratorHandle** result)
+{
+    FontMap* obj = reinterpret_cast<FontMap*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto it = obj->Begin();
+        auto ptr = it.AddRefGet();
+        *result = reinterpret_cast<FontMapIteratorHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FontMapIterator_GetKey(FontMapIteratorHandle* handle, NameObjectHandle** result)
+{
+    FontMap::Iterator* obj = reinterpret_cast<FontMap::Iterator*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto name = obj->First();
+        auto ptr = name.AddRefGet();
+        *result = reinterpret_cast<NameObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FontMapIterator_GetValue(FontMapIteratorHandle* handle, FontHandle** result)
+{
+    FontMap::Iterator* obj = reinterpret_cast<FontMap::Iterator*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto font = obj->Second();
+        auto ptr = font.AddRefGet();
+        *result = reinterpret_cast<FontHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FontMapIterator_IsValid(FontMapIteratorHandle* handle, boolean_type* result)
+{
+    FontMap::Iterator* iterator = reinterpret_cast<FontMap::Iterator*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(iterator);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        if (iterator->IsValid()) {
+            *result = VANILLAPDF_RV_TRUE;
+        }
+        else {
+            *result = VANILLAPDF_RV_FALSE;
+        }
+
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FontMapIterator_Next(FontMapIteratorHandle* handle)
+{
+    FontMap::Iterator* obj = reinterpret_cast<FontMap::Iterator*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try
+    {
+        ++(*obj);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FontMapIterator_Release(FontMapIteratorHandle* handle)
+{
+    return ObjectRelease<FontMap::Iterator, FontMapIteratorHandle>(handle);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION FontMap_ToUnknown(FontMapHandle* handle, IUnknownHandle** result) {
     return SafeObjectConvert<FontMap, IUnknown, FontMapHandle, IUnknownHandle>(handle, result);
 }

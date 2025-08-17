@@ -58,6 +58,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_GetMappedValue(
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_Initialize(UnicodeCharacterMapHandle* handle)
+{
+    UnicodeCharacterMap* obj = reinterpret_cast<UnicodeCharacterMap*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try
+    {
+        obj->Initialize();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_ToCharacterMap(UnicodeCharacterMapHandle* handle, CharacterMapHandle** result) {
     return SafeObjectConvert<UnicodeCharacterMap, CharacterMapBase, UnicodeCharacterMapHandle, CharacterMapHandle>(handle, result);
 }

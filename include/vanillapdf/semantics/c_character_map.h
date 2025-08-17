@@ -107,6 +107,11 @@ extern "C"
         BufferHandle** result);
 
     /**
+    * \brief Initialize the unicode character map
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_Initialize(UnicodeCharacterMapHandle* handle);
+
+    /**
     * \brief Reinterpret current object as \ref CharacterMapHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_ToCharacterMap(UnicodeCharacterMapHandle* handle, CharacterMapHandle** result);

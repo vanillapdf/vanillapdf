@@ -322,12 +322,39 @@ error_type process_page_contents(PageContentsHandle* obj, int nested) {
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+error_type process_unicode_character_map(UnicodeCharacterMapHandle* obj, int nested) {
+    UNUSED(nested);
+
+    RETURN_ERROR_IF_NOT_SUCCESS(UnicodeCharacterMap_Initialize(obj));
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
 error_type process_font_map(FontMapHandle* obj, int nested) {
+    FontMapIteratorHandle* iterator = NULL;
+    boolean_type has = VANILLAPDF_RV_FALSE;
+
     print_spaces(nested);
     print_text("Font map begin\n");
 
-    // TODO font map properties
-    UNUSED(obj);
+    RETURN_ERROR_IF_NOT_SUCCESS(FontMap_GetIterator(obj, &iterator));
+    while (VANILLAPDF_ERROR_SUCCESS == FontMapIterator_IsValid(iterator, &has) &&
+        VANILLAPDF_RV_TRUE == has) {
+        FontHandle* font = NULL;
+        UnicodeCharacterMapHandle* unicode_map = NULL;
+
+        RETURN_ERROR_IF_NOT_SUCCESS(FontMapIterator_GetValue(iterator, &font));
+
+        RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(
+            Font_GetUnicodeMap(font, &unicode_map),
+            process_unicode_character_map(unicode_map, nested + 1),
+            UnicodeCharacterMap_Release(unicode_map));
+
+        RETURN_ERROR_IF_NOT_SUCCESS(Font_Release(font));
+        RETURN_ERROR_IF_NOT_SUCCESS(FontMapIterator_Next(iterator));
+    }
+
+    RETURN_ERROR_IF_NOT_SUCCESS(FontMapIterator_Release(iterator));
 
     print_spaces(nested);
     print_text("Font map end\n");
