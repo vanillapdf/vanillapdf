@@ -181,20 +181,28 @@ void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bo
 
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    if (!overwrite) {
-        auto found = _list.find(name);
-        if (found != _list.end()) {
+    auto found = _list.find(name);
+    if (found != _list.end()) {
+        if (!overwrite) {
             throw DuplicateKeyException("The key " + name->ToString() + " was already present in the dictionary");
         }
+
+        spdlog::info("Overwriting dictionary entry for key: {}", name->ToString());
+
+        // Preserve the state of the existing objects before removing them
+        auto found_key = found->first;
+        auto found_value = found->second;
+
+        found_key->ClearOwner();
+        found_value->ClearOwner();
+        found_key->Unsubscribe(this);
+        found_value->Unsubscribe(this);
+
+        _list.erase(found);
     }
 
     auto pair = std::make_pair(name, value);
-    auto result = _list.insert(pair);
-
-    // The pair::second element in the pair is set to true if a new element was inserted or false if an equivalent key already existed.
-    if (!result.second) {
-        spdlog::info("Overwriting dictionary entry for key: {}", name->ToString());
-    }
+    _list.insert(pair);
 
     name->SetOwner(Object::GetWeakReference());
     value->SetOwner(Object::GetWeakReference());

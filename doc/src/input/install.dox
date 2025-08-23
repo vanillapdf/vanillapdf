@@ -2,22 +2,106 @@
 \page page_install Installation
 \tableofcontents
 
-Installation packages comes in two variants. Either a self-installing archive or compressed package.
+This page describes how to obtain and build Vanilla.PDF along with its
+dependencies.
 
-Self-installing archives are very easy to install, as they use the standard installation process for each platform.
+\section install_vcpkg Install with vcpkg
 
-\section install_compressed Installing compressed package
-
-Compressed package for UNIX does not include package dependencies runtime, which has to be installed separately.
-
-For debian, the installation would require:
-
-\code{.unparsed}
-apt-get install libjpeg9
-apt-get install libssl1.0.0
-apt-get install zlib1g
+The simplest way to get started is using
+<a href="https://github.com/microsoft/vcpkg">vcpkg</a>:
+\code{.bash}
+vcpkg install vanillapdf
 \endcode
 
-After the package contents are extracted, the application should be ready to run.
+After installation point CMake at your vcpkg instance:
+\code{.bash}
+cmake -S . -B build \
+  -DCMAKE_TOOLCHAIN_FILE=<vcpkg-root>/scripts/buildsystems/vcpkg.cmake
+cmake --build build
+\endcode
+
+\section install_source Build from source
+
+Clone the repository and initialize the bundled vcpkg submodule:
+\code{.bash}
+git clone https://github.com/vanillapdf/vanillapdf.git
+cd vanillapdf
+# fetch submodules for bundled vcpkg
+git submodule sync --recursive
+git submodule update --init --recursive
+\endcode
+
+List the available build presets:
+\code{.bash}
+cmake --list-presets
+\endcode
+
+\code{.unparsed}
+Available configure presets:
+  "windows-x86-ninja"
+  "windows-x64-ninja"
+  "default"
+  "linux-x64-gcc"
+  "linux-arm64-gcc"
+  "linux-x64-clang"
+  "linux-arm64-clang"
+  "linux-x64-musl"
+  "linux-arm64-musl"
+  "linux-arm-musl"
+  "macos-x64"
+  "macos-arm64"
+  "android-arm64"
+  "android-armv7"
+  "android-x86"
+  "android-x86_64"
+\endcode
+
+Configure and build with the preset matching your platform:
+\code{.bash}
+cmake --preset windows-x64-msvc-17
+cmake --build --preset windows-x64-msvc-17
+ctest --preset windows-x64-msvc-17  # optional
+\endcode
+
+If you already have vcpkg installed, set the `VCPKG_ROOT` environment variable
+or pass your own `-DCMAKE_TOOLCHAIN_FILE` to use it instead of the submodule.
+
+\section install_external_vcpkg Using your own vcpkg instance
+
+You may manage vcpkg yourself and install the required packages manually:
+\code{.bash}
+git clone https://github.com/microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+./vcpkg install openssl libjpeg-turbo
+\endcode
+
+Configure Vanilla.PDF with the vcpkg toolchain:
+\code{.bash}
+cmake -S . -B build/vcpkg \
+  -DCMAKE_TOOLCHAIN_FILE=</path/to/vcpkg>/scripts/buildsystems/vcpkg.cmake
+cmake --build build/vcpkg
+\endcode
+
+\section install_system Using system dependencies
+
+If some libraries should come from your package manager or Conan rather than
+vcpkg, enable the matching `VANILLAPDF_EXTERNAL_*` options when configuring:
+\code{.bash}
+cmake -B build \
+  -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+  -DVANILLAPDF_EXTERNAL_JPEG=ON
+cmake --build build
+\endcode
+
+Options exist for OpenSSL, libjpeg-turbo, openjpeg, zlib, spdlog,
+nlohmann-json, GTest and Google Benchmark. When these are set, the
+corresponding packages will not be installed by vcpkg and CMake will search for
+them on your system instead.
+
+\section install_packages Building packages
+
+Instructions for creating Debian or Homebrew packages are provided in the
+\ref page_packaging "packaging guide".
 
 */

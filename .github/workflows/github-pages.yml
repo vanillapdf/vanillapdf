@@ -16,6 +16,7 @@ on:
     paths:
       - '.github/workflows/github-pages.yml'
       - 'doc/doxyfile.in'
+      - 'doc/src/**'
       - 'cmake/**'
       - 'CMakeLists.txt'
   pull_request:
@@ -23,6 +24,7 @@ on:
     paths:
       - '.github/workflows/github-pages.yml'
       - 'doc/doxyfile.in'
+      - 'doc/src/**'
       - 'cmake/**'
       - 'CMakeLists.txt'
   workflow_dispatch:
@@ -45,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Doxygen
         run: sudo apt-get update && sudo apt-get install -y doxygen

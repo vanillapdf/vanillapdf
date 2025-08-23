@@ -71,7 +71,7 @@ jobs:
       options: --platform=${{ matrix.config.platform }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
       - uses: actions/setup-dotnet@v4
@@ -141,7 +141,7 @@ jobs:
             build_type: Release
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
       - uses: actions/setup-dotnet@v4
@@ -208,7 +208,7 @@ jobs:
             build_type: Release
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
       - uses: actions/setup-dotnet@v4
@@ -272,7 +272,7 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
 
