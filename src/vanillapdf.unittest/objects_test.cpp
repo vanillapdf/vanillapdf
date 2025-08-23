@@ -208,12 +208,17 @@ TEST(HexadecimalStringObject, SetValue) {
 TEST(DictionaryObject, InsertOverwrite) {
 
     const char AUTHOR_NAME[] = "Vanilla.PDF Labs s.r.o.";
+    const char NEW_AUTHOR_NAME[] = "Another Author";
 
     DictionaryObjectHandle* dictionary_object = NULL;
 
     ObjectHandle* author_base_object = NULL;
     StringObjectHandle* author_string_object = NULL;
     LiteralStringObjectHandle* author_literal_string_object = NULL;
+
+    ObjectHandle* new_author_base_object = NULL;
+    StringObjectHandle* new_author_string_object = NULL;
+    LiteralStringObjectHandle* new_author_literal_string_object = NULL;
 
     ObjectHandle* check_base_object = NULL;
     StringObjectHandle* check_string_object = NULL;
@@ -238,15 +243,23 @@ TEST(DictionaryObject, InsertOverwrite) {
     // Insert First, overwrite true
     ASSERT_EQ(DictionaryObject_InsertConst(dictionary_object, NameConstant_Author, author_base_object, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
 
+    // Create a new object with a different value
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString(NEW_AUTHOR_NAME, &new_author_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(new_author_literal_string_object, nullptr);
+
+    ASSERT_EQ(LiteralStringObject_ToStringObject(new_author_literal_string_object, &new_author_string_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(new_author_string_object, nullptr);
+
+    ASSERT_EQ(StringObject_ToObject(new_author_string_object, &new_author_base_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(new_author_base_object, nullptr);
+
     // Insert Second, overwrite false, expect failure
-    ASSERT_NE(DictionaryObject_InsertConst(dictionary_object, NameConstant_Author, author_base_object, VANILLAPDF_RV_FALSE), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(DictionaryObject_InsertConst(dictionary_object, NameConstant_Author, new_author_base_object, VANILLAPDF_RV_FALSE), VANILLAPDF_ERROR_SUCCESS);
 
-    // Insert Second, overwrite true
-    ASSERT_EQ(DictionaryObject_InsertConst(dictionary_object, NameConstant_Author, author_base_object, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
-
-    // Find the item in the dictionary
+    // Verify dictionary still contains the original value
     ASSERT_EQ(DictionaryObject_Find(dictionary_object, NameConstant_Author, &check_base_object), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(check_base_object, nullptr);
+    EXPECT_EQ(check_base_object, author_base_object);
 
     ASSERT_EQ(StringObject_FromObject(check_base_object, &check_string_object), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(check_string_object, nullptr);
@@ -260,11 +273,39 @@ TEST(DictionaryObject, InsertOverwrite) {
     ASSERT_EQ(Buffer_GetData(check_string_buffer, &check_string_data, &check_string_size), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(check_string_data, nullptr);
 
-    // Verify the item was stored in the dictionary
     ASSERT_EQ(check_string_size, strlen(AUTHOR_NAME));
-
     for (uint32_t i = 0; i < check_string_size; ++i) {
         EXPECT_EQ(check_string_data[i], AUTHOR_NAME[i]);
+    }
+
+    ASSERT_EQ(Buffer_Release(check_string_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(check_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StringObject_Release(check_string_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(check_base_object), VANILLAPDF_ERROR_SUCCESS);
+
+    // Insert Second, overwrite true
+    ASSERT_EQ(DictionaryObject_InsertConst(dictionary_object, NameConstant_Author, new_author_base_object, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+
+    // Find the item in the dictionary and verify it was overwritten
+    ASSERT_EQ(DictionaryObject_Find(dictionary_object, NameConstant_Author, &check_base_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(check_base_object, nullptr);
+    EXPECT_EQ(check_base_object, new_author_base_object);
+
+    ASSERT_EQ(StringObject_FromObject(check_base_object, &check_string_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(check_string_object, nullptr);
+
+    ASSERT_EQ(LiteralStringObject_FromStringObject(check_string_object, &check_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(check_literal_string_object, nullptr);
+
+    ASSERT_EQ(LiteralStringObject_GetValue(check_literal_string_object, &check_string_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(check_string_buffer, nullptr);
+
+    ASSERT_EQ(Buffer_GetData(check_string_buffer, &check_string_data, &check_string_size), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(check_string_data, nullptr);
+
+    ASSERT_EQ(check_string_size, strlen(NEW_AUTHOR_NAME));
+    for (uint32_t i = 0; i < check_string_size; ++i) {
+        EXPECT_EQ(check_string_data[i], NEW_AUTHOR_NAME[i]);
     }
 
     // Release the check objects
@@ -277,6 +318,11 @@ TEST(DictionaryObject, InsertOverwrite) {
     ASSERT_EQ(Object_Release(author_base_object), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(StringObject_Release(author_string_object), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(LiteralStringObject_Release(author_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
+
+    // Release the new inserted objects
+    ASSERT_EQ(Object_Release(new_author_base_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StringObject_Release(new_author_string_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(new_author_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
 
     // Release the container dictionary
     ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
