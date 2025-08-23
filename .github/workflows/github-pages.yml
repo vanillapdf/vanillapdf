@@ -16,6 +16,7 @@ on:
     paths:
       - '.github/workflows/github-pages.yml'
       - 'doc/doxyfile.in'
+      - 'doc/src/**'
       - 'cmake/**'
       - 'CMakeLists.txt'
   pull_request:
@@ -23,6 +24,7 @@ on:
     paths:
       - '.github/workflows/github-pages.yml'
       - 'doc/doxyfile.in'
+      - 'doc/src/**'
       - 'cmake/**'
       - 'CMakeLists.txt'
   workflow_dispatch:

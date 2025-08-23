@@ -1,0 +1,52 @@
+/*!
+\page page_packaging Packaging
+\tableofcontents
+
+This page details how to generate installable packages for Vanilla.PDF on
+common platforms.
+
+\section packaging_debian Debian packages
+
+On Debian based systems the project ships CMake presets to produce a `.deb`
+package. First install the required dependencies:
+\code{.bash}
+sudo apt-get update
+sudo apt-get install libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev
+\endcode
+
+Then build the package:
+\code{.bash}
+cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release \
+  -DVANILLAPDF_STANDALONE=ON \
+  -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+  -DVANILLAPDF_EXTERNAL_JPEG=ON \
+  -DVANILLAPDF_EXTERNAL_OPENJPEG=OFF \
+  -DVANILLAPDF_EXTERNAL_ZLIB=ON \
+  -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
+  -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
+  -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF \
+  -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=OFF
+cmake --build --preset linux-x64-gcc --target package
+\endcode
+
+\section packaging_homebrew Homebrew packages
+
+On macOS you can generate a Homebrew formula using the following commands:
+\code{.bash}
+brew install openssl@3 jpeg-turbo zlib
+
+cmake --preset macos-arm64 -DCMAKE_BUILD_TYPE=Release \
+  -DVANILLAPDF_STANDALONE=ON \
+  -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+  -DVANILLAPDF_EXTERNAL_JPEG=ON \
+  -DVANILLAPDF_EXTERNAL_OPENJPEG=OFF \
+  -DVANILLAPDF_EXTERNAL_ZLIB=ON \
+  -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
+  -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
+  -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF \
+  -DVANILLAPDF_ENABLE_BENCHMARK=ON -DVANILLAPDF_EXTERNAL_BENCHMARK=OFF
+
+cmake --build --preset macos-arm64 --target package
+\endcode
+
+*/
