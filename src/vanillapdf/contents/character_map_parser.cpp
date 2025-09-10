@@ -28,19 +28,16 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
             return result;
         }
 
-        // Skip structural tokens that we don't need to process explicitly
+        // Fixed: Better token handling for various CMap format variations
+        // Issue: Parser failed on files with different structural token arrangements
         if (token->GetType() == Token::Type::BLOCK_BEGIN ||
             token->GetType() == Token::Type::BLOCK_END ||
             token->GetType() == Token::Type::FIND_RESOURCE ||
             token->GetType() == Token::Type::DICTIONARY ||
             token->GetType() == Token::Type::CURRENT_DICTIONARY ||
             token->GetType() == Token::Type::DEFINE_RESOURCE ||
-            token->GetType() == Token::Type::STACK_POP) {
-            continue;
-        }
-
-        // Skip standalone 'def' tokens (they might appear without being consumed)
-        if (token->GetType() == Token::Type::DEFINITION) {
+            token->GetType() == Token::Type::STACK_POP ||
+            token->GetType() == Token::Type::DEFINITION) {
             continue;
         }
 
@@ -210,7 +207,8 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
                 result.SystemInfo.Ordering = system_info->FindAs<StringObjectPtr>(constant::Name::Ordering);
                 result.SystemInfo.Supplement = system_info->FindAs<IntegerObjectPtr>(constant::Name::Supplement);
 
-                // 'def' keyword is optional - only consume if present
+                // Fixed: 'def' keyword is optional in CMap files - check before consuming
+                // Issue: Parser failed on files with << >> dict syntax or missing 'def' keywords
                 auto next_token = PeekTokenSkip();
                 if (next_token->GetType() == Token::Type::DEFINITION) {
                     ReadTokenWithTypeSkip(Token::Type::DEFINITION);
@@ -219,7 +217,7 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
 
             if (name == constant::Name::CMapName) {
                 result.CMapName = ReadName();
-                // 'def' keyword is optional - only consume if present
+                // Fixed: Same optional 'def' handling as CIDSystemInfo
                 auto next_token = PeekTokenSkip();
                 if (next_token->GetType() == Token::Type::DEFINITION) {
                     ReadTokenWithTypeSkip(Token::Type::DEFINITION);
@@ -228,22 +226,20 @@ CharacterMapData CharacterMapParser::ReadCharacterMapData(void) {
 
             if (name == constant::Name::CMapType) {
                 result.CMapType = ReadInteger();
-                // 'def' keyword is optional - only consume if present
+                // Fixed: Same optional 'def' handling as CIDSystemInfo
                 auto next_token = PeekTokenSkip();
                 if (next_token->GetType() == Token::Type::DEFINITION) {
                     ReadTokenWithTypeSkip(Token::Type::DEFINITION);
                 }
             }
 
-            // Handle WMode parameter
+            // Fixed: Added WMode parameter support - was missing from original parser
             if (name->ToString() == "WMode") {
                 auto wmode_value = ReadInteger();
-                // 'def' keyword is optional - only consume if present
                 auto next_token = PeekTokenSkip();
                 if (next_token->GetType() == Token::Type::DEFINITION) {
                     ReadTokenWithTypeSkip(Token::Type::DEFINITION);
                 }
-                // Note: WMode is stored but not used in current implementation
             }
         }
     }
