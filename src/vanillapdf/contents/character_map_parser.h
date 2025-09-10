@@ -13,6 +13,13 @@ class CharacterMapParser : public syntax::ParserBase {
 public:
     CharacterMapParser(WeakReference<syntax::File> file, IInputStreamPtr stream);
     CharacterMapData ReadCharacterMapData(void);
+    
+    // Override to handle PostScript dictionary syntax and def inside dictionaries
+    virtual syntax::DictionaryObjectPtr ReadDictionary() override;
+    
+private:
+    syntax::DictionaryObjectPtr ReadPostScriptDictionary();
+    syntax::DictionaryObjectPtr ReadPDFDictionaryWithDef();
 };
 
 } // contents

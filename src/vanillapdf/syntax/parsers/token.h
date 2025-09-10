@@ -67,6 +67,8 @@ public:
         CURRENT_DICTIONARY,
         DEFINE_RESOURCE,
         STACK_POP,
+        DUP,
+        EXCH,
 
         // content streams
         LINE_WIDTH,

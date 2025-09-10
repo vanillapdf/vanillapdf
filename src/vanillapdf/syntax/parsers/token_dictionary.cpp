@@ -54,6 +54,8 @@ static const char CMAP_NAME[] = "CMapName";
 static const char CURRENT_DICTIONARY[] = "currentdict";
 static const char DEFINE_RESOURCE[] = "defineresource";
 static const char STACK_POP[] = "pop";
+static const char DUP[] = "dup";
+static const char EXCH[] = "exch";
 
 // content streams
 static const char LINE_WIDTH[] = "w";
@@ -217,6 +219,8 @@ void CharacterMapTokenDictionary::Initialize() {
     INSERT_TO_DICTIONARY(CURRENT_DICTIONARY);
     INSERT_TO_DICTIONARY(DEFINE_RESOURCE);
     INSERT_TO_DICTIONARY(STACK_POP);
+    INSERT_TO_DICTIONARY(DUP);
+    INSERT_TO_DICTIONARY(EXCH);
 
     ParserTokenDictionary::Initialize();
 }
