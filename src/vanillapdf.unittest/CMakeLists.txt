@@ -17,6 +17,8 @@ set(VANILLAPDF_UNITTEST_SOURCES
     attributes_test.cpp
     objects_test.cpp
     utils_test.cpp
+    export_test.cpp
+    export_verification_simple.cpp
 )
 
 set(VANILLAPDF_UNITTEST_HEADERS

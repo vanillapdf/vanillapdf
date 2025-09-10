@@ -443,6 +443,16 @@ extern "C"
     * \brief Represents DCTDecode filter, see 7.4.8.
     */
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_DCTDecode;
+
+    /**
+    * \brief Represents LZWDecode filter, see 7.4.5.
+    */
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_LZWDecode;
+
+    /**
+    * \brief Represents JPXDecode filter, see 7.4.9.
+    */
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_JPXDecode;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_XYZ;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_Fit;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_FitH;
