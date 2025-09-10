@@ -2,7 +2,7 @@
 #include "semantics/objects/font.h"
 
 #include "syntax/utils/name_constants.h"
-#include "syntax/objects/object_utils.h"
+#include "syntax/utils/object_utils.h" // Fixed: was "syntax/objects/object_utils.h" - file moved to utils directory
 
 namespace vanillapdf {
 namespace semantics {
