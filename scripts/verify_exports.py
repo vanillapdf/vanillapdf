@@ -225,7 +225,9 @@ def extract_exports(lib_path: str) -> List[str]:
         List of exported symbol names
     """
     if not os.path.exists(lib_path):
-        raise FileNotFoundError(f"Library file not found: {lib_path}")
+        raise FileNotFoundError(f"Library file not found: {lib_path}\n"
+                              f"Make sure the library was built successfully before running export verification.\n"
+                              f"For CMake builds, ensure the 'vanillapdf' target was built first.")
     
     system = platform.system().lower()
     

@@ -100,11 +100,17 @@ For shared library builds, you can verify that all exported symbols use proper C
 and don't contain name mangling characters:
 
 \code{.unparsed}
-python3 scripts/verify_exports.py libvanillapdf.so
+make verify_exports
+\endcode
+
+Or using CMake directly:
+\code{.unparsed}
+cmake --build . --target verify_exports
 \endcode
 
 This verification is automatically run in CI pipelines and will detect any C++ name 
-mangling in exported symbols, which could cause linking issues.
+mangling in exported symbols, which could cause linking issues. The verification is 
+skipped for static library builds.
 
 </ol>
 
