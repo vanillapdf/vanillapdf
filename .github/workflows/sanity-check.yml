@@ -122,9 +122,6 @@ jobs:
       - name: Test
         run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
 
-      - name: Verify exports
-        run: cmake --build --preset ${{ matrix.config.preset }} --target verify_exports
-
 
   windows:
     name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
@@ -175,9 +172,6 @@ jobs:
 
       - name: Test ${{ matrix.config.preset }}
         run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.build_type }} --output-on-failure
-
-      - name: Verify exports ${{ matrix.config.preset }}
-        run: cmake --build --preset ${{ matrix.config.preset }} --target verify_exports --config ${{ matrix.build_type }}
 
   macos:
     name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
@@ -232,6 +226,3 @@ jobs:
 
       - name: Test
         run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
-
-      - name: Verify exports
-        run: cmake --build --preset ${{ matrix.config.preset }} --target verify_exports

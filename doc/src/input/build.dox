@@ -91,26 +91,14 @@ make test
 
 With the expected output:
 \code{.unparsed}
-100% tests passed, 0 tests failed out of 241
+100% tests passed, 0 tests failed out of 242
 Total Test time (real) = 113.72 sec
 \endcode
 
-<li>Verify export symbols (optional):</li>
-For shared library builds, you can verify that all exported symbols use proper C linkage 
-and don't contain name mangling characters:
-
-\code{.unparsed}
-make verify_exports
-\endcode
-
-Or using CMake directly:
-\code{.unparsed}
-cmake --build . --target verify_exports
-\endcode
-
-This verification is automatically run in CI pipelines and will detect any C++ name 
-mangling in exported symbols, which could cause linking issues. The verification is 
-skipped for static library builds.
+For shared library builds, the test suite automatically includes export verification 
+to ensure all exported symbols use proper C linkage and don't contain name mangling 
+characters. This verification is skipped for static library builds and runs 
+transparently as part of the regular test suite.
 
 </ol>
 

@@ -119,6 +119,45 @@ if(VANILLAPDF_ENABLE_TESTS)
   include(cmake/build_name.cmake)
   include(CTest)
 
+  # Add export verification test for shared library builds
+  if(BUILD_SHARED_LIBS)
+    # Find Python3 executable
+    find_package(Python3 COMPONENTS Interpreter)
+    
+    if(Python3_Interpreter_FOUND)
+      # Add test that verifies exports after building vanillapdf
+      add_test(
+        NAME export_verification
+        COMMAND ${Python3_EXECUTABLE} "${CMAKE_SOURCE_DIR}/scripts/verify_exports.py" "$<TARGET_FILE:vanillapdf>"
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      )
+      
+      # Make sure the test runs after vanillapdf is built
+      set_tests_properties(export_verification PROPERTIES
+        DEPENDS vanillapdf
+        LABELS "export;verification"
+      )
+      
+      message(STATUS "Added export verification test using Python3: ${Python3_EXECUTABLE}")
+    else()
+      # Fallback to python3 command
+      add_test(
+        NAME export_verification
+        COMMAND python3 "${CMAKE_SOURCE_DIR}/scripts/verify_exports.py" "$<TARGET_FILE:vanillapdf>"
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      )
+      
+      set_tests_properties(export_verification PROPERTIES
+        DEPENDS vanillapdf
+        LABELS "export;verification"
+      )
+      
+      message(STATUS "Added export verification test using python3 command")
+    endif()
+  else()
+    message(STATUS "Export verification test skipped for static builds")
+  endif()
+
   add_subdirectory(src/vanillapdf.test)
   add_subdirectory(src/vanillapdf.unittest)
 endif()
