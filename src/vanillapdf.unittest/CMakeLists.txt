@@ -17,6 +17,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     attributes_test.cpp
     objects_test.cpp
     utils_test.cpp
+    pdf_data_api_test.cpp
 )
 
 set(VANILLAPDF_UNITTEST_HEADERS

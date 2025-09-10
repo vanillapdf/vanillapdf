@@ -88,6 +88,10 @@ set(VANILLAPDF_C_IMPLEMENTATION_CONTENTS_SOURCES
     implementation/contents/c_content_parser.cpp
 )
 
+set(VANILLAPDF_API_SOURCES
+    api/pdf_data_api.cpp
+)
+
 set(VANILLAPDF_CONTENTS_SOURCES
     contents/character_map_data.cpp
     contents/character_map_parser.cpp
@@ -410,6 +414,7 @@ source_group("Header Files\\include\\semantics" FILES
 
 source_group("Header Files\\include\\contents" FILES
     ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS}
+    ${VANILLAPDF_INCLUDE_API_HEADERS}
 )
 
 source_group("Header Files\\contents" FILES
@@ -476,6 +481,7 @@ set(VANILLAPDF_ALL_SOURCES
     ${VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES}
     ${VANILLAPDF_C_IMPLEMENTATION_CONTENTS_SOURCES}
     
+    ${VANILLAPDF_API_SOURCES}
     ${VANILLAPDF_SEMANTICS_SOURCES}
     ${VANILLAPDF_SYNTAX_SOURCES}
     
@@ -491,6 +497,7 @@ add_library(vanillapdf
     ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS}
     ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS}
     ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS}
+    ${VANILLAPDF_INCLUDE_API_HEADERS}
     
     ${VANILLAPDF_C_IMPLEMENTATION_SOURCES}
     ${VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES}
@@ -759,6 +766,7 @@ install(FILES ${VANILLAPDF_INCLUDE_UTILS_HEADERS} DESTINATION "include/vanillapd
 install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillapdf/syntax")
 install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics")
 install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include/vanillapdf/contents")
+install(FILES ${VANILLAPDF_INCLUDE_API_HEADERS} DESTINATION "include/vanillapdf/api")
 
 # Additional metadata for the project, that should be bundled together
 install(FILES

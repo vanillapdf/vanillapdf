@@ -197,6 +197,15 @@ extern "C"
     DECLARE_OBJECT_HANDLE(Date);
     DECLARE_OBJECT_HANDLE(Rectangle);
 
+    /* High-level API handles */
+    DECLARE_OBJECT_HANDLE(SignatureInfo);
+    DECLARE_OBJECT_HANDLE(SignatureList);
+    DECLARE_OBJECT_HANDLE(BookmarkInfo);
+    DECLARE_OBJECT_HANDLE(BookmarkList);
+    DECLARE_OBJECT_HANDLE(BookmarkDestination);
+    DECLARE_OBJECT_HANDLE(CommentInfo);
+    DECLARE_OBJECT_HANDLE(CommentList);
+
     #pragma endregion
 
     /** \endcond FORWARD_DECLARATIONS */

@@ -85,3 +85,7 @@ set(VANILLAPDF_INCLUDE_CONTENTS_HEADERS
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/contents/c_content_operator.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/contents/c_content_parser.h"
 )
+
+set(VANILLAPDF_INCLUDE_API_HEADERS
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/api/c_pdf_data_api.h"
+)
