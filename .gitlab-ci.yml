@@ -16,6 +16,7 @@ build-win-x86:
     - cmake . -G "Visual Studio 17 2022" -DCMAKE_GENERATOR_PLATFORM=Win32 -DPLATFORM_IDENTIFIER=win-x86
     - cmake --build . --config Release --target ALL_BUILD
     - cmake --build . --config Release --target RUN_TESTS
+    - python scripts/verify_exports.py Release/vanillapdf.dll
     - cmake --build . --config Release --target PACKAGE
     - dotnet restore nuget/vanillapdf.runtime.csproj
     - dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
@@ -42,6 +43,7 @@ build-win-x64:
     - cmake . -G "Visual Studio 17 2022" -DCMAKE_GENERATOR_PLATFORM=x64 -DPLATFORM_IDENTIFIER=win-x64
     - cmake --build . --config Release --target ALL_BUILD
     - cmake --build . --config Release --target RUN_TESTS
+    - python scripts/verify_exports.py Release/vanillapdf.dll
     - cmake --build . --config Release --target PACKAGE
     - dotnet restore nuget/vanillapdf.runtime.csproj
     - dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
@@ -67,6 +69,7 @@ build-osx-x64:
     - cmake . -DPLATFORM_IDENTIFIER=osx-x64
     - make
     - make test
+    - python3 scripts/verify_exports.py libvanillapdf.dylib
     - make package
     - dotnet restore nuget/vanillapdf.runtime.csproj
     - dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
@@ -91,6 +94,7 @@ build-ubuntu.22.04-x64:
     - cmake . -DPLATFORM_IDENTIFIER=ubuntu.22.04-x64
     - make
     - make test
+    - python3 scripts/verify_exports.py libvanillapdf.so
     - make package
 
   artifacts:
@@ -111,6 +115,7 @@ build-ubuntu.24.04-x64:
     - cmake . -DPLATFORM_IDENTIFIER=ubuntu.24.04-x64 -DDETECT_CUSTOM_LINUX_DISTRIBUTION=1
     - make
     - make test
+    - python3 scripts/verify_exports.py libvanillapdf.so
     - make package
 
   artifacts:
@@ -134,6 +139,7 @@ build-ubuntu.24.04-arm64:
     - cmake . -DPLATFORM_IDENTIFIER=ubuntu.24.04-arm64 -DDETECT_CUSTOM_LINUX_DISTRIBUTION=1
     - make
     - make test
+    - python3 scripts/verify_exports.py libvanillapdf.so
     - make package
 
   artifacts:
@@ -155,6 +161,7 @@ build-rocky.8-x64:
     - cmake . -DPLATFORM_IDENTIFIER=rocky.8-x64 -DDETECT_CUSTOM_LINUX_DISTRIBUTION=1
     - make
     - make test
+    - python3 scripts/verify_exports.py libvanillapdf.so
     - make package
 
   artifacts:
@@ -177,6 +184,7 @@ build-rocky.8-arm64:
     - cmake . -DPLATFORM_IDENTIFIER=rocky.8-arm64 -DDETECT_CUSTOM_LINUX_DISTRIBUTION=1
     - make
     - make test
+    - python3 scripts/verify_exports.py libvanillapdf.so
     - make package
 
   artifacts:
@@ -198,6 +206,7 @@ build-rocky.9-x64:
     - cmake . -DPLATFORM_IDENTIFIER=rocky.9-x64 -DDETECT_CUSTOM_LINUX_DISTRIBUTION=1
     - make
     - make test
+    - python3 scripts/verify_exports.py libvanillapdf.so
     - make package
 
   artifacts:
@@ -220,6 +229,7 @@ build-rocky.9-arm64:
     - cmake . -DPLATFORM_IDENTIFIER=rocky.9-arm64 -DDETECT_CUSTOM_LINUX_DISTRIBUTION=1
     - make
     - make test
+    - python3 scripts/verify_exports.py libvanillapdf.so
     - make package
 
   artifacts:
@@ -254,6 +264,7 @@ build-linux-x64:
     - cmake . -DPLATFORM_IDENTIFIER=linux-x64
     - make
     - make test
+    - python3 scripts/verify_exports.py libvanillapdf.so
     - make package
     - dotnet restore nuget/vanillapdf.runtime.csproj
     - dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
@@ -278,6 +289,7 @@ build-linux-arm64:
     - cmake . -DPLATFORM_IDENTIFIER=linux-arm64
     - make
     - make test
+    - python3 scripts/verify_exports.py libvanillapdf.so
     - make package
     - dotnet restore nuget/vanillapdf.runtime.csproj
     - dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .

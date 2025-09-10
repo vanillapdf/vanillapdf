@@ -95,6 +95,17 @@ With the expected output:
 Total Test time (real) = 113.72 sec
 \endcode
 
+<li>Verify export symbols (optional):</li>
+For shared library builds, you can verify that all exported symbols use proper C linkage 
+and don't contain name mangling characters:
+
+\code{.unparsed}
+python3 scripts/verify_exports.py libvanillapdf.so
+\endcode
+
+This verification is automatically run in CI pipelines and will detect any C++ name 
+mangling in exported symbols, which could cause linking issues.
+
 </ol>
 
 */
