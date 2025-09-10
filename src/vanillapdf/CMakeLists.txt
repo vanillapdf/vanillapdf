@@ -68,6 +68,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_fields.cpp
     implementation/semantics/c_font.cpp
     implementation/semantics/c_font_map.cpp
+    implementation/semantics/c_font_encoding.cpp
     implementation/semantics/c_interactive_forms.cpp
     implementation/semantics/c_outline.cpp
     implementation/semantics/c_page_contents.cpp
@@ -115,6 +116,9 @@ set(VANILLAPDF_SEMANTICS_SOURCES
     semantics/objects/digital_signature.cpp
     semantics/objects/document_info.cpp
     semantics/objects/font.cpp
+    semantics/objects/character_encoding.cpp
+    semantics/objects/character_encoding_tables.cpp
+    semantics/objects/character_encoding_tables2.cpp
     semantics/objects/outline.cpp
     semantics/objects/page_labels.cpp
     semantics/objects/rectangle.cpp
@@ -238,6 +242,7 @@ set(VANILLAPDF_SEMANTICS_HEADERS
     semantics/objects/document_info.h
     semantics/objects/fields.h
     semantics/objects/font.h
+    semantics/objects/character_encoding.h
     semantics/objects/interactive_forms.h
     semantics/objects/high_level_object.h
     semantics/objects/name_dictionary.h

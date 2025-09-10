@@ -66,6 +66,7 @@ set(VANILLAPDF_INCLUDE_SEMANTICS_HEADERS
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_fields.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_font.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_font_map.h"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_font_encoding.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_interactive_forms.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_outline.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_page_contents.h"

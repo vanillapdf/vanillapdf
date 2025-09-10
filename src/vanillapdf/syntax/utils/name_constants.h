@@ -225,6 +225,8 @@ extern const syntax::NameObject M;
 extern const syntax::NameObject ContactInfo;
 extern const syntax::NameObject Cert;
 extern const syntax::NameObject BaseFont;
+extern const syntax::NameObject BaseEncoding;
+extern const syntax::NameObject Differences;
 extern const syntax::NameObject Width;
 extern const syntax::NameObject Height;
 extern const syntax::NameObject ColorSpace;

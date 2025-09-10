@@ -527,6 +527,8 @@ extern "C"
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_ContactInfo;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_Cert;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_BaseFont;
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_BaseEncoding;
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_Differences;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_Width;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_Height;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_ColorSpace;

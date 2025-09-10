@@ -53,6 +53,7 @@
 #include "vanillapdf/semantics/c_digital_signature.h"
 #include "vanillapdf/semantics/c_font.h"
 #include "vanillapdf/semantics/c_font_map.h"
+#include "vanillapdf/semantics/c_font_encoding.h"
 #include "vanillapdf/semantics/c_character_map.h"
 #include "vanillapdf/semantics/c_date.h"
 #include "vanillapdf/semantics/c_rectangle.h"
