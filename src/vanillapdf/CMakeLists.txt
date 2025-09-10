@@ -836,39 +836,25 @@ endif(WIN32)
 # Add export verification test for shared library builds
 # Only add the test if testing is enabled and we're building shared libraries
 if(VANILLAPDF_ENABLE_TESTS AND BUILD_SHARED_LIBS)
+
     # Find Python3 executable
-    find_package(Python3 COMPONENTS Interpreter)
-    
-    if(Python3_Interpreter_FOUND)
-        # Add test that verifies exports after building vanillapdf
-        add_test(
-            NAME export_verification
-            COMMAND ${Python3_EXECUTABLE} "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/verify_exports.py" "$<TARGET_FILE:vanillapdf>"
-            WORKING_DIRECTORY ${VANILLAPDF_SOLUTION_SOURCE_DIR}
-        )
-        
-        # Make sure the test runs after vanillapdf is built
-        set_tests_properties(export_verification PROPERTIES
-            DEPENDS vanillapdf
-            LABELS "export;verification"
-        )
-        
-        message(STATUS "Added export verification test using Python3: ${Python3_EXECUTABLE}")
-    else()
-        # Fallback to python3 command
-        add_test(
-            NAME export_verification
-            COMMAND python3 "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/verify_exports.py" "$<TARGET_FILE:vanillapdf>"
-            WORKING_DIRECTORY ${VANILLAPDF_SOLUTION_SOURCE_DIR}
-        )
-        
-        set_tests_properties(export_verification PROPERTIES
-            DEPENDS vanillapdf
-            LABELS "export;verification"
-        )
-        
-        message(STATUS "Added export verification test using python3 command")
-    endif()
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+
+    # Add test that verifies exports after building vanillapdf
+    add_test(
+        NAME export_verification
+        COMMAND ${Python3_EXECUTABLE} "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/verify_exports.py" "$<TARGET_FILE:vanillapdf>"
+        WORKING_DIRECTORY ${VANILLAPDF_SOLUTION_SOURCE_DIR}
+    )
+
+    # Make sure the test runs after vanillapdf is built
+    set_tests_properties(export_verification PROPERTIES
+        DEPENDS vanillapdf
+        LABELS "export;verification"
+    )
+
+    message(STATUS "Added export verification test using Python3: ${Python3_EXECUTABLE}")
+
 elseif(VANILLAPDF_ENABLE_TESTS AND NOT BUILD_SHARED_LIBS)
     message(STATUS "Export verification test skipped for static builds")
 endif()
