@@ -122,6 +122,9 @@ jobs:
       - name: Test
         run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
 
+      - name: Verify exports
+        run: python3 scripts/verify_exports.py build/${{ matrix.config.preset }}/libvanillapdf.so
+
 
   windows:
     name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
@@ -172,6 +175,9 @@ jobs:
 
       - name: Test ${{ matrix.config.preset }}
         run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.build_type }} --output-on-failure
+
+      - name: Verify exports ${{ matrix.config.preset }}
+        run: python scripts/verify_exports.py build/${{ matrix.config.preset }}/${{ matrix.build_type }}/vanillapdf.dll
 
   macos:
     name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
@@ -226,3 +232,6 @@ jobs:
 
       - name: Test
         run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
+
+      - name: Verify exports
+        run: python3 scripts/verify_exports.py build/${{ matrix.config.preset }}/libvanillapdf.dylib

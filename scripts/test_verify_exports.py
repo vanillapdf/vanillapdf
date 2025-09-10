@@ -25,9 +25,9 @@ def test_mangling_detection():
     
     # Test cases
     test_cases = [
-        ("NameConstant_LZWDecode", False),  # Good C symbol
+        ("NameConstant_SomeFilter", False), # Good C symbol
         ("Buffer_Create", False),           # Good C symbol  
-        ("?NameConstant_LZWDecode@@3PEBUNameObjectHandleTag@@EB", True),  # Mangled
+        ("?SomeMangled@@3PEBUHandleTag@@EB", True),  # Mangled
         ("_Z15some_cpp_symbolv", True),     # GCC mangling
         ("simple_function", False),        # Good C symbol
         ("@__security_check_cookie@4", True),  # MSVC mangling

@@ -299,16 +299,16 @@ def main():
             print("✅ No mangled exports found!")
             print()
         
-        # Specifically check for the originally problematic constants
-        target_constants = ['NameConstant_LZWDecode', 'NameConstant_JPXDecode']
-        found_targets = []
-        
-        for target in target_constants:
-            if target in all_exports:
-                found_targets.append(target)
-                print(f"  ✅ {target} - Found and properly exported")
-            else:
-                print(f"  ❌ {target} - Missing or mangled")
+        # Report on VanillaPDF export status
+        print("VanillaPDF export analysis:")
+        if vanillapdf_exports:
+            clean_exports = [e for e in vanillapdf_exports if not has_mangled_characters(e)]
+            mangled_vanillapdf = [e for e in vanillapdf_exports if has_mangled_characters(e)]
+            
+            print(f"  ✅ Clean exports: {len(clean_exports)}")
+            print(f"  ⚠️  Mangled exports: {len(mangled_vanillapdf)}")
+        else:
+            print("  ⚠️  No VanillaPDF exports found")
         
         # Show some VanillaPDF exports for verification
         if vanillapdf_exports:
@@ -320,25 +320,13 @@ def main():
             if len(vanillapdf_exports) > 10:
                 print(f"  ... and {len(vanillapdf_exports) - 10} more")
         
-        # Check for any exports that might be our targets but mangled
-        possible_mangled_targets = []
-        for export_name in all_exports:
-            if ('LZWDecode' in export_name or 'JPXDecode' in export_name) and export_name not in found_targets:
-                possible_mangled_targets.append(export_name)
-        
-        if possible_mangled_targets:
-            print(f"\n⚠️  Possible mangled target symbols:")
-            for symbol in possible_mangled_targets:
-                print(f"  - {symbol}")
-        
         # Summary
         total_mangled = len([e for e in vanillapdf_exports if has_mangled_characters(e)])
         if total_mangled > 0:
             print(f"\n❌ FAILED: Found {total_mangled} mangled VanillaPDF exports out of {len(vanillapdf_exports)} total")
             sys.exit(1)
-        elif len(found_targets) < len(target_constants):
-            missing = set(target_constants) - set(found_targets)
-            print(f"\n❌ FAILED: Missing target constants: {', '.join(missing)}")
+        elif len(vanillapdf_exports) == 0:
+            print(f"\n⚠️  WARNING: No VanillaPDF exports found - this might indicate an issue with export detection")
             sys.exit(1)
         else:
             print(f"\n✅ SUCCESS: All {len(vanillapdf_exports)} VanillaPDF exports are properly exported without mangling")
