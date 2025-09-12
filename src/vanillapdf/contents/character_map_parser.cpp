@@ -20,12 +20,206 @@ CharacterMapParser::CharacterMapParser(WeakReference<File> file, IInputStreamPtr
     _dictionary->Initialize();
 }
 
+// Stack manipulation helpers
+void CharacterMapParser::PushToStack(ObjectPtr obj) {
+    m_operand_stack.push(obj);
+}
+
+ObjectPtr CharacterMapParser::PopFromStack() {
+    if (m_operand_stack.empty()) {
+        spdlog::warn("Attempt to pop from empty operand stack");
+        return NullObject::GetInstance();
+    }
+    auto obj = m_operand_stack.top();
+    m_operand_stack.pop();
+    return obj;
+}
+
+ObjectPtr CharacterMapParser::PeekStack() {
+    if (m_operand_stack.empty()) {
+        return NullObject::GetInstance();
+    }
+    return m_operand_stack.top();
+}
+
+bool CharacterMapParser::IsStackEmpty() const {
+    return m_operand_stack.empty();
+}
+
+size_t CharacterMapParser::StackSize() const {
+    return m_operand_stack.size();
+}
+
+DictionaryObjectPtr CharacterMapParser::GetCurrentDictionary() {
+    if (m_dictionary_stack.empty()) {
+        return nullptr;
+    }
+    return m_dictionary_stack.back();
+}
+
+// PostScript stack operators implementation
+void CharacterMapParser::ExecuteDup() {
+    // dup: duplicate the top element on the stack
+    if (!m_operand_stack.empty()) {
+        auto top = m_operand_stack.top();
+        m_operand_stack.push(top);
+    }
+}
+
+void CharacterMapParser::ExecuteExch() {
+    // exch: exchange the top two elements on the stack
+    if (m_operand_stack.size() >= 2) {
+        auto top = PopFromStack();
+        auto second = PopFromStack();
+        PushToStack(top);
+        PushToStack(second);
+    }
+}
+
+void CharacterMapParser::ExecutePop() {
+    // pop: remove the top element from the stack
+    if (!m_operand_stack.empty()) {
+        m_operand_stack.pop();
+    }
+}
+
+void CharacterMapParser::ExecuteDict() {
+    // dict: create a new dictionary
+    // Stack: int -> dict
+    auto count_obj = PopFromStack();
+    
+    DictionaryObjectPtr new_dict;
+    new_dict->SetFile(_file);
+    
+    PushToStack(new_dict);
+}
+
+void CharacterMapParser::ExecuteBegin() {
+    // begin: push dictionary onto dictionary stack
+    // Stack: dict -> -
+    auto dict_obj = PopFromStack();
+    if (dict_obj->GetObjectType() == Object::Type::Dictionary) {
+        auto dict = ConvertUtils<ObjectPtr>::ConvertTo<DictionaryObjectPtr>(dict_obj);
+        m_dictionary_stack.push_back(dict);
+    }
+}
+
+void CharacterMapParser::ExecuteEnd() {
+    // end: pop dictionary from dictionary stack
+    if (!m_dictionary_stack.empty()) {
+        m_dictionary_stack.pop_back();
+    }
+}
+
+void CharacterMapParser::ExecuteDef() {
+    // def: define a key-value pair in the current dictionary
+    // Stack: key value -> -
+    auto value = PopFromStack();
+    auto key = PopFromStack();
+    
+    auto current_dict = GetCurrentDictionary();
+    if (current_dict && key->GetObjectType() == Object::Type::Name) {
+        auto name = ConvertUtils<ObjectPtr>::ConvertTo<NameObjectPtr>(key);
+        if (value->GetObjectType() != Object::Type::Null) {
+            auto containable = ConvertUtils<ObjectPtr>::ConvertTo<ContainableObjectPtr>(value);
+            current_dict->Insert(name, containable);
+        }
+    }
+}
+
+void CharacterMapParser::ProcessPostScriptToken(TokenPtr token) {
+    // Process a single PostScript token
+    switch (token->GetType()) {
+        case Token::Type::DUP:
+            ExecuteDup();
+            break;
+        case Token::Type::EXCH:
+            ExecuteExch();
+            break;
+        case Token::Type::STACK_POP:
+            ExecutePop();
+            break;
+        case Token::Type::DICTIONARY:
+            ExecuteDict();
+            break;
+        case Token::Type::BLOCK_BEGIN:
+            ExecuteBegin();
+            break;
+        case Token::Type::BLOCK_END:
+            ExecuteEnd();
+            break;
+        case Token::Type::DEFINITION:
+            ExecuteDef();
+            break;
+        default:
+            // Not a PostScript operator, treat as operand
+            break;
+    }
+}
+
+ObjectPtr CharacterMapParser::ExecutePostScriptSequence() {
+    // Execute a sequence of PostScript operations until we get a result
+    // This is used for parsing dictionary constructs
+    
+    while (true) {
+        auto token = PeekTokenSkip();
+        
+        if (token->GetType() == Token::Type::END_OF_INPUT) {
+            break;
+        }
+        
+        // Check if this is a PostScript operator
+        bool is_operator = false;
+        switch (token->GetType()) {
+            case Token::Type::DUP:
+            case Token::Type::EXCH:
+            case Token::Type::STACK_POP:
+            case Token::Type::DICTIONARY:
+            case Token::Type::BLOCK_BEGIN:
+            case Token::Type::BLOCK_END:
+            case Token::Type::DEFINITION:
+                is_operator = true;
+                break;
+            default:
+                break;
+        }
+        
+        if (is_operator) {
+            ReadTokenSkip(); // consume the operator
+            ProcessPostScriptToken(token);
+            
+            // If we just executed 'def' and the stack is empty, we're done
+            if (token->GetType() == Token::Type::DEFINITION && m_operand_stack.empty()) {
+                break;
+            }
+        } else {
+            // Read as operand and push to stack
+            auto obj = ReadDirectObject();
+            PushToStack(obj);
+        }
+    }
+    
+    // Return the top of the stack if anything remains
+    if (!m_operand_stack.empty()) {
+        return PopFromStack();
+    }
+    
+    return NullObject::GetInstance();
+}
+
 DictionaryObjectPtr CharacterMapParser::ReadDictionary() {
+    // Clear the stacks for a fresh start
+    while (!m_operand_stack.empty()) {
+        m_operand_stack.pop();
+    }
+    m_dictionary_stack.clear();
+    
     // Peek ahead to determine dictionary type
     auto next_token = PeekTokenSkip();
     
     // Check for PostScript-style dictionary: "N dict dup begin"
-    if (next_token->GetType() == Token::Type::DICTIONARY) {
+    if (next_token->GetType() == Token::Type::INTEGER_OBJECT) {
+        // This might be PostScript dictionary syntax
         return ReadPostScriptDictionary();
     }
     // Check for PDF-style dictionary: "<<"
@@ -38,74 +232,103 @@ DictionaryObjectPtr CharacterMapParser::ReadDictionary() {
 }
 
 DictionaryObjectPtr CharacterMapParser::ReadPostScriptDictionary() {
-    // Handle PostScript dictionary syntax: "N dict dup begin ... end def"
+    // Handle PostScript dictionary syntax using stack-based execution
     // Example: /CIDSystemInfo 3 dict dup begin
     //            /Registry (Adobe) def
     //            /Ordering (Identity) def
     //            /Supplement 0 def
     //          end def
     
-    DictionaryObjectPtr dictionary;
-    dictionary->SetFile(_file);
+    // Read the integer (dictionary size)
+    auto count_obj = ReadDirectObject();
+    PushToStack(count_obj);
     
-    // Read the number (e.g., "3")
-    auto count_token = PeekTokenSkip();
-    if (count_token->GetType() == Token::Type::INTEGER_OBJECT) {
-        ReadTokenSkip(); // consume the number
-    }
+    // Process tokens using PostScript stack semantics
+    bool in_dict_sequence = false;
+    DictionaryObjectPtr result_dict;
     
-    // Read "dict"
-    auto dict_token = PeekTokenSkip();
-    if (dict_token->GetType() == Token::Type::DICTIONARY) {
-        ReadTokenWithTypeSkip(Token::Type::DICTIONARY);
-    }
-    
-    // Read "dup" if present
-    auto dup_token = PeekTokenSkip();
-    if (dup_token->GetType() == Token::Type::DUP) {
-        ReadTokenWithTypeSkip(Token::Type::DUP);
-    }
-    
-    // Read "begin"
-    auto begin_token = PeekTokenSkip();
-    if (begin_token->GetType() == Token::Type::BLOCK_BEGIN) {
-        ReadTokenWithTypeSkip(Token::Type::BLOCK_BEGIN);
-    }
-    
-    // Read dictionary entries until "end"
-    while (PeekTokenTypeSkip() != Token::Type::BLOCK_END) {
-        auto key = ReadDirectObject();
+    while (true) {
+        auto token = PeekTokenSkip();
         
-        // Skip if not a name
-        if (key->GetObjectType() != Object::Type::Name) {
+        if (token->GetType() == Token::Type::END_OF_INPUT) {
+            break;
+        }
+        
+        // Handle the dict operator
+        if (token->GetType() == Token::Type::DICTIONARY) {
+            ReadTokenSkip();
+            ExecuteDict();
+            in_dict_sequence = true;
             continue;
         }
         
-        auto name = ConvertUtils<ObjectPtr>::ConvertTo<NameObjectPtr>(key);
-        auto value = ReadDirectObject();
-        
-        // Skip "def" if present after the value
-        auto def_token = PeekTokenSkip();
-        if (def_token->GetType() == Token::Type::DEFINITION) {
-            ReadTokenWithTypeSkip(Token::Type::DEFINITION);
+        // Handle dup operator
+        if (token->GetType() == Token::Type::DUP) {
+            ReadTokenSkip();
+            ExecuteDup();
+            continue;
         }
         
-        if (value->GetObjectType() != Object::Type::Null) {
-            auto containable = ConvertUtils<ObjectPtr>::ConvertTo<ContainableObjectPtr>(value);
-            dictionary->Insert(name, containable);
+        // Handle begin operator
+        if (token->GetType() == Token::Type::BLOCK_BEGIN) {
+            ReadTokenSkip();
+            ExecuteBegin();
+            continue;
+        }
+        
+        // Handle end operator
+        if (token->GetType() == Token::Type::BLOCK_END) {
+            ReadTokenSkip();
+            
+            // Get the dictionary before we pop it from the stack
+            if (!m_dictionary_stack.empty()) {
+                result_dict = m_dictionary_stack.back();
+            }
+            
+            ExecuteEnd();
+            
+            // Push the dictionary back onto the operand stack for potential def
+            if (result_dict) {
+                PushToStack(result_dict);
+            }
+            
+            // Check if there's a def after end
+            auto next = PeekTokenSkip();
+            if (next->GetType() == Token::Type::DEFINITION) {
+                ReadTokenSkip();
+                // The def here would normally store the dictionary somewhere,
+                // but for our purposes, we just return it
+                break;
+            }
+            break;
+        }
+        
+        // Inside the dictionary, handle key-value-def sequences
+        if (!m_dictionary_stack.empty()) {
+            // Read key
+            auto key = ReadDirectObject();
+            if (key->GetObjectType() != Object::Type::Name) {
+                continue;
+            }
+            PushToStack(key);
+            
+            // Read value
+            auto value = ReadDirectObject();
+            PushToStack(value);
+            
+            // Look for def
+            auto def_token = PeekTokenSkip();
+            if (def_token->GetType() == Token::Type::DEFINITION) {
+                ReadTokenSkip();
+                ExecuteDef();
+            }
+        } else {
+            // We're not in a dictionary context yet
+            break;
         }
     }
     
-    // Read "end"
-    ReadTokenWithTypeSkip(Token::Type::BLOCK_END);
-    
-    // Read "def" if present after "end"
-    auto final_def = PeekTokenSkip();
-    if (final_def->GetType() == Token::Type::DEFINITION) {
-        ReadTokenWithTypeSkip(Token::Type::DEFINITION);
-    }
-    
-    return dictionary;
+    return result_dict ? result_dict : DictionaryObjectPtr();
 }
 
 DictionaryObjectPtr CharacterMapParser::ReadPDFDictionaryWithDef() {
@@ -121,6 +344,9 @@ DictionaryObjectPtr CharacterMapParser::ReadPDFDictionaryWithDef() {
     
     ReadTokenWithTypeSkip(Token::Type::DICTIONARY_BEGIN);
     
+    // Push the dictionary onto both stacks for def operations
+    m_dictionary_stack.push_back(dictionary);
+    
     while (PeekTokenTypeSkip() != Token::Type::DICTIONARY_END) {
         auto key = ReadDirectObject();
         
@@ -131,27 +357,39 @@ DictionaryObjectPtr CharacterMapParser::ReadPDFDictionaryWithDef() {
             continue;
         }
         
-        auto name = ConvertUtils<ObjectPtr>::ConvertTo<NameObjectPtr>(key);
+        PushToStack(key);
+        
         auto value = ReadDirectObject();
+        PushToStack(value);
         
         // Handle "def" after each value in the dictionary
         auto def_token = PeekTokenSkip();
         if (def_token->GetType() == Token::Type::DEFINITION) {
             ReadTokenWithTypeSkip(Token::Type::DEFINITION);
-        }
-        
-        if (value->GetObjectType() != Object::Type::Null) {
-            if (dictionary->Contains(name)) {
-                spdlog::warn("Found duplicate entry for {}, skipping", name->ToString());
-                continue;
+            ExecuteDef();
+        } else {
+            // If no def, manually insert into dictionary
+            auto name = ConvertUtils<ObjectPtr>::ConvertTo<NameObjectPtr>(key);
+            if (value->GetObjectType() != Object::Type::Null) {
+                if (dictionary->Contains(name)) {
+                    spdlog::warn("Found duplicate entry for {}, skipping", name->ToString());
+                } else {
+                    auto containable = ConvertUtils<ObjectPtr>::ConvertTo<ContainableObjectPtr>(value);
+                    dictionary->Insert(name, containable);
+                }
             }
-            
-            auto containable = ConvertUtils<ObjectPtr>::ConvertTo<ContainableObjectPtr>(value);
-            dictionary->Insert(name, containable);
+            // Pop the values we didn't use for def
+            PopFromStack();
+            PopFromStack();
         }
     }
     
     ReadTokenWithTypeSkip(Token::Type::DICTIONARY_END);
+    
+    // Pop dictionary from dictionary stack
+    if (!m_dictionary_stack.empty()) {
+        m_dictionary_stack.pop_back();
+    }
     
     // Read "def" if present after ">>"
     auto final_def = PeekTokenSkip();
