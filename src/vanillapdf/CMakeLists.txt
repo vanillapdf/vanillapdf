@@ -673,18 +673,12 @@ else (OPENSSL_FOUND)
 endif (OPENSSL_FOUND)
 
 if (JPEG_FOUND)
-    target_include_directories(vanillapdf PRIVATE ${JPEG_INCLUDE_DIR})
-
-    # This is not yet supported on all linux CMake distributions
-    # set(VANILLAPDF_LIBS JPEG::JPEG ${VANILLAPDF_LIBS})
-
-    target_link_libraries(vanillapdf PRIVATE ${JPEG_LIBRARIES})
+    target_link_libraries(vanillapdf PRIVATE JPEG::JPEG)
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
-
     message(STATUS "JPEG library ${JPEG_VERSION} was found")
-else (JPEG_FOUND)
+else()
     message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
-endif (JPEG_FOUND)
+endif()
 
 if (ZLIB_FOUND)
     target_include_directories(vanillapdf PRIVATE ${ZLIB_INCLUDE_DIRS})
