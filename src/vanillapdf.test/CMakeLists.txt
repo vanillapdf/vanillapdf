@@ -74,6 +74,51 @@ endif (CMAKE_COMPILER_IS_GNUCC)
 
 target_link_libraries(vanillapdf.test PRIVATE ${VANILLAPDF_TEST_LIBS})
 
+# Copy vcpkg shared libraries to test executable directory to prevent version conflicts
+if(BUILD_SHARED_LIBS AND APPLE)
+    # macOS: Copy each vcpkg dylib file to the same directory as the test executable
+
+    # Copy JPEG library if using vcpkg
+    if(NOT VANILLAPDF_EXTERNAL_JPEG AND JPEG_FOUND)
+        add_custom_command(TARGET vanillapdf.test POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/libjpeg.dylib"
+                "$<TARGET_FILE_DIR:vanillapdf.test>/libjpeg.dylib"
+            COMMENT "Copying vcpkg libjpeg for vanillapdf.test"
+        )
+    endif()
+
+    # Copy OpenJPEG library if using vcpkg
+    if(NOT VANILLAPDF_EXTERNAL_OPENJPEG AND OPENJPEG_LIBRARIES)
+        add_custom_command(TARGET vanillapdf.test POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/libopenjp2.dylib"
+                "$<TARGET_FILE_DIR:vanillapdf.test>/libopenjp2.dylib"
+            COMMENT "Copying vcpkg openjpeg for vanillapdf.test"
+        )
+    endif()
+
+    # Copy zlib library if using vcpkg
+    if(NOT VANILLAPDF_EXTERNAL_ZLIB AND ZLIB_FOUND)
+        add_custom_command(TARGET vanillapdf.test POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/libz.dylib"
+                "$<TARGET_FILE_DIR:vanillapdf.test>/libz.dylib"
+            COMMENT "Copying vcpkg zlib for vanillapdf.test"
+        )
+    endif()
+
+    # Copy OpenSSL library if using vcpkg
+    if(NOT VANILLAPDF_EXTERNAL_OPENSSL AND OPENSSL_FOUND)
+        add_custom_command(TARGET vanillapdf.test POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/libcrypto.dylib"
+                "$<TARGET_FILE_DIR:vanillapdf.test>/libcrypto.dylib"
+            COMMENT "Copying vcpkg openssl for vanillapdf.test"
+        )
+    endif()
+endif()
+
 # In case we have the dynamic link configuration add specific definitions
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(vanillapdf.test PRIVATE VANILLAPDF_CONFIGURATION_DLL)

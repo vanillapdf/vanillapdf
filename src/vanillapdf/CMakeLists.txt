@@ -575,20 +575,16 @@ if(BUILD_SHARED_LIBS)
 
     # Configure RPATH for shared dependencies to prevent library version conflicts
     if(UNIX AND NOT APPLE)
-        # Linux: Set RPATH to look in vcpkg lib directory during build and install
+        # Linux: Set RPATH for install only
         set_target_properties(vanillapdf PROPERTIES
-            BUILD_RPATH "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib"
             INSTALL_RPATH "$ORIGIN:$ORIGIN/../lib"
-            BUILD_WITH_INSTALL_RPATH OFF
         )
     endif()
 
     if(APPLE)
-        # macOS: Set RPATH for vcpkg lib directory during build and install
+        # macOS: Set RPATH for install only (build uses copied libraries in same directory)
         set_target_properties(vanillapdf PROPERTIES
-            BUILD_RPATH "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib"
             INSTALL_RPATH "@loader_path:@loader_path/../lib"
-            BUILD_WITH_INSTALL_RPATH OFF
         )
     endif()
 
@@ -874,7 +870,7 @@ if(BUILD_SHARED_LIBS)
 
             # Find shared library files from vcpkg
             find_file(LIBCRYPTO_SO
-                NAMES libcrypto.so libcrypto.so.3
+                NAMES libcrypto.so
                 PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
                 NO_DEFAULT_PATH
             )
@@ -891,7 +887,7 @@ if(BUILD_SHARED_LIBS)
 
             # Find shared library files from vcpkg
             find_file(LIBJPEG_SO
-                NAMES libjpeg.so libturbojpeg.so libjpeg.so.62
+                NAMES libjpeg.so libturbojpeg.so
                 PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
                 NO_DEFAULT_PATH
             )
@@ -908,7 +904,7 @@ if(BUILD_SHARED_LIBS)
 
             # Find shared library files from vcpkg
             find_file(ZLIB_SO
-                NAMES libz.so libz.so.1
+                NAMES libz.so
                 PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
                 NO_DEFAULT_PATH
             )
@@ -925,7 +921,7 @@ if(BUILD_SHARED_LIBS)
 
             # Find shared library files from vcpkg
             find_file(OPENJPEG_SO
-                NAMES libopenjp2.so libopenjp2.so.7
+                NAMES libopenjp2.so
                 PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
                 NO_DEFAULT_PATH
             )
@@ -947,7 +943,7 @@ if(BUILD_SHARED_LIBS)
 
             # Find dynamic library files from vcpkg
             find_file(LIBCRYPTO_DYLIB
-                NAMES libcrypto.dylib libcrypto.3.dylib
+                NAMES libcrypto.dylib
                 PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
                 NO_DEFAULT_PATH
             )
@@ -964,7 +960,7 @@ if(BUILD_SHARED_LIBS)
 
             # Find dynamic library files from vcpkg
             find_file(LIBJPEG_DYLIB
-                NAMES libjpeg.dylib libturbojpeg.dylib libjpeg.62.dylib
+                NAMES libjpeg.dylib libturbojpeg.dylib
                 PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
                 NO_DEFAULT_PATH
             )
@@ -981,7 +977,7 @@ if(BUILD_SHARED_LIBS)
 
             # Find dynamic library files from vcpkg
             find_file(ZLIB_DYLIB
-                NAMES libz.dylib libz.1.dylib
+                NAMES libz.dylib
                 PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
                 NO_DEFAULT_PATH
             )
@@ -998,7 +994,7 @@ if(BUILD_SHARED_LIBS)
 
             # Find dynamic library files from vcpkg
             find_file(OPENJPEG_DYLIB
-                NAMES libopenjp2.dylib libopenjp2.7.dylib
+                NAMES libopenjp2.dylib
                 PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
                 NO_DEFAULT_PATH
             )

@@ -58,6 +58,51 @@ if(WIN32)
     )
 endif(WIN32)
 
+# Copy vcpkg shared libraries to unittest executable directory to prevent version conflicts
+if(BUILD_SHARED_LIBS AND APPLE)
+    # macOS: Copy each vcpkg dylib file to the same directory as the unittest executable
+
+    # Copy JPEG library if using vcpkg
+    if(NOT VANILLAPDF_EXTERNAL_JPEG AND JPEG_FOUND)
+        add_custom_command(TARGET vanillapdf.unittest POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/libjpeg.dylib"
+                "$<TARGET_FILE_DIR:vanillapdf.unittest>/libjpeg.dylib"
+            COMMENT "Copying vcpkg libjpeg for vanillapdf.unittest"
+        )
+    endif()
+
+    # Copy OpenJPEG library if using vcpkg
+    if(NOT VANILLAPDF_EXTERNAL_OPENJPEG AND OPENJPEG_LIBRARIES)
+        add_custom_command(TARGET vanillapdf.unittest POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/libopenjp2.dylib"
+                "$<TARGET_FILE_DIR:vanillapdf.unittest>/libopenjp2.dylib"
+            COMMENT "Copying vcpkg openjpeg for vanillapdf.unittest"
+        )
+    endif()
+
+    # Copy zlib library if using vcpkg
+    if(NOT VANILLAPDF_EXTERNAL_ZLIB AND ZLIB_FOUND)
+        add_custom_command(TARGET vanillapdf.unittest POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/libz.dylib"
+                "$<TARGET_FILE_DIR:vanillapdf.unittest>/libz.dylib"
+            COMMENT "Copying vcpkg zlib for vanillapdf.unittest"
+        )
+    endif()
+
+    # Copy OpenSSL library if using vcpkg
+    if(NOT VANILLAPDF_EXTERNAL_OPENSSL AND OPENSSL_FOUND)
+        add_custom_command(TARGET vanillapdf.unittest POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/libcrypto.dylib"
+                "$<TARGET_FILE_DIR:vanillapdf.unittest>/libcrypto.dylib"
+            COMMENT "Copying vcpkg openssl for vanillapdf.unittest"
+        )
+    endif()
+endif()
+
 if (VANILLAPDF_EXTERNAL_GTEST)
     find_package(GTest MODULE REQUIRED)
 else()
