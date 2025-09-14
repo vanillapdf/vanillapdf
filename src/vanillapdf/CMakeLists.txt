@@ -698,6 +698,8 @@ if (JPEG_FOUND)
     # set(VANILLAPDF_LIBS JPEG::JPEG ${VANILLAPDF_LIBS})
 
     target_link_libraries(vanillapdf PRIVATE ${JPEG_LIBRARIES})
+    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
+
     message(STATUS "JPEG library ${JPEG_VERSION} was found")
 else (JPEG_FOUND)
     message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
