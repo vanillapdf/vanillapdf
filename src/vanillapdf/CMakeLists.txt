@@ -632,7 +632,15 @@ else ()
     find_package(ZLIB REQUIRED)
 endif()
 
-find_package(libjpeg-turbo CONFIG REQUIRED)
+if (VANILLAPDF_EXTERNAL_JPEG)
+    find_package(JPEG MODULE REQUIRED)
+else ()
+    find_package(JPEG CONFIG REQUIRED
+        PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/jpeg
+        NO_DEFAULT_PATH
+        NO_SYSTEM_ENVIRONMENT_PATH
+        NO_CMAKE_SYSTEM_PATH)
+endif()
 
 if (VANILLAPDF_EXTERNAL_OPENJPEG)
     find_package(OpenJPEG MODULE REQUIRED)
@@ -668,9 +676,9 @@ else (OPENSSL_FOUND)
     message(WARNING "Compiling without OpenSSL support. Work with encrypted document will be prohibited")
 endif (OPENSSL_FOUND)
 
-target_link_libraries(vanillapdf PRIVATE $<IF:$<TARGET_EXISTS:libjpeg-turbo::turbojpeg>,libjpeg-turbo::turbojpeg,libjpeg-turbo::turbojpeg-static>)
+target_link_libraries(vanillapdf PRIVATE JPEG::JPEG)
 target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
-message(STATUS "libjpeg-turbo was found")
+message(STATUS "JPEG library was found")
 
 if (ZLIB_FOUND)
     target_include_directories(vanillapdf PRIVATE ${ZLIB_INCLUDE_DIRS})
@@ -781,11 +789,11 @@ if(WIN32)
     endif (OPENSSL_FOUND)
 
     # libjpeg dependent libraries
-    if (TARGET libjpeg-turbo::turbojpeg OR TARGET libjpeg-turbo::turbojpeg-static)
+    if (TARGET JPEG::JPEG)
 
         # Find dll runtime binary file
         find_file(LIBJPEG_RUNTIME
-            NAMES turbojpeg.dll
+            NAMES jpeg62.dll
             PATHS ${VANILLPDF_BINARY_DIR}
         )
 
