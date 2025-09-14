@@ -682,6 +682,15 @@ if (JPEG_FOUND)
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
 
     message(STATUS "JPEG library ${JPEG_VERSION} was found")
+    
+    # Add version compatibility warning for macOS
+    if (APPLE AND CMAKE_OSX_ARCHITECTURES MATCHES "x86_64")
+        message(STATUS "Building for macOS x64 - ensuring JPEG library compatibility")
+        message(STATUS "If you encounter JPEG version mismatch errors at runtime:")
+        message(STATUS "1. Clean build directory and rebuild")
+        message(STATUS "2. Use -DVANILLAPDF_EXTERNAL_JPEG=ON to use system JPEG")
+        message(STATUS "3. Ensure consistent libjpeg-turbo installation")
+    endif()
 else (JPEG_FOUND)
     message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
 endif (JPEG_FOUND)
