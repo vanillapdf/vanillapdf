@@ -49,6 +49,9 @@ include(cmake/vcpkg_init.cmake)
 # Define main solution
 project(vanillapdf)
 
+# Prefer config-mode packages over Find modules when searching for dependencies
+set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
+
 # Prefer files in CMAKE_MODULE_PATH over shipped ones in module directory
 # In the future, they may possibly add conflicting search modules
 # so let's be cautious and prevent it!

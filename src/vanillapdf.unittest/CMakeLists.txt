@@ -71,6 +71,16 @@ set(VANILLAPDF_UNITTEST_LIBS
 
 target_link_libraries(vanillapdf.unittest PRIVATE ${VANILLAPDF_UNITTEST_LIBS})
 
+# Ensure runtime loader can locate built dependencies next to the executable
+if(APPLE)
+    set(_vanillapdf_ut_rpath "@executable_path")
+else()
+    set(_vanillapdf_ut_rpath "$ORIGIN")
+endif()
+set_target_properties(vanillapdf.unittest PROPERTIES
+    INSTALL_RPATH "${_vanillapdf_ut_rpath}"
+    BUILD_RPATH "${_vanillapdf_ut_rpath}")
+
 # In case we have the dynamic link configuration add specific definitions
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_CONFIGURATION_DLL)

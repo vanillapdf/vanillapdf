@@ -635,11 +635,7 @@ endif()
 if (VANILLAPDF_EXTERNAL_JPEG)
     find_package(JPEG MODULE REQUIRED)
 else ()
-    find_package(JPEG REQUIRED
-        PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/jpeg
-        NO_DEFAULT_PATH
-        NO_SYSTEM_ENVIRONMENT_PATH
-        NO_CMAKE_SYSTEM_PATH)
+    find_package(JPEG REQUIRED)
 endif()
 
 if (VANILLAPDF_EXTERNAL_OPENJPEG)
