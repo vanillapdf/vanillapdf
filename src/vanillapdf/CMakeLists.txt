@@ -633,9 +633,9 @@ else ()
 endif()
 
 if (VANILLAPDF_EXTERNAL_JPEG)
-    find_package(JPEG MODULE REQUIRED)
+    find_package(libjpeg-turbo MODULE REQUIRED)
 else ()
-    find_package(JPEG REQUIRED)
+    find_package(libjpeg-turbo CONFIG REQUIRED)
 endif()
 
 if (VANILLAPDF_EXTERNAL_OPENJPEG)
@@ -672,19 +672,18 @@ else (OPENSSL_FOUND)
     message(WARNING "Compiling without OpenSSL support. Work with encrypted document will be prohibited")
 endif (OPENSSL_FOUND)
 
-if (JPEG_FOUND)
-    target_include_directories(vanillapdf PRIVATE ${JPEG_INCLUDE_DIR})
-
-    # This is not yet supported on all linux CMake distributions
-    # set(VANILLAPDF_LIBS JPEG::JPEG ${VANILLAPDF_LIBS})
-
-    target_link_libraries(vanillapdf PRIVATE ${JPEG_LIBRARIES})
+if (libjpeg-turbo_FOUND)
+    target_link_libraries(vanillapdf PRIVATE libjpeg-turbo::jpeg libjpeg-turbo::turbojpeg)
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
 
-    message(STATUS "JPEG library ${JPEG_VERSION} was found")
-else (JPEG_FOUND)
+    if (VANILLAPDF_EXTERNAL_JPEG)
+        message(STATUS "External libjpeg-turbo library was found")
+    else()
+        message(STATUS "vcpkg libjpeg-turbo library was found")
+    endif()
+else (libjpeg-turbo_FOUND)
     message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
-endif (JPEG_FOUND)
+endif (libjpeg-turbo_FOUND)
 
 if (ZLIB_FOUND)
     target_include_directories(vanillapdf PRIVATE ${ZLIB_INCLUDE_DIRS})
@@ -795,7 +794,7 @@ if(WIN32)
     endif (OPENSSL_FOUND)
 
     # libjpeg dependent libraries
-    if (JPEG_FOUND)
+    if (libjpeg-turbo_FOUND)
 
         # Find dll runtime binary file
         find_file(LIBJPEG_RUNTIME
@@ -811,7 +810,7 @@ if(WIN32)
         
         # Install dependency into output package
         # install(FILES ${LIBJPEG_RUNTIME} DESTINATION bin)
-    endif (JPEG_FOUND)
+    endif (libjpeg-turbo_FOUND)
 
     # zlib dependent libraries
     if (ZLIB_FOUND)
