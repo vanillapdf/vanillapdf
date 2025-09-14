@@ -632,11 +632,7 @@ else ()
     find_package(ZLIB REQUIRED)
 endif()
 
-if (VANILLAPDF_EXTERNAL_JPEG)
-    find_package(JPEG MODULE REQUIRED)
-else ()
-    find_package(JPEG CONFIG REQUIRED)
-endif()
+find_package(libjpeg-turbo CONFIG REQUIRED)
 
 if (VANILLAPDF_EXTERNAL_OPENJPEG)
     find_package(OpenJPEG MODULE REQUIRED)
@@ -672,13 +668,9 @@ else (OPENSSL_FOUND)
     message(WARNING "Compiling without OpenSSL support. Work with encrypted document will be prohibited")
 endif (OPENSSL_FOUND)
 
-if (JPEG_FOUND)
-    target_link_libraries(vanillapdf PRIVATE JPEG::JPEG)
-    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
-    message(STATUS "JPEG library ${JPEG_VERSION} was found")
-else()
-    message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
-endif()
+target_link_libraries(vanillapdf PRIVATE $<IF:$<TARGET_EXISTS:libjpeg-turbo::turbojpeg>,libjpeg-turbo::turbojpeg,libjpeg-turbo::turbojpeg-static>)
+target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
+message(STATUS "libjpeg-turbo was found")
 
 if (ZLIB_FOUND)
     target_include_directories(vanillapdf PRIVATE ${ZLIB_INCLUDE_DIRS})
@@ -789,7 +781,7 @@ if(WIN32)
     endif (OPENSSL_FOUND)
 
     # libjpeg dependent libraries
-    if (JPEG_FOUND)
+    if (TARGET libjpeg-turbo::turbojpeg OR TARGET libjpeg-turbo::turbojpeg-static)
 
         # Find dll runtime binary file
         find_file(LIBJPEG_RUNTIME
@@ -799,13 +791,13 @@ if(WIN32)
 
         if (NOT EXISTS ${LIBJPEG_RUNTIME})
             # message(FATAL_ERROR "JPEG support is enabled, but the LIBJPEG_RUNTIME does not exist")
-        endif(NOT EXISTS ${LIBJPEG_RUNTIME})
-        
+        endif()
+
         # message(STATUS "LIBJPEG runtime was found at ${LIBJPEG_RUNTIME}")
-        
+
         # Install dependency into output package
         # install(FILES ${LIBJPEG_RUNTIME} DESTINATION bin)
-    endif (JPEG_FOUND)
+    endif()
 
     # zlib dependent libraries
     if (ZLIB_FOUND)
