@@ -573,6 +573,25 @@ if(BUILD_SHARED_LIBS)
         PUBLIC VANILLAPDF_CONFIGURATION_DLL
         PRIVATE VANILLAPDF_EXPORTS)
 
+    # Configure RPATH for shared dependencies to prevent library version conflicts
+    if(UNIX AND NOT APPLE)
+        # Linux: Set RPATH to look in vcpkg lib directory during build and install
+        set_target_properties(vanillapdf PROPERTIES
+            BUILD_RPATH "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib"
+            INSTALL_RPATH "$ORIGIN:$ORIGIN/../lib"
+            BUILD_WITH_INSTALL_RPATH OFF
+        )
+    endif()
+
+    if(APPLE)
+        # macOS: Set RPATH for vcpkg lib directory during build and install
+        set_target_properties(vanillapdf PROPERTIES
+            BUILD_RPATH "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib"
+            INSTALL_RPATH "@loader_path:@loader_path/../lib"
+            BUILD_WITH_INSTALL_RPATH OFF
+        )
+    endif()
+
 endif()
 
 # Specify version identificators
@@ -634,7 +653,8 @@ endif()
 
 if (VANILLAPDF_EXTERNAL_JPEG)
     find_package(JPEG MODULE REQUIRED)
-# else: When using vcpkg, don't search for JPEG - vcpkg provides it automatically
+else ()
+    find_package(JPEG REQUIRED)
 endif()
 
 if (VANILLAPDF_EXTERNAL_OPENJPEG)
@@ -671,23 +691,17 @@ else (OPENSSL_FOUND)
     message(WARNING "Compiling without OpenSSL support. Work with encrypted document will be prohibited")
 endif (OPENSSL_FOUND)
 
-if (VANILLAPDF_EXTERNAL_JPEG)
-    if (JPEG_FOUND)
-        target_include_directories(vanillapdf PRIVATE ${JPEG_INCLUDE_DIR})
-        target_link_libraries(vanillapdf PRIVATE ${JPEG_LIBRARIES})
-        target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
-        message(STATUS "External JPEG library ${JPEG_VERSION} was found")
-    else (JPEG_FOUND)
-        message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
-    endif (JPEG_FOUND)
-else ()
-    # Using vcpkg - libjpeg-turbo is automatically available when feature is enabled
-    # vcpkg provides these as JPEG::JPEG and unofficial::libjpeg-turbo::turbojpeg
-    target_link_libraries(vanillapdf PRIVATE JPEG::JPEG)
-    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
-    set(JPEG_FOUND TRUE)  # Set flag for consistent behavior with external case
-    message(STATUS "vcpkg libjpeg-turbo library is being used")
-endif()
+if (JPEG_FOUND)
+    target_include_directories(vanillapdf PRIVATE ${JPEG_INCLUDE_DIR})
+
+    # This is not yet supported on all linux CMake distributions
+    # set(VANILLAPDF_LIBS JPEG::JPEG ${VANILLAPDF_LIBS})
+
+    target_link_libraries(vanillapdf PRIVATE ${JPEG_LIBRARIES})
+    message(STATUS "JPEG library ${JPEG_VERSION} was found")
+else (JPEG_FOUND)
+    message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
+endif (JPEG_FOUND)
 
 if (ZLIB_FOUND)
     target_include_directories(vanillapdf PRIVATE ${ZLIB_INCLUDE_DIRS})
@@ -774,64 +788,226 @@ install(FILES
 # Define installation files and procedures
 include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanillapdf_install.cmake")
 
-# Install dependent libraries on windows
-if(WIN32)
+# Install dependent libraries for shared builds to prevent version conflicts
+if(BUILD_SHARED_LIBS)
 
-    # OpenSSL dependent libraries
-    if (OPENSSL_FOUND)
-    
-        # Find dll runtime binary file
-        find_file(LIBEAY_RUNTIME
-            NAMES libcrypto-3.dll libcrypto-3-x64.dll legacy.dll
-            PATHS ${VANILLPDF_BINARY_DIR}
-        )
+    # Windows: Install dependent DLL libraries
+    if(WIN32)
 
-        if (NOT EXISTS ${LIBEAY_RUNTIME})
-            # message(FATAL_ERROR "OpenSSL support is enabled, but the LIBEAY_RUNTIME does not exist")
-        endif(NOT EXISTS ${LIBEAY_RUNTIME})
-        
-        # message(STATUS "LIBEAY runtime was found at ${LIBEAY_RUNTIME}")
-        
-        # Install dependency into output package
-        # install(FILES ${LIBEAY_RUNTIME} DESTINATION bin)
+        # OpenSSL dependent libraries
+        if (OPENSSL_FOUND AND NOT VANILLAPDF_EXTERNAL_OPENSSL)
 
-    endif (OPENSSL_FOUND)
+            # Find dll runtime binary files from vcpkg
+            find_file(LIBEAY_RUNTIME
+                NAMES libcrypto-3.dll libcrypto-3-x64.dll legacy.dll
+                PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin
+                NO_DEFAULT_PATH
+            )
 
-    # libjpeg dependent libraries
-    if (JPEG_FOUND)
+            if (EXISTS ${LIBEAY_RUNTIME})
+                message(STATUS "OpenSSL runtime found at ${LIBEAY_RUNTIME}")
+                install(FILES ${LIBEAY_RUNTIME} DESTINATION bin)
+            endif()
 
-        # Find dll runtime binary file
-        find_file(LIBJPEG_RUNTIME
-            NAMES turbojpeg.dll
-            PATHS ${VANILLPDF_BINARY_DIR}
-        )
+        endif (OPENSSL_FOUND AND NOT VANILLAPDF_EXTERNAL_OPENSSL)
 
-        if (NOT EXISTS ${LIBJPEG_RUNTIME})
-            # message(FATAL_ERROR "JPEG support is enabled, but the LIBJPEG_RUNTIME does not exist")
-        endif(NOT EXISTS ${LIBJPEG_RUNTIME})
-        
-        # message(STATUS "LIBJPEG runtime was found at ${LIBJPEG_RUNTIME}")
-        
-        # Install dependency into output package
-        # install(FILES ${LIBJPEG_RUNTIME} DESTINATION bin)
-    endif (JPEG_FOUND)
+        # libjpeg dependent libraries
+        if (JPEG_FOUND AND NOT VANILLAPDF_EXTERNAL_JPEG)
 
-    # zlib dependent libraries
-    if (ZLIB_FOUND)
+            # Find dll runtime binary files from vcpkg
+            find_file(LIBJPEG_RUNTIME
+                NAMES turbojpeg.dll jpeg.dll
+                PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin
+                NO_DEFAULT_PATH
+            )
 
-        # Find dll runtime binary file
-        find_file(ZLIB_RUNTIME
-            NAMES zlib1.dll
-            PATHS ${VANILLPDF_BINARY_DIR}
-        )
+            if (EXISTS ${LIBJPEG_RUNTIME})
+                message(STATUS "JPEG runtime found at ${LIBJPEG_RUNTIME}")
+                install(FILES ${LIBJPEG_RUNTIME} DESTINATION bin)
+            endif()
 
-        if (NOT EXISTS ${ZLIB_RUNTIME})
-            # message(FATAL_ERROR "zlib support is enabled, but the ZLIB_RUNTIME does not exist")
-        endif(NOT EXISTS ${ZLIB_RUNTIME})
-        
-        # message(STATUS "ZLIB runtime was found at ${ZLIB_RUNTIME}")
-        
-        # Install dependency into output package
-        # install(FILES ${ZLIB_RUNTIME} DESTINATION bin)
-    endif (ZLIB_FOUND)
-endif(WIN32)
+        endif (JPEG_FOUND AND NOT VANILLAPDF_EXTERNAL_JPEG)
+
+        # zlib dependent libraries
+        if (ZLIB_FOUND AND NOT VANILLAPDF_EXTERNAL_ZLIB)
+
+            # Find dll runtime binary files from vcpkg
+            find_file(ZLIB_RUNTIME
+                NAMES zlib1.dll zlibd1.dll
+                PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin
+                NO_DEFAULT_PATH
+            )
+
+            if (EXISTS ${ZLIB_RUNTIME})
+                message(STATUS "zlib runtime found at ${ZLIB_RUNTIME}")
+                install(FILES ${ZLIB_RUNTIME} DESTINATION bin)
+            endif()
+
+        endif (ZLIB_FOUND AND NOT VANILLAPDF_EXTERNAL_ZLIB)
+
+        # OpenJPEG dependent libraries
+        if (OPENJPEG_LIBRARIES AND NOT VANILLAPDF_EXTERNAL_OPENJPEG)
+
+            # Find dll runtime binary files from vcpkg
+            find_file(OPENJPEG_RUNTIME
+                NAMES openjp2.dll
+                PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin
+                NO_DEFAULT_PATH
+            )
+
+            if (EXISTS ${OPENJPEG_RUNTIME})
+                message(STATUS "OpenJPEG runtime found at ${OPENJPEG_RUNTIME}")
+                install(FILES ${OPENJPEG_RUNTIME} DESTINATION bin)
+            endif()
+
+        endif (OPENJPEG_LIBRARIES AND NOT VANILLAPDF_EXTERNAL_OPENJPEG)
+
+    endif(WIN32)
+
+    # Linux: Install dependent shared libraries (.so files)
+    if(UNIX AND NOT APPLE)
+
+        # OpenSSL dependent libraries
+        if (OPENSSL_FOUND AND NOT VANILLAPDF_EXTERNAL_OPENSSL)
+
+            # Find shared library files from vcpkg
+            find_file(LIBCRYPTO_SO
+                NAMES libcrypto.so libcrypto.so.3
+                PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
+                NO_DEFAULT_PATH
+            )
+
+            if (EXISTS ${LIBCRYPTO_SO})
+                message(STATUS "OpenSSL shared library found at ${LIBCRYPTO_SO}")
+                install(FILES ${LIBCRYPTO_SO} DESTINATION lib)
+            endif()
+
+        endif (OPENSSL_FOUND AND NOT VANILLAPDF_EXTERNAL_OPENSSL)
+
+        # libjpeg dependent libraries
+        if (JPEG_FOUND AND NOT VANILLAPDF_EXTERNAL_JPEG)
+
+            # Find shared library files from vcpkg
+            find_file(LIBJPEG_SO
+                NAMES libjpeg.so libturbojpeg.so libjpeg.so.62
+                PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
+                NO_DEFAULT_PATH
+            )
+
+            if (EXISTS ${LIBJPEG_SO})
+                message(STATUS "JPEG shared library found at ${LIBJPEG_SO}")
+                install(FILES ${LIBJPEG_SO} DESTINATION lib)
+            endif()
+
+        endif (JPEG_FOUND AND NOT VANILLAPDF_EXTERNAL_JPEG)
+
+        # zlib dependent libraries
+        if (ZLIB_FOUND AND NOT VANILLAPDF_EXTERNAL_ZLIB)
+
+            # Find shared library files from vcpkg
+            find_file(ZLIB_SO
+                NAMES libz.so libz.so.1
+                PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
+                NO_DEFAULT_PATH
+            )
+
+            if (EXISTS ${ZLIB_SO})
+                message(STATUS "zlib shared library found at ${ZLIB_SO}")
+                install(FILES ${ZLIB_SO} DESTINATION lib)
+            endif()
+
+        endif (ZLIB_FOUND AND NOT VANILLAPDF_EXTERNAL_ZLIB)
+
+        # OpenJPEG dependent libraries
+        if (OPENJPEG_LIBRARIES AND NOT VANILLAPDF_EXTERNAL_OPENJPEG)
+
+            # Find shared library files from vcpkg
+            find_file(OPENJPEG_SO
+                NAMES libopenjp2.so libopenjp2.so.7
+                PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
+                NO_DEFAULT_PATH
+            )
+
+            if (EXISTS ${OPENJPEG_SO})
+                message(STATUS "OpenJPEG shared library found at ${OPENJPEG_SO}")
+                install(FILES ${OPENJPEG_SO} DESTINATION lib)
+            endif()
+
+        endif (OPENJPEG_LIBRARIES AND NOT VANILLAPDF_EXTERNAL_OPENJPEG)
+
+    endif()
+
+    # macOS: Install dependent dynamic libraries (.dylib files)
+    if(APPLE)
+
+        # OpenSSL dependent libraries
+        if (OPENSSL_FOUND AND NOT VANILLAPDF_EXTERNAL_OPENSSL)
+
+            # Find dynamic library files from vcpkg
+            find_file(LIBCRYPTO_DYLIB
+                NAMES libcrypto.dylib libcrypto.3.dylib
+                PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
+                NO_DEFAULT_PATH
+            )
+
+            if (EXISTS ${LIBCRYPTO_DYLIB})
+                message(STATUS "OpenSSL dynamic library found at ${LIBCRYPTO_DYLIB}")
+                install(FILES ${LIBCRYPTO_DYLIB} DESTINATION lib)
+            endif()
+
+        endif (OPENSSL_FOUND AND NOT VANILLAPDF_EXTERNAL_OPENSSL)
+
+        # libjpeg dependent libraries
+        if (JPEG_FOUND AND NOT VANILLAPDF_EXTERNAL_JPEG)
+
+            # Find dynamic library files from vcpkg
+            find_file(LIBJPEG_DYLIB
+                NAMES libjpeg.dylib libturbojpeg.dylib libjpeg.62.dylib
+                PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
+                NO_DEFAULT_PATH
+            )
+
+            if (EXISTS ${LIBJPEG_DYLIB})
+                message(STATUS "JPEG dynamic library found at ${LIBJPEG_DYLIB}")
+                install(FILES ${LIBJPEG_DYLIB} DESTINATION lib)
+            endif()
+
+        endif (JPEG_FOUND AND NOT VANILLAPDF_EXTERNAL_JPEG)
+
+        # zlib dependent libraries
+        if (ZLIB_FOUND AND NOT VANILLAPDF_EXTERNAL_ZLIB)
+
+            # Find dynamic library files from vcpkg
+            find_file(ZLIB_DYLIB
+                NAMES libz.dylib libz.1.dylib
+                PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
+                NO_DEFAULT_PATH
+            )
+
+            if (EXISTS ${ZLIB_DYLIB})
+                message(STATUS "zlib dynamic library found at ${ZLIB_DYLIB}")
+                install(FILES ${ZLIB_DYLIB} DESTINATION lib)
+            endif()
+
+        endif (ZLIB_FOUND AND NOT VANILLAPDF_EXTERNAL_ZLIB)
+
+        # OpenJPEG dependent libraries
+        if (OPENJPEG_LIBRARIES AND NOT VANILLAPDF_EXTERNAL_OPENJPEG)
+
+            # Find dynamic library files from vcpkg
+            find_file(OPENJPEG_DYLIB
+                NAMES libopenjp2.dylib libopenjp2.7.dylib
+                PATHS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
+                NO_DEFAULT_PATH
+            )
+
+            if (EXISTS ${OPENJPEG_DYLIB})
+                message(STATUS "OpenJPEG dynamic library found at ${OPENJPEG_DYLIB}")
+                install(FILES ${OPENJPEG_DYLIB} DESTINATION lib)
+            endif()
+
+        endif (OPENJPEG_LIBRARIES AND NOT VANILLAPDF_EXTERNAL_OPENJPEG)
+
+    endif()
+
+endif(BUILD_SHARED_LIBS)
