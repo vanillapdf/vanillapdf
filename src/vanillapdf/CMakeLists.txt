@@ -682,8 +682,8 @@ if (VANILLAPDF_EXTERNAL_JPEG)
     endif (JPEG_FOUND)
 else ()
     # Using vcpkg - libjpeg-turbo is automatically available when feature is enabled
-    target_link_libraries(vanillapdf PRIVATE $<IF:$<TARGET_EXISTS:libjpeg-turbo::jpeg>,libjpeg-turbo::jpeg,jpeg>)
-    target_link_libraries(vanillapdf PRIVATE $<IF:$<TARGET_EXISTS:libjpeg-turbo::turbojpeg>,libjpeg-turbo::turbojpeg,turbojpeg>)
+    # vcpkg provides these as JPEG::JPEG and unofficial::libjpeg-turbo::turbojpeg
+    target_link_libraries(vanillapdf PRIVATE JPEG::JPEG)
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
     set(JPEG_FOUND TRUE)  # Set flag for consistent behavior with external case
     message(STATUS "vcpkg libjpeg-turbo library is being used")
