@@ -635,7 +635,12 @@ endif()
 if (VANILLAPDF_EXTERNAL_JPEG)
     find_package(JPEG MODULE REQUIRED)
 else ()
-    find_package(JPEG REQUIRED)
+    find_package(JPEG CONFIG REQUIRED
+                 PATHS
+                     "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}"
+                     "${VCPKG_ROOT}/installed/${VCPKG_TARGET_TRIPLET}"
+                 NO_DEFAULT_PATH
+                 NO_SYSTEM_ENVIRONMENT_PATH)
 endif()
 
 if (VANILLAPDF_EXTERNAL_OPENJPEG)
