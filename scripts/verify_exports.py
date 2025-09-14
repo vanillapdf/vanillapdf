@@ -251,89 +251,99 @@ def extract_exports(lib_path: str) -> List[str]:
 def verify_library_exports(lib_path: str) -> Tuple[List[str], List[str], List[str]]:
     """
     Verify library exports and categorize them.
-    
+
     Args:
         lib_path: Path to the library file
-        
+
     Returns:
-        Tuple of (all_exports, mangled_exports, vanillapdf_exports)
+        Tuple of (all_exports, mangled_exports, clean_exports)
     """
     exports = extract_exports(lib_path)
-    
+
     if not exports:
         raise RuntimeError("Could not extract exports from library. Make sure appropriate tools are installed.")
-    
+
     mangled_exports = []
-    vanillapdf_exports = []
-    
+    clean_exports = []
+
     for export_name in exports:
         if has_mangled_characters(export_name):
             mangled_exports.append(export_name)
-        
-        # Collect VanillaPDF-related exports (functions, constants, etc.)
-        if any(prefix in export_name for prefix in ['vanillapdf', 'VanillaPDF', 'NameConstant_', 'Buffer_', 'Document_', 'Page_', 'Filter_']):
-            vanillapdf_exports.append(export_name)
-    
-    return exports, mangled_exports, vanillapdf_exports
+        else:
+            clean_exports.append(export_name)
+
+    return exports, mangled_exports, clean_exports
 
 def main():
     if len(sys.argv) != 2:
         print("Usage: python verify_exports.py <path_to_library>")
         sys.exit(1)
-    
+
     lib_path = sys.argv[1]
-    
+
     try:
-        all_exports, mangled_exports, vanillapdf_exports = verify_library_exports(lib_path)
-        
+        all_exports, mangled_exports, clean_exports = verify_library_exports(lib_path)
+
         print(f"Library Export Analysis: {lib_path}")
         print(f"Platform: {platform.system()}")
         print(f"Total exports found: {len(all_exports)}")
-        print(f"VanillaPDF-related exports: {len(vanillapdf_exports)}")
         print()
-        
+
         if mangled_exports:
-            print(f"⚠️  Found {len(mangled_exports)} mangled exports:")
-            for export_name in sorted(mangled_exports):
+            print(f"❌ Found {len(mangled_exports)} mangled exports:")
+            for export_name in sorted(mangled_exports)[:20]:  # Show first 20 to avoid overwhelming output
                 print(f"  - {export_name}")
+            if len(mangled_exports) > 20:
+                print(f"  ... and {len(mangled_exports) - 20} more mangled exports")
             print()
         else:
             print("✅ No mangled exports found!")
             print()
-        
-        # Report on VanillaPDF export status
-        print("VanillaPDF export analysis:")
-        if vanillapdf_exports:
-            clean_exports = [e for e in vanillapdf_exports if not has_mangled_characters(e)]
-            mangled_vanillapdf = [e for e in vanillapdf_exports if has_mangled_characters(e)]
-            
-            print(f"  ✅ Clean exports: {len(clean_exports)}")
-            print(f"  ⚠️  Mangled exports: {len(mangled_vanillapdf)}")
-        else:
-            print("  ⚠️  No VanillaPDF exports found")
-        
-        # Show some VanillaPDF exports for verification
-        if vanillapdf_exports:
-            print(f"\nVanillaPDF exports sample (showing first 10):")
-            for export in sorted(vanillapdf_exports)[:10]:
-                status = "⚠️ MANGLED" if has_mangled_characters(export) else "✅"
-                print(f"  {status} {export}")
-            
-            if len(vanillapdf_exports) > 10:
-                print(f"  ... and {len(vanillapdf_exports) - 10} more")
-        
-        # Summary
-        total_mangled = len([e for e in vanillapdf_exports if has_mangled_characters(e)])
-        if total_mangled > 0:
-            print(f"\n❌ FAILED: Found {total_mangled} mangled VanillaPDF exports out of {len(vanillapdf_exports)} total")
+
+        print(f"Export Summary:")
+        print(f"  ✅ Clean exports: {len(clean_exports)}")
+        print(f"  ❌ Mangled exports: {len(mangled_exports)}")
+
+        # Show some clean exports for verification
+        if clean_exports:
+            print(f"\nClean exports sample (showing first 15):")
+            for export in sorted(clean_exports)[:15]:
+                print(f"  ✅ {export}")
+
+            if len(clean_exports) > 15:
+                print(f"  ... and {len(clean_exports) - 15} more clean exports")
+
+        # Check for specific important constants that should be exported cleanly
+        important_constants = [
+            'NameConstant_LZWDecode',
+            'NameConstant_JPXDecode',
+            'NameConstant_DCTDecode',
+            'NameConstant_FlateDecode'
+        ]
+
+        print(f"\nImportant constants verification:")
+        missing_important = []
+        for const in important_constants:
+            if const in clean_exports:
+                print(f"  ✅ {const} - Found and properly exported")
+            elif const in mangled_exports:
+                print(f"  ❌ {const} - Found but mangled")
+            else:
+                print(f"  ⚠️  {const} - Not found")
+                missing_important.append(const)
+
+        # Final result
+        if len(mangled_exports) > 0:
+            print(f"\n❌ FAILED: Found {len(mangled_exports)} mangled exports out of {len(all_exports)} total")
+            print("All exports should use C linkage and not contain special mangling characters.")
             sys.exit(1)
-        elif len(vanillapdf_exports) == 0:
-            print(f"\n⚠️  WARNING: No VanillaPDF exports found - this might indicate an issue with export detection")
+        elif len(clean_exports) == 0:
+            print(f"\n⚠️  WARNING: No clean exports found - this might indicate an issue with export detection")
             sys.exit(1)
         else:
-            print(f"\n✅ SUCCESS: All {len(vanillapdf_exports)} VanillaPDF exports are properly exported without mangling")
+            print(f"\n✅ SUCCESS: All {len(all_exports)} exports are properly exported without mangling")
             sys.exit(0)
-        
+
     except Exception as e:
         print(f"Error: {e}")
         sys.exit(1)
