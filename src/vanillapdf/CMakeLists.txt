@@ -518,8 +518,17 @@ add_library(vanillapdf
     ${VANILLAPDF_RESOURCE_FILES}
 )
 
+# Ensure runtime loader can locate dependent libraries next to this target
+if(APPLE)
+    set(_vanillapdf_rpath "@loader_path")
+else()
+    set(_vanillapdf_rpath "$ORIGIN")
+endif()
+
 set_target_properties(vanillapdf PROPERTIES
-  PREFIX "lib"
+    PREFIX "lib"
+    INSTALL_RPATH "${_vanillapdf_rpath}"
+    BUILD_RPATH "${_vanillapdf_rpath}"
 )
 
 # Add precompiled header to speed up the compilation process
