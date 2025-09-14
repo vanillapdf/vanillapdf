@@ -648,9 +648,9 @@ else ()
 endif()
 
 if (VANILLAPDF_EXTERNAL_JPEG)
-    find_package(JPEG MODULE REQUIRED)
+    find_package(libjpeg-turbo MODULE REQUIRED)
 else ()
-    find_package(JPEG REQUIRED)
+    find_package(libjpeg-turbo CONFIG REQUIRED)
 endif()
 
 if (VANILLAPDF_EXTERNAL_OPENJPEG)
@@ -687,19 +687,28 @@ else (OPENSSL_FOUND)
     message(WARNING "Compiling without OpenSSL support. Work with encrypted document will be prohibited")
 endif (OPENSSL_FOUND)
 
-if (JPEG_FOUND)
-    target_include_directories(vanillapdf PRIVATE ${JPEG_INCLUDE_DIR})
-
-    # This is not yet supported on all linux CMake distributions
-    # set(VANILLAPDF_LIBS JPEG::JPEG ${VANILLAPDF_LIBS})
-
-    target_link_libraries(vanillapdf PRIVATE ${JPEG_LIBRARIES})
-    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
-
-    message(STATUS "JPEG library ${JPEG_VERSION} was found")
-else (JPEG_FOUND)
-    message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
-endif (JPEG_FOUND)
+# Both external and vcpkg cases now use libjpeg-turbo
+if (BUILD_SHARED_LIBS)
+    # Shared build: use shared libjpeg-turbo
+    if (TARGET libjpeg-turbo::turbojpeg)
+        target_link_libraries(vanillapdf PRIVATE libjpeg-turbo::turbojpeg)
+        target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
+        message(STATUS "libjpeg-turbo library (shared) is being used")
+        set(JPEG_FOUND TRUE)
+    else ()
+        message(FATAL_ERROR "libjpeg-turbo::turbojpeg target not found for shared build")
+    endif ()
+else ()
+    # Static build: use static libjpeg-turbo
+    if (TARGET libjpeg-turbo::turbojpeg-static)
+        target_link_libraries(vanillapdf PRIVATE libjpeg-turbo::turbojpeg-static)
+        target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
+        message(STATUS "libjpeg-turbo library (static) is being used")
+        set(JPEG_FOUND TRUE)
+    else ()
+        message(FATAL_ERROR "libjpeg-turbo::turbojpeg-static target not found for static build")
+    endif ()
+endif ()
 
 if (ZLIB_FOUND)
     target_include_directories(vanillapdf PRIVATE ${ZLIB_INCLUDE_DIRS})
