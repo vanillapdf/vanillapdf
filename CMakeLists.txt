@@ -39,6 +39,7 @@ option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure perf
 option(VANILLAPDF_ENABLE_ENCRYPTION "Enable PDF encryption/decryption support" ON)
 option(VANILLAPDF_ENABLE_JPEG "Enable JPEG image support" ON)
 option(VANILLAPDF_ENABLE_JPEG2000 "Enable JPEG2000 image support" ON)
+option(VANILLAPDF_ENABLE_ZLIB "Enable zlib compression support" ON)
 
 # Allow linking selected dependencies from the system instead of vcpkg,
 # or provided externally
