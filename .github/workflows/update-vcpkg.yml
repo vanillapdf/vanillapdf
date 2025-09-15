@@ -15,6 +15,14 @@ on:
   schedule:
     - cron: '0 2 1 * *'
 
+  # Validate workflow when it's modified
+  push:
+    paths:
+      - '.github/workflows/update-vcpkg.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/update-vcpkg.yml'
+
 permissions:
   contents: write    # Create branches and commits
   pull-requests: write    # Create pull requests
