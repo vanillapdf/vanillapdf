@@ -2,17 +2,17 @@
     "name": "vanillapdf",
     "version": "2.1.0",
     "description": "PDF rendering engine using vcpkg-managed dependencies",
-    "default-features": [],
+    "default-features": [ "encryption", "jpeg", "jpeg2000" ],
     "features": {
-        "openssl": {
-            "description": "Enable encryption and decryption of secure PDF documents using OpenSSL",
+        "encryption": {
+            "description": "Enable encryption and decryption of secure PDF documents",
             "dependencies": [ "openssl" ]
         },
-        "libjpeg-turbo": {
-            "description": "Decode JPEG images into bitmaps via libjpeg‑turbo",
+        "jpeg": {
+            "description": "Decode JPEG images into bitmaps",
             "dependencies": [ "libjpeg-turbo" ]
         },
-        "openjpeg": {
+        "jpeg2000": {
             "description": "Support JPEG‑2000 images through the OpenJPEG codec",
             "dependencies": [ "openjpeg" ]
         },

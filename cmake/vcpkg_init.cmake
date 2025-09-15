@@ -1,8 +1,8 @@
 # VCPKG - C++ package management system
 
-# For embedded configuration we leave everyting to the parent project
-if(NOT VANILLAPDF_STANDALONE)
-  message(STATUS "VanillaPDF is being built as a vcpkg port or embedded, skipping automatic package management")
+# Check if VanillaPDF should manage its own dependencies
+if(NOT VANILLAPDF_MANAGE_DEPS)
+  message(STATUS "VanillaPDF dependency management disabled, skipping automatic vcpkg setup")
   return()
 endif()
 
@@ -40,14 +40,14 @@ endif()
 # Configure vcpkg manifest features based on build options
 set(VANILLAPDF_VCPKG_FEATURE_LIST "")
 
-if(NOT VANILLAPDF_EXTERNAL_OPENSSL)
-  list(APPEND VANILLAPDF_VCPKG_FEATURE_LIST "openssl")
+if(VANILLAPDF_ENABLE_ENCRYPTION AND NOT VANILLAPDF_EXTERNAL_OPENSSL)
+  list(APPEND VANILLAPDF_VCPKG_FEATURE_LIST "encryption")
 endif()
-if(NOT VANILLAPDF_EXTERNAL_JPEG)
-  list(APPEND VANILLAPDF_VCPKG_FEATURE_LIST "libjpeg-turbo")
+if(VANILLAPDF_ENABLE_JPEG AND NOT VANILLAPDF_EXTERNAL_JPEG)
+  list(APPEND VANILLAPDF_VCPKG_FEATURE_LIST "jpeg")
 endif()
-if(NOT VANILLAPDF_EXTERNAL_OPENJPEG)
-  list(APPEND VANILLAPDF_VCPKG_FEATURE_LIST "openjpeg")
+if(VANILLAPDF_ENABLE_JPEG2000 AND NOT VANILLAPDF_EXTERNAL_OPENJPEG)
+  list(APPEND VANILLAPDF_VCPKG_FEATURE_LIST "jpeg2000")
 endif()
 if(NOT VANILLAPDF_EXTERNAL_ZLIB)
   list(APPEND VANILLAPDF_VCPKG_FEATURE_LIST "zlib")

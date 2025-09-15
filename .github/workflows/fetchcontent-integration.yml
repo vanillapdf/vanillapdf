@@ -1,0 +1,49 @@
+name: FetchContent Integration
+
+on:
+  workflow_dispatch:
+
+  # Weekly test on Sundays at 2 AM UTC
+  schedule:
+    - cron: '0 2 * * 0'
+
+  # Run on changes that could affect FetchContent
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'vcpkg.json'
+      - 'examples/fetchcontent-integration/**'
+
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'vcpkg.json'
+      - 'examples/fetchcontent-integration/**'
+
+permissions:
+  contents: read
+
+env:
+  VCPKG_DISABLE_METRICS: 1
+
+jobs:
+  fetchcontent-test:
+    name: FetchContent Integration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Test FetchContent Integration
+        working-directory: examples/fetchcontent-integration
+        run: |
+          echo "Testing FetchContent integration against commit: ${{ github.sha }}"
+          cmake -S . -B build -DVANILLAPDF_GIT_TAG=${{ github.sha }}
+          cmake --build build

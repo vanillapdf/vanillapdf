@@ -50,6 +50,27 @@ The repository uses `vanillapdf-bot` for automated operations:
   ```
 - Never use `github-actions[bot]` or similar generic bot names
 
+## ⚠️ CRITICAL: vcpkg Submodule Management
+
+**NEVER MODIFY external/vcpkg FOLDER**
+- The `external/vcpkg` folder is a Git submodule pointing to Microsoft's vcpkg repository
+- **NEVER** make direct changes to files in `external/vcpkg/` - these will be lost on submodule updates
+- The submodule is automatically updated monthly by vanillapdf-bot
+
+**vcpkg Port Development Workflow:**
+- Use `ports/vanillapdf/` folder for port development and testing
+- This folder mirrors the structure that will be submitted to Microsoft vcpkg
+- When ready for release, the vanillapdf-bot creates PRs to Microsoft vcpkg repository using content from `ports/vanillapdf/`
+- Port files in `ports/vanillapdf/`:
+  - `vcpkg.json` - Port manifest with features and dependencies
+  - `portfile.cmake` - Build instructions and feature configuration
+  - `usage` - Installation and usage documentation
+
+**For Claude Code:**
+- Always work in `ports/vanillapdf/` when updating vcpkg port files
+- Never edit anything in `external/vcpkg/ports/vanillapdf/` - it will be overwritten
+- Test port changes by copying from `ports/vanillapdf/` to a local vcpkg installation if needed
+
 ## 🚀 Release Process
 
 ### Release Branch Strategy
@@ -157,7 +178,53 @@ vcpkg install vanillapdf[openssl,zlib,spdlog]
 
 Important build configuration options available:
 
-- `-DVANILLAPDF_STANDALONE=ON/OFF` - Enable internal vcpkg setup for standalone builds (default: ON)
+#### Auto-Detection of Build Configuration
+
+VanillaPDF automatically detects the appropriate configuration based on usage context:
+
+**Dependency Management (`VANILLAPDF_MANAGE_DEPS`):**
+- `ON`: Standalone builds, FetchContent, Git submodules → Use internal vcpkg
+- `OFF`: vcpkg ports → Use external vcpkg (auto-detected via `VCPKG_TOOLCHAIN`)
+
+**Packaging (`VANILLAPDF_ENABLE_PACKAGING`):**
+- `ON`: Main project builds → Enable CPack packaging features
+- `OFF`: Dependency usage → Disable packaging to avoid conflicts
+
+**Usage Scenarios:**
+```cmake
+# Standalone development (auto-detected)
+git clone vanillapdf && cmake --preset windows-x64-msvc-17
+# → MANAGE_DEPS=ON, ENABLE_PACKAGING=ON
+
+# FetchContent usage (auto-detected)
+FetchContent_Declare(vanillapdf ...)
+# → MANAGE_DEPS=ON, ENABLE_PACKAGING=OFF
+
+# vcpkg port (auto-detected)
+vcpkg install vanillapdf
+# → MANAGE_DEPS=OFF, ENABLE_PACKAGING=OFF
+```
+
+**Manual Override:**
+```cmake
+# Force specific configuration
+cmake -DVANILLAPDF_MANAGE_DEPS=OFF -DVANILLAPDF_ENABLE_PACKAGING=ON ...
+```
+
+#### Feature Enable/Disable Options
+- `-DVANILLAPDF_ENABLE_ENCRYPTION=ON/OFF` - Enable PDF encryption/decryption support (default: ON)
+- `-DVANILLAPDF_ENABLE_JPEG=ON/OFF` - Enable JPEG image support (default: ON)
+- `-DVANILLAPDF_ENABLE_JPEG2000=ON/OFF` - Enable JPEG2000 image support (default: ON)
+
+#### Build Configuration Options
+- `-DVANILLAPDF_MANAGE_DEPS=ON/OFF` - Manage own dependencies via internal vcpkg (auto-detected)
+  - **Auto-detected default**: `OFF` for vcpkg ports, `ON` for all other scenarios
+  - `ON`: Use internal vcpkg for dependencies (standalone, FetchContent, submodules)
+  - `OFF`: Rely on external dependency management (vcpkg ports)
+- `-DVANILLAPDF_ENABLE_PACKAGING=ON/OFF` - Enable packaging features like CPack (auto-detected)
+  - **Auto-detected default**: `ON` for main project builds, `OFF` for dependency usage
+  - `ON`: Enable packaging (DEB, Brew, etc.) for distribution
+  - `OFF`: Disable packaging to avoid conflicts in parent projects
 - `-DVANILLAPDF_ENABLE_TESTS=ON/OFF` - Perform test scenarios (default: ON)
 - `-DVANILLAPDF_ENABLE_BENCHMARK=ON/OFF` - Include benchmarking project (default: ON)
 - `-DVANILLAPDF_USE_STATIC_CRT=ON/OFF` - Use static MSVC runtime (/MT) instead of dynamic (/MD) (default: OFF)
@@ -165,7 +232,14 @@ Important build configuration options available:
 - `-DVANILLAPDF_ENABLE_COVERAGE=ON` - Enable code coverage instrumentation (for GCC/Clang only)
 - `-DVANILLAPDF_FORCE_32_BIT=ON` - Force 32-bit output binary regardless of architecture
 - `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON` - Enable address sanitizer for memory safety testing
-- `-DVANILLAPDF_EXTERNAL_*` - Use system dependencies instead of vcpkg (e.g., `-DVANILLAPDF_EXTERNAL_OPENSSL=ON`)
+
+#### External Dependency Options
+- `-DVANILLAPDF_EXTERNAL_OPENSSL=ON/OFF` - Use system OpenSSL instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_JPEG=ON/OFF` - Use system libjpeg instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_OPENJPEG=ON/OFF` - Use system OpenJPEG instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_ZLIB=ON/OFF` - Use system zlib instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_SPDLOG=ON/OFF` - Use system spdlog instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON/OFF` - Use system nlohmann-json instead of vcpkg (default: OFF)
 
 ### Running Tests
 

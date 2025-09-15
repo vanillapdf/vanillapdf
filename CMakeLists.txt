@@ -14,10 +14,35 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Store information about solution root folder
 set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Configurable option, if this is a primary project or just a submodule
-option(VANILLAPDF_STANDALONE "Enable internal vcpkg setup for standalone builds" ON)
+# Auto-detect build configuration based on usage scenario
+
+# Dependency Management: Should VanillaPDF manage its own dependencies via vcpkg?
+# OFF only when used as a vcpkg port (external vcpkg manages dependencies)
+# ON for standalone builds, FetchContent, and submodules (self-contained)
+if(VCPKG_TOOLCHAIN OR DEFINED VCPKG_TARGET_TRIPLET)
+    set(VANILLAPDF_MANAGE_DEPS_DEFAULT OFF)  # vcpkg port - use external vcpkg
+else()
+    set(VANILLAPDF_MANAGE_DEPS_DEFAULT ON)   # standalone/FetchContent - use own vcpkg
+endif()
+
+# Packaging: Should packaging features (CPack, etc.) be enabled?
+# ON only when building VanillaPDF as the main project
+# OFF for FetchContent, submodules, and vcpkg ports (avoid conflicts)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    set(VANILLAPDF_ENABLE_PACKAGING_DEFAULT ON)   # main project - enable packaging
+else()
+    set(VANILLAPDF_ENABLE_PACKAGING_DEFAULT OFF)  # dependency - no packaging
+endif()
+
+option(VANILLAPDF_MANAGE_DEPS "Manage own dependencies via internal vcpkg" ${VANILLAPDF_MANAGE_DEPS_DEFAULT})
+option(VANILLAPDF_ENABLE_PACKAGING "Enable packaging features (CPack)" ${VANILLAPDF_ENABLE_PACKAGING_DEFAULT})
 option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ON)
 option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ON)
+
+# Enable/disable optional features
+option(VANILLAPDF_ENABLE_ENCRYPTION "Enable PDF encryption/decryption support" ON)
+option(VANILLAPDF_ENABLE_JPEG "Enable JPEG image support" ON)
+option(VANILLAPDF_ENABLE_JPEG2000 "Enable JPEG2000 image support" ON)
 
 # Allow linking selected dependencies from the system instead of vcpkg,
 # or provided externally
@@ -67,8 +92,9 @@ set(VANILLAPDF_VERSION_BUILD_SUFFIX "${VANILLAPDF_VERSION_BUILD_SUFFIX}" CACHE S
 set(VANILLAPDF_VERSION
     "${VANILLAPDF_VERSION_MAJOR}.${VANILLAPDF_VERSION_MINOR}.${VANILLAPDF_VERSION_PATCH}${VANILLAPDF_VERSION_BUILD_SUFFIX}")
 
-# Define packaging configuration only for standalone
-if (VANILLAPDF_STANDALONE)
+# Enable packaging (DEB, Brew, etc.) only when explicitly enabled
+# Disabled for FetchContent, submodules, and vcpkg ports to avoid conflicts
+if (VANILLAPDF_ENABLE_PACKAGING)
 
     # Package management
     include(cmake/packaging.cmake)

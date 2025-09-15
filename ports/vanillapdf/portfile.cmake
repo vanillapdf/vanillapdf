@@ -1,21 +1,15 @@
-# Vanilla.PDF vcpkg portfile
-# https://github.com/vanillapdf/vanillapdf
-#
-# Maintainer: Juraj Zikmund <jzikmund@vanillapdf.com>
-# License: Apache-2.0
-#
-# This portfile builds Vanilla.PDF, a cross-platform SDK for creating and modifying PDF documents.
-# It supports both static and shared builds via the standard CMake `BUILD_SHARED_LIBS` option.
-
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO vanillapdf/vanillapdf
-    REF v${VERSION}
+    REF "v${VERSION}"
     SHA512 f15d9a290de0eebac9073503ac555cbf389484aa3ff6385697ba879c336ed9cd4277af180f9d842b5bd8cca69bf6ef4dcfbedba07a6a76014e3974fe09fc6190
 )
 
 vcpkg_check_features(
     OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+    encryption   -DVANILLAPDF_ENABLE_ENCRYPTION=ON
+    jpeg         -DVANILLAPDF_ENABLE_JPEG=ON
+    jpeg2000     -DVANILLAPDF_ENABLE_JPEG2000=ON
     tests        -DVANILLAPDF_ENABLE_TESTS=ON
     benchmarks   -DVANILLAPDF_ENABLE_BENCHMARK=ON
 )
@@ -23,9 +17,8 @@ vcpkg_check_features(
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
-      -DVANILLAPDF_STANDALONE=OFF
-      -DVANILLAPDF_ENABLE_TESTS=OFF
-      -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+      -DVANILLAPDF_MANAGE_DEPS=OFF
+      -DVANILLAPDF_ENABLE_PACKAGING=OFF
       ${FEATURE_OPTIONS}
 )
 

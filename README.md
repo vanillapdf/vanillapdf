@@ -148,7 +148,35 @@ For instructions on generating Debian or Homebrew packages see the
 
 ---
 
-## 🔗 CMake Integration (Modern Target-Based)
+## 🔗 CMake Integration
+
+### Using FetchContent (Recommended)
+
+The easiest way to integrate VanillaPDF is using CMake's `FetchContent`:
+
+```cmake
+cmake_minimum_required(VERSION 3.20)
+project(MyApp)
+
+include(FetchContent)
+FetchContent_Declare(
+    vanillapdf
+    GIT_REPOSITORY https://github.com/vanillapdf/vanillapdf.git
+    GIT_TAG        main  # or "v2.1.0" for specific release
+)
+FetchContent_MakeAvailable(vanillapdf)
+
+# Link to your target
+target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
+```
+
+**Benefits:**
+- ✅ **Auto-detection**: Automatically detects embedded mode (no packaging conflicts)
+- ✅ **Self-contained**: No external vcpkg setup required
+- ✅ **Reproducible**: Pin to specific versions or use latest `main`
+- ✅ **Zero configuration**: Works out of the box with default features (encryption, JPEG, JPEG2000)
+
+### Using Pre-installed Package
 
 ```cmake
 find_package(vanillapdf CONFIG REQUIRED)
@@ -160,6 +188,24 @@ This requires Vanilla.PDF to be installed properly via:
 - `cmake --install`
 - vcpkg (`vcpkg install vanillapdf`)
 - or manually setting `CMAKE_PREFIX_PATH` to the install location
+
+---
+
+## 📋 Examples
+
+### FetchContent Integration
+
+See [`examples/fetchcontent-integration/`](examples/fetchcontent-integration/) for a complete example of using VanillaPDF via CMake's `FetchContent`. This demonstrates:
+
+- ✅ Zero-configuration setup
+- ✅ Automatic dependency management
+- ✅ Conflict-free integration
+- ✅ Full feature availability
+
+```bash
+cd examples/fetchcontent-integration
+cmake -S . -B build && cmake --build build
+```
 
 ---
 
