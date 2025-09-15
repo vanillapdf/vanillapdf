@@ -58,7 +58,8 @@ jobs:
             -DVANILLAPDF_ENABLE_STACK_SANITIZER=ON \
             -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
             -DVANILLAPDF_EXTERNAL_JPEG=ON \
-            -DVANILLAPDF_EXTERNAL_ZLIB=ON
+            -DVANILLAPDF_EXTERNAL_ZLIB=ON \
+            -DVANILLAPDF_ENABLE_TESTS=ON
 
       - name: Build
         run: cmake --build --preset ${{ env.BUILD_PRESET }}

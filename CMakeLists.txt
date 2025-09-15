@@ -36,8 +36,8 @@ endif()
 
 option(VANILLAPDF_MANAGE_DEPS "Manage own dependencies via internal vcpkg" ${VANILLAPDF_MANAGE_DEPS_DEFAULT})
 option(VANILLAPDF_ENABLE_PACKAGING "Enable packaging features (CPack)" ${VANILLAPDF_ENABLE_PACKAGING_DEFAULT})
-option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ON)
-option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ON)
+option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" OFF)
+option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" OFF)
 
 # Enable/disable optional features
 option(VANILLAPDF_ENABLE_ENCRYPTION "Enable PDF encryption/decryption support" ON)

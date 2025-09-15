@@ -102,7 +102,7 @@ jobs:
         shell: bash
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}" -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_ENABLE_PACKAGING=ON
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -169,7 +169,7 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}" -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_ENABLE_PACKAGING=ON
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type }}
@@ -250,7 +250,7 @@ jobs:
         shell: bash
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}" -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_ENABLE_PACKAGING=ON
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
