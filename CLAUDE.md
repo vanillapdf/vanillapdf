@@ -137,3 +137,4 @@ Use `VANILLAPDF_EXTERNAL_*` CMake options to use system dependencies instead of 
 - Use sanitizers in Debug builds: `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
 - Visual Studio .natvis files available for debugging C++ objects
 - Precompiled headers are used (`precompiled.h`) for faster builds
+- For all changes in the vanillapdf repository we need to create a new branch and pull request. This is mandated by repository permissions
