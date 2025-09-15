@@ -103,10 +103,10 @@ jobs:
             external/vcpkg/downloads
             external/vcpkg/buildtrees
             external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # Bootstrap vcpkg on Linux
       - name: Bootstrap vcpkg (Linux)
@@ -156,10 +156,10 @@ jobs:
             external/vcpkg/downloads
             external/vcpkg/buildtrees
             external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)
@@ -207,10 +207,10 @@ jobs:
             external/vcpkg/downloads
             external/vcpkg/buildtrees
             external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       - name: Install build tools (macOS)
         run: brew install --quiet autoconf automake autoconf-archive

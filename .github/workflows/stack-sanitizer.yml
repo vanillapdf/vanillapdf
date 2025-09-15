@@ -43,10 +43,10 @@ jobs:
             external/vcpkg/buildtrees
             external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ env.BUILD_PRESET }}-sanitizer-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizer-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ env.BUILD_PRESET }}-sanitizer-
-            vcpkg-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizer-
+            vcpkg-${{ runner.os }}-ubuntu-latest-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
