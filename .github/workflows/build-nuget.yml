@@ -229,6 +229,15 @@ jobs:
 
       # dotnet is available on macOS runners by default
 
+      # TODO: Remove this workaround - see GitHub issue #125
+      # Technical debt: technical/debt/macos-jpeg-conflict.md
+      - name: Fix JPEG library conflicts (macOS) - TEMPORARY WORKAROUND
+        run: |
+          echo "=== Unlinking conflicting JPEG packages ==="
+          brew unlink jpeg 2>/dev/null || echo "jpeg not linked or not found"
+          brew unlink jpeg-turbo 2>/dev/null || echo "jpeg-turbo not linked or not found"
+          brew unlink libjpeg 2>/dev/null || echo "libjpeg not linked or not found"
+
       # Bootstrap vcpkg on macOS
       - name: Bootstrap vcpkg (macOS)
         run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh

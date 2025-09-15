@@ -213,6 +213,27 @@ jobs:
       - name: Install build tools (macOS)
         run: brew install --quiet autoconf automake autoconf-archive
 
+      # TODO: Remove this workaround - see GitHub issue #125
+      # Technical debt: technical/debt/macos-jpeg-conflict.md
+      # This fixes "Wrong JPEG library version: library is 62, caller expects 80" on macOS
+      - name: Fix JPEG library conflicts (macOS) - TEMPORARY WORKAROUND
+        run: |
+          echo "=== Before JPEG fix ==="
+          brew list --formula | grep jpeg || echo "No jpeg packages found"
+          which jpeg 2>/dev/null || echo "No jpeg command found"
+          ls -la /opt/homebrew/lib/libjpeg* 2>/dev/null || echo "No libjpeg* in /opt/homebrew/lib"
+          ls -la /usr/local/lib/libjpeg* 2>/dev/null || echo "No libjpeg* in /usr/local/lib"
+
+          echo "=== Unlinking conflicting JPEG packages ==="
+          brew unlink jpeg 2>/dev/null || echo "jpeg not linked or not found"
+          brew unlink jpeg-turbo 2>/dev/null || echo "jpeg-turbo not linked or not found"
+          brew unlink libjpeg 2>/dev/null || echo "libjpeg not linked or not found"
+
+          echo "=== After JPEG fix ==="
+          brew list --formula | grep jpeg || echo "No jpeg packages found"
+          ls -la /opt/homebrew/lib/libjpeg* 2>/dev/null || echo "No libjpeg* in /opt/homebrew/lib"
+          ls -la /usr/local/lib/libjpeg* 2>/dev/null || echo "No libjpeg* in /usr/local/lib"
+
       # Bootstrap vcpkg on macOS
       - name: Bootstrap vcpkg (macOS)
         run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
