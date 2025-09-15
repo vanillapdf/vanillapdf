@@ -49,6 +49,8 @@ endif()
 if(VANILLAPDF_ENABLE_JPEG2000 AND NOT VANILLAPDF_EXTERNAL_OPENJPEG)
   list(APPEND VANILLAPDF_VCPKG_FEATURE_LIST "jpeg2000")
 endif()
+# Note: zlib, spdlog, and nlohmann-json are default features in vcpkg.json
+# but can be excluded when using external system dependencies
 if(NOT VANILLAPDF_EXTERNAL_ZLIB)
   list(APPEND VANILLAPDF_VCPKG_FEATURE_LIST "zlib")
 endif()

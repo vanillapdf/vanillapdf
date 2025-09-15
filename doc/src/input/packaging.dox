@@ -17,7 +17,8 @@ sudo apt-get install libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev
 Then build the package:
 \code{.bash}
 cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release \
-  -DVANILLAPDF_STANDALONE=ON \
+  -DVANILLAPDF_MANAGE_DEPS=ON \
+  -DVANILLAPDF_ENABLE_PACKAGING=ON \
   -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
   -DVANILLAPDF_EXTERNAL_JPEG=ON \
   -DVANILLAPDF_EXTERNAL_OPENJPEG=OFF \
@@ -36,7 +37,8 @@ On macOS you can generate a Homebrew formula using the following commands:
 brew install openssl@3 jpeg-turbo zlib
 
 cmake --preset macos-arm64 -DCMAKE_BUILD_TYPE=Release \
-  -DVANILLAPDF_STANDALONE=ON \
+  -DVANILLAPDF_MANAGE_DEPS=ON \
+  -DVANILLAPDF_ENABLE_PACKAGING=ON \
   -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
   -DVANILLAPDF_EXTERNAL_JPEG=ON \
   -DVANILLAPDF_EXTERNAL_OPENJPEG=OFF \

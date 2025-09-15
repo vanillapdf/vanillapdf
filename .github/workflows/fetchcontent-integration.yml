@@ -44,6 +44,14 @@ jobs:
       - name: Test FetchContent Integration
         working-directory: examples/fetchcontent-integration
         run: |
-          echo "Testing FetchContent integration against commit: ${{ github.sha }}"
-          cmake -S . -B build -DVANILLAPDF_GIT_TAG=${{ github.sha }}
+          echo "Testing FetchContent integration against: ${{ github.ref_name }}"
+          # For PR/push events, test against the branch instead of specific commit
+          # This avoids issues with commits that don't exist in the remote yet
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BRANCH_TO_TEST="${{ github.head_ref }}"
+          else
+            BRANCH_TO_TEST="${{ github.ref_name }}"
+          fi
+          echo "Using branch: $BRANCH_TO_TEST"
+          cmake -S . -B build -DVANILLAPDF_GIT_TAG="$BRANCH_TO_TEST"
           cmake --build build
