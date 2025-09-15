@@ -114,7 +114,7 @@ jobs:
         shell: bash
 
       - name: Generate build files
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DVANILLAPDF_ENABLE_TESTS=ON
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DVANILLAPDF_MANAGE_DEPS=ON -DVANILLAPDF_ENABLE_TESTS=ON
 
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -166,7 +166,7 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Generate build files ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DVANILLAPDF_ENABLE_TESTS=ON
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DVANILLAPDF_MANAGE_DEPS=ON -DVANILLAPDF_ENABLE_TESTS=ON
 
       - name: Build ${{ matrix.config.preset }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.build_type }}
@@ -242,7 +242,7 @@ jobs:
         shell: bash
 
       - name: Generate build files
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DVANILLAPDF_ENABLE_TESTS=ON
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DVANILLAPDF_MANAGE_DEPS=ON -DVANILLAPDF_ENABLE_TESTS=ON
 
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}

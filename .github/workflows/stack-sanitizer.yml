@@ -55,6 +55,7 @@ jobs:
       - name: Configure
         run: |
           cmake --preset ${{ env.BUILD_PRESET }} -DCMAKE_BUILD_TYPE=Debug \
+            -DVANILLAPDF_MANAGE_DEPS=ON \
             -DVANILLAPDF_ENABLE_STACK_SANITIZER=ON \
             -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
             -DVANILLAPDF_EXTERNAL_JPEG=ON \

@@ -71,7 +71,7 @@ jobs:
         shell: bash
 
       - name: Configure CMake with coverage
-        run: cmake --preset linux-x64-gcc -DVANILLAPDF_ENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug -DVANILLAPDF_ENABLE_TESTS=ON
+        run: cmake --preset linux-x64-gcc -DVANILLAPDF_MANAGE_DEPS=ON -DVANILLAPDF_ENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug -DVANILLAPDF_ENABLE_TESTS=ON
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset linux-x64-gcc

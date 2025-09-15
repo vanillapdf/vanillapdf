@@ -17,13 +17,9 @@ set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 # Auto-detect build configuration based on usage scenario
 
 # Dependency Management: Should VanillaPDF manage its own dependencies via vcpkg?
-# OFF only when used as a vcpkg port (external vcpkg manages dependencies)
-# ON for standalone builds, FetchContent, and submodules (self-contained)
-if(VCPKG_TOOLCHAIN OR DEFINED VCPKG_TARGET_TRIPLET)
-    set(VANILLAPDF_MANAGE_DEPS_DEFAULT OFF)  # vcpkg port - use external vcpkg
-else()
-    set(VANILLAPDF_MANAGE_DEPS_DEFAULT ON)   # standalone/FetchContent - use own vcpkg
-endif()
+# ON by default for predictable behavior (standalone builds, FetchContent, CI)
+# OFF only when explicitly disabled (e.g., vcpkg port with external vcpkg)
+set(VANILLAPDF_MANAGE_DEPS_DEFAULT ON)
 
 # Packaging: Should packaging features (CPack, etc.) be enabled?
 # ON only when building VanillaPDF as the main project
