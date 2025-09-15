@@ -6,9 +6,9 @@ Thank you for considering contributing to **Vanilla.PDF**! Your involvement help
 
 ## 🐞 Reporting Bugs
 
-If you encounter a bug or unexpected behavior, we’d appreciate your report. Please follow these steps:
+If you encounter a bug or unexpected behavior, we'd appreciate your report. Please follow these steps:
 
-1. Visit our public issue tracker (**coming soon**).
+1. Visit our [GitHub Issues](https://github.com/vanillapdf/vanillapdf/issues) to report bugs or check for existing reports.
 2. If you're a customer with a paid support plan, please use the dedicated support section.
 3. Include the following in your report:
    - Version of Vanilla.PDF
@@ -35,10 +35,19 @@ We’d love to hear it — send us a note at [jzikmund@vanillapdf.com](mailto:jz
 
 We welcome contributions! Please follow these guidelines:
 
+**🚨 MANDATORY: Branch and PR Workflow**
+- **ALL changes must go through a branch and pull request** - this is required by repository permissions
+- **NEVER commit directly to `main` or `release/*` branches** - they are protected
+- Create a new branch for every change, no matter how small
+- Follow naming convention: `feature/description` or `fix/description`
+
+**Pull Request Guidelines:**
 - 🧠 **Discuss major changes first**: For anything beyond a bug fix, contact the team before investing time.
-- 🌳 **Base your PR on the `main` branch**
+- 🌳 **Base your PR on the `main` branch** (or appropriate `release/*` branch for hotfixes)
 - 🧹 **Match the existing coding style**
 - ✅ **Sign your commits** (see below)
+- 🧪 **Ensure tests pass**: Run the test suite before submitting
+- 📝 **Use clear commit messages**: Follow conventional commit format when possible
 
 ---
 
