@@ -2,7 +2,6 @@
     "name": "vanillapdf",
     "version": "2.1.0",
     "description": "PDF rendering engine using vcpkg-managed dependencies",
-    "default-features": [ "encryption", "jpeg", "jpeg2000", "zlib", "spdlog", "nlohmann-json" ],
     "features": {
         "encryption": {
             "description": "Enable encryption and decryption of secure PDF documents",

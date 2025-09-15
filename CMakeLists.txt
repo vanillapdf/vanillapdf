@@ -26,14 +26,18 @@ set(VANILLAPDF_MANAGE_DEPS_DEFAULT ON)
 # OFF for FetchContent, submodules, and vcpkg ports (avoid conflicts)
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(VANILLAPDF_ENABLE_PACKAGING_DEFAULT ON)   # main project - enable packaging
+    set(VANILLAPDF_ENABLE_TESTS_DEFAULT ON)       # main project - enable tests
+    set(VANILLAPDF_ENABLE_BENCHMARK_DEFAULT ON)   # main project - enable benchmarks
 else()
     set(VANILLAPDF_ENABLE_PACKAGING_DEFAULT OFF)  # dependency - no packaging
+    set(VANILLAPDF_ENABLE_TESTS_DEFAULT OFF)      # dependency - no tests
+    set(VANILLAPDF_ENABLE_BENCHMARK_DEFAULT OFF)  # dependency - no benchmarks
 endif()
 
 option(VANILLAPDF_MANAGE_DEPS "Manage own dependencies via internal vcpkg" ${VANILLAPDF_MANAGE_DEPS_DEFAULT})
 option(VANILLAPDF_ENABLE_PACKAGING "Enable packaging features (CPack)" ${VANILLAPDF_ENABLE_PACKAGING_DEFAULT})
-option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" OFF)
-option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" OFF)
+option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ${VANILLAPDF_ENABLE_TESTS_DEFAULT})
+option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ${VANILLAPDF_ENABLE_BENCHMARK_DEFAULT})
 
 # Enable/disable optional features
 option(VANILLAPDF_ENABLE_ENCRYPTION "Enable PDF encryption/decryption support" ON)

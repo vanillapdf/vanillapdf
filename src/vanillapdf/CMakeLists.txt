@@ -628,10 +628,12 @@ if (VANILLAPDF_ENABLE_ENCRYPTION)
     endif()
 endif()
 
-if (VANILLAPDF_EXTERNAL_ZLIB)
-    find_package(ZLIB MODULE REQUIRED)
-else ()
-    find_package(ZLIB REQUIRED)
+if (VANILLAPDF_ENABLE_ZLIB)
+    if (VANILLAPDF_EXTERNAL_ZLIB)
+        find_package(ZLIB MODULE REQUIRED)
+    else ()
+        find_package(ZLIB REQUIRED)
+    endif()
 endif()
 
 if (VANILLAPDF_ENABLE_JPEG)
@@ -692,16 +694,18 @@ elseif (VANILLAPDF_ENABLE_JPEG)
     message(WARNING "JPEG enabled but JPEG library not found. JPEG compression will become unavailable")
 endif ()
 
-if (ZLIB_FOUND)
-    target_include_directories(vanillapdf PRIVATE ${ZLIB_INCLUDE_DIRS})
-
-    target_link_libraries(vanillapdf PRIVATE ZLIB::ZLIB)
-    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_ZLIB)
-
-    message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
-else (ZLIB_FOUND)
-    message(WARNING "Compiling without zlib support. zlib decompression will become unavailable")
-endif (ZLIB_FOUND)
+if (VANILLAPDF_ENABLE_ZLIB)
+    if (ZLIB_FOUND)
+        target_include_directories(vanillapdf PRIVATE ${ZLIB_INCLUDE_DIRS})
+        target_link_libraries(vanillapdf PRIVATE ZLIB::ZLIB)
+        target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_ZLIB)
+        message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
+    else (ZLIB_FOUND)
+        message(WARNING "ZLIB was enabled but not found. zlib decompression will become unavailable")
+    endif (ZLIB_FOUND)
+else()
+    message(STATUS "zlib support disabled. zlib decompression will be unavailable")
+endif()
 
 if (VANILLAPDF_ENABLE_JPEG2000 AND OPENJPEG_LIBRARIES)
     target_include_directories(vanillapdf PRIVATE ${OPENJPEG_INCLUDE_DIRS})
@@ -820,7 +824,7 @@ if(WIN32)
     endif (JPEG_FOUND)
 
     # zlib dependent libraries
-    if (ZLIB_FOUND)
+    if (VANILLAPDF_ENABLE_ZLIB AND ZLIB_FOUND)
 
         # Find dll runtime binary file
         find_file(ZLIB_RUNTIME
