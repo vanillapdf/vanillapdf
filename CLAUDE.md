@@ -2,6 +2,85 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ CRITICAL: Repository Workflow Requirements
+
+**ALWAYS CREATE BRANCH AND PULL REQUEST FOR ALL CHANGES**
+- Repository permissions mandate that ALL changes must go through a branch and pull request workflow
+- NEVER commit directly to main or release branches - they are protected
+- Create a new branch for every change, no matter how small
+- Always create a PR for review before merging
+
+## 🤖 Automation and Bot Information
+
+### vanillapdf-bot
+The repository uses `vanillapdf-bot` for automated operations:
+
+**Bot Identity:**
+- Name: `vanillapdf-bot`
+- Email: `info@vanillapdf.com`
+- Used for all automated commits and operations
+
+**Bot Duties:**
+- **Monthly vcpkg Updates**: Automatically updates vcpkg submodule and baseline (1st of each month)
+- **Release Automation**: Creates automated PRs to Microsoft vcpkg repository for new releases
+- **Commit Signing**: All automated commits are signed with the bot identity
+- **Workflow Consistency**: Ensures consistent authorship across all automated processes
+
+**When to Use Bot Identity:**
+- Any automated GitHub Actions workflows
+- Scheduled maintenance tasks
+- Release automation processes
+- vcpkg-related automated updates
+
+**Bot Repositories:**
+- `vanillapdf-bot/vcpkg` - Fork used for creating PRs to Microsoft vcpkg
+
+**Claude Code Guidelines for Automation:**
+- When creating GitHub Actions workflows that commit or create PRs, ALWAYS use vanillapdf-bot identity
+- Use the following git config in workflows:
+  ```yaml
+  - name: Configure Git
+    run: |
+      git config --global user.name "vanillapdf-bot"
+      git config --global user.email "info@vanillapdf.com"
+  ```
+- Include Co-Authored-By line in automated commit messages:
+  ```
+  Co-Authored-By: vanillapdf-bot <info@vanillapdf.com>
+  ```
+- Never use `github-actions[bot]` or similar generic bot names
+
+## 🚀 Release Process
+
+### Release Branch Strategy
+VanillaPDF follows a structured release branch model:
+
+**Branch Structure:**
+- `main` - Development branch (default)
+- `release/X.Y` - Release branches for major.minor versions (e.g., `release/2.1`)
+- Release branches contain patch versions (e.g., `2.1.0`, `2.1.1`, `2.1.2`)
+
+**Version Tagging:**
+- All versions are tagged in git with semantic versioning
+- Tags follow the format: `vX.Y.Z` (e.g., `v2.1.0`, `v2.1.1`)
+- Tags are created on the appropriate release branch
+
+**Release Workflow:**
+1. **Major/Minor Releases**: Create new `release/X.Y` branch from `main`
+2. **Patch Releases**: Work directly on existing `release/X.Y` branch
+3. **Hotfixes**: May branch from release branch if urgent fixes needed
+4. **Tagging**: Create git tags for all releases
+5. **Automation**: Release process triggers automated workflows including:
+   - Package building (NuGet, Deb, Brew)
+   - vcpkg port updates via vanillapdf-bot
+   - GitHub release creation
+   - Documentation updates
+
+**For Claude Code:**
+- When working on hotfixes, check if you should base your branch on a release branch instead of main
+- Always verify the target branch before creating PRs for release-related work
+- Release-related commits should follow the same branch and PR workflow
+
 ## Build Commands
 
 ### Using CMake Presets (Recommended)
@@ -210,8 +289,15 @@ The project includes several GitHub Actions workflows:
 - `codeql.yml` - Security analysis with GitHub CodeQL
 - `build-nuget.yml` / `build-deb-package.yml` / `build-brew-package.yml` - Package building
 - `github-pages.yml` - Documentation deployment
-- `update-vcpkg.yml` - Automated monthly vcpkg updates
-- `create-vcpkg-pr.yml` - Manual vcpkg update workflow
+- `update-vcpkg.yml` - Automated monthly vcpkg updates (uses vanillapdf-bot)
+- `create-vcpkg-pr.yml` - Manual vcpkg update workflow (uses vanillapdf-bot)
+- `release.yml` - Release automation workflow (uses vanillapdf-bot)
+
+**Automated Workflows Using vanillapdf-bot:**
+- All vcpkg-related automation
+- Release processes and package updates
+- Monthly maintenance tasks
+- Any workflow that creates commits or PRs automatically
 
 Builds are tested on:
 - Windows: 2022, 2025 (x86/x64, MSVC 17)
@@ -260,9 +346,13 @@ Builds are tested on:
 - Use sanitizers in Debug builds: `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
 - Visual Studio .natvis files available for debugging C++ objects
 - Precompiled headers are used (`precompiled.h`) for faster builds
-- For all changes in the vanillapdf repository we need to create a new branch and pull request. This is mandated by repository permissions
-- When submitting new change to the repository, make sure we are on the correct branch. Most of the time this is main branch, however in case of hotfixes it could be release branch as well. We are not able to commit directly to main or release branches as they are protected. Please make sure you check this before making a commit and push in git.
-- The default branch is main. master exists only for historical purposes and will be eventually removed.
+
+**🚨 MANDATORY: Branch and PR Workflow**
+- **ALWAYS** create a new branch and pull request for ALL changes - this is mandated by repository permissions
+- **NEVER** commit directly to main or release branches (they are protected)
+- Base new branches on `main` (default branch, `master` is legacy)
+- Check current branch before making commits: `git branch --show-current`
+- For hotfixes, may need to branch from release branch instead of main
 
 ## Troubleshooting
 
