@@ -24,9 +24,10 @@ on:
       - '.github/workflows/update-vcpkg.yml'
 
 permissions:
-  contents: write    # Create branches and commits
-  pull-requests: write    # Create pull requests
-  actions: read      # Check workflow status
+  contents: write        # Create branches and commits
+  pull-requests: write   # Create pull requests
+  actions: read          # Check workflow status
+  metadata: read         # Read repository metadata
 
 env:
   VCPKG_ROOT: external/vcpkg
@@ -158,7 +159,8 @@ jobs:
           CURRENT="${{ steps.current_version.outputs.current_tag }}"
           LATEST="${{ steps.latest_version.outputs.latest_tag }}"
 
-          gh pr create \
+          # Try to create PR, but handle permission errors gracefully
+          if gh pr create \
             --title "🤖 Update vcpkg to latest tag $LATEST" \
             --body "$(cat <<'EOF'
           ## 🔄 Automated vcpkg Update
@@ -190,12 +192,21 @@ jobs:
           EOF
           )" \
             --base main \
-            --head "$BRANCH_NAME"
+            --head "$BRANCH_NAME" 2>/dev/null; then
+            echo "✅ Successfully created pull request"
+          else
+            echo "⚠️ Could not create pull request automatically (likely due to GitHub permissions)"
+            echo "📝 Branch '$BRANCH_NAME' has been pushed with the vcpkg update"
+            echo "👤 Please manually create a pull request from this branch to main"
+            echo "🔗 Branch URL: https://github.com/${{ github.repository }}/tree/$BRANCH_NAME"
+          fi
 
       - name: Summary
         run: |
           if [ "${{ steps.check_update.outputs.update_needed }}" = "true" ]; then
-            echo "✅ Successfully created PR to update vcpkg from ${{ steps.current_version.outputs.current_tag }} to ${{ steps.latest_version.outputs.latest_tag }}"
+            echo "✅ Successfully updated vcpkg from ${{ steps.current_version.outputs.current_tag }} to ${{ steps.latest_version.outputs.latest_tag }}"
+            echo "📂 Changes committed to branch: automated/update-vcpkg-${{ steps.latest_version.outputs.latest_tag }}"
+            echo "🔍 Check the workflow logs above to see if a PR was created automatically"
           else
             echo "ℹ️ No update needed - already on latest version ${{ steps.current_version.outputs.current_tag }}"
           fi
