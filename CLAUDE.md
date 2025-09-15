@@ -2,6 +2,85 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ CRITICAL: Repository Workflow Requirements
+
+**ALWAYS CREATE BRANCH AND PULL REQUEST FOR ALL CHANGES**
+- Repository permissions mandate that ALL changes must go through a branch and pull request workflow
+- NEVER commit directly to main or release branches - they are protected
+- Create a new branch for every change, no matter how small
+- Always create a PR for review before merging
+
+## 🤖 Automation and Bot Information
+
+### vanillapdf-bot
+The repository uses `vanillapdf-bot` for automated operations:
+
+**Bot Identity:**
+- Name: `vanillapdf-bot`
+- Email: `info@vanillapdf.com`
+- Used for all automated commits and operations
+
+**Bot Duties:**
+- **Monthly vcpkg Updates**: Automatically updates vcpkg submodule and baseline (1st of each month)
+- **Release Automation**: Creates automated PRs to Microsoft vcpkg repository for new releases
+- **Commit Signing**: All automated commits are signed with the bot identity
+- **Workflow Consistency**: Ensures consistent authorship across all automated processes
+
+**When to Use Bot Identity:**
+- Any automated GitHub Actions workflows
+- Scheduled maintenance tasks
+- Release automation processes
+- vcpkg-related automated updates
+
+**Bot Repositories:**
+- `vanillapdf-bot/vcpkg` - Fork used for creating PRs to Microsoft vcpkg
+
+**Claude Code Guidelines for Automation:**
+- When creating GitHub Actions workflows that commit or create PRs, ALWAYS use vanillapdf-bot identity
+- Use the following git config in workflows:
+  ```yaml
+  - name: Configure Git
+    run: |
+      git config --global user.name "vanillapdf-bot"
+      git config --global user.email "info@vanillapdf.com"
+  ```
+- Include Co-Authored-By line in automated commit messages:
+  ```
+  Co-Authored-By: vanillapdf-bot <info@vanillapdf.com>
+  ```
+- Never use `github-actions[bot]` or similar generic bot names
+
+## 🚀 Release Process
+
+### Release Branch Strategy
+VanillaPDF follows a structured release branch model:
+
+**Branch Structure:**
+- `main` - Development branch (default)
+- `release/X.Y` - Release branches for major.minor versions (e.g., `release/2.1`)
+- Release branches contain patch versions (e.g., `2.1.0`, `2.1.1`, `2.1.2`)
+
+**Version Tagging:**
+- All versions are tagged in git with semantic versioning
+- Tags follow the format: `vX.Y.Z` (e.g., `v2.1.0`, `v2.1.1`)
+- Tags are created on the appropriate release branch
+
+**Release Workflow:**
+1. **Major/Minor Releases**: Create new `release/X.Y` branch from `main`
+2. **Patch Releases**: Work directly on existing `release/X.Y` branch
+3. **Hotfixes**: May branch from release branch if urgent fixes needed
+4. **Tagging**: Create git tags for all releases
+5. **Automation**: Release process triggers automated workflows including:
+   - Package building (NuGet, Deb, Brew)
+   - vcpkg port updates via vanillapdf-bot
+   - GitHub release creation
+   - Documentation updates
+
+**For Claude Code:**
+- When working on hotfixes, check if you should base your branch on a release branch instead of main
+- Always verify the target branch before creating PRs for release-related work
+- Release-related commits should follow the same branch and PR workflow
+
 ## Build Commands
 
 ### Using CMake Presets (Recommended)
@@ -10,6 +89,16 @@ List available presets:
 ```bash
 cmake --list-presets
 ```
+
+#### CMake Presets Structure
+
+Presets are organized by platform in separate files:
+- `cmake/presets/windows.json` - Visual Studio and Ninja generators
+- `cmake/presets/linux.json` - GCC and Clang compilers
+- `cmake/presets/macos.json` - AppleClang for x64 and ARM64
+- `cmake/presets/android.json` - NDK toolchain for all Android ABIs
+
+Each preset includes configure, build, and test configurations.
 
 Common presets include:
 - `windows-x64-msvc-17` / `windows-x86-msvc-17` - Windows with Visual Studio 2022
@@ -27,6 +116,17 @@ cmake --preset windows-x64-msvc-17
 cmake --build --preset windows-x64-msvc-17
 ```
 
+#### Windows Build Notes
+
+Windows presets automatically configure:
+- Static CRT linking (`VANILLAPDF_USE_STATIC_CRT=ON`)
+- Platform-specific vcpkg triplets (x86-windows, x64-windows)
+- Visual Studio generators (2019/2022) or Ninja
+
+For Ninja builds on Windows, ensure you have:
+- Visual Studio Build Tools or full Visual Studio installation
+- Ninja build system in PATH
+
 ### vcpkg Dependencies
 
 The project uses vcpkg for dependency management. Initialize submodules first:
@@ -34,6 +134,38 @@ The project uses vcpkg for dependency management. Initialize submodules first:
 git submodule sync --recursive
 git submodule update --init --recursive
 ```
+
+#### vcpkg Features
+
+VanillaPDF uses vcpkg's feature system to control optional dependencies. Available features:
+
+- `openssl` - Enable encryption and decryption of secure PDF documents
+- `libjpeg-turbo` - Decode JPEG images into bitmaps
+- `openjpeg` - Support JPEG‑2000 images through the OpenJPEG codec
+- `zlib` - Decompress PDF objects compressed with zlib
+- `spdlog` - High-performance logging for diagnostics and debugging
+- `nlohmann-json` - Parse application configuration from JSON files
+- `tests` - Enable unit and integration tests (includes gtest)
+- `benchmarks` - Enable performance benchmarking tools (includes google benchmark)
+
+Enable features with vcpkg install:
+```bash
+vcpkg install vanillapdf[openssl,zlib,spdlog]
+```
+
+### CMake Configuration Options
+
+Important build configuration options available:
+
+- `-DVANILLAPDF_STANDALONE=ON/OFF` - Enable internal vcpkg setup for standalone builds (default: ON)
+- `-DVANILLAPDF_ENABLE_TESTS=ON/OFF` - Perform test scenarios (default: ON)
+- `-DVANILLAPDF_ENABLE_BENCHMARK=ON/OFF` - Include benchmarking project (default: ON)
+- `-DVANILLAPDF_USE_STATIC_CRT=ON/OFF` - Use static MSVC runtime (/MT) instead of dynamic (/MD) (default: OFF)
+- `-DBUILD_SHARED_LIBS=ON/OFF` - Build vanillapdf as a shared library (default: ON)
+- `-DVANILLAPDF_ENABLE_COVERAGE=ON` - Enable code coverage instrumentation (for GCC/Clang only)
+- `-DVANILLAPDF_FORCE_32_BIT=ON` - Force 32-bit output binary regardless of architecture
+- `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON` - Enable address sanitizer for memory safety testing
+- `-DVANILLAPDF_EXTERNAL_*` - Use system dependencies instead of vcpkg (e.g., `-DVANILLAPDF_EXTERNAL_OPENSSL=ON`)
 
 ### Running Tests
 
@@ -48,6 +180,18 @@ ctest --preset windows-x64-msvc-17 -R "unittest"     # Unit tests only
 ctest --preset windows-x64-msvc-17 -R "test"         # Integration tests only
 ctest --preset windows-x64-msvc-17 -R "benchmark"    # Benchmarks only
 ```
+
+#### Code Coverage
+
+Enable code coverage (GCC/Clang only):
+```bash
+cmake --preset linux-x64-gcc -DVANILLAPDF_ENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build --preset linux-x64-gcc
+ctest --preset linux-x64-gcc
+gcovr -r . --xml-pretty -o coverage.xml  # Generate coverage report
+```
+
+Coverage reports are automatically generated in CI and uploaded to Codecov.
 
 ### CLI Tools
 
@@ -75,6 +219,30 @@ Build and use the `vanillapdf-tools` CLI utility:
 - **src/vanillapdf.test/** - Integration tests
 - **src/vanillapdf.unittest/** - Unit tests
 - **src/vanillapdf.benchmark/** - Performance benchmarks
+
+### Detailed Architecture
+
+**src/vanillapdf/syntax/** - PDF syntax layer
+- `objects/` - PDF object implementations (arrays, dictionaries, streams, etc.)
+- `parsers/` - Tokenizer, parser, and reverse parser implementations
+- `files/` - File I/O and PDF file structure handling
+- `filters/` - PDF filter implementations (compression, encoding)
+- `exceptions/` - Syntax-level exception handling
+- `utils/` - Syntax utility functions
+
+**src/vanillapdf/contents/** - Content stream processing
+- Content stream parser and operations
+- Character map parsing and handling
+- Content stream instruction definitions
+
+**src/vanillapdf/semantics/** - High-level PDF semantics
+- Document structure and page management
+- Form handling and interactive elements
+- Metadata and document properties
+
+**src/vanillapdf/implementation/** - C interface layer
+- C wrappers for C++ functionality
+- Maintains ABI compatibility
 
 ### Key Design Patterns
 
@@ -111,6 +279,47 @@ Use `VANILLAPDF_EXTERNAL_*` CMake options to use system dependencies instead of 
 - Benchmarks in `src/vanillapdf.benchmark/`
 - Sanitizers available with `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
 
+## CI/CD Workflows
+
+The project includes several GitHub Actions workflows:
+
+- `nightly-check.yml` - Full platform matrix testing (Linux, Windows, macOS, Android)
+- `coverage.yml` - Code coverage analysis with Codecov integration
+- `stack-sanitizer.yml` - Address sanitizer testing for memory safety
+- `codeql.yml` - Security analysis with GitHub CodeQL
+- `build-nuget.yml` / `build-deb-package.yml` / `build-brew-package.yml` - Package building
+- `github-pages.yml` - Documentation deployment
+- `update-vcpkg.yml` - Automated monthly vcpkg updates (uses vanillapdf-bot)
+- `create-vcpkg-pr.yml` - Manual vcpkg update workflow (uses vanillapdf-bot)
+- `release.yml` - Release automation workflow (uses vanillapdf-bot)
+
+**Automated Workflows Using vanillapdf-bot:**
+- All vcpkg-related automation
+- Release processes and package updates
+- Monthly maintenance tasks
+- Any workflow that creates commits or PRs automatically
+
+Builds are tested on:
+- Windows: 2022, 2025 (x86/x64, MSVC 17)
+- Linux: Ubuntu 22.04/24.04, Rocky 8/9, Fedora 41/42 (x64/ARM64)
+- macOS: 13 (x64), 14/15 (ARM64)
+- Android: arm64, armv7, x86, x86_64
+
+### Development Tools
+
+#### Visual Studio Debugging Support
+- `.natvis` files provide custom visualizations for PDF objects in Visual Studio debugger
+- `public.natvis` - Public API object visualizations
+- `vanillapdf.natvis` - Internal object visualizations
+
+#### Precompiled Headers
+- `precompiled.h/cpp` - Speeds up compilation by pre-compiling common headers
+- Automatically included in all source files
+
+#### Resource Files
+- `resources.rc` - Windows resource definitions for version information
+- `unistd.h` - POSIX compatibility header for Windows builds
+
 ### Contribution Guidelines
 
 - All commits must be signed off with `git commit -s`
@@ -137,4 +346,54 @@ Use `VANILLAPDF_EXTERNAL_*` CMake options to use system dependencies instead of 
 - Use sanitizers in Debug builds: `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
 - Visual Studio .natvis files available for debugging C++ objects
 - Precompiled headers are used (`precompiled.h`) for faster builds
-- For all changes in the vanillapdf repository we need to create a new branch and pull request. This is mandated by repository permissions
+
+**🚨 MANDATORY: Branch and PR Workflow**
+- **ALWAYS** create a new branch and pull request for ALL changes - this is mandated by repository permissions
+- **NEVER** commit directly to main or release branches (they are protected)
+- Base new branches on `main` (default branch, `master` is legacy)
+- Check current branch before making commits: `git branch --show-current`
+- For hotfixes, may need to branch from release branch instead of main
+
+## Troubleshooting
+
+### Common Issues
+
+#### vcpkg Bootstrap Fails
+```bash
+# Ensure submodules are initialized
+git submodule sync --recursive
+git submodule update --init --recursive
+```
+
+#### macOS JPEG Conflicts
+The project includes a workaround for JPEG library conflicts on macOS (see GitHub issue #125):
+```bash
+brew unlink jpeg jpeg-turbo libjpeg 2>/dev/null || true
+```
+
+#### Windows Debug Build Issues
+Some x86 debug configurations may have issues. Use Release builds for x86 on Windows if encountering problems.
+
+#### Missing System Dependencies
+For external dependency builds, ensure system packages are installed:
+```bash
+# Ubuntu/Debian
+sudo apt-get install libssl-dev libjpeg-turbo8-dev zlib1g-dev
+
+# macOS
+brew install openssl libjpeg-turbo
+```
+
+#### Build Configuration Issues
+If CMake configuration fails, try cleaning the build directory:
+```bash
+rm -rf build/
+cmake --preset your-preset
+```
+
+#### Test Failures
+If tests fail unexpectedly:
+1. Ensure all dependencies are properly installed
+2. Check that the correct preset is being used for your platform
+3. Run tests with verbose output: `ctest --preset your-preset --verbose`
+4. Check for memory issues with sanitizers: `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
