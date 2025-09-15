@@ -40,6 +40,8 @@ jobs:
           path: |
             build/${{ env.BUILD_PRESET }}/vcpkg_installed
             external/vcpkg/downloads
+            external/vcpkg/buildtrees
+            external/vcpkg/packages
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ env.BUILD_PRESET }}-sanitizer-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |

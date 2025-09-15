@@ -88,6 +88,8 @@ jobs:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
+            external/vcpkg/buildtrees
+            external/vcpkg/packages
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
@@ -154,6 +156,8 @@ jobs:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
+            external/vcpkg/buildtrees
+            external/vcpkg/packages
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
@@ -221,6 +225,8 @@ jobs:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
+            external/vcpkg/buildtrees
+            external/vcpkg/packages
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
           restore-keys: |
