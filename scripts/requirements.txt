@@ -1,0 +1,7 @@
+# Requirements for update_vcpkg.py script
+# No external Python dependencies required - uses only standard library
+
+# External tools required:
+# - git (command line)
+# - gh CLI (for GitHub PR creation)
+# - Python 3.6+
