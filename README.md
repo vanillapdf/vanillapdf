@@ -21,8 +21,10 @@
 - 🔐 **Encryption & Permissions**: Work with standard PDF security models
 - 🧪 **Test Coverage**: Unit-tested core with CI pipelines and sanitizers (enable stack sanitizer in Debug builds with `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`)
 - 🧰 **CLI Tools**: Batch-process PDFs directly from the terminal
-- ⚙️ **Cross-Platform**: Build on Windows, Linux, and macOS via CMakePresets
+- ⚙️ **Cross-Platform**: Build on Windows, Linux, macOS, and Android via CMakePresets
 - 📦 **Minimal Dependencies**: Statically linkable; vcpkg and Conan compatible
+- ⚡ **High Performance**: Optimized C++17 core with benchmark testing suite
+- 🔄 **CI/CD**: Automated testing across all platforms with nightly builds
 
 ---
 
@@ -34,6 +36,17 @@
 - **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
 
 ---
+
+## 🚀 Quick Start
+
+```bash
+# Clone and build in 3 steps (Windows example)
+git clone https://github.com/vanillapdf/vanillapdf.git
+cd vanillapdf && git submodule update --init --recursive
+cmake --preset windows-x64-msvc-17 && cmake --build --preset windows-x64-msvc-17
+
+# Linux/macOS: use linux-x64-gcc or macos-arm64 preset instead
+```
 
 ## 📦 Installation Options
 
@@ -61,7 +74,10 @@ cmake --list-presets
 Available configure presets:
   "windows-x86-ninja"
   "windows-x64-ninja"
-  "default"
+  "windows-x86-msvc-17"
+  "windows-x64-msvc-17"
+  "windows-x86-msvc-16"
+  "windows-x64-msvc-16"
   "linux-x64-gcc"
   "linux-arm64-gcc"
   "linux-x64-clang"
@@ -178,19 +194,28 @@ Run `--help` for a complete list of supported commands.
 
 ## 📚 Documentation
 
-- 📖 [Official Docs](https://vanillapdf.github.io/)
-- 📐 API Reference (Doxygen)
-- 🧩 C++ object model overview
-- 🐍 Python and .NET binding guides
+- 📖 [Official Documentation](https://vanillapdf.github.io/vanillapdf/)
+- 📐 [API Reference](https://vanillapdf.github.io/vanillapdf/annotated.html) (Doxygen)
+- 🛠️ [Installation Guide](https://vanillapdf.github.io/vanillapdf/page_install.html)
+- 📦 [Packaging Guide](https://vanillapdf.github.io/vanillapdf/page_packaging.html)
+- 🧩 [C++ Object Model Overview](https://vanillapdf.github.io/vanillapdf/page_architecture.html)
+- 📊 [Performance Benchmarks](https://vanillapdf.github.io/vanillapdf/page_benchmarks.html)
 
 ---
 
 ## 🤝 Contributing
 
-We welcome pull requests, feature proposals, and bug reports!
+We welcome pull requests, feature proposals, and bug reports! All contributions must follow our branching workflow.
 
 - 📜 [Code of Conduct](CODE_OF_CONDUCT.md)
-- 🛠️ `CONTRIBUTING.md`
+- 🛠️ [Contributing Guidelines](CONTRIBUTING.md)
+- 🔧 [Development Setup](CLAUDE.md) (for maintainers and Claude Code)
+- 🐛 [Issue Templates](.github/ISSUE_TEMPLATE/)
+
+**Development Process:**
+- All changes require a branch and pull request (main/release branches are protected)
+- Automated testing runs on Windows, Linux, macOS, and Android
+- Code coverage and sanitizer testing ensure quality
 
 ---
 
