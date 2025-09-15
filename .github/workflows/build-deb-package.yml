@@ -35,7 +35,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev
+          sudo apt-get install -y libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev
 
       - name: Configure
         run: |
@@ -44,7 +44,7 @@ jobs:
             -DVANILLAPDF_ENABLE_PACKAGING=ON \
             -DVANILLAPDF_ENABLE_ENCRYPTION=ON -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
             -DVANILLAPDF_ENABLE_JPEG=ON -DVANILLAPDF_EXTERNAL_JPEG=ON \
-            -DVANILLAPDF_ENABLE_JPEG2000=OFF \
+            -DVANILLAPDF_ENABLE_JPEG2000=ON -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
             -DVANILLAPDF_ENABLE_ZLIB=ON -DVANILLAPDF_EXTERNAL_ZLIB=ON \
             -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
             -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \

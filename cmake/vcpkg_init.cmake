@@ -6,15 +6,27 @@ if(NOT VANILLAPDF_MANAGE_DEPS)
   return()
 endif()
 
+# Debug: Print current state
+message(STATUS "DEBUG: CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
+message(STATUS "DEBUG: VCPKG_ROOT: ${VCPKG_ROOT}")
+message(STATUS "DEBUG: VANILLAPDF_SOLUTION_SOURCE_DIR: ${VANILLAPDF_SOLUTION_SOURCE_DIR}")
+
 # In case we are in STANDALONE configuration and VCPKG_ROOT is not defined, let's try to fallback
 if(NOT DEFINED VCPKG_ROOT)
   set(VCPKG_ROOT "${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/vcpkg")
+  message(STATUS "DEBUG: Set VCPKG_ROOT to: ${VCPKG_ROOT}")
 endif()
 
 # In case we are in STANDALONE configuration and CMAKE_TOOLCHAIN_FILE is not defined, let's try to fallback
 # This only works in case it is defined before the first call to project(), which is our case
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE AND DEFINED VCPKG_ROOT)
   set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+  message(STATUS "DEBUG: Set CMAKE_TOOLCHAIN_FILE to: ${CMAKE_TOOLCHAIN_FILE}")
+else()
+  message(STATUS "DEBUG: CMAKE_TOOLCHAIN_FILE already defined or VCPKG_ROOT not available")
+  if(DEFINED CMAKE_TOOLCHAIN_FILE)
+    message(STATUS "DEBUG: Existing CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
+  endif()
 endif()
 
 # Configure path to vcpkg bootstrap executables
@@ -36,6 +48,11 @@ endif()
 if(NOT EXISTS ${VCPKG_EXEC})
   message(FATAL_ERROR "***** FATAL ERROR: Could not bootstrap vcpkg *****")
 endif()
+
+# Debug: Check if vcpkg toolchain is active
+message(STATUS "DEBUG: VCPKG_TOOLCHAIN: ${VCPKG_TOOLCHAIN}")
+message(STATUS "DEBUG: VCPKG_TARGET_TRIPLET: ${VCPKG_TARGET_TRIPLET}")
+message(STATUS "DEBUG: Final CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
 
 # Configure vcpkg manifest features based on build options
 set(VANILLAPDF_VCPKG_FEATURE_LIST "")
