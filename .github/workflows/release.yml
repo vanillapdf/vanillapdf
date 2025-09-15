@@ -116,3 +116,10 @@ jobs:
       tag: ${{ needs.prepare.outputs.tag }}
       prerelease: ${{ needs.prepare.outputs.prerelease }}
     secrets: inherit
+
+  vcpkg-pr:
+    needs: [production-gate, prepare]
+    uses: ./.github/workflows/create-vcpkg-pr.yml
+    with:
+      tag: ${{ needs.prepare.outputs.tag }}
+    secrets: inherit
