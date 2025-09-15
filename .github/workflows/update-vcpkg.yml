@@ -1,0 +1,190 @@
+# Automated vcpkg update workflow
+name: Update vcpkg monthly
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: 'Force update even if already on latest version'
+        required: false
+        default: false
+        type: boolean
+
+  # Monthly schedule (1st of every month at 2 AM UTC)
+  schedule:
+    - cron: '0 2 1 * *'
+
+permissions:
+  contents: write    # Create branches and commits
+  pull-requests: write    # Create pull requests
+  actions: read      # Check workflow status
+
+env:
+  VCPKG_ROOT: external/vcpkg
+  VCPKG_DISABLE_METRICS: 1
+
+jobs:
+  update-vcpkg:
+    name: Update vcpkg to latest version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Check current vcpkg version
+        id: current_version
+        run: |
+          cd external/vcpkg
+          CURRENT_TAG=$(git describe --tags 2>/dev/null || echo "unknown")
+          echo "current_tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
+          echo "Current vcpkg version: $CURRENT_TAG"
+
+      - name: Fetch latest vcpkg version
+        id: latest_version
+        run: |
+          cd external/vcpkg
+          git fetch --tags
+          LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^[0-9]{4}\.[0-9]{2}\.[0-9]{2}$' | head -1)
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No valid version tags found"
+            exit 1
+          fi
+          LATEST_COMMIT=$(git rev-list -n 1 $LATEST_TAG)
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "latest_commit=$LATEST_COMMIT" >> $GITHUB_OUTPUT
+          echo "Latest vcpkg version: $LATEST_TAG"
+          echo "Latest commit: $LATEST_COMMIT"
+
+      - name: Check if update needed
+        id: check_update
+        run: |
+          CURRENT="${{ steps.current_version.outputs.current_tag }}"
+          LATEST="${{ steps.latest_version.outputs.latest_tag }}"
+          FORCE="${{ github.event.inputs.force_update }}"
+
+          if [ "$CURRENT" != "$LATEST" ] || [ "$FORCE" = "true" ]; then
+            echo "update_needed=true" >> $GITHUB_OUTPUT
+            echo "Update needed: $CURRENT -> $LATEST"
+          else
+            echo "update_needed=false" >> $GITHUB_OUTPUT
+            echo "No update needed, already on latest version: $CURRENT"
+          fi
+
+      - name: Create update branch
+        if: steps.check_update.outputs.update_needed == 'true'
+        run: |
+          BRANCH_NAME="automated/update-vcpkg-${{ steps.latest_version.outputs.latest_tag }}"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          git checkout -b "$BRANCH_NAME"
+
+      - name: Update vcpkg submodule
+        if: steps.check_update.outputs.update_needed == 'true'
+        run: |
+          cd external/vcpkg
+          git checkout ${{ steps.latest_version.outputs.latest_tag }}
+          if [ $? -ne 0 ]; then
+            echo "Failed to checkout vcpkg tag ${{ steps.latest_version.outputs.latest_tag }}"
+            exit 1
+          fi
+          cd ../..
+          git add external/vcpkg
+
+      - name: Update vcpkg.json baseline
+        if: steps.check_update.outputs.update_needed == 'true'
+        run: |
+          LATEST_COMMIT="${{ steps.latest_version.outputs.latest_commit }}"
+
+          # Update builtin-baseline in vcpkg.json
+          sed -i "s/\"builtin-baseline\": \"[^\"]*\"/\"builtin-baseline\": \"$LATEST_COMMIT\"/" vcpkg.json
+
+          # Verify the change was made
+          if grep -q "\"builtin-baseline\": \"$LATEST_COMMIT\"" vcpkg.json; then
+            echo "Successfully updated vcpkg.json baseline to $LATEST_COMMIT"
+            git add vcpkg.json
+          else
+            echo "Failed to update vcpkg.json baseline"
+            exit 1
+          fi
+
+          # Basic validation that vcpkg.json is still valid JSON
+          if ! python3 -m json.tool vcpkg.json > /dev/null 2>&1; then
+            echo "Error: vcpkg.json is not valid JSON after update"
+            exit 1
+          fi
+
+      - name: Commit changes
+        if: steps.check_update.outputs.update_needed == 'true'
+        run: |
+          CURRENT="${{ steps.current_version.outputs.current_tag }}"
+          LATEST="${{ steps.latest_version.outputs.latest_tag }}"
+
+          git commit -s -m "Update vcpkg to latest tag $LATEST
+
+- Updated vcpkg submodule from $CURRENT to $LATEST
+- Updated builtin-baseline in vcpkg.json to match new commit hash
+- Automated monthly update to ensure latest dependency versions
+
+🤖 Generated with GitHub Actions
+Co-Authored-By: vanillapdf-bot <info@vanillapdf.com>"
+
+      - name: Push branch
+        if: steps.check_update.outputs.update_needed == 'true'
+        run: |
+          git push origin "$BRANCH_NAME"
+
+      - name: Create Pull Request
+        if: steps.check_update.outputs.update_needed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CURRENT="${{ steps.current_version.outputs.current_tag }}"
+          LATEST="${{ steps.latest_version.outputs.latest_tag }}"
+
+          gh pr create \
+            --title "🤖 Update vcpkg to latest tag $LATEST" \
+            --body "## 🔄 Automated vcpkg Update
+
+This is an automated monthly update of the vcpkg dependency manager.
+
+### Changes
+- **vcpkg version**: \`$CURRENT\` → \`$LATEST\`
+- **Submodule commit**: Updated to \`${{ steps.latest_version.outputs.latest_commit }}\`
+- **vcpkg.json baseline**: Updated to match new commit hash
+
+### What's included
+- Latest dependency versions and security patches
+- Bug fixes and performance improvements in vcpkg itself
+- Updated package definitions for better compatibility
+
+### Testing checklist
+- [ ] All existing builds pass with new vcpkg version
+- [ ] Unit tests pass without regressions
+- [ ] Integration tests complete successfully
+- [ ] No breaking changes in dependency APIs
+
+### Notes
+This PR was automatically created by the \`update-vcpkg.yml\` workflow.
+It runs monthly on the 1st of each month at 2 AM UTC.
+
+---
+🤖 Generated with GitHub Actions" \
+            --base main \
+            --head "$BRANCH_NAME"
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.check_update.outputs.update_needed }}" = "true" ]; then
+            echo "✅ Successfully created PR to update vcpkg from ${{ steps.current_version.outputs.current_tag }} to ${{ steps.latest_version.outputs.latest_tag }}"
+          else
+            echo "ℹ️ No update needed - already on latest version ${{ steps.current_version.outputs.current_tag }}"
+          fi
