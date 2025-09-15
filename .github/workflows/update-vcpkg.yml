@@ -138,12 +138,12 @@ jobs:
 
           git commit -s -m "Update vcpkg to latest tag $LATEST
 
-- Updated vcpkg submodule from $CURRENT to $LATEST
-- Updated builtin-baseline in vcpkg.json to match new commit hash
-- Automated monthly update to ensure latest dependency versions
+          - Updated vcpkg submodule from $CURRENT to $LATEST
+          - Updated builtin-baseline in vcpkg.json to match new commit hash
+          - Automated monthly update to ensure latest dependency versions
 
-🤖 Generated with GitHub Actions
-Co-Authored-By: vanillapdf-bot <info@vanillapdf.com>"
+          🤖 Generated with GitHub Actions
+          Co-Authored-By: vanillapdf-bot <info@vanillapdf.com>"
 
       - name: Push branch
         if: steps.check_update.outputs.update_needed == 'true'
@@ -160,32 +160,35 @@ Co-Authored-By: vanillapdf-bot <info@vanillapdf.com>"
 
           gh pr create \
             --title "🤖 Update vcpkg to latest tag $LATEST" \
-            --body "## 🔄 Automated vcpkg Update
+            --body "$(cat <<'EOF'
+          ## 🔄 Automated vcpkg Update
 
-This is an automated monthly update of the vcpkg dependency manager.
+          This is an automated monthly update of the vcpkg dependency manager.
 
-### Changes
-- **vcpkg version**: \`$CURRENT\` → \`$LATEST\`
-- **Submodule commit**: Updated to \`${{ steps.latest_version.outputs.latest_commit }}\`
-- **vcpkg.json baseline**: Updated to match new commit hash
+          ### Changes
+          - **vcpkg version**: $CURRENT → $LATEST
+          - **Submodule commit**: Updated to ${{ steps.latest_version.outputs.latest_commit }}
+          - **vcpkg.json baseline**: Updated to match new commit hash
 
-### What's included
-- Latest dependency versions and security patches
-- Bug fixes and performance improvements in vcpkg itself
-- Updated package definitions for better compatibility
+          ### What's included
+          - Latest dependency versions and security patches
+          - Bug fixes and performance improvements in vcpkg itself
+          - Updated package definitions for better compatibility
 
-### Testing checklist
-- [ ] All existing builds pass with new vcpkg version
-- [ ] Unit tests pass without regressions
-- [ ] Integration tests complete successfully
-- [ ] No breaking changes in dependency APIs
+          ### Testing checklist
+          - [ ] All existing builds pass with new vcpkg version
+          - [ ] Unit tests pass without regressions
+          - [ ] Integration tests complete successfully
+          - [ ] No breaking changes in dependency APIs
 
-### Notes
-This PR was automatically created by the \`update-vcpkg.yml\` workflow.
-It runs monthly on the 1st of each month at 2 AM UTC.
+          ### Notes
+          This PR was automatically created by the update-vcpkg.yml workflow.
+          It runs monthly on the 1st of each month at 2 AM UTC.
 
----
-🤖 Generated with GitHub Actions" \
+          ---
+          🤖 Generated with GitHub Actions
+          EOF
+          )" \
             --base main \
             --head "$BRANCH_NAME"
 
