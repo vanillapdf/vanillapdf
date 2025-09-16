@@ -1,0 +1,9 @@
+{
+    "name": "fetchcontent-integration-test",
+    "version": "1.0.0",
+    "description": "FetchContent integration test - minimal vcpkg dependencies",
+    "dependencies": [
+        "spdlog",
+        "nlohmann-json"
+    ]
+}

@@ -5,14 +5,23 @@ This example tests the **actual end-user experience** of consuming VanillaPDF vi
 ## What it tests:
 
 1. **Real Git Integration**: Fetches VanillaPDF from GitHub (not local source)
-2. **Network Dependency Resolution**: Tests actual vcpkg bootstrapping and dependency fetching
+2. **Hybrid Dependency Resolution**: Tests using system packages + vcpkg for optimal build speed
 3. **Configuration**: Verifies correct dependency-only configuration:
-   - `VANILLAPDF_INTERNAL_VCPKG=ON` (manages own dependencies via internal vcpkg)
+   - `VANILLAPDF_INTERNAL_VCPKG=OFF` (parent project manages vcpkg)
+   - System packages for major deps (OpenSSL, JPEG, OpenJPEG, zlib)
+   - vcpkg for packages not available as system deps (spdlog, nlohmann-json)
    - `VANILLAPDF_ENABLE_PACKAGING=OFF` (no packaging for dependency usage)
    - `VANILLAPDF_ENABLE_TESTS=OFF` (no tests for dependency usage)
-4. **Complete Build Chain**: From Git clone to final executable linking
+4. **Complete Build Chain**: From dependency installation to final executable linking
 
 ## Running the example:
+
+### Prerequisites:
+Install system dependencies (Ubuntu/Debian):
+```bash
+sudo apt-get update
+sudo apt-get install -y libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev
+```
 
 ### Basic usage:
 ```bash
@@ -41,10 +50,11 @@ cmake -S . -B build -DVANILLAPDF_GIT_TAG=main
 ## Expected behavior:
 
 - ✅ CMake configuration succeeds
-- ✅ VanillaPDF manages its own dependencies (vcpkg bootstrap)
+- ✅ System dependencies detected (OpenSSL, JPEG, OpenJPEG, zlib)
+- ✅ vcpkg manages minimal dependencies (spdlog, nlohmann-json)
 - ✅ No packaging features enabled (no CPack conflicts)
 - ✅ All optional features work (encryption, JPEG, JPEG2000)
-- ✅ Parent project has no dependency management requirements
+- ✅ Fast build due to system package usage
 
 ## Why This Matters:
 
@@ -56,10 +66,11 @@ This test catches real-world integration issues that users would encounter:
 
 ## Key Benefits Verified:
 
-- ✅ **Zero configuration**: Just `FetchContent_Declare` and it works
-- ✅ **Self-contained**: No external vcpkg setup required from parent
+- ✅ **Minimal configuration**: Parent project manages its own dependencies
+- ✅ **Hybrid approach**: System packages for speed, vcpkg for unavailable deps
 - ✅ **Network resilient**: Handles real Git and dependency fetching
 - ✅ **Version pinnable**: Can use specific tags, branches, or commits
 - ✅ **Full features**: All VanillaPDF features available by default
+- ✅ **Fast builds**: System packages avoid long vcpkg compilation times
 
 **This is the actual experience external users will have.**

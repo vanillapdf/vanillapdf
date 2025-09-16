@@ -41,6 +41,11 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev
+
       - name: Test FetchContent Integration
         working-directory: examples/fetchcontent-integration
         run: |
