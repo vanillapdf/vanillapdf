@@ -20,7 +20,7 @@ This example tests the **actual end-user experience** of consuming VanillaPDF vi
 Install system dependencies (Ubuntu/Debian):
 ```bash
 sudo apt-get update
-sudo apt-get install -y libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev
+sudo apt-get install -y libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
 ```
 
 ### Basic usage:

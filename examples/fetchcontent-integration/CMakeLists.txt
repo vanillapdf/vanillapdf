@@ -8,7 +8,7 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     FetchContent_Declare(
         vcpkg
         GIT_REPOSITORY https://github.com/Microsoft/vcpkg.git
-        GIT_TAG        2025.01.31
+        GIT_TAG        2025.08.27
         SOURCE_DIR     ${CMAKE_BINARY_DIR}/vcpkg
     )
     FetchContent_MakeAvailable(vcpkg)
