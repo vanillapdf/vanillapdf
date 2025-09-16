@@ -2,6 +2,25 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 📝 Project Naming Conventions
+
+**CRITICAL**: Use correct naming conventions throughout all work:
+
+- **Official/Marketing Communications**: "Vanilla.PDF" (with dot, proper case)
+  - Use in: Documentation, user-facing messages, website content, official guides
+- **Code/Technical Contexts**: "vanillapdf" (lowercase, no dot, no quotes)
+  - Use in: Code comments, variable names, technical discussions, commit messages
+- **❌ INCORRECT**: "VanillaPDF" (avoid this mixed case without dot)
+
+Examples:
+```cmake
+# Correct in user-facing message:
+message(STATUS "Vanilla.PDF dependency management enabled")
+
+# Correct in code comment:
+# Configure vanillapdf build options
+```
+
 ## ⚠️ CRITICAL: Repository Workflow Requirements
 
 **ALWAYS CREATE BRANCH AND PULL REQUEST FOR ALL CHANGES**

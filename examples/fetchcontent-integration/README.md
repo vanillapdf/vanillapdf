@@ -6,9 +6,10 @@ This example tests the **actual end-user experience** of consuming VanillaPDF vi
 
 1. **Real Git Integration**: Fetches VanillaPDF from GitHub (not local source)
 2. **Network Dependency Resolution**: Tests actual vcpkg bootstrapping and dependency fetching
-3. **Auto-detection**: Verifies correct configuration in real-world scenario:
-   - `VANILLAPDF_MANAGE_DEPS=ON` (manages own dependencies via internal vcpkg)
-   - `VANILLAPDF_ENABLE_PACKAGING=OFF` (no packaging conflicts)
+3. **Configuration**: Verifies correct dependency-only configuration:
+   - `VANILLAPDF_INTERNAL_VCPKG=ON` (manages own dependencies via internal vcpkg)
+   - `VANILLAPDF_ENABLE_PACKAGING=OFF` (no packaging for dependency usage)
+   - `VANILLAPDF_ENABLE_TESTS=OFF` (no tests for dependency usage)
 4. **Complete Build Chain**: From Git clone to final executable linking
 
 ## Running the example:

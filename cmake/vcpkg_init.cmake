@@ -1,10 +1,14 @@
 # VCPKG - C++ package management system
 
-# Check if VanillaPDF should manage its own dependencies
-if(NOT VANILLAPDF_MANAGE_DEPS)
-  message(STATUS "VanillaPDF dependency management disabled, skipping automatic vcpkg setup")
+# Check if internal vcpkg dependency management is enabled
+# Disable when dependencies are managed by parent project (e.g., vcpkg ports, system packages)
+# TODO: Will be enhanced with smart detection in https://github.com/vanillapdf/vanillapdf/issues/138
+if(NOT VANILLAPDF_INTERNAL_VCPKG)
+  message(STATUS "vanillapdf internal vcpkg disabled via VANILLAPDF_INTERNAL_VCPKG=OFF")
   return()
 endif()
+
+message(STATUS "vanillapdf managing dependencies via internal vcpkg")
 
 # Debug: Print current state
 message(STATUS "DEBUG: CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")

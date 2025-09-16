@@ -14,36 +14,22 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Store information about solution root folder
 set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Auto-detect build configuration based on usage scenario
+# Build configuration options
 
-# Dependency Management: Should VanillaPDF manage its own dependencies via vcpkg?
-# ON by default for predictable behavior (standalone builds, FetchContent, CI)
-# OFF only when explicitly disabled (e.g., vcpkg port with external vcpkg)
-set(VANILLAPDF_MANAGE_DEPS_DEFAULT ON)
-
-# Packaging: Should packaging features (CPack, etc.) be enabled?
-# ON only when building VanillaPDF as the main project
-# OFF for FetchContent, submodules, and vcpkg ports (avoid conflicts)
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-    set(VANILLAPDF_ENABLE_PACKAGING_DEFAULT ON)   # main project - enable packaging
-    set(VANILLAPDF_ENABLE_TESTS_DEFAULT ON)       # main project - enable tests
-    set(VANILLAPDF_ENABLE_BENCHMARK_DEFAULT ON)   # main project - enable benchmarks
-else()
-    set(VANILLAPDF_ENABLE_PACKAGING_DEFAULT OFF)  # dependency - no packaging
-    set(VANILLAPDF_ENABLE_TESTS_DEFAULT OFF)      # dependency - no tests
-    set(VANILLAPDF_ENABLE_BENCHMARK_DEFAULT OFF)  # dependency - no benchmarks
-endif()
-
-option(VANILLAPDF_MANAGE_DEPS "Manage own dependencies via internal vcpkg" ${VANILLAPDF_MANAGE_DEPS_DEFAULT})
-option(VANILLAPDF_ENABLE_PACKAGING "Enable packaging features (CPack)" ${VANILLAPDF_ENABLE_PACKAGING_DEFAULT})
-option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ${VANILLAPDF_ENABLE_TESTS_DEFAULT})
-option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ${VANILLAPDF_ENABLE_BENCHMARK_DEFAULT})
+option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" OFF)
+option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" OFF)
+option(VANILLAPDF_ENABLE_PACKAGING "Enable packaging features (CPack, DEB, Brew, etc.)" OFF)
 
 # Enable/disable optional features
 option(VANILLAPDF_ENABLE_ENCRYPTION "Enable PDF encryption/decryption support" ON)
 option(VANILLAPDF_ENABLE_JPEG "Enable JPEG image support" ON)
 option(VANILLAPDF_ENABLE_JPEG2000 "Enable JPEG2000 image support" ON)
 option(VANILLAPDF_ENABLE_ZLIB "Enable zlib compression support" ON)
+
+# Option to control internal vcpkg dependency management
+# Disable when dependencies are managed by parent project (e.g., vcpkg ports, system packages)
+# TODO: Will be enhanced with smart detection in https://github.com/vanillapdf/vanillapdf/issues/138
+option(VANILLAPDF_INTERNAL_VCPKG "Enable internal vcpkg dependency management" ON)
 
 # Allow linking selected dependencies from the system instead of vcpkg,
 # or provided externally
@@ -93,8 +79,7 @@ set(VANILLAPDF_VERSION_BUILD_SUFFIX "${VANILLAPDF_VERSION_BUILD_SUFFIX}" CACHE S
 set(VANILLAPDF_VERSION
     "${VANILLAPDF_VERSION_MAJOR}.${VANILLAPDF_VERSION_MINOR}.${VANILLAPDF_VERSION_PATCH}${VANILLAPDF_VERSION_BUILD_SUFFIX}")
 
-# Enable packaging (DEB, Brew, etc.) only when explicitly enabled
-# Disabled for FetchContent, submodules, and vcpkg ports to avoid conflicts
+# Enable packaging (DEB, Brew, etc.) when explicitly requested
 if (VANILLAPDF_ENABLE_PACKAGING)
 
     # Package management
