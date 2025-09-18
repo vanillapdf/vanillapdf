@@ -19,19 +19,22 @@
 # This module should be included after target creation.
 # =====================================================================================
 
-if(MSVC)
-
-    # We would like to allow explicit configuration of the CMAKE_MSVC_RUNTIME_LIBRARY
-    if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+# Function to configure MSVC runtime library for vanillapdf targets
+function(vanillapdf_configure_msvc_runtime TARGET)
+    if(CMAKE_C_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
         if(VANILLAPDF_USE_STATIC_CRT)
-            message(STATUS "Using static MSVC runtime (/MT or /MTd)")
-            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "" FORCE)
+            set_target_properties(${TARGET} PROPERTIES
+                MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+            )
+            message(STATUS "Target ${TARGET}: Using static MSVC runtime (/MT or /MTd)")
         else()
-            message(STATUS "Using dynamic MSVC runtime (/MD or /MDd)")
-            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL$<$<CONFIG:Debug>:Debug>" CACHE STRING "" FORCE)
+            set_target_properties(${TARGET} PROPERTIES
+                MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+            )
+            message(STATUS "Target ${TARGET}: Using dynamic MSVC runtime (/MD or /MDd)")
         endif()
     endif()
-endif()
+endfunction()
 
 # Utility functions that change the options on per-targer basis
 

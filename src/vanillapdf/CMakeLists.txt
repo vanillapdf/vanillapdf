@@ -602,6 +602,9 @@ vanillapdf_check_standard_features(vanillapdf)
 # Configure default compilation parameters, strict warnings, config based definition for DEBUG/RELEASE, etc.
 vanillapdf_target_compile_defaults(vanillapdf)
 
+# Configure MSVC runtime library for vanillapdf target only
+vanillapdf_configure_msvc_runtime(vanillapdf)
+
 # In case we would like to extract code coverage report enable the flag
 if(VANILLAPDF_ENABLE_COVERAGE)
     enable_coverage_for_target(vanillapdf)
@@ -834,7 +837,7 @@ if(WIN32)
         
         # Install dependency into output package
         # install(FILES ${ZLIB_RUNTIME} DESTINATION bin)
-    endif (ZLIB_FOUND)
+    endif (VANILLAPDF_ENABLE_ZLIB AND ZLIB_FOUND)
 endif(WIN32)
 
 # Add export verification test for shared library builds

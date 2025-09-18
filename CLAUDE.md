@@ -522,3 +522,67 @@ If tests fail unexpectedly:
 2. Check that the correct preset is being used for your platform
 3. Run tests with verbose output: `ctest --preset your-preset --verbose`
 4. Check for memory issues with sanitizers: `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
+
+## GitHub Issue Management
+
+### Available Labels
+
+When creating GitHub issues, use these labels for proper categorization:
+
+**Issue Types:**
+- `bug` - Something isn't working
+- `enhancement` - New feature or request
+- `documentation` - Improvements or additions to documentation
+- `question` - Further information is requested
+
+**Build System & Dependencies:**
+- `cmake` - CMake configuration and build system issues
+- `build-system` - General build system improvements
+- `fetchcontent` - FetchContent integration issues
+- `vcpkg` - vcpkg dependency management
+- `dependencies` - Dependency updates
+
+**Development & Quality:**
+- `technical-debt` - Code quality and refactoring issues
+- `performance` - Performance improvements
+- `compatibility` - Platform/compiler compatibility issues
+- `ci-cd` - Continuous integration and deployment
+- `github_actions` - GitHub Actions workflow updates
+
+**Priority Levels:**
+- `priority-high` - High priority issues (critical bugs, blocking issues)
+- `priority-medium` - Medium priority issues (important improvements)
+- `priority-low` - Low priority issues (nice-to-have features)
+
+**Community:**
+- `good first issue` - Good for newcomers
+- `help wanted` - Extra attention is needed
+
+**Workflow:**
+- `duplicate` - This issue or pull request already exists
+- `invalid` - This doesn't seem right
+- `wontfix` - This will not be worked on
+
+### Label Usage Guidelines
+
+**For Build System Issues:**
+- Use `cmake` + `build-system` for CMake-specific problems
+- Add `fetchcontent` for FetchContent integration issues
+- Add `vcpkg` for dependency management problems
+- Include appropriate priority label
+
+**For Bug Reports:**
+- Always use `bug` as primary label
+- Add `priority-high` for critical bugs affecting releases
+- Add `compatibility` for platform-specific issues
+- Add relevant component labels (cmake, ci-cd, etc.)
+
+**For Feature Requests:**
+- Use `enhancement` as primary label
+- Add relevant component labels
+- Include priority level based on impact
+
+**Example Label Combinations:**
+- CMake cache variable issue: `enhancement`, `cmake`, `fetchcontent`, `technical-debt`, `priority-medium`
+- Critical build failure: `bug`, `build-system`, `priority-high`
+- FetchContent documentation: `documentation`, `fetchcontent`, `priority-low`

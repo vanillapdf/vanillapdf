@@ -58,5 +58,11 @@ jobs:
             BRANCH_TO_TEST="${{ github.ref_name }}"
           fi
           echo "Using branch: $BRANCH_TO_TEST"
-          cmake -S . -B build -DVANILLAPDF_GIT_TAG="$BRANCH_TO_TEST"
+          # Test with external system dependencies (faster than building via vcpkg)
+          cmake -S . -B build \
+            -DVANILLAPDF_GIT_TAG="$BRANCH_TO_TEST" \
+            -DFETCHCONTENT_EXAMPLE_EXTERNAL_OPENSSL=ON \
+            -DFETCHCONTENT_EXAMPLE_EXTERNAL_JPEG=ON \
+            -DFETCHCONTENT_EXAMPLE_EXTERNAL_OPENJPEG=ON \
+            -DFETCHCONTENT_EXAMPLE_EXTERNAL_ZLIB=ON
           cmake --build build

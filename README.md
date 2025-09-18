@@ -255,7 +255,7 @@ We welcome pull requests, feature proposals, and bug reports! All contributions 
 
 - 📜 [Code of Conduct](CODE_OF_CONDUCT.md)
 - 🛠️ [Contributing Guidelines](CONTRIBUTING.md)
-- 🔧 [Development Setup](CLAUDE.md) (for maintainers and Claude Code)
+- 🔧 [Development Setup](CLAUDE.md) (for maintainers)
 - 🐛 [Issue Templates](.github/ISSUE_TEMPLATE/)
 
 **Development Process:**

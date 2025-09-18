@@ -41,18 +41,37 @@ FetchContent_Declare(
     GIT_TAG        ${GIT_TAG_TO_USE}
 )
 
-# Configure vanillapdf to use our vcpkg for some deps, system packages for others
+# Configure which dependencies to build via vcpkg vs external sources
+option(FETCHCONTENT_EXAMPLE_EXTERNAL_OPENSSL "Use external OpenSSL instead of vcpkg" OFF)
+option(FETCHCONTENT_EXAMPLE_EXTERNAL_JPEG "Use external JPEG instead of vcpkg" OFF)
+option(FETCHCONTENT_EXAMPLE_EXTERNAL_OPENJPEG "Use external OpenJPEG instead of vcpkg" OFF)
+option(FETCHCONTENT_EXAMPLE_EXTERNAL_ZLIB "Use external zlib instead of vcpkg" OFF)
+
+# Build vcpkg feature list based on what we want to include
+set(VCPKG_FEATURE_FLAGS)
+if(NOT FETCHCONTENT_EXAMPLE_EXTERNAL_OPENSSL)
+    list(APPEND VCPKG_FEATURE_FLAGS "encryption")
+endif()
+if(NOT FETCHCONTENT_EXAMPLE_EXTERNAL_JPEG)
+    list(APPEND VCPKG_FEATURE_FLAGS "jpeg")
+endif()
+if(NOT FETCHCONTENT_EXAMPLE_EXTERNAL_OPENJPEG)
+    list(APPEND VCPKG_FEATURE_FLAGS "jpeg2000")
+endif()
+if(NOT FETCHCONTENT_EXAMPLE_EXTERNAL_ZLIB)
+    list(APPEND VCPKG_FEATURE_FLAGS "zlib")
+endif()
+
+# Set vcpkg feature flags
+if(VCPKG_FEATURE_FLAGS)
+    set(VCPKG_MANIFEST_FEATURES ${VCPKG_FEATURE_FLAGS} CACHE STRING "vcpkg features to enable")
+    message(STATUS "Enabling vcpkg features: ${VCPKG_FEATURE_FLAGS}")
+else()
+    message(STATUS "Using minimal vcpkg dependencies (only spdlog, nlohmann-json)")
+endif()
+
+# Configure vanillapdf to use parent's vcpkg
 set(VANILLAPDF_INTERNAL_VCPKG OFF CACHE BOOL "Disable vanillapdf internal vcpkg - use parent's vcpkg")
-
-# Use system packages for major dependencies (faster than building through vcpkg)
-set(VANILLAPDF_EXTERNAL_OPENSSL ON CACHE BOOL "Use system OpenSSL")
-set(VANILLAPDF_EXTERNAL_JPEG ON CACHE BOOL "Use system JPEG")
-set(VANILLAPDF_EXTERNAL_OPENJPEG ON CACHE BOOL "Use system OpenJPEG")
-set(VANILLAPDF_EXTERNAL_ZLIB ON CACHE BOOL "Use system zlib")
-
-# Use vcpkg for dependencies not available as system packages
-set(VANILLAPDF_EXTERNAL_SPDLOG OFF CACHE BOOL "Use vcpkg spdlog")
-set(VANILLAPDF_EXTERNAL_NLOHMANN_JSON OFF CACHE BOOL "Use vcpkg nlohmann-json")
 
 # Test real-world FetchContent integration
 message(STATUS "Testing real-world VanillaPDF FetchContent integration...")
