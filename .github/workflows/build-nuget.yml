@@ -135,11 +135,11 @@ jobs:
       matrix:
         config:
           - name: win-x86
-            preset: windows-x86-msvc-17
+            preset: windows-x86-msvc-17-static
             build_type: Release
 
           - name: win-x64
-            preset: windows-x64-msvc-17
+            preset: windows-x64-msvc-17-static
             build_type: Release
 
     steps:

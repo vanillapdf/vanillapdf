@@ -518,6 +518,11 @@ add_library(vanillapdf
     ${VANILLAPDF_RESOURCE_FILES}
 )
 
+# Create alias target for FetchContent and sub-project usage
+# TODO: Remove this alias and rename target to vanillapdf::vanillapdf for release 3.0
+# See GitHub issue #140: https://github.com/vanillapdf/vanillapdf/issues/140
+add_library(vanillapdf::vanillapdf ALIAS vanillapdf)
+
 set_target_properties(vanillapdf PROPERTIES
   PREFIX "lib"
 )
