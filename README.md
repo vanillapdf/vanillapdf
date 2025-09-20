@@ -30,7 +30,7 @@
 
 ## 🖥️ Supported Platforms & Compilers
 
-- **Windows:** Visual Studio 2019 (MSVC 16.11) or 2022 (MSVC 17.x)
+- **Windows:** Visual Studio 2022 (MSVC 17.x)
 - **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
 - **macOS:** AppleClang 15+ (Xcode 15)
 - **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
@@ -72,12 +72,14 @@ cmake --list-presets
 
 ```
 Available configure presets:
-  "windows-x86-ninja"
-  "windows-x64-ninja"
+
+  "windows-x86-msvc-17-static"
+  "windows-x64-msvc-17-static"
   "windows-x86-msvc-17"
   "windows-x64-msvc-17"
-  "windows-x86-msvc-16"
-  "windows-x64-msvc-16"
+  "windows-x86-msvc-17-static-md"
+  "windows-x64-msvc-17-static-md"
+  "default"
   "linux-x64-gcc"
   "linux-arm64-gcc"
   "linux-x64-clang"

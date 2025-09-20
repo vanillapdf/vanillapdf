@@ -6,7 +6,7 @@ on:
       - main
       - 'release/*'
     paths:
-      - '.github/workflows/testing/coverage.yml'
+      - '.github/workflows/coverage.yml'
       - '.codecov.yml'
       - 'src/**'
       - 'include/**'
@@ -21,7 +21,7 @@ on:
       - main
       - 'release/*'
     paths:
-      - '.github/workflows/testing/coverage.yml'
+      - '.github/workflows/coverage.yml'
       - '.codecov.yml'
       - 'src/**'
       - 'include/**'

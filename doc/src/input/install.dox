@@ -1,11 +1,13 @@
 /*!
-\page page_install Installation
+\page page_install Installation & Build Guide
 \tableofcontents
 
-This page describes how to obtain and build Vanilla.PDF along with its
-dependencies.
+This comprehensive guide covers how to obtain, build, and configure Vanilla.PDF
+for all supported platforms and use cases.
 
-\section install_vcpkg Install with vcpkg (Recommended)
+\section install_methods Installation Methods
+
+\subsection install_vcpkg Install with vcpkg (Recommended)
 
 The fastest way to get started is using
 <a href="https://github.com/microsoft/vcpkg">vcpkg</a>:
@@ -23,7 +25,7 @@ cmake --build build
 Benefits include fastest builds with pre-compiled binaries, feature control via
 `vcpkg install vanillapdf[openssl,jpeg,jpeg2000]`, and shared binary cache across projects.
 
-\section install_fetchcontent FetchContent Integration (Alternative)
+\subsection install_fetchcontent FetchContent Integration (Alternative)
 
 For users who prefer not to introduce external tools into their build chain,
 use CMake's FetchContent mechanism:
@@ -52,7 +54,20 @@ dependencies. Install them via system package managers
 A complete working example with cross-platform testing is available in the
 \ref example_fetchcontent_integration "FetchContent integration example" with automated CI validation.
 
-\section install_source Build from source
+\section install_requirements Build Requirements
+
+<b>CMake</b> (minimum version 3.20)
+Download from <https://cmake.org/download/>
+
+<b>Supported Compilers:</b>
+- **Windows:** Visual Studio 2022 (MSVC 17.x)
+- **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
+- **macOS:** AppleClang 15+ (Xcode 15)
+- **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
+
+\section install_source Build from Source
+
+\subsection install_clone Clone and Setup
 
 Clone the repository and initialize the bundled vcpkg submodule:
 \code{.bash}
@@ -63,6 +78,8 @@ git submodule sync --recursive
 git submodule update --init --recursive
 \endcode
 
+\subsection install_presets Available Build Presets
+
 List the available build presets:
 \code{.bash}
 cmake --list-presets
@@ -70,8 +87,13 @@ cmake --list-presets
 
 \code{.unparsed}
 Available configure presets:
-  "windows-x86-ninja"
-  "windows-x64-ninja"
+
+  "windows-x86-msvc-17-static"
+  "windows-x64-msvc-17-static"
+  "windows-x86-msvc-17"
+  "windows-x64-msvc-17"
+  "windows-x86-msvc-17-static-md"
+  "windows-x64-msvc-17-static-md"
   "default"
   "linux-x64-gcc"
   "linux-arm64-gcc"
@@ -88,17 +110,76 @@ Available configure presets:
   "android-x86_64"
 \endcode
 
-Configure and build with the preset matching your platform:
+Common presets include:
+- `windows-x64-msvc-17` / `windows-x86-msvc-17` - Windows with Visual Studio 2022 (dynamic CRT)
+- `windows-x64-msvc-17-static` / `windows-x86-msvc-17-static` - Windows with Visual Studio 2022 (static CRT)
+- `windows-x64-msvc-17-static-md` / `windows-x86-msvc-17-static-md` - Windows with Visual Studio 2022 (static libs, dynamic CRT)
+- `linux-x64-gcc` / `linux-arm64-gcc` - Linux with GCC
+- `linux-x64-clang` / `linux-arm64-clang` - Linux with Clang
+- `macos-x64` / `macos-arm64` - macOS builds
+
+\subsection install_platforms Platform-Specific Builds
+
+\subsubsection install_windows Building on Windows
+
+Choose a preset matching your toolchain:
 \code{.bash}
 cmake --preset windows-x64-msvc-17
 cmake --build --preset windows-x64-msvc-17
-ctest --preset windows-x64-msvc-17  # optional
+ctest --preset windows-x64-msvc-17
 \endcode
 
-If you already have vcpkg installed, set the `VCPKG_ROOT` environment variable
-or pass your own `-DCMAKE_TOOLCHAIN_FILE` to use it instead of the submodule.
+**Windows Build Notes:**
+- Uses Visual Studio 2022 generator
+- CRT linking depends on preset: `-static` variants use static CRT (`VANILLAPDF_USE_STATIC_CRT=ON`)
+- Uses optimized vcpkg triplets (e.g., `x64-windows-static-md` for static libs + dynamic CRT)
 
-\section install_external_vcpkg Using your own vcpkg instance
+\subsubsection install_linux Building on Linux
+
+\code{.bash}
+cmake --preset linux-x64-gcc
+cmake --build --preset linux-x64-gcc
+ctest --preset linux-x64-gcc
+\endcode
+
+**For external dependencies** (optional, faster builds):
+\code{.bash}
+sudo apt-get install libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev
+cmake --preset linux-x64-gcc -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+  -DVANILLAPDF_EXTERNAL_JPEG=ON -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
+  -DVANILLAPDF_EXTERNAL_ZLIB=ON
+\endcode
+
+\subsubsection install_macos Building on macOS
+
+\code{.bash}
+cmake --preset macos-arm64
+cmake --build --preset macos-arm64
+ctest --preset macos-arm64
+\endcode
+
+**For external dependencies** (optional, faster builds):
+\code{.bash}
+brew install openssl@3 jpeg-turbo zlib openjpeg
+cmake --preset macos-arm64 -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+  -DVANILLAPDF_EXTERNAL_JPEG=ON -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
+  -DVANILLAPDF_EXTERNAL_ZLIB=ON
+\endcode
+
+\section install_dependencies Dependency Management
+
+Vanilla.PDF uses **vcpkg** for automatic dependency management. Dependencies are handled
+automatically - no manual installation required.
+
+**Automatic Dependencies:**
+- OpenSSL (encryption and digital signatures)
+- libjpeg-turbo (JPEG image support)
+- OpenJPEG (JPEG2000 support)
+- zlib (compression)
+- spdlog (logging)
+- nlohmann-json (configuration)
+
+\subsection install_external_vcpkg Using your own vcpkg instance
 
 You may manage vcpkg yourself and install the required packages manually:
 \code{.bash}
@@ -115,7 +196,7 @@ cmake -S . -B build/vcpkg \
 cmake --build build/vcpkg
 \endcode
 
-\section install_system Using system dependencies
+\subsection install_system Using system dependencies
 
 If dependencies are managed externally (e.g., by system packages, Conan, or a parent project's vcpkg),
 disable internal vcpkg entirely:
@@ -137,6 +218,67 @@ Options exist for OpenSSL, libjpeg-turbo, openjpeg, zlib, spdlog,
 nlohmann-json, GTest and Google Benchmark. When `VANILLAPDF_EXTERNAL_*` options are set, the
 corresponding packages will not be installed by vcpkg and CMake will search for
 them on your system instead.
+
+\section install_configuration Build Configuration
+
+\subsection install_features Feature Enable/Disable Options
+- `-DVANILLAPDF_ENABLE_ENCRYPTION=ON/OFF` - PDF encryption/decryption support (default: ON)
+- `-DVANILLAPDF_ENABLE_JPEG=ON/OFF` - JPEG image support (default: ON)
+- `-DVANILLAPDF_ENABLE_JPEG2000=ON/OFF` - JPEG2000 support (default: ON)
+
+\subsection install_build_options Build Configuration Options
+- `-DVANILLAPDF_INTERNAL_VCPKG=ON/OFF` - Enable internal vcpkg dependency management (default: ON)
+- `-DVANILLAPDF_ENABLE_PACKAGING=ON/OFF` - Enable packaging features like CPack (auto-detected)
+- `-DVANILLAPDF_ENABLE_TESTS=ON/OFF` - Build and run test scenarios (default: ON)
+- `-DVANILLAPDF_ENABLE_BENCHMARK=ON/OFF` - Include benchmarking project (default: ON)
+- `-DVANILLAPDF_USE_STATIC_CRT=ON/OFF` - Use static MSVC runtime (/MT) instead of dynamic (/MD) (default: OFF)
+- `-DBUILD_SHARED_LIBS=ON/OFF` - Build vanillapdf as a shared library (default: ON)
+
+\subsection install_dev_options Development Options
+- `-DVANILLAPDF_ENABLE_COVERAGE=ON` - Enable code coverage instrumentation (GCC/Clang only)
+- `-DVANILLAPDF_FORCE_32_BIT=ON` - Force 32-bit output binary regardless of architecture
+- `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON` - Enable address sanitizer for memory safety testing
+
+\subsection install_external_options External Dependency Options
+- `-DVANILLAPDF_EXTERNAL_OPENSSL=ON/OFF` - Use system OpenSSL instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_JPEG=ON/OFF` - Use system libjpeg instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_OPENJPEG=ON/OFF` - Use system OpenJPEG instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_ZLIB=ON/OFF` - Use system zlib instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_SPDLOG=ON/OFF` - Use system spdlog instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON/OFF` - Use system nlohmann-json instead of vcpkg (default: OFF)
+
+\section install_testing Running Tests
+
+After building, run the test suite:
+\code{.bash}
+ctest --preset <your-preset> --output-on-failure
+\endcode
+
+**Test Categories:**
+- Unit tests: Core functionality validation
+- Integration tests: End-to-end scenarios
+- Benchmarks: Performance testing
+
+\section install_troubleshooting Troubleshooting
+
+**Common Issues:**
+
+*vcpkg bootstrap fails:*
+\code{.bash}
+git submodule sync --recursive
+git submodule update --init --recursive
+\endcode
+
+*Build configuration fails:*
+\code{.bash}
+rm -rf build/
+cmake --preset <your-preset>
+\endcode
+
+*Platform-specific dependency issues:*
+- **Linux**: Install system packages: `sudo apt-get install libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev`
+- **macOS**: Install via Homebrew: `brew install openssl@3 jpeg-turbo zlib openjpeg`
+- **Windows**: Use vcpkg presets or ensure Visual Studio 2022 is properly installed
 
 \section install_packages Building packages
 

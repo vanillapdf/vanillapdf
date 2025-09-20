@@ -14,7 +14,7 @@ on:
       - "main"
       - "release/*"
     paths:
-      - '.github/workflows/maintenance/github-pages.yml'
+      - '.github/workflows/github-pages.yml'
       - 'doc/doxyfile.in'
       - 'doc/src/**'
       - 'cmake/**'
@@ -22,7 +22,7 @@ on:
   pull_request:
     branches: ["main", "release/*"]
     paths:
-      - '.github/workflows/maintenance/github-pages.yml'
+      - '.github/workflows/github-pages.yml'
       - 'doc/doxyfile.in'
       - 'doc/src/**'
       - 'cmake/**'

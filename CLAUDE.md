@@ -141,9 +141,9 @@ Presets are organized by platform in separate files:
 Each preset includes configure, build, and test configurations.
 
 Common presets include:
-- `windows-x64-msvc-17` / `windows-x86-msvc-17` - Windows with Visual Studio 2022
-- `windows-x64-msvc-16` / `windows-x86-msvc-16` - Windows with Visual Studio 2019
-- `windows-x64-ninja` / `windows-x86-ninja` - Windows with Ninja generator
+- `windows-x64-msvc-17` / `windows-x86-msvc-17` - Windows with Visual Studio 2022 (dynamic CRT)
+- `windows-x64-msvc-17-static` / `windows-x86-msvc-17-static` - Windows with Visual Studio 2022 (static CRT)
+- `windows-x64-msvc-17-static-md` / `windows-x86-msvc-17-static-md` - Windows with Visual Studio 2022 (static libs, dynamic CRT)
 - `linux-x64-gcc` / `linux-arm64-gcc` - Linux with GCC
 - `linux-x64-clang` / `linux-arm64-clang` - Linux with Clang
 - `linux-x64-musl` / `linux-arm64-musl` / `linux-arm-musl` - Linux with musl libc
@@ -158,17 +158,16 @@ cmake --build --preset windows-x64-msvc-17
 
 #### Windows Build Notes
 
-Windows presets automatically configure:
-- Static CRT linking (`VANILLAPDF_USE_STATIC_CRT=ON`)
+Windows presets use Visual Studio 2022 generator and automatically configure:
+- CRT linking based on preset variant:
+  - Standard presets (`windows-x*-msvc-17`): Dynamic CRT (default)
+  - Static presets (`windows-x*-msvc-17-static`): Static CRT (`VANILLAPDF_USE_STATIC_CRT=ON`)
+  - Static-MD presets (`windows-x*-msvc-17-static-md`): Static libs + dynamic CRT
 - Platform-specific vcpkg triplets:
-  - `x64-windows-static-md` (x64, static CRT /MD) - recommended for most use cases
-  - `x86-windows-static-md` (x86, static CRT /MD)
-  - Avoids CRT mismatch issues in mixed static/dynamic linking scenarios
-- Visual Studio generators (2019/2022) or Ninja
-
-For Ninja builds on Windows, ensure you have:
-- Visual Studio Build Tools or full Visual Studio installation
-- Ninja build system in PATH
+  - `x64-windows` (standard presets, dynamic CRT)
+  - `x64-windows-static` (static presets, static CRT)
+  - `x64-windows-static-md` (static-md presets, static libs + dynamic CRT)
+- Visual Studio 2022 generator only (no Ninja variants available)
 
 ### vcpkg Dependencies
 

@@ -20,7 +20,7 @@ on:
   push:
     branches: [ "main", "release/*" ]
     paths:
-      - '.github/workflows/packaging/build-nuget.yml'
+      - '.github/workflows/build-nuget.yml'
       - 'nuget/**'
       - 'cmake/**'
       - 'vcpkg.json'
@@ -28,7 +28,7 @@ on:
   pull_request:
     branches: [ "main", "release/*" ]
     paths:
-      - '.github/workflows/packaging/build-nuget.yml'
+      - '.github/workflows/build-nuget.yml'
       - 'nuget/**'
       - 'cmake/**'
       - 'vcpkg.json'
