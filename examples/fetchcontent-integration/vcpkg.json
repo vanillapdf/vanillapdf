@@ -22,6 +22,14 @@
         "zlib": {
             "description": "Enable zlib compression",
             "dependencies": [ "zlib" ]
+        },
+        "tests": {
+            "description": "Enable testing framework (GTest)",
+            "dependencies": [ "gtest" ]
+        },
+        "benchmarks": {
+            "description": "Enable benchmarking framework (Google Benchmark)",
+            "dependencies": [ "benchmark" ]
         }
     }
 }

@@ -12,7 +12,7 @@ on:
   push:
     branches: [ "main", "release/*" ]
     paths:
-      - '.github/workflows/nightly-check.yml'
+      - '.github/workflows/testing/nightly-check.yml'
       - 'vcpkg.json'
 
   # Run workflow when there is a pull request towards main branch
@@ -20,7 +20,7 @@ on:
   pull_request:
     branches: [ "main", "release/*" ]
     paths:
-      - '.github/workflows/nightly-check.yml'
+      - '.github/workflows/testing/nightly-check.yml'
       - 'vcpkg.json'
 
   schedule:

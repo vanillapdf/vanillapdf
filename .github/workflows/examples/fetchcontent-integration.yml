@@ -1,0 +1,174 @@
+name: FetchContent Integration
+
+on:
+  workflow_dispatch:
+
+  # Weekly test on Sundays at 2 AM UTC
+  schedule:
+    - cron: '0 2 * * 0'
+
+  # Run on changes that could affect FetchContent
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'vcpkg.json'
+      - 'examples/fetchcontent-integration/**'
+
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'vcpkg.json'
+      - 'examples/fetchcontent-integration/**'
+
+permissions:
+  contents: read
+
+env:
+  VCPKG_DISABLE_METRICS: 1
+
+jobs:
+  fetchcontent-test:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              name: "Linux x64 Debug (External Deps)",
+              os: ubuntu-latest,
+              preset: "linux-x64-debug",
+              use_external_deps: true
+            }
+          - {
+              name: "Linux x64 Release (External Deps)",
+              os: ubuntu-latest,
+              preset: "linux-x64-release",
+              use_external_deps: true
+            }
+          - {
+              name: "Windows x64 Debug (vcpkg)",
+              os: windows-latest,
+              preset: "windows-x64-debug",
+              use_external_deps: false
+            }
+          - {
+              name: "Windows x64 Release (vcpkg)",
+              os: windows-latest,
+              preset: "windows-x64-release",
+              use_external_deps: false
+            }
+          - {
+              name: "macOS ARM64 Debug (Homebrew)",
+              os: macos-latest,
+              preset: "macos-arm64-debug",
+              use_external_deps: true
+            }
+          - {
+              name: "macOS ARM64 Release (Homebrew)",
+              os: macos-latest,
+              preset: "macos-arm64-release",
+              use_external_deps: true
+            }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        # Note: No submodules needed - FetchContent manages VanillaPDF source only
+
+      - name: Set up Visual Studio (Windows)
+        if: runner.os == 'Windows'
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Install system dependencies (Linux)
+        if: matrix.config.use_external_deps && runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
+
+      - name: Install system dependencies (macOS)
+        if: matrix.config.use_external_deps && runner.os == 'macOS'
+        run: |
+          # Install dependencies via Homebrew for faster builds
+          brew install ninja openssl jpeg openjpeg zlib
+          # Unlink any conflicting JPEG libraries to avoid conflicts
+          brew unlink jpeg jpeg-turbo libjpeg 2>/dev/null || true
+
+      - name: Configure Git reference for testing
+        working-directory: examples/fetchcontent-integration
+        run: |
+          echo "Testing FetchContent integration against: ${{ github.ref_name }}"
+          # For PR/push events, test against the branch instead of specific commit
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BRANCH_TO_TEST="${{ github.head_ref }}"
+          else
+            BRANCH_TO_TEST="${{ github.ref_name }}"
+          fi
+          echo "Using branch: $BRANCH_TO_TEST"
+          echo "VANILLAPDF_GIT_TAG=$BRANCH_TO_TEST" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Configure CMake
+        working-directory: examples/fetchcontent-integration
+        run: |
+          if [ "${{ matrix.config.use_external_deps }}" = "true" ]; then
+            # Test with external system dependencies (faster than building via vcpkg)
+            cmake --preset ${{ matrix.config.preset }} \
+              -DFETCHCONTENT_EXAMPLE_VANILLAPDF_GIT_TAG="$VANILLAPDF_GIT_TAG" \
+              -DFETCHCONTENT_EXAMPLE_EXTERNAL_OPENSSL=ON \
+              -DFETCHCONTENT_EXAMPLE_EXTERNAL_JPEG=ON \
+              -DFETCHCONTENT_EXAMPLE_EXTERNAL_OPENJPEG=ON \
+              -DFETCHCONTENT_EXAMPLE_EXTERNAL_ZLIB=ON
+          else
+            # Test with vcpkg dependencies (demonstrates full FetchContent + vcpkg integration)
+            cmake --preset ${{ matrix.config.preset }} \
+              -DFETCHCONTENT_EXAMPLE_VANILLAPDF_GIT_TAG="$VANILLAPDF_GIT_TAG"
+          fi
+        shell: bash
+
+      - name: Build
+        working-directory: examples/fetchcontent-integration
+        run: |
+          cmake --build --preset ${{ matrix.config.preset }}
+
+      - name: Test executable
+        working-directory: examples/fetchcontent-integration
+        run: |
+          echo "Running FetchContent integration test..."
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            if [ -f "build/${{ matrix.config.preset }}/Debug/fetchcontent_test.exe" ]; then
+              ./build/${{ matrix.config.preset }}/Debug/fetchcontent_test.exe
+            else
+              ./build/${{ matrix.config.preset }}/Release/fetchcontent_test.exe
+            fi
+          else
+            ./build/${{ matrix.config.preset }}/fetchcontent_test
+          fi
+        shell: bash
+
+      - name: Verify PDF creation
+        working-directory: examples/fetchcontent-integration
+        run: |
+          echo "Verifying PDF file creation..."
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            if [ -f "build/${{ matrix.config.preset }}/Debug/test_output.pdf" ] || [ -f "build/${{ matrix.config.preset }}/Release/test_output.pdf" ]; then
+              echo "✅ PDF file successfully created"
+            else
+              echo "❌ PDF file not found"
+              exit 1
+            fi
+          else
+            if [ -f "build/${{ matrix.config.preset }}/test_output.pdf" ]; then
+              echo "✅ PDF file successfully created"
+            else
+              echo "❌ PDF file not found"
+              exit 1
+            fi
+          fi
+        shell: bash
+

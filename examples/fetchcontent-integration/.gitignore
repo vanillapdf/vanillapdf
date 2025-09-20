@@ -1,0 +1,10 @@
+# Build files
+/.vs/
+/build/
+/out/
+
+# User specific configuration
+CMakeSettings.json
+
+# Log files
+*.log

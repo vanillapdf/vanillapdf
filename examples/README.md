@@ -8,10 +8,10 @@ This directory contains practical examples demonstrating different ways to integ
 **Complete FetchContent integration example**
 
 Demonstrates how to use VanillaPDF via CMake's `FetchContent` mechanism. Shows:
-- Zero-configuration setup
-- Automatic dependency management via internal vcpkg
+- Self-contained integration without external dependency managers
+- User-managed dependencies via system packages or vcpkg
 - Conflict-free integration with parent projects
-- All features enabled by default (encryption, JPEG, JPEG2000)
+- Configurable features (encryption, JPEG, JPEG2000)
 
 **Perfect for:** Adding VanillaPDF to existing CMake projects without external setup.
 

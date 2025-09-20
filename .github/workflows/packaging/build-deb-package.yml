@@ -8,14 +8,14 @@ on:
       - main
       - 'release/*'
     paths:
-      - .github/workflows/build-deb-package.yml
+      - .github/workflows/packaging/build-deb-package.yml
 
   pull_request:
     branches:
       - main
       - 'release/*'
     paths:
-      - .github/workflows/build-deb-package.yml
+      - .github/workflows/packaging/build-deb-package.yml
 
   schedule:
     - cron: '0 3 * * 1'

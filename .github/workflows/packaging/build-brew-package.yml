@@ -8,14 +8,14 @@ on:
       - main
       - 'release/*'
     paths:
-      - .github/workflows/build-brew-package.yml
+      - .github/workflows/packaging/build-brew-package.yml
 
   pull_request:
     branches:
       - main
       - 'release/*'
     paths:
-      - .github/workflows/build-brew-package.yml
+      - .github/workflows/packaging/build-brew-package.yml
 
   schedule:
     - cron: '0 3 * * 1'

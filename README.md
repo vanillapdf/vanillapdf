@@ -150,9 +150,31 @@ For instructions on generating Debian or Homebrew packages see the
 
 ## 🔗 CMake Integration
 
-### Using FetchContent (Recommended)
+### Using vcpkg (Recommended)
 
-The easiest way to integrate VanillaPDF is using CMake's `FetchContent`:
+The fastest way to integrate VanillaPDF is using vcpkg for optimal build performance:
+
+```cmake
+find_package(vanillapdf CONFIG REQUIRED)
+
+target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
+```
+
+This requires Vanilla.PDF to be installed via vcpkg:
+```bash
+vcpkg install vanillapdf
+```
+
+**Benefits:**
+- ⚡ **Fastest builds**: Pre-compiled binaries, no source compilation during build
+- 🔧 **Feature control**: Enable specific features with `vcpkg install vanillapdf[openssl,jpeg,jpeg2000]`
+- 📦 **Dependency management**: Handles all dependencies automatically
+- 🔄 **Caching**: Shared binary cache across projects
+- 🏢 **Enterprise-ready**: Proven at scale in production environments
+
+### Using FetchContent (Alternative)
+
+For users who prefer not to introduce external tools into their build chain:
 
 ```cmake
 cmake_minimum_required(VERSION 3.20)
@@ -171,12 +193,17 @@ target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 ```
 
 **Benefits:**
+- ✅ **Self-contained**: No external dependency managers required
 - ✅ **Auto-detection**: Automatically detects embedded mode (no packaging conflicts)
-- ✅ **Self-contained**: No external vcpkg setup required
-- ✅ **Reproducible**: Pin to specific versions or use latest `main`
-- ✅ **Zero configuration**: Works out of the box with default features (encryption, JPEG, JPEG2000)
+- ✅ **Cross-platform**: Tested on Windows (vcpkg), Linux (external), macOS (Homebrew)
+- ✅ **Feature control**: Configure optional features via CMake options
+- ✅ **Simple setup**: Default features enabled (encryption, JPEG, JPEG2000)
 
-### Using Pre-installed Package
+> **⚠️ Note**: When using FetchContent, you are responsible for managing VanillaPDF's dependencies. This can be done through system package managers (`apt-get install libssl-dev libjpeg-turbo8-dev` on Linux, `brew install openssl libjpeg-turbo` on macOS) or other packaging systems like Conan.
+
+> **✅ Integration Status**: [![FetchContent Integration](https://github.com/vanillapdf/vanillapdf/actions/workflows/examples/fetchcontent-integration.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/examples/fetchcontent-integration.yml)
+
+### Using Manual Installation
 
 ```cmake
 find_package(vanillapdf CONFIG REQUIRED)
@@ -184,28 +211,35 @@ find_package(vanillapdf CONFIG REQUIRED)
 target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 ```
 
-This requires Vanilla.PDF to be installed properly via:
-- `cmake --install`
-- vcpkg (`vcpkg install vanillapdf`)
-- or manually setting `CMAKE_PREFIX_PATH` to the install location
+This requires Vanilla.PDF to be installed manually via:
+- `cmake --install` from a built source tree
+- Setting `CMAKE_PREFIX_PATH` to the install location
 
 ---
 
 ## 📋 Examples
 
-### FetchContent Integration
+### FetchContent Integration Example
 
-See [`examples/fetchcontent-integration/`](examples/fetchcontent-integration/) for a complete example of using VanillaPDF via CMake's `FetchContent`. This demonstrates:
+See [`examples/fetchcontent-integration/`](examples/fetchcontent-integration/) for a complete working example that demonstrates real-world FetchContent usage:
 
-- ✅ Zero-configuration setup
-- ✅ Automatic dependency management
-- ✅ Conflict-free integration
-- ✅ Full feature availability
+**Features demonstrated:**
+- ✅ **Self-contained integration** - No external dependency managers required
+- ✅ **Cross-platform presets** - Windows (x64), Linux (x64), macOS (ARM64)
+- ✅ **Dependency flexibility** - Choose between vcpkg or external system dependencies
+- ✅ **Real PDF creation** - Creates actual PDF files with VanillaPDF functionality
+- ✅ **Feature configuration** - CMake options to enable/disable features (OpenSSL, JPEG, etc.)
 
+**Quick start:**
 ```bash
 cd examples/fetchcontent-integration
-cmake -S . -B build && cmake --build build
+cmake --preset windows-x64-debug    # Windows
+cmake --preset linux-x64-debug      # Linux
+cmake --preset macos-arm64-debug    # macOS
+cmake --build --preset [preset-name]
 ```
+
+**Continuous validation**: This integration approach is continuously tested across all platforms - see the [workflow results](https://github.com/vanillapdf/vanillapdf/actions/workflows/examples/fetchcontent-integration.yml) for live status.
 
 ---
 

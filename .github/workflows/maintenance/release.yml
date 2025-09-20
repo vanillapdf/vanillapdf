@@ -60,7 +60,7 @@ jobs:
 
   build-nuget:
     needs: verify
-    uses: ./.github/workflows/build-nuget.yml
+    uses: ./.github/workflows/packaging/build-nuget.yml
     with:
       build_suffix: ${{ needs.prepare.outputs.build_suffix }}
     secrets: inherit
@@ -105,13 +105,13 @@ jobs:
 
   github-pages:
     needs: production-gate
-    uses: ./.github/workflows/github-pages.yml
+    uses: ./.github/workflows/maintenance/github-pages.yml
     with:
       deploy: true
     secrets: inherit
   github-release:
     needs: production-gate
-    uses: ./.github/workflows/github-release.yml
+    uses: ./.github/workflows/maintenance/github-release.yml
     with:
       tag: ${{ needs.prepare.outputs.tag }}
       prerelease: ${{ needs.prepare.outputs.prerelease }}
@@ -119,7 +119,7 @@ jobs:
 
   vcpkg-pr:
     needs: [production-gate, prepare]
-    uses: ./.github/workflows/create-vcpkg-pr.yml
+    uses: ./.github/workflows/maintenance/create-vcpkg-pr.yml
     with:
       tag: ${{ needs.prepare.outputs.tag }}
     secrets: inherit
