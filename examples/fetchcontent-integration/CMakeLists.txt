@@ -123,6 +123,12 @@ if(WIN32 AND BUILD_SHARED_LIBS)
     )
 endif()
 
+# Enable testing and add test
+enable_testing()
+add_test(NAME fetchcontent_integration_test
+         COMMAND fetchcontent_test
+         WORKING_DIRECTORY $<TARGET_FILE_DIR:fetchcontent_test>)
+
 message(STATUS "✅ Real-world FetchContent integration successful!")
 message(STATUS "   - VanillaPDF fetched from GitHub")
 message(STATUS "   - Dependencies auto-managed")

@@ -138,39 +138,10 @@ jobs:
         run: |
           cmake --build --preset ${{ matrix.config.preset }}
 
-      - name: Test executable
+      - name: Run integration test
         working-directory: examples/fetchcontent-integration
         run: |
-          echo "Running FetchContent integration test..."
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            if [ -f "build/${{ matrix.config.preset }}/Debug/fetchcontent_test.exe" ]; then
-              ./build/${{ matrix.config.preset }}/Debug/fetchcontent_test.exe
-            else
-              ./build/${{ matrix.config.preset }}/Release/fetchcontent_test.exe
-            fi
-          else
-            ./build/${{ matrix.config.preset }}/fetchcontent_test
-          fi
-        shell: bash
-
-      - name: Verify PDF creation
-        working-directory: examples/fetchcontent-integration
-        run: |
-          echo "Verifying PDF file creation..."
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            if [ -f "build/${{ matrix.config.preset }}/Debug/test_output.pdf" ] || [ -f "build/${{ matrix.config.preset }}/Release/test_output.pdf" ]; then
-              echo "✅ PDF file successfully created"
-            else
-              echo "❌ PDF file not found"
-              exit 1
-            fi
-          else
-            if [ -f "build/${{ matrix.config.preset }}/test_output.pdf" ]; then
-              echo "✅ PDF file successfully created"
-            else
-              echo "❌ PDF file not found"
-              exit 1
-            fi
-          fi
+          echo "Running FetchContent integration test via CTest..."
+          ctest --preset ${{ matrix.config.preset }} --output-on-failure
         shell: bash
 
