@@ -99,6 +99,15 @@ bool OutlineItem::Flags(OutputOutlineItemFlagsPtr& result) const {
     return true;
 }
 
+bool OutlineItem::Destination(syntax::ObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::Dest)) {
+        return false;
+    }
+
+    result = _obj->Find(constant::Name::Dest);
+    return true;
+}
+
 bool Outline::First(OutputOutlineItemPtr& result) const {
     if (!_obj->Contains(constant::Name::First)) {
         return false;

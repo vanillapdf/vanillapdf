@@ -205,6 +205,27 @@ syntax::ObjectPtr DestinationBase::GetPage() const {
     throw GeneralException("Destination was created but object is neither array nor dictionary");
 }
 
+syntax::ObjectPtr DestinationBase::GetParameter(size_t index) const {
+    if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(_obj)) {
+        auto destination = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
+        if (index >= destination->GetSize()) {
+            return syntax::NullObject::GetInstance();
+        }
+        return destination->GetValue(index);
+    }
+
+    if (syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(_obj)) {
+        auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(_obj);
+        auto destination = dict->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::D);
+        if (index >= destination->GetSize()) {
+            return syntax::NullObject::GetInstance();
+        }
+        return destination->GetValue(index);
+    }
+
+    return syntax::NullObject::GetInstance();
+}
+
 bool NamedDestinations::Contains(const syntax::NameObject& name) const {
     return _obj->Contains(name);
 }

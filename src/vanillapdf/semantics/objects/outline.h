@@ -54,15 +54,8 @@ public:
     bool Last(OutputOutlineItemPtr& result) const;
     bool Count(syntax::IntegerObjectPtr& result) const;
 
-    //TODO destinations
-    //bool Destination(syntax::ObjectPtr& result) const
-    //{
-    //	if (!_obj->Contains(constant::Name::Dest))
-    //		return false;
-
-    //	result = _obj->Find(constant::Name::Dest);
-    //	return true;
-    //}
+    // Get the destination for this outline item
+    bool Destination(syntax::ObjectPtr& result) const;
 
     //TODO action dictionary
     //bool Action(syntax::ObjectPtr& result) const

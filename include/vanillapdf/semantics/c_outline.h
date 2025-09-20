@@ -199,7 +199,14 @@ extern "C"
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemHandle* handle, IntegerObjectHandle** result);
 
-    //VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetDestinations(OutlineItemHandle* handle, IntegerObjectHandle** result);
+    /**
+    * \brief
+    * Get the destination associated with this outline item.
+    * The destination specifies where to navigate when this outline item is clicked.
+    * Returns NULL if no destination is defined.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetDestination(OutlineItemHandle* handle, DestinationHandle** result);
+
     //VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetActions(OutlineItemHandle* handle, IntegerObjectHandle** result);
     //VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetStructureElement(OutlineItemHandle* handle, IntegerObjectHandle** result);
 

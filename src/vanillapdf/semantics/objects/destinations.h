@@ -34,6 +34,9 @@ public:
     syntax::ObjectPtr GetPage() const;
     bool HasAttribute(const syntax::NameObject& name) const;
     syntax::ObjectPtr GetAttribute(const syntax::NameObject& name) const;
+    
+    // Get parameter at specific index in destination array (for array-based destinations)
+    syntax::ObjectPtr GetParameter(size_t index) const;
 
     virtual Type GetType() const noexcept = 0;
 };

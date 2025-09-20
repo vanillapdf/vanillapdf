@@ -126,6 +126,11 @@ extern "C"
     */
 
     /**
+    * \brief Get the type of this destination.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetType(DestinationHandle* handle, DestinationType* result);
+
+    /**
     * \brief The page of the document that shall be displayed.
     *
     * The object type shall be either
@@ -138,6 +143,36 @@ extern "C"
     * \see \ref PageTreeHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle* handle, ObjectHandle** result);
+
+    /**
+    * \brief Get the left coordinate for XYZ and FitRectangle destinations.
+    * Returns NULL if not applicable for this destination type.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetLeft(DestinationHandle* handle, RealObjectHandle** result);
+
+    /**
+    * \brief Get the top coordinate for XYZ, FitHorizontal, FitRectangle destinations.
+    * Returns NULL if not applicable for this destination type.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetTop(DestinationHandle* handle, RealObjectHandle** result);
+
+    /**
+    * \brief Get the right coordinate for FitRectangle destinations.
+    * Returns NULL if not applicable for this destination type.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetRight(DestinationHandle* handle, RealObjectHandle** result);
+
+    /**
+    * \brief Get the bottom coordinate for FitRectangle destinations.
+    * Returns NULL if not applicable for this destination type.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetBottom(DestinationHandle* handle, RealObjectHandle** result);
+
+    /**
+    * \brief Get the zoom factor for XYZ destinations.
+    * Returns NULL if not applicable for this destination type.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetZoom(DestinationHandle* handle, RealObjectHandle** result);
 
     /**
     * \copydoc IUnknown_Release

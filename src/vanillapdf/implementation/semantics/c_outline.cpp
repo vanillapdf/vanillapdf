@@ -1,8 +1,10 @@
 #include "precompiled.h"
 
 #include "semantics/objects/outline.h"
+#include "semantics/objects/destinations.h"
 
 #include "vanillapdf/semantics/c_outline.h"
+#include "vanillapdf/semantics/c_destinations.h"
 #include "implementation/c_helper.h"
 
 using namespace vanillapdf;
@@ -212,6 +214,33 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemHan
         if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetDestination(OutlineItemHandle* handle, DestinationHandle** result)
+{
+    OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        syntax::ObjectPtr dest_obj;
+        auto contains = obj->Destination(dest_obj);
+        if (!contains) {
+            *result = nullptr;
+            return VANILLAPDF_ERROR_SUCCESS;
+        }
+        
+        auto destination = DestinationBase::Create(dest_obj);
+        if (!destination) {
+            *result = nullptr;
+            return VANILLAPDF_ERROR_SUCCESS;
+        }
+        
+        destination->AddRef();
+        *result = reinterpret_cast<DestinationHandle*>(destination.release());
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

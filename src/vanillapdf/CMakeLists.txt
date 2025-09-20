@@ -67,6 +67,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_document_signature_settings.cpp
     implementation/semantics/c_fields.cpp
     implementation/semantics/c_font.cpp
+    implementation/semantics/c_bookmarks.cpp
     implementation/semantics/c_font_map.cpp
     implementation/semantics/c_interactive_forms.cpp
     implementation/semantics/c_outline.cpp
@@ -112,6 +113,7 @@ set(VANILLAPDF_SEMANTICS_SOURCES
     semantics/objects/date.cpp
     semantics/objects/destinations.cpp
     semantics/objects/developer_extensions.cpp
+    semantics/objects/bookmarks.cpp
     semantics/objects/digital_signature.cpp
     semantics/objects/document_info.cpp
     semantics/objects/font.cpp
