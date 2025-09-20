@@ -69,14 +69,10 @@ include(FetchContent)
 # Configure which VanillaPDF version to fetch
 set(FETCHCONTENT_EXAMPLE_VANILLAPDF_GIT_TAG "main" CACHE STRING "VanillaPDF Git branch, tag, or commit hash to fetch")
 
-# Determine which Git reference to use (priority: ENV var > cache var)
-if(DEFINED ENV{GITHUB_SHA})
-    set(GIT_TAG_TO_USE $ENV{GITHUB_SHA})
-    message(STATUS "Testing against CI commit: ${GIT_TAG_TO_USE}")
-else()
-    set(GIT_TAG_TO_USE ${FETCHCONTENT_EXAMPLE_VANILLAPDF_GIT_TAG})
-    message(STATUS "Testing against configured reference: ${GIT_TAG_TO_USE}")
-endif()
+# Determine which Git reference to use (priority: configured tag > main)
+# Use the configured tag/branch, avoiding GITHUB_SHA which may not exist in target repo
+set(GIT_TAG_TO_USE ${FETCHCONTENT_EXAMPLE_VANILLAPDF_GIT_TAG})
+message(STATUS "Testing against configured reference: ${GIT_TAG_TO_USE}")
 
 # Use real Git repository with robust tag selection
 FetchContent_Declare(

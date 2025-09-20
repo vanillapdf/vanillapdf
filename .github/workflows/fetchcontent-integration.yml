@@ -24,6 +24,10 @@ on:
       - 'vcpkg.json'
       - 'examples/fetchcontent-integration/**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
