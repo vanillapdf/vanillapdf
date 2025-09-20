@@ -1,43 +1,21 @@
 # VanillaPDF Examples
 
-This directory contains practical examples demonstrating different ways to integrate and use VanillaPDF.
+This directory contains practical examples demonstrating VanillaPDF integration and usage patterns.
 
 ## Available Examples
 
-### [`fetchcontent-integration/`](fetchcontent-integration/)
-**Complete FetchContent integration example**
+- **[`fetchcontent-integration/`](fetchcontent-integration/)** - Complete CMake FetchContent integration example with cross-platform testing
 
-Demonstrates how to use VanillaPDF via CMake's `FetchContent` mechanism. Shows:
-- Self-contained integration without external dependency managers
-- User-managed dependencies via system packages or vcpkg
-- Conflict-free integration with parent projects
-- Configurable features (encryption, JPEG, JPEG2000)
+## Documentation
 
-**Perfect for:** Adding VanillaPDF to existing CMake projects without external setup.
+For detailed documentation of all examples, including integration patterns and API usage, see the **[Examples Documentation](https://vanillapdf.github.io/vanillapdf/page_examples.html)**.
 
-```cmake
-include(FetchContent)
-FetchContent_Declare(
-    vanillapdf
-    GIT_REPOSITORY https://github.com/vanillapdf/vanillapdf.git
-    GIT_TAG        main
-)
-FetchContent_MakeAvailable(vanillapdf)
-target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
-```
+## Quick Start
 
----
-
-## Running Examples
-
-Each example directory contains:
-- `CMakeLists.txt` - Build configuration
-- `README.md` - Detailed instructions and explanation
-- Source files demonstrating usage
-
-To run any example:
+To run the FetchContent integration example:
 ```bash
-cd examples/<example-name>
-cmake -S . -B build
-cmake --build build
+cd examples/fetchcontent-integration
+cmake --preset windows-x64-debug  # Choose your platform
+cmake --build --preset windows-x64-debug
+ctest --preset windows-x64-debug --output-on-failure
 ```

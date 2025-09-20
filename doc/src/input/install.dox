@@ -5,9 +5,9 @@
 This page describes how to obtain and build Vanilla.PDF along with its
 dependencies.
 
-\section install_vcpkg Install with vcpkg
+\section install_vcpkg Install with vcpkg (Recommended)
 
-The simplest way to get started is using
+The fastest way to get started is using
 <a href="https://github.com/microsoft/vcpkg">vcpkg</a>:
 \code{.bash}
 vcpkg install vanillapdf
@@ -19,6 +19,38 @@ cmake -S . -B build \
   -DCMAKE_TOOLCHAIN_FILE=<vcpkg-root>/scripts/buildsystems/vcpkg.cmake
 cmake --build build
 \endcode
+
+Benefits include fastest builds with pre-compiled binaries, feature control via
+`vcpkg install vanillapdf[openssl,jpeg,jpeg2000]`, and shared binary cache across projects.
+
+\section install_fetchcontent FetchContent Integration (Alternative)
+
+For users who prefer not to introduce external tools into their build chain,
+use CMake's FetchContent mechanism:
+
+\code{.cmake}
+cmake_minimum_required(VERSION 3.20)
+project(MyApp)
+
+include(FetchContent)
+FetchContent_Declare(
+    vanillapdf
+    GIT_REPOSITORY https://github.com/vanillapdf/vanillapdf.git
+    GIT_TAG        main  # or "v2.1.0" for specific release
+)
+FetchContent_MakeAvailable(vanillapdf)
+
+# Link to your target
+target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
+\endcode
+
+\note When using FetchContent, you are responsible for managing VanillaPDF's
+dependencies. Install them via system package managers
+(`apt-get install libssl-dev libjpeg-turbo8-dev` on Linux,
+`brew install openssl libjpeg-turbo` on macOS) or other packaging systems like Conan.
+
+A complete working example with cross-platform testing is available in the
+\ref example_fetchcontent_integration "FetchContent integration example" with automated CI validation.
 
 \section install_source Build from source
 
@@ -85,8 +117,15 @@ cmake --build build/vcpkg
 
 \section install_system Using system dependencies
 
-If some libraries should come from your package manager or Conan rather than
-vcpkg, enable the matching `VANILLAPDF_EXTERNAL_*` options when configuring:
+If dependencies are managed externally (e.g., by system packages, Conan, or a parent project's vcpkg),
+disable internal vcpkg entirely:
+\code{.bash}
+cmake -B build -DVANILLAPDF_INTERNAL_VCPKG=OFF
+cmake --build build
+\endcode
+
+Alternatively, if you want to use internal vcpkg but override specific libraries
+to come from your package manager, enable the matching `VANILLAPDF_EXTERNAL_*` options:
 \code{.bash}
 cmake -B build \
   -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
@@ -95,7 +134,7 @@ cmake --build build
 \endcode
 
 Options exist for OpenSSL, libjpeg-turbo, openjpeg, zlib, spdlog,
-nlohmann-json, GTest and Google Benchmark. When these are set, the
+nlohmann-json, GTest and Google Benchmark. When `VANILLAPDF_EXTERNAL_*` options are set, the
 corresponding packages will not be installed by vcpkg and CMake will search for
 them on your system instead.
 

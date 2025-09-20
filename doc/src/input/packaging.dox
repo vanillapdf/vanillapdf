@@ -3,50 +3,87 @@
 \tableofcontents
 
 This page details how to generate installable packages for Vanilla.PDF on
-common platforms.
+common platforms using automated packaging workflows.
 
-\section packaging_debian Debian packages
+\section packaging_automated Automated Package Building
 
-On Debian based systems the project ships CMake presets to produce a `.deb`
-package. First install the required dependencies:
+The project includes automated GitHub Actions workflows for package generation:
+
+- **Debian packages**: `.github/workflows/packaging/build-deb-package.yml`
+- **Homebrew packages**: `.github/workflows/packaging/build-brew-package.yml`
+- **NuGet packages**: `.github/workflows/packaging/build-nuget.yml`
+
+These workflows are continuously tested and use the exact configuration shown below.
+
+\section packaging_debian Debian Packages
+
+On Debian/Ubuntu systems, first install the required dependencies:
 \code{.bash}
 sudo apt-get update
-sudo apt-get install libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev
+sudo apt-get install -y libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
 \endcode
 
-Then build the package:
+Build the Debian package:
 \code{.bash}
 cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release \
-  -DVANILLAPDF_MANAGE_DEPS=ON \
   -DVANILLAPDF_ENABLE_PACKAGING=ON \
   -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
   -DVANILLAPDF_EXTERNAL_JPEG=ON \
-  -DVANILLAPDF_EXTERNAL_OPENJPEG=OFF \
+  -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
   -DVANILLAPDF_EXTERNAL_ZLIB=ON \
-  -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
-  -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
-  -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF
+  -DVANILLAPDF_ENABLE_TESTS=ON
 cmake --build --preset linux-x64-gcc --target package
 \endcode
 
-\section packaging_homebrew Homebrew packages
+This generates a `.deb` file that can be installed with `dpkg -i`.
 
-On macOS you can generate a Homebrew formula using the following commands:
+\section packaging_homebrew Homebrew Packages
+
+On macOS, install the required dependencies:
 \code{.bash}
-brew install openssl@3 jpeg-turbo zlib
+brew install openssl@3 jpeg-turbo zlib openjpeg
+\endcode
 
+Build the Homebrew package:
+\code{.bash}
 cmake --preset macos-arm64 -DCMAKE_BUILD_TYPE=Release \
-  -DVANILLAPDF_MANAGE_DEPS=ON \
   -DVANILLAPDF_ENABLE_PACKAGING=ON \
   -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
   -DVANILLAPDF_EXTERNAL_JPEG=ON \
-  -DVANILLAPDF_EXTERNAL_OPENJPEG=OFF \
+  -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
   -DVANILLAPDF_EXTERNAL_ZLIB=ON \
-  -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
-  -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
-  -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF
-
+  -DVANILLAPDF_ENABLE_TESTS=ON
 cmake --build --preset macos-arm64 --target package
 \endcode
+
+This generates package files suitable for Homebrew distribution.
+
+\section packaging_nuget NuGet Packages
+
+Windows NuGet packages are built using the automated workflow with vcpkg dependencies:
+
+\code{.bash}
+cmake --preset windows-x64-msvc-17-static -DCMAKE_BUILD_TYPE=Release \
+  -DVANILLAPDF_ENABLE_PACKAGING=ON \
+  -DVANILLAPDF_ENABLE_TESTS=ON
+cmake --build --preset windows-x64-msvc-17-static --config Release --target package
+\endcode
+
+\section packaging_notes Configuration Notes
+
+**Automatic Detection:**
+- `VANILLAPDF_ENABLE_PACKAGING` is auto-detected for main project builds
+
+**External Dependencies:**
+- Using system packages (EXTERNAL_*=ON) results in smaller packages and faster builds
+- vcpkg dependencies (EXTERNAL_*=OFF) create self-contained packages
+
+**Platform Considerations:**
+- **Linux**: System packages are preferred for distribution packages
+- **macOS**: Homebrew dependencies are standard for macOS packages
+- **Windows**: vcpkg dependencies provide consistent, self-contained packages
+
+For automated package building in CI environments, refer to the GitHub Actions workflows
+in `.github/workflows/packaging/` which demonstrate the complete build process.
 
 */

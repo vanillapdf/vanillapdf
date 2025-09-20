@@ -160,7 +160,10 @@ cmake --build --preset windows-x64-msvc-17
 
 Windows presets automatically configure:
 - Static CRT linking (`VANILLAPDF_USE_STATIC_CRT=ON`)
-- Platform-specific vcpkg triplets (x86-windows, x64-windows)
+- Platform-specific vcpkg triplets:
+  - `x64-windows-static-md` (x64, static CRT /MD) - recommended for most use cases
+  - `x86-windows-static-md` (x86, static CRT /MD)
+  - Avoids CRT mismatch issues in mixed static/dynamic linking scenarios
 - Visual Studio generators (2019/2022) or Ninja
 
 For Ninja builds on Windows, ensure you have:
@@ -201,33 +204,27 @@ Important build configuration options available:
 
 VanillaPDF automatically detects the appropriate configuration based on usage context:
 
-**Dependency Management (`VANILLAPDF_MANAGE_DEPS`):**
-- `ON`: Standalone builds, FetchContent, Git submodules → Use internal vcpkg
-- `OFF`: vcpkg ports → Use external vcpkg (auto-detected via `VCPKG_TOOLCHAIN`)
-
 **Packaging (`VANILLAPDF_ENABLE_PACKAGING`):**
 - `ON`: Main project builds → Enable CPack packaging features
 - `OFF`: Dependency usage → Disable packaging to avoid conflicts
 
 **Usage Scenarios:**
 ```cmake
-# Standalone development (auto-detected)
+# Standalone development (default settings)
 git clone vanillapdf && cmake --preset windows-x64-msvc-17
-# → MANAGE_DEPS=ON, ENABLE_PACKAGING=ON
+# → INTERNAL_VCPKG=ON, ENABLE_PACKAGING=ON
 
-# FetchContent usage (auto-detected)
+# FetchContent usage (packaging auto-disabled)
 FetchContent_Declare(vanillapdf ...)
-# → MANAGE_DEPS=ON, ENABLE_PACKAGING=OFF
+# → INTERNAL_VCPKG=ON, ENABLE_PACKAGING=OFF
 
-# vcpkg port (auto-detected)
+# vcpkg port or external dependency management
 vcpkg install vanillapdf
-# → MANAGE_DEPS=OFF, ENABLE_PACKAGING=OFF
-```
+# → INTERNAL_VCPKG=OFF (set by portfile), ENABLE_PACKAGING=OFF
 
-**Manual Override:**
-```cmake
-# Force specific configuration
-cmake -DVANILLAPDF_MANAGE_DEPS=OFF -DVANILLAPDF_ENABLE_PACKAGING=ON ...
+# Manual override to disable internal vcpkg
+cmake --preset windows-x64-msvc-17 -DVANILLAPDF_INTERNAL_VCPKG=OFF
+# → Use system or externally managed dependencies
 ```
 
 #### Feature Enable/Disable Options
@@ -236,10 +233,9 @@ cmake -DVANILLAPDF_MANAGE_DEPS=OFF -DVANILLAPDF_ENABLE_PACKAGING=ON ...
 - `-DVANILLAPDF_ENABLE_JPEG2000=ON/OFF` - Enable JPEG2000 image support (default: ON)
 
 #### Build Configuration Options
-- `-DVANILLAPDF_MANAGE_DEPS=ON/OFF` - Manage own dependencies via internal vcpkg (auto-detected)
-  - **Auto-detected default**: `OFF` for vcpkg ports, `ON` for all other scenarios
-  - `ON`: Use internal vcpkg for dependencies (standalone, FetchContent, submodules)
-  - `OFF`: Rely on external dependency management (vcpkg ports)
+- `-DVANILLAPDF_INTERNAL_VCPKG=ON/OFF` - Enable internal vcpkg dependency management (default: ON)
+  - `ON`: Use internal vcpkg for dependency management (standalone, FetchContent, submodules)
+  - `OFF`: Disable internal vcpkg when dependencies are managed externally (vcpkg ports, system packages)
 - `-DVANILLAPDF_ENABLE_PACKAGING=ON/OFF` - Enable packaging features like CPack (auto-detected)
   - **Auto-detected default**: `ON` for main project builds, `OFF` for dependency usage
   - `ON`: Enable packaging (DEB, Brew, etc.) for distribution
@@ -296,6 +292,31 @@ Build and use the `vanillapdf-tools` CLI utility:
 # Get help for available commands
 ./vanillapdf-tools --help
 ```
+
+### FetchContent Integration Testing
+
+The project includes a comprehensive FetchContent integration example in `examples/fetchcontent-integration/` that demonstrates real-world usage patterns:
+
+#### Running FetchContent Tests
+```bash
+cd examples/fetchcontent-integration
+cmake --preset windows-x64-debug  # or linux-x64-debug, macos-arm64-debug
+cmake --build --preset windows-x64-debug
+ctest --preset windows-x64-debug --output-on-failure
+```
+
+#### Key Features
+- **Real GitHub Integration**: Tests actual FetchContent from GitHub repository (not local source)
+- **Cross-platform Testing**: Windows (vcpkg), Linux (apt), macOS (Homebrew) dependency strategies
+- **CMake Test Integration**: Uses `add_test()` and `enable_testing()` for proper test execution
+- **Automatic CI Testing**: Continuously validated via GitHub Actions workflow
+
+#### Dependency Management Approaches
+- **Windows**: Uses internal vcpkg for all dependencies
+- **Linux**: Uses system packages (`apt-get install`) for speed
+- **macOS**: Uses Homebrew packages (`brew install`) for speed
+
+The example creates actual PDF files and validates the complete integration chain from dependency resolution through PDF creation.
 
 ## Architecture Overview
 
@@ -522,6 +543,22 @@ If tests fail unexpectedly:
 2. Check that the correct preset is being used for your platform
 3. Run tests with verbose output: `ctest --preset your-preset --verbose`
 4. Check for memory issues with sanitizers: `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
+
+## Recent Improvements
+
+### FetchContent Integration Enhancements
+- **Fixed vcpkg triplet issues**: Resolved CRT mismatch problems by using `x64-windows-static-md` instead of `x64-windows-static`
+- **Enhanced FetchContent example**: Added comprehensive real-world integration testing in `examples/fetchcontent-integration/`
+- **Cross-platform CI testing**: Automated testing on Windows (vcpkg), Linux (apt), macOS (Homebrew)
+- **CMake test integration**: Proper test execution using `add_test()` and CTest framework
+- **Simplified workflow paths**: Eliminated complex path detection logic in favor of CMake-managed execution
+- **Workflow organization**: GitHub Actions workflows now use consistent naming and concurrency controls
+
+### Build System Improvements
+- **vcpkg triplet standardization**: All Windows builds now use Microsoft's official triplets
+- **Debug message cleanup**: Removed temporary debugging output from development
+- **Dependency flexibility**: Enhanced support for both system packages and vcpkg dependencies
+- **Documentation updates**: Updated README with clearer integration guidance (vcpkg recommended, FetchContent as alternative)
 
 ## GitHub Issue Management
 

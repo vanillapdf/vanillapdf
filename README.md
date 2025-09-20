@@ -150,70 +150,33 @@ For instructions on generating Debian or Homebrew packages see the
 
 ## 🔗 CMake Integration
 
+VanillaPDF provides multiple integration methods to suit different development workflows:
+
 ### Using vcpkg (Recommended)
-
-The fastest way to integrate VanillaPDF is using vcpkg for optimal build performance:
-
-```cmake
-find_package(vanillapdf CONFIG REQUIRED)
-
-target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
-```
-
-This requires Vanilla.PDF to be installed via vcpkg:
 ```bash
 vcpkg install vanillapdf
 ```
-
-**Benefits:**
-- ⚡ **Fastest builds**: Pre-compiled binaries, no source compilation during build
-- 🔧 **Feature control**: Enable specific features with `vcpkg install vanillapdf[openssl,jpeg,jpeg2000]`
-- 📦 **Dependency management**: Handles all dependencies automatically
-- 🔄 **Caching**: Shared binary cache across projects
-- 🏢 **Enterprise-ready**: Proven at scale in production environments
+⚡ **Fastest builds** with pre-compiled binaries and automatic dependency management.
 
 ### Using FetchContent (Alternative)
-
-For users who prefer not to introduce external tools into their build chain:
-
 ```cmake
-cmake_minimum_required(VERSION 3.20)
-project(MyApp)
-
 include(FetchContent)
-FetchContent_Declare(
-    vanillapdf
+FetchContent_Declare(vanillapdf
     GIT_REPOSITORY https://github.com/vanillapdf/vanillapdf.git
-    GIT_TAG        main  # or "v2.1.0" for specific release
-)
+    GIT_TAG        main)
 FetchContent_MakeAvailable(vanillapdf)
-
-# Link to your target
 target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 ```
+🛠️ **Self-contained** approach without external tools. Note: You manage dependencies yourself.
 
-**Benefits:**
-- ✅ **Self-contained**: No external dependency managers required
-- ✅ **Auto-detection**: Automatically detects embedded mode (no packaging conflicts)
-- ✅ **Cross-platform**: Tested on Windows (vcpkg), Linux (external), macOS (Homebrew)
-- ✅ **Feature control**: Configure optional features via CMake options
-- ✅ **Simple setup**: Default features enabled (encryption, JPEG, JPEG2000)
-
-> **⚠️ Note**: When using FetchContent, you are responsible for managing VanillaPDF's dependencies. This can be done through system package managers (`apt-get install libssl-dev libjpeg-turbo8-dev` on Linux, `brew install openssl libjpeg-turbo` on macOS) or other packaging systems like Conan.
-
-> **✅ Integration Status**: [![FetchContent Integration](https://github.com/vanillapdf/vanillapdf/actions/workflows/examples/fetchcontent-integration.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/examples/fetchcontent-integration.yml)
-
-### Using Manual Installation
-
-```cmake
-find_package(vanillapdf CONFIG REQUIRED)
-
-target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
+### Build from Source
+```bash
+git clone https://github.com/vanillapdf/vanillapdf.git
+cmake --preset windows-x64-msvc-17  # Choose your platform preset
+cmake --build --preset windows-x64-msvc-17
 ```
 
-This requires Vanilla.PDF to be installed manually via:
-- `cmake --install` from a built source tree
-- Setting `CMAKE_PREFIX_PATH` to the install location
+📖 **Detailed integration instructions**: See the [installation guide](https://vanillapdf.github.io/vanillapdf/page_install.html) for complete setup options, feature configuration, and platform-specific guidance.
 
 ---
 
@@ -221,25 +184,18 @@ This requires Vanilla.PDF to be installed manually via:
 
 ### FetchContent Integration Example
 
-See [`examples/fetchcontent-integration/`](examples/fetchcontent-integration/) for a complete working example that demonstrates real-world FetchContent usage:
+A complete working example is available in [`examples/fetchcontent-integration/`](examples/fetchcontent-integration/) that demonstrates cross-platform FetchContent integration with automated testing.
 
-**Features demonstrated:**
-- ✅ **Self-contained integration** - No external dependency managers required
-- ✅ **Cross-platform presets** - Windows (x64), Linux (x64), macOS (ARM64)
-- ✅ **Dependency flexibility** - Choose between vcpkg or external system dependencies
-- ✅ **Real PDF creation** - Creates actual PDF files with VanillaPDF functionality
-- ✅ **Feature configuration** - CMake options to enable/disable features (OpenSSL, JPEG, etc.)
+[![FetchContent Integration](https://github.com/vanillapdf/vanillapdf/actions/workflows/fetchcontent-integration.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/fetchcontent-integration.yml)
 
-**Quick start:**
+**Quick test:**
 ```bash
 cd examples/fetchcontent-integration
-cmake --preset windows-x64-debug    # Windows
-cmake --preset linux-x64-debug      # Linux
-cmake --preset macos-arm64-debug    # macOS
-cmake --build --preset [preset-name]
+cmake --preset windows-x64-debug && cmake --build --preset windows-x64-debug
+ctest --preset windows-x64-debug --output-on-failure
 ```
 
-**Continuous validation**: This integration approach is continuously tested across all platforms - see the [workflow results](https://github.com/vanillapdf/vanillapdf/actions/workflows/examples/fetchcontent-integration.yml) for live status.
+This example creates real PDF files and validates the complete integration chain from dependency resolution through PDF creation.
 
 ---
 

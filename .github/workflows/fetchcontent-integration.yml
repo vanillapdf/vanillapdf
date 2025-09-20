@@ -35,74 +35,15 @@ env:
   VCPKG_DISABLE_METRICS: 1
 
 jobs:
-  fetchcontent-test:
-    name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {
-              name: "Linux x64 Debug (External Deps)",
-              os: ubuntu-latest,
-              preset: "linux-x64-debug",
-              use_external_deps: true
-            }
-          - {
-              name: "Linux x64 Release (External Deps)",
-              os: ubuntu-latest,
-              preset: "linux-x64-release",
-              use_external_deps: true
-            }
-          - {
-              name: "Windows x64 Debug (vcpkg)",
-              os: windows-latest,
-              preset: "windows-x64-debug",
-              use_external_deps: false
-            }
-          - {
-              name: "Windows x64 Release (vcpkg)",
-              os: windows-latest,
-              preset: "windows-x64-release",
-              use_external_deps: false
-            }
-          - {
-              name: "macOS ARM64 Debug (Homebrew)",
-              os: macos-latest,
-              preset: "macos-arm64-debug",
-              use_external_deps: true
-            }
-          - {
-              name: "macOS ARM64 Release (Homebrew)",
-              os: macos-latest,
-              preset: "macos-arm64-release",
-              use_external_deps: true
-            }
+  setup:
+    name: Setup Git Reference
+    runs-on: ubuntu-latest
+    outputs:
+      git_tag: ${{ steps.git_ref.outputs.git_tag }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        # Note: No submodules needed - FetchContent manages VanillaPDF source only
-
-      - name: Set up Visual Studio (Windows)
-        if: runner.os == 'Windows'
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Install system dependencies (Linux)
-        if: matrix.config.use_external_deps && runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ninja-build libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
-
-      - name: Install system dependencies (macOS)
-        if: matrix.config.use_external_deps && runner.os == 'macOS'
-        run: |
-          # Install dependencies via Homebrew for faster builds
-          brew install ninja openssl@3 jpeg-turbo zlib openjpeg
-
       - name: Configure Git reference for testing
-        working-directory: examples/fetchcontent-integration
+        id: git_ref
         run: |
           echo "Testing FetchContent integration against: ${{ github.ref_name }}"
           # For PR/push events, test against the branch instead of specific commit
@@ -112,36 +53,131 @@ jobs:
             BRANCH_TO_TEST="${{ github.ref_name }}"
           fi
           echo "Using branch: $BRANCH_TO_TEST"
-          echo "VANILLAPDF_GIT_TAG=$BRANCH_TO_TEST" >> $GITHUB_ENV
-        shell: bash
+          echo "git_tag=$BRANCH_TO_TEST" >> $GITHUB_OUTPUT
+
+  linux:
+    name: Linux ${{ matrix.preset }} (External Deps)
+    runs-on: ubuntu-latest
+    needs: setup
+
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [linux-x64-debug, linux-x64-release]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        # Note: No submodules needed - FetchContent manages VanillaPDF source only
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
 
       - name: Configure CMake
         working-directory: examples/fetchcontent-integration
         run: |
-          if [ "${{ matrix.config.use_external_deps }}" = "true" ]; then
-            # Test with external system dependencies (faster than building via vcpkg)
-            cmake --preset ${{ matrix.config.preset }} \
-              -DFETCHCONTENT_EXAMPLE_VANILLAPDF_GIT_TAG="$VANILLAPDF_GIT_TAG" \
-              -DFETCHCONTENT_EXAMPLE_EXTERNAL_OPENSSL=ON \
-              -DFETCHCONTENT_EXAMPLE_EXTERNAL_JPEG=ON \
-              -DFETCHCONTENT_EXAMPLE_EXTERNAL_OPENJPEG=ON \
-              -DFETCHCONTENT_EXAMPLE_EXTERNAL_ZLIB=ON
-          else
-            # Test with vcpkg dependencies (demonstrates full FetchContent + vcpkg integration)
-            cmake --preset ${{ matrix.config.preset }} \
-              -DFETCHCONTENT_EXAMPLE_VANILLAPDF_GIT_TAG="$VANILLAPDF_GIT_TAG"
-          fi
-        shell: bash
+          echo "Using Git tag: ${{ needs.setup.outputs.git_tag }}"
+          cmake --preset ${{ matrix.preset }} \
+            -DFETCHCONTENT_EXAMPLE_VANILLAPDF_GIT_TAG="${{ needs.setup.outputs.git_tag }}" \
+            -DFETCHCONTENT_EXAMPLE_EXTERNAL_OPENSSL=ON \
+            -DFETCHCONTENT_EXAMPLE_EXTERNAL_JPEG=ON \
+            -DFETCHCONTENT_EXAMPLE_EXTERNAL_OPENJPEG=ON \
+            -DFETCHCONTENT_EXAMPLE_EXTERNAL_ZLIB=ON
 
       - name: Build
         working-directory: examples/fetchcontent-integration
         run: |
-          cmake --build --preset ${{ matrix.config.preset }}
+          cmake --build --preset ${{ matrix.preset }}
 
       - name: Run integration test
         working-directory: examples/fetchcontent-integration
         run: |
           echo "Running FetchContent integration test via CTest..."
-          ctest --preset ${{ matrix.config.preset }} --output-on-failure
+          ctest --preset ${{ matrix.preset }} --output-on-failure
+
+  windows:
+    name: Windows ${{ matrix.preset }} (vcpkg)
+    runs-on: windows-latest
+    needs: setup
+
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [windows-x64-debug, windows-x64-release]
+        include:
+          - preset: windows-x64-debug
+            build_type: Debug
+          - preset: windows-x64-release
+            build_type: Release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        # Note: No submodules needed - FetchContent manages VanillaPDF source only
+
+      - name: Set up Visual Studio
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Configure CMake
+        working-directory: examples/fetchcontent-integration
+        run: |
+          echo "Using Git tag: ${{ needs.setup.outputs.git_tag }}"
+          cmake --preset ${{ matrix.preset }} \
+            -DFETCHCONTENT_EXAMPLE_VANILLAPDF_GIT_TAG="${{ needs.setup.outputs.git_tag }}"
         shell: bash
+
+      - name: Build
+        working-directory: examples/fetchcontent-integration
+        run: |
+          cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.build_type }}
+
+      - name: Run integration test
+        working-directory: examples/fetchcontent-integration
+        run: |
+          echo "Running FetchContent integration test via CTest..."
+          ctest --preset ${{ matrix.preset }} -C ${{ matrix.build_type }} --output-on-failure
+
+  macos:
+    name: macOS ${{ matrix.preset }} (Homebrew)
+    runs-on: macos-latest
+    needs: setup
+
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [macos-arm64-debug, macos-arm64-release]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        # Note: No submodules needed - FetchContent manages VanillaPDF source only
+
+      - name: Install system dependencies
+        run: |
+          # Install dependencies via Homebrew for faster builds
+          brew install ninja openssl@3 jpeg-turbo zlib openjpeg
+
+      - name: Configure CMake
+        working-directory: examples/fetchcontent-integration
+        run: |
+          echo "Using Git tag: ${{ needs.setup.outputs.git_tag }}"
+          cmake --preset ${{ matrix.preset }} \
+            -DFETCHCONTENT_EXAMPLE_VANILLAPDF_GIT_TAG="${{ needs.setup.outputs.git_tag }}" \
+            -DFETCHCONTENT_EXAMPLE_EXTERNAL_OPENSSL=ON \
+            -DFETCHCONTENT_EXAMPLE_EXTERNAL_JPEG=ON \
+            -DFETCHCONTENT_EXAMPLE_EXTERNAL_OPENJPEG=ON \
+            -DFETCHCONTENT_EXAMPLE_EXTERNAL_ZLIB=ON
+
+      - name: Build
+        working-directory: examples/fetchcontent-integration
+        run: |
+          cmake --build --preset ${{ matrix.preset }}
+
+      - name: Run integration test
+        working-directory: examples/fetchcontent-integration
+        run: |
+          echo "Running FetchContent integration test via CTest..."
+          ctest --preset ${{ matrix.preset }} --output-on-failure
 

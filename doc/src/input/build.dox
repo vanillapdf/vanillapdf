@@ -2,104 +2,153 @@
 \page page_build Build
 \tableofcontents
 
-\section build_deps Project dependencies
+This page describes how to build Vanilla.PDF from source using modern CMake presets
+and automated dependency management.
 
-<b>CMake</b>
-This project uses CMake (<https://cmake.org/>) framework as a cross-platform build tool.<br>
-Latest version is available at <https://cmake.org/download/>.
+\section build_requirements Build Requirements
 
-<b>OpenSSL</b>
-Building OpenSSL from source is out of scope of this guide.<br>
-For detailed information about build process visit <a href="https://www.openssl.org/">OpenSSL official page</a>.<br>
-You can find pre-built binaries <a href="https://wiki.openssl.org/index.php/Binaries">here</a>.
+<b>CMake</b> (minimum version 3.20)
+Download from <https://cmake.org/download/>
 
-<b>zlib</b>
-Building zlib from source is out of scope of this guide.<br />
-For detailed information about build process visit <a href="https://zlib.net/">zlib official page</a>.<br>
-You can find pre-built binaries <a href="http://gnuwin32.sourceforge.net/packages/zlib.htm">here</a>.
+<b>Supported Compilers:</b>
+- **Windows:** Visual Studio 2019 (MSVC 16.11) or 2022 (MSVC 17.x)
+- **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
+- **macOS:** AppleClang 15+ (Xcode 15)
+- **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
 
-<b>libjpeg</b>
-Building libjpeg from source is out of scope of this guide.<br>
-For detailed information about build process visit <a href="http://libjpeg.sourceforge.net/">libjpeg official page</a>.<br>
-You can find pre-built binaries <a href="http://gnuwin32.sourceforge.net/packages/jpeg.htm">here</a>.
+\section build_dependencies Dependency Management
 
-\section build_win Compiling from source on Windows
+Vanilla.PDF uses **vcpkg** for automatic dependency management. Dependencies are handled
+automatically - no manual installation required.
 
-Alternatively, you can compile library \ref build_unix "the UNIX way" using 
-[Cygwin](https://en.wikipedia.org/wiki/Cygwin) or [MinGW](http://www.mingw.org/).
+**Automatic Dependencies:**
+- OpenSSL (encryption and digital signatures)
+- libjpeg-turbo (JPEG image support)
+- OpenJPEG (JPEG2000 support)
+- zlib (compression)
+- spdlog (logging)
+- nlohmann-json (configuration)
 
-Download source tarball and put it somewhere (e.g. use <code>c:\\tools</code>)
+\section build_presets Using CMake Presets
 
-Now start a visual studio native command shell (for either x86 or x64) and type
-
-\code{.unparsed}
-cd c:\tools
-tar zxvf vanillapdf-x.y.z.src.tar.gz
+List available presets for your platform:
+\code{.bash}
+git clone https://github.com/vanillapdf/vanillapdf.git
+cd vanillapdf
+git submodule update --init --recursive
+cmake --list-presets
 \endcode
 
-to unpack the sources (you can obtain \c tar from e.g. http://gnuwin32.sourceforge.net/packages.html).
-Alternatively you can use an unpack program, like 7-Zip (see http://www.7-zip.org)
-or use the build in unpack feature of modern Windows systems).
+Common presets include:
+- `windows-x64-msvc-17` / `windows-x86-msvc-17` - Windows with Visual Studio 2022
+- `windows-x64-ninja` / `windows-x86-ninja` - Windows with Ninja generator
+- `linux-x64-gcc` / `linux-arm64-gcc` - Linux with GCC
+- `linux-x64-clang` / `linux-arm64-clang` - Linux with Clang
+- `macos-x64` / `macos-arm64` - macOS builds
 
-Now your environment is setup to generate the required project files for \c vanillapdf.
+\section build_windows Building on Windows
 
-cd into the \c vanillapdf-x.y.z directory, create and cd to a build directory
-
-\code{.unparsed}
-mkdir build
-cd build
-cmake -G "Visual Studio 12 2013" ..
+Choose a preset matching your toolchain:
+\code{.bash}
+cmake --preset windows-x64-msvc-17
+cmake --build --preset windows-x64-msvc-17
+ctest --preset windows-x64-msvc-17
 \endcode
 
-\section build_unix Compiling from source on UNIX
+**Windows Build Notes:**
+- Automatically configures static CRT linking (`VANILLAPDF_USE_STATIC_CRT=ON`)
+- Uses optimized vcpkg triplets (`x64-windows-static-md`)
+- Supports both Visual Studio generators and Ninja
 
-<ol>
-<li>Installing dependencies</li>
-\code{.unparsed}
-sudo apt-get install cmake
-sudo apt-get install libjpeg-dev
-sudo apt-get install libssl-dev
-sudo apt-get install zlib1g-dev
+\section build_linux Building on Linux
+
+\code{.bash}
+cmake --preset linux-x64-gcc
+cmake --build --preset linux-x64-gcc
+ctest --preset linux-x64-gcc
 \endcode
 
-<li>Unpack the archive, unless you already have done that:</li>
-\code{.unparsed}
-unzip vanillapdf-master.zip	# uncompress the archive
+**For external dependencies** (optional, faster builds):
+\code{.bash}
+sudo apt-get install libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev
+cmake --preset linux-x64-gcc -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+  -DVANILLAPDF_EXTERNAL_JPEG=ON -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
+  -DVANILLAPDF_EXTERNAL_ZLIB=ON
 \endcode
 
-<li>Create a build directory:</li>
-\code{.unparsed}
-cd vanillapdf-master
-mkdir build
-cd build
+\section build_macos Building on macOS
+
+\code{.bash}
+cmake --preset macos-arm64
+cmake --build --preset macos-arm64
+ctest --preset macos-arm64
 \endcode
 
-<li>Run CMake with the makefile generator:</li>
-\code{.unparsed}
-cmake -G "Unix Makefiles" ..
+**For external dependencies** (optional, faster builds):
+\code{.bash}
+brew install openssl@3 jpeg-turbo zlib openjpeg
+cmake --preset macos-arm64 -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+  -DVANILLAPDF_EXTERNAL_JPEG=ON -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
+  -DVANILLAPDF_EXTERNAL_ZLIB=ON
 \endcode
 
-<li>Compile the program by running make:</li>
-\code{.unparsed}
-make
+\section build_configuration Build Configuration
+
+**Feature Enable/Disable Options:**
+- `-DVANILLAPDF_ENABLE_ENCRYPTION=ON/OFF` - PDF encryption/decryption support (default: ON)
+- `-DVANILLAPDF_ENABLE_JPEG=ON/OFF` - JPEG image support (default: ON)
+- `-DVANILLAPDF_ENABLE_JPEG2000=ON/OFF` - JPEG2000 support (default: ON)
+
+**Build Configuration Options:**
+- `-DVANILLAPDF_INTERNAL_VCPKG=ON/OFF` - Enable internal vcpkg dependency management (default: ON)
+- `-DVANILLAPDF_ENABLE_PACKAGING=ON/OFF` - Enable packaging features like CPack (auto-detected)
+- `-DVANILLAPDF_ENABLE_TESTS=ON/OFF` - Build and run test scenarios (default: ON)
+- `-DVANILLAPDF_ENABLE_BENCHMARK=ON/OFF` - Include benchmarking project (default: ON)
+- `-DVANILLAPDF_USE_STATIC_CRT=ON/OFF` - Use static MSVC runtime (/MT) instead of dynamic (/MD) (default: OFF)
+- `-DBUILD_SHARED_LIBS=ON/OFF` - Build vanillapdf as a shared library (default: ON)
+
+**Development Options:**
+- `-DVANILLAPDF_ENABLE_COVERAGE=ON` - Enable code coverage instrumentation (GCC/Clang only)
+- `-DVANILLAPDF_FORCE_32_BIT=ON` - Force 32-bit output binary regardless of architecture
+- `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON` - Enable address sanitizer for memory safety testing
+
+**External Dependency Options:**
+- `-DVANILLAPDF_EXTERNAL_OPENSSL=ON/OFF` - Use system OpenSSL instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_JPEG=ON/OFF` - Use system libjpeg instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_OPENJPEG=ON/OFF` - Use system OpenJPEG instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_ZLIB=ON/OFF` - Use system zlib instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_SPDLOG=ON/OFF` - Use system spdlog instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON/OFF` - Use system nlohmann-json instead of vcpkg (default: OFF)
+
+\section build_testing Running Tests
+
+After building, run the test suite:
+\code{.bash}
+ctest --preset <your-preset> --output-on-failure
 \endcode
 
-<li>Verify the library sanity:</li>
-\code{.unparsed}
-make test
+**Test Categories:**
+- Unit tests: Core functionality validation
+- Integration tests: End-to-end scenarios
+- Benchmarks: Performance testing
+
+\section build_troubleshooting Troubleshooting
+
+**Common Issues:**
+
+*vcpkg bootstrap fails:*
+\code{.bash}
+git submodule sync --recursive
+git submodule update --init --recursive
 \endcode
 
-With the expected output:
-\code{.unparsed}
-100% tests passed, 0 tests failed out of 242
-Total Test time (real) = 113.72 sec
+*Build configuration fails:*
+\code{.bash}
+rm -rf build/
+cmake --preset <your-preset>
 \endcode
 
-For shared library builds, the test suite automatically includes export verification 
-to ensure all exported symbols use proper C linkage and don't contain name mangling 
-characters. This verification is skipped for static library builds and runs 
-transparently as part of the regular test suite.
-
-</ol>
+For platform-specific issues and advanced configuration options, see the
+\ref page_install "installation guide".
 
 */
