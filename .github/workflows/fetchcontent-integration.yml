@@ -99,9 +99,7 @@ jobs:
         if: matrix.config.use_external_deps && runner.os == 'macOS'
         run: |
           # Install dependencies via Homebrew for faster builds
-          brew install ninja openssl jpeg openjpeg zlib
-          # Unlink any conflicting JPEG libraries to avoid conflicts
-          brew unlink jpeg jpeg-turbo libjpeg 2>/dev/null || true
+          brew install ninja openssl@3 jpeg-turbo zlib openjpeg
 
       - name: Configure Git reference for testing
         working-directory: examples/fetchcontent-integration
