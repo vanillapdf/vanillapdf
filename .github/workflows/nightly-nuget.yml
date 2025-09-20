@@ -51,7 +51,7 @@ jobs:
 
   build-nuget:
     needs: prepare-suffix
-    uses: ./.github/workflows/packaging/build-nuget.yml
+    uses: ./.github/workflows/build-nuget.yml
     with:
       build_suffix: ${{ needs.prepare-suffix.outputs.nightly_suffix }}
 
