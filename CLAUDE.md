@@ -2,6 +2,25 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 📝 Project Naming Conventions
+
+**CRITICAL**: Use correct naming conventions throughout all work:
+
+- **Official/Marketing Communications**: "Vanilla.PDF" (with dot, proper case)
+  - Use in: Documentation, user-facing messages, website content, official guides
+- **Code/Technical Contexts**: "vanillapdf" (lowercase, no dot, no quotes)
+  - Use in: Code comments, variable names, technical discussions, commit messages
+- **❌ INCORRECT**: "VanillaPDF" (avoid this mixed case without dot)
+
+Examples:
+```cmake
+# Correct in user-facing message:
+message(STATUS "Vanilla.PDF dependency management enabled")
+
+# Correct in code comment:
+# Configure vanillapdf build options
+```
+
 ## ⚠️ CRITICAL: Repository Workflow Requirements
 
 **ALWAYS CREATE BRANCH AND PULL REQUEST FOR ALL CHANGES**
@@ -49,6 +68,27 @@ The repository uses `vanillapdf-bot` for automated operations:
   Co-Authored-By: vanillapdf-bot <info@vanillapdf.com>
   ```
 - Never use `github-actions[bot]` or similar generic bot names
+
+## ⚠️ CRITICAL: vcpkg Submodule Management
+
+**NEVER MODIFY external/vcpkg FOLDER**
+- The `external/vcpkg` folder is a Git submodule pointing to Microsoft's vcpkg repository
+- **NEVER** make direct changes to files in `external/vcpkg/` - these will be lost on submodule updates
+- The submodule is automatically updated monthly by vanillapdf-bot
+
+**vcpkg Port Development Workflow:**
+- Use `ports/vanillapdf/` folder for port development and testing
+- This folder mirrors the structure that will be submitted to Microsoft vcpkg
+- When ready for release, the vanillapdf-bot creates PRs to Microsoft vcpkg repository using content from `ports/vanillapdf/`
+- Port files in `ports/vanillapdf/`:
+  - `vcpkg.json` - Port manifest with features and dependencies
+  - `portfile.cmake` - Build instructions and feature configuration
+  - `usage` - Installation and usage documentation
+
+**For Claude Code:**
+- Always work in `ports/vanillapdf/` when updating vcpkg port files
+- Never edit anything in `external/vcpkg/ports/vanillapdf/` - it will be overwritten
+- Test port changes by copying from `ports/vanillapdf/` to a local vcpkg installation if needed
 
 ## 🚀 Release Process
 
@@ -101,9 +141,9 @@ Presets are organized by platform in separate files:
 Each preset includes configure, build, and test configurations.
 
 Common presets include:
-- `windows-x64-msvc-17` / `windows-x86-msvc-17` - Windows with Visual Studio 2022
-- `windows-x64-msvc-16` / `windows-x86-msvc-16` - Windows with Visual Studio 2019
-- `windows-x64-ninja` / `windows-x86-ninja` - Windows with Ninja generator
+- `windows-x64-msvc-17` / `windows-x86-msvc-17` - Windows with Visual Studio 2022 (dynamic CRT)
+- `windows-x64-msvc-17-static` / `windows-x86-msvc-17-static` - Windows with Visual Studio 2022 (static CRT)
+- `windows-x64-msvc-17-static-md` / `windows-x86-msvc-17-static-md` - Windows with Visual Studio 2022 (static libs, dynamic CRT)
 - `linux-x64-gcc` / `linux-arm64-gcc` - Linux with GCC
 - `linux-x64-clang` / `linux-arm64-clang` - Linux with Clang
 - `linux-x64-musl` / `linux-arm64-musl` / `linux-arm-musl` - Linux with musl libc
@@ -118,14 +158,16 @@ cmake --build --preset windows-x64-msvc-17
 
 #### Windows Build Notes
 
-Windows presets automatically configure:
-- Static CRT linking (`VANILLAPDF_USE_STATIC_CRT=ON`)
-- Platform-specific vcpkg triplets (x86-windows, x64-windows)
-- Visual Studio generators (2019/2022) or Ninja
-
-For Ninja builds on Windows, ensure you have:
-- Visual Studio Build Tools or full Visual Studio installation
-- Ninja build system in PATH
+Windows presets use Visual Studio 2022 generator and automatically configure:
+- CRT linking based on preset variant:
+  - Standard presets (`windows-x*-msvc-17`): Dynamic CRT (default)
+  - Static presets (`windows-x*-msvc-17-static`): Static CRT (`VANILLAPDF_USE_STATIC_CRT=ON`)
+  - Static-MD presets (`windows-x*-msvc-17-static-md`): Static libs + dynamic CRT
+- Platform-specific vcpkg triplets:
+  - `x64-windows` (standard presets, dynamic CRT)
+  - `x64-windows-static` (static presets, static CRT)
+  - `x64-windows-static-md` (static-md presets, static libs + dynamic CRT)
+- Visual Studio 2022 generator only (no Ninja variants available)
 
 ### vcpkg Dependencies
 
@@ -157,7 +199,46 @@ vcpkg install vanillapdf[openssl,zlib,spdlog]
 
 Important build configuration options available:
 
-- `-DVANILLAPDF_STANDALONE=ON/OFF` - Enable internal vcpkg setup for standalone builds (default: ON)
+#### Auto-Detection of Build Configuration
+
+VanillaPDF automatically detects the appropriate configuration based on usage context:
+
+**Packaging (`VANILLAPDF_ENABLE_PACKAGING`):**
+- `ON`: Main project builds → Enable CPack packaging features
+- `OFF`: Dependency usage → Disable packaging to avoid conflicts
+
+**Usage Scenarios:**
+```cmake
+# Standalone development (default settings)
+git clone vanillapdf && cmake --preset windows-x64-msvc-17
+# → INTERNAL_VCPKG=ON, ENABLE_PACKAGING=ON
+
+# FetchContent usage (packaging auto-disabled)
+FetchContent_Declare(vanillapdf ...)
+# → INTERNAL_VCPKG=ON, ENABLE_PACKAGING=OFF
+
+# vcpkg port or external dependency management
+vcpkg install vanillapdf
+# → INTERNAL_VCPKG=OFF (set by portfile), ENABLE_PACKAGING=OFF
+
+# Manual override to disable internal vcpkg
+cmake --preset windows-x64-msvc-17 -DVANILLAPDF_INTERNAL_VCPKG=OFF
+# → Use system or externally managed dependencies
+```
+
+#### Feature Enable/Disable Options
+- `-DVANILLAPDF_ENABLE_ENCRYPTION=ON/OFF` - Enable PDF encryption/decryption support (default: ON)
+- `-DVANILLAPDF_ENABLE_JPEG=ON/OFF` - Enable JPEG image support (default: ON)
+- `-DVANILLAPDF_ENABLE_JPEG2000=ON/OFF` - Enable JPEG2000 image support (default: ON)
+
+#### Build Configuration Options
+- `-DVANILLAPDF_INTERNAL_VCPKG=ON/OFF` - Enable internal vcpkg dependency management (default: ON)
+  - `ON`: Use internal vcpkg for dependency management (standalone, FetchContent, submodules)
+  - `OFF`: Disable internal vcpkg when dependencies are managed externally (vcpkg ports, system packages)
+- `-DVANILLAPDF_ENABLE_PACKAGING=ON/OFF` - Enable packaging features like CPack (auto-detected)
+  - **Auto-detected default**: `ON` for main project builds, `OFF` for dependency usage
+  - `ON`: Enable packaging (DEB, Brew, etc.) for distribution
+  - `OFF`: Disable packaging to avoid conflicts in parent projects
 - `-DVANILLAPDF_ENABLE_TESTS=ON/OFF` - Perform test scenarios (default: ON)
 - `-DVANILLAPDF_ENABLE_BENCHMARK=ON/OFF` - Include benchmarking project (default: ON)
 - `-DVANILLAPDF_USE_STATIC_CRT=ON/OFF` - Use static MSVC runtime (/MT) instead of dynamic (/MD) (default: OFF)
@@ -165,7 +246,14 @@ Important build configuration options available:
 - `-DVANILLAPDF_ENABLE_COVERAGE=ON` - Enable code coverage instrumentation (for GCC/Clang only)
 - `-DVANILLAPDF_FORCE_32_BIT=ON` - Force 32-bit output binary regardless of architecture
 - `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON` - Enable address sanitizer for memory safety testing
-- `-DVANILLAPDF_EXTERNAL_*` - Use system dependencies instead of vcpkg (e.g., `-DVANILLAPDF_EXTERNAL_OPENSSL=ON`)
+
+#### External Dependency Options
+- `-DVANILLAPDF_EXTERNAL_OPENSSL=ON/OFF` - Use system OpenSSL instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_JPEG=ON/OFF` - Use system libjpeg instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_OPENJPEG=ON/OFF` - Use system OpenJPEG instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_ZLIB=ON/OFF` - Use system zlib instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_SPDLOG=ON/OFF` - Use system spdlog instead of vcpkg (default: OFF)
+- `-DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON/OFF` - Use system nlohmann-json instead of vcpkg (default: OFF)
 
 ### Running Tests
 
@@ -203,6 +291,31 @@ Build and use the `vanillapdf-tools` CLI utility:
 # Get help for available commands
 ./vanillapdf-tools --help
 ```
+
+### FetchContent Integration Testing
+
+The project includes a comprehensive FetchContent integration example in `examples/fetchcontent-integration/` that demonstrates real-world usage patterns:
+
+#### Running FetchContent Tests
+```bash
+cd examples/fetchcontent-integration
+cmake --preset windows-x64-debug  # or linux-x64-debug, macos-arm64-debug
+cmake --build --preset windows-x64-debug
+ctest --preset windows-x64-debug --output-on-failure
+```
+
+#### Key Features
+- **Real GitHub Integration**: Tests actual FetchContent from GitHub repository (not local source)
+- **Cross-platform Testing**: Windows (vcpkg), Linux (apt), macOS (Homebrew) dependency strategies
+- **CMake Test Integration**: Uses `add_test()` and `enable_testing()` for proper test execution
+- **Automatic CI Testing**: Continuously validated via GitHub Actions workflow
+
+#### Dependency Management Approaches
+- **Windows**: Uses internal vcpkg for all dependencies
+- **Linux**: Uses system packages (`apt-get install`) for speed
+- **macOS**: Uses Homebrew packages (`brew install`) for speed
+
+The example creates actual PDF files and validates the complete integration chain from dependency resolution through PDF creation.
 
 ## Architecture Overview
 
@@ -429,3 +542,83 @@ If tests fail unexpectedly:
 2. Check that the correct preset is being used for your platform
 3. Run tests with verbose output: `ctest --preset your-preset --verbose`
 4. Check for memory issues with sanitizers: `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
+
+## Recent Improvements
+
+### FetchContent Integration Enhancements
+- **Fixed vcpkg triplet issues**: Resolved CRT mismatch problems by using `x64-windows-static-md` instead of `x64-windows-static`
+- **Enhanced FetchContent example**: Added comprehensive real-world integration testing in `examples/fetchcontent-integration/`
+- **Cross-platform CI testing**: Automated testing on Windows (vcpkg), Linux (apt), macOS (Homebrew)
+- **CMake test integration**: Proper test execution using `add_test()` and CTest framework
+- **Simplified workflow paths**: Eliminated complex path detection logic in favor of CMake-managed execution
+- **Workflow organization**: GitHub Actions workflows now use consistent naming and concurrency controls
+
+### Build System Improvements
+- **vcpkg triplet standardization**: All Windows builds now use Microsoft's official triplets
+- **Debug message cleanup**: Removed temporary debugging output from development
+- **Dependency flexibility**: Enhanced support for both system packages and vcpkg dependencies
+- **Documentation updates**: Updated README with clearer integration guidance (vcpkg recommended, FetchContent as alternative)
+
+## GitHub Issue Management
+
+### Available Labels
+
+When creating GitHub issues, use these labels for proper categorization:
+
+**Issue Types:**
+- `bug` - Something isn't working
+- `enhancement` - New feature or request
+- `documentation` - Improvements or additions to documentation
+- `question` - Further information is requested
+
+**Build System & Dependencies:**
+- `cmake` - CMake configuration and build system issues
+- `build-system` - General build system improvements
+- `fetchcontent` - FetchContent integration issues
+- `vcpkg` - vcpkg dependency management
+- `dependencies` - Dependency updates
+
+**Development & Quality:**
+- `technical-debt` - Code quality and refactoring issues
+- `performance` - Performance improvements
+- `compatibility` - Platform/compiler compatibility issues
+- `ci-cd` - Continuous integration and deployment
+- `github_actions` - GitHub Actions workflow updates
+
+**Priority Levels:**
+- `priority-high` - High priority issues (critical bugs, blocking issues)
+- `priority-medium` - Medium priority issues (important improvements)
+- `priority-low` - Low priority issues (nice-to-have features)
+
+**Community:**
+- `good first issue` - Good for newcomers
+- `help wanted` - Extra attention is needed
+
+**Workflow:**
+- `duplicate` - This issue or pull request already exists
+- `invalid` - This doesn't seem right
+- `wontfix` - This will not be worked on
+
+### Label Usage Guidelines
+
+**For Build System Issues:**
+- Use `cmake` + `build-system` for CMake-specific problems
+- Add `fetchcontent` for FetchContent integration issues
+- Add `vcpkg` for dependency management problems
+- Include appropriate priority label
+
+**For Bug Reports:**
+- Always use `bug` as primary label
+- Add `priority-high` for critical bugs affecting releases
+- Add `compatibility` for platform-specific issues
+- Add relevant component labels (cmake, ci-cd, etc.)
+
+**For Feature Requests:**
+- Use `enhancement` as primary label
+- Add relevant component labels
+- Include priority level based on impact
+
+**Example Label Combinations:**
+- CMake cache variable issue: `enhancement`, `cmake`, `fetchcontent`, `technical-debt`, `priority-medium`
+- Critical build failure: `bug`, `build-system`, `priority-high`
+- FetchContent documentation: `documentation`, `fetchcontent`, `priority-low`

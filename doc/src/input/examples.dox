@@ -1,7 +1,13 @@
-/*! 
+/*!
 \page page_examples Examples
 
-Full example list:
+\section examples_integration Integration Examples
+
+<ul>
+<li>\ref example_fetchcontent_integration - FetchContent integration with cross-platform testing
+</ul>
+
+\section examples_api API Usage Examples
 
 <ul>
 <li>\ref merge.c - File merge
@@ -112,4 +118,56 @@ Additional resources:
 /**
 * \example write_custom.c
 * Example use of custom file writer callbacks
+*/
+
+/**
+* \example examples/fetchcontent-integration/CMakeLists.txt
+* FetchContent integration example demonstrating how to consume VanillaPDF using
+* CMake's FetchContent mechanism with cross-platform dependency management.
+*/
+
+/**
+* \example examples/fetchcontent-integration/main.cpp
+* Example application for FetchContent integration that creates a PDF document
+* and demonstrates proper resource management with VanillaPDF C API.
+*/
+
+/*!
+\page example_fetchcontent_integration FetchContent Integration Example
+
+The FetchContent integration example demonstrates how to consume VanillaPDF using
+CMake's FetchContent mechanism in real-world scenarios.
+
+\section fetchcontent_features Features Demonstrated
+
+- **Real GitHub Integration**: Fetches VanillaPDF from GitHub repository (not local source)
+- **Cross-platform Testing**: Windows (vcpkg), Linux (apt), macOS (Homebrew) dependency strategies
+- **CMake Test Integration**: Uses `add_test()` and `enable_testing()` for proper test execution
+- **Dependency Management**: Shows both vcpkg and system package approaches
+- **Actual PDF Creation**: Creates real PDF files and validates functionality
+
+\section fetchcontent_usage Quick Usage
+
+\code{.bash}
+cd examples/fetchcontent-integration
+cmake --preset windows-x64-debug  # or linux-x64-debug, macos-arm64-debug
+cmake --build --preset windows-x64-debug
+ctest --preset windows-x64-debug --output-on-failure
+\endcode
+
+\section fetchcontent_dependencies Dependency Management
+
+The example demonstrates different dependency management strategies:
+
+- **Windows**: Uses internal vcpkg for all dependencies
+- **Linux**: Uses system packages (`apt-get install`) for faster builds
+- **macOS**: Uses Homebrew packages (`brew install`) for faster builds
+
+\section fetchcontent_ci Continuous Integration
+
+This integration approach is continuously validated via automated CI workflows
+across all supported platforms.
+
+\note When using FetchContent, you are responsible for managing VanillaPDF's dependencies
+through system package managers or other packaging systems.
 */

@@ -518,6 +518,11 @@ add_library(vanillapdf
     ${VANILLAPDF_RESOURCE_FILES}
 )
 
+# Create alias target for FetchContent and sub-project usage
+# TODO: Remove this alias and rename target to vanillapdf::vanillapdf for release 3.0
+# See GitHub issue #140: https://github.com/vanillapdf/vanillapdf/issues/140
+add_library(vanillapdf::vanillapdf ALIAS vanillapdf)
+
 set_target_properties(vanillapdf PROPERTIES
   PREFIX "lib"
 )
@@ -602,6 +607,9 @@ vanillapdf_check_standard_features(vanillapdf)
 # Configure default compilation parameters, strict warnings, config based definition for DEBUG/RELEASE, etc.
 vanillapdf_target_compile_defaults(vanillapdf)
 
+# Configure MSVC runtime library for vanillapdf target only
+vanillapdf_configure_msvc_runtime(vanillapdf)
+
 # In case we would like to extract code coverage report enable the flag
 if(VANILLAPDF_ENABLE_COVERAGE)
     enable_coverage_for_target(vanillapdf)
@@ -620,38 +628,46 @@ if (MSVC AND NOT BUILD_SHARED_LIBS)
     set(THREADS_PREFER_PTHREAD_FLAG OFF)
 endif()
 
-if (VANILLAPDF_EXTERNAL_OPENSSL)
-    find_package(OpenSSL MODULE REQUIRED)
-else ()
-    find_package(OpenSSL REQUIRED)
+if (VANILLAPDF_ENABLE_ENCRYPTION)
+    if (VANILLAPDF_EXTERNAL_OPENSSL)
+        find_package(OpenSSL MODULE REQUIRED)
+    else ()
+        find_package(OpenSSL REQUIRED)
+    endif()
 endif()
 
-if (VANILLAPDF_EXTERNAL_ZLIB)
-    find_package(ZLIB MODULE REQUIRED)
-else ()
-    find_package(ZLIB REQUIRED)
+if (VANILLAPDF_ENABLE_ZLIB)
+    if (VANILLAPDF_EXTERNAL_ZLIB)
+        find_package(ZLIB MODULE REQUIRED)
+    else ()
+        find_package(ZLIB REQUIRED)
+    endif()
 endif()
 
-if (VANILLAPDF_EXTERNAL_JPEG)
-    find_package(JPEG MODULE REQUIRED)
-else ()
-    find_package(JPEG REQUIRED)
+if (VANILLAPDF_ENABLE_JPEG)
+    if (VANILLAPDF_EXTERNAL_JPEG)
+        find_package(JPEG MODULE REQUIRED)
+    else ()
+        find_package(JPEG REQUIRED)
+    endif()
 endif()
 
-if (VANILLAPDF_EXTERNAL_OPENJPEG)
-    find_package(OpenJPEG MODULE REQUIRED)
-else ()
-    find_package(OpenJPEG REQUIRED)
+if (VANILLAPDF_ENABLE_JPEG2000)
+    if (VANILLAPDF_EXTERNAL_OPENJPEG)
+        find_package(OpenJPEG CONFIG REQUIRED)
+    else ()
+        find_package(OpenJPEG CONFIG REQUIRED)
+    endif()
 endif()
 
 if (VANILLAPDF_EXTERNAL_SPDLOG)
-    find_package(spdlog MODULE REQUIRED)
+    find_package(spdlog CONFIG REQUIRED)
 else ()
     find_package(spdlog CONFIG REQUIRED)
 endif()
 
 if (VANILLAPDF_EXTERNAL_NLOHMANN_JSON)
-    find_package(nlohmann_json MODULE REQUIRED)
+    find_package(nlohmann_json CONFIG REQUIRED)
 else ()
     find_package(nlohmann_json CONFIG REQUIRED)
 endif()
@@ -661,51 +677,47 @@ if (COMPILE_SKIA)
     target_link_libraries(vanillapdf PRIVATE unofficial::skia::skia)
 endif (COMPILE_SKIA)
 
-if (OPENSSL_FOUND)
-    target_include_directories(vanillapdf PRIVATE ${OPENSSL_INCLUDE_DIR})
-
+if (VANILLAPDF_ENABLE_ENCRYPTION AND OPENSSL_FOUND)
     target_link_libraries(vanillapdf PRIVATE OpenSSL::Crypto)
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_OPENSSL)
 
     message(STATUS "OpenSSL ${OPENSSL_VERSION} was found")
-else (OPENSSL_FOUND)
-    message(WARNING "Compiling without OpenSSL support. Work with encrypted document will be prohibited")
-endif (OPENSSL_FOUND)
+elseif (VANILLAPDF_ENABLE_ENCRYPTION)
+    message(FATAL_ERROR "Encryption enabled but OpenSSL not found. Please install OpenSSL or disable encryption with -DVANILLAPDF_ENABLE_ENCRYPTION=OFF")
+else()
+    message(STATUS "Encryption support disabled. Encrypted documents will not be supported")
+endif ()
 
-if (JPEG_FOUND)
-    target_include_directories(vanillapdf PRIVATE ${JPEG_INCLUDE_DIR})
-
-    # This is not yet supported on all linux CMake distributions
-    # set(VANILLAPDF_LIBS JPEG::JPEG ${VANILLAPDF_LIBS})
-
-    target_link_libraries(vanillapdf PRIVATE ${JPEG_LIBRARIES})
+if (VANILLAPDF_ENABLE_JPEG AND JPEG_FOUND)
+    target_link_libraries(vanillapdf PRIVATE JPEG::JPEG)
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
 
     message(STATUS "JPEG library ${JPEG_VERSION} was found")
-else (JPEG_FOUND)
-    message(WARNING "Compiling without JPEG support. JPEG compression will become unavailable")
-endif (JPEG_FOUND)
+elseif (VANILLAPDF_ENABLE_JPEG)
+    message(FATAL_ERROR "JPEG enabled but JPEG library not found. Please install JPEG library or disable JPEG support with -DVANILLAPDF_ENABLE_JPEG=OFF")
+else()
+    message(STATUS "JPEG support disabled. JPEG images will not be supported")
+endif ()
 
-if (ZLIB_FOUND)
-    target_include_directories(vanillapdf PRIVATE ${ZLIB_INCLUDE_DIRS})
-
+if (VANILLAPDF_ENABLE_ZLIB AND ZLIB_FOUND)
     target_link_libraries(vanillapdf PRIVATE ZLIB::ZLIB)
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_ZLIB)
-
     message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
-else (ZLIB_FOUND)
-    message(WARNING "Compiling without zlib support. zlib decompression will become unavailable")
-endif (ZLIB_FOUND)
+elseif (VANILLAPDF_ENABLE_ZLIB)
+    message(FATAL_ERROR "ZLIB enabled but not found. Please install ZLIB or disable zlib support with -DVANILLAPDF_ENABLE_ZLIB=OFF")
+else()
+    message(STATUS "zlib support disabled. zlib decompression will be unavailable")
+endif()
 
-if (OPENJPEG_LIBRARIES)
-    target_include_directories(vanillapdf PRIVATE ${OPENJPEG_INCLUDE_DIRS})
-    #set(VANILLAPDF_LIBS OpenJPEG::OpenJPEG ${VANILLAPDF_LIBS})
-    target_link_libraries(vanillapdf PRIVATE ${OPENJPEG_LIBRARIES})
+if (VANILLAPDF_ENABLE_JPEG2000 AND TARGET openjp2)
+    target_link_libraries(vanillapdf PRIVATE openjp2)
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_OPENJPEG)
-    message(STATUS "openjpeg was found without specified version")
-else (OPENJPEG_LIBRARIES)
-    message(WARNING "Compiling without openjpeg support. jpeg2000 decompression will become unavailable")
-endif (OPENJPEG_LIBRARIES)
+    message(STATUS "OpenJPEG found and linked")
+elseif (VANILLAPDF_ENABLE_JPEG2000)
+    message(FATAL_ERROR "JPEG2000 enabled but OpenJPEG not found. Please install OpenJPEG or disable JPEG2000 support with -DVANILLAPDF_ENABLE_JPEG2000=OFF")
+else()
+    message(STATUS "JPEG2000 support disabled. JPEG2000 images will not be supported")
+endif ()
 
 # Update 30.08.2024:
 # fmtlib is part of spdlog which is a required dependency of the solution
@@ -814,7 +826,7 @@ if(WIN32)
     endif (JPEG_FOUND)
 
     # zlib dependent libraries
-    if (ZLIB_FOUND)
+    if (VANILLAPDF_ENABLE_ZLIB AND ZLIB_FOUND)
 
         # Find dll runtime binary file
         find_file(ZLIB_RUNTIME
@@ -830,7 +842,7 @@ if(WIN32)
         
         # Install dependency into output package
         # install(FILES ${ZLIB_RUNTIME} DESTINATION bin)
-    endif (ZLIB_FOUND)
+    endif (VANILLAPDF_ENABLE_ZLIB AND ZLIB_FOUND)
 endif(WIN32)
 
 # Add export verification test for shared library builds

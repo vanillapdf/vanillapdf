@@ -14,15 +14,24 @@
             "name": "vcpkg-cmake-config",
             "host": true
         },
-        "openssl",
-        "libjpeg-turbo",
-        "openjpeg",
         "zlib",
         "spdlog",
         "nlohmann-json"
     ],
-    "default-features": [],
+    "default-features": [ "encryption", "jpeg", "jpeg2000" ],
     "features": {
+        "encryption": {
+            "description": "Enable encryption and decryption of secure PDF documents",
+            "dependencies": [ "openssl" ]
+        },
+        "jpeg": {
+            "description": "Decode JPEG images into bitmaps",
+            "dependencies": [ "libjpeg-turbo" ]
+        },
+        "jpeg2000": {
+            "description": "Support JPEG‑2000 images through the OpenJPEG codec",
+            "dependencies": [ "openjpeg" ]
+        },
         "tests": {
             "description": "Enable unit and integration tests",
             "dependencies": [

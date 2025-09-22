@@ -30,7 +30,7 @@
 
 ## 🖥️ Supported Platforms & Compilers
 
-- **Windows:** Visual Studio 2019 (MSVC 16.11) or 2022 (MSVC 17.x)
+- **Windows:** Visual Studio 2022 (MSVC 17.x)
 - **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
 - **macOS:** AppleClang 15+ (Xcode 15)
 - **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
@@ -72,12 +72,14 @@ cmake --list-presets
 
 ```
 Available configure presets:
-  "windows-x86-ninja"
-  "windows-x64-ninja"
+
+  "windows-x86-msvc-17-static"
+  "windows-x64-msvc-17-static"
   "windows-x86-msvc-17"
   "windows-x64-msvc-17"
-  "windows-x86-msvc-16"
-  "windows-x64-msvc-16"
+  "windows-x86-msvc-17-static-md"
+  "windows-x64-msvc-17-static-md"
+  "default"
   "linux-x64-gcc"
   "linux-arm64-gcc"
   "linux-x64-clang"
@@ -148,18 +150,54 @@ For instructions on generating Debian or Homebrew packages see the
 
 ---
 
-## 🔗 CMake Integration (Modern Target-Based)
+## 🔗 CMake Integration
 
+VanillaPDF provides multiple integration methods to suit different development workflows:
+
+### Using vcpkg (Recommended)
+```bash
+vcpkg install vanillapdf
+```
+⚡ **Fastest builds** with pre-compiled binaries and automatic dependency management.
+
+### Using FetchContent (Alternative)
 ```cmake
-find_package(vanillapdf CONFIG REQUIRED)
-
+include(FetchContent)
+FetchContent_Declare(vanillapdf
+    GIT_REPOSITORY https://github.com/vanillapdf/vanillapdf.git
+    GIT_TAG        main)
+FetchContent_MakeAvailable(vanillapdf)
 target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 ```
+🛠️ **Self-contained** approach without external tools. Note: You manage dependencies yourself.
 
-This requires Vanilla.PDF to be installed properly via:
-- `cmake --install`
-- vcpkg (`vcpkg install vanillapdf`)
-- or manually setting `CMAKE_PREFIX_PATH` to the install location
+### Build from Source
+```bash
+git clone https://github.com/vanillapdf/vanillapdf.git
+cmake --preset windows-x64-msvc-17  # Choose your platform preset
+cmake --build --preset windows-x64-msvc-17
+```
+
+📖 **Detailed integration instructions**: See the [installation guide](https://vanillapdf.github.io/vanillapdf/page_install.html) for complete setup options, feature configuration, and platform-specific guidance.
+
+---
+
+## 📋 Examples
+
+### FetchContent Integration Example
+
+A complete working example is available in [`examples/fetchcontent-integration/`](examples/fetchcontent-integration/) that demonstrates cross-platform FetchContent integration with automated testing.
+
+[![FetchContent Integration](https://github.com/vanillapdf/vanillapdf/actions/workflows/fetchcontent-integration.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/fetchcontent-integration.yml)
+
+**Quick test:**
+```bash
+cd examples/fetchcontent-integration
+cmake --preset windows-x64-debug && cmake --build --preset windows-x64-debug
+ctest --preset windows-x64-debug --output-on-failure
+```
+
+This example creates real PDF files and validates the complete integration chain from dependency resolution through PDF creation.
 
 ---
 
@@ -209,7 +247,7 @@ We welcome pull requests, feature proposals, and bug reports! All contributions 
 
 - 📜 [Code of Conduct](CODE_OF_CONDUCT.md)
 - 🛠️ [Contributing Guidelines](CONTRIBUTING.md)
-- 🔧 [Development Setup](CLAUDE.md) (for maintainers and Claude Code)
+- 🔧 [Development Setup](CLAUDE.md) (for maintainers)
 - 🐛 [Issue Templates](.github/ISSUE_TEMPLATE/)
 
 **Development Process:**

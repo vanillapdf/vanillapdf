@@ -14,10 +14,22 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Store information about solution root folder
 set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Configurable option, if this is a primary project or just a submodule
-option(VANILLAPDF_STANDALONE "Enable internal vcpkg setup for standalone builds" ON)
-option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" ON)
-option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" ON)
+# Build configuration options
+
+option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" OFF)
+option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" OFF)
+option(VANILLAPDF_ENABLE_PACKAGING "Enable packaging features (CPack, DEB, Brew, etc.)" OFF)
+
+# Enable/disable optional features
+option(VANILLAPDF_ENABLE_ENCRYPTION "Enable PDF encryption/decryption support" ON)
+option(VANILLAPDF_ENABLE_JPEG "Enable JPEG image support" ON)
+option(VANILLAPDF_ENABLE_JPEG2000 "Enable JPEG2000 image support" ON)
+option(VANILLAPDF_ENABLE_ZLIB "Enable zlib compression support" ON)
+
+# Option to control internal vcpkg dependency management
+# Disable when dependencies are managed by parent project (e.g., vcpkg ports, system packages)
+# TODO: Will be enhanced with smart detection in https://github.com/vanillapdf/vanillapdf/issues/138
+option(VANILLAPDF_INTERNAL_VCPKG "Enable internal vcpkg dependency management" ON)
 
 # Allow linking selected dependencies from the system instead of vcpkg,
 # or provided externally
@@ -67,8 +79,8 @@ set(VANILLAPDF_VERSION_BUILD_SUFFIX "${VANILLAPDF_VERSION_BUILD_SUFFIX}" CACHE S
 set(VANILLAPDF_VERSION
     "${VANILLAPDF_VERSION_MAJOR}.${VANILLAPDF_VERSION_MINOR}.${VANILLAPDF_VERSION_PATCH}${VANILLAPDF_VERSION_BUILD_SUFFIX}")
 
-# Define packaging configuration only for standalone
-if (VANILLAPDF_STANDALONE)
+# Enable packaging (DEB, Brew, etc.) when explicitly requested
+if (VANILLAPDF_ENABLE_PACKAGING)
 
     # Package management
     include(cmake/packaging.cmake)

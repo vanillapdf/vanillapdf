@@ -52,6 +52,9 @@ add_executable(vanillapdf.tools
 # Configure default compilation parameters, strict warnings, config based definition for DEBUG/RELEASE, etc.
 vanillapdf_target_compile_defaults(vanillapdf.tools)
 
+# Configure MSVC runtime library for tools target
+vanillapdf_configure_msvc_runtime(vanillapdf.tools)
+
 # Optional stack sanitizer
 enable_stack_sanitizer_for_target(vanillapdf.tools)
 

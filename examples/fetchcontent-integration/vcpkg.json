@@ -1,0 +1,35 @@
+{
+    "name": "fetchcontent-integration-test",
+    "version": "1.0.0",
+    "description": "FetchContent integration test with optional dependencies for faster builds",
+    "dependencies": [
+        "spdlog",
+        "nlohmann-json"
+    ],
+    "features": {
+        "encryption": {
+            "description": "Enable OpenSSL for PDF encryption",
+            "dependencies": [ "openssl" ]
+        },
+        "jpeg": {
+            "description": "Enable JPEG support",
+            "dependencies": [ "libjpeg-turbo" ]
+        },
+        "jpeg2000": {
+            "description": "Enable JPEG2000 support",
+            "dependencies": [ "openjpeg" ]
+        },
+        "zlib": {
+            "description": "Enable zlib compression",
+            "dependencies": [ "zlib" ]
+        },
+        "tests": {
+            "description": "Enable testing framework (GTest)",
+            "dependencies": [ "gtest" ]
+        },
+        "benchmarks": {
+            "description": "Enable benchmarking framework (Google Benchmark)",
+            "dependencies": [ "benchmark" ]
+        }
+    }
+}

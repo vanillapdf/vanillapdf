@@ -7,8 +7,7 @@
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/external/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/cmake/overlays"
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             }
         }
     ],

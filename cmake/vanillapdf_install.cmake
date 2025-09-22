@@ -10,7 +10,7 @@ install(EXPORT vanillapdfTargets
 
 # Generate and install config file
 configure_package_config_file(
-  ${CMAKE_SOURCE_DIR}/cmake/vanillapdfConfig.cmake.in
+  ${CMAKE_CURRENT_LIST_DIR}/vanillapdfConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/vanillapdfConfig.cmake
   INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
 )
@@ -29,6 +29,6 @@ install(FILES
 )
 
 install(FILES
-  ${CMAKE_SOURCE_DIR}/cmake/vanillapdfDependencies.cmake
+  ${CMAKE_CURRENT_LIST_DIR}/vanillapdfDependencies.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
 )

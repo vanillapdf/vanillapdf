@@ -40,6 +40,9 @@ add_executable(vanillapdf.benchmark
 # Configure default compilation parameters, strict warnings, config based definition for DEBUG/RELEASE, etc.
 vanillapdf_target_compile_defaults(vanillapdf.benchmark)
 
+# Configure MSVC runtime library for benchmark target
+vanillapdf_configure_msvc_runtime(vanillapdf.benchmark)
+
 # Optional stack sanitizer
 enable_stack_sanitizer_for_target(vanillapdf.benchmark)
 

@@ -152,7 +152,7 @@ jobs:
         shell: bash
 
       - name: Configure ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DVANILLAPDF_ENABLE_TESTS=ON
 
       - name: Build ${{ matrix.config.preset }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -174,9 +174,22 @@ jobs:
         build_type: [Release]
 
         config:
+          # Static dependencies + Static CRT (for NuGet builds)
+          - { name: "win.2022-x86-static", os: windows-2022, preset: "windows-x86-msvc-17-static" }
+          - { name: "win.2022-x64-static", os: windows-2022, preset: "windows-x64-msvc-17-static" }
+          - { name: "win.2025-x86-static", os: windows-2025, preset: "windows-x86-msvc-17-static" }
+          - { name: "win.2025-x64-static", os: windows-2025, preset: "windows-x64-msvc-17-static" }
+
+          # Static dependencies + Dynamic CRT (for Python wrappers)
+          - { name: "win.2022-x86-static-md", os: windows-2022, preset: "windows-x86-msvc-17-static-md" }
+          - { name: "win.2022-x64-static-md", os: windows-2022, preset: "windows-x64-msvc-17-static-md" }
+          - { name: "win.2025-x86-static-md", os: windows-2025, preset: "windows-x86-msvc-17-static-md" }
+          - { name: "win.2025-x64-static-md", os: windows-2025, preset: "windows-x64-msvc-17-static-md" }
+
+          # Dynamic dependencies + Dynamic CRT
           - { name: "win.2022-x86", os: windows-2022, preset: "windows-x86-msvc-17" }
-          - { name: "win.2025-x86", os: windows-2025, preset: "windows-x86-msvc-17" }
           - { name: "win.2022-x64", os: windows-2022, preset: "windows-x64-msvc-17" }
+          - { name: "win.2025-x86", os: windows-2025, preset: "windows-x86-msvc-17" }
           - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17" }
 
     steps:
@@ -202,7 +215,7 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Configure ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DVANILLAPDF_ENABLE_TESTS=ON
 
       - name: Build ${{ matrix.config.preset }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.build_type }}
@@ -261,7 +274,7 @@ jobs:
         shell: bash
 
       - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DVANILLAPDF_ENABLE_TESTS=ON
 
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}
