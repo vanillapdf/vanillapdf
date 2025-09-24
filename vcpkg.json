@@ -1,44 +1,56 @@
 {
-    "name": "vanillapdf",
-    "version": "2.1.0",
-    "description": "PDF rendering engine using vcpkg-managed dependencies",
-    "features": {
-        "encryption": {
-            "description": "Enable encryption and decryption of secure PDF documents",
-            "dependencies": [ "openssl" ]
-        },
-        "jpeg": {
-            "description": "Decode JPEG images into bitmaps",
-            "dependencies": [ "libjpeg-turbo" ]
-        },
-        "jpeg2000": {
-            "description": "Support JPEG‑2000 images through the OpenJPEG codec",
-            "dependencies": [ "openjpeg" ]
-        },
-        "zlib": {
-            "description": "Decompress PDF objects compressed with zlib",
-            "dependencies": [ "zlib" ]
-        },
-        "spdlog": {
-            "description": "High-performance logging for diagnostics and debugging",
-            "dependencies": [ "spdlog" ]
-        },
-        "nlohmann-json": {
-            "description": "Parse application configuration from JSON files",
-            "dependencies": [ "nlohmann-json" ]
-        },
-        "tests": {
-            "description": "Enable unit and integration tests",
-            "dependencies": [
-                "gtest"
-            ]
-        },
-        "benchmarks": {
-            "description": "Enable performance benchmarking tools",
-            "dependencies": [
-                "benchmark"
-            ]
-        }
+  "name": "vanillapdf",
+  "version": "2.1.0",
+  "description": "PDF rendering engine using vcpkg-managed dependencies",
+  "features": {
+    "encryption": {
+      "description": "Enable encryption and decryption of secure PDF documents",
+      "dependencies": [
+        "openssl"
+      ]
     },
-    "builtin-baseline": "120deac3062162151622ca4860575a33844ba10b"
+    "jpeg": {
+      "description": "Decode JPEG images into bitmaps",
+      "dependencies": [
+        "libjpeg-turbo"
+      ]
+    },
+    "jpeg2000": {
+      "description": "Support JPEG‑2000 images through the OpenJPEG codec",
+      "dependencies": [
+        "openjpeg"
+      ]
+    },
+    "zlib": {
+      "description": "Decompress PDF objects compressed with zlib",
+      "dependencies": [
+        "zlib"
+      ]
+    },
+    "spdlog": {
+      "description": "High-performance logging for diagnostics and debugging",
+      "dependencies": [
+        "spdlog"
+      ]
+    },
+    "nlohmann-json": {
+      "description": "Parse application configuration from JSON files",
+      "dependencies": [
+        "nlohmann-json"
+      ]
+    },
+    "tests": {
+      "description": "Enable unit and integration tests",
+      "dependencies": [
+        "gtest"
+      ]
+    },
+    "benchmarks": {
+      "description": "Enable performance benchmarking tools",
+      "dependencies": [
+        "benchmark"
+      ]
+    }
+  },
+  "builtin-baseline": "4334d8b4c8916018600212ab4dd4bbdc343065d1"
 }
