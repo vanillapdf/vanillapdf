@@ -11,30 +11,8 @@
 namespace vanillapdf {
 namespace semantics {
 
-DestinationBase::DestinationBase(syntax::MixedArrayObjectPtr root) : HighLevelObject(root) {}
-XYZDestination::XYZDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
-FitDestination::FitDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
-FitHorizontalDestination::FitHorizontalDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
-FitVerticalDestination::FitVerticalDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
-FitRectangleDestination::FitRectangleDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
-FitBoundingBoxDestination::FitBoundingBoxDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
-FitBoundingBoxHorizontalDestination::FitBoundingBoxHorizontalDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
-FitBoundingBoxVerticalDestination::FitBoundingBoxVerticalDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
-
-DestinationBase::DestinationBase(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
-XYZDestination::XYZDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
-FitDestination::FitDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
-FitHorizontalDestination::FitHorizontalDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
-FitVerticalDestination::FitVerticalDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
-FitRectangleDestination::FitRectangleDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
-FitBoundingBoxDestination::FitBoundingBoxDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
-FitBoundingBoxHorizontalDestination::FitBoundingBoxHorizontalDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
-FitBoundingBoxVerticalDestination::FitBoundingBoxVerticalDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
-
-DestinationBase::Type XYZDestination::GetType() const noexcept { return DestinationBase::Type::XYZ; }
-
 bool XYZDestination::GetLeft(syntax::ObjectPtr& result) const {
-    auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
+    auto arr = GetDestinationArray();
     if (arr->GetSize() < 3) return false;
 
     auto obj = arr->GetValue(1);
@@ -47,7 +25,7 @@ bool XYZDestination::GetLeft(syntax::ObjectPtr& result) const {
 }
 
 bool XYZDestination::GetTop(syntax::ObjectPtr& result) const {
-    auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
+    auto arr = GetDestinationArray();
     if (arr->GetSize() < 3) return false;
 
     auto obj = arr->GetValue(2);
@@ -60,7 +38,7 @@ bool XYZDestination::GetTop(syntax::ObjectPtr& result) const {
 }
 
 bool XYZDestination::GetZoom(syntax::ObjectPtr& result) const {
-    auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
+    auto arr = GetDestinationArray();
     if (arr->GetSize() < 4) return false;
 
     auto obj = arr->GetValue(3);
@@ -72,10 +50,9 @@ bool XYZDestination::GetZoom(syntax::ObjectPtr& result) const {
     return true;
 }
 
-DestinationBase::Type FitDestination::GetType() const noexcept { return DestinationBase::Type::Fit; }
 
 bool FitHorizontalDestination::GetTop(syntax::ObjectPtr& result) const {
-    auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
+    auto arr = GetDestinationArray();
     if (arr->GetSize() < 3) return false;
 
     auto obj = arr->GetValue(2);
@@ -86,10 +63,9 @@ bool FitHorizontalDestination::GetTop(syntax::ObjectPtr& result) const {
     result = obj;
     return true;
 }
-DestinationBase::Type FitHorizontalDestination::GetType() const noexcept { return DestinationBase::Type::FitHorizontal; }
 
 bool FitVerticalDestination::GetLeft(syntax::ObjectPtr& result) const {
-    auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
+    auto arr = GetDestinationArray();
     if (arr->GetSize() < 3) return false;
 
     auto obj = arr->GetValue(2);
@@ -100,10 +76,9 @@ bool FitVerticalDestination::GetLeft(syntax::ObjectPtr& result) const {
     result = obj;
     return true;
 }
-DestinationBase::Type FitVerticalDestination::GetType() const noexcept { return DestinationBase::Type::FitVertical; }
 
 bool FitRectangleDestination::GetLeft(syntax::ObjectPtr& result) const {
-    auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
+    auto arr = GetDestinationArray();
     if (arr->GetSize() < 3) return false;
 
     auto obj = arr->GetValue(2);
@@ -116,7 +91,7 @@ bool FitRectangleDestination::GetLeft(syntax::ObjectPtr& result) const {
 }
 
 bool FitRectangleDestination::GetBottom(syntax::ObjectPtr& result) const {
-    auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
+    auto arr = GetDestinationArray();
     if (arr->GetSize() < 4) return false;
 
     auto obj = arr->GetValue(3);
@@ -129,7 +104,7 @@ bool FitRectangleDestination::GetBottom(syntax::ObjectPtr& result) const {
 }
 
 bool FitRectangleDestination::GetRight(syntax::ObjectPtr& result) const {
-    auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
+    auto arr = GetDestinationArray();
     if (arr->GetSize() < 5) return false;
 
     auto obj = arr->GetValue(4);
@@ -142,7 +117,7 @@ bool FitRectangleDestination::GetRight(syntax::ObjectPtr& result) const {
 }
 
 bool FitRectangleDestination::GetTop(syntax::ObjectPtr& result) const {
-    auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
+    auto arr = GetDestinationArray();
     if (arr->GetSize() < 6) return false;
 
     auto obj = arr->GetValue(5);
@@ -153,11 +128,9 @@ bool FitRectangleDestination::GetTop(syntax::ObjectPtr& result) const {
     result = obj;
     return true;
 }
-DestinationBase::Type FitRectangleDestination::GetType() const noexcept { return DestinationBase::Type::FitRectangle; }
-DestinationBase::Type FitBoundingBoxDestination::GetType() const noexcept { return DestinationBase::Type::FitBoundingBox; }
 
 bool FitBoundingBoxHorizontalDestination::GetTop(syntax::ObjectPtr& result) const {
-    auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
+    auto arr = GetDestinationArray();
     if (arr->GetSize() < 3) return false;
 
     auto obj = arr->GetValue(2);
@@ -168,10 +141,9 @@ bool FitBoundingBoxHorizontalDestination::GetTop(syntax::ObjectPtr& result) cons
     result = obj;
     return true;
 }
-DestinationBase::Type FitBoundingBoxHorizontalDestination::GetType() const noexcept { return DestinationBase::Type::FitBoundingBoxHorizontal; }
 
 bool FitBoundingBoxVerticalDestination::GetLeft(syntax::ObjectPtr& result) const {
-    auto arr = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
+    auto arr = GetDestinationArray();
     if (arr->GetSize() < 3) return false;
 
     auto obj = arr->GetValue(2);
@@ -182,7 +154,6 @@ bool FitBoundingBoxVerticalDestination::GetLeft(syntax::ObjectPtr& result) const
     result = obj;
     return true;
 }
-DestinationBase::Type FitBoundingBoxVerticalDestination::GetType() const noexcept { return DestinationBase::Type::FitBoundingBoxVertical; }
 
 NamedDestinations::NamedDestinations(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
 
@@ -359,24 +330,80 @@ DestinationPtr DestinationBase::Create(syntax::DictionaryObjectPtr root) {
         throw GeneralException("Invalid destination dictionary");
     }
 
-    auto destination = root->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::D);
-    return Create(destination);
+    auto destination_array = root->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::D);
+    if (destination_array->GetSize() < 2) {
+        throw GeneralException("Invalid destination array");
+    }
+
+    syntax::ObjectPtr page_number_obj = destination_array->GetValue(0);
+    syntax::ObjectPtr type_obj = destination_array->GetValue(1);
+
+    if (!syntax::ObjectUtils::IsType<syntax::IntegerObjectPtr>(page_number_obj)
+        && !syntax::ObjectUtils::IsType<syntax::IndirectReferenceObjectPtr>(page_number_obj)
+        && !syntax::ObjectUtils::IsType<syntax::NullObjectPtr>(page_number_obj)) {
+        LOG_ERROR_AND_THROW_GENERAL("Invalid page object type in destination: {}",
+            static_cast<int32_t>(page_number_obj->GetObjectType()));
+    }
+
+    if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
+        LOG_ERROR_AND_THROW_GENERAL("Destination type is not name object: {}",
+            static_cast<int32_t>(type_obj->GetObjectType()));
+    }
+
+    syntax::NameObjectPtr type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
+
+    if (type == constant::Name::XYZ) {
+        return make_deferred<XYZDestination>(root);
+    }
+
+    if (type == constant::Name::Fit) {
+        return make_deferred<FitDestination>(root);
+    }
+
+    if (type == constant::Name::FitH) {
+        return make_deferred<FitHorizontalDestination>(root);
+    }
+
+    if (type == constant::Name::FitV) {
+        return make_deferred<FitVerticalDestination>(root);
+    }
+
+    if (type == constant::Name::FitR) {
+        return make_deferred<FitRectangleDestination>(root);
+    }
+
+    if (type == constant::Name::FitB) {
+        return make_deferred<FitBoundingBoxDestination>(root);
+    }
+
+    if (type == constant::Name::FitBH) {
+        return make_deferred<FitBoundingBoxHorizontalDestination>(root);
+    }
+
+    if (type == constant::Name::FitBV) {
+        return make_deferred<FitBoundingBoxVerticalDestination>(root);
+    }
+
+    LOG_ERROR_AND_THROW_GENERAL("Unknown destination type: {}", type->ToString());
 }
 
-syntax::ObjectPtr DestinationBase::GetPage() const {
+syntax::MixedArrayObjectPtr DestinationBase::GetDestinationArray() const {
     if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(_obj)) {
-        auto destination = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
-        return destination->GetValue(0);
+        return syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(_obj);
     }
 
     if (syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(_obj)) {
         auto dict = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(_obj);
-        auto destination = dict->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::D);
-        return destination->GetValue(0);
+        return dict->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::D);
     }
 
     assert(false && "Destination was created but object is neither array nor dictionary");
     throw GeneralException("Destination was created but object is neither array nor dictionary");
+}
+
+syntax::ObjectPtr DestinationBase::GetPage() const {
+    auto destination = GetDestinationArray();
+    return destination->GetValue(0);
 }
 
 bool NamedDestinations::Contains(const syntax::NameObject& name) const {
