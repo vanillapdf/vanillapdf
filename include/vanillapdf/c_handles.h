@@ -158,6 +158,14 @@ extern "C"
 
     DECLARE_OBJECT_HANDLE(NamedDestinations);
     DECLARE_OBJECT_HANDLE(Destination);
+    DECLARE_OBJECT_HANDLE(XYZDestination);
+    DECLARE_OBJECT_HANDLE(FitDestination);
+    DECLARE_OBJECT_HANDLE(FitHorizontalDestination);
+    DECLARE_OBJECT_HANDLE(FitVerticalDestination);
+    DECLARE_OBJECT_HANDLE(FitRectangleDestination);
+    DECLARE_OBJECT_HANDLE(FitBoundingBoxDestination);
+    DECLARE_OBJECT_HANDLE(FitBoundingBoxHorizontalDestination);
+    DECLARE_OBJECT_HANDLE(FitBoundingBoxVerticalDestination);
 
     DECLARE_OBJECT_HANDLE(PageAnnotations);
     DECLARE_OBJECT_HANDLE(Annotation);

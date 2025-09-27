@@ -139,8 +139,8 @@ bool OutlineItem::Destination(OutputDestinationPtr& result) const {
     }
 
     auto dest = _obj->Find(constant::Name::Dest);
-    auto destination = DestinationBase::Create(dest);
-    result = OutputDestinationPtr(destination.release());
+    auto destination = DestinationBase::ResolveDestination(dest);
+    result = OutputDestinationPtr(destination);
     return true;
 }
 
