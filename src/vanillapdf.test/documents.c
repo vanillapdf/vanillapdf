@@ -810,6 +810,7 @@ error_type process_outline_item(OutlineItemHandle* outline, int nested) {
     StringObjectHandle* title = NULL;
     OutlineItemColorHandle* color = NULL;
     OutlineItemFlagsHandle* flags = NULL;
+    DestinationHandle* destination = NULL;
 
     print_spaces(nested);
     print_text("Document outline begin\n");
@@ -852,6 +853,10 @@ error_type process_outline_item(OutlineItemHandle* outline, int nested) {
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetFlags(outline, &flags),
         process_outline_item_flags(flags, nested + 1),
         OutlineItemFlags_Release(flags));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetDestination(outline, &destination),
+        process_destination(destination, nested + 1),
+        Destination_Release(destination));
 
     print_spaces(nested);
     print_text("Document outline end\n");
