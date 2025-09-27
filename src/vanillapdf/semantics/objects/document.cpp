@@ -536,7 +536,7 @@ void Document::AppendStringDestination(StringObjectPtr key, DestinationPtr value
 
     // Create only shallow copies
     auto cloned_destination_obj = m_holder->ShallowCopyObject(value_object);
-    auto cloned_destination = DestinationBase::Create(cloned_destination_obj);
+    auto cloned_destination = DestinationBase::CreateFromObject(cloned_destination_obj);
     auto cloned_destination_page = cloned_destination->GetPage();
 
     FixDestinationPage(cloned_destination_page, other_page, merged_page);
@@ -576,7 +576,7 @@ void Document::AppendNameDestination(NameObjectPtr key, DestinationPtr value, Pa
 
     // Create only shallow copies
     auto cloned_destination_obj = m_holder->ShallowCopyObject(value_object);
-    auto cloned_destination = DestinationBase::Create(cloned_destination_obj);
+    auto cloned_destination = DestinationBase::CreateFromObject(cloned_destination_obj);
     auto cloned_destination_page = cloned_destination->GetPage();
 
     FixDestinationPage(cloned_destination_page, other_page, merged_page);

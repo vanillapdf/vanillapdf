@@ -27,9 +27,9 @@ public:
     explicit DestinationBase(syntax::MixedArrayObjectPtr root) : HighLevelObject(root) {}
     explicit DestinationBase(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
 
-    static DestinationPtr Create(syntax::MixedArrayObjectPtr root);
-    static DestinationPtr Create(syntax::DictionaryObjectPtr root);
-    static DestinationPtr Create(syntax::ObjectPtr root);
+    static DestinationPtr CreateFromArray(syntax::MixedArrayObjectPtr root);
+    static DestinationPtr CreateFromDictionary(syntax::DictionaryObjectPtr root);
+    static DestinationPtr CreateFromObject(syntax::ObjectPtr root);
 
     // Helper method to resolve destination from any object (array, dictionary, string name, or name object)
     // Handles named destination lookup when needed
@@ -42,6 +42,13 @@ public:
 protected:
     // Helper method to get the destination array regardless of storage format (array or dictionary)
     syntax::MixedArrayObjectPtr GetDestinationArray() const;
+
+private:
+    // Helper method to validate destination array and extract type
+    static syntax::NameObjectPtr ValidateAndGetDestinationType(syntax::MixedArrayObjectPtr array);
+
+    // Helper method to get destination class type from destination type name
+    static DestinationBase::Type GetDestinationClassType(syntax::NameObjectPtr type);
 };
 
 class XYZDestination : public DestinationBase {
@@ -157,7 +164,7 @@ public:
 
         DestinationPtr Second() const {
             auto containable = BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current->second;
-            return DestinationBase::Create(containable);
+            return DestinationBase::CreateFromObject(containable);
         }
     };
 

@@ -182,6 +182,30 @@ extern "C"
     */
 
     /**
+    * \brief Create a destination from an array object.
+    *
+    * Array format: [page /Type ...]
+    * The array should contain at least the page reference and destination type.
+    *
+    * \param array_handle Array object containing destination parameters
+    * \param result Pointer to receive the created destination handle
+    * \return VANILLAPDF_ERROR_SUCCESS on success, error otherwise
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Destination_CreateFromArray(ArrayObjectHandle* array_handle, DestinationHandle** result);
+
+    /**
+    * \brief Create a destination from a dictionary object.
+    *
+    * Dictionary format: {/D [page /Type ...]}
+    * The dictionary should contain a /D entry with the destination array.
+    *
+    * \param dict_handle Dictionary object containing /D entry with destination parameters
+    * \param result Pointer to receive the created destination handle
+    * \return VANILLAPDF_ERROR_SUCCESS on success, error otherwise
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Destination_CreateFromDictionary(DictionaryObjectHandle* dict_handle, DestinationHandle** result);
+
+    /**
     * \brief Get the type of destination to determine available parameters.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetDestinationType(DestinationHandle* handle, DestinationType* result);

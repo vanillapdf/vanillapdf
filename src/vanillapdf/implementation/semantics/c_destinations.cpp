@@ -8,6 +8,36 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
+VANILLAPDF_API error_type CALLING_CONVENTION Destination_CreateFromArray(ArrayObjectHandle* array_handle, DestinationHandle** result)
+{
+    MixedArrayObject* array_obj = reinterpret_cast<MixedArrayObject*>(array_handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(array_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto destination = DestinationBase::CreateFromArray(array_obj);
+        auto ptr = destination.AddRefGet();
+        *result = reinterpret_cast<DestinationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Destination_CreateFromDictionary(DictionaryObjectHandle* dict_handle, DestinationHandle** result)
+{
+    DictionaryObject* dict_obj = reinterpret_cast<DictionaryObject*>(dict_handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(dict_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto destination = DestinationBase::CreateFromDictionary(dict_obj);
+        auto ptr = destination.AddRefGet();
+        *result = reinterpret_cast<DestinationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetDestinationType(DestinationHandle* handle, DestinationType* result)
 {
     DestinationBase* obj = reinterpret_cast<DestinationBase*>(handle);
