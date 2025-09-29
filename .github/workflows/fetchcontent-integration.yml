@@ -15,6 +15,7 @@ on:
       - 'cmake/**'
       - 'vcpkg.json'
       - 'examples/fetchcontent-integration/**'
+      - '.github/workflows/fetchcontent-integration.yml'
 
   pull_request:
     branches: [ "main" ]
@@ -23,6 +24,7 @@ on:
       - 'cmake/**'
       - 'vcpkg.json'
       - 'examples/fetchcontent-integration/**'
+      - '.github/workflows/fetchcontent-integration.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
