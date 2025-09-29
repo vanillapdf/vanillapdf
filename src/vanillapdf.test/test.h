@@ -161,7 +161,7 @@ do { \
     error_type __result__ = (fn); \
     if (VANILLAPDF_ERROR_SUCCESS != __result__) \
     { \
-        print_text("Function call \"%s\" has failed with result %u { %s:%d }\n", \
+        printf("Function call \"%s\" has failed with result %u { %s:%d }\n", \
         #fn, __result__, __FILE__, __LINE__); \
         print_last_error(); \
         assert(!"Operation failed"); \
@@ -183,7 +183,7 @@ do { \
     } \
     else \
     { \
-        print_text("Function call \"%s\" has failed with result %u { %s:%d }\n", \
+        printf("Function call \"%s\" has failed with result %u { %s:%d }\n", \
         #eval, __result__, __FILE__, __LINE__); \
         print_last_error(); \
         assert(!"Operation failed"); \

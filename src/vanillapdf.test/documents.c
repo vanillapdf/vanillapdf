@@ -582,15 +582,238 @@ error_type process_named_destinations(NamedDestinationsHandle* obj, int nested) 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+error_type process_xyz_destination(XYZDestinationHandle* obj, int nested) {
+    ObjectHandle* left = NULL;
+    ObjectHandle* top = NULL;
+    ObjectHandle* zoom = NULL;
+
+    print_spaces(nested);
+    print_text("XYZ destination begin\n");
+
+    // Test XYZ-specific parameters (these may return VANILLAPDF_ERROR_OBJECT_MISSING if null)
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(XYZDestination_GetLeft(obj, &left),
+        process_object(left, nested + 1),
+        Object_Release(left));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(XYZDestination_GetTop(obj, &top),
+        process_object(top, nested + 1),
+        Object_Release(top));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(XYZDestination_GetZoom(obj, &zoom),
+        process_object(zoom, nested + 1),
+        Object_Release(zoom));
+
+    print_spaces(nested);
+    print_text("XYZ destination end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_fit_destination(FitDestinationHandle* obj, int nested) {
+    print_spaces(nested);
+    print_text("Fit destination begin\n");
+
+    print_spaces(nested + 1);
+    print_text("Fit destination processed\n");
+
+    print_spaces(nested);
+    print_text("Fit destination end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_fit_horizontal_destination(FitHorizontalDestinationHandle* obj, int nested) {
+    ObjectHandle* top = NULL;
+
+    print_spaces(nested);
+    print_text("FitHorizontal destination begin\n");
+
+    // Test FitH-specific parameters
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FitHorizontalDestination_GetTop(obj, &top),
+        process_object(top, nested + 1),
+        Object_Release(top));
+
+    print_spaces(nested);
+    print_text("FitHorizontal destination end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_fit_vertical_destination(FitVerticalDestinationHandle* obj, int nested) {
+    ObjectHandle* left = NULL;
+
+    print_spaces(nested);
+    print_text("FitVertical destination begin\n");
+
+    // Test FitV-specific parameters
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FitVerticalDestination_GetLeft(obj, &left),
+        process_object(left, nested + 1),
+        Object_Release(left));
+
+    print_spaces(nested);
+    print_text("FitVertical destination end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_fit_rectangle_destination(FitRectangleDestinationHandle* obj, int nested) {
+    ObjectHandle* left = NULL;
+    ObjectHandle* bottom = NULL;
+    ObjectHandle* right = NULL;
+    ObjectHandle* top = NULL;
+
+    print_spaces(nested);
+    print_text("FitRectangle destination begin\n");
+
+    // Test FitR-specific parameters
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FitRectangleDestination_GetLeft(obj, &left),
+        process_object(left, nested + 1),
+        Object_Release(left));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FitRectangleDestination_GetBottom(obj, &bottom),
+        process_object(bottom, nested + 1),
+        Object_Release(bottom));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FitRectangleDestination_GetRight(obj, &right),
+        process_object(right, nested + 1),
+        Object_Release(right));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FitRectangleDestination_GetTop(obj, &top),
+        process_object(top, nested + 1),
+        Object_Release(top));
+
+    print_spaces(nested);
+    print_text("FitRectangle destination end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_fit_bounding_box_destination(FitBoundingBoxDestinationHandle* obj, int nested) {
+    print_spaces(nested);
+    print_text("FitBoundingBox destination begin\n");
+
+    print_spaces(nested + 1);
+    print_text("FitBoundingBox destination processed\n");
+
+    print_spaces(nested);
+    print_text("FitBoundingBox destination end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_fit_bounding_box_horizontal_destination(FitBoundingBoxHorizontalDestinationHandle* obj, int nested) {
+    ObjectHandle* top = NULL;
+
+    print_spaces(nested);
+    print_text("FitBoundingBoxHorizontal destination begin\n");
+
+    // Test FitBH-specific parameters
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FitBoundingBoxHorizontalDestination_GetTop(obj, &top),
+        process_object(top, nested + 1),
+        Object_Release(top));
+
+    print_spaces(nested);
+    print_text("FitBoundingBoxHorizontal destination end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_fit_bounding_box_vertical_destination(FitBoundingBoxVerticalDestinationHandle* obj, int nested) {
+    ObjectHandle* left = NULL;
+
+    print_spaces(nested);
+    print_text("FitBoundingBoxVertical destination begin\n");
+
+    // Test FitBV-specific parameters
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FitBoundingBoxVerticalDestination_GetLeft(obj, &left),
+        process_object(left, nested + 1),
+        Object_Release(left));
+
+    print_spaces(nested);
+    print_text("FitBoundingBoxVertical destination end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
 error_type process_destination(DestinationHandle* obj, int nested) {
     ObjectHandle* page = NULL;
+    DestinationType type;
+    XYZDestinationHandle* xyz_dest = NULL;
+    FitDestinationHandle* fit_dest = NULL;
+    FitHorizontalDestinationHandle* fit_h_dest = NULL;
+    FitVerticalDestinationHandle* fit_v_dest = NULL;
+    FitRectangleDestinationHandle* fit_r_dest = NULL;
+    FitBoundingBoxDestinationHandle* fit_b_dest = NULL;
+    FitBoundingBoxHorizontalDestinationHandle* fit_bh_dest = NULL;
+    FitBoundingBoxVerticalDestinationHandle* fit_bv_dest = NULL;
 
     print_spaces(nested);
     print_text("Destination begin\n");
 
+    RETURN_ERROR_IF_NOT_SUCCESS(Destination_GetDestinationType(obj, &type));
+
+    print_spaces(nested + 1);
+    print_text("Type: %d\n", (int)type);
+
     RETURN_ERROR_IF_NOT_SUCCESS(Destination_GetPageNumber(obj, &page));
     RETURN_ERROR_IF_NOT_SUCCESS(process_object(page, nested + 1));
     RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(page));
+
+    // Test type-specific conversions and functionality
+    switch (type) {
+        case DestinationType_XYZ:
+            RETURN_ERROR_IF_NOT_SUCCESS(XYZDestination_FromDestination(obj, &xyz_dest));
+            RETURN_ERROR_IF_NOT_SUCCESS(process_xyz_destination(xyz_dest, nested + 1));
+            RETURN_ERROR_IF_NOT_SUCCESS(XYZDestination_Release(xyz_dest));
+            break;
+
+        case DestinationType_Fit:
+            RETURN_ERROR_IF_NOT_SUCCESS(FitDestination_FromDestination(obj, &fit_dest));
+            RETURN_ERROR_IF_NOT_SUCCESS(process_fit_destination(fit_dest, nested + 1));
+            RETURN_ERROR_IF_NOT_SUCCESS(FitDestination_Release(fit_dest));
+            break;
+
+        case DestinationType_FitHorizontal:
+            RETURN_ERROR_IF_NOT_SUCCESS(FitHorizontalDestination_FromDestination(obj, &fit_h_dest));
+            RETURN_ERROR_IF_NOT_SUCCESS(process_fit_horizontal_destination(fit_h_dest, nested + 1));
+            RETURN_ERROR_IF_NOT_SUCCESS(FitHorizontalDestination_Release(fit_h_dest));
+            break;
+
+        case DestinationType_FitVertical:
+            RETURN_ERROR_IF_NOT_SUCCESS(FitVerticalDestination_FromDestination(obj, &fit_v_dest));
+            RETURN_ERROR_IF_NOT_SUCCESS(process_fit_vertical_destination(fit_v_dest, nested + 1));
+            RETURN_ERROR_IF_NOT_SUCCESS(FitVerticalDestination_Release(fit_v_dest));
+            break;
+
+        case DestinationType_FitRectangle:
+            RETURN_ERROR_IF_NOT_SUCCESS(FitRectangleDestination_FromDestination(obj, &fit_r_dest));
+            RETURN_ERROR_IF_NOT_SUCCESS(process_fit_rectangle_destination(fit_r_dest, nested + 1));
+            RETURN_ERROR_IF_NOT_SUCCESS(FitRectangleDestination_Release(fit_r_dest));
+            break;
+
+        case DestinationType_FitBoundingBox:
+            RETURN_ERROR_IF_NOT_SUCCESS(FitBoundingBoxDestination_FromDestination(obj, &fit_b_dest));
+            RETURN_ERROR_IF_NOT_SUCCESS(process_fit_bounding_box_destination(fit_b_dest, nested + 1));
+            RETURN_ERROR_IF_NOT_SUCCESS(FitBoundingBoxDestination_Release(fit_b_dest));
+            break;
+
+        case DestinationType_FitBoundingBoxHorizontal:
+            RETURN_ERROR_IF_NOT_SUCCESS(FitBoundingBoxHorizontalDestination_FromDestination(obj, &fit_bh_dest));
+            RETURN_ERROR_IF_NOT_SUCCESS(process_fit_bounding_box_horizontal_destination(fit_bh_dest, nested + 1));
+            RETURN_ERROR_IF_NOT_SUCCESS(FitBoundingBoxHorizontalDestination_Release(fit_bh_dest));
+            break;
+
+        case DestinationType_FitBoundingBoxVertical:
+            RETURN_ERROR_IF_NOT_SUCCESS(FitBoundingBoxVerticalDestination_FromDestination(obj, &fit_bv_dest));
+            RETURN_ERROR_IF_NOT_SUCCESS(process_fit_bounding_box_vertical_destination(fit_bv_dest, nested + 1));
+            RETURN_ERROR_IF_NOT_SUCCESS(FitBoundingBoxVerticalDestination_Release(fit_bv_dest));
+            break;
+
+        default:
+            print_spaces(nested + 1);
+            print_text("ERROR: Unknown destination type: %d\n", (int)type);
+            return VANILLAPDF_TEST_ERROR_FAILURE;
+    }
 
     print_spaces(nested);
     print_text("Destination end\n");
@@ -810,6 +1033,7 @@ error_type process_outline_item(OutlineItemHandle* outline, int nested) {
     StringObjectHandle* title = NULL;
     OutlineItemColorHandle* color = NULL;
     OutlineItemFlagsHandle* flags = NULL;
+    DestinationHandle* destination = NULL;
 
     print_spaces(nested);
     print_text("Document outline begin\n");
@@ -852,6 +1076,10 @@ error_type process_outline_item(OutlineItemHandle* outline, int nested) {
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetFlags(outline, &flags),
         process_outline_item_flags(flags, nested + 1),
         OutlineItemFlags_Release(flags));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(OutlineItem_GetDestination(outline, &destination),
+        process_destination(destination, nested + 1),
+        Destination_Release(destination));
 
     print_spaces(nested);
     print_text("Document outline end\n");

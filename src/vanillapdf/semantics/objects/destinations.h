@@ -24,74 +24,116 @@ public:
     };
 
 public:
-    explicit DestinationBase(syntax::MixedArrayObjectPtr root);
-    explicit DestinationBase(syntax::DictionaryObjectPtr root);
+    explicit DestinationBase(syntax::MixedArrayObjectPtr root) : HighLevelObject(root) {}
+    explicit DestinationBase(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
 
-    static std::unique_ptr<DestinationBase> Create(syntax::MixedArrayObjectPtr root);
-    static std::unique_ptr<DestinationBase> Create(syntax::DictionaryObjectPtr root);
-    static std::unique_ptr<DestinationBase> Create(syntax::ObjectPtr root);
+    static DestinationPtr CreateFromArray(syntax::MixedArrayObjectPtr root);
+    static DestinationPtr CreateFromDictionary(syntax::DictionaryObjectPtr root);
+    static DestinationPtr CreateFromObject(syntax::ObjectPtr root);
+
+    // Helper method to resolve destination from any object (array, dictionary, string name, or name object)
+    // Handles named destination lookup when needed
+    static DestinationPtr ResolveDestination(syntax::ObjectPtr dest_obj);
 
     syntax::ObjectPtr GetPage() const;
-    bool HasAttribute(const syntax::NameObject& name) const;
-    syntax::ObjectPtr GetAttribute(const syntax::NameObject& name) const;
 
     virtual Type GetType() const noexcept = 0;
+
+protected:
+    // Helper method to get the destination array regardless of storage format (array or dictionary)
+    syntax::MixedArrayObjectPtr GetDestinationArray() const;
+
+private:
+    // Helper method to validate destination array and extract type
+    static syntax::NameObjectPtr ValidateAndGetDestinationType(syntax::MixedArrayObjectPtr array);
+
+    // Helper method to get destination class type from destination type name
+    static DestinationBase::Type GetDestinationClassType(syntax::NameObjectPtr type);
 };
 
 class XYZDestination : public DestinationBase {
 public:
-    explicit XYZDestination(syntax::MixedArrayObjectPtr root);
-    explicit XYZDestination(syntax::DictionaryObjectPtr root);
-    virtual Type GetType() const noexcept override;
+    explicit XYZDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
+    explicit XYZDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
+    virtual Type GetType() const noexcept override { return DestinationBase::Type::XYZ; }
+
+    // XYZ destination parameters: [page left top zoom]
+    // Returns false if parameter is null (meaning no change)
+    bool GetLeft(syntax::ObjectPtr& result) const;
+    bool GetTop(syntax::ObjectPtr& result) const;
+    bool GetZoom(syntax::ObjectPtr& result) const;
 };
 
 class FitDestination : public DestinationBase {
 public:
-    explicit FitDestination(syntax::MixedArrayObjectPtr root);
-    explicit FitDestination(syntax::DictionaryObjectPtr root);
-    virtual Type GetType() const noexcept override;
+    explicit FitDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
+    explicit FitDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
+    virtual Type GetType() const noexcept override { return DestinationBase::Type::Fit; }
 };
 
 class FitHorizontalDestination : public DestinationBase {
 public:
-    explicit FitHorizontalDestination(syntax::MixedArrayObjectPtr root);
-    explicit FitHorizontalDestination(syntax::DictionaryObjectPtr root);
-    virtual Type GetType() const noexcept override;
+    explicit FitHorizontalDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
+    explicit FitHorizontalDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
+    virtual Type GetType() const noexcept override { return DestinationBase::Type::FitHorizontal; }
+
+    // FitH destination parameters: [page /FitH top]
+    // Returns false if parameter is null (meaning no change)
+    bool GetTop(syntax::ObjectPtr& result) const;
 };
 
 class FitVerticalDestination : public DestinationBase {
 public:
-    explicit FitVerticalDestination(syntax::MixedArrayObjectPtr root);
-    explicit FitVerticalDestination(syntax::DictionaryObjectPtr root);
-    virtual Type GetType() const noexcept override;
+    explicit FitVerticalDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
+    explicit FitVerticalDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
+    virtual Type GetType() const noexcept override { return DestinationBase::Type::FitVertical; }
+
+    // FitV destination parameters: [page /FitV left]
+    // Returns false if parameter is null (meaning no change)
+    bool GetLeft(syntax::ObjectPtr& result) const;
 };
 
 class FitRectangleDestination : public DestinationBase {
 public:
-    explicit FitRectangleDestination(syntax::MixedArrayObjectPtr root);
-    explicit FitRectangleDestination(syntax::DictionaryObjectPtr root);
-    virtual Type GetType() const noexcept override;
+    explicit FitRectangleDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
+    explicit FitRectangleDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
+    virtual Type GetType() const noexcept override { return DestinationBase::Type::FitRectangle; }
+
+    // FitR destination parameters: [page /FitR left bottom right top]
+    // Returns false if parameter is null (meaning no change)
+    bool GetLeft(syntax::ObjectPtr& result) const;
+    bool GetBottom(syntax::ObjectPtr& result) const;
+    bool GetRight(syntax::ObjectPtr& result) const;
+    bool GetTop(syntax::ObjectPtr& result) const;
 };
 
 class FitBoundingBoxDestination : public DestinationBase {
 public:
-    explicit FitBoundingBoxDestination(syntax::MixedArrayObjectPtr root);
-    explicit FitBoundingBoxDestination(syntax::DictionaryObjectPtr root);
-    virtual Type GetType() const noexcept override;
+    explicit FitBoundingBoxDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
+    explicit FitBoundingBoxDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
+    virtual Type GetType() const noexcept override { return DestinationBase::Type::FitBoundingBox; }
 };
 
 class FitBoundingBoxHorizontalDestination : public DestinationBase {
 public:
-    explicit FitBoundingBoxHorizontalDestination(syntax::MixedArrayObjectPtr root);
-    explicit FitBoundingBoxHorizontalDestination(syntax::DictionaryObjectPtr root);
-    virtual Type GetType() const noexcept override;
+    explicit FitBoundingBoxHorizontalDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
+    explicit FitBoundingBoxHorizontalDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
+    virtual Type GetType() const noexcept override { return DestinationBase::Type::FitBoundingBoxHorizontal; }
+
+    // FitBH destination parameters: [page /FitBH top]
+    // Returns false if parameter is null (meaning no change)
+    bool GetTop(syntax::ObjectPtr& result) const;
 };
 
 class FitBoundingBoxVerticalDestination : public DestinationBase {
 public:
-    explicit FitBoundingBoxVerticalDestination(syntax::MixedArrayObjectPtr root);
-    explicit FitBoundingBoxVerticalDestination(syntax::DictionaryObjectPtr root);
-    virtual Type GetType() const noexcept override;
+    explicit FitBoundingBoxVerticalDestination(syntax::MixedArrayObjectPtr root) : DestinationBase(root) {}
+    explicit FitBoundingBoxVerticalDestination(syntax::DictionaryObjectPtr root) : DestinationBase(root) {}
+    virtual Type GetType() const noexcept override { return DestinationBase::Type::FitBoundingBoxVertical; }
+
+    // FitBV destination parameters: [page /FitBV left]
+    // Returns false if parameter is null (meaning no change)
+    bool GetLeft(syntax::ObjectPtr& result) const;
 };
 
 class NamedDestinations : public HighLevelObject<syntax::DictionaryObjectPtr> {
@@ -122,8 +164,7 @@ public:
 
         DestinationPtr Second() const {
             auto containable = BaseIterator<syntax::DictionaryObjectPtr::const_iterator>::m_current->second;
-            auto new_destination = DestinationBase::Create(containable);
-            return DestinationPtr(new_destination.release());
+            return DestinationBase::CreateFromObject(containable);
         }
     };
 

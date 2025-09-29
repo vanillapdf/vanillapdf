@@ -19,6 +19,28 @@ VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_Create(IntegerObjectH
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_CreateFromIntegerValue(bigint_type value, IntegerObjectHandle** result) {
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto object = make_deferred<IntegerObject>(value);
+        auto ptr = object.AddRefGet();
+        *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_CreateFromUnsignedIntegerValue(biguint_type value, IntegerObjectHandle** result) {
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto object = make_deferred<IntegerObject>(value);
+        auto ptr = object.AddRefGet();
+        *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_GetIntegerValue(IntegerObjectHandle* handle, bigint_type* result)
 {
     IntegerObject* obj = reinterpret_cast<IntegerObject*>(handle);

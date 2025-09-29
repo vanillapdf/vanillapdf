@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "semantics/objects/outline.h"
+#include "semantics/objects/destinations.h"
 
 #include "semantics/utils/semantic_exceptions.h"
 
@@ -131,6 +132,17 @@ bool Outline::Count(syntax::IntegerObjectPtr& result) const {
 syntax::RealObjectPtr OutlineItemColor::Red(void) const { return _obj->GetValue(0); }
 syntax::RealObjectPtr OutlineItemColor::Green(void) const { return _obj->GetValue(1); }
 syntax::RealObjectPtr OutlineItemColor::Blue(void) const { return _obj->GetValue(2); }
+
+bool OutlineItem::Destination(OutputDestinationPtr& result) const {
+    if (!_obj->Contains(constant::Name::Dest)) {
+        return false;
+    }
+
+    auto dest = _obj->Find(constant::Name::Dest);
+    auto destination = DestinationBase::ResolveDestination(dest);
+    result = OutputDestinationPtr(destination);
+    return true;
+}
 
 bool OutlineItemFlags::Italic(void) const { return (_obj->GetIntegerValue() & 0x01) != 0; }
 bool OutlineItemFlags::Bold(void) const { return (_obj->GetIntegerValue() & 0x02) != 0; }

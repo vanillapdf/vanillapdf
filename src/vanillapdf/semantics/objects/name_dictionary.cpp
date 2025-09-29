@@ -22,9 +22,7 @@ bool NameDictionary::Dests(OutputNameTreePtr<DestinationPtr>& result) const {
 }
 
 DestinationPtr NameDictionary::DestinationConversionFunction(const syntax::ContainableObjectPtr& obj) {
-    auto destination = DestinationBase::Create(obj);
-    auto raw_ptr = destination.release();
-    return DestinationPtr(raw_ptr);
+    return DestinationBase::CreateFromObject(obj);
 }
 
 } // semantics

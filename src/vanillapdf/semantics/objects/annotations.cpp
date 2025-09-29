@@ -190,94 +190,22 @@ bool LinkAnnotation::Destination(OutputDestinationPtr& result) const {
         return false;
     }
 
-    auto dest_obj = _obj->Find(constant::Name::Dest);
-    if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(dest_obj)) {
-        auto array_obj = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(dest_obj);
-        auto destination = DestinationBase::Create(array_obj);
-        result = destination.release();
+    // Update 27.9.2025:
+    // In the file issue3188.pdf there is a link annotation with destination LI0.
+    // The document catalog does not contain the entry Dests or Names, so we are not able to resolve this destination.
+    // Foxit reader is able to read the document and in the white area it shows clickable cursor,
+    // meaning the annotation is there. When this is clicked nothing happens.
+
+    try {
+        auto dest_obj = _obj->Find(constant::Name::Dest);
+        auto destination = DestinationBase::ResolveDestination(dest_obj);
+        result = destination;
         return true;
     }
-
-    if (syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(dest_obj)) {
-        auto dict_obj = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(dest_obj);
-        auto destination = DestinationBase::Create(dict_obj);
-        result = destination.release();
-        return true;
+    catch (ExceptionBase& ex) {
+        spdlog::warn("Could not resolve link annotation destination: {}", ex.what());
+        return false;
     }
-
-    if (syntax::ObjectUtils::IsType<syntax::StringObjectPtr>(dest_obj)) {
-        auto document_ref = SemanticUtils::GetMappedDocument(_obj->GetFile());
-
-        assert(!document_ref.IsEmpty() && "Document reference was not set");
-        if (!document_ref.IsActive()) {
-            return false;
-        }
-
-        DocumentPtr document = document_ref.GetReference();
-
-        OutputCatalogPtr catalog_ptr;
-        bool has_catalog = document->GetDocumentCatalog(catalog_ptr);
-        if (!has_catalog) {
-            return false;
-        }
-
-        OutputNameDictionaryPtr name_dictionary;
-        bool has_dictionary = catalog_ptr->Names(name_dictionary);
-        if (!has_dictionary) {
-            return false;
-        }
-
-        OutputNameTreePtr<DestinationPtr> destinations;
-        bool contains = name_dictionary->Dests(destinations);
-        if (!contains) {
-            return false;
-        }
-
-        auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(dest_obj);
-
-        assert(destinations->Contains(destination_name) && "Referenced destination does not exist");
-        if (!destinations->Contains(destination_name)) {
-            return false;
-        }
-
-        result = destinations->Find(destination_name);
-        return true;
-    }
-
-    if (syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(dest_obj)) {
-        auto document_ref = SemanticUtils::GetMappedDocument(_obj->GetFile());
-
-        assert(!document_ref.IsEmpty() && "Document reference was not set");
-        if (!document_ref.IsActive()) {
-            return false;
-        }
-
-        DocumentPtr document = document_ref.GetReference();
-
-        OutputCatalogPtr catalog;
-        bool has_catalog = document->GetDocumentCatalog(catalog);
-        if (!has_catalog) {
-            return false;
-        }
-
-        OutputNamedDestinationsPtr destinations;
-        bool has_destinations = catalog->Destinations(destinations);
-        if (!has_destinations) {
-            return false;
-        }
-
-        auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(dest_obj);
-
-        assert(destinations->Contains(destination_name) && "Referenced destination does not exist");
-        if (!destinations->Contains(destination_name)) {
-            return false;
-        }
-
-        result = destinations->Find(destination_name);
-        return true;
-    }
-
-    throw GeneralException("Unknown link destination type");
 }
 
 } // semantics

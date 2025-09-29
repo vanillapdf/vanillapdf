@@ -33,6 +33,16 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_Create(IntegerObjectHandle** result);
 
     /**
+    * \brief Creates a new IntegerObject instance with signed integer value
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_CreateFromIntegerValue(bigint_type value, IntegerObjectHandle** result);
+
+    /**
+    * \brief Creates a new IntegerObject instance with unsigned integer value
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_CreateFromUnsignedIntegerValue(biguint_type value, IntegerObjectHandle** result);
+
+    /**
     * \brief Return objects contained integer value
     */
     VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_GetIntegerValue(IntegerObjectHandle* handle, bigint_type* result);
