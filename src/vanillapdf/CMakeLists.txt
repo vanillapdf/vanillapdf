@@ -28,6 +28,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_output_stream.cpp
     implementation/utils/c_memory_buffer_output_stream.cpp
     implementation/utils/c_pkcs12_key.cpp
+    implementation/utils/c_signature_verification.cpp
     implementation/utils/c_signing_key.cpp
     implementation/utils/c_unknown_interface.cpp
 )
@@ -130,6 +131,8 @@ set(VANILLAPDF_SEMANTICS_SOURCES
     semantics/utils/document_signer.cpp
     semantics/utils/document_signature_settings.cpp
     semantics/utils/semantic_utils.cpp
+    semantics/utils/signature_verification_options.cpp
+    semantics/utils/signature_verification_result.cpp
 )
 
 set(VANILLAPDF_SYNTAX_SOURCES
@@ -190,7 +193,9 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/modify_observer_interface.cpp
     utils/pkcs12_key.cpp
     utils/resource.cpp
+    utils/signature_verifier.cpp
     utils/time_utils.cpp
+    utils/trusted_certificate_store.cpp
     utils/unknown_interface.cpp
     utils/windows_utils.cpp
     utils/zlib_wrapper.cpp
@@ -254,6 +259,8 @@ set(VANILLAPDF_SEMANTICS_HEADERS
     semantics/utils/semantic_exceptions.h
     semantics/utils/semantic_utils.h
     semantics/utils/semantics_fwd.h
+    semantics/utils/signature_verification_options.h
+    semantics/utils/signature_verification_result.h
 )
 
 set(VANILLAPDF_SYNTAX_HEADERS
@@ -339,9 +346,12 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/pdf_version.h
     utils/pkcs12_key.h
     utils/resource.h
+    utils/signature_verifier.h
+    utils/signature_verifier_interface.h
     utils/stack_allocator.h
     utils/template_utils.h
     utils/time_utils.h
+    utils/trusted_certificate_store.h
     utils/unknown_interface.h
     utils/util.h
     utils/utils_fwd.h
