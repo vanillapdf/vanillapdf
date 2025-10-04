@@ -131,8 +131,6 @@ set(VANILLAPDF_SEMANTICS_SOURCES
     semantics/utils/document_signer.cpp
     semantics/utils/document_signature_settings.cpp
     semantics/utils/semantic_utils.cpp
-    semantics/utils/signature_verification_options.cpp
-    semantics/utils/signature_verification_result.cpp
 )
 
 set(VANILLAPDF_SYNTAX_SOURCES
@@ -193,6 +191,8 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/modify_observer_interface.cpp
     utils/pkcs12_key.cpp
     utils/resource.cpp
+    utils/signature_verification_options.cpp
+    utils/signature_verification_result.cpp
     utils/signature_verifier.cpp
     utils/time_utils.cpp
     utils/trusted_certificate_store.cpp
@@ -259,8 +259,6 @@ set(VANILLAPDF_SEMANTICS_HEADERS
     semantics/utils/semantic_exceptions.h
     semantics/utils/semantic_utils.h
     semantics/utils/semantics_fwd.h
-    semantics/utils/signature_verification_options.h
-    semantics/utils/signature_verification_result.h
 )
 
 set(VANILLAPDF_SYNTAX_HEADERS
@@ -346,6 +344,8 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/pdf_version.h
     utils/pkcs12_key.h
     utils/resource.h
+    utils/signature_verification_options.h
+    utils/signature_verification_result.h
     utils/signature_verifier.h
     utils/signature_verifier_interface.h
     utils/stack_allocator.h

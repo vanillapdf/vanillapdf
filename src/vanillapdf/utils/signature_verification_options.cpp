@@ -1,9 +1,8 @@
 #include "precompiled.h"
 
-#include "semantics/utils/signature_verification_options.h"
+#include "utils/signature_verification_options.h"
 
 namespace vanillapdf {
-namespace semantics {
 
 SignatureVerificationOptions::SignatureVerificationOptions()
     : m_flags(VerificationFlags::None) {
@@ -29,9 +28,4 @@ VerificationFlags SignatureVerificationOptions::GetFlags() const {
     return m_flags;
 }
 
-DatePtr SignatureVerificationOptions::GetVerificationTime() const {
-    return m_verification_time;
-}
-
-} // semantics
 } // vanillapdf

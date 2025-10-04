@@ -1,9 +1,8 @@
 #include "precompiled.h"
 
-#include "semantics/utils/signature_verification_result.h"
+#include "utils/signature_verification_result.h"
 
 namespace vanillapdf {
-namespace semantics {
 
 SignatureVerificationResult::SignatureVerificationResult()
     : m_status(SignatureVerificationStatus::Unknown)
@@ -52,18 +51,6 @@ BufferPtr SignatureVerificationResult::GetCertificateChainAt(types::size_type in
     return m_certificate_chain[index];
 }
 
-DatePtr SignatureVerificationResult::GetSigningTime() const {
-    return m_signing_time;
-}
-
-DatePtr SignatureVerificationResult::GetCertificateNotBefore() const {
-    return m_cert_not_before;
-}
-
-DatePtr SignatureVerificationResult::GetCertificateNotAfter() const {
-    return m_cert_not_after;
-}
-
 std::string SignatureVerificationResult::GetSignerCommonName() const {
     return m_signer_common_name;
 }
@@ -102,21 +89,8 @@ void SignatureVerificationResult::AddCertificateToChain(BufferPtr cert) {
     m_certificate_chain.push_back(cert);
 }
 
-void SignatureVerificationResult::SetSigningTime(DatePtr time) {
-    m_signing_time = time;
-}
-
-void SignatureVerificationResult::SetCertificateNotBefore(DatePtr date) {
-    m_cert_not_before = date;
-}
-
-void SignatureVerificationResult::SetCertificateNotAfter(DatePtr date) {
-    m_cert_not_after = date;
-}
-
 void SignatureVerificationResult::SetSignerCommonName(const std::string& name) {
     m_signer_common_name = name;
 }
 
-} // semantics
 } // vanillapdf

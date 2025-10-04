@@ -44,6 +44,10 @@ class ISignatureVerifier; using ISignatureVerifierPtr = Deferred<ISignatureVerif
 class PKCS12Key; using PKCS12KeyPtr = Deferred<PKCS12Key>;
 class TrustedCertificateStore; using TrustedCertificateStorePtr = Deferred<TrustedCertificateStore>;
 
+// Signature verification
+class SignatureVerificationOptions; using SignatureVerificationOptionsPtr = Deferred<SignatureVerificationOptions>;
+class SignatureVerificationResult; using SignatureVerificationResultPtr = Deferred<SignatureVerificationResult>;
+
 // Streams
 class IInputStream; using IInputStreamPtr = Deferred<IInputStream>;
 class InputStream; using InputStreamPtr = Deferred<InputStream>;

@@ -5,11 +5,10 @@
 
 #include "utils/trusted_certificate_store.h"
 #include "utils/signature_verifier.h"
-#include "semantics/utils/signature_verification_options.h"
-#include "semantics/utils/signature_verification_result.h"
+#include "utils/signature_verification_options.h"
+#include "utils/signature_verification_result.h"
 
 using namespace vanillapdf;
-using namespace vanillapdf::semantics;
 
 // TrustedCertificateStore
 

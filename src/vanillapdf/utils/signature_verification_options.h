@@ -1,13 +1,11 @@
 #ifndef _SIGNATURE_VERIFICATION_OPTIONS_H
 #define _SIGNATURE_VERIFICATION_OPTIONS_H
 
-#include "semantics/utils/semantics_fwd.h"
+#include "utils/utils_fwd.h"
 #include "utils/unknown_interface.h"
 #include "utils/trusted_certificate_store.h"
-#include "semantics/objects/date.h"
 
 namespace vanillapdf {
-namespace semantics {
 
 /**
 * \enum VerificationFlags
@@ -61,14 +59,6 @@ public:
     void SetFlags(VerificationFlags flags);
 
     /**
-    * \brief Set reference time for verification
-    * \param time Time to use for verification (nullptr = current time)
-    *
-    * Useful for checking if signature was valid at a specific point in time.
-    */
-    void SetVerificationTime(DatePtr time);
-
-    /**
     * \brief Get trusted certificate store
     * \return Certificate store or nullptr if not set (will use system defaults)
     */
@@ -80,19 +70,11 @@ public:
     */
     VerificationFlags GetFlags() const;
 
-    /**
-    * \brief Get verification time
-    * \return Verification time or nullptr if using current time
-    */
-    DatePtr GetVerificationTime() const;
-
 private:
     TrustedCertificateStorePtr m_trusted_store;
     VerificationFlags m_flags;
-    DatePtr m_verification_time;
 };
 
-} // semantics
 } // vanillapdf
 
 #endif /* _SIGNATURE_VERIFICATION_OPTIONS_H */
