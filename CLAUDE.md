@@ -29,6 +29,12 @@ message(STATUS "Vanilla.PDF dependency management enabled")
 - Create a new branch for every change, no matter how small
 - Always create a PR for review before merging
 
+**CRITICAL: Branch Targets**
+- **Default branch**: `main` - ALL pull requests should target this branch
+- **Historical reference**: `master` - This is a legacy branch for historical reference ONLY
+- ⚠️ **NEVER create PRs against `master`** - it is not the active development branch
+- When using `gh pr create`, always specify `--base main` or omit the base flag (defaults to main)
+
 ## 🤖 Automation and Bot Information
 
 ### vanillapdf-bot
