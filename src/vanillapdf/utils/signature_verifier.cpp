@@ -57,24 +57,32 @@ void ExtractCertificateChain(PKCS7* p7, SignatureVerificationResultPtr& result) 
         }
 
         if (i == 0) {
+
+            result->SetSignerCertificate(cert_buf);
+
             // Extract common name from signing certificate
             X509_NAME* subject = X509_get_subject_name(cert);
             if (!subject) {
-                spdlog::warn("Failed to get subject name from signing certificate");
-            } else {
-                char cn[256] = {0};
-                int cn_len = X509_NAME_get_text_by_NID(subject, NID_commonName, cn, sizeof(cn));
-                if (cn_len > 0) {
-                    result->SetSignerCommonName(std::string(cn));
-                } else {
-                    spdlog::warn("Common name not found in signing certificate");
-                }
+                spdlog::warn("Common name not found in signing certificate");
+                continue;
             }
+
+            // First get the required buffer size
+            int cn_len = X509_NAME_get_text_by_NID(subject, NID_commonName, nullptr, 0);
+            if (cn_len < 0) {
+                spdlog::warn("Failed to get subject name from signing certificate");
+                continue;
+            }
+
+            // Allocate buffer with exact size needed (+1 for null terminator)
+            auto cn_buffer = make_deferred_container<Buffer>(cn_len + 1);
+            X509_NAME_get_text_by_NID(subject, NID_commonName, cn_buffer->data(), cn_len + 1);
+
+            // Convert to BufferPtr (UTF-8 encoded)
+            result->SetSignerCommonName(cn_buffer);
 
             // Note: Validity dates (not_before, not_after) will be exposed in a future phase
             // For now, we only extract the common name and certificate data
-
-            result->SetSignerCertificate(cert_buf);
         }
 
         result->AddCertificateToChain(cert_buf);
@@ -86,6 +94,7 @@ bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationR
     X509_STORE_CTX* ctx = X509_STORE_CTX_new();
     if (!ctx) {
         spdlog::error("Failed to create X509_STORE_CTX: {}", MiscUtils::GetLastOpensslError());
+
         result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
         result->SetMessage("Failed to initialize certificate verification context");
         result->SetCertificateTrusted(false);
@@ -98,6 +107,7 @@ bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationR
     STACK_OF(X509)* signers = PKCS7_get0_signers(p7, nullptr, 0);
     if (!signers) {
         spdlog::error("Failed to get signers from PKCS7: {}", MiscUtils::GetLastOpensslError());
+
         result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
         result->SetMessage("Failed to extract signer certificates from signature");
         result->SetCertificateTrusted(false);
@@ -108,6 +118,7 @@ bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationR
 
     if (sk_X509_num(signers) == 0) {
         spdlog::error("No signer certificates found in PKCS7");
+
         result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
         result->SetMessage("No signer certificates found in signature");
         result->SetCertificateTrusted(false);
@@ -117,6 +128,7 @@ bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationR
     X509* signer_cert = sk_X509_value(signers, 0);
     if (!signer_cert) {
         spdlog::error("Signer certificate is null");
+
         result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
         result->SetMessage("Invalid signer certificate");
         result->SetCertificateTrusted(false);
@@ -129,6 +141,7 @@ bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationR
     // Initialize verification context
     if (!X509_STORE_CTX_init(ctx, store, signer_cert, cert_chain)) {
         spdlog::error("Failed to initialize X509_STORE_CTX: {}", MiscUtils::GetLastOpensslError());
+
         result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
         result->SetMessage("Failed to initialize certificate verification context");
         result->SetCertificateTrusted(false);
@@ -202,8 +215,9 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     if (!p7) {
         std::string error = MiscUtils::GetLastOpensslError();
         spdlog::error("Failed to parse PKCS#7 signature: {}", error);
+
         result->SetStatus(SignatureVerificationStatus::Invalid);
-        result->SetMessage("Failed to parse PKCS#7 signature: " + error);
+        result->SetMessage(fmt::format("Failed to parse PKCS#7 signature: {}", error));
         return result;
     }
 
@@ -217,8 +231,9 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     if (!data_bio) {
         std::string error = MiscUtils::GetLastOpensslError();
         spdlog::error("Failed to create BIO from signed data: {}", error);
+
         result->SetStatus(SignatureVerificationStatus::Invalid);
-        result->SetMessage("Failed to create BIO from signed data");
+        result->SetMessage(fmt::format("Failed to create BIO from signed data: {}", error));
         return result;
     }
 
@@ -231,6 +246,7 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     if (verify_result != 1) {
         std::string error = MiscUtils::GetLastOpensslError();
         spdlog::error("Cryptographic signature verification failed: {}", error);
+
         result->SetSignatureValid(false);
         result->SetStatus(SignatureVerificationStatus::Invalid);
         result->SetMessage(fmt::format("Signature verification failed: {}", error));
@@ -243,6 +259,7 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     // Verify certificate chain with provided trusted store
     if (trusted_store.empty()) {
         spdlog::error("Trusted certificate store is required for signature verification");
+
         result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
         result->SetMessage("Trusted certificate store is required");
         return result;
@@ -251,6 +268,7 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     X509_STORE* store = static_cast<X509_STORE*>(trusted_store->GetNativeHandle());
     if (!store) {
         spdlog::error("Trusted store native handle is null");
+
         result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
         result->SetMessage("Invalid trusted certificate store");
         return result;

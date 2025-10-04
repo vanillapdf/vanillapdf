@@ -7,10 +7,6 @@
 #include <fstream>
 #include <filesystem>
 
-#if defined(_WIN32)
-#include "utils/windows_utils.h"
-#endif
-
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 #include <openssl/x509.h>
 #include <openssl/x509_vfy.h>
@@ -109,7 +105,8 @@ void TrustedCertificateStore::TrustedCertificateStoreImpl::AddCertificateFromPEM
         // Ignore duplicate certificate errors
         unsigned long err = ERR_peek_last_error();
         if (ERR_GET_REASON(err) != X509_R_CERT_ALREADY_IN_HASH_TABLE) {
-            LOG_ERROR_AND_THROW_GENERAL("Failed to add certificate to store: {}", err);
+            std::string error = MiscUtils::GetLastOpensslError();
+            LOG_ERROR_AND_THROW_GENERAL("Failed to add PEM certificate to store: {}", error);
         }
     }
 }
@@ -127,9 +124,11 @@ void TrustedCertificateStore::TrustedCertificateStoreImpl::AddCertificateFromDER
     int result = X509_STORE_add_cert(m_store, cert);
 
     if (result != 1) {
+        // Ignore duplicate certificate errors
         unsigned long err = ERR_peek_last_error();
         if (ERR_GET_REASON(err) != X509_R_CERT_ALREADY_IN_HASH_TABLE) {
-            LOG_ERROR_AND_THROW_GENERAL("Failed to add certificate to store: {}", err);
+            std::string error = MiscUtils::GetLastOpensslError();
+            LOG_ERROR_AND_THROW_GENERAL("Failed to add DER certificate to store: {}", error);
         }
     }
 }
