@@ -1,11 +1,10 @@
 #include "precompiled.h"
 
-#include "vanillapdf/utils/c_signature_verification.h"
+#include "vanillapdf/utils/c_signature_verifier.h"
 #include "implementation/c_helper.h"
 
 #include "utils/trusted_certificate_store.h"
 #include "utils/signature_verifier.h"
-#include "utils/signature_verification_options.h"
 #include "utils/signature_verification_result.h"
 
 using namespace vanillapdf;
@@ -27,14 +26,16 @@ VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_Create(
 
 VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_AddCertificateFromPEM(
     TrustedCertificateStoreHandle* handle,
-    const char* pem_data) {
+    string_type pem_data) {
 
     TrustedCertificateStore* store = reinterpret_cast<TrustedCertificateStore*>(handle);
+    const Buffer* buffer = reinterpret_cast<const Buffer*>(pem_data);
+
     RETURN_ERROR_PARAM_VALUE_IF_NULL(store);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(pem_data);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer);
 
     try {
-        store->AddCertificateFromPEM(std::string(pem_data));
+        store->AddCertificateFromPEM(*buffer);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -44,7 +45,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_AddCertific
     const BufferHandle* der_data) {
 
     TrustedCertificateStore* store = reinterpret_cast<TrustedCertificateStore*>(handle);
-    Buffer* buffer = reinterpret_cast<Buffer*>(const_cast<BufferHandle*>(der_data));
+    const Buffer* buffer = reinterpret_cast<const Buffer*>(der_data);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(store);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer);
 
@@ -54,30 +55,16 @@ VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_AddCertific
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_AddCertificateFromFile(
-    TrustedCertificateStoreHandle* handle,
-    const char* file_path) {
-
-    TrustedCertificateStore* store = reinterpret_cast<TrustedCertificateStore*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(store);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(file_path);
-
-    try {
-        store->AddCertificateFromFile(std::string(file_path));
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
 VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_LoadFromDirectory(
     TrustedCertificateStoreHandle* handle,
-    const char* directory_path) {
+    string_type directory_path) {
 
     TrustedCertificateStore* store = reinterpret_cast<TrustedCertificateStore*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(store);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(directory_path);
 
     try {
-        store->LoadFromDirectory(std::string(directory_path));
+        store->LoadFromDirectory(directory_path);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -99,82 +86,30 @@ VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_Release(
     return ObjectRelease<TrustedCertificateStore, TrustedCertificateStoreHandle>(handle);
 }
 
-// SignatureVerificationOptions
-
-VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationOptions_Create(
-    SignatureVerificationOptionsHandle** result) {
-
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        auto options = make_deferred<SignatureVerificationOptions>();
-        auto ptr = options.AddRefGet();
-        *result = reinterpret_cast<SignatureVerificationOptionsHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationOptions_SetTrustedCertificates(
-    SignatureVerificationOptionsHandle* handle,
-    TrustedCertificateStoreHandle* store) {
-
-    SignatureVerificationOptions* options = reinterpret_cast<SignatureVerificationOptions*>(handle);
-    TrustedCertificateStore* cert_store = reinterpret_cast<TrustedCertificateStore*>(store);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(options);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(cert_store);
-
-    try {
-        TrustedCertificateStorePtr store_ptr(cert_store);
-        options->SetTrustedCertificates(store_ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationOptions_SetFlags(
-    SignatureVerificationOptionsHandle* handle,
-    int32_type flags) {
-
-    SignatureVerificationOptions* options = reinterpret_cast<SignatureVerificationOptions*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(options);
-
-    try {
-        options->SetFlags(static_cast<VerificationFlags>(flags));
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationOptions_Release(
-    SignatureVerificationOptionsHandle* handle) {
-    return ObjectRelease<SignatureVerificationOptions, SignatureVerificationOptionsHandle>(handle);
-}
-
 // SignatureVerification
 
 VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerification_Verify(
     const BufferHandle* signed_data,
     const BufferHandle* signature_contents,
     TrustedCertificateStoreHandle* trusted_store,
-    int32_type flags,
+    VerificationFlagType flags,
     SignatureVerificationResultHandle** result) {
 
-    Buffer* data_buf = reinterpret_cast<Buffer*>(const_cast<BufferHandle*>(signed_data));
-    Buffer* sig_buf = reinterpret_cast<Buffer*>(const_cast<BufferHandle*>(signature_contents));
+    const Buffer* data_buf = reinterpret_cast<const Buffer*>(signed_data);
+    const Buffer* sig_buf = reinterpret_cast<const Buffer*>(signature_contents);
     TrustedCertificateStore* store = reinterpret_cast<TrustedCertificateStore*>(trusted_store);
 
     RETURN_ERROR_PARAM_VALUE_IF_NULL(data_buf);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(sig_buf);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(store);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        TrustedCertificateStorePtr store_ptr;
-        if (store) {
-            store_ptr = TrustedCertificateStorePtr(store);
-        }
 
         auto verification_result = SignatureVerifier::Verify(
             *data_buf,
             *sig_buf,
-            store_ptr,
+            store,
             static_cast<VerificationFlags>(flags)
         );
 
@@ -219,42 +154,42 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetMessage(
 
 VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsSignatureValid(
     SignatureVerificationResultHandle* handle,
-    bool_type* result) {
+    boolean_type* result) {
 
     SignatureVerificationResult* vr = reinterpret_cast<SignatureVerificationResult*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(vr);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        *result = vr->IsSignatureValid() ? VANILLAPDF_TRUE : VANILLAPDF_FALSE;
+        *result = vr->IsSignatureValid() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsDocumentIntact(
     SignatureVerificationResultHandle* handle,
-    bool_type* result) {
+    boolean_type* result) {
 
     SignatureVerificationResult* vr = reinterpret_cast<SignatureVerificationResult*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(vr);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        *result = vr->IsDocumentIntact() ? VANILLAPDF_TRUE : VANILLAPDF_FALSE;
+        *result = vr->IsDocumentIntact() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsCertificateTrusted(
     SignatureVerificationResultHandle* handle,
-    bool_type* result) {
+    boolean_type* result) {
 
     SignatureVerificationResult* vr = reinterpret_cast<SignatureVerificationResult*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(vr);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        *result = vr->IsCertificateTrusted() ? VANILLAPDF_TRUE : VANILLAPDF_FALSE;
+        *result = vr->IsCertificateTrusted() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -269,9 +204,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetSignerCertifi
 
     try {
         auto cert = vr->GetSignerCertificate();
-        if (!cert) {
+        if (cert.empty()) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
+
         auto ptr = cert.AddRefGet();
         *result = reinterpret_cast<BufferHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

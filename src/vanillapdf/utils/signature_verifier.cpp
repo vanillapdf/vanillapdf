@@ -3,7 +3,7 @@
 #include "utils/signature_verifier.h"
 #include "utils/misc_utils.h"
 #include "utils/exceptions.h"
-#include "utils/signature_verification_options.h"
+#include "utils/log.h"
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 #include <openssl/pkcs7.h>
@@ -21,89 +21,128 @@ namespace vanillapdf {
 namespace {
 
 // Helper to extract certificate chain from PKCS7
-void ExtractCertificateChain(PKCS7* p7, SignatureVerificationResult* result) {
+void ExtractCertificateChain(PKCS7* p7, SignatureVerificationResultPtr& result) {
     STACK_OF(X509)* certs = PKCS7_get0_signers(p7, nullptr, 0);
     if (!certs) {
+        spdlog::warn("No signers found in PKCS7 signature");
         return;
     }
 
+    SCOPE_GUARD([certs]() { sk_X509_free(certs); });
+
     int cert_count = sk_X509_num(certs);
+
     for (int i = 0; i < cert_count; i++) {
         X509* cert = sk_X509_value(certs, i);
+        if (!cert) {
+            spdlog::warn("Certificate at index {} is null, skipping", i);
+            continue;
+        }
 
         // Convert to DER
         int der_len = i2d_X509(cert, nullptr);
         if (der_len < 0) {
+            spdlog::error("Failed to determine DER length for certificate at index {}: {}",
+                         i, MiscUtils::GetLastOpensslError());
             continue;
         }
 
         BufferPtr cert_buf = make_deferred_container<Buffer>(der_len);
         unsigned char* der_ptr = reinterpret_cast<unsigned char*>(cert_buf->data());
-        i2d_X509(cert, &der_ptr);
+        int actual_len = i2d_X509(cert, &der_ptr);
+        if (actual_len < 0) {
+            spdlog::error("Failed to convert certificate at index {} to DER format: {}",
+                         i, MiscUtils::GetLastOpensslError());
+            continue;
+        }
 
         if (i == 0) {
-            result->SetSignerCertificate(cert_buf);
-
-            // Extract common name
+            // Extract common name from signing certificate
             X509_NAME* subject = X509_get_subject_name(cert);
-            char cn[256] = {0};
-            X509_NAME_get_text_by_NID(subject, NID_commonName, cn, sizeof(cn));
-            result->SetSignerCommonName(std::string(cn));
+            if (!subject) {
+                spdlog::warn("Failed to get subject name from signing certificate");
+            } else {
+                char cn[256] = {0};
+                int cn_len = X509_NAME_get_text_by_NID(subject, NID_commonName, cn, sizeof(cn));
+                if (cn_len > 0) {
+                    result->SetSignerCommonName(std::string(cn));
+                } else {
+                    spdlog::warn("Common name not found in signing certificate");
+                }
+            }
 
-            // Extract validity dates
-            const ASN1_TIME* not_before = X509_get0_notBefore(cert);
-            const ASN1_TIME* not_after = X509_get0_notAfter(cert);
+            // Note: Validity dates (not_before, not_after) will be exposed in a future phase
+            // For now, we only extract the common name and certificate data
 
-            // TODO: Convert ASN1_TIME to DatePtr
-            // For now, just set the result
-            (void)not_before;
-            (void)not_after;
+            result->SetSignerCertificate(cert_buf);
         }
 
         result->AddCertificateToChain(cert_buf);
     }
-
-    sk_X509_free(certs);
 }
 
 // Helper to verify certificate chain
-bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationResult* result) {
+bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationResultPtr& result) {
     X509_STORE_CTX* ctx = X509_STORE_CTX_new();
     if (!ctx) {
+        spdlog::error("Failed to create X509_STORE_CTX: {}", MiscUtils::GetLastOpensslError());
+        result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
+        result->SetMessage("Failed to initialize certificate verification context");
+        result->SetCertificateTrusted(false);
         return false;
     }
+
     SCOPE_GUARD([ctx]() { X509_STORE_CTX_free(ctx); });
 
     // Get signer certificate
     STACK_OF(X509)* signers = PKCS7_get0_signers(p7, nullptr, 0);
-    if (!signers || sk_X509_num(signers) == 0) {
-        sk_X509_free(signers);
+    if (!signers) {
+        spdlog::error("Failed to get signers from PKCS7: {}", MiscUtils::GetLastOpensslError());
+        result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
+        result->SetMessage("Failed to extract signer certificates from signature");
+        result->SetCertificateTrusted(false);
+        return false;
+    }
+
+    SCOPE_GUARD([signers]() { sk_X509_free(signers); });
+
+    if (sk_X509_num(signers) == 0) {
+        spdlog::error("No signer certificates found in PKCS7");
+        result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
+        result->SetMessage("No signer certificates found in signature");
+        result->SetCertificateTrusted(false);
         return false;
     }
 
     X509* signer_cert = sk_X509_value(signers, 0);
+    if (!signer_cert) {
+        spdlog::error("Signer certificate is null");
+        result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
+        result->SetMessage("Invalid signer certificate");
+        result->SetCertificateTrusted(false);
+        return false;
+    }
 
     // Get certificate chain from PKCS7
     STACK_OF(X509)* cert_chain = p7->d.sign->cert;
 
     // Initialize verification context
     if (!X509_STORE_CTX_init(ctx, store, signer_cert, cert_chain)) {
-        sk_X509_free(signers);
+        spdlog::error("Failed to initialize X509_STORE_CTX: {}", MiscUtils::GetLastOpensslError());
+        result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
+        result->SetMessage("Failed to initialize certificate verification context");
+        result->SetCertificateTrusted(false);
         return false;
     }
 
     // Verify the chain
     int verify_result = X509_verify_cert(ctx);
 
-    sk_X509_free(signers);
-
-    if (verify_result == 1) {
-        result->SetCertificateTrusted(true);
-        return true;
-    } else {
-        result->SetCertificateTrusted(false);
+    if (verify_result != 1) {
         int error = X509_STORE_CTX_get_error(ctx);
         const char* error_str = X509_verify_cert_error_string(error);
+
+        spdlog::info("Certificate chain validation failed: {}", error_str);
 
         // Set appropriate status based on error
         switch (error) {
@@ -126,9 +165,14 @@ bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationR
                 break;
         }
 
-        result->SetMessage(std::string("Certificate validation failed: ") + error_str);
+        result->SetMessage(fmt::format("Certificate validation failed: {}", error_str));
+        result->SetCertificateTrusted(false);
+
         return false;
     }
+
+    result->SetCertificateTrusted(true);
+    return true;
 }
 
 } // anonymous namespace
@@ -141,6 +185,10 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     TrustedCertificateStorePtr trusted_store,
     VerificationFlags flags) {
 
+    // Note: flags parameter reserved for future verification options
+    // (e.g., CheckRevocation, RequireTrustedRoot, AllowExpiredCerts, CheckSigningTime)
+    (void)flags;
+
     auto result = make_deferred<SignatureVerificationResult>();
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
@@ -152,79 +200,66 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     PKCS7* p7 = d2i_PKCS7(nullptr, &sig_ptr, static_cast<long>(signature_contents.size()));
 
     if (!p7) {
+        std::string error = MiscUtils::GetLastOpensslError();
+        spdlog::error("Failed to parse PKCS#7 signature: {}", error);
         result->SetStatus(SignatureVerificationStatus::Invalid);
-        result->SetMessage("Failed to parse PKCS#7 signature: " + MiscUtils::GetLastOpensslError());
+        result->SetMessage("Failed to parse PKCS#7 signature: " + error);
         return result;
     }
+
     SCOPE_GUARD([p7]() { PKCS7_free(p7); });
 
     // Extract certificate chain
-    ExtractCertificateChain(p7, result.Get());
+    ExtractCertificateChain(p7, result);
 
     // Create BIO from signed data
     BIO* data_bio = BIO_new_mem_buf(signed_data.data(), static_cast<int>(signed_data.size()));
     if (!data_bio) {
+        std::string error = MiscUtils::GetLastOpensslError();
+        spdlog::error("Failed to create BIO from signed data: {}", error);
         result->SetStatus(SignatureVerificationStatus::Invalid);
         result->SetMessage("Failed to create BIO from signed data");
         return result;
     }
+
     SCOPE_GUARD([data_bio]() { BIO_free(data_bio); });
 
     // Verify the signature cryptographically
     // For detached signatures, we need to verify against the data
     int verify_result = PKCS7_verify(p7, nullptr, nullptr, data_bio, nullptr, PKCS7_DETACHED | PKCS7_NOVERIFY);
 
-    if (verify_result == 1) {
-        result->SetSignatureValid(true);
-        result->SetDocumentIntact(true);
-    } else {
+    if (verify_result != 1) {
+        std::string error = MiscUtils::GetLastOpensslError();
+        spdlog::error("Cryptographic signature verification failed: {}", error);
         result->SetSignatureValid(false);
         result->SetStatus(SignatureVerificationStatus::Invalid);
-        result->SetMessage("Signature verification failed: " + MiscUtils::GetLastOpensslError());
+        result->SetMessage(fmt::format("Signature verification failed: {}", error));
         return result;
     }
 
-    // Verify certificate chain if trusted store provided
-    X509_STORE* store = nullptr;
-    bool store_created = false;
+    result->SetSignatureValid(true);
+    result->SetDocumentIntact(true);
 
-    if (trusted_store) {
-        store = static_cast<X509_STORE*>(trusted_store->GetNativeHandle());
-    } else {
-        // Create default store with system certificates
-        store = X509_STORE_new();
-        X509_STORE_set_default_paths(store);
-        store_created = true;
+    // Verify certificate chain with provided trusted store
+    if (trusted_store.empty()) {
+        spdlog::error("Trusted certificate store is required for signature verification");
+        result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
+        result->SetMessage("Trusted certificate store is required");
+        return result;
     }
 
-    if (store) {
-        bool chain_valid = VerifyCertificateChain(p7, store, result.Get());
-
-        if (store_created) {
-            X509_STORE_free(store);
-        }
-
-        if (!chain_valid) {
-            // Status already set by VerifyCertificateChain
-            return result;
-        }
+    X509_STORE* store = static_cast<X509_STORE*>(trusted_store->GetNativeHandle());
+    if (!store) {
+        spdlog::error("Trusted store native handle is null");
+        result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
+        result->SetMessage("Invalid trusted certificate store");
+        return result;
     }
 
-    // Check for weak algorithms if requested
-    if (static_cast<int>(flags & VerificationFlags::CheckSigningTime)) {
-        // Get digest algorithm
-        PKCS7_SIGNER_INFO* si = sk_PKCS7_SIGNER_INFO_value(PKCS7_get_signer_info(p7), 0);
-        if (si) {
-            const EVP_MD* md = EVP_get_digestbyobj(si->digest_alg->algorithm);
-            if (md) {
-                int nid = EVP_MD_type(md);
-                if (nid == NID_md5 || nid == NID_sha1) {
-                    result->SetStatus(SignatureVerificationStatus::WeakAlgorithm);
-                    result->SetMessage("Weak digest algorithm detected (MD5 or SHA1)");
-                    return result;
-                }
-            }
-        }
+    bool chain_valid = VerifyCertificateChain(p7, store, result);
+    if (!chain_valid) {
+        // Status already set by VerifyCertificateChain
+        return result;
     }
 
     // All checks passed
@@ -237,8 +272,8 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     (void)signed_data;
     (void)signature_contents;
     (void)trusted_store;
-    (void)flags;
 
+    spdlog::warn("Signature verification not available - OpenSSL support not compiled");
     result->SetStatus(SignatureVerificationStatus::Unknown);
     result->SetMessage("Signature verification requires OpenSSL support");
 

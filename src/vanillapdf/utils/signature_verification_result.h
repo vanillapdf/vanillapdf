@@ -15,8 +15,9 @@ namespace vanillapdf {
 * \brief Overall status of signature verification
 */
 enum class SignatureVerificationStatus {
-    Valid = 0,                    ///< Signature is cryptographically valid
-    Invalid,                      ///< Signature verification failed
+    Undefined = 0,               ///< Status not set (uninitialized)
+    Valid,                       ///< Signature is cryptographically valid
+    Invalid,                     ///< Signature verification failed
     CertificateExpired,          ///< Certificate has expired
     CertificateNotYetValid,      ///< Certificate not yet valid
     CertificateRevoked,          ///< Certificate has been revoked

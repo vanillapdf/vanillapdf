@@ -5,9 +5,33 @@
 #include "utils/buffer.h"
 #include "utils/trusted_certificate_store.h"
 #include "utils/signature_verification_result.h"
-#include "utils/signature_verification_options.h"
 
 namespace vanillapdf {
+
+/**
+* \enum VerificationFlags
+* \brief Flags controlling signature verification behavior
+*/
+enum class VerificationFlags {
+    None = 0,
+    CheckRevocation = 1 << 0,          ///< Check CRL/OCSP for certificate revocation
+    RequireTrustedRoot = 1 << 1,       ///< Require certificate chain to a trusted root
+    AllowExpiredCerts = 1 << 2,        ///< Allow expired certificates
+    CheckSigningTime = 1 << 3          ///< Validate certificate was valid at signing time
+};
+
+// Bitwise operators for VerificationFlags
+inline VerificationFlags operator|(VerificationFlags a, VerificationFlags b) {
+    return static_cast<VerificationFlags>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+inline VerificationFlags operator&(VerificationFlags a, VerificationFlags b) {
+    return static_cast<VerificationFlags>(static_cast<int>(a) & static_cast<int>(b));
+}
+
+inline bool operator!(VerificationFlags a) {
+    return static_cast<int>(a) == 0;
+}
 
 /**
 * \class SignatureVerifier
@@ -22,7 +46,7 @@ public:
     * \brief Verify a digital signature
     * \param signed_data The raw bytes that were signed (extracted from PDF via ByteRange)
     * \param signature_contents The PKCS#7 DER-encoded signature blob
-    * \param trusted_store Optional certificate store for chain validation (uses system defaults if null)
+    * \param trusted_store Certificate store for chain validation (required)
     * \param flags Verification behavior flags
     * \return Detailed verification result
     *
@@ -30,8 +54,10 @@ public:
     * 1. Extracts the signing certificate from the PKCS#7 signature
     * 2. Verifies the signature cryptographically against signed_data
     * 3. Validates the certificate chain against trusted_store
-    * 4. Checks certificate validity periods
-    * 5. Returns comprehensive verification result
+    * 4. Returns comprehensive verification result
+    *
+    * \note The trusted_store parameter is required. Use TrustedCertificateStore
+    *       to configure trusted certificates (from files, directories, or system defaults).
     */
     static SignatureVerificationResultPtr Verify(
         const Buffer& signed_data,

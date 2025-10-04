@@ -28,7 +28,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_output_stream.cpp
     implementation/utils/c_memory_buffer_output_stream.cpp
     implementation/utils/c_pkcs12_key.cpp
-    implementation/utils/c_signature_verification.cpp
+    implementation/utils/c_signature_verifier.cpp
     implementation/utils/c_signing_key.cpp
     implementation/utils/c_unknown_interface.cpp
 )
@@ -191,7 +191,6 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/modify_observer_interface.cpp
     utils/pkcs12_key.cpp
     utils/resource.cpp
-    utils/signature_verification_options.cpp
     utils/signature_verification_result.cpp
     utils/signature_verifier.cpp
     utils/time_utils.cpp
@@ -344,7 +343,6 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/pdf_version.h
     utils/pkcs12_key.h
     utils/resource.h
-    utils/signature_verification_options.h
     utils/signature_verification_result.h
     utils/signature_verifier.h
     utils/signature_verifier_interface.h
