@@ -113,6 +113,10 @@ elseif(APPLE)
     set(CPACK_GENERATOR		"DragNDrop;TGZ")
     set(CPACK_SYSTEM_NAME	"OSX")
 
+    # Use retry script for hdiutil to work around XProtect race conditions
+    # See: https://github.com/HEXRD/hexrdgui/pull/1768
+    set(CPACK_COMMAND_HDIUTIL "${CMAKE_CURRENT_SOURCE_DIR}/scripts/hdiutil_retry.sh")
+
 elseif(UNIX)
     set(CPACK_GENERATOR		"TGZ")
 else()
