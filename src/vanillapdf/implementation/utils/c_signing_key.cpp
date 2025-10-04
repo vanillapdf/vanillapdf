@@ -84,9 +84,8 @@ public:
         }
     }
 
-    void SignUpdate(BufferPtr data) override {
-        auto input_ptr = data.get();
-        auto input_handle = reinterpret_cast<const BufferHandle*>(input_ptr);
+    void SignUpdate(const Buffer& data) override {
+        auto input_handle = reinterpret_cast<const BufferHandle*>(&data);
         error_type rv = m_update(m_user_data, input_handle);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
             std::stringstream ss;
@@ -167,6 +166,95 @@ VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_ToUnknown(SigningKeyHand
 
 VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_FromUnknown(IUnknownHandle* handle, SigningKeyHandle** result) {
     return SafeObjectConvert<IUnknown, ISigningKey, IUnknownHandle, SigningKeyHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_SignInitialize(
+    SigningKeyHandle* handle,
+    MessageDigestAlgorithmType algorithm) {
+
+    ISigningKey* key = reinterpret_cast<ISigningKey*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(key);
+
+    try {
+        MessageDigestAlgorithm cpp_algorithm;
+        switch (algorithm) {
+            case MessageDigestAlgorithmType_Undefined:
+                cpp_algorithm = MessageDigestAlgorithm::Undefined; break;
+            case MessageDigestAlgorithmType_MDNULL:
+                cpp_algorithm = MessageDigestAlgorithm::MDNULL; break;
+            case MessageDigestAlgorithmType_MD2:
+                cpp_algorithm = MessageDigestAlgorithm::MD2; break;
+            case MessageDigestAlgorithmType_MD4:
+                cpp_algorithm = MessageDigestAlgorithm::MD4; break;
+            case MessageDigestAlgorithmType_MD5:
+                cpp_algorithm = MessageDigestAlgorithm::MD5; break;
+            case MessageDigestAlgorithmType_SHA1:
+                cpp_algorithm = MessageDigestAlgorithm::SHA1; break;
+            case MessageDigestAlgorithmType_SHA224:
+                cpp_algorithm = MessageDigestAlgorithm::SHA224; break;
+            case MessageDigestAlgorithmType_SHA256:
+                cpp_algorithm = MessageDigestAlgorithm::SHA256; break;
+            case MessageDigestAlgorithmType_SHA384:
+                cpp_algorithm = MessageDigestAlgorithm::SHA384; break;
+            case MessageDigestAlgorithmType_SHA512:
+                cpp_algorithm = MessageDigestAlgorithm::SHA512; break;
+            case MessageDigestAlgorithmType_MDC2:
+                cpp_algorithm = MessageDigestAlgorithm::MDC2; break;
+            case MessageDigestAlgorithmType_RIPEMD160:
+                cpp_algorithm = MessageDigestAlgorithm::RIPEMD160; break;
+            case MessageDigestAlgorithmType_WHIRLPOOL:
+                cpp_algorithm = MessageDigestAlgorithm::WHIRLPOOL; break;
+            default:
+                return VANILLAPDF_ERROR_PARAMETER_VALUE;
+        }
+
+        key->SignInitialize(cpp_algorithm);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_SignUpdate(
+    SigningKeyHandle* handle,
+    const BufferHandle* data) {
+
+    ISigningKey* key = reinterpret_cast<ISigningKey*>(handle);
+    const Buffer* buffer = reinterpret_cast<const Buffer*>(data);
+
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(key);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(buffer);
+
+    try {
+        key->SignUpdate(*buffer);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_SignFinal(
+    SigningKeyHandle* handle,
+    BufferHandle** result) {
+
+    ISigningKey* key = reinterpret_cast<ISigningKey*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(key);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto signature = key->SignFinal();
+        auto ptr = signature.AddRefGet();
+        *result = reinterpret_cast<BufferHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_SignCleanup(
+    SigningKeyHandle* handle) {
+
+    ISigningKey* key = reinterpret_cast<ISigningKey*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(key);
+
+    try {
+        key->SignCleanup();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_Release(SigningKeyHandle* handle) {

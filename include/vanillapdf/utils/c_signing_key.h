@@ -88,6 +88,44 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_FromUnknown(IUnknownHandle* handle, SigningKeyHandle** result);
 
     /**
+    * \brief Initialize signing operation with specified digest algorithm
+    * \param handle The signing key
+    * \param algorithm Message digest algorithm to use for signing
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_SignInitialize(
+        SigningKeyHandle* handle,
+        MessageDigestAlgorithmType algorithm
+    );
+
+    /**
+    * \brief Update signing operation with data to be signed
+    * \param handle The signing key
+    * \param data Data to include in signature
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_SignUpdate(
+        SigningKeyHandle* handle,
+        const BufferHandle* data
+    );
+
+    /**
+    * \brief Finalize signing operation and return signature
+    * \param handle The signing key
+    * \param result Output buffer containing PKCS#7 signature
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_SignFinal(
+        SigningKeyHandle* handle,
+        BufferHandle** result
+    );
+
+    /**
+    * \brief Cleanup signing operation resources
+    * \param handle The signing key
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_SignCleanup(
+        SigningKeyHandle* handle
+    );
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */
