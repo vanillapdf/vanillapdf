@@ -117,6 +117,10 @@ class DocumentEncryptionSettings; using DocumentEncryptionSettingsPtr = Deferred
 class DocumentSigner; using DocumentSignerPtr = Deferred<DocumentSigner>;
 class DocumentSignatureSettings; using DocumentSignatureSettingsPtr = Deferred<DocumentSignatureSettings>;
 
+// Signature verification
+class SignatureVerificationOptions; using SignatureVerificationOptionsPtr = Deferred<SignatureVerificationOptions>;
+class SignatureVerificationResult; using SignatureVerificationResultPtr = Deferred<SignatureVerificationResult>;
+
 } // semantics
 } // vanillapdf
 

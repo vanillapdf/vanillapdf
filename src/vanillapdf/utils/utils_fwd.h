@@ -40,7 +40,9 @@ class BaseIterator;
 
 class IEncryptionKey; using IEncryptionKeyPtr = Deferred<IEncryptionKey>;
 class ISigningKey; using ISigningKeyPtr = Deferred<ISigningKey>;
+class ISignatureVerifier; using ISignatureVerifierPtr = Deferred<ISignatureVerifier>;
 class PKCS12Key; using PKCS12KeyPtr = Deferred<PKCS12Key>;
+class TrustedCertificateStore; using TrustedCertificateStorePtr = Deferred<TrustedCertificateStore>;
 
 // Streams
 class IInputStream; using IInputStreamPtr = Deferred<IInputStream>;
