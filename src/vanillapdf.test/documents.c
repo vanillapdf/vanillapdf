@@ -1849,7 +1849,7 @@ error_type process_field(FieldHandle* obj, int nested) {
 
     switch (type) {
         case FieldType_Signature:
-            RETURN_ERROR_IF_NOT_SUCCESS(Field_ToSignature(obj, &signature_field));
+            RETURN_ERROR_IF_NOT_SUCCESS(SignatureField_FromField(obj, &signature_field));
             RETURN_ERROR_IF_NOT_SUCCESS(process_signature_field(signature_field, nested + 1));
             RETURN_ERROR_IF_NOT_SUCCESS(SignatureField_Release(signature_field));
             break;

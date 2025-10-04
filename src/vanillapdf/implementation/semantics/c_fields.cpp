@@ -85,6 +85,38 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_ToSignature(FieldHandle* hand
     return SafeObjectConvert<Field, SignatureField, FieldHandle, SignatureFieldHandle>(handle, result);
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_ToField(ButtonFieldHandle* handle, FieldHandle** result) {
+    return SafeObjectConvert<ButtonField, Field, ButtonFieldHandle, FieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_FromField(FieldHandle* handle, ButtonFieldHandle** result) {
+    return SafeObjectConvert<Field, ButtonField, FieldHandle, ButtonFieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextField_ToField(TextFieldHandle* handle, FieldHandle** result) {
+    return SafeObjectConvert<TextField, Field, TextFieldHandle, FieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextField_FromField(FieldHandle* handle, TextFieldHandle** result) {
+    return SafeObjectConvert<Field, TextField, FieldHandle, TextFieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_ToField(ChoiceFieldHandle* handle, FieldHandle** result) {
+    return SafeObjectConvert<ChoiceField, Field, ChoiceFieldHandle, FieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_FromField(FieldHandle* handle, ChoiceFieldHandle** result) {
+    return SafeObjectConvert<Field, ChoiceField, FieldHandle, ChoiceFieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_ToField(SignatureFieldHandle* handle, FieldHandle** result) {
+    return SafeObjectConvert<SignatureField, Field, SignatureFieldHandle, FieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_FromField(FieldHandle* handle, SignatureFieldHandle** result) {
+    return SafeObjectConvert<Field, SignatureField, FieldHandle, SignatureFieldHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Release(FieldCollectionHandle* handle) {
     return ObjectRelease<FieldCollection, FieldCollectionHandle>(handle);
 }

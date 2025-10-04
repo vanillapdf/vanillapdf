@@ -46,9 +46,11 @@ function(vanillapdf_target_compile_defaults TARGET)
         $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>,$<CONFIG:MinSizeRel>>:RELEASE>
     )
 
-    # Warnings as errors for MSVC
+    # Warning level and warnings as errors for MSVC
     if(CMAKE_C_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
         target_compile_options(${TARGET} PRIVATE
+            # MSVC: Enable maximum warning level for all configurations
+            /W4
             # MSVC: apply /WX for Debug and RelWithDebInfo
             $<$<CONFIG:Debug>:/WX>
             $<$<CONFIG:RelWithDebInfo>:/WX>
