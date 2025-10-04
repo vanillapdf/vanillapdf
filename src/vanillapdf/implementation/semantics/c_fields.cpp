@@ -1,11 +1,27 @@
 #include "precompiled.h"
 
 #include "semantics/objects/fields.h"
+#include "syntax/objects/dictionary_object.h"
 
 #include "vanillapdf/semantics/c_fields.h"
 #include "implementation/c_helper.h"
 
+using namespace vanillapdf;
+using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_CreateFromDictionary(DictionaryObjectHandle* dictionary, FieldHandle** result) {
+    DictionaryObject* dict = reinterpret_cast<DictionaryObject*>(dictionary);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(dict);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto field = Field::Create(dict);
+        auto ptr = field.AddRefGet();
+        *result = reinterpret_cast<FieldHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
 
 VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle* handle, FieldType* result) {
     Field* obj = reinterpret_cast<Field*>(handle);
@@ -82,6 +98,38 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_ToChoice(FieldHandle* handle,
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Field_ToSignature(FieldHandle* handle, SignatureFieldHandle** result) {
+    return SafeObjectConvert<Field, SignatureField, FieldHandle, SignatureFieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_ToField(ButtonFieldHandle* handle, FieldHandle** result) {
+    return SafeObjectConvert<ButtonField, Field, ButtonFieldHandle, FieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_FromField(FieldHandle* handle, ButtonFieldHandle** result) {
+    return SafeObjectConvert<Field, ButtonField, FieldHandle, ButtonFieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextField_ToField(TextFieldHandle* handle, FieldHandle** result) {
+    return SafeObjectConvert<TextField, Field, TextFieldHandle, FieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextField_FromField(FieldHandle* handle, TextFieldHandle** result) {
+    return SafeObjectConvert<Field, TextField, FieldHandle, TextFieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_ToField(ChoiceFieldHandle* handle, FieldHandle** result) {
+    return SafeObjectConvert<ChoiceField, Field, ChoiceFieldHandle, FieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_FromField(FieldHandle* handle, ChoiceFieldHandle** result) {
+    return SafeObjectConvert<Field, ChoiceField, FieldHandle, ChoiceFieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_ToField(SignatureFieldHandle* handle, FieldHandle** result) {
+    return SafeObjectConvert<SignatureField, Field, SignatureFieldHandle, FieldHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_FromField(FieldHandle* handle, SignatureFieldHandle** result) {
     return SafeObjectConvert<Field, SignatureField, FieldHandle, SignatureFieldHandle>(handle, result);
 }
 

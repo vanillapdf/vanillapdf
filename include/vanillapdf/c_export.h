@@ -36,4 +36,20 @@
     #define VANILLAPDF_API
 #endif
 
+/*
+* Deprecation macro for functions
+* Usage: Place before function declaration
+* Example: VANILLAPDF_DEPRECATED VANILLAPDF_API error_type Function(...);
+* Note: For MSVC, requires /W3 or higher warning level
+* Note: For GCC/Clang, deprecation warnings are enabled by default with -Wall
+* Note: Use Doxygen \deprecated tag to document replacement function
+*/
+#if defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
+    #define VANILLAPDF_DEPRECATED __declspec(deprecated)
+#elif defined(COMPILER_GCC) || defined(COMPILER_CLANG)
+    #define VANILLAPDF_DEPRECATED __attribute__((deprecated))
+#else
+    #define VANILLAPDF_DEPRECATED
+#endif
+
 #endif /* _C_EXPORT_H */

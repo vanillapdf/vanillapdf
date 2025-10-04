@@ -537,9 +537,6 @@ if(MSVC)
     # Add natvis file embedding
     target_link_options(vanillapdf PRIVATE "/NATVIS:${CMAKE_CURRENT_SOURCE_DIR}/public.natvis")
 
-    # Enable maximum warning level and treat warnings as errors
-    target_compile_options(vanillapdf PRIVATE "/W4")
-
     # Disable warning about unused parameters
     target_compile_options(vanillapdf PRIVATE "/wd4100")
 

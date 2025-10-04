@@ -144,6 +144,13 @@ extern "C"
 
     /**
     * \brief
+    * Create a field from a dictionary object.
+    * The field type is determined by the /FT entry in the dictionary.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_CreateFromDictionary(DictionaryObjectHandle* dictionary, FieldHandle** result);
+
+    /**
+    * \brief
     * Return type of field.
     * Result can be used to convert to derived type.
     */
@@ -151,23 +158,27 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ButtonFieldHandle.
+    * \deprecated Use ButtonField_FromField instead
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Field_ToButton(FieldHandle* handle, ButtonFieldHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Field_ToButton(FieldHandle* handle, ButtonFieldHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref TextFieldHandle.
+    * \deprecated Use TextField_FromField instead
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Field_ToText(FieldHandle* handle, TextFieldHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Field_ToText(FieldHandle* handle, TextFieldHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ChoiceFieldHandle.
+    * \deprecated Use ChoiceField_FromField instead
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Field_ToChoice(FieldHandle* handle, ChoiceFieldHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Field_ToChoice(FieldHandle* handle, ChoiceFieldHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref SignatureFieldHandle.
+    * \deprecated Use SignatureField_FromField instead
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Field_ToSignature(FieldHandle* handle, SignatureFieldHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Field_ToSignature(FieldHandle* handle, SignatureFieldHandle** result);
 
     /**
     * \copydoc IUnknown_Release
@@ -183,6 +194,16 @@ extern "C"
     */
 
     /**
+    * \brief Reinterpret current object as \ref FieldHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_ToField(ButtonFieldHandle* handle, FieldHandle** result);
+
+    /**
+    * \brief Convert \ref FieldHandle to \ref ButtonFieldHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_FromField(FieldHandle* handle, ButtonFieldHandle** result);
+
+    /**
     * \copydoc Field_Release
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_Release(ButtonFieldHandle* handle);
@@ -195,6 +216,16 @@ extern "C"
     */
 
     /**
+    * \brief Reinterpret current object as \ref FieldHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_ToField(TextFieldHandle* handle, FieldHandle** result);
+
+    /**
+    * \brief Convert \ref FieldHandle to \ref TextFieldHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_FromField(FieldHandle* handle, TextFieldHandle** result);
+
+    /**
     * \copydoc Field_Release
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TextField_Release(TextFieldHandle* handle);
@@ -205,6 +236,16 @@ extern "C"
     * \memberof ChoiceFieldHandle
     * @{
     */
+
+    /**
+    * \brief Reinterpret current object as \ref FieldHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_ToField(ChoiceFieldHandle* handle, FieldHandle** result);
+
+    /**
+    * \brief Convert \ref FieldHandle to \ref ChoiceFieldHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_FromField(FieldHandle* handle, ChoiceFieldHandle** result);
 
     /**
     * \copydoc Field_Release
@@ -224,6 +265,16 @@ extern "C"
     * specifying various attributes of the signature field.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_GetValue(SignatureFieldHandle* handle, DigitalSignatureHandle** result);
+
+    /**
+    * \brief Reinterpret current object as \ref FieldHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_ToField(SignatureFieldHandle* handle, FieldHandle** result);
+
+    /**
+    * \brief Convert \ref FieldHandle to \ref SignatureFieldHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_FromField(FieldHandle* handle, SignatureFieldHandle** result);
 
     /**
     * \copydoc Field_Release

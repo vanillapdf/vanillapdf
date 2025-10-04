@@ -611,13 +611,10 @@ error_type process_xyz_destination(XYZDestinationHandle* obj, int nested) {
 
 error_type process_fit_destination(FitDestinationHandle* obj, int nested) {
     print_spaces(nested);
-    print_text("Fit destination begin\n");
-
-    print_spaces(nested + 1);
     print_text("Fit destination processed\n");
 
-    print_spaces(nested);
-    print_text("Fit destination end\n");
+    // This object has no more properties
+    UNUSED(obj);
 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -690,13 +687,10 @@ error_type process_fit_rectangle_destination(FitRectangleDestinationHandle* obj,
 
 error_type process_fit_bounding_box_destination(FitBoundingBoxDestinationHandle* obj, int nested) {
     print_spaces(nested);
-    print_text("FitBoundingBox destination begin\n");
-
-    print_spaces(nested + 1);
     print_text("FitBoundingBox destination processed\n");
 
-    print_spaces(nested);
-    print_text("FitBoundingBox destination end\n");
+    // This object has no more properties
+    UNUSED(obj);
 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -1841,6 +1835,9 @@ error_type process_field_collection(FieldCollectionHandle* obj, int nested) {
 error_type process_field(FieldHandle* obj, int nested) {
     FieldType type;
     SignatureFieldHandle* signature_field = NULL;
+    ButtonFieldHandle* button_field = NULL;
+    TextFieldHandle* text_field = NULL;
+    ChoiceFieldHandle* choice_field = NULL;
 
     print_spaces(nested);
     print_text("Field begin\n");
@@ -1849,17 +1846,35 @@ error_type process_field(FieldHandle* obj, int nested) {
 
     switch (type) {
         case FieldType_Signature:
-            RETURN_ERROR_IF_NOT_SUCCESS(Field_ToSignature(obj, &signature_field));
+            RETURN_ERROR_IF_NOT_SUCCESS(SignatureField_FromField(obj, &signature_field));
             RETURN_ERROR_IF_NOT_SUCCESS(process_signature_field(signature_field, nested + 1));
             RETURN_ERROR_IF_NOT_SUCCESS(SignatureField_Release(signature_field));
             break;
 
-        case FieldType_NonTerminal:
         case FieldType_Button:
+            print_spaces(nested + 1);
+            print_text("Type: Button\n");
+            RETURN_ERROR_IF_NOT_SUCCESS(ButtonField_FromField(obj, &button_field));
+            RETURN_ERROR_IF_NOT_SUCCESS(ButtonField_Release(button_field));
+            break;
+
         case FieldType_Text:
+            print_spaces(nested + 1);
+            print_text("Type: Text\n");
+            RETURN_ERROR_IF_NOT_SUCCESS(TextField_FromField(obj, &text_field));
+            RETURN_ERROR_IF_NOT_SUCCESS(TextField_Release(text_field));
+            break;
+
         case FieldType_Choice:
             print_spaces(nested + 1);
-            print_text("Type: %d\n", type);
+            print_text("Type: Choice\n");
+            RETURN_ERROR_IF_NOT_SUCCESS(ChoiceField_FromField(obj, &choice_field));
+            RETURN_ERROR_IF_NOT_SUCCESS(ChoiceField_Release(choice_field));
+            break;
+
+        case FieldType_NonTerminal:
+            print_spaces(nested + 1);
+            print_text("Type: NonTerminal\n");
             break;
 
         default:
