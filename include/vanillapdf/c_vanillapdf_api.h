@@ -79,6 +79,7 @@
 #include "vanillapdf/utils/c_errors.h"
 #include "vanillapdf/utils/c_pkcs12_key.h"
 #include "vanillapdf/utils/c_signing_key.h"
+#include "vanillapdf/utils/c_signature_verifier.h"
 #include "vanillapdf/utils/c_message_digest_algorithm.h"
 #include "vanillapdf/utils/c_name_constants.h"
 
