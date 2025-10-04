@@ -367,4 +367,170 @@ TEST(Document, Sign) {
     ASSERT_EQ(InputOutputStream_Release(io_stream), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(Document, ButtonFieldConversion) {
+    DictionaryObjectHandle* dict = nullptr;
+    NameObjectHandle* ft_key = nullptr;
+    NameObjectHandle* btn_value = nullptr;
+    FieldHandle* field = nullptr;
+    ButtonFieldHandle* button_field = nullptr;
+    FieldHandle* field_back = nullptr;
+    FieldType field_type = FieldType_Undefined;
+
+    ASSERT_EQ(DictionaryObject_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dict, nullptr);
+
+    ASSERT_EQ(NameObject_CreateFromDecodedString("FT", &ft_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Btn", &btn_value), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(DictionaryObject_Insert(dict, ft_key, reinterpret_cast<ObjectHandle*>(btn_value), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Field_CreateFromDictionary(dict, &field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field, nullptr);
+
+    ASSERT_EQ(Field_GetType(field, &field_type), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(field_type, FieldType_Button);
+
+    ASSERT_EQ(ButtonField_FromField(field, &button_field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(button_field, nullptr);
+
+    ASSERT_EQ(ButtonField_ToField(button_field, &field_back), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field_back, nullptr);
+
+    ASSERT_EQ(Field_Release(field_back), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ButtonField_Release(button_field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Field_Release(field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(btn_value), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(ft_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Release(dict), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(Document, TextFieldConversion) {
+    DictionaryObjectHandle* dict = nullptr;
+    NameObjectHandle* ft_key = nullptr;
+    NameObjectHandle* tx_value = nullptr;
+    FieldHandle* field = nullptr;
+    TextFieldHandle* text_field = nullptr;
+    FieldHandle* field_back = nullptr;
+    FieldType field_type = FieldType_Undefined;
+
+    ASSERT_EQ(DictionaryObject_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dict, nullptr);
+
+    ASSERT_EQ(NameObject_CreateFromDecodedString("FT", &ft_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Tx", &tx_value), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(DictionaryObject_Insert(dict, ft_key, reinterpret_cast<ObjectHandle*>(tx_value), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Field_CreateFromDictionary(dict, &field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field, nullptr);
+
+    ASSERT_EQ(Field_GetType(field, &field_type), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(field_type, FieldType_Text);
+
+    ASSERT_EQ(TextField_FromField(field, &text_field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(text_field, nullptr);
+
+    ASSERT_EQ(TextField_ToField(text_field, &field_back), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field_back, nullptr);
+
+    ASSERT_EQ(Field_Release(field_back), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextField_Release(text_field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Field_Release(field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(tx_value), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(ft_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Release(dict), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(Document, ChoiceFieldConversion) {
+    DictionaryObjectHandle* dict = nullptr;
+    NameObjectHandle* ft_key = nullptr;
+    NameObjectHandle* ch_value = nullptr;
+    FieldHandle* field = nullptr;
+    ChoiceFieldHandle* choice_field = nullptr;
+    FieldHandle* field_back = nullptr;
+    FieldType field_type = FieldType_Undefined;
+
+    ASSERT_EQ(DictionaryObject_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dict, nullptr);
+
+    ASSERT_EQ(NameObject_CreateFromDecodedString("FT", &ft_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Ch", &ch_value), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(DictionaryObject_Insert(dict, ft_key, reinterpret_cast<ObjectHandle*>(ch_value), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Field_CreateFromDictionary(dict, &field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field, nullptr);
+
+    ASSERT_EQ(Field_GetType(field, &field_type), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(field_type, FieldType_Choice);
+
+    ASSERT_EQ(ChoiceField_FromField(field, &choice_field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(choice_field, nullptr);
+
+    ASSERT_EQ(ChoiceField_ToField(choice_field, &field_back), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field_back, nullptr);
+
+    ASSERT_EQ(Field_Release(field_back), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ChoiceField_Release(choice_field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Field_Release(field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(ch_value), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(ft_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Release(dict), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(Document, SignatureFieldConversion) {
+    DictionaryObjectHandle* dict = nullptr;
+    NameObjectHandle* ft_key = nullptr;
+    NameObjectHandle* sig_value = nullptr;
+    FieldHandle* field = nullptr;
+    SignatureFieldHandle* signature_field = nullptr;
+    FieldHandle* field_back = nullptr;
+    FieldType field_type = FieldType_Undefined;
+
+    ASSERT_EQ(DictionaryObject_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dict, nullptr);
+
+    ASSERT_EQ(NameObject_CreateFromDecodedString("FT", &ft_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Sig", &sig_value), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(DictionaryObject_Insert(dict, ft_key, reinterpret_cast<ObjectHandle*>(sig_value), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Field_CreateFromDictionary(dict, &field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field, nullptr);
+
+    ASSERT_EQ(Field_GetType(field, &field_type), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(field_type, FieldType_Signature);
+
+    ASSERT_EQ(SignatureField_FromField(field, &signature_field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signature_field, nullptr);
+
+    ASSERT_EQ(SignatureField_ToField(signature_field, &field_back), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field_back, nullptr);
+
+    ASSERT_EQ(Field_Release(field_back), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SignatureField_Release(signature_field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Field_Release(field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(sig_value), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(ft_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Release(dict), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(Document, NonTerminalFieldCreation) {
+    DictionaryObjectHandle* dict = nullptr;
+    FieldHandle* field = nullptr;
+    FieldType field_type = FieldType_Undefined;
+
+    ASSERT_EQ(DictionaryObject_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dict, nullptr);
+
+    ASSERT_EQ(Field_CreateFromDictionary(dict, &field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field, nullptr);
+
+    ASSERT_EQ(Field_GetType(field, &field_type), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(field_type, FieldType_NonTerminal);
+
+    ASSERT_EQ(Field_Release(field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Release(dict), VANILLAPDF_ERROR_SUCCESS);
+}
+
 } /* documents */

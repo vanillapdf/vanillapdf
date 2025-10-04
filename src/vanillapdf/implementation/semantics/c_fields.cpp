@@ -1,11 +1,27 @@
 #include "precompiled.h"
 
 #include "semantics/objects/fields.h"
+#include "syntax/objects/dictionary_object.h"
 
 #include "vanillapdf/semantics/c_fields.h"
 #include "implementation/c_helper.h"
 
+using namespace vanillapdf;
+using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_CreateFromDictionary(DictionaryObjectHandle* dictionary, FieldHandle** result) {
+    DictionaryObject* dict = reinterpret_cast<DictionaryObject*>(dictionary);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(dict);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto field = Field::Create(dict);
+        auto ptr = field.AddRefGet();
+        *result = reinterpret_cast<FieldHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
 
 VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle* handle, FieldType* result) {
     Field* obj = reinterpret_cast<Field*>(handle);

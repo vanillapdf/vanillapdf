@@ -144,6 +144,13 @@ extern "C"
 
     /**
     * \brief
+    * Create a field from a dictionary object.
+    * The field type is determined by the /FT entry in the dictionary.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_CreateFromDictionary(DictionaryObjectHandle* dictionary, FieldHandle** result);
+
+    /**
+    * \brief
     * Return type of field.
     * Result can be used to convert to derived type.
     */
