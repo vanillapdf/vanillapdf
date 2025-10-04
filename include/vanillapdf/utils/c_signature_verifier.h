@@ -123,7 +123,7 @@ extern "C"
     /** @} */
 
     /**
-    * \memberof SignatureVerificationResultHandle
+    * \memberof SignatureVerifier
     * @{
     */
 
@@ -131,13 +131,13 @@ extern "C"
     * \brief Verify digital signature (low-level API)
     * \param signed_data The raw bytes that were signed
     * \param signature_contents The PKCS#7 signature blob
-    * \param trusted_store Optional certificate store (NULL = use system defaults)
+    * \param trusted_store Trusted certificate store (required)
     * \param flags Verification flags
     * \param result Output verification result
     *
     * This is a low-level API that operates on raw bytes extracted from PDF.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerification_Verify(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerifier_Verify(
         const BufferHandle* signed_data,
         const BufferHandle* signature_contents,
         TrustedCertificateStoreHandle* trusted_store,
@@ -145,10 +145,17 @@ extern "C"
         SignatureVerificationResultHandle** result
     );
 
+    /** @} */
+
+    /**
+    * \memberof SignatureVerificationResultHandle
+    * @{
+    */
+
     /**
     * \brief Get overall verification status
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetStatus(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetStatus(
         SignatureVerificationResultHandle* handle,
         SignatureVerificationStatusType* result
     );
@@ -156,7 +163,7 @@ extern "C"
     /**
     * \brief Get human-readable message describing verification result
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetMessage(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetMessage(
         SignatureVerificationResultHandle* handle,
         BufferHandle** result
     );
@@ -164,7 +171,7 @@ extern "C"
     /**
     * \brief Check if signature is cryptographically valid
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsSignatureValid(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_IsSignatureValid(
         SignatureVerificationResultHandle* handle,
         boolean_type* result
     );
@@ -172,7 +179,7 @@ extern "C"
     /**
     * \brief Check if document bytes are intact (ByteRange matches)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsDocumentIntact(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_IsDocumentIntact(
         SignatureVerificationResultHandle* handle,
         boolean_type* result
     );
@@ -180,7 +187,7 @@ extern "C"
     /**
     * \brief Check if certificate chain is trusted
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsCertificateTrusted(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_IsCertificateTrusted(
         SignatureVerificationResultHandle* handle,
         boolean_type* result
     );
@@ -188,19 +195,19 @@ extern "C"
     /**
     * \brief Get signer's certificate (DER-encoded)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetSignerCertificate(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetSignerCertificate(
         SignatureVerificationResultHandle* handle,
         BufferHandle** result
     );
 
     // TODO: Certificate chain access requires iterator pattern for C API (std::vector not compatible)
-    // VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetCertificateChainCount(...)
-    // VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetCertificateChainAt(...)
+    // VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetCertificateChainCount(...)
+    // VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetCertificateChainAt(...)
 
     /**
     * \brief Get signer's common name from certificate
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetSignerCommonName(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetSignerCommonName(
         SignatureVerificationResultHandle* handle,
         BufferHandle** result
     );
@@ -209,7 +216,7 @@ extern "C"
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_Release(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_Release(
         SignatureVerificationResultHandle* handle
     );
 

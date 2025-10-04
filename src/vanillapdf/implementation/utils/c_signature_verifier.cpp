@@ -26,7 +26,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_Create(
 
 VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_AddCertificateFromPEM(
     TrustedCertificateStoreHandle* handle,
-    string_type pem_data) {
+    const BufferHandle* pem_data) {
 
     TrustedCertificateStore* store = reinterpret_cast<TrustedCertificateStore*>(handle);
     const Buffer* buffer = reinterpret_cast<const Buffer*>(pem_data);
@@ -86,9 +86,9 @@ VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_Release(
     return ObjectRelease<TrustedCertificateStore, TrustedCertificateStoreHandle>(handle);
 }
 
-// SignatureVerification
+// SignatureVerifier
 
-VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerification_Verify(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerifier_Verify(
     const BufferHandle* signed_data,
     const BufferHandle* signature_contents,
     TrustedCertificateStoreHandle* trusted_store,
@@ -121,7 +121,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerification_Verify(
 
 // SignatureVerificationResult
 
-VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetStatus(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetStatus(
     SignatureVerificationResultHandle* handle,
     SignatureVerificationStatusType* result) {
 
@@ -135,7 +135,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetStatus(
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetMessage(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetMessage(
     SignatureVerificationResultHandle* handle,
     BufferHandle** result) {
 
@@ -155,7 +155,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetMessage(
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsSignatureValid(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_IsSignatureValid(
     SignatureVerificationResultHandle* handle,
     boolean_type* result) {
 
@@ -169,7 +169,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsSignatureValid
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsDocumentIntact(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_IsDocumentIntact(
     SignatureVerificationResultHandle* handle,
     boolean_type* result) {
 
@@ -183,7 +183,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsDocumentIntact
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsCertificateTrusted(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_IsCertificateTrusted(
     SignatureVerificationResultHandle* handle,
     boolean_type* result) {
 
@@ -197,7 +197,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsCertificateTru
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetSignerCertificate(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetSignerCertificate(
     SignatureVerificationResultHandle* handle,
     BufferHandle** result) {
 
@@ -219,7 +219,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetSignerCertifi
 
 // TODO: Certificate chain access requires iterator pattern for C API (std::vector not compatible)
 
-VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetSignerCommonName(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetSignerCommonName(
     SignatureVerificationResultHandle* handle,
     BufferHandle** result) {
 
@@ -239,7 +239,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetSignerCommonN
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_Release(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_Release(
     SignatureVerificationResultHandle* handle) {
     return ObjectRelease<SignatureVerificationResult, SignatureVerificationResultHandle>(handle);
 }
