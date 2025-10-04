@@ -16,7 +16,7 @@ SignatureVerificationStatus SignatureVerificationResult::GetStatus() const {
     return m_status;
 }
 
-std::string SignatureVerificationResult::GetMessage() const {
+BufferPtr SignatureVerificationResult::GetMessage() const {
     return m_message;
 }
 
@@ -51,7 +51,7 @@ BufferPtr SignatureVerificationResult::GetCertificateChainAt(types::size_type in
     return m_certificate_chain[index];
 }
 
-std::string SignatureVerificationResult::GetSignerCommonName() const {
+BufferPtr SignatureVerificationResult::GetSignerCommonName() const {
     return m_signer_common_name;
 }
 
@@ -61,8 +61,12 @@ void SignatureVerificationResult::SetStatus(SignatureVerificationStatus status) 
     m_status = status;
 }
 
-void SignatureVerificationResult::SetMessage(const std::string& message) {
+void SignatureVerificationResult::SetMessage(BufferPtr message) {
     m_message = message;
+}
+
+void SignatureVerificationResult::SetMessage(std::string_view message) {
+    m_message = make_deferred_container<Buffer>(message.begin(), message.end());
 }
 
 void SignatureVerificationResult::SetSignatureValid(bool valid) {
@@ -89,8 +93,12 @@ void SignatureVerificationResult::AddCertificateToChain(BufferPtr cert) {
     m_certificate_chain.push_back(cert);
 }
 
-void SignatureVerificationResult::SetSignerCommonName(const std::string& name) {
+void SignatureVerificationResult::SetSignerCommonName(BufferPtr name) {
     m_signer_common_name = name;
+}
+
+void SignatureVerificationResult::SetSignerCommonName(std::string_view name) {
+    m_signer_common_name = make_deferred_container<Buffer>(name.begin(), name.end());
 }
 
 } // vanillapdf

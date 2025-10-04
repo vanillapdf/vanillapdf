@@ -48,9 +48,9 @@ public:
 
     /**
     * \brief Get human-readable message describing the result
-    * \return Description message
+    * \return Description message as buffer (UTF-8 encoded)
     */
-    std::string GetMessage() const;
+    BufferPtr GetMessage() const;
 
     /**
     * \brief Check if signature is cryptographically valid
@@ -97,31 +97,33 @@ public:
 
     /**
     * \brief Get signer's common name from certificate
-    * \return Common name (CN) field from certificate subject
+    * \return Common name (CN) field from certificate subject as buffer (UTF-8 encoded)
     */
-    std::string GetSignerCommonName() const;
+    BufferPtr GetSignerCommonName() const;
 
     // Setters for building the result (internal use)
     void SetStatus(SignatureVerificationStatus status);
-    void SetMessage(const std::string& message);
+    void SetMessage(BufferPtr message);
+    void SetMessage(std::string_view message);  ///< Convenience overload for UTF-8 strings
     void SetSignatureValid(bool valid);
     void SetDocumentIntact(bool intact);
     void SetCertificateTrusted(bool trusted);
     void SetCertificateValidAtSigningTime(bool valid);
     void SetSignerCertificate(BufferPtr cert);
     void AddCertificateToChain(BufferPtr cert);
-    void SetSignerCommonName(const std::string& name);
+    void SetSignerCommonName(BufferPtr name);
+    void SetSignerCommonName(std::string_view name);  ///< Convenience overload for UTF-8 strings
 
 private:
     SignatureVerificationStatus m_status;
-    std::string m_message;
+    BufferPtr m_message;                    ///< UTF-8 encoded message
     bool m_signature_valid;
     bool m_document_intact;
     bool m_certificate_trusted;
     bool m_certificate_valid_at_signing;
-    BufferPtr m_signer_certificate;
+    BufferPtr m_signer_certificate;         ///< DER-encoded certificate
     std::vector<BufferPtr> m_certificate_chain;
-    std::string m_signer_common_name;
+    BufferPtr m_signer_common_name;         ///< UTF-8 encoded common name
 };
 
 } // vanillapdf

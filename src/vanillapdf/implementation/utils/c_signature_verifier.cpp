@@ -144,8 +144,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetMessage(
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        std::string message = vr->GetMessage();
-        auto buffer = make_deferred_container<Buffer>(message.begin(), message.end());
+        auto buffer = vr->GetMessage();
+        if (buffer->empty()) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
         auto ptr = buffer.AddRefGet();
         *result = reinterpret_cast<BufferHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -204,7 +207,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetSignerCertifi
 
     try {
         auto cert = vr->GetSignerCertificate();
-        if (cert.empty()) {
+        if (cert->empty()) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
@@ -214,36 +217,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetSignerCertifi
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetCertificateChainCount(
-    SignatureVerificationResultHandle* handle,
-    size_type* result) {
-
-    SignatureVerificationResult* vr = reinterpret_cast<SignatureVerificationResult*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(vr);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        *result = vr->GetCertificateChainCount();
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetCertificateChainAt(
-    SignatureVerificationResultHandle* handle,
-    size_type index,
-    BufferHandle** result) {
-
-    SignatureVerificationResult* vr = reinterpret_cast<SignatureVerificationResult*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(vr);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        auto cert = vr->GetCertificateChainAt(index);
-        auto ptr = cert.AddRefGet();
-        *result = reinterpret_cast<BufferHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
+// TODO: Certificate chain access requires iterator pattern for C API (std::vector not compatible)
 
 VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetSignerCommonName(
     SignatureVerificationResultHandle* handle,
@@ -254,8 +228,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_GetSignerCommonN
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        std::string common_name = vr->GetSignerCommonName();
-        auto buffer = make_deferred_container<Buffer>(common_name.begin(), common_name.end());
+        auto buffer = vr->GetSignerCommonName();
+        if (buffer->empty()) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
         auto ptr = buffer.AddRefGet();
         *result = reinterpret_cast<BufferHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
