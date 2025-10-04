@@ -214,7 +214,6 @@ TEST(SignatureVerifier, CreateAndVerifySignature) {
     BufferHandle* message_buffer = nullptr;
     BufferHandle* signature_buffer = nullptr;
     TrustedCertificateStoreHandle* trust_store = nullptr;
-    BufferHandle* pem_cert_buffer = nullptr;
     SignatureVerificationResultHandle* verify_result = nullptr;
 
     // Step 1: Create PKCS12 key from test certificate
@@ -251,19 +250,11 @@ TEST(SignatureVerifier, CreateAndVerifySignature) {
     ASSERT_EQ(SigningKey_SignCleanup(signing_key),
               VANILLAPDF_ERROR_SUCCESS);
 
-    // Step 4: Create trust store and add master certificate
+    // Step 4: Create trust store (initially empty)
     ASSERT_EQ(TrustedCertificateStore_Create(&trust_store), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(trust_store, nullptr);
 
-    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(MASTER_CERTIFICATE_PEM),
-                                     MASTER_CERTIFICATE_PEM_SIZE, &pem_cert_buffer),
-              VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(pem_cert_buffer, nullptr);
-
-    ASSERT_EQ(TrustedCertificateStore_AddCertificateFromPEM(trust_store, pem_cert_buffer),
-              VANILLAPDF_ERROR_SUCCESS);
-
-    // Step 5: Verify the signature
+    // Step 5: First verification pass to extract signer certificate
     ASSERT_EQ(SignatureVerifier_Verify(
         message_buffer,
         signature_buffer,
@@ -273,7 +264,30 @@ TEST(SignatureVerifier, CreateAndVerifySignature) {
     ), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(verify_result, nullptr);
 
-    // Step 6: Check verification results
+    // Step 6: Extract signer certificate and add to trust store
+    BufferHandle* signer_cert = nullptr;
+    ASSERT_EQ(SignatureVerificationResult_GetSignerCertificate(verify_result, &signer_cert),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signer_cert, nullptr);
+
+    ASSERT_EQ(TrustedCertificateStore_AddCertificateFromDER(trust_store, signer_cert),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    // Release first verification result
+    ASSERT_EQ(SignatureVerificationResult_Release(verify_result), VANILLAPDF_ERROR_SUCCESS);
+    verify_result = nullptr;
+
+    // Step 7: Verify again with signer certificate now in trust store
+    ASSERT_EQ(SignatureVerifier_Verify(
+        message_buffer,
+        signature_buffer,
+        trust_store,
+        VerificationFlag_None,
+        &verify_result
+    ), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(verify_result, nullptr);
+
+    // Step 8: Check verification results
     SignatureVerificationStatusType status = SignatureStatus_Undefined;
     ASSERT_EQ(SignatureVerificationResult_GetStatus(verify_result, &status),
               VANILLAPDF_ERROR_SUCCESS);
@@ -290,31 +304,30 @@ TEST(SignatureVerifier, CreateAndVerifySignature) {
     ASSERT_EQ(SignatureVerificationResult_IsCertificateTrusted(verify_result, &is_cert_trusted),
               VANILLAPDF_ERROR_SUCCESS);
 
-    // Get signer common name
+    // Get and validate signer common name
     BufferHandle* common_name_buffer = nullptr;
-    error_type cn_rv = SignatureVerificationResult_GetSignerCommonName(verify_result, &common_name_buffer);
-    if (cn_rv == VANILLAPDF_ERROR_SUCCESS && common_name_buffer != nullptr) {
-        string_type cn_data = nullptr;
-        size_type cn_len = 0;
-        ASSERT_EQ(Buffer_GetData(common_name_buffer, &cn_data, &cn_len), VANILLAPDF_ERROR_SUCCESS);
-        // Common name should be "Unit test signer" from SIGNING_CERTIFICATE
-        Buffer_Release(common_name_buffer);
-    }
+    ASSERT_EQ(SignatureVerificationResult_GetSignerCommonName(verify_result, &common_name_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(common_name_buffer, nullptr);
 
-    // Log results for debugging
-    printf("Signature verification status: %d\n", status);
-    printf("Is signature valid: %d\n", is_signature_valid);
-    printf("Is document intact: %d\n", is_doc_intact);
-    printf("Is certificate trusted: %d\n", is_cert_trusted);
+    string_type cn_data = nullptr;
+    size_type cn_len = 0;
+    ASSERT_EQ(Buffer_GetData(common_name_buffer, &cn_data, &cn_len), VANILLAPDF_ERROR_SUCCESS);
 
-    // Expectations: signature should be cryptographically valid, document intact
-    // Note: Certificate trust depends on whether master cert is in system trust store
+    // Common name should be "Unit test signer" from SIGNING_CERTIFICATE
+    EXPECT_STREQ(cn_data, "Unit test signer");
+
+    // Validate signature and document integrity
+    // Note: We manually add the signer certificate to the trust store for testing
+    EXPECT_EQ(status, SignatureStatus_Valid);
     EXPECT_EQ(is_signature_valid, VANILLAPDF_RV_TRUE);
     EXPECT_EQ(is_doc_intact, VANILLAPDF_RV_TRUE);
+    EXPECT_EQ(is_cert_trusted, VANILLAPDF_RV_TRUE);
 
     // Cleanup
     if (verify_result) SignatureVerificationResult_Release(verify_result);
-    if (pem_cert_buffer) Buffer_Release(pem_cert_buffer);
+    if (signer_cert) Buffer_Release(signer_cert);
+    if (common_name_buffer) Buffer_Release(common_name_buffer);
     if (trust_store) TrustedCertificateStore_Release(trust_store);
     if (signature_buffer) Buffer_Release(signature_buffer);
     if (message_buffer) Buffer_Release(message_buffer);
