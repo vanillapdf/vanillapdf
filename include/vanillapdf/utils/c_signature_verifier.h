@@ -1,5 +1,5 @@
-#ifndef _C_SIGNATURE_VERIFICATION_H
-#define _C_SIGNATURE_VERIFICATION_H
+#ifndef _C_SIGNATURE_VERIFIER_H
+#define _C_SIGNATURE_VERIFIER_H
 
 #include "vanillapdf/c_export.h"
 #include "vanillapdf/c_handles.h"
@@ -20,13 +20,6 @@ extern "C"
     * \extends IUnknownHandle
     * \ingroup group_utils
     * \brief Collection of trusted certificates for signature verification
-    */
-
-    /**
-    * \class SignatureVerificationOptionsHandle
-    * \extends IUnknownHandle
-    * \ingroup group_utils
-    * \brief Configuration options for signature verification
     */
 
     /**
@@ -53,7 +46,8 @@ extern "C"
     * \ingroup group_utils
     */
     typedef enum {
-        SignatureStatus_Valid = 0,              /**< Signature is cryptographically valid */
+        SignatureStatus_Undefined = 0,          /**< Status not set (uninitialized) */
+        SignatureStatus_Valid,                  /**< Signature is cryptographically valid */
         SignatureStatus_Invalid,                /**< Signature verification failed */
         SignatureStatus_CertificateExpired,     /**< Certificate has expired */
         SignatureStatus_CertificateNotYetValid, /**< Certificate not yet valid */
@@ -80,11 +74,11 @@ extern "C"
     /**
     * \brief Add a certificate from PEM format
     * \param handle The certificate store
-    * \param pem_data PEM-encoded certificate data (null-terminated string)
+    * \param pem_data PEM-encoded certificate data (null-terminated UTF-8 string)
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_AddCertificateFromPEM(
         TrustedCertificateStoreHandle* handle,
-        const char* pem_data
+        const BufferHandle* pem_data
     );
 
     /**
@@ -98,23 +92,13 @@ extern "C"
     );
 
     /**
-    * \brief Add certificate from file (PEM or DER auto-detected)
-    * \param handle The certificate store
-    * \param file_path Path to certificate file
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_AddCertificateFromFile(
-        TrustedCertificateStoreHandle* handle,
-        const char* file_path
-    );
-
-    /**
     * \brief Load certificates from directory (e.g., /etc/ssl/certs)
     * \param handle The certificate store
-    * \param directory_path Path to directory containing certificates
+    * \param directory_path Path to directory containing certificates (UTF-8 encoded)
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_LoadFromDirectory(
         TrustedCertificateStoreHandle* handle,
-        const char* directory_path
+        string_type directory_path
     );
 
     /**
@@ -139,48 +123,6 @@ extern "C"
     /** @} */
 
     /**
-    * \memberof SignatureVerificationOptionsHandle
-    * @{
-    */
-
-    /**
-    * \brief Create verification options with defaults
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationOptions_Create(
-        SignatureVerificationOptionsHandle** result
-    );
-
-    /**
-    * \brief Set trusted certificate store (optional - uses system defaults if not set)
-    * \param handle The verification options
-    * \param store Trusted certificate store
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationOptions_SetTrustedCertificates(
-        SignatureVerificationOptionsHandle* handle,
-        TrustedCertificateStoreHandle* store
-    );
-
-    /**
-    * \brief Set verification flags
-    * \param handle The verification options
-    * \param flags Bitwise OR of VerificationFlagType values
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationOptions_SetFlags(
-        SignatureVerificationOptionsHandle* handle,
-        int32_type flags
-    );
-
-    /**
-    * \copydoc IUnknown_Release
-    * \see \ref IUnknown_Release
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationOptions_Release(
-        SignatureVerificationOptionsHandle* handle
-    );
-
-    /** @} */
-
-    /**
     * \memberof SignatureVerificationResultHandle
     * @{
     */
@@ -199,7 +141,7 @@ extern "C"
         const BufferHandle* signed_data,
         const BufferHandle* signature_contents,
         TrustedCertificateStoreHandle* trusted_store,
-        int32_type flags,
+        VerificationFlagType flags,
         SignatureVerificationResultHandle** result
     );
 
@@ -224,7 +166,7 @@ extern "C"
     */
     VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsSignatureValid(
         SignatureVerificationResultHandle* handle,
-        bool_type* result
+        boolean_type* result
     );
 
     /**
@@ -232,7 +174,7 @@ extern "C"
     */
     VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsDocumentIntact(
         SignatureVerificationResultHandle* handle,
-        bool_type* result
+        boolean_type* result
     );
 
     /**
@@ -240,7 +182,7 @@ extern "C"
     */
     VANILLAPDF_API error_type CALLING_CONVENTION VerificationResult_IsCertificateTrusted(
         SignatureVerificationResultHandle* handle,
-        bool_type* result
+        boolean_type* result
     );
 
     /**
@@ -290,4 +232,4 @@ extern "C"
 };
 #endif
 
-#endif /* _C_SIGNATURE_VERIFICATION_H */
+#endif /* _C_SIGNATURE_VERIFIER_H */

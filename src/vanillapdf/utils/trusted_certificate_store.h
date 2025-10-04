@@ -6,6 +6,7 @@
 #include "utils/buffer.h"
 
 #include <string>
+#include <string_view>
 #include <memory>
 
 namespace vanillapdf {
@@ -26,7 +27,7 @@ public:
     * \brief Add a certificate from PEM format
     * \param pem_data PEM-encoded certificate data
     */
-    void AddCertificateFromPEM(const std::string& pem_data);
+    void AddCertificateFromPEM(const Buffer& pem_data);
 
     /**
     * \brief Add a certificate from DER format
@@ -35,14 +36,9 @@ public:
     void AddCertificateFromDER(const Buffer& der_data);
 
     /**
-    * \brief Add a certificate from file
-    * \param file_path Path to certificate file (PEM or DER, auto-detected)
-    */
-    void AddCertificateFromFile(const std::string& file_path);
-
-    /**
     * \brief Load certificates from directory
     * \param directory_path Path to directory containing certificate files
+    *                       Must be UTF-8 encoded on all platforms
     *
     * Loads all certificate files from the specified directory.
     * Commonly used for loading from /etc/ssl/certs on Linux.
