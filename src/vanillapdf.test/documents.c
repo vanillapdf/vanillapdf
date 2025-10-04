@@ -611,13 +611,10 @@ error_type process_xyz_destination(XYZDestinationHandle* obj, int nested) {
 
 error_type process_fit_destination(FitDestinationHandle* obj, int nested) {
     print_spaces(nested);
-    print_text("Fit destination begin\n");
-
-    print_spaces(nested + 1);
     print_text("Fit destination processed\n");
 
-    print_spaces(nested);
-    print_text("Fit destination end\n");
+    // This object has no more properties
+    UNUSED(obj);
 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -690,13 +687,10 @@ error_type process_fit_rectangle_destination(FitRectangleDestinationHandle* obj,
 
 error_type process_fit_bounding_box_destination(FitBoundingBoxDestinationHandle* obj, int nested) {
     print_spaces(nested);
-    print_text("FitBoundingBox destination begin\n");
-
-    print_spaces(nested + 1);
     print_text("FitBoundingBox destination processed\n");
 
-    print_spaces(nested);
-    print_text("FitBoundingBox destination end\n");
+    // This object has no more properties
+    UNUSED(obj);
 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
