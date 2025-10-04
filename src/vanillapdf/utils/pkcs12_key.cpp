@@ -32,7 +32,7 @@ public:
 
     // ISigningKey
     void SignInitialize(MessageDigestAlgorithm algorithm);
-    void SignUpdate(BufferPtr data);
+    void SignUpdate(const Buffer& data);
     void SignUpdate(IInputStreamPtr data, types::stream_size length);
     BufferPtr SignFinal();
     void SignCleanup();
@@ -86,7 +86,7 @@ void PKCS12Key::SignInitialize(MessageDigestAlgorithm algorithm) {
     return m_impl->SignInitialize(algorithm);
 }
 
-void PKCS12Key::SignUpdate(const BufferPtr data) {
+void PKCS12Key::SignUpdate(const Buffer& data) {
     return m_impl->SignUpdate(data);
 }
 
@@ -354,9 +354,9 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 
 }
 
-void PKCS12Key::PKCS12KeyImpl::SignUpdate(BufferPtr data) {
-    auto input_stream = data->ToInputStream();
-    SignUpdate(input_stream, data->size());
+void PKCS12Key::PKCS12KeyImpl::SignUpdate(const Buffer& data) {
+    auto input_stream = data.ToInputStream();
+    SignUpdate(input_stream, data.size());
 }
 
 void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_size length) {
