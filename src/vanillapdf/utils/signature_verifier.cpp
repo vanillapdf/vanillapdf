@@ -3,7 +3,7 @@
 #include "utils/signature_verifier.h"
 #include "utils/misc_utils.h"
 #include "utils/exceptions.h"
-#include "semantics/utils/signature_verification_options.h"
+#include "utils/signature_verification_options.h"
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 #include <openssl/pkcs7.h>
@@ -15,8 +15,6 @@
 #endif
 
 namespace vanillapdf {
-
-using namespace semantics;
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 

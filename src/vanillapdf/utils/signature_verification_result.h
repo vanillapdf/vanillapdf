@@ -1,16 +1,14 @@
 #ifndef _SIGNATURE_VERIFICATION_RESULT_H
 #define _SIGNATURE_VERIFICATION_RESULT_H
 
-#include "semantics/utils/semantics_fwd.h"
+#include "utils/utils_fwd.h"
 #include "utils/unknown_interface.h"
 #include "utils/buffer.h"
-#include "semantics/objects/date.h"
 
 #include <string>
 #include <vector>
 
 namespace vanillapdf {
-namespace semantics {
 
 /**
 * \enum SignatureVerificationStatus
@@ -97,24 +95,6 @@ public:
     BufferPtr GetCertificateChainAt(types::size_type index) const;
 
     /**
-    * \brief Get signing time from signature
-    * \return Signing time or nullptr if not available
-    */
-    DatePtr GetSigningTime() const;
-
-    /**
-    * \brief Get certificate validity start date
-    * \return Certificate NotBefore date
-    */
-    DatePtr GetCertificateNotBefore() const;
-
-    /**
-    * \brief Get certificate validity end date
-    * \return Certificate NotAfter date
-    */
-    DatePtr GetCertificateNotAfter() const;
-
-    /**
     * \brief Get signer's common name from certificate
     * \return Common name (CN) field from certificate subject
     */
@@ -129,9 +109,6 @@ public:
     void SetCertificateValidAtSigningTime(bool valid);
     void SetSignerCertificate(BufferPtr cert);
     void AddCertificateToChain(BufferPtr cert);
-    void SetSigningTime(DatePtr time);
-    void SetCertificateNotBefore(DatePtr date);
-    void SetCertificateNotAfter(DatePtr date);
     void SetSignerCommonName(const std::string& name);
 
 private:
@@ -143,13 +120,9 @@ private:
     bool m_certificate_valid_at_signing;
     BufferPtr m_signer_certificate;
     std::vector<BufferPtr> m_certificate_chain;
-    DatePtr m_signing_time;
-    DatePtr m_cert_not_before;
-    DatePtr m_cert_not_after;
     std::string m_signer_common_name;
 };
 
-} // semantics
 } // vanillapdf
 
 #endif /* _SIGNATURE_VERIFICATION_RESULT_H */

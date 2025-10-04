@@ -4,7 +4,8 @@
 #include "utils/utils_fwd.h"
 #include "utils/buffer.h"
 #include "utils/trusted_certificate_store.h"
-#include "semantics/utils/signature_verification_result.h"
+#include "utils/signature_verification_result.h"
+#include "utils/signature_verification_options.h"
 
 namespace vanillapdf {
 
@@ -32,11 +33,11 @@ public:
     * 4. Checks certificate validity periods
     * 5. Returns comprehensive verification result
     */
-    static semantics::SignatureVerificationResultPtr Verify(
+    static SignatureVerificationResultPtr Verify(
         const Buffer& signed_data,
         const Buffer& signature_contents,
         TrustedCertificateStorePtr trusted_store,
-        semantics::VerificationFlags flags
+        VerificationFlags flags
     );
 
 private:
