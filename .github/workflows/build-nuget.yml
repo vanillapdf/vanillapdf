@@ -299,7 +299,7 @@ jobs:
         run: cmake -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}" -P cmake/nuget.cmake
 
       - name: Download runtime packages
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           pattern: vanillapdf.runtime.*
           path: nuget/local-packages
