@@ -275,6 +275,19 @@ ctest --preset windows-x64-msvc-17 -R "test"         # Integration tests only
 ctest --preset windows-x64-msvc-17 -R "benchmark"    # Benchmarks only
 ```
 
+Run individual test cases with verbose output:
+```bash
+ctest --preset windows-x64-msvc-17 -R "objects_test" --verbose
+ctest --preset windows-x64-msvc-17 -R "signature_verifier_test" --output-on-failure
+```
+
+**Windows (Visual Studio) specific**: Visual Studio is a multi-config generator, so you must specify build configuration:
+```bash
+# Specify configuration with --build-config
+ctest --preset windows-x64-msvc-17 --build-config Debug -R "SignatureVerifier" --output-on-failure
+ctest --preset windows-x64-msvc-17 --build-config Release -R "unittest"
+```
+
 #### Code Coverage
 
 Enable code coverage (GCC/Clang only):
@@ -366,9 +379,46 @@ The example creates actual PDF files and validates the complete integration chai
 ### Key Design Patterns
 
 1. **C++ Core with C Interface** - Core library is C++17, exposed via C interface in `implementation/`
+   - Public API: All `include/vanillapdf/c_*.h` headers provide ABI-stable C interface
+   - Internal implementation: C++17 code in `src/vanillapdf/` (not exposed)
+   - Bridge layer: `src/vanillapdf/implementation/` wraps C++ objects for C API
+   - **Handle-based system**: C API uses opaque pointers (handles) defined in `c_handles.h`
+     - Example: `VPDF_DOCUMENT`, `VPDF_FILE`, `VPDF_OBJECT` are all opaque handles
+     - Internally cast to C++ objects in implementation layer
+     - Ensures ABI stability across compiler versions
 2. **Object-based PDF Model** - PDF syntax objects (arrays, dictionaries, streams) have corresponding C++ classes
 3. **Parser-based Architecture** - Separate parsers for syntax (`syntax/parsers/`) and content streams (`contents/`)
 4. **Interface Segregation** - Clean interfaces for encryption, signing, and streams in `utils/`
+5. **Layered Architecture** - Three distinct layers:
+   - **Syntax Layer**: Low-level PDF objects and file structure
+   - **Semantics Layer**: High-level document concepts (pages, annotations, forms)
+   - **Contents Layer**: Content stream parsing and operations
+
+### Signature Verification Architecture
+
+**Location**: `src/vanillapdf/utils/` (low-level utilities, independent of document parsing)
+
+**Core Components**:
+- `SignatureVerifier` - Static utility class for PKCS#7 signature verification
+  - Operates on raw bytes (signed data + signature blob)
+  - No dependency on PDF document structures
+  - Uses OpenSSL for cryptographic operations
+- `SignatureVerificationResult` - Detailed verification result object
+  - Status (valid/invalid/expired/revoked/untrusted/etc.)
+  - Certificate chain information
+  - Signer common name extraction
+- `TrustedCertificateStore` - Certificate store for chain validation
+  - Load from PEM/DER format
+  - Load from system defaults (Windows CertStore, Linux/macOS OpenSSL paths)
+  - Load from directory (e.g., `/etc/ssl/certs`)
+- `SigningKey` enhancements - Extended with direct signing methods
+  - `Sign_Initialize/Update/Final/Cleanup` for PKCS#7 signature creation
+  - Enables testing without full document context
+
+**C API**: `include/vanillapdf/utils/c_signature_verifier.h`, `c_signing_key.h`
+
+**Tests**: `src/vanillapdf.unittest/signature_verifier_test.cpp`
+- Run with: `ctest --preset windows-x64-msvc-17 --build-config Debug -R "TrustedCertificateStore|SignatureVerifier|SignatureVerificationResult"`
 
 ### Feature Dependencies
 
@@ -482,26 +532,66 @@ The script will:
 ## Common Tasks
 
 ### Adding New PDF Object Type
-1. Create class in `src/vanillapdf/syntax/objects/`
+1. Create C++ class in `src/vanillapdf/syntax/objects/` (e.g., `new_object.h`, `new_object.cpp`)
 2. Add parser logic in `src/vanillapdf/syntax/parsers/`
-3. Implement C interface in `src/vanillapdf/implementation/syntax/`
-4. Add tests in appropriate test directory
+3. Create C API header in `include/vanillapdf/syntax/c_new_object.h`
+4. Implement C interface wrapper in `src/vanillapdf/implementation/syntax/c_new_object.cpp`
+5. Add to main API header `include/vanillapdf/c_vanillapdf_api.h`
+6. Add unit tests in `src/vanillapdf.unittest/objects_test.cpp`
 
 ### Adding Content Stream Operation
 1. Define operation in `src/vanillapdf/contents/content_stream_operations.h`
 2. Implement in `src/vanillapdf/contents/content_stream_operations.cpp`
 3. Add parser support in `src/vanillapdf/contents/content_stream_parser.h`
-4. Create C interface in `src/vanillapdf/implementation/contents/`
+4. Create C API header in `include/vanillapdf/contents/c_content_operation.h` (if needed)
+5. Create C interface wrapper in `src/vanillapdf/implementation/contents/`
+6. Add integration tests in `src/vanillapdf.test/`
+
+### Adding New Semantic Object
+1. Create C++ class in `src/vanillapdf/semantics/objects/` (e.g., `new_semantic.h`, `new_semantic.cpp`)
+2. Inherit from `HighLevelObject` base class
+3. Create C API header in `include/vanillapdf/semantics/c_new_semantic.h`
+4. Implement C interface wrapper in `src/vanillapdf/implementation/semantics/`
+5. Add to main API header `include/vanillapdf/c_vanillapdf_api.h`
+6. Add tests in appropriate test directory
+
+### Working with Signature Verification
+
+**Current Status** (as of feature/signature-verification branch):
+- ✅ Low-level C++ API complete (`SignatureVerifier`, `SignatureVerificationResult`, `TrustedCertificateStore`)
+- ✅ C API complete with comprehensive null checks
+- ✅ Unit tests complete and passing (18 tests)
+- ✅ `SigningKey` direct signing methods implemented
+
+**TODO** (Next steps to complete feature):
+1. **Certificate chain C API** - Add iterator-based access to certificate chain
+   - C++ methods exist: `GetCertificateChainCount()`, `GetCertificateChainAt()`
+   - Need C wrappers in `c_signature_verifier.h` (see TODO comment at line 203)
+2. **Document-level API** - High-level signature verification from `Document`
+   - Extract `ByteRange` and `Contents` from signature field
+   - Read document bytes specified by ByteRange
+   - Call low-level `SignatureVerifier_Verify`
+3. **Integration tests** - End-to-end PDF signing and verification
+4. **CLI tool** - Add `verify` command to `vanillapdf-tools`
+
+**Testing signature verification**:
+```bash
+# Run all signature verification tests
+ctest --preset windows-x64-msvc-17 --build-config Debug \
+  -R "TrustedCertificateStore|SignatureVerifier|SignatureVerificationResult" \
+  --output-on-failure
+```
 
 ### Debugging and Development
 - Use sanitizers in Debug builds: `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
-- Visual Studio .natvis files available for debugging C++ objects
+- Visual Studio .natvis files available for debugging C++ objects (`public.natvis`, `vanillapdf.natvis`)
 - Precompiled headers are used (`precompiled.h`) for faster builds
+- C API headers use handle-based system (opaque pointers) for ABI stability
 
 **🚨 MANDATORY: Branch and PR Workflow**
 - **ALWAYS** create a new branch and pull request for ALL changes - this is mandated by repository permissions
 - **NEVER** commit directly to main or release branches (they are protected)
-- Base new branches on `main` (default branch, `master` is legacy)
+- Base new branches on `main` (default branch)
 - Check current branch before making commits: `git branch --show-current`
 - For hotfixes, may need to branch from release branch instead of main
 
