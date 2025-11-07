@@ -51,6 +51,7 @@
 #include "vanillapdf/semantics/c_interactive_forms.h"
 #include "vanillapdf/semantics/c_fields.h"
 #include "vanillapdf/semantics/c_digital_signature.h"
+#include "vanillapdf/semantics/c_digital_signature_extensions.h"
 #include "vanillapdf/semantics/c_font.h"
 #include "vanillapdf/semantics/c_font_map.h"
 #include "vanillapdf/semantics/c_character_map.h"

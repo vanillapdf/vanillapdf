@@ -18,6 +18,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     attributes_test.cpp
     objects_test.cpp
     utils_test.cpp
+    digital_signature_test.cpp
     signature_verifier_test.cpp
 )
 

@@ -336,4 +336,223 @@ TEST(SignatureVerifier, CreateAndVerifySignature) {
     if (pkcs12_buffer) Buffer_Release(pkcs12_buffer);
 }
 
+// DigitalSignatureExtensions Tests
+
+TEST(DigitalSignatureExtensions, Verify_NullChecks) {
+    DigitalSignatureHandle* signature = nullptr;
+    DocumentHandle* document = nullptr;
+    TrustedCertificateStoreHandle* trust_store = nullptr;
+    SignatureVerificationResultHandle* result = nullptr;
+
+    // Create minimal objects for null checks
+    ASSERT_EQ(TrustedCertificateStore_Create(&trust_store), VANILLAPDF_ERROR_SUCCESS);
+
+    // Null signature check
+    EXPECT_EQ(DigitalSignatureExtensions_Verify(nullptr, document, trust_store,
+              VerificationFlag_None, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    // Null document check
+    EXPECT_EQ(DigitalSignatureExtensions_Verify(signature, nullptr, trust_store,
+              VerificationFlag_None, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    // Null trust store check
+    EXPECT_EQ(DigitalSignatureExtensions_Verify(signature, document, nullptr,
+              VerificationFlag_None, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    // Null result check
+    EXPECT_EQ(DigitalSignatureExtensions_Verify(signature, document, trust_store,
+              VerificationFlag_None, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    ASSERT_EQ(TrustedCertificateStore_Release(trust_store), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(DigitalSignatureExtensions, SignAndVerifyDocument) {
+    InputOutputStreamHandle* source_stream = nullptr;
+    InputOutputStreamHandle* signed_stream = nullptr;
+    FileHandle* source_file = nullptr;
+    FileHandle* signed_file = nullptr;
+    BufferHandle* pkcs12_buffer = nullptr;
+    PKCS12KeyHandle* pkcs12_key = nullptr;
+    SigningKeyHandle* signing_key = nullptr;
+    DateHandle* signing_time = nullptr;
+    DocumentSignatureSettingsHandle* signature_settings = nullptr;
+    DocumentHandle* source_document = nullptr;
+    DocumentHandle* signed_document = nullptr;
+    CatalogHandle* catalog = nullptr;
+    InteractiveFormHandle* acro_form = nullptr;
+    FieldCollectionHandle* fields = nullptr;
+    FieldHandle* field = nullptr;
+    SignatureFieldHandle* sig_field = nullptr;
+    DigitalSignatureHandle* digital_signature = nullptr;
+    TrustedCertificateStoreHandle* trust_store = nullptr;
+    SignatureVerificationResultHandle* verify_result = nullptr;
+
+    // Step 1: Create a simple PDF document in memory
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(&source_stream), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(source_stream, nullptr);
+
+    ASSERT_EQ(File_CreateStream(source_stream, "memory_source.pdf", &source_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(source_file, nullptr);
+
+    ASSERT_EQ(Document_CreateFile(source_file, &source_document), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(source_document, nullptr);
+
+    // Step 2: Set up signing key from test certificate
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(SIGNING_CERTIFICATE),
+                                     SIGNING_CERTIFICATE_SIZE, &pkcs12_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pkcs12_buffer, nullptr);
+
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(pkcs12_buffer, nullptr, &pkcs12_key),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pkcs12_key, nullptr);
+
+    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, &signing_key),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signing_key, nullptr);
+
+    ASSERT_EQ(Date_CreateCurrent(&signing_time), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signing_time, nullptr);
+
+    // Step 3: Create signature settings
+    ASSERT_EQ(DocumentSignatureSettings_Create(&signature_settings), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signature_settings, nullptr);
+
+    ASSERT_EQ(DocumentSignatureSettings_SetSigningKey(signature_settings, signing_key),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentSignatureSettings_SetDigest(signature_settings, MessageDigestAlgorithmType_SHA256),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentSignatureSettings_SetSigningTime(signature_settings, signing_time),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    // Step 4: Create separate memory stream for signed PDF (avoiding GitHub issue #156)
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(&signed_stream), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signed_stream, nullptr);
+
+    ASSERT_EQ(File_CreateStream(signed_stream, "memory_signed.pdf", &signed_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signed_file, nullptr);
+
+    // Step 5: Sign the document from source to signed stream
+    ASSERT_EQ(Document_Sign(source_document, signed_file, signature_settings),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    // Release source resources (no longer needed)
+    ASSERT_EQ(Document_Release(source_document), VANILLAPDF_ERROR_SUCCESS);
+    source_document = nullptr;
+    ASSERT_EQ(File_Release(source_file), VANILLAPDF_ERROR_SUCCESS);
+    source_file = nullptr;
+    ASSERT_EQ(File_Release(signed_file), VANILLAPDF_ERROR_SUCCESS);
+    signed_file = nullptr;
+
+    // Step 6: Open the signed document from memory
+    ASSERT_EQ(File_OpenStream(signed_stream, "memory_signed.pdf", &signed_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signed_file, nullptr);
+
+    ASSERT_EQ(Document_OpenFile(signed_file, &signed_document), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signed_document, nullptr);
+
+    // Step 7: Get the signature field from the signed document
+    ASSERT_EQ(Document_GetCatalog(signed_document, &catalog), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(catalog, nullptr);
+
+    ASSERT_EQ(Catalog_GetAcroForm(catalog, &acro_form), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(acro_form, nullptr);
+
+    ASSERT_EQ(InteractiveForm_GetFields(acro_form, &fields), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(fields, nullptr);
+
+    size_type field_count = 0;
+    ASSERT_EQ(FieldCollection_GetSize(fields, &field_count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_GT(field_count, 0);
+
+    ASSERT_EQ(FieldCollection_At(fields, 0, &field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field, nullptr);
+
+    ASSERT_EQ(Field_ToSignature(field, &sig_field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(sig_field, nullptr);
+
+    ASSERT_EQ(SignatureField_GetValue(sig_field, &digital_signature), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(digital_signature, nullptr);
+
+    // Step 8: Verify signature (first pass to extract certificate)
+    ASSERT_EQ(TrustedCertificateStore_Create(&trust_store), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(trust_store, nullptr);
+
+    ASSERT_EQ(DigitalSignatureExtensions_Verify(digital_signature, signed_document, trust_store,
+              VerificationFlag_None, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(verify_result, nullptr);
+
+    // Extract signer certificate and add to trust store
+    BufferHandle* signer_cert = nullptr;
+    ASSERT_EQ(SignatureVerificationResult_GetSignerCertificate(verify_result, &signer_cert),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signer_cert, nullptr);
+
+    ASSERT_EQ(TrustedCertificateStore_AddCertificateFromDER(trust_store, signer_cert),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(signer_cert), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(SignatureVerificationResult_Release(verify_result), VANILLAPDF_ERROR_SUCCESS);
+    verify_result = nullptr;
+
+    // Step 9: Verify signature again with certificate in trust store
+    ASSERT_EQ(DigitalSignatureExtensions_Verify(digital_signature, signed_document, trust_store,
+              VerificationFlag_None, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(verify_result, nullptr);
+
+    // Step 10: Validate the verification result
+    SignatureVerificationStatusType status = SignatureStatus_Undefined;
+    ASSERT_EQ(SignatureVerificationResult_GetStatus(verify_result, &status),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type is_signature_valid = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(SignatureVerificationResult_IsSignatureValid(verify_result, &is_signature_valid),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type is_doc_intact = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(SignatureVerificationResult_IsDocumentIntact(verify_result, &is_doc_intact),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type is_cert_trusted = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(SignatureVerificationResult_IsCertificateTrusted(verify_result, &is_cert_trusted),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    // Get and validate signer common name
+    BufferHandle* common_name_buffer = nullptr;
+    ASSERT_EQ(SignatureVerificationResult_GetSignerCommonName(verify_result, &common_name_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(common_name_buffer, nullptr);
+
+    string_type cn_data = nullptr;
+    size_type cn_len = 0;
+    ASSERT_EQ(Buffer_GetData(common_name_buffer, &cn_data, &cn_len), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_STREQ(cn_data, "Unit test signer");
+
+    // Validate results
+    EXPECT_EQ(status, SignatureStatus_Valid);
+    EXPECT_EQ(is_signature_valid, VANILLAPDF_RV_TRUE);
+    EXPECT_EQ(is_doc_intact, VANILLAPDF_RV_TRUE);
+    EXPECT_EQ(is_cert_trusted, VANILLAPDF_RV_TRUE);
+
+    // Cleanup
+    if (common_name_buffer) Buffer_Release(common_name_buffer);
+    if (verify_result) SignatureVerificationResult_Release(verify_result);
+    if (trust_store) TrustedCertificateStore_Release(trust_store);
+    if (digital_signature) DigitalSignature_Release(digital_signature);
+    if (sig_field) SignatureField_Release(sig_field);
+    if (field) Field_Release(field);
+    if (fields) FieldCollection_Release(fields);
+    if (acro_form) InteractiveForm_Release(acro_form);
+    if (catalog) Catalog_Release(catalog);
+    if (signed_document) Document_Release(signed_document);
+    if (signed_file) File_Release(signed_file);
+    if (signature_settings) DocumentSignatureSettings_Release(signature_settings);
+    if (signing_time) Date_Release(signing_time);
+    if (signing_key) SigningKey_Release(signing_key);
+    if (pkcs12_key) PKCS12Key_Release(pkcs12_key);
+    if (pkcs12_buffer) Buffer_Release(pkcs12_buffer);
+    if (signed_stream) InputOutputStream_Release(signed_stream);
+    if (source_stream) InputOutputStream_Release(source_stream);
+}
+
 } // namespace signature_verification

@@ -42,6 +42,10 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
         throw FileNotInitializedException(destination->GetFilenameString());
     }
 
+    // TODO: https://github.com/vanillapdf/vanillapdf/issues/156
+    // Detect and handle when source and destination are the same file
+    // Currently causes infinite loop if both parameters point to the same file/data model
+
     std::string reason;
 
     // Verify that configuration flags are valid
@@ -1300,12 +1304,21 @@ void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
     output->Write(WhiteSpace::LINE_FEED);
 
     // Quote from 7.5.2 File Header
-    // 
+    //
     // If a PDF file contains binary data, as most do (see 7.2, "Lexical Conventions"),
     // the header line shall be immediately followed by a comment line containing at least four binary characters that is,
     // characters whose codes are 128 or greater.
     // This ensures proper behaviour of file transfer applications that inspect data near the beginning of a file
     // to determine whether to treat the file's contents as text or as binary.
+
+    // TODO: Fix object offset bug when binary header is enabled
+    // Enabling this binary header causes object offset issues in the xref table
+    // See: https://github.com/vanillapdf/vanillapdf/issues/155
+
+    // Update 07.11.2025
+    // All the tests pass even after uncommenting this, so it could have been just a very specific problem.
+    // Either case we should include a test, that verifies the actual offsets of the objects.
+    // I have seen the file that was saved to disk, that have incorrect offsets in the XREF table.
 
     output->Write('%');
     output->Write((unsigned char)0xDE);
