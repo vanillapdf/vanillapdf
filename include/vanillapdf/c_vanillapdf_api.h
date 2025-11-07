@@ -50,6 +50,7 @@
 #include "vanillapdf/semantics/c_resource_dictionary.h"
 #include "vanillapdf/semantics/c_interactive_forms.h"
 #include "vanillapdf/semantics/c_fields.h"
+#include "vanillapdf/semantics/c_byte_range.h"
 #include "vanillapdf/semantics/c_digital_signature.h"
 #include "vanillapdf/semantics/c_digital_signature_extensions.h"
 #include "vanillapdf/semantics/c_font.h"

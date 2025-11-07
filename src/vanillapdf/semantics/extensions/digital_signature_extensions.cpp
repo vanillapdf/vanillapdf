@@ -3,6 +3,7 @@
 #include "semantics/extensions/digital_signature_extensions.h"
 #include "semantics/objects/digital_signature.h"
 #include "semantics/objects/document.h"
+#include "semantics/utils/byte_range.h"
 
 #include "syntax/files/file.h"
 #include "syntax/objects/integer_object.h"

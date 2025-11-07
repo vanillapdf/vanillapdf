@@ -56,6 +56,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES
 
 set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_annotations.cpp
+    implementation/semantics/c_byte_range.cpp
     implementation/semantics/c_catalog.cpp
     implementation/semantics/c_character_map.cpp
     implementation/semantics/c_date.cpp
@@ -129,6 +130,7 @@ set(VANILLAPDF_SEMANTICS_SOURCES
 
     semantics/extensions/digital_signature_extensions.cpp
 
+    semantics/utils/byte_range.cpp
     semantics/utils/document_encryption_settings.cpp
 
     semantics/utils/document_signer.cpp
@@ -256,6 +258,7 @@ set(VANILLAPDF_SEMANTICS_HEADERS
 
     semantics/extensions/digital_signature_extensions.h
 
+    semantics/utils/byte_range.h
     semantics/utils/document_encryption_settings.h
 
     semantics/utils/document_signer.h
