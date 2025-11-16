@@ -245,6 +245,15 @@ bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationR
             case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
             case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY:
             case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
+            case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
+                // Check if untrusted roots are allowed
+                if (!settings.empty() && settings->GetAllowUntrustedRootFlag()) {
+                    spdlog::info("Certificate chain does not terminate in trusted root but AllowUntrustedRootFlag is enabled, continuing");
+                    result->SetCertificateTrusted(false);  // Still mark as not trusted, but allow
+                    result->SetStatus(SignatureVerificationStatus::Valid);
+                    result->SetMessage("Certificate is self-signed but is allowed by settings");
+                    return true;  // Allow verification to proceed
+                }
                 result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
                 break;
             default:
@@ -275,8 +284,8 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     auto result = make_deferred<SignatureVerificationResult>();
 
     // Settings are passed to verification functions for validation behavior control
-    // Currently implemented: AllowExpiredCertsFlag, AllowWeakAlgorithmsFlag
-    // TODO: CheckRevocationFlag, RequireTrustedRootFlag, CheckSigningTimeFlag
+    // Currently implemented: AllowExpiredCertsFlag, AllowWeakAlgorithmsFlag, AllowUntrustedRootFlag
+    // TODO: CheckRevocationFlag, CheckSigningTimeFlag
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 

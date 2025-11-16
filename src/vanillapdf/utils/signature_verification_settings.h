@@ -16,7 +16,7 @@ namespace vanillapdf {
 * \code
 * auto settings = make_deferred<SignatureVerificationSettings>();
 * settings->SetCheckRevocationFlag(true);
-* settings->SetRequireTrustedRootFlag(true);
+* settings->SetAllowUntrustedRootFlag(false);  // Require trusted root (default)
 * settings->SetAllowExpiredCertsFlag(false);
 *
 * auto result = SignatureVerifier::Verify(signed_data, signature, trust_store, settings);
@@ -37,16 +37,16 @@ public:
     void SetCheckRevocationFlag(bool flag) noexcept { m_check_revocation = flag; }
 
     /**
-    * \brief Check if certificate chain must terminate in a trusted root
-    * \return true if trusted root is required, false otherwise
+    * \brief Check if untrusted certificate roots are allowed (self-signed certificates)
+    * \return true if untrusted roots are allowed, false otherwise
     */
-    bool GetRequireTrustedRootFlag(void) const noexcept { return m_require_trusted_root; }
+    bool GetAllowUntrustedRootFlag(void) const noexcept { return m_allow_untrusted_root; }
 
     /**
-    * \brief Require certificate chain to terminate in a trusted root
-    * \param flag true to require trusted root, false to allow self-signed
+    * \brief Allow or reject untrusted certificate roots (self-signed certificates)
+    * \param flag true to allow untrusted roots, false to require trusted root
     */
-    void SetRequireTrustedRootFlag(bool flag) noexcept { m_require_trusted_root = flag; }
+    void SetAllowUntrustedRootFlag(bool flag) noexcept { m_allow_untrusted_root = flag; }
 
     /**
     * \brief Check if expired certificates are allowed
@@ -86,7 +86,7 @@ public:
 
 private:
     bool m_check_revocation = false;       ///< Check CRL/OCSP for certificate revocation
-    bool m_require_trusted_root = false;   ///< Require certificate chain to trusted root
+    bool m_allow_untrusted_root = false;   ///< Allow untrusted certificate roots (self-signed)
     bool m_allow_expired_certs = false;    ///< Allow expired certificates
     bool m_check_signing_time = false;     ///< Validate certificate was valid at signing time
     bool m_allow_weak_algorithms = false;  ///< Allow weak signature algorithms and key sizes

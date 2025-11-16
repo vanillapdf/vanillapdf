@@ -49,7 +49,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetCh
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetRequireTrustedRootFlag(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetAllowUntrustedRootFlag(
     SignatureVerificationSettingsHandle* handle,
     boolean_type* result) {
 
@@ -58,12 +58,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetRe
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        *result = settings->GetRequireTrustedRootFlag() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
+        *result = settings->GetAllowUntrustedRootFlag() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetRequireTrustedRootFlag(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetAllowUntrustedRootFlag(
     SignatureVerificationSettingsHandle* handle,
     boolean_type value) {
 
@@ -71,7 +71,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetRe
     RETURN_ERROR_PARAM_VALUE_IF_NULL(settings);
 
     try {
-        settings->SetRequireTrustedRootFlag(value == VANILLAPDF_RV_TRUE);
+        settings->SetAllowUntrustedRootFlag(value == VANILLAPDF_RV_TRUE);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

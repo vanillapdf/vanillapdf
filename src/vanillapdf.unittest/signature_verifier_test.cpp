@@ -195,10 +195,10 @@ TEST(SignatureVerificationSettings, CreateAndGetDefaults) {
               VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(check_revocation, VANILLAPDF_RV_FALSE);
 
-    boolean_type require_trusted_root = VANILLAPDF_RV_TRUE;
-    ASSERT_EQ(SignatureVerificationSettings_GetRequireTrustedRootFlag(settings, &require_trusted_root),
+    boolean_type allow_untrusted_root = VANILLAPDF_RV_TRUE;
+    ASSERT_EQ(SignatureVerificationSettings_GetAllowUntrustedRootFlag(settings, &allow_untrusted_root),
               VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(require_trusted_root, VANILLAPDF_RV_FALSE);
+    EXPECT_EQ(allow_untrusted_root, VANILLAPDF_RV_FALSE);
 
     boolean_type allow_expired = VANILLAPDF_RV_TRUE;
     ASSERT_EQ(SignatureVerificationSettings_GetAllowExpiredCertsFlag(settings, &allow_expired),
@@ -351,6 +351,121 @@ TEST(SignatureVerifier, AllowExpiredCertsFlag_Integration) {
     ASSERT_EQ(SignatureVerificationResult_IsCertificateTrusted(verify_result, &is_cert_trusted),
               VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(is_cert_trusted, VANILLAPDF_RV_TRUE);  // Now trusted despite expiration
+
+    // Cleanup
+    if (verify_result) SignatureVerificationResult_Release(verify_result);
+    if (settings) SignatureVerificationSettings_Release(settings);
+    if (trust_store) TrustedCertificateStore_Release(trust_store);
+    if (signature_buffer) Buffer_Release(signature_buffer);
+    if (message_buffer) Buffer_Release(message_buffer);
+    if (signing_key) SigningKey_Release(signing_key);
+    if (pkcs12_key) PKCS12Key_Release(pkcs12_key);
+    if (pkcs12_buffer) Buffer_Release(pkcs12_buffer);
+}
+
+TEST(SignatureVerifier, AllowUntrustedRootFlag_Integration) {
+    // Test self-signed certificate validation with AllowUntrustedRootFlag
+    const char* test_message = "Test message for self-signed cert verification";
+    const size_t test_message_len = strlen(test_message);
+
+    BufferHandle* pkcs12_buffer = nullptr;
+    PKCS12KeyHandle* pkcs12_key = nullptr;
+    SigningKeyHandle* signing_key = nullptr;
+    BufferHandle* message_buffer = nullptr;
+    BufferHandle* signature_buffer = nullptr;
+    TrustedCertificateStoreHandle* trust_store = nullptr;
+    SignatureVerificationSettingsHandle* settings = nullptr;
+    SignatureVerificationResultHandle* verify_result = nullptr;
+
+    // Step 1: Create signing key from test certificate (self-signed)
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(SIGNING_CERTIFICATE),
+                                     SIGNING_CERTIFICATE_SIZE, &pkcs12_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pkcs12_buffer, nullptr);
+
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(pkcs12_buffer, nullptr, &pkcs12_key),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pkcs12_key, nullptr);
+
+    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, &signing_key),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signing_key, nullptr);
+
+    // Step 2: Create signature
+    ASSERT_EQ(SigningKey_SignInitialize(signing_key, MessageDigestAlgorithmType_SHA256),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Buffer_CreateFromData(test_message, test_message_len, &message_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(message_buffer, nullptr);
+
+    ASSERT_EQ(SigningKey_SignUpdate(signing_key, message_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(SigningKey_SignFinal(signing_key, &signature_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signature_buffer, nullptr);
+
+    ASSERT_EQ(SigningKey_SignCleanup(signing_key), VANILLAPDF_ERROR_SUCCESS);
+
+    // Step 3: Create empty trust store (certificate is self-signed, not in store)
+    ASSERT_EQ(TrustedCertificateStore_Create(&trust_store), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(trust_store, nullptr);
+
+    // Step 4: Verify with default settings (AllowUntrustedRootFlag disabled - STRICT by default)
+    // Should FAIL with CertificateUntrusted (secure by default)
+    ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
+              nullptr, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(verify_result, nullptr);
+
+    SignatureVerificationStatusType status = SignatureStatus_Undefined;
+    ASSERT_EQ(SignatureVerificationResult_GetStatus(verify_result, &status),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    // Should be CertificateUntrusted (strict by default - secure)
+    EXPECT_EQ(status, SignatureStatus_CertificateUntrusted);
+
+    boolean_type is_signature_valid = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(SignatureVerificationResult_IsSignatureValid(verify_result, &is_signature_valid),
+              VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(is_signature_valid, VANILLAPDF_RV_TRUE);  // Cryptographically valid
+
+    boolean_type is_cert_trusted = VANILLAPDF_RV_TRUE;
+    ASSERT_EQ(SignatureVerificationResult_IsCertificateTrusted(verify_result, &is_cert_trusted),
+              VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(is_cert_trusted, VANILLAPDF_RV_FALSE);  // Not trusted (self-signed)
+
+    ASSERT_EQ(SignatureVerificationResult_Release(verify_result), VANILLAPDF_ERROR_SUCCESS);
+    verify_result = nullptr;
+
+    // Step 5: Create settings with AllowUntrustedRootFlag enabled
+    ASSERT_EQ(SignatureVerificationSettings_Create(&settings), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(settings, nullptr);
+
+    ASSERT_EQ(SignatureVerificationSettings_SetAllowUntrustedRootFlag(settings, VANILLAPDF_RV_TRUE),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    // Step 6: Verify again with AllowUntrustedRootFlag enabled
+    // Should now SUCCEED (opt-in to allow untrusted roots)
+    ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
+              settings, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(verify_result, nullptr);
+
+    ASSERT_EQ(SignatureVerificationResult_GetStatus(verify_result, &status),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    // With AllowUntrustedRootFlag, self-signed certs are allowed
+    EXPECT_EQ(status, SignatureStatus_Valid);
+
+    is_signature_valid = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(SignatureVerificationResult_IsSignatureValid(verify_result, &is_signature_valid),
+              VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(is_signature_valid, VANILLAPDF_RV_TRUE);
+
+    is_cert_trusted = VANILLAPDF_RV_TRUE;
+    ASSERT_EQ(SignatureVerificationResult_IsCertificateTrusted(verify_result, &is_cert_trusted),
+              VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(is_cert_trusted, VANILLAPDF_RV_FALSE);  // Still marked as not trusted
 
     // Cleanup
     if (verify_result) SignatureVerificationResult_Release(verify_result);

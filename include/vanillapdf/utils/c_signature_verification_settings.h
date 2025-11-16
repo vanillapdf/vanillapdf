@@ -59,23 +59,23 @@ extern "C"
     );
 
     /**
-    * \brief Get require trusted root flag
+    * \brief Get allow untrusted root flag
     * \param handle The settings handle
     * \param result Output flag value
     * \return Error code
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetRequireTrustedRootFlag(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetAllowUntrustedRootFlag(
         SignatureVerificationSettingsHandle* handle,
         boolean_type* result
     );
 
     /**
-    * \brief Set require trusted root flag
+    * \brief Set allow untrusted root flag (self-signed certificates)
     * \param handle The settings handle
     * \param value Flag value to set
     * \return Error code
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetRequireTrustedRootFlag(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetAllowUntrustedRootFlag(
         SignatureVerificationSettingsHandle* handle,
         boolean_type value
     );
