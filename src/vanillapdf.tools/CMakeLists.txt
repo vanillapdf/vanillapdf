@@ -17,6 +17,7 @@ set(VANILLAPDF_TOOLS_SOURCES
     merge.c
     sign.c
     sign_custom.c
+    verify.c
     encrypt.c
     decrypt.c
     write_custom.c
@@ -100,3 +101,19 @@ target_compile_definitions(vanillapdf.tools PRIVATE -DVANILLAPDF_TOOLS_VERSION_P
 target_compile_definitions(vanillapdf.tools PRIVATE -DVANILLAPDF_TOOLS_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
 target_compile_definitions(vanillapdf.tools PRIVATE -DVANILLAPDF_TOOLS_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanilla_logo.ico")
+
+# Add tests for vanillapdf-tools CLI
+if(VANILLAPDF_ENABLE_TESTS)
+    # Verify test for Granizo-signed.PDF (self-signed certificate) - should succeed with flag
+    add_test(
+        NAME "Tools.verify.Granizo-signed.with-flag"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/custom/Granizo-signed.PDF" --allow-untrusted-root
+    )
+
+    # Verify test for Granizo-signed.PDF without flag - should fail (untrusted root)
+    add_test(
+        NAME "Tools.verify.Granizo-signed.without-flag"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/custom/Granizo-signed.PDF"
+    )
+    set_tests_properties("Tools.verify.Granizo-signed.without-flag" PROPERTIES WILL_FAIL TRUE)
+endif()
