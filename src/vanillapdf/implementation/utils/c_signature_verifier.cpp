@@ -92,17 +92,19 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerifier_Verify(
     const BufferHandle* signed_data,
     const BufferHandle* signature_contents,
     TrustedCertificateStoreHandle* trusted_store,
-    VerificationFlagType flags,
+    SignatureVerificationSettingsHandle* settings,
     SignatureVerificationResultHandle** result) {
 
     const Buffer* data_buf = reinterpret_cast<const Buffer*>(signed_data);
     const Buffer* sig_buf = reinterpret_cast<const Buffer*>(signature_contents);
     TrustedCertificateStore* store = reinterpret_cast<TrustedCertificateStore*>(trusted_store);
+    SignatureVerificationSettings* verification_settings = reinterpret_cast<SignatureVerificationSettings*>(settings);
 
     RETURN_ERROR_PARAM_VALUE_IF_NULL(data_buf);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(sig_buf);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(store);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    // Note: settings can be NULL for default settings
 
     try {
 
@@ -110,7 +112,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerifier_Verify(
             *data_buf,
             *sig_buf,
             store,
-            static_cast<VerificationFlags>(flags)
+            verification_settings
         );
 
         auto ptr = verification_result.AddRefGet();

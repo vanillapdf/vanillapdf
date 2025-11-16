@@ -46,6 +46,7 @@ class TrustedCertificateStore; using TrustedCertificateStorePtr = Deferred<Trust
 
 // Signature verification
 class SignatureVerificationResult; using SignatureVerificationResultPtr = Deferred<SignatureVerificationResult>;
+class SignatureVerificationSettings; using SignatureVerificationSettingsPtr = Deferred<SignatureVerificationSettings>;
 
 // Streams
 class IInputStream; using IInputStreamPtr = Deferred<IInputStream>;

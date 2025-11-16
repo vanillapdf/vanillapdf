@@ -5,33 +5,9 @@
 #include "utils/buffer.h"
 #include "utils/trusted_certificate_store.h"
 #include "utils/signature_verification_result.h"
+#include "utils/signature_verification_settings.h"
 
 namespace vanillapdf {
-
-/**
-* \enum VerificationFlags
-* \brief Flags controlling signature verification behavior
-*/
-enum class VerificationFlags {
-    None = 0,
-    CheckRevocation = 1 << 0,          ///< Check CRL/OCSP for certificate revocation
-    RequireTrustedRoot = 1 << 1,       ///< Require certificate chain to a trusted root
-    AllowExpiredCerts = 1 << 2,        ///< Allow expired certificates
-    CheckSigningTime = 1 << 3          ///< Validate certificate was valid at signing time
-};
-
-// Bitwise operators for VerificationFlags
-inline VerificationFlags operator|(VerificationFlags a, VerificationFlags b) {
-    return static_cast<VerificationFlags>(static_cast<int>(a) | static_cast<int>(b));
-}
-
-inline VerificationFlags operator&(VerificationFlags a, VerificationFlags b) {
-    return static_cast<VerificationFlags>(static_cast<int>(a) & static_cast<int>(b));
-}
-
-inline bool operator!(VerificationFlags a) {
-    return static_cast<int>(a) == 0;
-}
 
 /**
 * \class SignatureVerifier
@@ -47,7 +23,7 @@ public:
     * \param signed_data The raw bytes that were signed (extracted from PDF via ByteRange)
     * \param signature_contents The PKCS#7 DER-encoded signature blob
     * \param trusted_store Certificate store for chain validation (required)
-    * \param flags Verification behavior flags
+    * \param settings Verification behavior settings (optional, uses defaults if empty)
     * \return Detailed verification result
     *
     * This function:
@@ -58,12 +34,13 @@ public:
     *
     * \note The trusted_store parameter is required. Use TrustedCertificateStore
     *       to configure trusted certificates (from files, directories, or system defaults).
+    * \note If settings is empty, default settings are used (all flags disabled).
     */
     static SignatureVerificationResultPtr Verify(
         const Buffer& signed_data,
         const Buffer& signature_contents,
         TrustedCertificateStorePtr trusted_store,
-        VerificationFlags flags
+        SignatureVerificationSettingsPtr settings
     );
 
 private:

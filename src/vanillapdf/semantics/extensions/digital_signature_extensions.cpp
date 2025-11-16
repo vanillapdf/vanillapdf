@@ -21,7 +21,7 @@ SignatureVerificationResultPtr DigitalSignatureExtensions::Verify(
     DigitalSignaturePtr signature,
     DocumentPtr document,
     TrustedCertificateStorePtr trusted_store,
-    VerificationFlags flags
+    SignatureVerificationSettingsPtr settings
 ) {
     // Get the file from the document
     auto file = document->GetFile();
@@ -88,7 +88,7 @@ SignatureVerificationResultPtr DigitalSignatureExtensions::Verify(
         *signed_data_buffer,
         *signature_contents,
         trusted_store,
-        flags
+        settings
     );
 }
 

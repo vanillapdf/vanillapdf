@@ -29,17 +29,6 @@ extern "C"
     * \brief Result of signature verification operation
     */
 
-    /**
-    * \brief Verification behavior flags
-    * \ingroup group_utils
-    */
-    typedef enum {
-        VerificationFlag_None = 0,
-        VerificationFlag_CheckRevocation = 1 << 0,      /**< Check CRL/OCSP for certificate revocation */
-        VerificationFlag_RequireTrustedRoot = 1 << 1,   /**< Require certificate chain to trusted root */
-        VerificationFlag_AllowExpiredCerts = 1 << 2,    /**< Allow expired certificates */
-        VerificationFlag_CheckSigningTime = 1 << 3      /**< Validate cert was valid at signing time */
-    } VerificationFlagType;
 
     /**
     * \brief Overall status of signature verification
@@ -132,16 +121,17 @@ extern "C"
     * \param signed_data The raw bytes that were signed
     * \param signature_contents The PKCS#7 signature blob
     * \param trusted_store Trusted certificate store (required)
-    * \param flags Verification flags
+    * \param settings Verification settings (optional, can be NULL for defaults)
     * \param result Output verification result
     *
     * This is a low-level API that operates on raw bytes extracted from PDF.
+    * If settings is NULL, default settings are used (all flags disabled).
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerifier_Verify(
         const BufferHandle* signed_data,
         const BufferHandle* signature_contents,
         TrustedCertificateStoreHandle* trusted_store,
-        VerificationFlagType flags,
+        SignatureVerificationSettingsHandle* settings,
         SignatureVerificationResultHandle** result
     );
 

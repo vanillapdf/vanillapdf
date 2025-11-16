@@ -16,29 +16,28 @@ error_type CALLING_CONVENTION DigitalSignatureExtensions_Verify(
     DigitalSignatureHandle* signature,
     DocumentHandle* document,
     TrustedCertificateStoreHandle* trusted_store,
-    VerificationFlagType flags,
+    SignatureVerificationSettingsHandle* settings,
     SignatureVerificationResultHandle** result
 ) {
     DigitalSignature* signature_obj = reinterpret_cast<DigitalSignature*>(signature);
     Document* document_obj = reinterpret_cast<Document*>(document);
     TrustedCertificateStore* trusted_store_obj = reinterpret_cast<TrustedCertificateStore*>(trusted_store);
+    SignatureVerificationSettings* settings_obj = reinterpret_cast<SignatureVerificationSettings*>(settings);
 
     RETURN_ERROR_PARAM_VALUE_IF_NULL(signature_obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(document_obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(trusted_store_obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    // Note: settings can be NULL for default settings
 
     try
     {
-        // Convert verification flags from C enum to C++ enum
-        auto cpp_flags = static_cast<VerificationFlags>(flags);
-
         // Call the extension method
         auto verification_result = DigitalSignatureExtensions::Verify(
             signature_obj,
             document_obj,
             trusted_store_obj,
-            cpp_flags
+            settings_obj
         );
 
         // Increment reference count for output

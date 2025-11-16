@@ -21,7 +21,7 @@ extern "C"
     * \param signature The digital signature object to verify
     * \param document The PDF document containing the signature
     * \param trusted_store Certificate store for chain validation (required)
-    * \param flags Verification behavior flags
+    * \param settings Verification settings (optional, can be NULL for defaults)
     * \param result Output verification result
     *
     * This extension method:
@@ -33,6 +33,7 @@ extern "C"
     *
     * \note The signature must contain valid ByteRange and Contents entries.
     *       The document must be the same document from which the signature was obtained.
+    *       If settings is NULL, default settings are used (all flags disabled).
     *
     * \see SignatureVerifier_Verify for low-level signature verification
     */
@@ -40,7 +41,7 @@ extern "C"
         DigitalSignatureHandle* signature,
         DocumentHandle* document,
         TrustedCertificateStoreHandle* trusted_store,
-        VerificationFlagType flags,
+        SignatureVerificationSettingsHandle* settings,
         SignatureVerificationResultHandle** result
     );
 

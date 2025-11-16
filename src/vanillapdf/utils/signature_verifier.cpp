@@ -196,11 +196,12 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     const Buffer& signed_data,
     const Buffer& signature_contents,
     TrustedCertificateStorePtr trusted_store,
-    VerificationFlags flags) {
+    SignatureVerificationSettingsPtr settings) {
 
-    // Note: flags parameter reserved for future verification options
+    // Note: settings parameter reserved for future verification options
     // (e.g., CheckRevocation, RequireTrustedRoot, AllowExpiredCerts, CheckSigningTime)
-    (void)flags;
+    // For now, we acknowledge the settings but don't use them yet
+    (void)settings;
 
     auto result = make_deferred<SignatureVerificationResult>();
 

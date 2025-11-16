@@ -71,10 +71,10 @@ public:
     // [Note:There are no signed, unsigned, short, or long bool types or values. end note]
     // Values of type bool participate in integral promotions(4.5).
 
-    // There is no need to specify nullptr - use the default constructor
-    // I am not able to check the value statically
+    // Note: nullptr is accepted and handled safely - creates an empty Deferred.
+    // While the default constructor is preferred for clarity, nullptr is valid
+    // for compatibility with C API wrappers and other scenarios.
     DeferredWrapperBase(T* value) noexcept : DeferredWrapperBase(value, true) {
-        assert(value != nullptr);
     }
 
     // I wanted to ensure that the original value is initialized before calling

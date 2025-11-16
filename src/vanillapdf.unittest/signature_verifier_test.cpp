@@ -92,19 +92,19 @@ TEST(SignatureVerifier, Verify_NullChecks) {
 
     // Null signed_data check
     EXPECT_EQ(SignatureVerifier_Verify(nullptr, signature_contents, store,
-              VerificationFlag_None, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
+              nullptr, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
 
     // Null signature_contents check
     EXPECT_EQ(SignatureVerifier_Verify(signed_data, nullptr, store,
-              VerificationFlag_None, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
+              nullptr, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
 
     // Null store check
     EXPECT_EQ(SignatureVerifier_Verify(signed_data, signature_contents, nullptr,
-              VerificationFlag_None, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
+              nullptr, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
 
     // Null result check
     EXPECT_EQ(SignatureVerifier_Verify(signed_data, signature_contents, store,
-              VerificationFlag_None, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+              nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 
     ASSERT_EQ(TrustedCertificateStore_Release(store), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_Release(signature_contents), VANILLAPDF_ERROR_SUCCESS);
@@ -259,7 +259,7 @@ TEST(SignatureVerifier, CreateAndVerifySignature) {
         message_buffer,
         signature_buffer,
         trust_store,
-        VerificationFlag_None,
+        nullptr,  // Use default settings
         &verify_result
     ), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(verify_result, nullptr);
@@ -282,7 +282,7 @@ TEST(SignatureVerifier, CreateAndVerifySignature) {
         message_buffer,
         signature_buffer,
         trust_store,
-        VerificationFlag_None,
+        nullptr,  // Use default settings
         &verify_result
     ), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(verify_result, nullptr);
@@ -349,19 +349,19 @@ TEST(DigitalSignatureExtensions, Verify_NullChecks) {
 
     // Null signature check
     EXPECT_EQ(DigitalSignatureExtensions_Verify(nullptr, document, trust_store,
-              VerificationFlag_None, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
+              nullptr, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
 
     // Null document check
     EXPECT_EQ(DigitalSignatureExtensions_Verify(signature, nullptr, trust_store,
-              VerificationFlag_None, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
+              nullptr, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
 
     // Null trust store check
     EXPECT_EQ(DigitalSignatureExtensions_Verify(signature, document, nullptr,
-              VerificationFlag_None, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
+              nullptr, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
 
     // Null result check
     EXPECT_EQ(DigitalSignatureExtensions_Verify(signature, document, trust_store,
-              VerificationFlag_None, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+              nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 
     ASSERT_EQ(TrustedCertificateStore_Release(trust_store), VANILLAPDF_ERROR_SUCCESS);
 }
@@ -479,7 +479,7 @@ TEST(DigitalSignatureExtensions, SignAndVerifyDocument) {
     ASSERT_NE(trust_store, nullptr);
 
     ASSERT_EQ(DigitalSignatureExtensions_Verify(digital_signature, signed_document, trust_store,
-              VerificationFlag_None, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+              nullptr, &verify_result), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(verify_result, nullptr);
 
     // Extract signer certificate and add to trust store
@@ -497,7 +497,7 @@ TEST(DigitalSignatureExtensions, SignAndVerifyDocument) {
 
     // Step 9: Verify signature again with certificate in trust store
     ASSERT_EQ(DigitalSignatureExtensions_Verify(digital_signature, signed_document, trust_store,
-              VerificationFlag_None, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+              nullptr, &verify_result), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(verify_result, nullptr);
 
     // Step 10: Validate the verification result

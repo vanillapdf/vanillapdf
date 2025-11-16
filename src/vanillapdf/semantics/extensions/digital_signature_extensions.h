@@ -23,7 +23,7 @@ public:
     * \param signature The digital signature object to verify
     * \param document The PDF document containing the signature
     * \param trusted_store Certificate store for chain validation (required)
-    * \param flags Verification behavior flags
+    * \param settings Verification behavior settings (optional, uses defaults if empty)
     * \return Detailed verification result
     *
     * This extension method:
@@ -35,12 +35,13 @@ public:
     *
     * \note The signature must contain valid ByteRange and Contents entries.
     *       The document must be the same document from which the signature was obtained.
+    *       If settings is empty, default settings are used (all flags disabled).
     */
     static SignatureVerificationResultPtr Verify(
         DigitalSignaturePtr signature,
         DocumentPtr document,
         TrustedCertificateStorePtr trusted_store,
-        VerificationFlags flags = VerificationFlags::None
+        SignatureVerificationSettingsPtr settings
     );
 
 private:
