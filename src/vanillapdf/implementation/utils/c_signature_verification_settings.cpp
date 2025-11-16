@@ -130,6 +130,33 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetCh
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetAllowWeakAlgorithmsFlag(
+    SignatureVerificationSettingsHandle* handle,
+    boolean_type* result) {
+
+    SignatureVerificationSettings* settings = reinterpret_cast<SignatureVerificationSettings*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(settings);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        *result = settings->GetAllowWeakAlgorithmsFlag() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetAllowWeakAlgorithmsFlag(
+    SignatureVerificationSettingsHandle* handle,
+    boolean_type value) {
+
+    SignatureVerificationSettings* settings = reinterpret_cast<SignatureVerificationSettings*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(settings);
+
+    try {
+        settings->SetAllowWeakAlgorithmsFlag(value == VANILLAPDF_RV_TRUE);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_Release(
     SignatureVerificationSettingsHandle* handle) {
     return ObjectRelease<SignatureVerificationSettings, SignatureVerificationSettingsHandle>(handle);

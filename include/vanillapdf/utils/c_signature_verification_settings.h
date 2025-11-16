@@ -125,6 +125,28 @@ extern "C"
     );
 
     /**
+    * \brief Get allow weak algorithms flag
+    * \param handle The settings handle
+    * \param result Output flag value
+    * \return Error code
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetAllowWeakAlgorithmsFlag(
+        SignatureVerificationSettingsHandle* handle,
+        boolean_type* result
+    );
+
+    /**
+    * \brief Set allow weak algorithms flag (MD5, SHA-1, RSA < 2048 bits)
+    * \param handle The settings handle
+    * \param value Flag value to set
+    * \return Error code
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetAllowWeakAlgorithmsFlag(
+        SignatureVerificationSettingsHandle* handle,
+        boolean_type value
+    );
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */

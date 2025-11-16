@@ -20,6 +20,72 @@ namespace vanillapdf {
 
 namespace {
 
+// Helper to check if signature uses weak cryptographic algorithms
+bool IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPtr& result) {
+    // Get signer info
+    STACK_OF(PKCS7_SIGNER_INFO)* signer_info_stack = PKCS7_get_signer_info(p7);
+    if (!signer_info_stack || sk_PKCS7_SIGNER_INFO_num(signer_info_stack) == 0) {
+        spdlog::warn("No signer info found in PKCS#7");
+        return false;  // Can't determine, assume strong
+    }
+
+    PKCS7_SIGNER_INFO* si = sk_PKCS7_SIGNER_INFO_value(signer_info_stack, 0);
+    if (!si) {
+        spdlog::warn("Signer info is null");
+        return false;
+    }
+
+    // Check digest algorithm
+    X509_ALGOR* digest_alg = si->digest_alg;
+    if (digest_alg && digest_alg->algorithm) {
+        int nid = OBJ_obj2nid(digest_alg->algorithm);
+        const char* alg_name = OBJ_nid2sn(nid);
+
+        // Check for weak digest algorithms (MD5, SHA-1, MD2, MD4)
+        if (nid == NID_md5 || nid == NID_sha1 || nid == NID_md2 || nid == NID_md4) {
+            spdlog::info("Weak digest algorithm detected: {}", alg_name ? alg_name : "unknown");
+            result->SetMessage(fmt::format("Weak digest algorithm: {}", alg_name ? alg_name : "unknown"));
+            return true;
+        }
+    }
+
+    // Check public key size
+    STACK_OF(X509)* signers = PKCS7_get0_signers(p7, nullptr, 0);
+    if (!signers || sk_X509_num(signers) == 0) {
+        return false;  // Can't check key size
+    }
+    SCOPE_GUARD([signers]() { sk_X509_free(signers); });
+
+    X509* signer_cert = sk_X509_value(signers, 0);
+    if (!signer_cert) {
+        return false;
+    }
+
+    EVP_PKEY* pkey = X509_get0_pubkey(signer_cert);
+    if (!pkey) {
+        return false;
+    }
+
+    int key_type = EVP_PKEY_base_id(pkey);
+    int key_bits = EVP_PKEY_bits(pkey);
+
+    // Check for weak RSA key sizes (< 2048 bits)
+    if (key_type == EVP_PKEY_RSA && key_bits < 2048) {
+        spdlog::info("Weak RSA key size detected: {} bits", key_bits);
+        result->SetMessage(fmt::format("Weak RSA key size: {} bits (minimum 2048)", key_bits));
+        return true;
+    }
+
+    // Check for weak DSA key sizes (< 2048 bits)
+    if (key_type == EVP_PKEY_DSA && key_bits < 2048) {
+        spdlog::info("Weak DSA key size detected: {} bits", key_bits);
+        result->SetMessage(fmt::format("Weak DSA key size: {} bits (minimum 2048)", key_bits));
+        return true;
+    }
+
+    return false;  // No weak algorithms detected
+}
+
 // Helper to extract certificate chain from PKCS7
 void ExtractCertificateChain(PKCS7* p7, SignatureVerificationResultPtr& result) {
     STACK_OF(X509)* certs = PKCS7_get0_signers(p7, nullptr, 0);
@@ -208,8 +274,8 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
 
     auto result = make_deferred<SignatureVerificationResult>();
 
-    // Settings are passed to VerifyCertificateChain for validation behavior control
-    // Currently implemented: AllowExpiredCertsFlag
+    // Settings are passed to verification functions for validation behavior control
+    // Currently implemented: AllowExpiredCertsFlag, AllowWeakAlgorithmsFlag
     // TODO: CheckRevocationFlag, RequireTrustedRootFlag, CheckSigningTimeFlag
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
@@ -286,6 +352,19 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     if (!chain_valid) {
         // Status already set by VerifyCertificateChain
         return result;
+    }
+
+    // Check for weak cryptographic algorithms (MD5, SHA-1, weak key sizes)
+    bool has_weak_algorithm = IsWeakAlgorithm(p7, result);
+    if (has_weak_algorithm) {
+        // Check if weak algorithms are allowed by settings
+        if (settings.empty() || !settings->GetAllowWeakAlgorithmsFlag()) {
+            spdlog::info("Weak algorithm detected and AllowWeakAlgorithmsFlag is disabled");
+            result->SetStatus(SignatureVerificationStatus::WeakAlgorithm);
+            // Message already set by IsWeakAlgorithm
+            return result;
+        }
+        spdlog::info("Weak algorithm detected but AllowWeakAlgorithmsFlag is enabled, continuing");
     }
 
     // All checks passed

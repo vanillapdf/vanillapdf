@@ -72,11 +72,24 @@ public:
     */
     void SetCheckSigningTimeFlag(bool flag) noexcept { m_check_signing_time = flag; }
 
+    /**
+    * \brief Check if weak cryptographic algorithms are allowed
+    * \return true if weak algorithms are allowed, false otherwise
+    */
+    bool GetAllowWeakAlgorithmsFlag(void) const noexcept { return m_allow_weak_algorithms; }
+
+    /**
+    * \brief Allow or reject weak cryptographic algorithms (MD5, SHA-1, RSA < 2048 bits)
+    * \param flag true to allow weak algorithms, false to reject them
+    */
+    void SetAllowWeakAlgorithmsFlag(bool flag) noexcept { m_allow_weak_algorithms = flag; }
+
 private:
     bool m_check_revocation = false;       ///< Check CRL/OCSP for certificate revocation
     bool m_require_trusted_root = false;   ///< Require certificate chain to trusted root
     bool m_allow_expired_certs = false;    ///< Allow expired certificates
     bool m_check_signing_time = false;     ///< Validate certificate was valid at signing time
+    bool m_allow_weak_algorithms = false;  ///< Allow weak signature algorithms and key sizes
 };
 
 } // vanillapdf

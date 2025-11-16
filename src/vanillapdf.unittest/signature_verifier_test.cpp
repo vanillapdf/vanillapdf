@@ -363,6 +363,143 @@ TEST(SignatureVerifier, AllowExpiredCertsFlag_Integration) {
     if (pkcs12_buffer) Buffer_Release(pkcs12_buffer);
 }
 
+// Parameterized test for weak algorithm detection
+class WeakAlgorithmTest : public ::testing::TestWithParam<MessageDigestAlgorithmType> {
+};
+
+TEST_P(WeakAlgorithmTest, AllowWeakAlgorithmsFlag_Integration) {
+    MessageDigestAlgorithmType weak_algorithm = GetParam();
+
+    const char* test_message = "Test message for weak algorithm verification";
+    const size_t test_message_len = strlen(test_message);
+
+    BufferHandle* pkcs12_buffer = nullptr;
+    PKCS12KeyHandle* pkcs12_key = nullptr;
+    SigningKeyHandle* signing_key = nullptr;
+    BufferHandle* message_buffer = nullptr;
+    BufferHandle* signature_buffer = nullptr;
+    TrustedCertificateStoreHandle* trust_store = nullptr;
+    SignatureVerificationSettingsHandle* settings = nullptr;
+    SignatureVerificationResultHandle* verify_result = nullptr;
+
+    // Step 1: Create signing key from test certificate
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(SIGNING_CERTIFICATE),
+                                     SIGNING_CERTIFICATE_SIZE, &pkcs12_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pkcs12_buffer, nullptr);
+
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(pkcs12_buffer, nullptr, &pkcs12_key),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pkcs12_key, nullptr);
+
+    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, &signing_key),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signing_key, nullptr);
+
+    // Step 2: Create signature with weak algorithm
+    ASSERT_EQ(SigningKey_SignInitialize(signing_key, weak_algorithm),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Buffer_CreateFromData(test_message, test_message_len, &message_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(message_buffer, nullptr);
+
+    ASSERT_EQ(SigningKey_SignUpdate(signing_key, message_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(SigningKey_SignFinal(signing_key, &signature_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signature_buffer, nullptr);
+
+    ASSERT_EQ(SigningKey_SignCleanup(signing_key), VANILLAPDF_ERROR_SUCCESS);
+
+    // Step 3: Create trust store and add the signer certificate
+    ASSERT_EQ(TrustedCertificateStore_Create(&trust_store), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(trust_store, nullptr);
+
+    BufferHandle* cert_buffer = nullptr;
+    ASSERT_EQ(PKCS12Key_GetCertificate(pkcs12_key, &cert_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(cert_buffer, nullptr);
+
+    ASSERT_EQ(TrustedCertificateStore_AddCertificateFromDER(trust_store, cert_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(cert_buffer), VANILLAPDF_ERROR_SUCCESS);
+
+    // Step 4: Verify with default settings (AllowWeakAlgorithmsFlag disabled)
+    // Should fail with WeakAlgorithm status
+    ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
+              nullptr, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(verify_result, nullptr);
+
+    SignatureVerificationStatusType status = SignatureStatus_Undefined;
+    ASSERT_EQ(SignatureVerificationResult_GetStatus(verify_result, &status),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    // Must fail with WeakAlgorithm status
+    EXPECT_EQ(status, SignatureStatus_WeakAlgorithm);
+
+    boolean_type is_signature_valid = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(SignatureVerificationResult_IsSignatureValid(verify_result, &is_signature_valid),
+              VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(is_signature_valid, VANILLAPDF_RV_TRUE);  // Cryptographically valid, just weak
+
+    ASSERT_EQ(SignatureVerificationResult_Release(verify_result), VANILLAPDF_ERROR_SUCCESS);
+    verify_result = nullptr;
+
+    // Step 5: Create settings with AllowWeakAlgorithmsFlag enabled
+    ASSERT_EQ(SignatureVerificationSettings_Create(&settings), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(settings, nullptr);
+
+    ASSERT_EQ(SignatureVerificationSettings_SetAllowWeakAlgorithmsFlag(settings, VANILLAPDF_RV_TRUE),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    // Step 6: Verify again with AllowWeakAlgorithmsFlag enabled
+    // Should now succeed despite weak algorithm
+    ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
+              settings, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(verify_result, nullptr);
+
+    ASSERT_EQ(SignatureVerificationResult_GetStatus(verify_result, &status),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    // With AllowWeakAlgorithmsFlag, weak algorithms are allowed - must be Valid
+    EXPECT_EQ(status, SignatureStatus_Valid);
+
+    is_signature_valid = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(SignatureVerificationResult_IsSignatureValid(verify_result, &is_signature_valid),
+              VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(is_signature_valid, VANILLAPDF_RV_TRUE);
+
+    // Cleanup
+    if (verify_result) SignatureVerificationResult_Release(verify_result);
+    if (settings) SignatureVerificationSettings_Release(settings);
+    if (trust_store) TrustedCertificateStore_Release(trust_store);
+    if (signature_buffer) Buffer_Release(signature_buffer);
+    if (message_buffer) Buffer_Release(message_buffer);
+    if (signing_key) SigningKey_Release(signing_key);
+    if (pkcs12_key) PKCS12Key_Release(pkcs12_key);
+    if (pkcs12_buffer) Buffer_Release(pkcs12_buffer);
+}
+
+// Instantiate the parameterized test with different weak algorithms
+INSTANTIATE_TEST_SUITE_P(
+    WeakAlgorithms,
+    WeakAlgorithmTest,
+    ::testing::Values(
+        MessageDigestAlgorithmType_MD5,
+        MessageDigestAlgorithmType_MD4,
+        MessageDigestAlgorithmType_SHA1
+    ),
+    [](const ::testing::TestParamInfo<MessageDigestAlgorithmType>& info) {
+        switch (info.param) {
+            case MessageDigestAlgorithmType_MD5:  return "MD5";
+            case MessageDigestAlgorithmType_MD4:  return "MD4";
+            case MessageDigestAlgorithmType_SHA1: return "SHA1";
+            default: return "Unknown";
+        }
+    }
+);
+
 // Real Certificate Tests
 
 TEST(TrustedCertificateStore, AddCertificateFromPEM_Master) {
