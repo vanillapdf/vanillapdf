@@ -190,9 +190,27 @@ extern "C"
         BufferHandle** result
     );
 
-    // TODO: Certificate chain access requires iterator pattern for C API (std::vector not compatible)
-    // VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetCertificateChainCount(...)
-    // VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetCertificateChainAt(...)
+    /**
+    * \brief Get number of certificates in the chain
+    * \param handle The verification result
+    * \param result Output certificate count (0 = signer, 1+ = intermediate/root)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetCertificateChainCount(
+        SignatureVerificationResultHandle* handle,
+        size_type* result
+    );
+
+    /**
+    * \brief Get certificate from chain at index
+    * \param handle The verification result
+    * \param index Certificate index (0 = signer, 1+ = intermediate/root)
+    * \param result Output DER-encoded certificate
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetCertificateChainAt(
+        SignatureVerificationResultHandle* handle,
+        size_type index,
+        BufferHandle** result
+    );
 
     /**
     * \brief Get signer's common name from certificate

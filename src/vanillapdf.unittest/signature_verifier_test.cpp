@@ -162,6 +162,20 @@ TEST(SignatureVerificationResult, GetSignerCommonName_NullChecks) {
               VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
+TEST(SignatureVerificationResult, GetCertificateChainCount_NullChecks) {
+    size_type count = 0;
+
+    EXPECT_EQ(SignatureVerificationResult_GetCertificateChainCount(nullptr, &count),
+              VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+TEST(SignatureVerificationResult, GetCertificateChainAt_NullChecks) {
+    BufferHandle* cert = nullptr;
+
+    EXPECT_EQ(SignatureVerificationResult_GetCertificateChainAt(nullptr, 0, &cert),
+              VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
 TEST(SignatureVerificationResult, Release_NullCheck) {
     EXPECT_EQ(SignatureVerificationResult_Release(nullptr),
               VANILLAPDF_ERROR_PARAMETER_VALUE);
@@ -316,6 +330,21 @@ TEST(SignatureVerifier, CreateAndVerifySignature) {
 
     // Common name should be "Unit test signer" from SIGNING_CERTIFICATE
     EXPECT_STREQ(cn_data, "Unit test signer");
+
+    // Validate certificate chain
+    size_type chain_count = 0;
+    ASSERT_EQ(SignatureVerificationResult_GetCertificateChainCount(verify_result, &chain_count),
+              VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_GT(chain_count, 0);  // Should have at least the signer certificate
+
+    // Verify we can get certificates from the chain
+    if (chain_count > 0) {
+        BufferHandle* chain_cert = nullptr;
+        ASSERT_EQ(SignatureVerificationResult_GetCertificateChainAt(verify_result, 0, &chain_cert),
+                  VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(chain_cert, nullptr);
+        Buffer_Release(chain_cert);
+    }
 
     // Validate signature and document integrity
     // Note: We manually add the signer certificate to the trust store for testing
