@@ -88,6 +88,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_FromSigningKey(SigningKey
     return SafeObjectConvert<ISigningKey, PKCS12Key, SigningKeyHandle, PKCS12KeyHandle>(handle, result);
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_GetCertificate(
+    PKCS12KeyHandle* handle,
+    BufferHandle** result) {
+
+    PKCS12Key* key = reinterpret_cast<PKCS12Key*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(key);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto cert = key->GetCertificate();
+        auto ptr = cert.AddRefGet();
+        *result = reinterpret_cast<BufferHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_Release(PKCS12KeyHandle* handle) {
     return ObjectRelease<PKCS12Key, PKCS12KeyHandle>(handle);
 }

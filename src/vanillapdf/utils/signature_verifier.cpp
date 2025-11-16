@@ -90,7 +90,7 @@ void ExtractCertificateChain(PKCS7* p7, SignatureVerificationResultPtr& result) 
 }
 
 // Helper to verify certificate chain
-bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationResultPtr& result) {
+bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationResultPtr& result, SignatureVerificationSettingsPtr settings) {
     X509_STORE_CTX* ctx = X509_STORE_CTX_new();
     if (!ctx) {
         spdlog::error("Failed to create X509_STORE_CTX: {}", MiscUtils::GetLastOpensslError());
@@ -160,6 +160,14 @@ bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationR
         // Set appropriate status based on error
         switch (error) {
             case X509_V_ERR_CERT_HAS_EXPIRED:
+                // Check if expired certificates are allowed
+                if (!settings.empty() && settings->GetAllowExpiredCertsFlag()) {
+                    spdlog::info("Certificate has expired but AllowExpiredCertsFlag is enabled, continuing verification");
+                    result->SetCertificateTrusted(true);
+                    result->SetStatus(SignatureVerificationStatus::Valid);
+                    result->SetMessage("Certificate has expired but is allowed by settings");
+                    return true;  // Allow verification to proceed
+                }
                 result->SetStatus(SignatureVerificationStatus::CertificateExpired);
                 break;
             case X509_V_ERR_CERT_NOT_YET_VALID:
@@ -198,12 +206,11 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     TrustedCertificateStorePtr trusted_store,
     SignatureVerificationSettingsPtr settings) {
 
-    // Note: settings parameter reserved for future verification options
-    // (e.g., CheckRevocation, RequireTrustedRoot, AllowExpiredCerts, CheckSigningTime)
-    // For now, we acknowledge the settings but don't use them yet
-    (void)settings;
-
     auto result = make_deferred<SignatureVerificationResult>();
+
+    // Settings are passed to VerifyCertificateChain for validation behavior control
+    // Currently implemented: AllowExpiredCertsFlag
+    // TODO: CheckRevocationFlag, RequireTrustedRootFlag, CheckSigningTimeFlag
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
@@ -275,7 +282,7 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
         return result;
     }
 
-    bool chain_valid = VerifyCertificateChain(p7, store, result);
+    bool chain_valid = VerifyCertificateChain(p7, store, result, settings);
     if (!chain_valid) {
         // Status already set by VerifyCertificateChain
         return result;

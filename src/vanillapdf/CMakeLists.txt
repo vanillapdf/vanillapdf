@@ -29,6 +29,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_memory_buffer_output_stream.cpp
     implementation/utils/c_pkcs12_key.cpp
     implementation/utils/c_signature_verifier.cpp
+    implementation/utils/c_signature_verification_settings.cpp
     implementation/utils/c_signing_key.cpp
     implementation/utils/c_unknown_interface.cpp
 )

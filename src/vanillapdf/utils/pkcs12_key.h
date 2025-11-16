@@ -26,6 +26,9 @@ public:
     BufferPtr SignFinal() override;
     void SignCleanup() override;
 
+    // Certificate access
+    BufferPtr GetCertificate() const;
+
 private:
     class PKCS12KeyImpl;
     std::shared_ptr<PKCS12KeyImpl> m_impl;
