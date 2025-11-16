@@ -478,6 +478,116 @@ TEST(SignatureVerifier, AllowUntrustedRootFlag_Integration) {
     if (pkcs12_buffer) Buffer_Release(pkcs12_buffer);
 }
 
+// Test CheckSigningTimeFlag - validates certificate chain at signing time
+// TODO: Add negative test case - need ability to set custom signing time during signature creation
+// Negative case: Sign with future date (beyond cert validity), verify should fail when CheckSigningTimeFlag enabled
+TEST(SignatureVerifier, CheckSigningTimeFlag_Integration) {
+    const char* test_message = "Test message for signing time verification";
+    const size_t test_message_len = strlen(test_message);
+
+    BufferHandle* pkcs12_buffer = nullptr;
+    PKCS12KeyHandle* pkcs12_key = nullptr;
+    SigningKeyHandle* signing_key = nullptr;
+    BufferHandle* message_buffer = nullptr;
+    BufferHandle* signature_buffer = nullptr;
+    TrustedCertificateStoreHandle* trust_store = nullptr;
+    SignatureVerificationSettingsHandle* settings = nullptr;
+    SignatureVerificationResultHandle* verify_result = nullptr;
+
+    // Step 1: Create signing key from test certificate
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(SIGNING_CERTIFICATE),
+                                     SIGNING_CERTIFICATE_SIZE, &pkcs12_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pkcs12_buffer, nullptr);
+
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(pkcs12_buffer, nullptr, &pkcs12_key),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pkcs12_key, nullptr);
+
+    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, &signing_key),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signing_key, nullptr);
+
+    // Step 2: Create message buffer
+    ASSERT_EQ(Buffer_CreateFromData(test_message, test_message_len, &message_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(message_buffer, nullptr);
+
+    // Step 3: Sign the message (includes signing time attribute with current time)
+    ASSERT_EQ(SigningKey_SignInitialize(signing_key, MessageDigestAlgorithmType_SHA256),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SigningKey_SignUpdate(signing_key, message_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SigningKey_SignFinal(signing_key, &signature_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signature_buffer, nullptr);
+    ASSERT_EQ(SigningKey_SignCleanup(signing_key), VANILLAPDF_ERROR_SUCCESS);
+
+    // Step 4: Create trust store with self-signed certificate
+    ASSERT_EQ(TrustedCertificateStore_Create(&trust_store),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(trust_store, nullptr);
+
+    BufferHandle* cert_buffer = nullptr;
+    ASSERT_EQ(PKCS12Key_GetCertificate(pkcs12_key, &cert_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(cert_buffer, nullptr);
+
+    ASSERT_EQ(TrustedCertificateStore_AddCertificateFromDER(trust_store, cert_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    Buffer_Release(cert_buffer);
+
+    // Step 5: Verify WITHOUT CheckSigningTimeFlag (default behavior)
+    ASSERT_EQ(SignatureVerificationSettings_Create(&settings),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(settings, nullptr);
+
+    // Allow untrusted root since this is self-signed
+    ASSERT_EQ(SignatureVerificationSettings_SetAllowUntrustedRootFlag(settings, VANILLAPDF_RV_TRUE),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
+              settings, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(verify_result, nullptr);
+
+    SignatureVerificationStatusType status;
+    ASSERT_EQ(SignatureVerificationResult_GetStatus(verify_result, &status),
+              VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(status, SignatureStatus_Valid);
+
+    SignatureVerificationResult_Release(verify_result);
+    verify_result = nullptr;
+
+    // Step 6: Verify WITH CheckSigningTimeFlag enabled
+    ASSERT_EQ(SignatureVerificationSettings_SetCheckSigningTimeFlag(settings, VANILLAPDF_RV_TRUE),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
+              settings, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(verify_result, nullptr);
+
+    ASSERT_EQ(SignatureVerificationResult_GetStatus(verify_result, &status),
+              VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(status, SignatureStatus_Valid);
+
+    // Both pass since certificate is valid both now and at signing time
+    // This test exercises the code path but doesn't test the negative scenario
+    // TODO: To fully test, we need ability to sign with custom signing time:
+    //   - Sign with date beyond cert validity (e.g., year 2100)
+    //   - Without flag: validates at current time (2025) -> cert valid -> PASS
+    //   - With flag: validates at signing time (2100) -> cert expired -> FAIL
+
+    // Cleanup
+    if (verify_result) SignatureVerificationResult_Release(verify_result);
+    if (settings) SignatureVerificationSettings_Release(settings);
+    if (trust_store) TrustedCertificateStore_Release(trust_store);
+    if (signature_buffer) Buffer_Release(signature_buffer);
+    if (message_buffer) Buffer_Release(message_buffer);
+    if (signing_key) SigningKey_Release(signing_key);
+    if (pkcs12_key) PKCS12Key_Release(pkcs12_key);
+    if (pkcs12_buffer) Buffer_Release(pkcs12_buffer);
+}
+
 // Parameterized test for weak algorithm detection
 class WeakAlgorithmTest : public ::testing::TestWithParam<MessageDigestAlgorithmType> {
 };
