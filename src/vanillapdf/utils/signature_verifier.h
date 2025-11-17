@@ -7,6 +7,14 @@
 #include "utils/signature_verification_result.h"
 #include "utils/signature_verification_settings.h"
 
+// Forward declarations for OpenSSL types (only when OpenSSL is available)
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+struct pkcs7_st;
+struct x509_store_st;
+typedef struct pkcs7_st PKCS7;
+typedef struct x509_store_st X509_STORE;
+#endif
+
 namespace vanillapdf {
 
 /**
@@ -46,6 +54,43 @@ public:
 private:
     SignatureVerifier() = delete;
     ~SignatureVerifier() = delete;
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+    /**
+     * \brief Check if signature uses weak cryptographic algorithms
+     * \return true if weak algorithm detected, false otherwise
+     * \throws GeneralException for logic errors (parsing failures, structure errors)
+     */
+    static bool IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPtr& result);
+
+    /**
+     * \brief Extract certificate chain from PKCS#7 signature
+     * \param p7 PKCS#7 signature structure
+     * \param result Verification result to populate with certificate chain
+     */
+    static void ExtractCertificateChain(PKCS7* p7, SignatureVerificationResultPtr& result);
+
+    /**
+     * \brief Extract signing time from PKCS#7 authenticated attributes
+     * \param p7 PKCS#7 signature structure
+     * \param signing_time Output parameter for extracted time
+     * \return true if signing time was found and extracted, false if not present (valid per spec)
+     * \throws GeneralException for logic errors (parsing failures, memory allocation, etc.)
+     */
+    static bool ExtractSigningTime(PKCS7* p7, time_t* signing_time);
+
+    /**
+     * \brief Verify certificate chain against trusted store
+     * \param p7 PKCS#7 signature structure
+     * \param store Trusted certificate store
+     * \param result Verification result to populate
+     * \param settings Verification settings
+     * \return true if chain is valid, false otherwise
+     */
+    static bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store,
+                                       SignatureVerificationResultPtr& result,
+                                       SignatureVerificationSettingsPtr settings);
+#endif
 };
 
 } // vanillapdf

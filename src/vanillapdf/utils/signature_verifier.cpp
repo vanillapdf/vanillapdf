@@ -20,12 +20,10 @@ namespace vanillapdf {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-namespace {
-
 // Helper to check if signature uses weak cryptographic algorithms
 // Returns true if weak algorithm detected, false otherwise
 // Throws GeneralException for logic errors (parsing failures, structure errors)
-bool IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPtr& result) {
+bool SignatureVerifier::IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPtr& result) {
     // Get signer info
     STACK_OF(PKCS7_SIGNER_INFO)* signer_info_stack = PKCS7_get_signer_info(p7);
     if (!signer_info_stack || sk_PKCS7_SIGNER_INFO_num(signer_info_stack) == 0) {
@@ -89,7 +87,7 @@ bool IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPtr& result) {
 }
 
 // Helper to extract certificate chain from PKCS7
-void ExtractCertificateChain(PKCS7* p7, SignatureVerificationResultPtr& result) {
+void SignatureVerifier::ExtractCertificateChain(PKCS7* p7, SignatureVerificationResultPtr& result) {
     STACK_OF(X509)* certs = PKCS7_get0_signers(p7, nullptr, 0);
     if (!certs) {
         spdlog::warn("No signers found in PKCS7 signature");
@@ -160,7 +158,7 @@ void ExtractCertificateChain(PKCS7* p7, SignatureVerificationResultPtr& result) 
 // Helper to extract signing time from PKCS7 authenticated attributes
 // Returns true if signing time was found and extracted, false if not present (valid per spec)
 // Throws GeneralException for logic errors (parsing failures, memory allocation, etc.)
-bool ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
+bool SignatureVerifier::ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
     if (!signing_time) {
         LOG_ERROR_AND_THROW_GENERAL("signing_time parameter is null");
     }
@@ -242,7 +240,7 @@ bool ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
 }
 
 // Helper to verify certificate chain
-bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationResultPtr& result, SignatureVerificationSettingsPtr settings) {
+bool SignatureVerifier::VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationResultPtr& result, SignatureVerificationSettingsPtr settings) {
     X509_STORE_CTX* ctx = X509_STORE_CTX_new();
     if (!ctx) {
         spdlog::error("Failed to create X509_STORE_CTX: {}", MiscUtils::GetLastOpensslError());
@@ -303,7 +301,7 @@ bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationR
     // Check if signing time validation is requested
     if (!settings.empty() && settings->GetCheckSigningTimeFlag()) {
         time_t signing_time = 0;
-        if (!ExtractSigningTime(p7, &signing_time)) {
+        if (!SignatureVerifier::ExtractSigningTime(p7, &signing_time)) {
             // CheckSigningTimeFlag is set but signing time is not present in signature
             spdlog::error("CheckSigningTimeFlag is enabled but signing time not found in signature");
             result->SetStatus(SignatureVerificationStatus::Invalid);
@@ -374,8 +372,6 @@ bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationR
     return true;
 }
 
-} // anonymous namespace
-
 #endif
 
 SignatureVerificationResultPtr SignatureVerifier::Verify(
@@ -410,7 +406,7 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     SCOPE_GUARD([p7]() { PKCS7_free(p7); });
 
     // Extract certificate chain
-    ExtractCertificateChain(p7, result);
+    SignatureVerifier::ExtractCertificateChain(p7, result);
 
     // Create BIO from signed data
     BIO* data_bio = BIO_new_mem_buf(signed_data.data(), static_cast<int>(signed_data.size()));
@@ -460,14 +456,14 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
         return result;
     }
 
-    bool chain_valid = VerifyCertificateChain(p7, store, result, settings);
+    bool chain_valid = SignatureVerifier::VerifyCertificateChain(p7, store, result, settings);
     if (!chain_valid) {
         // Status already set by VerifyCertificateChain
         return result;
     }
 
     // Check for weak cryptographic algorithms (MD5, SHA-1, weak key sizes)
-    bool has_weak_algorithm = IsWeakAlgorithm(p7, result);
+    bool has_weak_algorithm = SignatureVerifier::IsWeakAlgorithm(p7, result);
     if (has_weak_algorithm) {
         // Check if weak algorithms are allowed by settings
         if (settings.empty() || !settings->GetAllowWeakAlgorithmsFlag()) {
