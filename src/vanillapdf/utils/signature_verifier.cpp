@@ -5,6 +5,8 @@
 #include "utils/exceptions.h"
 #include "utils/log.h"
 
+#include <chrono>
+
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 #include <openssl/pkcs7.h>
 #include <openssl/x509.h>
@@ -21,18 +23,18 @@ namespace vanillapdf {
 namespace {
 
 // Helper to check if signature uses weak cryptographic algorithms
+// Returns true if weak algorithm detected, false otherwise
+// Throws GeneralException for logic errors (parsing failures, structure errors)
 bool IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPtr& result) {
     // Get signer info
     STACK_OF(PKCS7_SIGNER_INFO)* signer_info_stack = PKCS7_get_signer_info(p7);
     if (!signer_info_stack || sk_PKCS7_SIGNER_INFO_num(signer_info_stack) == 0) {
-        spdlog::warn("No signer info found in PKCS#7");
-        return false;  // Can't determine, assume strong
+        LOG_ERROR_AND_THROW_GENERAL("No signer info found in PKCS#7 signature");
     }
 
     PKCS7_SIGNER_INFO* si = sk_PKCS7_SIGNER_INFO_value(signer_info_stack, 0);
     if (!si) {
-        spdlog::warn("Signer info is null");
-        return false;
+        LOG_ERROR_AND_THROW_GENERAL("Signer info is null (PKCS#7 structure error)");
     }
 
     // Check digest algorithm
@@ -52,18 +54,18 @@ bool IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPtr& result) {
     // Check public key size
     STACK_OF(X509)* signers = PKCS7_get0_signers(p7, nullptr, 0);
     if (!signers || sk_X509_num(signers) == 0) {
-        return false;  // Can't check key size
+        LOG_ERROR_AND_THROW_GENERAL("Failed to get signer certificates from PKCS#7");
     }
     SCOPE_GUARD([signers]() { sk_X509_free(signers); });
 
     X509* signer_cert = sk_X509_value(signers, 0);
     if (!signer_cert) {
-        return false;
+        LOG_ERROR_AND_THROW_GENERAL("Signer certificate is null");
     }
 
     EVP_PKEY* pkey = X509_get0_pubkey(signer_cert);
     if (!pkey) {
-        return false;
+        LOG_ERROR_AND_THROW_GENERAL("Failed to get public key from signer certificate");
     }
 
     int key_type = EVP_PKEY_base_id(pkey);
@@ -156,50 +158,49 @@ void ExtractCertificateChain(PKCS7* p7, SignatureVerificationResultPtr& result) 
 }
 
 // Helper to extract signing time from PKCS7 authenticated attributes
-// Returns true if signing time was found and extracted, false otherwise
+// Returns true if signing time was found and extracted, false if not present (valid per spec)
+// Throws GeneralException for logic errors (parsing failures, memory allocation, etc.)
 bool ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
     if (!signing_time) {
-        return false;
+        LOG_ERROR_AND_THROW_GENERAL("signing_time parameter is null");
     }
 
     // Get signer info
     STACK_OF(PKCS7_SIGNER_INFO)* signer_info_stack = PKCS7_get_signer_info(p7);
     if (!signer_info_stack || sk_PKCS7_SIGNER_INFO_num(signer_info_stack) == 0) {
-        spdlog::info("No signer info found in PKCS#7, cannot extract signing time");
-        return false;
+        LOG_ERROR_AND_THROW_GENERAL("No signer info found in PKCS#7 signature");
     }
 
     PKCS7_SIGNER_INFO* si = sk_PKCS7_SIGNER_INFO_value(signer_info_stack, 0);
     if (!si) {
-        spdlog::info("Signer info is null, cannot extract signing time");
-        return false;
+        LOG_ERROR_AND_THROW_GENERAL("Signer info is null (PKCS#7 structure error)");
     }
 
     // Get authenticated attributes
     STACK_OF(X509_ATTRIBUTE)* auth_attrs = PKCS7_get_signed_attributes(si);
     if (!auth_attrs) {
-        spdlog::info("No authenticated attributes found, signing time not available");
+        // No authenticated attributes - signing time is optional per spec
+        spdlog::debug("No authenticated attributes found, signing time not available");
         return false;
     }
 
     // Look for signing time attribute (NID_pkcs9_signingTime)
     int idx = X509at_get_attr_by_NID(auth_attrs, NID_pkcs9_signingTime, -1);
     if (idx < 0) {
-        spdlog::info("Signing time attribute not found in authenticated attributes");
+        // Signing time attribute not present - this is valid per spec
+        spdlog::debug("Signing time attribute not found in authenticated attributes");
         return false;
     }
 
     X509_ATTRIBUTE* attr = X509at_get_attr(auth_attrs, idx);
     if (!attr) {
-        spdlog::warn("Failed to get signing time attribute");
-        return false;
+        LOG_ERROR_AND_THROW_GENERAL("Failed to get signing time attribute (X509at_get_attr returned null)");
     }
 
     // Get the ASN1_TYPE from the attribute
     ASN1_TYPE* asn1_time = X509_ATTRIBUTE_get0_type(attr, 0);
     if (!asn1_time) {
-        spdlog::warn("Failed to get ASN1_TYPE from signing time attribute");
-        return false;
+        LOG_ERROR_AND_THROW_GENERAL("Failed to get ASN1_TYPE from signing time attribute");
     }
 
     // Get ASN1_TIME from ASN1_TYPE
@@ -209,34 +210,32 @@ bool ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
     }
 
     if (!time_value) {
-        spdlog::warn("Signing time has unexpected type");
-        return false;
+        LOG_ERROR_AND_THROW_GENERAL("Signing time has unexpected ASN1 type: {}", asn1_time->type);
     }
 
     // Use ASN1_TIME_diff to convert to time_t (avoids timezone/DST/leap second complexity)
     // Create epoch time (1970-01-01 00:00:00 UTC)
     ASN1_TIME* epoch = ASN1_TIME_new();
     if (!epoch) {
-        spdlog::error("Failed to create ASN1_TIME for epoch");
-        return false;
+        LOG_ERROR_AND_THROW_GENERAL("Failed to create ASN1_TIME for epoch: {}", MiscUtils::GetLastOpensslError());
     }
     SCOPE_GUARD([epoch]() { ASN1_TIME_free(epoch); });
 
-    if (!ASN1_TIME_set_string(epoch, "19700101000000Z")) {
-        spdlog::error("Failed to set epoch time string");
-        return false;
+    // Set epoch using time_t(0) instead of string
+    if (!ASN1_TIME_set(epoch, 0)) {
+        LOG_ERROR_AND_THROW_GENERAL("Failed to set epoch time: {}", MiscUtils::GetLastOpensslError());
     }
 
     // Calculate difference between signing time and epoch
     int days = 0;
     int seconds = 0;
     if (!ASN1_TIME_diff(&days, &seconds, epoch, time_value)) {
-        spdlog::error("Failed to calculate time difference: {}", MiscUtils::GetLastOpensslError());
-        return false;
+        LOG_ERROR_AND_THROW_GENERAL("Failed to calculate time difference: {}", MiscUtils::GetLastOpensslError());
     }
 
-    // Convert to time_t: days * 86400 + seconds
-    *signing_time = static_cast<time_t>(days) * 86400 + static_cast<time_t>(seconds);
+    // Convert to time_t using chrono for clean duration calculation
+    auto duration = std::chrono::hours(days * 24) + std::chrono::seconds(seconds);
+    *signing_time = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
 
     spdlog::info("Extracted signing time: {} (days={}, seconds={})", *signing_time, days, seconds);
     return true;
@@ -304,14 +303,18 @@ bool VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationR
     // Check if signing time validation is requested
     if (!settings.empty() && settings->GetCheckSigningTimeFlag()) {
         time_t signing_time = 0;
-        if (ExtractSigningTime(p7, &signing_time)) {
-            // Validate certificate chain at signing time instead of current time
-            X509_STORE_CTX_set_time(ctx, 0, signing_time);
-            spdlog::info("Validating certificate chain at signing time: {}", signing_time);
-        } else {
-            spdlog::warn("CheckSigningTimeFlag is enabled but signing time not found in signature");
-            // Continue with current time validation (don't fail if signing time is missing)
+        if (!ExtractSigningTime(p7, &signing_time)) {
+            // CheckSigningTimeFlag is set but signing time is not present in signature
+            spdlog::error("CheckSigningTimeFlag is enabled but signing time not found in signature");
+            result->SetStatus(SignatureVerificationStatus::Invalid);
+            result->SetMessage("Signing time validation requested but signing time not found in signature");
+            result->SetCertificateTrusted(false);
+            return false;
         }
+
+        // Validate certificate chain at signing time instead of current time
+        X509_STORE_CTX_set_time(ctx, 0, signing_time);
+        spdlog::info("Validating certificate chain at signing time: {}", signing_time);
     }
 
     // Verify the chain
