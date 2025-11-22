@@ -316,6 +316,13 @@ bool SignatureVerifier::VerifyCertificateChain(PKCS7* p7, X509_STORE* store, Sig
         spdlog::info("Validating certificate chain at signing time: {}", signing_time);
     }
 
+    // Check if certificate validation should be skipped
+    if (!settings.empty() && settings->GetSkipCertificateValidation()) {
+        spdlog::info("SkipCertificateValidation is enabled, bypassing X509 chain validation");
+        result->SetCertificateTrusted(false);  // Mark as not trusted since validation was skipped
+        return true;  // Allow verification to proceed without chain validation
+    }
+
     // Verify the chain
     int verify_result = X509_verify_cert(ctx);
 
@@ -328,14 +335,6 @@ bool SignatureVerifier::VerifyCertificateChain(PKCS7* p7, X509_STORE* store, Sig
         // Set appropriate status based on error
         switch (error) {
             case X509_V_ERR_CERT_HAS_EXPIRED:
-                // Check if expired certificates are allowed
-                if (!settings.empty() && settings->GetAllowExpiredCertsFlag()) {
-                    spdlog::info("Certificate has expired but AllowExpiredCertsFlag is enabled, continuing verification");
-                    result->SetCertificateTrusted(true);
-                    result->SetStatus(SignatureVerificationStatus::Valid);
-                    result->SetMessage("Certificate has expired but is allowed by settings");
-                    return true;  // Allow verification to proceed
-                }
                 result->SetStatus(SignatureVerificationStatus::CertificateExpired);
                 break;
             case X509_V_ERR_CERT_NOT_YET_VALID:
@@ -348,14 +347,6 @@ bool SignatureVerifier::VerifyCertificateChain(PKCS7* p7, X509_STORE* store, Sig
             case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY:
             case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
             case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
-                // Check if untrusted roots are allowed
-                if (!settings.empty() && settings->GetAllowUntrustedRootFlag()) {
-                    spdlog::info("Certificate chain does not terminate in trusted root but AllowUntrustedRootFlag is enabled, continuing");
-                    result->SetCertificateTrusted(false);  // Still mark as not trusted, but allow
-                    result->SetStatus(SignatureVerificationStatus::Valid);
-                    result->SetMessage("Certificate is self-signed but is allowed by settings");
-                    return true;  // Allow verification to proceed
-                }
                 result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
                 break;
             default:
@@ -384,7 +375,7 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     auto result = make_deferred<SignatureVerificationResult>();
 
     // Settings are passed to verification functions for validation behavior control
-    // Currently implemented: AllowExpiredCertsFlag, AllowWeakAlgorithmsFlag, AllowUntrustedRootFlag, CheckSigningTimeFlag
+    // Currently implemented: SkipCertificateValidation, AllowWeakAlgorithmsFlag, CheckSigningTimeFlag
     // TODO: CheckRevocationFlag - CRL/OCSP implementation (https://github.com/vanillapdf/vanillapdf/issues/157)
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)

@@ -15,9 +15,8 @@ namespace vanillapdf {
 * Example usage:
 * \code
 * auto settings = make_deferred<SignatureVerificationSettings>();
-* settings->SetCheckRevocationFlag(true);
-* settings->SetAllowUntrustedRootFlag(false);  // Require trusted root (default)
-* settings->SetAllowExpiredCertsFlag(false);
+* settings->SetSkipCertificateValidation(false);  // Require valid certificate chain (default)
+* settings->SetAllowWeakAlgorithmsFlag(false);    // Reject weak algorithms (default)
 *
 * auto result = SignatureVerifier::Verify(signed_data, signature, trust_store, settings);
 * \endcode
@@ -37,28 +36,49 @@ public:
     void SetCheckRevocationFlag(bool flag) noexcept { m_check_revocation = flag; }
 
     /**
-    * \brief Check if untrusted certificate roots are allowed (self-signed certificates)
-    * \return true if untrusted roots are allowed, false otherwise
+    * \brief Check if certificate chain validation should be skipped
+    * \return true if certificate validation is skipped, false otherwise
+    *
+    * When enabled, the signature will be verified cryptographically but
+    * the certificate chain will not be validated against the trust store.
+    * This bypasses checks for: expired certificates, untrusted roots,
+    * incomplete chains, and other X509 validation errors.
+    *
+    * \note Effect on verification result when enabled:
+    * - SignatureVerificationResult::GetStatus() returns SignatureStatus_Valid
+    *   (assuming the cryptographic signature is correct)
+    * - SignatureVerificationResult::IsSignatureValid() returns true
+    * - SignatureVerificationResult::IsCertificateTrusted() returns **false**
+    *
+    * The IsCertificateTrusted flag remains false because the certificate chain
+    * was not actually verified - we cannot claim trust for something we did not check.
+    * This provides transparency: a Valid status with IsCertificateTrusted=false
+    * indicates that validation was bypassed rather than successfully completed.
+    *
+    * \warning This is a security bypass intended for testing/debugging only.
+    * In production, certificates should be properly added to the trust store.
     */
-    bool GetAllowUntrustedRootFlag(void) const noexcept { return m_allow_untrusted_root; }
+    bool GetSkipCertificateValidation(void) const noexcept { return m_skip_certificate_validation; }
 
     /**
-    * \brief Allow or reject untrusted certificate roots (self-signed certificates)
-    * \param flag true to allow untrusted roots, false to require trusted root
+    * \brief Enable or disable certificate chain validation
+    * \param flag true to skip validation (insecure), false to require valid chain (default)
+    *
+    * When set to true, certificate chain validation is bypassed entirely.
+    * The cryptographic signature is still verified, but no X509 chain validation
+    * is performed. This allows signatures with expired, self-signed, or untrusted
+    * certificates to pass verification.
+    *
+    * \note When validation is skipped, IsCertificateTrusted() will return false
+    * in the verification result, even though the overall status may be Valid.
+    * This accurately reflects that trust was not established through verification.
+    *
+    * \warning Setting this to true bypasses important security checks including:
+    * certificate expiration, trust chain validation, and root CA verification.
+    * Only use for testing or when you explicitly trust the signer through
+    * out-of-band means.
     */
-    void SetAllowUntrustedRootFlag(bool flag) noexcept { m_allow_untrusted_root = flag; }
-
-    /**
-    * \brief Check if expired certificates are allowed
-    * \return true if expired certificates are allowed, false otherwise
-    */
-    bool GetAllowExpiredCertsFlag(void) const noexcept { return m_allow_expired_certs; }
-
-    /**
-    * \brief Allow or reject expired certificates
-    * \param flag true to allow expired certificates, false to reject them
-    */
-    void SetAllowExpiredCertsFlag(bool flag) noexcept { m_allow_expired_certs = flag; }
+    void SetSkipCertificateValidation(bool flag) noexcept { m_skip_certificate_validation = flag; }
 
     /**
     * \brief Check if signing time validation is enabled
@@ -85,11 +105,10 @@ public:
     void SetAllowWeakAlgorithmsFlag(bool flag) noexcept { m_allow_weak_algorithms = flag; }
 
 private:
-    bool m_check_revocation = false;       ///< Check CRL/OCSP for certificate revocation
-    bool m_allow_untrusted_root = false;   ///< Allow untrusted certificate roots (self-signed)
-    bool m_allow_expired_certs = false;    ///< Allow expired certificates
-    bool m_check_signing_time = false;     ///< Validate certificate was valid at signing time
-    bool m_allow_weak_algorithms = false;  ///< Allow weak signature algorithms and key sizes
+    bool m_check_revocation = false;            ///< Check CRL/OCSP for certificate revocation
+    bool m_skip_certificate_validation = false; ///< Skip X509 certificate chain validation
+    bool m_check_signing_time = false;          ///< Validate certificate was valid at signing time
+    bool m_allow_weak_algorithms = false;       ///< Allow weak signature algorithms and key sizes
 };
 
 } // vanillapdf

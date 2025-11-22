@@ -3,15 +3,14 @@
 void print_verify_help() {
     printf("Usage: verify -f [signed PDF file] [options]\n");
     printf("Options:\n");
-    printf("  -f [file]              Signed PDF file to verify (required)\n");
-    printf("  -c [certs]             Trusted certificate store directory (optional, uses system defaults if not specified)\n");
-    printf("  -l [license]           License file (optional)\n");
-    printf("  --allow-expired-certs  Allow expired certificates\n");
-    printf("  --allow-weak-algorithms Allow weak cryptographic algorithms (MD5, SHA-1, RSA < 2048 bits)\n");
-    printf("  --allow-untrusted-root Allow untrusted root certificates (self-signed)\n");
-    printf("  --check-signing-time   Validate certificate at signing time instead of current time\n");
+    printf("  -f [file]                     Signed PDF file to verify (required)\n");
+    printf("  -c [certs]                    Trusted certificate store directory (optional, uses system defaults if not specified)\n");
+    printf("  -l [license]                  License file (optional)\n");
+    printf("  --skip-certificate-validation Skip X509 certificate chain validation (insecure, for testing only)\n");
+    printf("  --allow-weak-algorithms       Allow weak cryptographic algorithms (MD5, SHA-1, RSA < 2048 bits)\n");
+    printf("  --check-signing-time          Validate certificate at signing time instead of current time\n");
     /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
-    printf("  --check-revocation     Check certificate revocation (CRL/OCSP)\n");
+    printf("  --check-revocation            Check certificate revocation (CRL/OCSP)\n");
     */
 }
 
@@ -22,9 +21,8 @@ int process_verify(int argc, char *argv[]) {
     string_type pdf_file = NULL;
     string_type certs_path = NULL;
 
-    boolean_type allow_expired_certs = VANILLAPDF_RV_FALSE;
+    boolean_type skip_certificate_validation = VANILLAPDF_RV_FALSE;
     boolean_type allow_weak_algorithms = VANILLAPDF_RV_FALSE;
-    boolean_type allow_untrusted_root = VANILLAPDF_RV_FALSE;
     boolean_type check_signing_time = VANILLAPDF_RV_FALSE;
     /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157) */
     /* boolean_type check_revocation = VANILLAPDF_RV_FALSE; */
@@ -59,14 +57,11 @@ int process_verify(int argc, char *argv[]) {
             arg_counter++;
 
         // Flags
-        } else if (strcmp(argv[arg_counter], "--allow-expired-certs") == 0) {
-            allow_expired_certs = VANILLAPDF_RV_TRUE;
+        } else if (strcmp(argv[arg_counter], "--skip-certificate-validation") == 0) {
+            skip_certificate_validation = VANILLAPDF_RV_TRUE;
 
         } else if (strcmp(argv[arg_counter], "--allow-weak-algorithms") == 0) {
             allow_weak_algorithms = VANILLAPDF_RV_TRUE;
-
-        } else if (strcmp(argv[arg_counter], "--allow-untrusted-root") == 0) {
-            allow_untrusted_root = VANILLAPDF_RV_TRUE;
 
         } else if (strcmp(argv[arg_counter], "--check-signing-time") == 0) {
             check_signing_time = VANILLAPDF_RV_TRUE;
@@ -158,19 +153,14 @@ int process_verify(int argc, char *argv[]) {
     // Configure verification settings
     RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_Create(&settings));
 
-    if (allow_expired_certs) {
-        printf("Allowing expired certificates\n");
-        RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetAllowExpiredCertsFlag(settings, VANILLAPDF_RV_TRUE));
+    if (skip_certificate_validation) {
+        printf("WARNING: Skipping certificate chain validation (insecure)\n");
+        RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetSkipCertificateValidation(settings, VANILLAPDF_RV_TRUE));
     }
 
     if (allow_weak_algorithms) {
         printf("Allowing weak cryptographic algorithms\n");
         RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetAllowWeakAlgorithmsFlag(settings, VANILLAPDF_RV_TRUE));
-    }
-
-    if (allow_untrusted_root) {
-        printf("Allowing untrusted root certificates\n");
-        RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetAllowUntrustedRootFlag(settings, VANILLAPDF_RV_TRUE));
     }
 
     if (check_signing_time) {

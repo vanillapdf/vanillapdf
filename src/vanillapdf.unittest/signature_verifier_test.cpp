@@ -190,58 +190,54 @@ TEST(SignatureVerificationSettings, CreateAndGetDefaults) {
     ASSERT_NE(settings, nullptr);
 
     // Check default values (should all be false/disabled)
-    boolean_type check_revocation = VANILLAPDF_RV_TRUE;
-    ASSERT_EQ(SignatureVerificationSettings_GetCheckRevocationFlag(settings, &check_revocation),
+    boolean_type skip_cert_validation = VANILLAPDF_RV_TRUE;
+    ASSERT_EQ(SignatureVerificationSettings_GetSkipCertificateValidation(settings, &skip_cert_validation),
               VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(check_revocation, VANILLAPDF_RV_FALSE);
-
-    boolean_type allow_untrusted_root = VANILLAPDF_RV_TRUE;
-    ASSERT_EQ(SignatureVerificationSettings_GetAllowUntrustedRootFlag(settings, &allow_untrusted_root),
-              VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(allow_untrusted_root, VANILLAPDF_RV_FALSE);
-
-    boolean_type allow_expired = VANILLAPDF_RV_TRUE;
-    ASSERT_EQ(SignatureVerificationSettings_GetAllowExpiredCertsFlag(settings, &allow_expired),
-              VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(allow_expired, VANILLAPDF_RV_FALSE);
+    EXPECT_EQ(skip_cert_validation, VANILLAPDF_RV_FALSE);
 
     boolean_type check_signing_time = VANILLAPDF_RV_TRUE;
     ASSERT_EQ(SignatureVerificationSettings_GetCheckSigningTimeFlag(settings, &check_signing_time),
               VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(check_signing_time, VANILLAPDF_RV_FALSE);
 
+    boolean_type allow_weak = VANILLAPDF_RV_TRUE;
+    ASSERT_EQ(SignatureVerificationSettings_GetAllowWeakAlgorithmsFlag(settings, &allow_weak),
+              VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(allow_weak, VANILLAPDF_RV_FALSE);
+
     ASSERT_EQ(SignatureVerificationSettings_Release(settings), VANILLAPDF_ERROR_SUCCESS);
 }
 
-TEST(SignatureVerificationSettings, SetAndGetAllowExpiredCerts) {
+TEST(SignatureVerificationSettings, SetAndGetSkipCertificateValidation) {
     SignatureVerificationSettingsHandle* settings = nullptr;
 
     ASSERT_EQ(SignatureVerificationSettings_Create(&settings), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(settings, nullptr);
 
     // Set to true
-    ASSERT_EQ(SignatureVerificationSettings_SetAllowExpiredCertsFlag(settings, VANILLAPDF_RV_TRUE),
+    ASSERT_EQ(SignatureVerificationSettings_SetSkipCertificateValidation(settings, VANILLAPDF_RV_TRUE),
               VANILLAPDF_ERROR_SUCCESS);
 
     // Verify it was set
-    boolean_type allow_expired = VANILLAPDF_RV_FALSE;
-    ASSERT_EQ(SignatureVerificationSettings_GetAllowExpiredCertsFlag(settings, &allow_expired),
+    boolean_type skip_cert_validation = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(SignatureVerificationSettings_GetSkipCertificateValidation(settings, &skip_cert_validation),
               VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(allow_expired, VANILLAPDF_RV_TRUE);
+    EXPECT_EQ(skip_cert_validation, VANILLAPDF_RV_TRUE);
 
     // Set back to false
-    ASSERT_EQ(SignatureVerificationSettings_SetAllowExpiredCertsFlag(settings, VANILLAPDF_RV_FALSE),
+    ASSERT_EQ(SignatureVerificationSettings_SetSkipCertificateValidation(settings, VANILLAPDF_RV_FALSE),
               VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_EQ(SignatureVerificationSettings_GetAllowExpiredCertsFlag(settings, &allow_expired),
+    ASSERT_EQ(SignatureVerificationSettings_GetSkipCertificateValidation(settings, &skip_cert_validation),
               VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(allow_expired, VANILLAPDF_RV_FALSE);
+    EXPECT_EQ(skip_cert_validation, VANILLAPDF_RV_FALSE);
 
     ASSERT_EQ(SignatureVerificationSettings_Release(settings), VANILLAPDF_ERROR_SUCCESS);
 }
 
-TEST(SignatureVerifier, AllowExpiredCertsFlag_Integration) {
+TEST(SignatureVerifier, SkipCertificateValidation_ExpiredCert_Integration) {
     // Note: EXPIRED_CERTIFICATE is an expired certificate
+    // Test that SkipCertificateValidation allows verification despite expiration
     const char* test_message = "Test message for expired cert verification";
     const size_t test_message_len = strlen(test_message);
 
@@ -302,7 +298,7 @@ TEST(SignatureVerifier, AllowExpiredCertsFlag_Integration) {
               VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_Release(cert_buffer), VANILLAPDF_ERROR_SUCCESS);
 
-    // Step 4: Verify with default settings (AllowExpiredCertsFlag disabled)
+    // Step 4: Verify with default settings (SkipCertificateValidation disabled)
     // Should fail with CertificateExpired status
     ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
               nullptr, &verify_result), VANILLAPDF_ERROR_SUCCESS);
@@ -323,15 +319,15 @@ TEST(SignatureVerifier, AllowExpiredCertsFlag_Integration) {
     ASSERT_EQ(SignatureVerificationResult_Release(verify_result), VANILLAPDF_ERROR_SUCCESS);
     verify_result = nullptr;
 
-    // Step 5: Create settings with AllowExpiredCertsFlag enabled
+    // Step 5: Create settings with SkipCertificateValidation enabled
     ASSERT_EQ(SignatureVerificationSettings_Create(&settings), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(settings, nullptr);
 
-    ASSERT_EQ(SignatureVerificationSettings_SetAllowExpiredCertsFlag(settings, VANILLAPDF_RV_TRUE),
+    ASSERT_EQ(SignatureVerificationSettings_SetSkipCertificateValidation(settings, VANILLAPDF_RV_TRUE),
               VANILLAPDF_ERROR_SUCCESS);
 
-    // Step 6: Verify again with AllowExpiredCertsFlag enabled
-    // Should now succeed despite expiration
+    // Step 6: Verify again with SkipCertificateValidation enabled
+    // Should now succeed since certificate validation is skipped
     ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
               settings, &verify_result), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(verify_result, nullptr);
@@ -339,7 +335,7 @@ TEST(SignatureVerifier, AllowExpiredCertsFlag_Integration) {
     ASSERT_EQ(SignatureVerificationResult_GetStatus(verify_result, &status),
               VANILLAPDF_ERROR_SUCCESS);
 
-    // With AllowExpiredCertsFlag, expired certs are allowed - must be Valid
+    // With SkipCertificateValidation, certificate errors are bypassed - must be Valid
     EXPECT_EQ(status, SignatureStatus_Valid);
 
     boolean_type is_signature_valid = VANILLAPDF_RV_FALSE;
@@ -350,7 +346,7 @@ TEST(SignatureVerifier, AllowExpiredCertsFlag_Integration) {
     is_cert_trusted = VANILLAPDF_RV_FALSE;  // Reuse from Step 4
     ASSERT_EQ(SignatureVerificationResult_IsCertificateTrusted(verify_result, &is_cert_trusted),
               VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(is_cert_trusted, VANILLAPDF_RV_TRUE);  // Now trusted despite expiration
+    EXPECT_EQ(is_cert_trusted, VANILLAPDF_RV_FALSE);  // Still not trusted since validation was skipped
 
     // Cleanup
     if (verify_result) SignatureVerificationResult_Release(verify_result);
@@ -363,8 +359,8 @@ TEST(SignatureVerifier, AllowExpiredCertsFlag_Integration) {
     if (pkcs12_buffer) Buffer_Release(pkcs12_buffer);
 }
 
-TEST(SignatureVerifier, AllowUntrustedRootFlag_Integration) {
-    // Test self-signed certificate validation with AllowUntrustedRootFlag
+TEST(SignatureVerifier, SkipCertificateValidation_UntrustedRoot_Integration) {
+    // Test self-signed certificate validation with SkipCertificateValidation
     const char* test_message = "Test message for self-signed cert verification";
     const size_t test_message_len = strlen(test_message);
 
@@ -412,7 +408,7 @@ TEST(SignatureVerifier, AllowUntrustedRootFlag_Integration) {
     ASSERT_EQ(TrustedCertificateStore_Create(&trust_store), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(trust_store, nullptr);
 
-    // Step 4: Verify with default settings (AllowUntrustedRootFlag disabled - STRICT by default)
+    // Step 4: Verify with default settings (SkipCertificateValidation disabled - STRICT by default)
     // Should FAIL with CertificateUntrusted (secure by default)
     ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
               nullptr, &verify_result), VANILLAPDF_ERROR_SUCCESS);
@@ -438,15 +434,15 @@ TEST(SignatureVerifier, AllowUntrustedRootFlag_Integration) {
     ASSERT_EQ(SignatureVerificationResult_Release(verify_result), VANILLAPDF_ERROR_SUCCESS);
     verify_result = nullptr;
 
-    // Step 5: Create settings with AllowUntrustedRootFlag enabled
+    // Step 5: Create settings with SkipCertificateValidation enabled
     ASSERT_EQ(SignatureVerificationSettings_Create(&settings), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(settings, nullptr);
 
-    ASSERT_EQ(SignatureVerificationSettings_SetAllowUntrustedRootFlag(settings, VANILLAPDF_RV_TRUE),
+    ASSERT_EQ(SignatureVerificationSettings_SetSkipCertificateValidation(settings, VANILLAPDF_RV_TRUE),
               VANILLAPDF_ERROR_SUCCESS);
 
-    // Step 6: Verify again with AllowUntrustedRootFlag enabled
-    // Should now SUCCEED (opt-in to allow untrusted roots)
+    // Step 6: Verify again with SkipCertificateValidation enabled
+    // Should now SUCCEED since certificate validation is skipped
     ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
               settings, &verify_result), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(verify_result, nullptr);
@@ -454,7 +450,7 @@ TEST(SignatureVerifier, AllowUntrustedRootFlag_Integration) {
     ASSERT_EQ(SignatureVerificationResult_GetStatus(verify_result, &status),
               VANILLAPDF_ERROR_SUCCESS);
 
-    // With AllowUntrustedRootFlag, self-signed certs are allowed
+    // With SkipCertificateValidation, certificate errors are bypassed
     EXPECT_EQ(status, SignatureStatus_Valid);
 
     is_signature_valid = VANILLAPDF_RV_FALSE;
@@ -538,16 +534,9 @@ TEST(SignatureVerifier, CheckSigningTimeFlag_Integration) {
     Buffer_Release(cert_buffer);
 
     // Step 5: Verify WITHOUT CheckSigningTimeFlag (default behavior)
-    ASSERT_EQ(SignatureVerificationSettings_Create(&settings),
-              VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(settings, nullptr);
-
-    // Allow untrusted root since this is self-signed
-    ASSERT_EQ(SignatureVerificationSettings_SetAllowUntrustedRootFlag(settings, VANILLAPDF_RV_TRUE),
-              VANILLAPDF_ERROR_SUCCESS);
-
+    // Since certificate is self-signed and added to trust store, it should pass
     ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
-              settings, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+              nullptr, &verify_result), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(verify_result, nullptr);
 
     SignatureVerificationStatusType status;
@@ -559,6 +548,10 @@ TEST(SignatureVerifier, CheckSigningTimeFlag_Integration) {
     verify_result = nullptr;
 
     // Step 6: Verify WITH CheckSigningTimeFlag enabled
+    ASSERT_EQ(SignatureVerificationSettings_Create(&settings),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(settings, nullptr);
+
     ASSERT_EQ(SignatureVerificationSettings_SetCheckSigningTimeFlag(settings, VANILLAPDF_RV_TRUE),
               VANILLAPDF_ERROR_SUCCESS);
 

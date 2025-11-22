@@ -52,7 +52,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetCh
 }
 */
 
-VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetAllowUntrustedRootFlag(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetSkipCertificateValidation(
     SignatureVerificationSettingsHandle* handle,
     boolean_type* result) {
 
@@ -61,12 +61,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetAl
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        *result = settings->GetAllowUntrustedRootFlag() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
+        *result = settings->GetSkipCertificateValidation() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetAllowUntrustedRootFlag(
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetSkipCertificateValidation(
     SignatureVerificationSettingsHandle* handle,
     boolean_type value) {
 
@@ -74,34 +74,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetAl
     RETURN_ERROR_PARAM_VALUE_IF_NULL(settings);
 
     try {
-        settings->SetAllowUntrustedRootFlag(value == VANILLAPDF_RV_TRUE);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetAllowExpiredCertsFlag(
-    SignatureVerificationSettingsHandle* handle,
-    boolean_type* result) {
-
-    SignatureVerificationSettings* settings = reinterpret_cast<SignatureVerificationSettings*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(settings);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        *result = settings->GetAllowExpiredCertsFlag() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetAllowExpiredCertsFlag(
-    SignatureVerificationSettingsHandle* handle,
-    boolean_type value) {
-
-    SignatureVerificationSettings* settings = reinterpret_cast<SignatureVerificationSettings*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(settings);
-
-    try {
-        settings->SetAllowExpiredCertsFlag(value == VANILLAPDF_RV_TRUE);
+        settings->SetSkipCertificateValidation(value == VANILLAPDF_RV_TRUE);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

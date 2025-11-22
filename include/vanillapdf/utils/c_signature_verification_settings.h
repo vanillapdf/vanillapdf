@@ -62,45 +62,55 @@ extern "C"
     */
 
     /**
-    * \brief Get allow untrusted root flag
+    * \brief Get skip certificate validation flag
     * \param handle The settings handle
     * \param result Output flag value
     * \return Error code
+    *
+    * When enabled, signature verification will skip X509 certificate chain
+    * validation. The cryptographic signature is still verified, but the
+    * certificate chain is not validated against the trust store.
+    *
+    * \note Effect on verification result when enabled:
+    * - SignatureVerificationResult_GetStatus() returns SignatureStatus_Valid
+    *   (assuming the cryptographic signature is correct)
+    * - SignatureVerificationResult_IsSignatureValid() returns VANILLAPDF_RV_TRUE
+    * - SignatureVerificationResult_IsCertificateTrusted() returns VANILLAPDF_RV_FALSE
+    *
+    * The IsCertificateTrusted flag remains false because the certificate chain
+    * was not actually verified - we cannot claim trust for something we did not check.
+    * This provides transparency: a Valid status with IsCertificateTrusted=false
+    * indicates that validation was bypassed rather than successfully completed.
+    *
+    * \warning This is a security bypass intended for testing/debugging only.
+    * In production, certificates should be properly added to the trust store.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetAllowUntrustedRootFlag(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetSkipCertificateValidation(
         SignatureVerificationSettingsHandle* handle,
         boolean_type* result
     );
 
     /**
-    * \brief Set allow untrusted root flag (self-signed certificates)
+    * \brief Set skip certificate validation flag
     * \param handle The settings handle
-    * \param value Flag value to set
+    * \param value Flag value to set (true to skip validation, false for full validation)
     * \return Error code
+    *
+    * When set to true, certificate chain validation is bypassed entirely.
+    * The cryptographic signature is still verified, but no X509 chain validation
+    * is performed. This allows signatures with expired, self-signed, or untrusted
+    * certificates to pass verification.
+    *
+    * \note When validation is skipped, SignatureVerificationResult_IsCertificateTrusted()
+    * will return VANILLAPDF_RV_FALSE, even though the overall status may be Valid.
+    * This accurately reflects that trust was not established through verification.
+    *
+    * \warning Setting this to true bypasses important security checks including:
+    * certificate expiration, trust chain validation, and root CA verification.
+    * Only use for testing or when you explicitly trust the signer through
+    * out-of-band means.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetAllowUntrustedRootFlag(
-        SignatureVerificationSettingsHandle* handle,
-        boolean_type value
-    );
-
-    /**
-    * \brief Get allow expired certificates flag
-    * \param handle The settings handle
-    * \param result Output flag value
-    * \return Error code
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetAllowExpiredCertsFlag(
-        SignatureVerificationSettingsHandle* handle,
-        boolean_type* result
-    );
-
-    /**
-    * \brief Set allow expired certificates flag
-    * \param handle The settings handle
-    * \param value Flag value to set
-    * \return Error code
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetAllowExpiredCertsFlag(
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetSkipCertificateValidation(
         SignatureVerificationSettingsHandle* handle,
         boolean_type value
     );
