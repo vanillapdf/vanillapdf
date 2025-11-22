@@ -6,14 +6,16 @@
 #include "utils/encryption_key_interface.h"
 #include "utils/signing_key_interface.h"
 
+#include <string_view>
+
 namespace vanillapdf {
 
 class PKCS12Key : public IEncryptionKey, public ISigningKey {
 public:
     explicit PKCS12Key(const Buffer& data);
     explicit PKCS12Key(const std::string& path);
-    PKCS12Key(const std::string& path, const Buffer& password);
-    PKCS12Key(const Buffer& data, const Buffer& password);
+    PKCS12Key(const std::string& path, std::string_view password);
+    PKCS12Key(const Buffer& data, std::string_view password);
 
     // IEncryptionKey
     BufferPtr Decrypt(const Buffer& data) override;

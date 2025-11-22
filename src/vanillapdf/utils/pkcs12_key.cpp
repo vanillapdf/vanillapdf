@@ -23,8 +23,8 @@ class PKCS12Key::PKCS12KeyImpl {
 public:
     explicit PKCS12KeyImpl(const Buffer& data);
     explicit PKCS12KeyImpl(const std::string& path);
-    PKCS12KeyImpl(const std::string& path, const Buffer& password);
-    PKCS12KeyImpl(const Buffer& data, const Buffer& password);
+    PKCS12KeyImpl(const std::string& path, std::string_view password);
+    PKCS12KeyImpl(const Buffer& data, std::string_view password);
     ~PKCS12KeyImpl() = default;
 
     // IEncryptionKey
@@ -64,7 +64,7 @@ private:
 
     BufferArrayPtr m_certificates;
 
-    void Load(const Buffer& data, const Buffer& password);
+    void Load(const Buffer& data, std::string_view password);
 };
 
 #pragma region Forwards
@@ -78,11 +78,11 @@ PKCS12Key::PKCS12Key(const std::string& path) {
     m_impl = make_unique<PKCS12KeyImpl>(path);
 }
 
-PKCS12Key::PKCS12Key(const std::string& path, const Buffer& password) {
+PKCS12Key::PKCS12Key(const std::string& path, std::string_view password) {
     m_impl = make_unique<PKCS12KeyImpl>(path, password);
 }
 
-PKCS12Key::PKCS12Key(const Buffer& data, const Buffer& password) {
+PKCS12Key::PKCS12Key(const Buffer& data, std::string_view password) {
     m_impl = make_unique<PKCS12KeyImpl>(data, password);
 }
 
@@ -121,8 +121,8 @@ BufferPtr PKCS12Key::GetCertificate() const {
 #pragma endregion
 
     // Actual implementation
-PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path) : PKCS12KeyImpl(path, Buffer()) {}
-PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path, const Buffer& password) {
+PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path) : PKCS12KeyImpl(path, std::string_view()) {}
+PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path, std::string_view password) {
     std::ifstream file(path, std::ios::in | std::ios::binary);
     SCOPE_GUARD_CAPTURE_REFERENCES(file.close());
 
@@ -147,13 +147,13 @@ PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path, const Buffer& p
     Load(data, password);
 }
 
-PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data) : PKCS12KeyImpl(data, Buffer()) {}
+PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data) : PKCS12KeyImpl(data, std::string_view()) {}
 
-PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data, const Buffer& password) {
+PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data, std::string_view password) {
     Load(data, password);
 }
 
-void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) {
+void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, std::string_view password) {
 
     CryptoUtils::InitializeOpenSSL();
 

@@ -9,6 +9,17 @@ include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include")
 # Include local files in the directory
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
+# Generate test certificates header from PFX files
+include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/generate_test_certificates.cmake")
+set(GENERATED_CERTIFICATES_HEADER "${CMAKE_CURRENT_BINARY_DIR}/test_certificates.h")
+generate_test_certificates_header(
+    OUTPUT_FILE ${GENERATED_CERTIFICATES_HEADER}
+    CERTIFICATES_DIR "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/certificates"
+)
+
+# Include directory for generated header
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+
 set(VANILLAPDF_UNITTEST_SOURCES
     main.cpp
     byte_range_test.cpp

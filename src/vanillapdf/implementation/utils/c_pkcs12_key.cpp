@@ -15,12 +15,9 @@ VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromFile(string_typ
 
     try {
         std::string path_string(path);
-        Buffer password_buffer;
-        if (nullptr != password) {
-            password_buffer = Buffer(password);
-        }
-
-        Deferred<PKCS12Key> key = make_deferred<PKCS12Key>(path_string, password_buffer);
+        // Handle nullptr password - std::string_view(nullptr) is undefined behavior
+        std::string_view password_view = password ? std::string_view(password) : std::string_view();
+        Deferred<PKCS12Key> key = make_deferred<PKCS12Key>(path_string, password_view);
         auto ptr = key.AddRefGet();
         *result = reinterpret_cast<PKCS12KeyHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -33,13 +30,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_CreateFromBuffer(BufferHa
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        Buffer password_buffer;
-        if (nullptr != password) {
-            password_buffer = Buffer(password);
-        }
-
         BufferPtr data_buffer(buffer_ptr);
-        Deferred<PKCS12Key> key = make_deferred<PKCS12Key>(data_buffer, password_buffer);
+        // Handle nullptr password - std::string_view(nullptr) is undefined behavior
+        std::string_view password_view = password ? std::string_view(password) : std::string_view();
+        Deferred<PKCS12Key> key = make_deferred<PKCS12Key>(data_buffer, password_view);
         auto ptr = key.AddRefGet();
         *result = reinterpret_cast<PKCS12KeyHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

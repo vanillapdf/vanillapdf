@@ -465,6 +465,7 @@ TEST(NameObject, NullCheck) {
 }
 
 struct EncodedNameCase {
+    std::string_view name;  // Test case name for display
     std::string_view encoded;
     std::string_view expected_decoded;
 };
@@ -501,19 +502,21 @@ TEST_P(NameObjectParamTest, CreateFromEncodedString) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    /* empty */,
+    EncodedNames,
     NameObjectParamTest,
     ::testing::Values(
-        EncodedNameCase{ "", "" },
-        EncodedNameCase{ "Hello", "Hello" },
-        EncodedNameCase{ "#01#02#03#FA#FB#FC#FD#FE#FF", "\x01\x02\x03\xFA\xFB\xFC\xFD\xFE\xFF" },
-        EncodedNameCase{ "#20", " " },
-        EncodedNameCase{ "#41#42#43", "ABC" },
-        EncodedNameCase{ "#00#FF", std::string_view("\x00\xFF", 2) },
-        EncodedNameCase{ "#41#42#43", "ABC" },
-        EncodedNameCase{ "Test#20Name", "Test Name" },
-        EncodedNameCase{ "Name#23With#23Hashes", "Name#With#Hashes" }
-    )
+        EncodedNameCase{ "Empty", "", "" },
+        EncodedNameCase{ "Simple", "Hello", "Hello" },
+        EncodedNameCase{ "HexSequence", "#01#02#03#FA#FB#FC#FD#FE#FF", "\x01\x02\x03\xFA\xFB\xFC\xFD\xFE\xFF" },
+        EncodedNameCase{ "Space", "#20", " " },
+        EncodedNameCase{ "ABC", "#41#42#43", "ABC" },
+        EncodedNameCase{ "NullAndFF", "#00#FF", std::string_view("\x00\xFF", 2) },
+        EncodedNameCase{ "MixedEncoding", "Test#20Name", "Test Name" },
+        EncodedNameCase{ "EscapedHashes", "Name#23With#23Hashes", "Name#With#Hashes" }
+    ),
+    [](const ::testing::TestParamInfo<EncodedNameCase>& info) {
+        return std::string(info.param.name);
+    }
 );
 
 TEST(NameObject, ToPdfEncoding) {
