@@ -116,4 +116,10 @@ include(GoogleTest)
 # CMake Error at C:/Program Files/CMake/share/cmake-3.31/Modules/GoogleTestAddTests.cmake:132 (message): Error running test executable.
 # DISCOVERY_MODE PRE_TEST delays test discovery until just prior to test execution.
 # This way test discovery occurs in the target environment where the test has a better chance at finding appropriate runtime dependencies.
-gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST)
+#
+# Update 22.11.2025
+# NO_PRETTY_VALUES prevents appending "# GetParam() = <raw bytes>" to test names for parameterized tests.
+# Without this flag, test names include raw memory addresses making output unreadable:
+#   Before: CertificateTypes/.../40-byte object <B0-4E 79-8B F7-7F 00-00...>
+#   After:  CertificateTypes/.../2kDSA_SHA256
+gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST NO_PRETTY_VALUES)
