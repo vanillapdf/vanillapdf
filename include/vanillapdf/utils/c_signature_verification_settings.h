@@ -36,27 +36,30 @@ extern "C"
         SignatureVerificationSettingsHandle** result
     );
 
-    /**
+    /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
+
+    **
     * \brief Get certificate revocation checking flag
     * \param handle The settings handle
     * \param result Output flag value
     * \return Error code
-    */
+    *
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetCheckRevocationFlag(
         SignatureVerificationSettingsHandle* handle,
         boolean_type* result
     );
 
-    /**
+    **
     * \brief Set certificate revocation checking flag
     * \param handle The settings handle
     * \param value Flag value to set
     * \return Error code
-    */
+    *
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetCheckRevocationFlag(
         SignatureVerificationSettingsHandle* handle,
         boolean_type value
     );
+    */
 
     /**
     * \brief Get allow untrusted root flag

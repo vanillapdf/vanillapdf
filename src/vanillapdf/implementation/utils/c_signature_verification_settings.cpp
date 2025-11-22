@@ -22,6 +22,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_Creat
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+// TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
+/*
 VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetCheckRevocationFlag(
     SignatureVerificationSettingsHandle* handle,
     boolean_type* result) {
@@ -48,6 +50,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetCh
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
+*/
 
 VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_GetAllowUntrustedRootFlag(
     SignatureVerificationSettingsHandle* handle,

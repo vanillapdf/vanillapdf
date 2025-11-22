@@ -384,8 +384,8 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     auto result = make_deferred<SignatureVerificationResult>();
 
     // Settings are passed to verification functions for validation behavior control
-    // Currently implemented: AllowExpiredCertsFlag, AllowWeakAlgorithmsFlag, AllowUntrustedRootFlag
-    // TODO: CheckRevocationFlag, CheckSigningTimeFlag
+    // Currently implemented: AllowExpiredCertsFlag, AllowWeakAlgorithmsFlag, AllowUntrustedRootFlag, CheckSigningTimeFlag
+    // TODO: CheckRevocationFlag - CRL/OCSP implementation (https://github.com/vanillapdf/vanillapdf/issues/157)
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 

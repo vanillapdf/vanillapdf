@@ -10,7 +10,9 @@ void print_verify_help() {
     printf("  --allow-weak-algorithms Allow weak cryptographic algorithms (MD5, SHA-1, RSA < 2048 bits)\n");
     printf("  --allow-untrusted-root Allow untrusted root certificates (self-signed)\n");
     printf("  --check-signing-time   Validate certificate at signing time instead of current time\n");
+    /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
     printf("  --check-revocation     Check certificate revocation (CRL/OCSP)\n");
+    */
 }
 
 int process_verify(int argc, char *argv[]) {
@@ -24,7 +26,8 @@ int process_verify(int argc, char *argv[]) {
     boolean_type allow_weak_algorithms = VANILLAPDF_RV_FALSE;
     boolean_type allow_untrusted_root = VANILLAPDF_RV_FALSE;
     boolean_type check_signing_time = VANILLAPDF_RV_FALSE;
-    boolean_type check_revocation = VANILLAPDF_RV_FALSE;
+    /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157) */
+    /* boolean_type check_revocation = VANILLAPDF_RV_FALSE; */
 
     DocumentHandle* document = NULL;
     FileHandle* file = NULL;
@@ -68,8 +71,10 @@ int process_verify(int argc, char *argv[]) {
         } else if (strcmp(argv[arg_counter], "--check-signing-time") == 0) {
             check_signing_time = VANILLAPDF_RV_TRUE;
 
+        /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
         } else if (strcmp(argv[arg_counter], "--check-revocation") == 0) {
             check_revocation = VANILLAPDF_RV_TRUE;
+        */
 
         } else {
             print_verify_help();
@@ -173,10 +178,12 @@ int process_verify(int argc, char *argv[]) {
         RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetCheckSigningTimeFlag(settings, VANILLAPDF_RV_TRUE));
     }
 
+    /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
     if (check_revocation) {
         printf("Checking certificate revocation status\n");
         RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetCheckRevocationFlag(settings, VANILLAPDF_RV_TRUE));
     }
+    */
 
     // Iterate through all fields and verify signature fields
     size_type signature_count = 0;
