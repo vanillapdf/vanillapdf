@@ -42,10 +42,34 @@ bool SignatureVerifier::IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPt
         int nid = OBJ_obj2nid(digest_alg->algorithm);
         const char* alg_name = OBJ_nid2sn(nid);
 
-        // Check for weak digest algorithms (MD5, SHA-1, MD2, MD4)
-        if (nid == NID_md5 || nid == NID_sha1 || nid == NID_md2 || nid == NID_md4) {
+        // Check for weak digest algorithms (hash only - this field does NOT contain signature algorithms)
+        // Signature algorithms like NID_sha1WithRSAEncryption belong in digest_enc_alg or cert->sig_alg
+        if (nid == NID_md2 || nid == NID_md4 || nid == NID_md5 || nid == NID_sha1 || nid == NID_md5_sha1) {
             spdlog::info("Weak digest algorithm detected: {}", alg_name ? alg_name : "unknown");
             result->SetMessage(fmt::format("Weak digest algorithm: {}", alg_name ? alg_name : "unknown"));
+            return true;
+        }
+    }
+
+    // Check signature algorithm (digest_enc_alg in PKCS#7 SignerInfo)
+    X509_ALGOR* sig_alg = si->digest_enc_alg;
+    if (sig_alg && sig_alg->algorithm) {
+        int nid = OBJ_obj2nid(sig_alg->algorithm);
+        const char* alg_name = OBJ_nid2sn(nid);
+
+        // Check for weak signature algorithms:
+        // - MD2/MD4/MD5 based: NID_md2WithRSAEncryption, NID_md4WithRSAEncryption, NID_md5WithRSAEncryption, NID_md5WithRSA
+        // - SHA-0 based: NID_shaWithRSAEncryption, NID_dsaWithSHA
+        // - SHA-1 based: NID_sha1WithRSAEncryption, NID_sha1WithRSA, NID_dsaWithSHA1, NID_dsaWithSHA1_2, NID_ecdsa_with_SHA1
+        // - Deprecated: NID_ripemd160WithRSA, NID_mdc2WithRSA
+        if (nid == NID_md2WithRSAEncryption || nid == NID_md4WithRSAEncryption ||
+            nid == NID_md5WithRSAEncryption || nid == NID_md5WithRSA ||
+            nid == NID_shaWithRSAEncryption || nid == NID_dsaWithSHA ||
+            nid == NID_sha1WithRSAEncryption || nid == NID_sha1WithRSA ||
+            nid == NID_dsaWithSHA1 || nid == NID_dsaWithSHA1_2 || nid == NID_ecdsa_with_SHA1 ||
+            nid == NID_ripemd160WithRSA || nid == NID_mdc2WithRSA) {
+            spdlog::info("Weak signature algorithm detected: {}", alg_name ? alg_name : "unknown");
+            result->SetMessage(fmt::format("Weak signature algorithm: {}", alg_name ? alg_name : "unknown"));
             return true;
         }
     }

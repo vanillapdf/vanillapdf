@@ -84,7 +84,14 @@ SignatureVerificationResult* Verify(data, signature, trust_store, settings) {
 - Comprehensive test suite (25+ tests including end-to-end)
 - `SigningKey` direct signing methods
 - Certificate chain iteration API
-- Weak algorithm detection (MD5, SHA-1, MD2, MD4, RSA<2048, DSA<2048, EC<256)
+- Weak algorithm detection:
+  - Digest algorithms (si->digest_alg): MD2, MD4, MD5, SHA-1, MD5-SHA1
+  - Signature algorithms (si->digest_enc_alg):
+    - MD2/MD4/MD5 based: md2WithRSA, md4WithRSA, md5WithRSA
+    - SHA-0 based: shaWithRSA, dsaWithSHA
+    - SHA-1 based: sha1WithRSA, dsaWithSHA1, ecdsaWithSHA1
+    - Deprecated: ripemd160WithRSA, mdc2WithRSA
+  - Key sizes: RSA<2048, DSA<2048, EC<256
 - Signing time extraction and validation
 
 ### Configuration Flags

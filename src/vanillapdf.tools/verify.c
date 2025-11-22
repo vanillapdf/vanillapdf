@@ -139,6 +139,7 @@ int process_verify(int argc, char *argv[]) {
 
     printf("Found %zu form field(s), searching for signature fields...\n", field_count);
 
+    //! [Create trust store]
     // Create or load trusted certificate store
     RETURN_ERROR_IF_NOT_SUCCESS(TrustedCertificateStore_Create(&trust_store));
 
@@ -149,7 +150,9 @@ int process_verify(int argc, char *argv[]) {
         printf("Loading system default trusted certificates\n");
         RETURN_ERROR_IF_NOT_SUCCESS(TrustedCertificateStore_LoadSystemDefaults(trust_store));
     }
+    //! [Create trust store]
 
+    //! [Configure verification settings]
     // Configure verification settings
     RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_Create(&settings));
 
@@ -174,6 +177,7 @@ int process_verify(int argc, char *argv[]) {
         RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetCheckRevocationFlag(settings, VANILLAPDF_RV_TRUE));
     }
     */
+    //! [Configure verification settings]
 
     // Iterate through all fields and verify signature fields
     size_type signature_count = 0;
@@ -212,6 +216,7 @@ int process_verify(int argc, char *argv[]) {
         signature_count++;
         printf("\n=== Verifying Signature #%zu ===\n", signature_count);
 
+        //! [Verify signature]
         // Verify signature using DigitalSignatureExtensions
         RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignatureExtensions_Verify(digital_signature, document, trust_store, settings, &result));
 
@@ -235,6 +240,7 @@ int process_verify(int argc, char *argv[]) {
         // Get verification message
         BufferHandle* message_buffer = NULL;
         RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationResult_GetMessage(result, &message_buffer));
+        //! [Verify signature]
 
         // Print results
         printf("Status: ");

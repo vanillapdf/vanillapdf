@@ -699,19 +699,22 @@ TEST_P(WeakAlgorithmTest, AllowWeakAlgorithmsFlag_Integration) {
     if (pkcs12_buffer) Buffer_Release(pkcs12_buffer);
 }
 
-// Instantiate the parameterized test with different weak algorithms
+// Instantiate the parameterized test with different weak digest algorithms
+// Note: This tests weak digest algorithms (si->digest_alg). The signature algorithm
+// (si->digest_enc_alg) is determined by the key type + digest and is also checked.
+// MD2 is excluded because it's disabled in modern OpenSSL builds.
 INSTANTIATE_TEST_SUITE_P(
     WeakAlgorithms,
     WeakAlgorithmTest,
     ::testing::Values(
-        MessageDigestAlgorithmType_MD5,
         MessageDigestAlgorithmType_MD4,
+        MessageDigestAlgorithmType_MD5,
         MessageDigestAlgorithmType_SHA1
     ),
     [](const ::testing::TestParamInfo<MessageDigestAlgorithmType>& info) {
         switch (info.param) {
-            case MessageDigestAlgorithmType_MD5:  return "MD5";
             case MessageDigestAlgorithmType_MD4:  return "MD4";
+            case MessageDigestAlgorithmType_MD5:  return "MD5";
             case MessageDigestAlgorithmType_SHA1: return "SHA1";
             default: return "Unknown";
         }
