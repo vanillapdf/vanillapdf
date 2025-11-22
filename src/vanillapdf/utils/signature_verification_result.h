@@ -71,12 +71,6 @@ public:
     bool IsCertificateTrusted() const;
 
     /**
-    * \brief Check if certificate was valid at signing time
-    * \return true if certificate was valid when signature was created
-    */
-    bool IsCertificateValidAtSigningTime() const;
-
-    /**
     * \brief Get signer's certificate
     * \return DER-encoded certificate or nullptr if not available
     */
@@ -108,7 +102,6 @@ public:
     void SetSignatureValid(bool valid);
     void SetDocumentIntact(bool intact);
     void SetCertificateTrusted(bool trusted);
-    void SetCertificateValidAtSigningTime(bool valid);
     void SetSignerCertificate(BufferPtr cert);
     void AddCertificateToChain(BufferPtr cert);
     void SetSignerCommonName(BufferPtr name);
@@ -120,7 +113,6 @@ private:
     bool m_signature_valid;
     bool m_document_intact;
     bool m_certificate_trusted;
-    bool m_certificate_valid_at_signing;
     BufferPtr m_signer_certificate;         ///< DER-encoded certificate
     std::vector<BufferPtr> m_certificate_chain;
     BufferPtr m_signer_common_name;         ///< UTF-8 encoded common name

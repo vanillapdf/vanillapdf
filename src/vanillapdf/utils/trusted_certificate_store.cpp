@@ -170,10 +170,6 @@ void TrustedCertificateStore::TrustedCertificateStoreImpl::AddCertificateFromDER
     LOG_ERROR_AND_THROW_GENERAL("TrustedCertificateStore requires OpenSSL support");
 }
 
-void TrustedCertificateStore::TrustedCertificateStoreImpl::AddCertificateFromFile(const std::string&) {
-    LOG_ERROR_AND_THROW_GENERAL("TrustedCertificateStore requires OpenSSL support");
-}
-
 void TrustedCertificateStore::TrustedCertificateStoreImpl::LoadFromDirectory(const std::string&) {
     LOG_ERROR_AND_THROW_GENERAL("TrustedCertificateStore requires OpenSSL support");
 }

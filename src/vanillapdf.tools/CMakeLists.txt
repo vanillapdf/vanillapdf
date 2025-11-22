@@ -105,9 +105,10 @@ target_compile_definitions(vanillapdf.tools PRIVATE -DVANILLAPDF_TOOLS_ICON="${V
 # Add tests for vanillapdf-tools CLI
 if(VANILLAPDF_ENABLE_TESTS)
     # Verify test for Granizo-signed.PDF (self-signed certificate) - should succeed with flag
+    # Uses --skip-certificate-validation to bypass untrusted root check
     add_test(
         NAME "Tools.verify.Granizo-signed.with-flag"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/custom/Granizo-signed.PDF" --allow-untrusted-root
+        COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/custom/Granizo-signed.PDF" --skip-certificate-validation
     )
 
     # Verify test for Granizo-signed.PDF without flag - should fail (untrusted root)

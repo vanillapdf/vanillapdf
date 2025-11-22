@@ -84,6 +84,13 @@ bool SignatureVerifier::IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPt
         return true;
     }
 
+    // Check for weak EC key sizes (< 256 bits)
+    if (key_type == EVP_PKEY_EC && key_bits < 256) {
+        spdlog::info("Weak EC key size detected: {} bits", key_bits);
+        result->SetMessage(fmt::format("Weak EC key size: {} bits (minimum 256)", key_bits));
+        return true;
+    }
+
     return false;  // No weak algorithms detected
 }
 

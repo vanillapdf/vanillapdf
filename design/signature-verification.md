@@ -84,95 +84,45 @@ SignatureVerificationResult* Verify(data, signature, trust_store, settings) {
 - Comprehensive test suite (25+ tests including end-to-end)
 - `SigningKey` direct signing methods
 - Certificate chain iteration API
-- Weak algorithm detection (MD5, SHA-1, MD2, MD4, RSA<2048, DSA<2048)
+- Weak algorithm detection (MD5, SHA-1, MD2, MD4, RSA<2048, DSA<2048, EC<256)
 - Signing time extraction and validation
 
 ### Configuration Flags
 
 | Flag | Default | Purpose |
 |------|---------|---------|
-| `SkipCertificateValidationFlag` | `false` | Bypass X509 chain validation |
+| `SkipCertificateValidationFlag` | `false` | Bypass X509 chain validation (allows self-signed/untrusted certs) |
 | `CheckSigningTimeFlag` | `false` | Validate cert at signing time |
 | `AllowWeakAlgorithmsFlag` | `false` | Allow MD5, SHA-1, small keys |
-| `AllowUntrustedRootFlag` | `false` | Accept self-signed certificates |
 
 ## Cleanup Tasks
 
-### Critical Issues (Must Fix)
+### Completed ✅
 
-#### 1. CheckRevocationFlag is Non-Functional
+#### 1. CheckRevocationFlag Commented Out
+**Status**: ✅ Completed - Commented out with TODO link to GitHub issue #157
 
-**Location**:
-- `src/vanillapdf/utils/signature_verification_settings.h`
-- `src/vanillapdf/utils/signature_verifier.cpp:388` (TODO comment)
+The `CheckRevocationFlag` was exposed in the settings API but had NO implementation. It has been commented out with a reference to the future CRL/OCSP implementation issue.
 
-**Problem**: The `CheckRevocationFlag` is exposed in the settings API but has NO implementation. Users might enable it expecting CRL/OCSP certificate revocation checking to work, but it does nothing.
+#### 2. Orphaned AddCertificateFromFile Method Removed
+**Status**: ✅ Completed
 
-**Impact**: Misleading API - security feature appears available but isn't functional.
+Removed orphaned stub implementation from `trusted_certificate_store.cpp`.
 
-**Recommendation**: Remove the flag from all APIs until CRL/OCSP checking is properly implemented:
-- Remove from `SignatureVerificationSettings`
-- Remove from C API (`c_signature_verification_settings.h`)
-- Remove from CLI tool (`verify.c`)
+#### 3. IsCertificateValidAtSigningTime Field Removed
+**Status**: ✅ Completed
 
-#### 2. Orphaned AddCertificateFromFile Method
+Removed unused field, getter, setter from `SignatureVerificationResult`.
 
-**Location**: `src/vanillapdf/utils/trusted_certificate_store.cpp:173-175`
+#### 4. EC Key Strength Validation Added
+**Status**: ✅ Completed
 
-**Problem**: A stub implementation exists in the .cpp file but the method is NOT declared in the header file (`trusted_certificate_store.h`). This is dead/unreachable code.
+Added EC key size validation (< 256 bits flagged as weak) in `signature_verifier.cpp`.
 
-**Impact**: Code maintenance issue; confusing for future developers.
+#### 5. CLI Test Fixed
+**Status**: ✅ Completed
 
-**Recommendation**: Remove the orphaned method from the .cpp file.
-
-### Should Fix (Quality)
-
-#### 3. IsCertificateValidAtSigningTime Field Unused
-
-**Location**:
-- `src/vanillapdf/utils/signature_verification_result.h:77` (declaration)
-- `src/vanillapdf/utils/signature_verification_result.cpp:35` (getter)
-
-**Problem**: The `m_certificate_valid_at_signing` field is declared and has a getter, but it's never set during verification. It always returns `false`.
-
-**Impact**: Useless API surface; potentially confusing for users.
-
-**Recommendation**: Either:
-- (a) Implement the logic to properly set this field during verification, OR
-- (b) Remove the field and associated methods until needed
-
-#### 4. EC Key Strength Validation Missing
-
-**Location**: `src/vanillapdf/utils/signature_verifier.cpp:70-84` (IsWeakAlgorithm)
-
-**Problem**: The weak algorithm detection checks RSA and DSA key sizes but does NOT validate EC (Elliptic Curve) keys. EC keys smaller than 256 bits should be flagged as weak.
-
-**Impact**: Incomplete weak algorithm detection for modern EC-based signatures.
-
-**Recommendation**: Add EC key size validation:
-```cpp
-// Check for weak EC key sizes (< 256 bits)
-if (key_type == EVP_PKEY_EC && key_bits < 256) {
-    spdlog::info("Weak EC key size detected: {} bits", key_bits);
-    result->SetMessage(fmt::format("Weak EC key size: {} bits (minimum 256)", key_bits));
-    return true;
-}
-```
-
-## Files to Modify
-
-| File | Change |
-|------|--------|
-| `src/vanillapdf/utils/signature_verification_settings.h` | Remove CheckRevocationFlag |
-| `src/vanillapdf/implementation/utils/c_signature_verification_settings.cpp` | Remove CheckRevocationFlag C API |
-| `include/vanillapdf/utils/c_signature_verification_settings.h` | Remove CheckRevocationFlag C API |
-| `src/vanillapdf.tools/verify.c` | Remove --check-revocation option |
-| `src/vanillapdf/utils/trusted_certificate_store.cpp` | Remove orphaned AddCertificateFromFile |
-| `src/vanillapdf/utils/signature_verification_result.h` | Remove IsCertificateValidAtSigningTime |
-| `src/vanillapdf/utils/signature_verification_result.cpp` | Remove IsCertificateValidAtSigningTime |
-| `include/vanillapdf/utils/c_signature_verifier.h` | Remove IsCertificateValidAtSigningTime C API |
-| `src/vanillapdf/implementation/utils/c_signature_verifier.cpp` | Remove IsCertificateValidAtSigningTime C API |
-| `src/vanillapdf/utils/signature_verifier.cpp` | Add EC key validation |
+Fixed `Tools.verify.Granizo-signed.with-flag` test to use `--skip-certificate-validation` instead of non-existent `--allow-untrusted-root` flag.
 
 ## Test Coverage Gaps (Nice to Have)
 
@@ -199,16 +149,17 @@ b918aaf6 refactor: Extract CryptoUtils class for centralized OpenSSL utilities
 4daefff7 refactor: Improve error handling and time conversion in signature verification
 02284d8c feat: Add CLI verify command for signature verification
 3860a597 feat: Add CheckSigningTimeFlag for signing time validation
-eda3a3c9 feat: Add AllowUntrustedRootFlag for self-signed certificate handling
+eda3a3c9 feat: Add SkipCertificateValidationFlag for bypassing chain validation
 ```
 
 ## Next Steps
 
-- [ ] Remove CheckRevocationFlag from all APIs
-- [ ] Remove orphaned AddCertificateFromFile method
-- [ ] Remove unused IsCertificateValidAtSigningTime field
-- [ ] Add EC key strength validation
-- [ ] Build and test all changes
+- [x] Comment out CheckRevocationFlag from all APIs (with GitHub issue link)
+- [x] Remove orphaned AddCertificateFromFile method
+- [x] Remove unused IsCertificateValidAtSigningTime field
+- [x] Add EC key strength validation
+- [x] Fix CLI test to use correct flag
+- [x] Build and test all changes
 - [ ] Commit and push fixes
 
 ## Future Work

@@ -8,8 +8,7 @@ SignatureVerificationResult::SignatureVerificationResult()
     : m_status(SignatureVerificationStatus::Unknown)
     , m_signature_valid(false)
     , m_document_intact(false)
-    , m_certificate_trusted(false)
-    , m_certificate_valid_at_signing(false) {
+    , m_certificate_trusted(false) {
 }
 
 SignatureVerificationStatus SignatureVerificationResult::GetStatus() const {
@@ -30,10 +29,6 @@ bool SignatureVerificationResult::IsDocumentIntact() const {
 
 bool SignatureVerificationResult::IsCertificateTrusted() const {
     return m_certificate_trusted;
-}
-
-bool SignatureVerificationResult::IsCertificateValidAtSigningTime() const {
-    return m_certificate_valid_at_signing;
 }
 
 BufferPtr SignatureVerificationResult::GetSignerCertificate() const {
@@ -79,10 +74,6 @@ void SignatureVerificationResult::SetDocumentIntact(bool intact) {
 
 void SignatureVerificationResult::SetCertificateTrusted(bool trusted) {
     m_certificate_trusted = trusted;
-}
-
-void SignatureVerificationResult::SetCertificateValidAtSigningTime(bool valid) {
-    m_certificate_valid_at_signing = valid;
 }
 
 void SignatureVerificationResult::SetSignerCertificate(BufferPtr cert) {

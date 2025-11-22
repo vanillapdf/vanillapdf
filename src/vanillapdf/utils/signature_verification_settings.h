@@ -23,17 +23,19 @@ namespace vanillapdf {
 */
 class SignatureVerificationSettings : public IUnknown {
 public:
-    /**
+    /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
+    **
     * \brief Check if certificate revocation should be verified (CRL/OCSP)
     * \return true if revocation checking is enabled, false otherwise
-    */
+    *
     bool GetCheckRevocationFlag(void) const noexcept { return m_check_revocation; }
 
-    /**
+    **
     * \brief Enable or disable certificate revocation checking
     * \param flag true to enable revocation checking, false to disable
-    */
+    *
     void SetCheckRevocationFlag(bool flag) noexcept { m_check_revocation = flag; }
+    */
 
     /**
     * \brief Check if certificate chain validation should be skipped
@@ -105,7 +107,9 @@ public:
     void SetAllowWeakAlgorithmsFlag(bool flag) noexcept { m_allow_weak_algorithms = flag; }
 
 private:
+    /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
     bool m_check_revocation = false;            ///< Check CRL/OCSP for certificate revocation
+    */
     bool m_skip_certificate_validation = false; ///< Skip X509 certificate chain validation
     bool m_check_signing_time = false;          ///< Validate certificate was valid at signing time
     bool m_allow_weak_algorithms = false;       ///< Allow weak signature algorithms and key sizes
