@@ -188,6 +188,7 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/buffer.cpp
     utils/buffer_array.cpp
     utils/constants.cpp
+    utils/crypto_utils.cpp
     utils/errors.cpp
     utils/exceptions.cpp
     utils/library_info.cpp
@@ -336,6 +337,7 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/character.h
     utils/constants.h
     utils/conversion_utils.h
+    utils/crypto_utils.h
     utils/custom_size_allocator.h
     utils/custom_size_vector.h
     utils/deferred.h

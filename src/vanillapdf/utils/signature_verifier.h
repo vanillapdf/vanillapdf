@@ -2,18 +2,11 @@
 #define _SIGNATURE_VERIFIER_H
 
 #include "utils/utils_fwd.h"
+#include "utils/crypto_utils.h"
 #include "utils/buffer.h"
 #include "utils/trusted_certificate_store.h"
 #include "utils/signature_verification_result.h"
 #include "utils/signature_verification_settings.h"
-
-// Forward declarations for OpenSSL types (only when OpenSSL is available)
-#if defined(VANILLAPDF_HAVE_OPENSSL)
-struct pkcs7_st;
-struct x509_store_st;
-typedef struct pkcs7_st PKCS7;
-typedef struct x509_store_st X509_STORE;
-#endif
 
 namespace vanillapdf {
 

@@ -1,8 +1,8 @@
 #include "precompiled.h"
 
 #include "utils/trusted_certificate_store.h"
+#include "utils/crypto_utils.h"
 #include "utils/exceptions.h"
-#include "utils/misc_utils.h"
 
 #include <fstream>
 #include <filesystem>
@@ -69,7 +69,7 @@ void* TrustedCertificateStore::GetNativeHandle() const {
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
 TrustedCertificateStore::TrustedCertificateStoreImpl::TrustedCertificateStoreImpl() {
-    MiscUtils::InitializeOpenSSL();
+    CryptoUtils::InitializeOpenSSL();
 
     m_store = X509_STORE_new();
     if (!m_store) {
@@ -105,7 +105,7 @@ void TrustedCertificateStore::TrustedCertificateStoreImpl::AddCertificateFromPEM
         // Ignore duplicate certificate errors
         unsigned long err = ERR_peek_last_error();
         if (ERR_GET_REASON(err) != X509_R_CERT_ALREADY_IN_HASH_TABLE) {
-            std::string error = MiscUtils::GetLastOpensslError();
+            std::string error = CryptoUtils::GetLastOpensslError();
             LOG_ERROR_AND_THROW_GENERAL("Failed to add PEM certificate to store: {}", error);
         }
     }
@@ -127,7 +127,7 @@ void TrustedCertificateStore::TrustedCertificateStoreImpl::AddCertificateFromDER
         // Ignore duplicate certificate errors
         unsigned long err = ERR_peek_last_error();
         if (ERR_GET_REASON(err) != X509_R_CERT_ALREADY_IN_HASH_TABLE) {
-            std::string error = MiscUtils::GetLastOpensslError();
+            std::string error = CryptoUtils::GetLastOpensslError();
             LOG_ERROR_AND_THROW_GENERAL("Failed to add DER certificate to store: {}", error);
         }
     }

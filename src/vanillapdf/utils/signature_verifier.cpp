@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "utils/signature_verifier.h"
+#include "utils/crypto_utils.h"
 #include "utils/misc_utils.h"
 #include "utils/exceptions.h"
 #include "utils/log.h"
@@ -109,7 +110,7 @@ void SignatureVerifier::ExtractCertificateChain(PKCS7* p7, SignatureVerification
         int der_len = i2d_X509(cert, nullptr);
         if (der_len < 0) {
             spdlog::error("Failed to determine DER length for certificate at index {}: {}",
-                         i, MiscUtils::GetLastOpensslError());
+                         i, CryptoUtils::GetLastOpensslError());
             continue;
         }
 
@@ -118,7 +119,7 @@ void SignatureVerifier::ExtractCertificateChain(PKCS7* p7, SignatureVerification
         int actual_len = i2d_X509(cert, &der_ptr);
         if (actual_len < 0) {
             spdlog::error("Failed to convert certificate at index {} to DER format: {}",
-                         i, MiscUtils::GetLastOpensslError());
+                         i, CryptoUtils::GetLastOpensslError());
             continue;
         }
 
@@ -215,20 +216,20 @@ bool SignatureVerifier::ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
     // Create epoch time (1970-01-01 00:00:00 UTC)
     ASN1_TIME* epoch = ASN1_TIME_new();
     if (!epoch) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to create ASN1_TIME for epoch: {}", MiscUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW_GENERAL("Failed to create ASN1_TIME for epoch: {}", CryptoUtils::GetLastOpensslError());
     }
     SCOPE_GUARD([epoch]() { ASN1_TIME_free(epoch); });
 
     // Set epoch using time_t(0) instead of string
     if (!ASN1_TIME_set(epoch, 0)) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to set epoch time: {}", MiscUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW_GENERAL("Failed to set epoch time: {}", CryptoUtils::GetLastOpensslError());
     }
 
     // Calculate difference between signing time and epoch
     int days = 0;
     int seconds = 0;
     if (!ASN1_TIME_diff(&days, &seconds, epoch, time_value)) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to calculate time difference: {}", MiscUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW_GENERAL("Failed to calculate time difference: {}", CryptoUtils::GetLastOpensslError());
     }
 
     // Convert to time_t using chrono for clean duration calculation
@@ -243,7 +244,7 @@ bool SignatureVerifier::ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
 bool SignatureVerifier::VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationResultPtr& result, SignatureVerificationSettingsPtr settings) {
     X509_STORE_CTX* ctx = X509_STORE_CTX_new();
     if (!ctx) {
-        spdlog::error("Failed to create X509_STORE_CTX: {}", MiscUtils::GetLastOpensslError());
+        spdlog::error("Failed to create X509_STORE_CTX: {}", CryptoUtils::GetLastOpensslError());
 
         result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
         result->SetMessage("Failed to initialize certificate verification context");
@@ -256,7 +257,7 @@ bool SignatureVerifier::VerifyCertificateChain(PKCS7* p7, X509_STORE* store, Sig
     // Get signer certificate
     STACK_OF(X509)* signers = PKCS7_get0_signers(p7, nullptr, 0);
     if (!signers) {
-        spdlog::error("Failed to get signers from PKCS7: {}", MiscUtils::GetLastOpensslError());
+        spdlog::error("Failed to get signers from PKCS7: {}", CryptoUtils::GetLastOpensslError());
 
         result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
         result->SetMessage("Failed to extract signer certificates from signature");
@@ -290,7 +291,7 @@ bool SignatureVerifier::VerifyCertificateChain(PKCS7* p7, X509_STORE* store, Sig
 
     // Initialize verification context
     if (!X509_STORE_CTX_init(ctx, store, signer_cert, cert_chain)) {
-        spdlog::error("Failed to initialize X509_STORE_CTX: {}", MiscUtils::GetLastOpensslError());
+        spdlog::error("Failed to initialize X509_STORE_CTX: {}", CryptoUtils::GetLastOpensslError());
 
         result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
         result->SetMessage("Failed to initialize certificate verification context");
@@ -388,14 +389,14 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    MiscUtils::InitializeOpenSSL();
+    CryptoUtils::InitializeOpenSSL();
 
     // Parse PKCS7 signature
     const unsigned char* sig_ptr = reinterpret_cast<const unsigned char*>(signature_contents.data());
     PKCS7* p7 = d2i_PKCS7(nullptr, &sig_ptr, static_cast<long>(signature_contents.size()));
 
     if (!p7) {
-        std::string error = MiscUtils::GetLastOpensslError();
+        std::string error = CryptoUtils::GetLastOpensslError();
         spdlog::error("Failed to parse PKCS#7 signature: {}", error);
 
         result->SetStatus(SignatureVerificationStatus::Invalid);
@@ -411,7 +412,7 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     // Create BIO from signed data
     BIO* data_bio = BIO_new_mem_buf(signed_data.data(), static_cast<int>(signed_data.size()));
     if (!data_bio) {
-        std::string error = MiscUtils::GetLastOpensslError();
+        std::string error = CryptoUtils::GetLastOpensslError();
         spdlog::error("Failed to create BIO from signed data: {}", error);
 
         result->SetStatus(SignatureVerificationStatus::Invalid);
@@ -426,7 +427,7 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     int verify_result = PKCS7_verify(p7, nullptr, nullptr, data_bio, nullptr, PKCS7_DETACHED | PKCS7_NOVERIFY);
 
     if (verify_result != 1) {
-        std::string error = MiscUtils::GetLastOpensslError();
+        std::string error = CryptoUtils::GetLastOpensslError();
         spdlog::error("Cryptographic signature verification failed: {}", error);
 
         result->SetSignatureValid(false);
