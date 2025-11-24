@@ -14,6 +14,12 @@ extern "C" {
     */
 
     /**
+    * \class MiscUtils
+    * \ingroup group_utils
+    * \brief Static utility class for OpenSSL initialization and cleanup
+    */
+
+    /**
     * \memberof MiscUtils
     * @{ */
 

@@ -11,7 +11,7 @@ extern "C"
 #endif
 
     /**
-    * \file c_signature_verification.h
+    * \file c_signature_verifier.h
     * \brief This file contains APIs for PDF signature verification
     */
 
@@ -110,6 +110,12 @@ extern "C"
     );
 
     /** @} */
+
+    /**
+    * \class SignatureVerifier
+    * \ingroup group_utils
+    * \brief Static utility class for PKCS#7 signature verification
+    */
 
     /**
     * \memberof SignatureVerifier

@@ -16,6 +16,7 @@ Developer guide:
 
 <ul>
 <li>Section \ref page_architecture gives a global overview of how Vanilla.PDF is internally structured
+<li>Section \ref page_signature_verification shows how to verify digital signatures
 <li>Section \ref page_examples describes usage of Vanilla.PDF in various scenarios
 </ul>
 
