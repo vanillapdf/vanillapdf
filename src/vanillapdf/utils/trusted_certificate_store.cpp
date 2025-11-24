@@ -26,9 +26,10 @@ public:
     void AddCertificateFromDER(const Buffer& der_data);
     void LoadFromDirectory(const std::string& directory_path);
     void LoadSystemDefaults();
-    void* GetNativeHandle() const;
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
+    X509_STORE* GetNativeHandle() const;
+
 private:
     X509_STORE* m_store = nullptr;
 #endif
@@ -58,9 +59,11 @@ void TrustedCertificateStore::LoadSystemDefaults() {
     m_impl->LoadSystemDefaults();
 }
 
-void* TrustedCertificateStore::GetNativeHandle() const {
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+X509_STORE* TrustedCertificateStore::GetNativeHandle() const {
     return m_impl->GetNativeHandle();
 }
+#endif
 
 #pragma endregion
 
@@ -148,7 +151,7 @@ void TrustedCertificateStore::TrustedCertificateStoreImpl::LoadSystemDefaults() 
     }
 }
 
-void* TrustedCertificateStore::TrustedCertificateStoreImpl::GetNativeHandle() const {
+X509_STORE* TrustedCertificateStore::TrustedCertificateStoreImpl::GetNativeHandle() const {
     return m_store;
 }
 
@@ -176,11 +179,6 @@ void TrustedCertificateStore::TrustedCertificateStoreImpl::LoadFromDirectory(con
 
 void TrustedCertificateStore::TrustedCertificateStoreImpl::LoadSystemDefaults() {
     LOG_ERROR_AND_THROW_GENERAL("TrustedCertificateStore requires OpenSSL support");
-}
-
-void* TrustedCertificateStore::TrustedCertificateStoreImpl::GetNativeHandle() const {
-    LOG_ERROR_AND_THROW_GENERAL("TrustedCertificateStore requires OpenSSL support");
-    return nullptr;
 }
 
 #endif

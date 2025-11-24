@@ -470,7 +470,7 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
         return result;
     }
 
-    X509_STORE* store = static_cast<X509_STORE*>(trusted_store->GetNativeHandle());
+    X509_STORE* store = trusted_store->GetNativeHandle();
     if (!store) {
         spdlog::error("Trusted store native handle is null");
 

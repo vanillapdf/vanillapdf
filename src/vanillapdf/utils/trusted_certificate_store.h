@@ -4,6 +4,7 @@
 #include "utils/utils_fwd.h"
 #include "utils/unknown_interface.h"
 #include "utils/buffer.h"
+#include "utils/crypto_utils.h"
 
 #include <string>
 #include <string_view>
@@ -53,13 +54,16 @@ public:
     */
     void LoadSystemDefaults();
 
+#if defined(VANILLAPDF_HAVE_OPENSSL)
     /**
-    * \brief Get native handle for OpenSSL operations
-    * \return Pointer to X509_STORE (cast to void* for ABI stability)
+    * \brief Get native OpenSSL X509_STORE handle
+    * \return Pointer to X509_STORE for OpenSSL operations
     *
-    * Internal use only - provides access to underlying OpenSSL X509_STORE
+    * Internal use only - provides direct access to OpenSSL certificate store.
+    * Returns nullptr when OpenSSL support is not compiled in.
     */
-    void* GetNativeHandle() const;
+    X509_STORE* GetNativeHandle() const;
+#endif
 
 private:
     class TrustedCertificateStoreImpl;
