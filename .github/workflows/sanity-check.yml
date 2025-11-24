@@ -187,7 +187,7 @@ jobs:
 
         config:
           - name: osx.15-x64
-            runner: macos-15-large
+            runner: macos-15-intel
             preset: macos-x64
 
           - name: osx.15-arm64
