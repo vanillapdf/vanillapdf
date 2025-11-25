@@ -129,7 +129,7 @@ jobs:
       options: --platform=${{ matrix.config.platform }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -193,7 +193,7 @@ jobs:
           - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17" }
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -239,7 +239,7 @@ jobs:
           - { name: "osx.15-arm64", runner: macos-15, preset: "macos-arm64" }
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
