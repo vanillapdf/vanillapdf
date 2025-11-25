@@ -26,11 +26,17 @@
     #define CALLING_CONVENTION
 #endif
 
-#if defined(VANILLAPDF_CONFIGURATION_DLL) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
-    #if defined(VANILLAPDF_EXPORTS)
-        #define VANILLAPDF_API __declspec(dllexport)
+#if defined(VANILLAPDF_CONFIGURATION_DLL)
+    #if defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
+        #if defined(VANILLAPDF_EXPORTS)
+            #define VANILLAPDF_API __declspec(dllexport)
+        #else
+            #define VANILLAPDF_API __declspec(dllimport)
+        #endif
+    #elif defined(COMPILER_GCC) || defined(COMPILER_CLANG)
+        #define VANILLAPDF_API __attribute__((visibility("default")))
     #else
-        #define VANILLAPDF_API __declspec(dllimport)
+        #define VANILLAPDF_API
     #endif
 #else
     #define VANILLAPDF_API
