@@ -100,6 +100,18 @@ jobs:
             platform: linux/arm64
             preset: linux-arm64-gcc
 
+          - name: rocky.10-x64
+            os: ubuntu-24.04
+            image: ghcr.io/vanillapdf/vanillapdf-rockylinux:10
+            platform: linux/amd64
+            preset: linux-x64-gcc
+
+          - name: rocky.10-arm64
+            os: ubuntu-24.04-arm
+            image: ghcr.io/vanillapdf/vanillapdf-rockylinux:10
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+
           - name: fedora.41-x64
             os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-fedora-amd64:41
@@ -121,6 +133,18 @@ jobs:
           - name: fedora.42-arm64
             os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-fedora-arm64v8:42
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+
+          - name: fedora.43-x64
+            os: ubuntu-24.04
+            image: ghcr.io/vanillapdf/vanillapdf-fedora:43
+            platform: linux/amd64
+            preset: linux-x64-gcc
+
+          - name: fedora.43-arm64
+            os: ubuntu-24.04-arm
+            image: ghcr.io/vanillapdf/vanillapdf-fedora:43
             platform: linux/arm64
             preset: linux-arm64-gcc
 
@@ -179,18 +203,21 @@ jobs:
           - { name: "win.2022-x64-static", os: windows-2022, preset: "windows-x64-msvc-17-static" }
           - { name: "win.2025-x86-static", os: windows-2025, preset: "windows-x86-msvc-17-static" }
           - { name: "win.2025-x64-static", os: windows-2025, preset: "windows-x64-msvc-17-static" }
+          - { name: "win.11-arm64-static", os: windows-11-arm, preset: "windows-arm64-msvc-17-static" }
 
           # Static dependencies + Dynamic CRT (for Python wrappers)
           - { name: "win.2022-x86-static-md", os: windows-2022, preset: "windows-x86-msvc-17-static-md" }
           - { name: "win.2022-x64-static-md", os: windows-2022, preset: "windows-x64-msvc-17-static-md" }
           - { name: "win.2025-x86-static-md", os: windows-2025, preset: "windows-x86-msvc-17-static-md" }
           - { name: "win.2025-x64-static-md", os: windows-2025, preset: "windows-x64-msvc-17-static-md" }
+          - { name: "win.11-arm64-static-md", os: windows-11-arm, preset: "windows-arm64-msvc-17-static-md" }
 
           # Dynamic dependencies + Dynamic CRT
           - { name: "win.2022-x86", os: windows-2022, preset: "windows-x86-msvc-17" }
           - { name: "win.2022-x64", os: windows-2022, preset: "windows-x64-msvc-17" }
           - { name: "win.2025-x86", os: windows-2025, preset: "windows-x86-msvc-17" }
           - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17" }
+          - { name: "win.11-arm64", os: windows-11-arm, preset: "windows-arm64-msvc-17" }
 
     steps:
       - uses: actions/checkout@v6
@@ -234,8 +261,8 @@ jobs:
         build_type: [Debug, Release]
 
         config:
-          - { name: "osx.13-x64", runner: macos-13, preset: "macos-x64" }
           - { name: "osx.14-arm64", runner: macos-14, preset: "macos-arm64" }
+          - { name: "osx.15-x64", runner: macos-15-intel, preset: "macos-x64" }
           - { name: "osx.15-arm64", runner: macos-15, preset: "macos-arm64" }
 
     steps:

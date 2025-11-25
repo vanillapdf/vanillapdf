@@ -47,6 +47,27 @@
             }
         },
         {
+            "name": "windows-arm64-msvc-17",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "arm64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-windows",
+                "PLATFORM_IDENTIFIER": "win-arm64"
+            }
+        },
+        {
+            "name": "windows-arm64-msvc-17-static",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "arm64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-windows-static",
+                "PLATFORM_IDENTIFIER": "win-arm64",
+                "VANILLAPDF_USE_STATIC_CRT": "ON"
+            }
+        },
+        {
             "name": "windows-x86-msvc-17-static-md",
             "inherits": "default",
             "generator": "Visual Studio 17 2022",
@@ -64,6 +85,16 @@
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "x64-windows-static-md",
                 "PLATFORM_IDENTIFIER": "win-x64"
+            }
+        },
+        {
+            "name": "windows-arm64-msvc-17-static-md",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "arm64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-windows-static-md",
+                "PLATFORM_IDENTIFIER": "win-arm64"
             }
         }
     ],
@@ -85,12 +116,24 @@
             "configurePreset": "windows-x64-msvc-17"
         },
         {
+            "name": "windows-arm64-msvc-17",
+            "configurePreset": "windows-arm64-msvc-17"
+        },
+        {
+            "name": "windows-arm64-msvc-17-static",
+            "configurePreset": "windows-arm64-msvc-17-static"
+        },
+        {
             "name": "windows-x86-msvc-17-static-md",
             "configurePreset": "windows-x86-msvc-17-static-md"
         },
         {
             "name": "windows-x64-msvc-17-static-md",
             "configurePreset": "windows-x64-msvc-17-static-md"
+        },
+        {
+            "name": "windows-arm64-msvc-17-static-md",
+            "configurePreset": "windows-arm64-msvc-17-static-md"
         }
     ],
     "testPresets": [
@@ -111,12 +154,24 @@
             "configurePreset": "windows-x64-msvc-17"
         },
         {
+            "name": "windows-arm64-msvc-17",
+            "configurePreset": "windows-arm64-msvc-17"
+        },
+        {
+            "name": "windows-arm64-msvc-17-static",
+            "configurePreset": "windows-arm64-msvc-17-static"
+        },
+        {
             "name": "windows-x86-msvc-17-static-md",
             "configurePreset": "windows-x86-msvc-17-static-md"
         },
         {
             "name": "windows-x64-msvc-17-static-md",
             "configurePreset": "windows-x64-msvc-17-static-md"
+        },
+        {
+            "name": "windows-arm64-msvc-17-static-md",
+            "configurePreset": "windows-arm64-msvc-17-static-md"
         }
     ]
 }
