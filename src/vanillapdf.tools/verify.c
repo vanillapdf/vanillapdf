@@ -197,7 +197,7 @@ int process_verify(int argc, char *argv[]) {
         }
 
         // Try to convert to signature field
-        error_type sig_result = Field_ToSignature(field, &sig_field);
+        error_type sig_result = SignatureField_FromField(field, &sig_field);
         if (sig_result != VANILLAPDF_ERROR_SUCCESS) {
             // Not a signature field, skip
             Field_Release(field);
