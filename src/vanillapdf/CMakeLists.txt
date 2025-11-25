@@ -544,26 +544,6 @@ add_library(vanillapdf::vanillapdf ALIAS vanillapdf)
 
 set_target_properties(vanillapdf PROPERTIES
   PREFIX "lib"
-
-  # Symbol visibility control for GCC/Clang shared library builds
-  #
-  # Problem: On Windows, only symbols marked with __declspec(dllexport) are exported.
-  # On Linux/macOS, by default ALL symbols are exported, including internal C++
-  # template instantiations (e.g., ObjectRelease<T>), class methods, and other
-  # implementation details that should not be part of the public API.
-  #
-  # Solution: Set default visibility to "hidden" so no symbols are exported unless
-  # explicitly marked. Combined with VANILLAPDF_API using __attribute__((visibility("default")))
-  # in c_export.h, this ensures only the public C API functions are exported.
-  #
-  # - CXX_VISIBILITY_PRESET hidden: Adds -fvisibility=hidden for C++ code
-  # - C_VISIBILITY_PRESET hidden: Adds -fvisibility=hidden for C code
-  # - VISIBILITY_INLINES_HIDDEN ON: Also hides inline function symbols
-  #
-  # This makes Linux/macOS export behavior match Windows __declspec(dllexport).
-  CXX_VISIBILITY_PRESET hidden
-  C_VISIBILITY_PRESET hidden
-  VISIBILITY_INLINES_HIDDEN ON
 )
 
 # Add precompiled header to speed up the compilation process
