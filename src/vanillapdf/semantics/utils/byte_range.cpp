@@ -8,7 +8,7 @@
 namespace vanillapdf {
 namespace semantics {
 
-ByteRangeCollection::ByteRangeCollection() : HighLevelObject(make_deferred<syntax::ArrayObject<syntax::IntegerObjectPtr>>()) {
+ByteRangeCollection::ByteRangeCollection() {
 }
 
 ByteRangeCollection::ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj) : HighLevelObject(obj) {

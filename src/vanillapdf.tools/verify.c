@@ -137,7 +137,7 @@ int process_verify(int argc, char *argv[]) {
         return VANILLAPDF_TOOLS_ERROR_FAILURE;
     }
 
-    printf("Found %zu form field(s), searching for signature fields...\n", field_count);
+    printf("Found %llu form field(s), searching for signature fields...\n", (unsigned long long) field_count);
 
     //! [Create trust store]
     // Create or load trusted certificate store
@@ -192,7 +192,7 @@ int process_verify(int argc, char *argv[]) {
         // Get field at index
         error_type field_result = FieldCollection_At(fields, i, &field);
         if (field_result != VANILLAPDF_ERROR_SUCCESS) {
-            printf("Warning: Failed to get field at index %zu\n", i);
+            printf("Warning: Failed to get field at index %llu\n", (unsigned long long) i);
             continue;
         }
 
@@ -207,14 +207,14 @@ int process_verify(int argc, char *argv[]) {
         // Get digital signature value
         error_type value_result = SignatureField_GetValue(sig_field, &digital_signature);
         if (value_result != VANILLAPDF_ERROR_SUCCESS) {
-            printf("Warning: Signature field at index %zu has no value\n", i);
+            printf("Warning: Signature field at index %llu has no value\n", (unsigned long long) i);
             SignatureField_Release(sig_field);
             Field_Release(field);
             continue;
         }
 
         signature_count++;
-        printf("\n=== Verifying Signature #%zu ===\n", signature_count);
+        printf("\n=== Verifying Signature #%llu ===\n", (unsigned long long) signature_count);
 
         //! [Verify signature]
         // Verify signature using DigitalSignatureExtensions
@@ -276,7 +276,7 @@ int process_verify(int argc, char *argv[]) {
         printf("Certificate Trusted: %s\n", is_cert_trusted ? "Yes" : "No");
 
         if (signer_name != NULL) {
-            size_t name_size = 0;
+            size_type name_size = 0;
             string_type name_data = NULL;
             RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(signer_name, &name_data, &name_size));
             if (name_size > 0) {
@@ -285,7 +285,7 @@ int process_verify(int argc, char *argv[]) {
         }
 
         if (message_buffer != NULL) {
-            size_t message_size = 0;
+            size_type message_size = 0;
             string_type message_data = NULL;
             RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(message_buffer, &message_data, &message_size));
             if (message_size > 0) {
@@ -313,7 +313,7 @@ int process_verify(int argc, char *argv[]) {
         printf("No signature fields found in PDF\n");
         overall_result = VANILLAPDF_TOOLS_ERROR_FAILURE;
     } else {
-        printf("Verified %zu signature(s)\n", signature_count);
+        printf("Verified %llu signature(s)\n", (unsigned long long) signature_count);
     }
     printf("============================\n\n");
 
