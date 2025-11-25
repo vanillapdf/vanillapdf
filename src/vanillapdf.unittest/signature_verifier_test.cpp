@@ -1059,7 +1059,7 @@ TEST(DigitalSignatureExtensions, SignAndVerifyDocument) {
     ASSERT_EQ(FieldCollection_At(fields, 0, &field), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(field, nullptr);
 
-    ASSERT_EQ(Field_ToSignature(field, &sig_field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SignatureField_FromField(field, &sig_field), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(sig_field, nullptr);
 
     ASSERT_EQ(SignatureField_GetValue(sig_field, &digital_signature), VANILLAPDF_ERROR_SUCCESS);
