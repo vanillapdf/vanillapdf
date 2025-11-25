@@ -6,161 +6,65 @@
 [![Build](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml)
 [![Coverage](https://codecov.io/gh/vanillapdf/vanillapdf/branch/main/graph/badge.svg?token=1UO4W5XGTL)](https://codecov.io/gh/vanillapdf/vanillapdf)
 [![Docs](https://img.shields.io/badge/docs-available-brightgreen)](https://vanillapdf.github.io/vanillapdf)
-[![Repo Size](https://img.shields.io/github/repo-size/vanillapdf/vanillapdf)](https://github.com/vanillapdf/vanillapdf)
 
-**Vanilla.PDF** is a modern, high-performance, open-source C++17 SDK for creating, editing, signing, and analyzing PDF documents. With no external runtime dependencies and full cross-platform support, it’s ideal for embedding into desktop, server, or automation workflows.
+**Vanilla.PDF** is a modern, high-performance, open-source C++17 SDK for creating, editing, signing, and analyzing PDF documents. With no external runtime dependencies and full cross-platform support, it's ideal for embedding into desktop, server, or automation workflows.
 
----
+## Features
 
-## 🚀 Features
+| Category | Description |
+|----------|-------------|
+| **Digital Signatures** | Add and verify CMS (PKCS#7) digital signatures |
+| **PDF Generation** | Create documents with text, images, paths, and pages |
+| **Advanced Editing** | Modify content streams, metadata, and page structure |
+| **PDF Parsing** | Inspect low-level internals like XRef tables and objects |
+| **Encryption** | Work with standard PDF security models |
+| **CLI Tools** | Batch-process PDFs directly from the terminal |
 
-- ✅ **Digital Signatures**: Add CMS (PKCS#7) digital signatures to existing PDFs
-- 📄 **PDF Generation**: Create documents with text, images, paths, and pages
-- 🛠️ **Advanced Editing**: Modify content streams, metadata, and page structure
-- 🔍 **PDF Parsing**: Inspect low-level internals like XRef tables and objects
-- 🔐 **Encryption & Permissions**: Work with standard PDF security models
-- 🧪 **Test Coverage**: Unit-tested core with CI pipelines and sanitizers (enable stack sanitizer in Debug builds with `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`)
-- 🧰 **CLI Tools**: Batch-process PDFs directly from the terminal
-- ⚙️ **Cross-Platform**: Build on Windows, Linux, macOS, and Android via CMakePresets
-- 📦 **Minimal Dependencies**: Statically linkable; vcpkg and Conan compatible
-- ⚡ **High Performance**: Optimized C++17 core with benchmark testing suite
-- 🔄 **CI/CD**: Automated testing across all platforms with nightly builds
+## Supported Platforms
 
----
+| Platform | Compilers | Architectures |
+|----------|-----------|---------------|
+| Windows | Visual Studio 2022 (MSVC 17.x) | x86, x64 |
+| Linux | GCC 8.1+, Clang 10+ | x64, ARM64, ARM |
+| macOS | AppleClang 15+ (Xcode 15) | x64, ARM64 |
+| Android | NDK toolchain | arm64-v8a, armeabi-v7a, x86, x86_64 |
 
-## 🖥️ Supported Platforms & Compilers
-
-- **Windows:** Visual Studio 2022 (MSVC 17.x)
-- **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
-- **macOS:** AppleClang 15+ (Xcode 15)
-- **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
-
----
-
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-# Clone and build in 3 steps (Windows example)
-git clone https://github.com/vanillapdf/vanillapdf.git
-cd vanillapdf && git submodule update --init --recursive
-cmake --preset windows-x64-msvc-17 && cmake --build --preset windows-x64-msvc-17
-
-# Linux/macOS: use linux-x64-gcc or macos-arm64 preset instead
-```
-
-## 📦 Installation Options
-
-Detailed setup instructions are available in the
-[installation guide](https://vanillapdf.github.io/vanillapdf/page_install.html).
-
-### 🛠 Build from Source
-
-```bash
+# Clone repository
 git clone https://github.com/vanillapdf/vanillapdf.git
 cd vanillapdf
 
-# Fetch the bundled vcpkg submodule (skip if VCPKG_ROOT points to an existing install)
+# Initialize submodules (required for vcpkg dependencies)
 git submodule sync --recursive
 git submodule update --init --recursive
-```
 
-To see which build presets are available run:
-
-```bash
-cmake --list-presets
-```
-
-```
-Available configure presets:
-
-  "windows-x86-msvc-17-static"
-  "windows-x64-msvc-17-static"
-  "windows-x86-msvc-17"
-  "windows-x64-msvc-17"
-  "windows-x86-msvc-17-static-md"
-  "windows-x64-msvc-17-static-md"
-  "default"
-  "linux-x64-gcc"
-  "linux-arm64-gcc"
-  "linux-x64-clang"
-  "linux-arm64-clang"
-  "linux-x64-musl"
-  "linux-arm64-musl"
-  "linux-arm-musl"
-  "macos-x64"
-  "macos-arm64"
-  "android-arm64"
-  "android-armv7"
-  "android-x86"
-  "android-x86_64"
-```
-
-Choose the preset matching your platform:
-
-```bash
+# Build (Windows)
 cmake --preset windows-x64-msvc-17
 cmake --build --preset windows-x64-msvc-17
-ctest --preset windows-x64-msvc-17  # Optional
+
+# Build (Linux/macOS) - use appropriate preset
+cmake --preset linux-x64-gcc      # or macos-arm64
+cmake --build --preset linux-x64-gcc
 ```
 
-The repository includes `external/vcpkg` as a submodule. Initializing the
-submodule is required unless you provide `VCPKG_ROOT` or pass your own
-`-DCMAKE_TOOLCHAIN_FILE` pointing to a preinstalled vcpkg.
+Run `cmake --list-presets` to see all available configurations including static/dynamic CRT variants and cross-compilation options.
 
-### Install Dependencies with vcpkg
+## Installation Options
 
-If you prefer to use [vcpkg](https://github.com/microsoft/vcpkg) for dependency
-management, bootstrap it and install the required packages:
+### vcpkg (Recommended)
 
-```bash
-git clone https://github.com/microsoft/vcpkg.git
-cd vcpkg
-./bootstrap-vcpkg.sh
-./vcpkg install openssl libjpeg-turbo
-```
+The fastest way to get started with pre-compiled binaries:
 
-Then configure Vanilla.PDF with the vcpkg toolchain:
-
-```bash
-cmake -S . -B build/vcpkg \
-  -DCMAKE_TOOLCHAIN_FILE=</path/to/vcpkg>/scripts/buildsystems/vcpkg.cmake
-cmake --build build/vcpkg
-```
-
-### Using System Dependencies
-
-If some libraries should come from your package manager or Conan rather than
-vcpkg, enable the matching `VANILLAPDF_EXTERNAL_*` options when configuring:
-
-```bash
-cmake -B build \
-  -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
-  -DVANILLAPDF_EXTERNAL_JPEG=ON
-cmake --build build
-```
-
-Options exist for OpenSSL, libjpeg-turbo, openjpeg, zlib, spdlog,
-nlohmann-json, GTest and Google Benchmark. When these are set, the
-corresponding packages will not be installed by vcpkg and CMake will
-search for them on your system instead. The GTest and Benchmark options
-are only available when tests or benchmarks are enabled.
-
-For instructions on generating Debian or Homebrew packages see the
-[packaging guide](https://vanillapdf.github.io/vanillapdf/page_packaging.html).
-
----
-
-## 🔗 CMake Integration
-
-VanillaPDF provides multiple integration methods to suit different development workflows:
-
-### Using vcpkg (Recommended)
 ```bash
 vcpkg install vanillapdf
 ```
-⚡ **Fastest builds** with pre-compiled binaries and automatic dependency management.
 
-### Using FetchContent (Alternative)
+### CMake FetchContent
+
+Self-contained approach without external package managers:
+
 ```cmake
 include(FetchContent)
 FetchContent_Declare(vanillapdf
@@ -169,114 +73,80 @@ FetchContent_Declare(vanillapdf
 FetchContent_MakeAvailable(vanillapdf)
 target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 ```
-🛠️ **Self-contained** approach without external tools. Note: You manage dependencies yourself.
 
-### Build from Source
+A complete working example is available in [`examples/fetchcontent-integration/`](examples/fetchcontent-integration/).
+
+### System Dependencies
+
+For builds using system packages instead of vcpkg:
+
 ```bash
-git clone https://github.com/vanillapdf/vanillapdf.git
-cmake --preset windows-x64-msvc-17  # Choose your platform preset
-cmake --build --preset windows-x64-msvc-17
+# Ubuntu/Debian
+sudo apt-get install libssl-dev libjpeg-turbo8-dev zlib1g-dev
+
+# macOS
+brew install openssl libjpeg-turbo
+
+# Then configure with external dependency flags
+cmake -B build -DVANILLAPDF_EXTERNAL_OPENSSL=ON -DVANILLAPDF_EXTERNAL_JPEG=ON
 ```
 
-📖 **Detailed integration instructions**: See the [installation guide](https://vanillapdf.github.io/vanillapdf/page_install.html) for complete setup options, feature configuration, and platform-specific guidance.
+See the [Installation Guide](https://vanillapdf.github.io/vanillapdf/page_install.html) for complete setup options, build configuration, and troubleshooting.
 
----
+## CLI Tool: `vanillapdf-tools`
 
-## 📋 Examples
-
-### FetchContent Integration Example
-
-A complete working example is available in [`examples/fetchcontent-integration/`](examples/fetchcontent-integration/) that demonstrates cross-platform FetchContent integration with automated testing.
-
-[![FetchContent Integration](https://github.com/vanillapdf/vanillapdf/actions/workflows/fetchcontent-integration.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/fetchcontent-integration.yml)
-
-**Quick test:**
-```bash
-cd examples/fetchcontent-integration
-cmake --preset windows-x64-debug && cmake --build --preset windows-x64-debug
-ctest --preset windows-x64-debug --output-on-failure
-```
-
-This example creates real PDF files and validates the complete integration chain from dependency resolution through PDF creation.
-
----
-
-## 🧰 CLI Utility: `vanillapdf-tools`
-
-Use the bundled CLI tool for quick PDF tasks like signing:
+The bundled CLI utility enables PDF operations from the command line:
 
 ```bash
-./vanillapdf-tools <command> [options]
-```
+# Sign a PDF document
+./vanillapdf-tools sign -s input.pdf -d signed.pdf -k private_key.p12 -p password
 
-### Example: Sign a PDF
+# Verify a signature
+./vanillapdf-tools verify -s signed.pdf
 
-```bash
-./vanillapdf-tools sign \
-  -s input.pdf \
-  -d signed.pdf \
-  -k private_key.p12 \
-  -p your_password
+# See all available commands
+./vanillapdf-tools --help
 ```
 
 | Option | Description |
 |--------|-------------|
-| `-s`   | Source PDF file |
-| `-d`   | Output PDF file |
-| `-k`   | Private key (PKCS#12) |
-| `-p`   | Password for the key |
+| `-s` | Source PDF file |
+| `-d` | Destination/output PDF file |
+| `-k` | Private key file (PKCS#12 format) |
+| `-p` | Password for the key |
 
-Run `--help` for a complete list of supported commands.
+## Documentation
 
----
+| Resource | Description |
+|----------|-------------|
+| [Official Documentation](https://vanillapdf.github.io/vanillapdf/) | Complete manual and guides |
+| [API Reference](https://vanillapdf.github.io/vanillapdf/annotated.html) | Doxygen-generated API docs |
+| [Installation Guide](https://vanillapdf.github.io/vanillapdf/page_install.html) | Build options and platform setup |
+| [Architecture Overview](https://vanillapdf.github.io/vanillapdf/page_architecture.html) | Internal design and patterns |
+| [PDF Tutorial](https://vanillapdf.github.io/vanillapdf/page_pdf_course.html) | Learn PDF format fundamentals |
+| [Signature Verification](https://vanillapdf.github.io/vanillapdf/page_signature_verification.html) | Digital signature guide |
+| [Code Examples](https://vanillapdf.github.io/vanillapdf/page_examples.html) | Sample code for common tasks |
+| [Packaging Guide](https://vanillapdf.github.io/vanillapdf/page_packaging.html) | DEB, Homebrew, NuGet builds |
 
-## 📚 Documentation
+## Contributing
 
-- 📖 [Official Documentation](https://vanillapdf.github.io/vanillapdf/)
-- 📐 [API Reference](https://vanillapdf.github.io/vanillapdf/annotated.html) (Doxygen)
-- 🛠️ [Installation Guide](https://vanillapdf.github.io/vanillapdf/page_install.html)
-- 📦 [Packaging Guide](https://vanillapdf.github.io/vanillapdf/page_packaging.html)
-- 🧩 [C++ Object Model Overview](https://vanillapdf.github.io/vanillapdf/page_architecture.html)
-- 📊 [Performance Benchmarks](https://vanillapdf.github.io/vanillapdf/page_benchmarks.html)
+We welcome pull requests, feature proposals, and bug reports!
 
----
+- [Contributing Guidelines](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Development Setup](CLAUDE.md)
 
-## 🤝 Contributing
+**Important:** All changes require a branch and pull request. The `main` and `release/*` branches are protected.
 
-We welcome pull requests, feature proposals, and bug reports! All contributions must follow our branching workflow.
-
-- 📜 [Code of Conduct](CODE_OF_CONDUCT.md)
-- 🛠️ [Contributing Guidelines](CONTRIBUTING.md)
-- 🔧 [Development Setup](CLAUDE.md) (for maintainers)
-- 🐛 [Issue Templates](.github/ISSUE_TEMPLATE/)
-
-**Development Process:**
-- All changes require a branch and pull request (main/release branches are protected)
-- Automated testing runs on Windows, Linux, macOS, and Android
-- Code coverage and sanitizer testing ensure quality
-
----
-
-## 🔒 License
+## License
 
 Vanilla.PDF is licensed under the [Apache 2.0 License](LICENSE.txt).
 
-For a complete list of changes, see the [Releases page](https://github.com/vanillapdf/vanillapdf/releases).
+## Contact & Support
 
----
-
-## 💬 Contact & Support
-
-📧 info@vanillapdf.com  
-🌐 [vanillapdf.com/contact](https://vanillapdf.com/contact/)  
-🐙 [GitHub Issues](https://github.com/vanillapdf/vanillapdf/issues)
-
----
-
-## ❤️ Support Us
-
-If you find Vanilla.PDF useful:
-
-- ⭐ Star the project
-- 🔗 Share it with your network
-- ☕ [Sponsor development](https://github.com/sponsors/vanillapdf)
+| Channel | Link |
+|---------|------|
+| Email | info@vanillapdf.com |
+| Website | [vanillapdf.com/contact](https://vanillapdf.com/contact/) |
+| Issues | [GitHub Issues](https://github.com/vanillapdf/vanillapdf/issues) |
+| Sponsor | [GitHub Sponsors](https://github.com/sponsors/vanillapdf) |
