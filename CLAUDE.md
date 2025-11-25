@@ -95,6 +95,9 @@ Common presets include:
 - `windows-x64-msvc-17` / `windows-x86-msvc-17` - Windows with Visual Studio 2022 (dynamic CRT)
 - `windows-x64-msvc-17-static` / `windows-x86-msvc-17-static` - Windows with Visual Studio 2022 (static CRT)
 - `windows-x64-msvc-17-static-md` / `windows-x86-msvc-17-static-md` - Windows with Visual Studio 2022 (static libs, dynamic CRT)
+- `windows-x64-msvc-18` / `windows-x86-msvc-18` - Windows with Visual Studio 2026 (dynamic CRT)
+- `windows-x64-msvc-18-static` / `windows-x86-msvc-18-static` - Windows with Visual Studio 2026 (static CRT)
+- `windows-x64-msvc-18-static-md` / `windows-x86-msvc-18-static-md` - Windows with Visual Studio 2026 (static libs, dynamic CRT)
 - `linux-x64-gcc` / `linux-arm64-gcc` - Linux with GCC
 - `linux-x64-clang` / `linux-arm64-clang` - Linux with Clang
 - `linux-x64-musl` / `linux-arm64-musl` / `linux-arm-musl` - Linux with musl libc
@@ -109,16 +112,16 @@ cmake --build --preset windows-x64-msvc-17
 
 #### Windows Build Notes
 
-Windows presets use Visual Studio 2022 generator and automatically configure:
+Windows presets use Visual Studio generators and automatically configure:
 - CRT linking based on preset variant:
-  - Standard presets (`windows-x*-msvc-17`): Dynamic CRT (default)
-  - Static presets (`windows-x*-msvc-17-static`): Static CRT (`VANILLAPDF_USE_STATIC_CRT=ON`)
-  - Static-MD presets (`windows-x*-msvc-17-static-md`): Static libs + dynamic CRT
+  - Standard presets (`windows-x*-msvc-17`, `windows-x*-msvc-18`): Dynamic CRT (default)
+  - Static presets (`windows-x*-msvc-17-static`, `windows-x*-msvc-18-static`): Static CRT (`VANILLAPDF_USE_STATIC_CRT=ON`)
+  - Static-MD presets (`windows-x*-msvc-17-static-md`, `windows-x*-msvc-18-static-md`): Static libs + dynamic CRT
 - Platform-specific vcpkg triplets:
   - `x64-windows` (standard presets, dynamic CRT)
   - `x64-windows-static` (static presets, static CRT)
   - `x64-windows-static-md` (static-md presets, static libs + dynamic CRT)
-- Visual Studio 2022 generator only (no Ninja variants available)
+- Visual Studio 2022 (msvc-17) and Visual Studio 2026 (msvc-18) generators available
 
 ### vcpkg Dependencies
 

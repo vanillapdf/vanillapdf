@@ -96,6 +96,99 @@
                 "VCPKG_TARGET_TRIPLET": "arm64-windows-static-md",
                 "PLATFORM_IDENTIFIER": "win-arm64"
             }
+        },
+        {
+            "name": "windows-x86-msvc-18-static",
+            "inherits": "default",
+            "generator": "Visual Studio 18 2026",
+            "architecture": "Win32",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x86-windows-static",
+                "PLATFORM_IDENTIFIER": "win-x86",
+                "VANILLAPDF_USE_STATIC_CRT": "ON"
+            }
+        },
+        {
+            "name": "windows-x64-msvc-18-static",
+            "inherits": "default",
+            "generator": "Visual Studio 18 2026",
+            "architecture": "x64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+                "PLATFORM_IDENTIFIER": "win-x64",
+                "VANILLAPDF_USE_STATIC_CRT": "ON"
+            }
+        },
+        {
+            "name": "windows-x86-msvc-18",
+            "inherits": "default",
+            "generator": "Visual Studio 18 2026",
+            "architecture": "Win32",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x86-windows",
+                "PLATFORM_IDENTIFIER": "win-x86"
+            }
+        },
+        {
+            "name": "windows-x64-msvc-18",
+            "inherits": "default",
+            "generator": "Visual Studio 18 2026",
+            "architecture": "x64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows",
+                "PLATFORM_IDENTIFIER": "win-x64"
+            }
+        },
+        {
+            "name": "windows-arm64-msvc-18",
+            "inherits": "default",
+            "generator": "Visual Studio 18 2026",
+            "architecture": "arm64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-windows",
+                "PLATFORM_IDENTIFIER": "win-arm64"
+            }
+        },
+        {
+            "name": "windows-arm64-msvc-18-static",
+            "inherits": "default",
+            "generator": "Visual Studio 18 2026",
+            "architecture": "arm64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-windows-static",
+                "PLATFORM_IDENTIFIER": "win-arm64",
+                "VANILLAPDF_USE_STATIC_CRT": "ON"
+            }
+        },
+        {
+            "name": "windows-x86-msvc-18-static-md",
+            "inherits": "default",
+            "generator": "Visual Studio 18 2026",
+            "architecture": "Win32",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x86-windows-static-md",
+                "PLATFORM_IDENTIFIER": "win-x86"
+            }
+        },
+        {
+            "name": "windows-x64-msvc-18-static-md",
+            "inherits": "default",
+            "generator": "Visual Studio 18 2026",
+            "architecture": "x64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows-static-md",
+                "PLATFORM_IDENTIFIER": "win-x64"
+            }
+        },
+        {
+            "name": "windows-arm64-msvc-18-static-md",
+            "inherits": "default",
+            "generator": "Visual Studio 18 2026",
+            "architecture": "arm64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "arm64-windows-static-md",
+                "PLATFORM_IDENTIFIER": "win-arm64"
+            }
         }
     ],
     "buildPresets": [
@@ -134,6 +227,42 @@
         {
             "name": "windows-arm64-msvc-17-static-md",
             "configurePreset": "windows-arm64-msvc-17-static-md"
+        },
+        {
+            "name": "windows-x86-msvc-18-static",
+            "configurePreset": "windows-x86-msvc-18-static"
+        },
+        {
+            "name": "windows-x64-msvc-18-static",
+            "configurePreset": "windows-x64-msvc-18-static"
+        },
+        {
+            "name": "windows-x86-msvc-18",
+            "configurePreset": "windows-x86-msvc-18"
+        },
+        {
+            "name": "windows-x64-msvc-18",
+            "configurePreset": "windows-x64-msvc-18"
+        },
+        {
+            "name": "windows-arm64-msvc-18",
+            "configurePreset": "windows-arm64-msvc-18"
+        },
+        {
+            "name": "windows-arm64-msvc-18-static",
+            "configurePreset": "windows-arm64-msvc-18-static"
+        },
+        {
+            "name": "windows-x86-msvc-18-static-md",
+            "configurePreset": "windows-x86-msvc-18-static-md"
+        },
+        {
+            "name": "windows-x64-msvc-18-static-md",
+            "configurePreset": "windows-x64-msvc-18-static-md"
+        },
+        {
+            "name": "windows-arm64-msvc-18-static-md",
+            "configurePreset": "windows-arm64-msvc-18-static-md"
         }
     ],
     "testPresets": [
@@ -172,6 +301,42 @@
         {
             "name": "windows-arm64-msvc-17-static-md",
             "configurePreset": "windows-arm64-msvc-17-static-md"
+        },
+        {
+            "name": "windows-x86-msvc-18-static",
+            "configurePreset": "windows-x86-msvc-18-static"
+        },
+        {
+            "name": "windows-x64-msvc-18-static",
+            "configurePreset": "windows-x64-msvc-18-static"
+        },
+        {
+            "name": "windows-x86-msvc-18",
+            "configurePreset": "windows-x86-msvc-18"
+        },
+        {
+            "name": "windows-x64-msvc-18",
+            "configurePreset": "windows-x64-msvc-18"
+        },
+        {
+            "name": "windows-arm64-msvc-18",
+            "configurePreset": "windows-arm64-msvc-18"
+        },
+        {
+            "name": "windows-arm64-msvc-18-static",
+            "configurePreset": "windows-arm64-msvc-18-static"
+        },
+        {
+            "name": "windows-x86-msvc-18-static-md",
+            "configurePreset": "windows-x86-msvc-18-static-md"
+        },
+        {
+            "name": "windows-x64-msvc-18-static-md",
+            "configurePreset": "windows-x64-msvc-18-static-md"
+        },
+        {
+            "name": "windows-arm64-msvc-18-static-md",
+            "configurePreset": "windows-arm64-msvc-18-static-md"
         }
     ]
 }
