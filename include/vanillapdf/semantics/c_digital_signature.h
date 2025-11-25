@@ -25,20 +25,6 @@ extern "C"
     */
 
     /**
-    * \class ByteRangeCollectionHandle
-    * \extends IUnknownHandle
-    * \ingroup group_documents
-    * \brief Represents a collection of \ref ByteRangeHandle
-    */
-
-    /**
-    * \class ByteRangeHandle
-    * \extends IUnknownHandle
-    * \ingroup group_documents
-    * \brief Represents starting byte offset and length
-    */
-
-    /**
     * \memberof DigitalSignatureHandle
     * @{
     */
@@ -126,53 +112,6 @@ extern "C"
     * \see \ref IUnknown_Release
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_Release(DigitalSignatureHandle* handle);
-
-    /** @} */
-
-    /**
-    * \memberof ByteRangeCollectionHandle
-    * @{
-    */
-
-    /**
-    * \brief Get size of byte range collection
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_GetSize(ByteRangeCollectionHandle* handle, size_type* result);
-
-    /**
-    * \brief
-    * Get single byte range from array at specific position
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_GetValue(ByteRangeCollectionHandle* handle, size_type at, ByteRangeHandle** result);
-
-    /**
-    * \copydoc IUnknown_Release
-    * \see \ref IUnknown_Release
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Release(ByteRangeCollectionHandle* handle);
-
-    /** @} */
-
-    /**
-    * \memberof ByteRangeHandle
-    * @{
-    */
-
-    /**
-    * \brief Get starting offset of byte range
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetOffset(ByteRangeHandle* handle, IntegerObjectHandle** result);
-
-    /**
-    * \brief Get length of byte range
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetLength(ByteRangeHandle* handle, IntegerObjectHandle** result);
-
-    /**
-    * \copydoc IUnknown_Release
-    * \see \ref IUnknown_Release
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_Release(ByteRangeHandle* handle);
 
     /** @} */
 

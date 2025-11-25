@@ -50,7 +50,9 @@
 #include "vanillapdf/semantics/c_resource_dictionary.h"
 #include "vanillapdf/semantics/c_interactive_forms.h"
 #include "vanillapdf/semantics/c_fields.h"
+#include "vanillapdf/semantics/c_byte_range.h"
 #include "vanillapdf/semantics/c_digital_signature.h"
+#include "vanillapdf/semantics/c_digital_signature_extensions.h"
 #include "vanillapdf/semantics/c_font.h"
 #include "vanillapdf/semantics/c_font_map.h"
 #include "vanillapdf/semantics/c_character_map.h"
@@ -79,6 +81,8 @@
 #include "vanillapdf/utils/c_errors.h"
 #include "vanillapdf/utils/c_pkcs12_key.h"
 #include "vanillapdf/utils/c_signing_key.h"
+#include "vanillapdf/utils/c_signature_verifier.h"
+#include "vanillapdf/utils/c_signature_verification_settings.h"
 #include "vanillapdf/utils/c_message_digest_algorithm.h"
 #include "vanillapdf/utils/c_name_constants.h"
 

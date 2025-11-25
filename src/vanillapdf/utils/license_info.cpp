@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "utils/resource.h"
+#include "utils/crypto_utils.h"
 #include "utils/misc_utils.h"
 #include "utils/library_info.h"
 #include "utils/license_info.h"
@@ -270,7 +271,7 @@ bool LicenseInfo::CheckSignature(
 
     SCOPE_GUARD([digest_context]() { EVP_MD_CTX_destroy(digest_context); });
 
-    auto algorithm = MiscUtils::GetAlgorithm(digest_algorithm);
+    auto algorithm = CryptoUtils::GetAlgorithm(digest_algorithm);
 
     auto initialized = EVP_DigestVerifyInit(digest_context, nullptr, algorithm, nullptr, signing_certificate_x509_pubkey);
     if (initialized != 1) {
@@ -352,7 +353,7 @@ bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
 bool LicenseInfo::CheckCertificateChain(const std::vector<std::string>& certificates) {
 
     // Initialize algorithms is required before validating certificates
-    MiscUtils::InitializeOpenSSL();
+    CryptoUtils::InitializeOpenSSL();
 
     // Create trusted certificate store
     auto store = X509_STORE_new();

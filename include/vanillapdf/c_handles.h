@@ -115,6 +115,9 @@ extern "C"
     DECLARE_OBJECT_HANDLE(SigningKey);
     DECLARE_OBJECT_HANDLE(EncryptionKey);
     DECLARE_OBJECT_HANDLE(PKCS12Key);
+    DECLARE_OBJECT_HANDLE(TrustedCertificateStore);
+    DECLARE_OBJECT_HANDLE(SignatureVerificationResult);
+    DECLARE_OBJECT_HANDLE(SignatureVerificationSettings);
 
     DECLARE_OBJECT_HANDLE(InputStream);
     DECLARE_OBJECT_HANDLE(OutputStream);

@@ -2,130 +2,75 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 📝 Project Naming Conventions
+## Quick Reference
 
-**CRITICAL**: Use correct naming conventions throughout all work:
+```bash
+# Configure and build (Windows)
+cmake --preset windows-x64-msvc-17
+cmake --build --preset windows-x64-msvc-17
 
-- **Official/Marketing Communications**: "Vanilla.PDF" (with dot, proper case)
-  - Use in: Documentation, user-facing messages, website content, official guides
-- **Code/Technical Contexts**: "vanillapdf" (lowercase, no dot, no quotes)
-  - Use in: Code comments, variable names, technical discussions, commit messages
-- **❌ INCORRECT**: "VanillaPDF" (avoid this mixed case without dot)
+# Configure and build (Linux/macOS)
+cmake --preset linux-x64-gcc      # or macos-arm64
+cmake --build --preset linux-x64-gcc
 
-Examples:
-```cmake
-# Correct in user-facing message:
-message(STATUS "Vanilla.PDF dependency management enabled")
+# Run all tests (Windows - must specify build config)
+ctest --preset windows-x64-msvc-17 --build-config Debug
 
-# Correct in code comment:
-# Configure vanillapdf build options
+# Run specific test
+ctest --preset windows-x64-msvc-17 --build-config Debug -R "TestName" --output-on-failure
+
+# Initialize submodules (required before first build)
+git submodule sync --recursive && git submodule update --init --recursive
 ```
 
-## ⚠️ CRITICAL: Repository Workflow Requirements
+## Project Naming Conventions
 
-**ALWAYS CREATE BRANCH AND PULL REQUEST FOR ALL CHANGES**
-- Repository permissions mandate that ALL changes must go through a branch and pull request workflow
-- NEVER commit directly to main or release branches - they are protected
-- Create a new branch for every change, no matter how small
-- Always create a PR for review before merging
+- **Official/Marketing**: "Vanilla.PDF" (with dot) - documentation, user-facing messages
+- **Code/Technical**: "vanillapdf" (lowercase, no dot) - code, commits, technical discussions
+- **Avoid**: "VanillaPDF" (mixed case without dot)
 
-**CRITICAL: Branch Targets**
+## Repository Workflow (CRITICAL)
+
+**Branch Targets:**
 - **Default branch**: `main` - ALL pull requests should target this branch
-- **Historical reference**: `master` - This is a legacy branch for historical reference ONLY
-- ⚠️ **NEVER create PRs against `master`** - it is not the active development branch
+- **Historical reference**: `master` - legacy branch for historical reference ONLY
 - When using `gh pr create`, always specify `--base main` or omit the base flag (defaults to main)
 
-## 🤖 Automation and Bot Information
+**ALL changes MUST go through a branch and pull request:**
+- NEVER commit directly to `main` or `release/*` branches (protected)
+- Create a new branch for every change: `feature/description` or `fix/description`
+- Base branches on `main` (or `release/*` for hotfixes)
 
-### vanillapdf-bot
-The repository uses `vanillapdf-bot` for automated operations:
+## Automation Bot
 
-**Bot Identity:**
-- Name: `vanillapdf-bot`
-- Email: `info@vanillapdf.com`
-- Used for all automated commits and operations
+The repository uses `vanillapdf-bot` (info@vanillapdf.com) for automated operations:
+- Monthly vcpkg updates, release automation, vcpkg PRs to Microsoft
 
-**Bot Duties:**
-- **Monthly vcpkg Updates**: Automatically updates vcpkg submodule and baseline (1st of each month)
-- **Release Automation**: Creates automated PRs to Microsoft vcpkg repository for new releases
-- **Commit Signing**: All automated commits are signed with the bot identity
-- **Workflow Consistency**: Ensures consistent authorship across all automated processes
+When creating GitHub Actions workflows that commit or create PRs:
+```yaml
+- name: Configure Git
+  run: |
+    git config --global user.name "vanillapdf-bot"
+    git config --global user.email "info@vanillapdf.com"
+```
 
-**When to Use Bot Identity:**
-- Any automated GitHub Actions workflows
-- Scheduled maintenance tasks
-- Release automation processes
-- vcpkg-related automated updates
+## vcpkg Submodule Management
 
-**Bot Repositories:**
-- `vanillapdf-bot/vcpkg` - Fork used for creating PRs to Microsoft vcpkg
+**NEVER modify `external/vcpkg/`** - it's a Git submodule updated monthly by vanillapdf-bot.
 
-**Claude Code Guidelines for Automation:**
-- When creating GitHub Actions workflows that commit or create PRs, ALWAYS use vanillapdf-bot identity
-- Use the following git config in workflows:
-  ```yaml
-  - name: Configure Git
-    run: |
-      git config --global user.name "vanillapdf-bot"
-      git config --global user.email "info@vanillapdf.com"
-  ```
-- Include Co-Authored-By line in automated commit messages:
-  ```
-  Co-Authored-By: vanillapdf-bot <info@vanillapdf.com>
-  ```
-- Never use `github-actions[bot]` or similar generic bot names
+For vcpkg port development, work in `ports/vanillapdf/` (not `external/vcpkg/ports/`).
 
-## ⚠️ CRITICAL: vcpkg Submodule Management
-
-**NEVER MODIFY external/vcpkg FOLDER**
-- The `external/vcpkg` folder is a Git submodule pointing to Microsoft's vcpkg repository
-- **NEVER** make direct changes to files in `external/vcpkg/` - these will be lost on submodule updates
-- The submodule is automatically updated monthly by vanillapdf-bot
-
-**vcpkg Port Development Workflow:**
-- Use `ports/vanillapdf/` folder for port development and testing
-- This folder mirrors the structure that will be submitted to Microsoft vcpkg
-- When ready for release, the vanillapdf-bot creates PRs to Microsoft vcpkg repository using content from `ports/vanillapdf/`
-- Port files in `ports/vanillapdf/`:
-  - `vcpkg.json` - Port manifest with features and dependencies
-  - `portfile.cmake` - Build instructions and feature configuration
-  - `usage` - Installation and usage documentation
-
-**For Claude Code:**
-- Always work in `ports/vanillapdf/` when updating vcpkg port files
-- Never edit anything in `external/vcpkg/ports/vanillapdf/` - it will be overwritten
-- Test port changes by copying from `ports/vanillapdf/` to a local vcpkg installation if needed
-
-## 🚀 Release Process
-
-### Release Branch Strategy
-VanillaPDF follows a structured release branch model:
+## Release Process
 
 **Branch Structure:**
 - `main` - Development branch (default)
-- `release/X.Y` - Release branches for major.minor versions (e.g., `release/2.1`)
-- Release branches contain patch versions (e.g., `2.1.0`, `2.1.1`, `2.1.2`)
+- `release/X.Y` - Release branches for major.minor versions
+- Tags: `vX.Y.Z` format on release branches
 
-**Version Tagging:**
-- All versions are tagged in git with semantic versioning
-- Tags follow the format: `vX.Y.Z` (e.g., `v2.1.0`, `v2.1.1`)
-- Tags are created on the appropriate release branch
-
-**Release Workflow:**
-1. **Major/Minor Releases**: Create new `release/X.Y` branch from `main`
-2. **Patch Releases**: Work directly on existing `release/X.Y` branch
-3. **Hotfixes**: May branch from release branch if urgent fixes needed
-4. **Tagging**: Create git tags for all releases
-5. **Automation**: Release process triggers automated workflows including:
-   - Package building (NuGet, Deb, Brew)
-   - vcpkg port updates via vanillapdf-bot
-   - GitHub release creation
-   - Documentation updates
-
-**For Claude Code:**
-- When working on hotfixes, check if you should base your branch on a release branch instead of main
-- Always verify the target branch before creating PRs for release-related work
-- Release-related commits should follow the same branch and PR workflow
+**Workflow:**
+- Major/Minor: Create `release/X.Y` from `main`
+- Patch: Work on existing `release/X.Y`
+- Hotfixes: Branch from release branch if needed
 
 ## Build Commands
 
@@ -275,6 +220,19 @@ ctest --preset windows-x64-msvc-17 -R "test"         # Integration tests only
 ctest --preset windows-x64-msvc-17 -R "benchmark"    # Benchmarks only
 ```
 
+Run individual test cases with verbose output:
+```bash
+ctest --preset windows-x64-msvc-17 -R "objects_test" --verbose
+ctest --preset windows-x64-msvc-17 -R "signature_verifier_test" --output-on-failure
+```
+
+**Windows (Visual Studio) specific**: Visual Studio is a multi-config generator, so you must specify build configuration:
+```bash
+# Specify configuration with --build-config
+ctest --preset windows-x64-msvc-17 --build-config Debug -R "SignatureVerifier" --output-on-failure
+ctest --preset windows-x64-msvc-17 --build-config Release -R "unittest"
+```
+
 #### Code Coverage
 
 Enable code coverage (GCC/Clang only):
@@ -366,9 +324,46 @@ The example creates actual PDF files and validates the complete integration chai
 ### Key Design Patterns
 
 1. **C++ Core with C Interface** - Core library is C++17, exposed via C interface in `implementation/`
+   - Public API: All `include/vanillapdf/c_*.h` headers provide ABI-stable C interface
+   - Internal implementation: C++17 code in `src/vanillapdf/` (not exposed)
+   - Bridge layer: `src/vanillapdf/implementation/` wraps C++ objects for C API
+   - **Handle-based system**: C API uses opaque pointers (handles) defined in `c_handles.h`
+     - Example: `VPDF_DOCUMENT`, `VPDF_FILE`, `VPDF_OBJECT` are all opaque handles
+     - Internally cast to C++ objects in implementation layer
+     - Ensures ABI stability across compiler versions
 2. **Object-based PDF Model** - PDF syntax objects (arrays, dictionaries, streams) have corresponding C++ classes
 3. **Parser-based Architecture** - Separate parsers for syntax (`syntax/parsers/`) and content streams (`contents/`)
 4. **Interface Segregation** - Clean interfaces for encryption, signing, and streams in `utils/`
+5. **Layered Architecture** - Three distinct layers:
+   - **Syntax Layer**: Low-level PDF objects and file structure
+   - **Semantics Layer**: High-level document concepts (pages, annotations, forms)
+   - **Contents Layer**: Content stream parsing and operations
+
+### Signature Verification Architecture
+
+**Location**: `src/vanillapdf/utils/` (low-level utilities, independent of document parsing)
+
+**Core Components**:
+- `SignatureVerifier` - Static utility class for PKCS#7 signature verification
+  - Operates on raw bytes (signed data + signature blob)
+  - No dependency on PDF document structures
+  - Uses OpenSSL for cryptographic operations
+- `SignatureVerificationResult` - Detailed verification result object
+  - Status (valid/invalid/expired/revoked/untrusted/etc.)
+  - Certificate chain information
+  - Signer common name extraction
+- `TrustedCertificateStore` - Certificate store for chain validation
+  - Load from PEM/DER format
+  - Load from system defaults (Windows CertStore, Linux/macOS OpenSSL paths)
+  - Load from directory (e.g., `/etc/ssl/certs`)
+- `SigningKey` enhancements - Extended with direct signing methods
+  - `Sign_Initialize/Update/Final/Cleanup` for PKCS#7 signature creation
+  - Enables testing without full document context
+
+**C API**: `include/vanillapdf/utils/c_signature_verifier.h`, `c_signing_key.h`
+
+**Tests**: `src/vanillapdf.unittest/signature_verifier_test.cpp`
+- Run with: `ctest --preset windows-x64-msvc-17 --build-config Debug -R "TrustedCertificateStore|SignatureVerifier|SignatureVerificationResult"`
 
 ### Feature Dependencies
 
@@ -482,28 +477,49 @@ The script will:
 ## Common Tasks
 
 ### Adding New PDF Object Type
-1. Create class in `src/vanillapdf/syntax/objects/`
+1. Create C++ class in `src/vanillapdf/syntax/objects/` (e.g., `new_object.h`, `new_object.cpp`)
 2. Add parser logic in `src/vanillapdf/syntax/parsers/`
-3. Implement C interface in `src/vanillapdf/implementation/syntax/`
-4. Add tests in appropriate test directory
+3. Create C API header in `include/vanillapdf/syntax/c_new_object.h`
+4. Implement C interface wrapper in `src/vanillapdf/implementation/syntax/c_new_object.cpp`
+5. Add to main API header `include/vanillapdf/c_vanillapdf_api.h`
+6. Add unit tests in `src/vanillapdf.unittest/objects_test.cpp`
 
 ### Adding Content Stream Operation
 1. Define operation in `src/vanillapdf/contents/content_stream_operations.h`
 2. Implement in `src/vanillapdf/contents/content_stream_operations.cpp`
 3. Add parser support in `src/vanillapdf/contents/content_stream_parser.h`
-4. Create C interface in `src/vanillapdf/implementation/contents/`
+4. Create C API header in `include/vanillapdf/contents/c_content_operation.h` (if needed)
+5. Create C interface wrapper in `src/vanillapdf/implementation/contents/`
+6. Add integration tests in `src/vanillapdf.test/`
+
+### Adding New Semantic Object
+1. Create C++ class in `src/vanillapdf/semantics/objects/` (e.g., `new_semantic.h`, `new_semantic.cpp`)
+2. Inherit from `HighLevelObject` base class
+3. Create C API header in `include/vanillapdf/semantics/c_new_semantic.h`
+4. Implement C interface wrapper in `src/vanillapdf/implementation/semantics/`
+5. Add to main API header `include/vanillapdf/c_vanillapdf_api.h`
+6. Add tests in appropriate test directory
+
+### Signature Verification
+
+**Components** (in `src/vanillapdf/utils/`):
+- `SignatureVerifier` - PKCS#7 signature verification (raw bytes)
+- `SignatureVerificationResult` - Verification status and certificate chain
+- `TrustedCertificateStore` - Certificate store for chain validation
+- `DigitalSignatureExtensions::Verify` - Document-level verification
+
+**Testing**:
+```bash
+ctest --preset windows-x64-msvc-17 --build-config Debug \
+  -R "TrustedCertificateStore|SignatureVerifier|SignatureVerificationResult" \
+  --output-on-failure
+```
 
 ### Debugging and Development
 - Use sanitizers in Debug builds: `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
-- Visual Studio .natvis files available for debugging C++ objects
+- Visual Studio .natvis files available for debugging C++ objects (`public.natvis`, `vanillapdf.natvis`)
 - Precompiled headers are used (`precompiled.h`) for faster builds
-
-**🚨 MANDATORY: Branch and PR Workflow**
-- **ALWAYS** create a new branch and pull request for ALL changes - this is mandated by repository permissions
-- **NEVER** commit directly to main or release branches (they are protected)
-- Base new branches on `main` (default branch, `master` is legacy)
-- Check current branch before making commits: `git branch --show-current`
-- For hotfixes, may need to branch from release branch instead of main
+- C API headers use handle-based system (opaque pointers) for ABI stability
 
 ## Troubleshooting
 
@@ -548,83 +564,3 @@ If tests fail unexpectedly:
 2. Check that the correct preset is being used for your platform
 3. Run tests with verbose output: `ctest --preset your-preset --verbose`
 4. Check for memory issues with sanitizers: `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
-
-## Recent Improvements
-
-### FetchContent Integration Enhancements
-- **Fixed vcpkg triplet issues**: Resolved CRT mismatch problems by using `x64-windows-static-md` instead of `x64-windows-static`
-- **Enhanced FetchContent example**: Added comprehensive real-world integration testing in `examples/fetchcontent-integration/`
-- **Cross-platform CI testing**: Automated testing on Windows (vcpkg), Linux (apt), macOS (Homebrew)
-- **CMake test integration**: Proper test execution using `add_test()` and CTest framework
-- **Simplified workflow paths**: Eliminated complex path detection logic in favor of CMake-managed execution
-- **Workflow organization**: GitHub Actions workflows now use consistent naming and concurrency controls
-
-### Build System Improvements
-- **vcpkg triplet standardization**: All Windows builds now use Microsoft's official triplets
-- **Debug message cleanup**: Removed temporary debugging output from development
-- **Dependency flexibility**: Enhanced support for both system packages and vcpkg dependencies
-- **Documentation updates**: Updated README with clearer integration guidance (vcpkg recommended, FetchContent as alternative)
-
-## GitHub Issue Management
-
-### Available Labels
-
-When creating GitHub issues, use these labels for proper categorization:
-
-**Issue Types:**
-- `bug` - Something isn't working
-- `enhancement` - New feature or request
-- `documentation` - Improvements or additions to documentation
-- `question` - Further information is requested
-
-**Build System & Dependencies:**
-- `cmake` - CMake configuration and build system issues
-- `build-system` - General build system improvements
-- `fetchcontent` - FetchContent integration issues
-- `vcpkg` - vcpkg dependency management
-- `dependencies` - Dependency updates
-
-**Development & Quality:**
-- `technical-debt` - Code quality and refactoring issues
-- `performance` - Performance improvements
-- `compatibility` - Platform/compiler compatibility issues
-- `ci-cd` - Continuous integration and deployment
-- `github_actions` - GitHub Actions workflow updates
-
-**Priority Levels:**
-- `priority-high` - High priority issues (critical bugs, blocking issues)
-- `priority-medium` - Medium priority issues (important improvements)
-- `priority-low` - Low priority issues (nice-to-have features)
-
-**Community:**
-- `good first issue` - Good for newcomers
-- `help wanted` - Extra attention is needed
-
-**Workflow:**
-- `duplicate` - This issue or pull request already exists
-- `invalid` - This doesn't seem right
-- `wontfix` - This will not be worked on
-
-### Label Usage Guidelines
-
-**For Build System Issues:**
-- Use `cmake` + `build-system` for CMake-specific problems
-- Add `fetchcontent` for FetchContent integration issues
-- Add `vcpkg` for dependency management problems
-- Include appropriate priority label
-
-**For Bug Reports:**
-- Always use `bug` as primary label
-- Add `priority-high` for critical bugs affecting releases
-- Add `compatibility` for platform-specific issues
-- Add relevant component labels (cmake, ci-cd, etc.)
-
-**For Feature Requests:**
-- Use `enhancement` as primary label
-- Add relevant component labels
-- Include priority level based on impact
-
-**Example Label Combinations:**
-- CMake cache variable issue: `enhancement`, `cmake`, `fetchcontent`, `technical-debt`, `priority-medium`
-- Critical build failure: `bug`, `build-system`, `priority-high`
-- FetchContent documentation: `documentation`, `fetchcontent`, `priority-low`

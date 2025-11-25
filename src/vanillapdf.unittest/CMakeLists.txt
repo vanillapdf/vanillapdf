@@ -9,8 +9,20 @@ include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include")
 # Include local files in the directory
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
+# Generate test certificates header from PFX files
+include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/generate_test_certificates.cmake")
+set(GENERATED_CERTIFICATES_HEADER "${CMAKE_CURRENT_BINARY_DIR}/test_certificates.h")
+generate_test_certificates_header(
+    OUTPUT_FILE ${GENERATED_CERTIFICATES_HEADER}
+    CERTIFICATES_DIR "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/certificates"
+)
+
+# Include directory for generated header
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+
 set(VANILLAPDF_UNITTEST_SOURCES
     main.cpp
+    byte_range_test.cpp
     document_test.cpp
     destinations_test.cpp
     filter_test.cpp
@@ -18,10 +30,13 @@ set(VANILLAPDF_UNITTEST_SOURCES
     attributes_test.cpp
     objects_test.cpp
     utils_test.cpp
+    digital_signature_test.cpp
+    signature_verifier_test.cpp
 )
 
 set(VANILLAPDF_UNITTEST_HEADERS
     unittest.h
+    test_data.h
 )
 
 # Resource files
@@ -101,4 +116,10 @@ include(GoogleTest)
 # CMake Error at C:/Program Files/CMake/share/cmake-3.31/Modules/GoogleTestAddTests.cmake:132 (message): Error running test executable.
 # DISCOVERY_MODE PRE_TEST delays test discovery until just prior to test execution.
 # This way test discovery occurs in the target environment where the test has a better chance at finding appropriate runtime dependencies.
-gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST)
+#
+# Update 22.11.2025
+# NO_PRETTY_VALUES prevents appending "# GetParam() = <raw bytes>" to test names for parameterized tests.
+# Without this flag, test names include raw memory addresses making output unreadable:
+#   Before: CertificateTypes/.../40-byte object <B0-4E 79-8B F7-7F 00-00...>
+#   After:  CertificateTypes/.../2kDSA_SHA256
+gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST NO_PRETTY_VALUES)

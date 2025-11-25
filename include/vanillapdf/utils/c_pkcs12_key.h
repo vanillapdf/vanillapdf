@@ -67,6 +67,18 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_FromSigningKey(SigningKeyHandle* handle, PKCS12KeyHandle** result);
 
     /**
+    * \brief Get the certificate from the PKCS12 key
+    * \param handle The PKCS12 key handle
+    * \param result Output buffer containing DER-encoded certificate
+    * \return Error code
+    * \note Returns the first certificate from the PKCS12 certificate chain
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PKCS12Key_GetCertificate(
+        PKCS12KeyHandle* handle,
+        BufferHandle** result
+    );
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */

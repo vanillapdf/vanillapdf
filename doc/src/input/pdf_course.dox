@@ -175,8 +175,13 @@ Root of documents hierarchy is so called \ref CatalogHandle, which contains info
 All document pages can be found within \ref PageTreeHandle, with references to their \ref PageObjectHandle.
 Page contents are describer in the \ref page_contents section.
 
-Documents digital signature is also supported using \ref DocumentHandle::Document_Sign "Document_Sign" function. The easiest way is to use \ref PKCS12KeyHandle from file.
-A complete example on how to digitally sign a document is available at \ref sign.c.
+Digital signatures are fully supported:
+<ul>
+<li>Sign documents using \ref DocumentHandle::Document_Sign "Document_Sign" function with \ref PKCS12KeyHandle
+<li>Verify signatures using \ref DigitalSignatureExtensions_Verify with \ref TrustedCertificateStoreHandle
+</ul>
+Complete examples are available at \ref sign.c (signing) and \ref verify.c (verification).
+See also \ref page_signature_verification for comprehensive verification guide.
 
 \subsection document_common_data_structures Common data structures
 

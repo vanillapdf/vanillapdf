@@ -15,6 +15,7 @@
 <li>\ref filter.c - Compression filters
 <li>\ref sign.c - Digital signature
 <li>\ref sign_custom.c - Custom digital signature using interface callbacks
+<li>\ref verify.c - Signature verification
 <li>\ref decrypt.c - File decryption
 <li>\ref write_custom.c - Custom file writer callbacks
 </ul>
@@ -121,6 +122,11 @@ Additional resources:
 */
 
 /**
+* \example verify.c
+* Example use of digital signature verification with certificate chain validation.
+*/
+
+/**
 * \example examples/fetchcontent-integration/CMakeLists.txt
 * FetchContent integration example demonstrating how to consume VanillaPDF using
 * CMake's FetchContent mechanism with cross-platform dependency management.
@@ -171,3 +177,4 @@ across all supported platforms.
 \note When using FetchContent, you are responsible for managing VanillaPDF's dependencies
 through system package managers or other packaging systems.
 */
+

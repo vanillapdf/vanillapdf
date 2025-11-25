@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "utils/crypto_utils.h"
 #include "utils/misc_utils.h"
 #include "utils/pkcs12_key.h"
 #include "utils/license_info.h"
@@ -22,9 +23,9 @@ class PKCS12Key::PKCS12KeyImpl {
 public:
     explicit PKCS12KeyImpl(const Buffer& data);
     explicit PKCS12KeyImpl(const std::string& path);
-    PKCS12KeyImpl(const std::string& path, const Buffer& password);
-    PKCS12KeyImpl(const Buffer& data, const Buffer& password);
-    ~PKCS12KeyImpl();
+    PKCS12KeyImpl(const std::string& path, std::string_view password);
+    PKCS12KeyImpl(const Buffer& data, std::string_view password);
+    ~PKCS12KeyImpl() = default;
 
     // IEncryptionKey
     BufferPtr Decrypt(const Buffer& data);
@@ -32,27 +33,38 @@ public:
 
     // ISigningKey
     void SignInitialize(MessageDigestAlgorithm algorithm);
-    void SignUpdate(BufferPtr data);
+    void SignUpdate(const Buffer& data);
     void SignUpdate(IInputStreamPtr data, types::stream_size length);
     BufferPtr SignFinal();
     void SignCleanup();
 
+    // Certificate access
+    BufferPtr GetCertificate() const;
+
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
 private:
-    PKCS12 *p12 = nullptr;
-    EVP_PKEY *key = nullptr;
-    EVP_PKEY_CTX *encryption_context = nullptr;
-    X509 *cert = nullptr;
+    // Custom deleters for OpenSSL types
+    struct PKCS12Deleter { void operator()(PKCS12* p) const { if (p) PKCS12_free(p); } };
+    struct EVPPKEYDeleter { void operator()(EVP_PKEY* p) const { if (p) EVP_PKEY_free(p); } };
+    struct X509Deleter { void operator()(X509* p) const { if (p) X509_free(p); } };
+    struct EVPPKEYCTXDeleter { void operator()(EVP_PKEY_CTX* p) const { if (p) EVP_PKEY_CTX_free(p); } };
+    struct PKCS7Deleter { void operator()(PKCS7* p) const { if (p) PKCS7_free(p); } };
+    struct BIODeleter { void operator()(BIO* p) const { if (p) BIO_free_all(p); } };
 
-    PKCS7 *p7 = nullptr;
-    BIO *p7bio = nullptr;
+    std::unique_ptr<PKCS12, PKCS12Deleter> p12;
+    std::unique_ptr<EVP_PKEY, EVPPKEYDeleter> key;
+    std::unique_ptr<EVP_PKEY_CTX, EVPPKEYCTXDeleter> encryption_context;
+    std::unique_ptr<X509, X509Deleter> cert;
+
+    std::unique_ptr<PKCS7, PKCS7Deleter> p7;
+    std::unique_ptr<BIO, BIODeleter> p7bio;
 
 #endif
 
     BufferArrayPtr m_certificates;
 
-    void Load(const Buffer& data, const Buffer& password);
+    void Load(const Buffer& data, std::string_view password);
 };
 
 #pragma region Forwards
@@ -66,11 +78,11 @@ PKCS12Key::PKCS12Key(const std::string& path) {
     m_impl = make_unique<PKCS12KeyImpl>(path);
 }
 
-PKCS12Key::PKCS12Key(const std::string& path, const Buffer& password) {
+PKCS12Key::PKCS12Key(const std::string& path, std::string_view password) {
     m_impl = make_unique<PKCS12KeyImpl>(path, password);
 }
 
-PKCS12Key::PKCS12Key(const Buffer& data, const Buffer& password) {
+PKCS12Key::PKCS12Key(const Buffer& data, std::string_view password) {
     m_impl = make_unique<PKCS12KeyImpl>(data, password);
 }
 
@@ -86,7 +98,7 @@ void PKCS12Key::SignInitialize(MessageDigestAlgorithm algorithm) {
     return m_impl->SignInitialize(algorithm);
 }
 
-void PKCS12Key::SignUpdate(const BufferPtr data) {
+void PKCS12Key::SignUpdate(const Buffer& data) {
     return m_impl->SignUpdate(data);
 }
 
@@ -102,11 +114,15 @@ void PKCS12Key::SignCleanup() {
     return m_impl->SignCleanup();
 }
 
+BufferPtr PKCS12Key::GetCertificate() const {
+    return m_impl->GetCertificate();
+}
+
 #pragma endregion
 
     // Actual implementation
-PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path) : PKCS12KeyImpl(path, Buffer()) {}
-PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path, const Buffer& password) {
+PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path) : PKCS12KeyImpl(path, std::string_view()) {}
+PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path, std::string_view password) {
     std::ifstream file(path, std::ios::in | std::ios::binary);
     SCOPE_GUARD_CAPTURE_REFERENCES(file.close());
 
@@ -131,15 +147,15 @@ PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path, const Buffer& p
     Load(data, password);
 }
 
-PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data) : PKCS12KeyImpl(data, Buffer()) {}
+PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data) : PKCS12KeyImpl(data, std::string_view()) {}
 
-PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data, const Buffer& password) {
+PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data, std::string_view password) {
     Load(data, password);
 }
 
-void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) {
+void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, std::string_view password) {
 
-    MiscUtils::InitializeOpenSSL();
+    CryptoUtils::InitializeOpenSSL();
 
     // The const cast seems to be unnecessary, but on my linux VM
     // with OpenSSL 1.0.1f method BIO_new_mem_buf takes only void*
@@ -149,16 +165,22 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
     BIO* bio = BIO_new_mem_buf(buffer_data, buffer_length);
     SCOPE_GUARD([bio]() { BIO_free(bio); } );
 
-    p12 = d2i_PKCS12_bio(bio, nullptr);
-    if (nullptr == p12) {
-        throw GeneralException("Could not parse der structure PKCS#12, " + MiscUtils::GetLastOpensslError());
+    PKCS12* p12_raw = d2i_PKCS12_bio(bio, nullptr);
+    if (nullptr == p12_raw) {
+        throw GeneralException("Could not parse der structure PKCS#12, " + CryptoUtils::GetLastOpensslError());
     }
+    p12 = std::unique_ptr<PKCS12, PKCS12Deleter>(p12_raw);
 
     STACK_OF(X509) *additional_certs = nullptr;
-    int parsed = PKCS12_parse(p12, password.data(), &key, &cert, &additional_certs);
+    EVP_PKEY* key_raw = nullptr;
+    X509* cert_raw = nullptr;
+    int parsed = PKCS12_parse(p12.get(), password.data(), &key_raw, &cert_raw, &additional_certs);
     if (1 != parsed) {
-        throw GeneralException("Could not parse PKCS#12, " + MiscUtils::GetLastOpensslError());
+        throw GeneralException("Could not parse PKCS#12, " + CryptoUtils::GetLastOpensslError());
     }
+
+    key = std::unique_ptr<EVP_PKEY, EVPPKEYDeleter>(key_raw);
+    cert = std::unique_ptr<X509, X509Deleter>(cert_raw);
 
     assert(key != nullptr);
     assert(cert != nullptr);
@@ -171,14 +193,14 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, const Buffer& password) 
 
         int length = i2d_X509(additional_cert, nullptr);
         if (length < 0) {
-            throw GeneralException("Could not get PKCS#7 size, " + MiscUtils::GetLastOpensslError());
+            throw GeneralException("Could not get PKCS#7 size, " + CryptoUtils::GetLastOpensslError());
         }
 
         BufferPtr additional_cert_data = make_deferred_container<Buffer>(length);
         auto data_pointer = (unsigned char *) additional_cert_data->data();
         int converted = i2d_X509(additional_cert, &data_pointer);
         if (converted < 0) {
-            throw GeneralException("Could not convert PKCS#7, " + MiscUtils::GetLastOpensslError());
+            throw GeneralException("Could not convert PKCS#7, " + CryptoUtils::GetLastOpensslError());
         }
 
         m_certificates->Append(additional_cert_data);
@@ -189,36 +211,36 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    if (encryption_context == nullptr) {
-        auto evp_pkey_context = EVP_PKEY_CTX_new_from_pkey(nullptr, key, nullptr);
+    if (!encryption_context) {
+        auto evp_pkey_context = EVP_PKEY_CTX_new_from_pkey(nullptr, key.get(), nullptr);
         if (evp_pkey_context == nullptr) {
-            auto openssl_error = MiscUtils::GetLastOpensslError();
+            auto openssl_error = CryptoUtils::GetLastOpensslError();
             spdlog::error("Could not create PKEY context: {}", openssl_error);
             throw GeneralException("Could not create PKEY context" + openssl_error);
         }
 
-        encryption_context = evp_pkey_context;
+        encryption_context = std::unique_ptr<EVP_PKEY_CTX, EVPPKEYCTXDeleter>(evp_pkey_context);
     }
 
-    int init_result = EVP_PKEY_decrypt_init(encryption_context);
+    int init_result = EVP_PKEY_decrypt_init(encryption_context.get());
     if (init_result != 1) {
-        auto openssl_error = MiscUtils::GetLastOpensslError();
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
         spdlog::error("Could not initialize encryption engine: {}", openssl_error);
         throw GeneralException("Could not initialize encryption engine: " + std::to_string(init_result));
     }
 
     size_t outlen = 0;
-    int length_result = EVP_PKEY_decrypt(encryption_context, nullptr, &outlen, (unsigned char *) data.data(), data.std_size());
+    int length_result = EVP_PKEY_decrypt(encryption_context.get(), nullptr, &outlen, (unsigned char *) data.data(), data.std_size());
     if (length_result != 1) {
-        auto openssl_error = MiscUtils::GetLastOpensslError();
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
         spdlog::error("Could not get decrypt message length: {}", openssl_error);
         throw GeneralException("Could not get decrypt message length: " + std::to_string(length_result));
     }
 
     BufferPtr output = make_deferred_container<Buffer>(outlen);
-    int decrypt_result = EVP_PKEY_decrypt(encryption_context, (unsigned char *) output->data(), &outlen, (unsigned char *) data.data(), data.std_size());
+    int decrypt_result = EVP_PKEY_decrypt(encryption_context.get(), (unsigned char *) output->data(), &outlen, (unsigned char *) data.data(), data.std_size());
     if (decrypt_result != 1) {
-        auto openssl_error = MiscUtils::GetLastOpensslError();
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
         spdlog::error("Could not get decrypt message: {}", openssl_error);
         throw GeneralException("Could not get decrypt message: " + std::to_string(decrypt_result));
     }
@@ -239,8 +261,8 @@ bool PKCS12Key::PKCS12KeyImpl::ContainsPrivateKey(const Buffer& issuer, const Bu
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
     // X509_NAME is conflicting with some windows headers
-    auto issuer_name = X509_get_issuer_name(cert);
-    ASN1_INTEGER* serial_asn = X509_get_serialNumber(cert);
+    auto issuer_name = X509_get_issuer_name(cert.get());
+    ASN1_INTEGER* serial_asn = X509_get_serialNumber(cert.get());
 
     // Convert issuer to null terminated string
     char* oneline = X509_NAME_oneline(issuer_name, nullptr, 0);
@@ -268,24 +290,22 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    if (p7 != nullptr) {
-        PKCS7_free(p7);
-        p7 = nullptr;
-    }
+    // Reset existing PKCS7 structure if present
+    p7.reset();
 
-    p7 = PKCS7_new();
-
-    if (p7 == nullptr) {
+    PKCS7* p7_raw = PKCS7_new();
+    if (p7_raw == nullptr) {
         throw GeneralException("Could not create PKCS#7");
     }
+    p7 = std::unique_ptr<PKCS7, PKCS7Deleter>(p7_raw);
 
-    int type_set = PKCS7_set_type(p7, NID_pkcs7_signed);
+    int type_set = PKCS7_set_type(p7.get(), NID_pkcs7_signed);
     if (type_set != 1) {
         throw GeneralException("Could not set PKCS#7 type");
     }
 
-    auto message_digest = MiscUtils::GetAlgorithm(algorithm);
-    auto signer_info = PKCS7_add_signature(p7, cert, key, message_digest);
+    auto message_digest = CryptoUtils::GetAlgorithm(algorithm);
+    auto signer_info = PKCS7_add_signature(p7.get(), cert.get(), key.get(), message_digest);
     if (signer_info == nullptr) {
         throw GeneralException("Could not add signature");
     }
@@ -300,7 +320,7 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
         throw GeneralException("Could not add signing time");
     }
 
-    int certificate_added = PKCS7_add_certificate(p7, cert);
+    int certificate_added = PKCS7_add_certificate(p7.get(), cert.get());
     if (certificate_added != 1) {
         throw GeneralException("Could not add certificate");
     }
@@ -318,32 +338,30 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 
         SCOPE_GUARD([extra_certificate]() { X509_free(extra_certificate); });
 
-        int extra_certificate_added = PKCS7_add_certificate(p7, extra_certificate);
+        int extra_certificate_added = PKCS7_add_certificate(p7.get(), extra_certificate);
         if (extra_certificate_added != 1) {
             throw GeneralException("Could not add extra certificate");
         }
     }
 
-    int content_set = PKCS7_content_new(p7, NID_pkcs7_data);
+    int content_set = PKCS7_content_new(p7.get(), NID_pkcs7_data);
     if (content_set != 1) {
         throw GeneralException("Could not set signing content");
     }
 
-    int detached_set = PKCS7_set_detached(p7, 1);
+    int detached_set = PKCS7_set_detached(p7.get(), 1);
     if (detached_set != 1) {
         throw GeneralException("Could not set PKCS#7 detached");
     }
 
-    if (p7bio != nullptr) {
-        BIO_free_all(p7bio);
-        p7bio = nullptr;
-    }
+    // Reset existing BIO if present
+    p7bio.reset();
 
-    p7bio = PKCS7_dataInit(p7, nullptr);
-
-    if (p7bio == nullptr) {
+    BIO* p7bio_raw = PKCS7_dataInit(p7.get(), nullptr);
+    if (p7bio_raw == nullptr) {
         throw GeneralException("Could not initialize signing data");
     }
+    p7bio = std::unique_ptr<BIO, BIODeleter>(p7bio_raw);
 
 #else
 
@@ -354,9 +372,9 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 
 }
 
-void PKCS12Key::PKCS12KeyImpl::SignUpdate(BufferPtr data) {
-    auto input_stream = data->ToInputStream();
-    SignUpdate(input_stream, data->size());
+void PKCS12Key::PKCS12KeyImpl::SignUpdate(const Buffer& data) {
+    auto input_stream = data.ToInputStream();
+    SignUpdate(input_stream, data.size());
 }
 
 void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_size length) {
@@ -376,7 +394,7 @@ void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_si
         types::stream_size read = data->Read(buffer, block_size_converted);
         int read_converted = ValueConvertUtils::SafeConvert<int>(read);
 
-        int written = BIO_write(p7bio, buffer.data(), read_converted);
+        int written = BIO_write(p7bio.get(), buffer.data(), read_converted);
         if (written != read_converted) {
             throw GeneralException("Could not write data");
         }
@@ -397,19 +415,19 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    int finalized = PKCS7_dataFinal(p7, p7bio);
+    int finalized = PKCS7_dataFinal(p7.get(), p7bio.get());
     if (finalized != 1) {
         throw GeneralException("Could not finalize PKCS#7");
     }
 
-    int length = i2d_PKCS7(p7, nullptr);
+    int length = i2d_PKCS7(p7.get(), nullptr);
     if (length < 0) {
         throw GeneralException("Could not get PKCS#7 size");
     }
 
     BufferPtr result = make_deferred_container<Buffer>(length);
     auto data_pointer = (unsigned char *) result->data();
-    int converted = i2d_PKCS7(p7, &data_pointer);
+    int converted = i2d_PKCS7(p7.get(), &data_pointer);
     if (converted < 0) {
         throw GeneralException("Could not convert PKCS#7");
     }
@@ -428,41 +446,42 @@ void PKCS12Key::PKCS12KeyImpl::SignCleanup() {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    if (nullptr != p12) {
-        PKCS12_free(p12);
-        p12 = nullptr;
-    }
-
-    if (nullptr != key) {
-        EVP_PKEY_free(key);
-        key = nullptr;
-    }
-
-    if (nullptr != cert) {
-        X509_free(cert);
-        cert = nullptr;
-    }
-
-    if (nullptr != encryption_context) {
-        EVP_PKEY_CTX_free(encryption_context);
-        encryption_context = nullptr;
-    }
-
-    if (nullptr != p7) {
-        PKCS7_free(p7);
-        p7 = nullptr;
-    }
-
-    if (nullptr != p7bio) {
-        BIO_free_all(p7bio);
-        p7bio = nullptr;
-    }
+    // Reset signing-related resources (unique_ptr handles cleanup automatically)
+    p7.reset();
+    p7bio.reset();
 
 #endif
 }
 
-PKCS12Key::PKCS12KeyImpl::~PKCS12KeyImpl() {
-    SignCleanup();
+BufferPtr PKCS12Key::PKCS12KeyImpl::GetCertificate() const {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+    if (!cert) {
+        throw GeneralException("No certificate available in PKCS12 key");
+    }
+
+    // Convert X509* to DER format (same technique used for additional certs)
+    int length = i2d_X509(cert.get(), nullptr);
+    if (length < 0) {
+        throw GeneralException("Could not get certificate size, " + CryptoUtils::GetLastOpensslError());
+    }
+
+    BufferPtr cert_data = make_deferred_container<Buffer>(length);
+    auto data_pointer = (unsigned char *) cert_data->data();
+    int converted = i2d_X509(cert.get(), &data_pointer);
+    if (converted < 0) {
+        throw GeneralException("Could not convert certificate to DER, " + CryptoUtils::GetLastOpensslError());
+    }
+
+    return cert_data;
+
+#else
+
+    throw NotSupportedException("This library was compiled without OpenSSL support");
+
+#endif
+
 }
 
 } // vanillapdf

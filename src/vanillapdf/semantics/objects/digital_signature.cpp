@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "semantics/objects/digital_signature.h"
+#include "semantics/utils/byte_range.h"
 #include "semantics/utils/semantic_exceptions.h"
 
 #include "syntax/utils/name_constants.h"
@@ -9,32 +10,6 @@ namespace vanillapdf {
 namespace semantics {
 
 DigitalSignature::DigitalSignature(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
-ByteRangeCollection::ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj) : HighLevelObject(obj) {
-    assert(obj->GetSize() % 2 == 0);
-    if (obj->GetSize() % 2 != 0) {
-        throw SemanticContextExceptionFactory::Construct<syntax::ArrayObject<syntax::IntegerObjectPtr>, ByteRangeCollection>(obj);
-    }
-}
-
-ByteRange::ByteRange(syntax::IntegerObjectPtr byte_offset, syntax::IntegerObjectPtr length)
-    : m_byte_offset(byte_offset), m_length(length) {
-}
-
-syntax::IntegerObjectPtr ByteRange::ByteOffset(void) const {
-    return m_byte_offset;
-}
-
-syntax::IntegerObjectPtr ByteRange::Length(void) const {
-    return m_length;
-}
-
-types::size_type ByteRangeCollection::GetSize(void) const {
-    return _obj->GetSize() / 2;
-}
-
-ByteRangePtr ByteRangeCollection::GetValue(types::size_type at) const {
-    return make_deferred<ByteRange>(_obj->GetValue(at), _obj->GetValue(at + 1));
-}
 
 syntax::HexadecimalStringObjectPtr DigitalSignature::Contents() {
     return _obj->FindAs<syntax::HexadecimalStringObjectPtr>(constant::Name::Contents);

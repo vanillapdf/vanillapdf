@@ -1,10 +1,12 @@
 #include "precompiled.h"
 
 #include "semantics/objects/digital_signature.h"
+#include "semantics/utils/byte_range.h"
 
 #include "vanillapdf/semantics/c_digital_signature.h"
 #include "implementation/c_helper.h"
 
+using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
@@ -139,64 +141,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(Digit
         *result = reinterpret_cast<ByteRangeCollectionHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetOffset(ByteRangeHandle* handle, IntegerObjectHandle** result) {
-    ByteRange* range = reinterpret_cast<ByteRange*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(range);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        auto direct = range->ByteOffset();
-        auto ptr = direct.AddRefGet();
-        *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_GetLength(ByteRangeHandle* handle, IntegerObjectHandle** result) {
-    ByteRange* range = reinterpret_cast<ByteRange*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(range);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        auto direct = range->Length();
-        auto ptr = direct.AddRefGet();
-        *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_GetSize(ByteRangeCollectionHandle* handle, size_type* result) {
-    ByteRangeCollection* collection = reinterpret_cast<ByteRangeCollection*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        *result = collection->GetSize();
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_GetValue(ByteRangeCollectionHandle* handle, size_type at, ByteRangeHandle** result) {
-    ByteRangeCollection* collection = reinterpret_cast<ByteRangeCollection*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        auto direct = collection->GetValue(at);
-        auto ptr = direct.AddRefGet();
-        *result = reinterpret_cast<ByteRangeHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRange_Release(ByteRangeHandle* handle) {
-    return ObjectRelease<ByteRange, ByteRangeHandle>(handle);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION ByteRangeCollection_Release(ByteRangeCollectionHandle* handle) {
-    return ObjectRelease<ByteRangeCollection, ByteRangeCollectionHandle>(handle);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_Release(DigitalSignatureHandle* handle) {

@@ -9,26 +9,6 @@
 namespace vanillapdf {
 namespace semantics {
 
-class ByteRange : public IUnknown {
-public:
-    explicit ByteRange(syntax::IntegerObjectPtr byte_offset, syntax::IntegerObjectPtr length);
-
-    syntax::IntegerObjectPtr ByteOffset(void) const;
-    syntax::IntegerObjectPtr Length(void) const;
-
-private:
-    syntax::IntegerObjectPtr m_byte_offset;
-    syntax::IntegerObjectPtr m_length;
-};
-
-class ByteRangeCollection : public HighLevelObject<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>> {
-public:
-    explicit ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj);
-
-    types::size_type GetSize(void) const;
-    ByteRangePtr GetValue(types::size_type at) const;
-};
-
 class DigitalSignature : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
     explicit DigitalSignature(syntax::DictionaryObjectPtr root);

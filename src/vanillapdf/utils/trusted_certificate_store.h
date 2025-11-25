@@ -1,0 +1,75 @@
+#ifndef _TRUSTED_CERTIFICATE_STORE_H
+#define _TRUSTED_CERTIFICATE_STORE_H
+
+#include "utils/utils_fwd.h"
+#include "utils/unknown_interface.h"
+#include "utils/buffer.h"
+#include "utils/crypto_utils.h"
+
+#include <string>
+#include <string_view>
+#include <memory>
+
+namespace vanillapdf {
+
+/**
+* \class TrustedCertificateStore
+* \brief Collection of trusted certificates for signature verification
+*
+* This class manages a collection of trusted X.509 certificates used
+* to validate certificate chains during signature verification.
+*/
+class TrustedCertificateStore : public IUnknown {
+public:
+    TrustedCertificateStore();
+    ~TrustedCertificateStore();
+
+    /**
+    * \brief Add a certificate from PEM format
+    * \param pem_data PEM-encoded certificate data
+    */
+    void AddCertificateFromPEM(const Buffer& pem_data);
+
+    /**
+    * \brief Add a certificate from DER format
+    * \param der_data DER-encoded certificate data
+    */
+    void AddCertificateFromDER(const Buffer& der_data);
+
+    /**
+    * \brief Load certificates from directory
+    * \param directory_path Path to directory containing certificate files
+    *                       Must be UTF-8 encoded on all platforms
+    *
+    * Loads all certificate files from the specified directory.
+    * Commonly used for loading from /etc/ssl/certs on Linux.
+    */
+    void LoadFromDirectory(const std::string& directory_path);
+
+    /**
+    * \brief Load system default trusted certificates
+    *
+    * On Windows: Uses Windows Certificate Store
+    * On Linux/macOS: Uses OpenSSL default paths (/etc/ssl/certs, etc.)
+    */
+    void LoadSystemDefaults();
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+    /**
+    * \brief Get native OpenSSL X509_STORE handle
+    * \return Pointer to X509_STORE for OpenSSL operations
+    *
+    * Internal use only - provides direct access to OpenSSL certificate store.
+    * Returns nullptr when OpenSSL support is not compiled in.
+    */
+    X509_STORE* GetNativeHandle() const;
+#endif
+
+private:
+    class TrustedCertificateStoreImpl;
+    std::shared_ptr<TrustedCertificateStoreImpl> m_impl;
+};
+
+} // vanillapdf
+
+#endif /* _TRUSTED_CERTIFICATE_STORE_H */

@@ -121,16 +121,17 @@ if(NOT CMAKE_BUILD_TYPE)
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
+# Enable testing infrastructure before including source directories
+if(VANILLAPDF_ENABLE_TESTS)
+  include(cmake/build_name.cmake)
+  include(CTest)
+endif()
+
 # Include source directories
 add_subdirectory(src/vanillapdf)
 add_subdirectory(src/vanillapdf.tools)
 
 if(VANILLAPDF_ENABLE_TESTS)
-
-  # Allow tests to be run
-  include(cmake/build_name.cmake)
-  include(CTest)
-
   add_subdirectory(src/vanillapdf.test)
   add_subdirectory(src/vanillapdf.unittest)
 endif()
