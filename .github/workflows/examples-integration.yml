@@ -204,9 +204,12 @@ jobs:
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
+      - name: Install vanillapdf via vcpkg (classic mode with --head)
+        run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=x64-linux
+
       - name: Configure CMake
         working-directory: examples/vcpkg-port-integration
-        run: cmake --preset ${{ matrix.preset }} -DVCPKG_PORT_TEST_USE_HEAD=ON
+        run: cmake --preset ${{ matrix.preset }}
 
       - name: Build
         working-directory: examples/vcpkg-port-integration
@@ -242,9 +245,12 @@ jobs:
       - name: Bootstrap vcpkg
         run: .\external\vcpkg\bootstrap-vcpkg.bat
 
+      - name: Install vanillapdf via vcpkg (classic mode with --head)
+        run: .\external\vcpkg\vcpkg.exe install vanillapdf --head --overlay-ports=./ports --triplet=x64-windows
+
       - name: Configure CMake
         working-directory: examples/vcpkg-port-integration
-        run: cmake --preset ${{ matrix.preset }} -DVCPKG_PORT_TEST_USE_HEAD=ON
+        run: cmake --preset ${{ matrix.preset }}
 
       - name: Build
         working-directory: examples/vcpkg-port-integration
@@ -281,9 +287,12 @@ jobs:
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
+      - name: Install vanillapdf via vcpkg (classic mode with --head)
+        run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=arm64-osx
+
       - name: Configure CMake
         working-directory: examples/vcpkg-port-integration
-        run: cmake --preset ${{ matrix.preset }} -DVCPKG_PORT_TEST_USE_HEAD=ON
+        run: cmake --preset ${{ matrix.preset }}
 
       - name: Build
         working-directory: examples/vcpkg-port-integration

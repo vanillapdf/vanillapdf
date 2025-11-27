@@ -1,19 +1,18 @@
 cmake_minimum_required(VERSION 3.20)
 
 # This example tests the vcpkg port overlay from ports/vanillapdf
-# It uses --head mode to test against the current HEAD of the repository
 #
-# Usage (with --head to test current main branch):
-#   cmake --preset linux-x64-debug -DVCPKG_PORT_TEST_USE_HEAD=ON
+# For --head mode testing (uses HEAD_REF main), first install vanillapdf manually:
+#   cd <repo-root>
+#   ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports
+#
+# Then configure and build:
+#   cmake --preset linux-x64-debug
 #   cmake --build --preset linux-x64-debug
 #   ctest --preset linux-x64-debug
 #
-# The --head flag tells vcpkg to use HEAD_REF (main branch) instead of
-# the versioned REF+SHA512, allowing us to test uncommitted changes.
-
-# Enable --head mode to use HEAD_REF instead of versioned release
-# This tests the current state of the repository
-option(VCPKG_PORT_TEST_USE_HEAD "Use vcpkg --head mode to test HEAD_REF" ON)
+# Note: --head only works in classic mode, not manifest mode. The CI workflow
+# handles the two-step process (vcpkg install first, then cmake configure).
 
 # Set up vcpkg toolchain before project() call
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -28,16 +27,8 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     message(STATUS "Using vcpkg toolchain: ${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
-# Configure port overlay to use the local port definition
-# This points to ports/vanillapdf in the repository root
-set(VCPKG_OVERLAY_PORTS "${CMAKE_CURRENT_SOURCE_DIR}/../../ports" CACHE STRING "")
-message(STATUS "Using port overlay: ${VCPKG_OVERLAY_PORTS}")
-
-# Pass --head to vcpkg install if enabled
-if(VCPKG_PORT_TEST_USE_HEAD)
-    list(APPEND VCPKG_INSTALL_OPTIONS "--head")
-    message(STATUS "Using vcpkg --head mode (will use HEAD_REF main)")
-endif()
+# Disable manifest mode - we use classic mode with pre-installed packages
+set(VCPKG_MANIFEST_MODE OFF CACHE BOOL "")
 
 project(VcpkgPortIntegrationTest)
 
