@@ -1,0 +1,11 @@
+{
+    "name": "vcpkg-port-integration-test",
+    "version": "1.0.0",
+    "description": "vcpkg port overlay integration test using --head mode",
+    "dependencies": [
+        {
+            "name": "vanillapdf",
+            "default-features": true
+        }
+    ]
+}

@@ -51,11 +51,12 @@ jobs:
           MAJOR=$(echo "$VERSION" | cut -d. -f1)
           MINOR=$(echo "$VERSION" | cut -d. -f2)
           PATCH=$(echo "$VERSION" | cut -d. -f3 | cut -d- -f1)
-          grep -q "\"version\": \"$VERSION\"" vcpkg.json || { echo "vcpkg.json version mismatch"; exit 1; }
-          grep -q "\"version\": \"$VERSION\"" ports/vanillapdf/vcpkg.json || { echo "port manifest version mismatch"; exit 1; }
+          # cmake/version.cmake is the source of truth - vcpkg.json is generated from it
           grep -q "set(VANILLAPDF_VERSION_MAJOR ${MAJOR})" cmake/version.cmake || { echo "Version major mismatch"; exit 1; }
           grep -q "set(VANILLAPDF_VERSION_MINOR ${MINOR})" cmake/version.cmake || { echo "Version minor mismatch"; exit 1; }
           grep -q "set(VANILLAPDF_VERSION_PATCH ${PATCH})" cmake/version.cmake || { echo "Version patch mismatch"; exit 1; }
+          # Note: ports/vanillapdf/vcpkg.json is updated after the release via scripts/update_port.py
+          # (requires SHA512 of the release tarball which is only available after tag push)
 
 
   build-nuget:
