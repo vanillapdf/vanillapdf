@@ -215,7 +215,7 @@ jobs:
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
-        run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=x64-linux
+        run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=x64-linux --no-binarycaching
 
       - name: Configure CMake
         working-directory: examples/vcpkg-port-integration
@@ -263,7 +263,7 @@ jobs:
         run: .\external\vcpkg\bootstrap-vcpkg.bat
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
-        run: .\external\vcpkg\vcpkg.exe install vanillapdf --head --overlay-ports=./ports --triplet=x64-windows
+        run: .\external\vcpkg\vcpkg.exe install vanillapdf --head --overlay-ports=./ports --triplet=x64-windows --no-binarycaching
 
       - name: Configure CMake
         working-directory: examples/vcpkg-port-integration
@@ -306,7 +306,7 @@ jobs:
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
-        run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=arm64-osx
+        run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=arm64-osx --no-binarycaching
 
       - name: Configure CMake
         working-directory: examples/vcpkg-port-integration
