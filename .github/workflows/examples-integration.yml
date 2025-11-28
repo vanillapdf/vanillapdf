@@ -217,8 +217,11 @@ jobs:
       - name: Update portfile to use current branch
         run: |
           BRANCH="${{ github.head_ref || github.ref_name }}"
-          echo "Updating HEAD_REF to: $BRANCH"
-          sed -i "s|HEAD_REF main|HEAD_REF $BRANCH|" ports/vanillapdf/portfile.cmake
+          # URL-encode the branch name (replace / with %2F)
+          BRANCH_ENCODED=$(echo "$BRANCH" | sed 's|/|%2F|g')
+          echo "Updating HEAD_REF to: $BRANCH (encoded: $BRANCH_ENCODED)"
+          sed -i "s|HEAD_REF main|HEAD_REF $BRANCH_ENCODED|" ports/vanillapdf/portfile.cmake
+          cat ports/vanillapdf/portfile.cmake
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
         run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=x64-linux
@@ -272,8 +275,11 @@ jobs:
         shell: bash
         run: |
           BRANCH="${{ github.head_ref || github.ref_name }}"
-          echo "Updating HEAD_REF to: $BRANCH"
-          sed -i "s|HEAD_REF main|HEAD_REF $BRANCH|" ports/vanillapdf/portfile.cmake
+          # URL-encode the branch name (replace / with %2F)
+          BRANCH_ENCODED=$(echo "$BRANCH" | sed 's|/|%2F|g')
+          echo "Updating HEAD_REF to: $BRANCH (encoded: $BRANCH_ENCODED)"
+          sed -i "s|HEAD_REF main|HEAD_REF $BRANCH_ENCODED|" ports/vanillapdf/portfile.cmake
+          cat ports/vanillapdf/portfile.cmake
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
         run: .\external\vcpkg\vcpkg.exe install vanillapdf --head --overlay-ports=./ports --triplet=x64-windows
@@ -321,8 +327,11 @@ jobs:
       - name: Update portfile to use current branch
         run: |
           BRANCH="${{ github.head_ref || github.ref_name }}"
-          echo "Updating HEAD_REF to: $BRANCH"
-          sed -i '' "s|HEAD_REF main|HEAD_REF $BRANCH|" ports/vanillapdf/portfile.cmake
+          # URL-encode the branch name (replace / with %2F)
+          BRANCH_ENCODED=$(echo "$BRANCH" | sed 's|/|%2F|g')
+          echo "Updating HEAD_REF to: $BRANCH (encoded: $BRANCH_ENCODED)"
+          sed -i '' "s|HEAD_REF main|HEAD_REF $BRANCH_ENCODED|" ports/vanillapdf/portfile.cmake
+          cat ports/vanillapdf/portfile.cmake
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
         run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=arm64-osx
