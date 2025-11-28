@@ -25,6 +25,7 @@ set(VANILLAPDF_INCLUDE_UTILS_HEADERS
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_input_output_stream.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_pdf_version.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_pkcs12_key.h"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_signature_verification_settings.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_signature_verifier.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_signing_key.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_unknown_interface.h"
@@ -54,6 +55,7 @@ set(VANILLAPDF_INCLUDE_SYNTAX_HEADERS
 
 set(VANILLAPDF_INCLUDE_SEMANTICS_HEADERS
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_annotations.h"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_byte_range.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_catalog.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_character_map.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_date.h"
