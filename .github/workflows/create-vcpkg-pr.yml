@@ -18,6 +18,11 @@ jobs:
       branch-name: update-vanillapdf-${{ inputs.tag }}
       pr-url: ${{ steps.pr-info.outputs.pr-url }}
     steps:
+      - name: Checkout vanillapdf repo
+        uses: actions/checkout@v6
+        with:
+          path: vanillapdf
+
       - name: Setup Git & GitHub CLI
         run: |
           git config --global user.name "vanillapdf-bot"
@@ -31,28 +36,28 @@ jobs:
           git fetch upstream
           git checkout -b update-vanillapdf-${{ inputs.tag }} upstream/master
 
-      - name: Update vanillapdf port version
+      - name: Sync port files and update version
         run: |
-          cd vcpkg
           VERSION="${{ inputs.tag }}"
           VERSION_NO_V="${VERSION#v}"
 
-          # Update the port manifest version
+          # Copy our port files to vcpkg fork (syncs portfile.cmake, usage, vcpkg.json)
+          cp -r vanillapdf/ports/vanillapdf/* vcpkg/ports/vanillapdf/
+
+          # Update the version in vcpkg.json
+          cd vcpkg
           sed -i "s/\"version\": \".*\"/\"version\": \"${VERSION_NO_V}\"/" ports/vanillapdf/vcpkg.json
 
-          # Update the port version database
-          vcpkg_exe="./vcpkg"
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            vcpkg_exe="./vcpkg.exe"
-          fi
+          # Remove port-version field if present (required for new versions)
+          sed -i '/"port-version":/d' ports/vanillapdf/vcpkg.json
 
           # Bootstrap vcpkg if needed
-          if [[ ! -f "$vcpkg_exe" ]]; then
+          if [[ ! -f "./vcpkg" ]]; then
             ./bootstrap-vcpkg.sh
           fi
 
-          # Add the new version
-          $vcpkg_exe x-add-version vanillapdf --overwrite-version
+          # Add the new version to the database
+          ./vcpkg x-add-version vanillapdf --overwrite-version
 
       - name: Commit and push changes to fork
         run: |
