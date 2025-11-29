@@ -55,6 +55,9 @@ option(VANILLAPDF_USE_STATIC_CRT "Use static MSVC runtime (/MT) instead of dynam
 option(BUILD_SHARED_LIBS "Build vanillapdf as a shared library" ON)
 
 # Note: This needs to be included before defining the main project
+# Generate vcpkg.json from template with version from cmake/version.cmake
+include(cmake/vcpkg_manifest.cmake)
+
 # Check for VCPKG - C++ package management system
 include(cmake/vcpkg_init.cmake)
 
@@ -69,13 +72,13 @@ project(vanillapdf)
 # We can setup custom modules to search for third party dependencies
 # set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-# Version information is shared with standalone scripts
-include(cmake/version.cmake)
+# Version information is loaded early via cmake/vcpkg_manifest.cmake (before vcpkg_init)
+# to generate vcpkg.json with the correct version.
 
-# Allow overriding the build suffix from the command line
+# Allow overriding the build suffix from the command line (after vcpkg.json is generated)
 set(VANILLAPDF_VERSION_BUILD_SUFFIX "${VANILLAPDF_VERSION_BUILD_SUFFIX}" CACHE STRING "Optional build suffix")
 
-# Compose full version string for configuration files using the (possibly) overridden suffix
+# Recompose full version string if suffix was overridden via cache
 set(VANILLAPDF_VERSION
     "${VANILLAPDF_VERSION_MAJOR}.${VANILLAPDF_VERSION_MINOR}.${VANILLAPDF_VERSION_PATCH}${VANILLAPDF_VERSION_BUILD_SUFFIX}")
 

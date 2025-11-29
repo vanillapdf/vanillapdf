@@ -1,0 +1,10 @@
+# Build directories
+/build/
+
+# IDE files
+.vs/
+.vscode/
+*.user
+
+# Test output
+*.pdf

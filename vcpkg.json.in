@@ -1,6 +1,6 @@
 {
   "name": "vanillapdf",
-  "version": "2.1.0",
+  "version": "@VANILLAPDF_VERSION@",
   "description": "PDF rendering engine using vcpkg-managed dependencies",
   "features": {
     "encryption": {
@@ -16,7 +16,7 @@
       ]
     },
     "jpeg2000": {
-      "description": "Support JPEG‑2000 images through the OpenJPEG codec",
+      "description": "Support JPEG-2000 images through the OpenJPEG codec",
       "dependencies": [
         "openjpeg"
       ]

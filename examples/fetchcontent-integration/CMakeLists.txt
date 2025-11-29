@@ -112,6 +112,7 @@ FetchContent_MakeAvailable(vanillapdf)
 # Create a simple test executable to verify the integration works
 add_executable(fetchcontent_test main.cpp)
 target_link_libraries(fetchcontent_test PRIVATE vanillapdf::vanillapdf)
+target_include_directories(fetchcontent_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../shared/include)
 
 # Copy vanillapdf.dll to executable directory on Windows (if building shared)
 if(WIN32 AND BUILD_SHARED_LIBS)

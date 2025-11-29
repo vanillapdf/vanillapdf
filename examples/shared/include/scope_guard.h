@@ -1,9 +1,9 @@
-#ifndef SCOPE_GUARD_H
-#define SCOPE_GUARD_H
+#ifndef VANILLAPDF_EXAMPLES_SCOPE_GUARD_H
+#define VANILLAPDF_EXAMPLES_SCOPE_GUARD_H
 
 #include <utility>
 
-namespace fetchcontent_example {
+namespace vanillapdf_examples {
 
 template <typename FunctionType>
 class ScopeGuard {
@@ -44,10 +44,10 @@ ScopeGuard<FunctionType> make_scope_guard(FunctionType&& f) {
     return ScopeGuard<FunctionType>(std::forward<FunctionType>(f));
 }
 
-} // namespace fetchcontent_example
+} // namespace vanillapdf_examples
 
 #define TOKENPASTE(x, y, z) x ## y ## z
 #define TOKENPASTE2(x, y, z) TOKENPASTE(x, y, z)
-#define SCOPE_GUARD(deleter_function) auto TOKENPASTE2(__scope_guard_, __LINE__, __) = fetchcontent_example::make_scope_guard(deleter_function)
+#define SCOPE_GUARD(deleter_function) auto TOKENPASTE2(__scope_guard_, __LINE__, __) = vanillapdf_examples::make_scope_guard(deleter_function)
 
-#endif // SCOPE_GUARD_H
+#endif // VANILLAPDF_EXAMPLES_SCOPE_GUARD_H
