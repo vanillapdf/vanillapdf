@@ -63,6 +63,9 @@ jobs:
             ./bootstrap-vcpkg.sh
           fi
 
+          # Format the manifest (required by vcpkg)
+          ./vcpkg format-manifest ports/vanillapdf/vcpkg.json
+
           # Add the new version to the database
           ./vcpkg x-add-version vanillapdf --overwrite-version
 
