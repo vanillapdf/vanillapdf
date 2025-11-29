@@ -111,7 +111,7 @@ jobs:
       deploy: true
     secrets: inherit
   github-release:
-    needs: production-gate
+    needs: [production-gate, prepare]
     uses: ./.github/workflows/github-release.yml
     with:
       tag: ${{ needs.prepare.outputs.tag }}
@@ -120,6 +120,8 @@ jobs:
 
   vcpkg-pr:
     needs: [production-gate, prepare]
+    # Only create vcpkg PR for official releases, not pre-releases (alpha, beta, rc)
+    if: needs.prepare.outputs.prerelease == 'false'
     uses: ./.github/workflows/create-vcpkg-pr.yml
     with:
       tag: ${{ needs.prepare.outputs.tag }}
