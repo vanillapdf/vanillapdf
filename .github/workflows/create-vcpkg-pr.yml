@@ -7,6 +7,13 @@ on:
         required: true
         type: string
 
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag name (e.g. v2.2.0)"
+        required: true
+        type: string
+
 permissions:
   contents: read
 
