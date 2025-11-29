@@ -116,7 +116,8 @@ jobs:
     uses: ./.github/workflows/github-release.yml
     with:
       tag: ${{ needs.prepare.outputs.tag }}
-      prerelease: ${{ needs.prepare.outputs.prerelease }}
+      # Convert string output to boolean (job outputs are always strings)
+      prerelease: ${{ needs.prepare.outputs.prerelease == 'true' }}
     secrets: inherit
 
   vcpkg-pr:
