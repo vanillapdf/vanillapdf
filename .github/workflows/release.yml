@@ -60,7 +60,7 @@ jobs:
 
 
   build-nuget:
-    needs: verify
+    needs: [verify, prepare]
     uses: ./.github/workflows/build-nuget.yml
     with:
       build_suffix: ${{ needs.prepare.outputs.build_suffix }}
@@ -116,7 +116,8 @@ jobs:
     uses: ./.github/workflows/github-release.yml
     with:
       tag: ${{ needs.prepare.outputs.tag }}
-      prerelease: ${{ needs.prepare.outputs.prerelease }}
+      # Convert string output to boolean (job outputs are always strings)
+      prerelease: ${{ needs.prepare.outputs.prerelease == 'true' }}
     secrets: inherit
 
   vcpkg-pr:
