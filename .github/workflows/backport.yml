@@ -1,0 +1,41 @@
+name: Backport
+
+on:
+  pull_request_target:
+    types: [closed, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  backport:
+    name: Backport PR
+    runs-on: ubuntu-latest
+    # Only run when PR is merged (not just closed)
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Backport
+        uses: korthout/backport-action@v3
+        with:
+          # Label pattern: "backport release/2.2" -> targets "release/2.2"
+          # Supports any branch name after "backport "
+          label_pattern: '^backport (?<target>[^ ]+)$'
+
+          # Add label to created backport PR for tracking
+          pull_labels: backported
+
+          # For squash-merged PRs, cherry-pick the squashed commit
+          # For merge commits, cherry-pick the merge commit
+          merge_commits: 'skip'
+
+          # Title format for backport PRs
+          pull_title: '[Backport ${target_branch}] ${pull_title}'
+
+          # Body format for backport PRs
+          pull_body: |
+            Backport of #${pull_number} to `${target_branch}`.
+
+            ---
+
+            ${pull_body}

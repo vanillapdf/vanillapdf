@@ -409,6 +409,24 @@ The project includes several GitHub Actions workflows:
 - `update-vcpkg.yml` - Automated monthly vcpkg updates (uses vanillapdf-bot)
 - `create-vcpkg-pr.yml` - Manual vcpkg update workflow (uses vanillapdf-bot)
 - `release.yml` - Release automation workflow (uses vanillapdf-bot)
+- `backport.yml` - Automatic backporting of merged PRs to release branches
+
+### Backporting PRs to Release Branches
+
+To backport a merged PR to a release branch:
+
+1. Add a label `backport release/X.Y` to the PR (e.g., `backport release/2.2`)
+2. When the PR is merged, the backport workflow automatically:
+   - Cherry-picks the commit to the target branch
+   - Creates a new PR with title `[Backport release/X.Y] <original title>`
+   - Adds the `backported` label to the new PR
+3. If cherry-pick fails (conflicts), manually create a backport PR
+
+Available backport labels:
+- `backport release/2.2` - Backport to release/2.2 branch
+- `backport release/2.1` - Backport to release/2.1 branch
+
+For new release branches, create a label following the pattern `backport <branch-name>`.
 
 **Automated Workflows Using vanillapdf-bot:**
 - All vcpkg-related automation
