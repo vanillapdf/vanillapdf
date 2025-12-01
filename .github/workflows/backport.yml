@@ -22,8 +22,8 @@ jobs:
           # Supports any branch name after "backport "
           label_pattern: '^backport (?<target>[^ ]+)$'
 
-          # Add label to created backport PR for tracking
-          pull_labels: backported
+          # Add label to created backport PR for tracking (includes target branch)
+          pull_labels: backported ${target_branch}
 
           # For squash-merged PRs, cherry-pick the squashed commit
           # For merge commits, cherry-pick the merge commit

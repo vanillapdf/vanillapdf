@@ -419,14 +419,16 @@ To backport a merged PR to a release branch:
 2. When the PR is merged, the backport workflow automatically:
    - Cherry-picks the commit to the target branch
    - Creates a new PR with title `[Backport release/X.Y] <original title>`
-   - Adds the `backported` label to the new PR
+   - Adds `backported release/X.Y` label to the new PR
 3. If cherry-pick fails (conflicts), manually create a backport PR
 
-Available backport labels:
-- `backport release/2.2` - Backport to release/2.2 branch
-- `backport release/2.1` - Backport to release/2.1 branch
+Available labels:
+- `backport release/2.2` - Request backport to release/2.2 branch
+- `backport release/2.1` - Request backport to release/2.1 branch
+- `backported release/2.2` - PR was backported to release/2.2
+- `backported release/2.1` - PR was backported to release/2.1
 
-For new release branches, create a label following the pattern `backport <branch-name>`.
+For new release branches, create labels following the patterns `backport <branch>` and `backported <branch>`.
 
 **Automated Workflows Using vanillapdf-bot:**
 - All vcpkg-related automation
