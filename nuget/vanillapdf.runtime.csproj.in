@@ -20,10 +20,11 @@
   <ItemGroup>
     <None Include="vanillapdf_net.targets" Pack="true" PackagePath="buildTransitive/vanillapdf.runtime.@PLATFORM_IDENTIFIER@.targets" />
 
-    <!-- MSVC-style layout -->
+    <!-- MSVC-style layout (Windows) -->
     <None Include="../build/*/src/vanillapdf/Release/libvanillapdf.dll" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dll" />
+    <None Include="../build/*/src/vanillapdf/Release/libvanillapdf.pdb" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.pdb" />
 
-    <!-- Ninja/unix-style layout -->
+    <!-- Ninja/unix-style layout (Linux/macOS) -->
     <None Include="../build/*/src/vanillapdf/libvanillapdf.so" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.so" />
     <None Include="../build/*/src/vanillapdf/libvanillapdf.dylib" Pack="true" PackagePath="runtimes/@PLATFORM_IDENTIFIER@/native/libvanillapdf.dylib" />
     
