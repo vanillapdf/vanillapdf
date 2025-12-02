@@ -15,6 +15,9 @@ jobs:
     # Only run when PR is merged (not just closed)
     if: github.event.pull_request.merged == true
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Backport
         uses: korthout/backport-action@v3
         with:
@@ -23,7 +26,7 @@ jobs:
           label_pattern: '^backport (?<target>[^ ]+)$'
 
           # Add label to created backport PR for tracking (includes target branch)
-          pull_labels: backported ${target_branch}
+          add_labels: backported ${target_branch}
 
           # For squash-merged PRs, cherry-pick the squashed commit
           # For merge commits, cherry-pick the merge commit
@@ -33,7 +36,7 @@ jobs:
           pull_title: '[Backport ${target_branch}] ${pull_title}'
 
           # Body format for backport PRs
-          pull_body: |
+          pull_description: |
             Backport of #${pull_number} to `${target_branch}`.
 
             ---
