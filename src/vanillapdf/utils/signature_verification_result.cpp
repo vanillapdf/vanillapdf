@@ -61,7 +61,7 @@ void SignatureVerificationResult::SetMessage(BufferPtr message) {
 }
 
 void SignatureVerificationResult::SetMessage(std::string_view message) {
-    m_message = make_deferred_container<Buffer>(message.begin(), message.end());
+    m_message = Buffer::CreateFromString(message);
 }
 
 void SignatureVerificationResult::SetSignatureValid(bool valid) {
@@ -89,7 +89,7 @@ void SignatureVerificationResult::SetSignerCommonName(BufferPtr name) {
 }
 
 void SignatureVerificationResult::SetSignerCommonName(std::string_view name) {
-    m_signer_common_name = make_deferred_container<Buffer>(name.begin(), name.end());
+    m_signer_common_name = Buffer::CreateFromString(name);
 }
 
 } // vanillapdf
