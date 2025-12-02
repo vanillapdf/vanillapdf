@@ -74,6 +74,8 @@ TEST(ByteRange, CreateFromData) {
     // Cleanup
     IntegerObject_Release(retrieved_offset);
     IntegerObject_Release(retrieved_length);
+    IntegerObject_Release(offset);
+    IntegerObject_Release(length);
     ByteRange_Release(range);
 }
 
@@ -106,6 +108,8 @@ TEST(ByteRangeCollection, CreateEmptyAndAppend) {
     EXPECT_EQ(size, 1);
 
     // Cleanup
+    IntegerObject_Release(offset);
+    IntegerObject_Release(length);
     ByteRange_Release(range);
     ByteRangeCollection_Release(collection);
 }
@@ -127,6 +131,8 @@ TEST(ByteRangeCollection, AppendMultipleAndRetrieve) {
         ByteRangeHandle* range = nullptr;
         ASSERT_EQ(ByteRange_CreateFromData(offset, length, &range), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(ByteRangeCollection_Append(collection, range), VANILLAPDF_ERROR_SUCCESS);
+        IntegerObject_Release(offset);
+        IntegerObject_Release(length);
         ByteRange_Release(range);
     }
 
@@ -175,6 +181,8 @@ TEST(ByteRangeCollection, InsertAtBeginning) {
     ByteRangeHandle* range1 = nullptr;
     ASSERT_EQ(ByteRange_CreateFromData(offset1, length1, &range1), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(ByteRangeCollection_Append(collection, range1), VANILLAPDF_ERROR_SUCCESS);
+    IntegerObject_Release(offset1);
+    IntegerObject_Release(length1);
     ByteRange_Release(range1);
 
     // Insert at beginning
@@ -187,6 +195,8 @@ TEST(ByteRangeCollection, InsertAtBeginning) {
     ByteRangeHandle* range2 = nullptr;
     ASSERT_EQ(ByteRange_CreateFromData(offset2, length2, &range2), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(ByteRangeCollection_Insert(collection, 0, range2), VANILLAPDF_ERROR_SUCCESS);
+    IntegerObject_Release(offset2);
+    IntegerObject_Release(length2);
     ByteRange_Release(range2);
 
     // Verify size
@@ -224,6 +234,8 @@ TEST(ByteRangeCollection, InsertInMiddle) {
         ByteRangeHandle* range = nullptr;
         ASSERT_EQ(ByteRange_CreateFromData(offset, length, &range), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(ByteRangeCollection_Append(collection, range), VANILLAPDF_ERROR_SUCCESS);
+        IntegerObject_Release(offset);
+        IntegerObject_Release(length);
         ByteRange_Release(range);
     }
 
@@ -237,6 +249,8 @@ TEST(ByteRangeCollection, InsertInMiddle) {
     ByteRangeHandle* range_mid = nullptr;
     ASSERT_EQ(ByteRange_CreateFromData(offset_mid, length_mid, &range_mid), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(ByteRangeCollection_Insert(collection, 1, range_mid), VANILLAPDF_ERROR_SUCCESS);
+    IntegerObject_Release(offset_mid);
+    IntegerObject_Release(length_mid);
     ByteRange_Release(range_mid);
 
     // Verify size
@@ -274,6 +288,8 @@ TEST(ByteRangeCollection, RemoveFromCollection) {
         ByteRangeHandle* range = nullptr;
         ASSERT_EQ(ByteRange_CreateFromData(offset, length, &range), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(ByteRangeCollection_Append(collection, range), VANILLAPDF_ERROR_SUCCESS);
+        IntegerObject_Release(offset);
+        IntegerObject_Release(length);
         ByteRange_Release(range);
     }
 
@@ -326,6 +342,8 @@ TEST(ByteRangeCollection, ClearCollection) {
         ByteRangeHandle* range = nullptr;
         ASSERT_EQ(ByteRange_CreateFromData(offset, length, &range), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(ByteRangeCollection_Append(collection, range), VANILLAPDF_ERROR_SUCCESS);
+        IntegerObject_Release(offset);
+        IntegerObject_Release(length);
         ByteRange_Release(range);
     }
 
