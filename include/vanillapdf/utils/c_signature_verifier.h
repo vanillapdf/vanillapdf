@@ -102,6 +102,22 @@ extern "C"
     );
 
     /**
+    * \brief Reinterpret current object as \ref IUnknownHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_ToUnknown(
+        TrustedCertificateStoreHandle* handle,
+        IUnknownHandle** result
+    );
+
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref TrustedCertificateStoreHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_FromUnknown(
+        IUnknownHandle* handle,
+        TrustedCertificateStoreHandle** result
+    );
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */
@@ -224,6 +240,22 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetSignerCommonName(
         SignatureVerificationResultHandle* handle,
         BufferHandle** result
+    );
+
+    /**
+    * \brief Reinterpret current object as \ref IUnknownHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_ToUnknown(
+        SignatureVerificationResultHandle* handle,
+        IUnknownHandle** result
+    );
+
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref SignatureVerificationResultHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_FromUnknown(
+        IUnknownHandle* handle,
+        SignatureVerificationResultHandle** result
     );
 
     /**
