@@ -4,10 +4,6 @@ on:
   pull_request_target:
     types: [closed, labeled]
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   backport:
     name: Backport PR
@@ -15,30 +11,125 @@ jobs:
     # Only run when PR is merged (not just closed)
     if: github.event.pull_request.merged == true
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Backport
-        uses: korthout/backport-action@v3
+      - name: Get target branches from labels
+        id: get-targets
+        uses: actions/github-script@v7
         with:
-          # Label pattern: "backport release/2.2" -> targets "release/2.2"
-          # Supports any branch name after "backport "
-          label_pattern: '^backport (?<target>[^ ]+)$'
+          script: |
+            const labels = context.payload.pull_request.labels;
+            const targets = labels
+              .map(label => label.name)
+              .filter(name => name.startsWith('backport '))
+              .map(name => name.replace('backport ', ''));
 
-          # Add label to created backport PR for tracking (includes target branch)
-          add_labels: backported ${target_branch}
+            if (targets.length === 0) {
+              console.log('No backport labels found');
+              return;
+            }
 
-          # For squash-merged PRs, cherry-pick the squashed commit
-          # For merge commits, cherry-pick the merge commit
-          merge_commits: 'skip'
+            console.log(`Found backport targets: ${targets.join(', ')}`);
+            core.setOutput('targets', JSON.stringify(targets));
+            core.setOutput('has_targets', 'true');
 
-          # Title format for backport PRs
-          pull_title: '[Backport ${target_branch}] ${pull_title}'
+      # Use BOT_TOKEN to allow triggering other workflows (e.g., CodeQL)
+      # GITHUB_TOKEN cannot trigger other workflows by design
+      - name: Checkout
+        if: steps.get-targets.outputs.has_targets == 'true'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.BOT_TOKEN }}
 
-          # Body format for backport PRs
-          pull_description: |
-            Backport of #${pull_number} to `${target_branch}`.
+      - name: Configure Git
+        if: steps.get-targets.outputs.has_targets == 'true'
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
 
-            ---
+      - name: Backport to target branches
+        if: steps.get-targets.outputs.has_targets == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          MERGE_COMMIT: ${{ github.event.pull_request.merge_commit_sha }}
+          TARGETS: ${{ steps.get-targets.outputs.targets }}
+        run: |
+          set -e
 
-            ${pull_body}
+          for target in $(echo "$TARGETS" | jq -r '.[]'); do
+            echo "::group::Backporting to $target"
+
+            branch_name="backport-${PR_NUMBER}-to-${target//\//-}"
+
+            # Check if target branch exists
+            if ! git ls-remote --exit-code --heads origin "$target" > /dev/null 2>&1; then
+              echo "::error::Target branch '$target' does not exist"
+              gh pr comment "$PR_NUMBER" --body "❌ Backport to \`$target\` failed: branch does not exist."
+              continue
+            fi
+
+            # Create backport branch from target
+            git fetch origin "$target"
+            git checkout -b "$branch_name" "origin/$target"
+
+            # Cherry-pick the merge commit
+            if git cherry-pick -x "$MERGE_COMMIT"; then
+              # Push the branch
+              git push origin "$branch_name"
+
+              # Create the PR body
+              pr_body=$(cat <<PRBODY
+          Backport of #${PR_NUMBER} to \`$target\`.
+
+          ---
+
+          $PR_BODY
+          PRBODY
+              )
+
+              # Create the PR
+              pr_url=$(gh pr create \
+                --base "$target" \
+                --head "$branch_name" \
+                --title "[Backport $target] $PR_TITLE" \
+                --body "$pr_body")
+
+              echo "Created backport PR: $pr_url"
+
+              # Add backported label to the new PR
+              gh pr edit "$pr_url" --add-label "backported $target"
+
+              # Comment on original PR
+              gh pr comment "$PR_NUMBER" --body "Backport to \`$target\` created: $pr_url"
+            else
+              # Cherry-pick failed - likely conflicts
+              git cherry-pick --abort || true
+
+              echo "::error::Cherry-pick failed for $target (likely conflicts)"
+
+              # Create failure comment with manual instructions
+              failure_msg=$(cat <<FAILMSG
+          Backport to \`$target\` failed due to cherry-pick conflicts. Please backport manually:
+
+          \`\`\`bash
+          git fetch origin $target
+          git checkout -b $branch_name origin/$target
+          git cherry-pick -x $MERGE_COMMIT
+          # Resolve conflicts, then:
+          git push origin $branch_name
+          gh pr create --base $target --head $branch_name
+          \`\`\`
+          FAILMSG
+              )
+
+              gh pr comment "$PR_NUMBER" --body "$failure_msg"
+            fi
+
+            # Reset for next iteration
+            git checkout main || git checkout master
+            git branch -D "$branch_name" 2>/dev/null || true
+
+            echo "::endgroup::"
+          done
