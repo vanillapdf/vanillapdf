@@ -72,7 +72,7 @@ jobs:
     needs: build-nuget
     steps:
       - name: Download NuGet packages
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ./nupkgs
       - name: Push to GitHub Packages
@@ -95,7 +95,7 @@ jobs:
     environment: production
     steps:
       - name: Download NuGet packages
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ./nupkgs
       - name: Push to NuGet.org
