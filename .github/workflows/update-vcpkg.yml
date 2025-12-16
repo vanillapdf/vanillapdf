@@ -25,8 +25,8 @@ on:
         type: boolean
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read  # checkout only; bot token will do writes
+  pull-requests: read
 
 jobs:
   update-vcpkg:
@@ -44,13 +44,19 @@ jobs:
           git config --global user.name "vanillapdf-bot"
           git config --global user.email "info@vanillapdf.com"
 
+      - name: Set authenticated origin for push
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/${REPO}.git"
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.14'
 
       - name: Run vcpkg update script
-        id: update
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
@@ -65,21 +71,12 @@ jobs:
             FLAGS="$FLAGS --no-pr"
           fi
 
-          python scripts/update_vcpkg.py $FLAGS 2>&1 | tee update_output.txt
-
-          # Check if update was performed
-          if grep -q "Successfully updated vcpkg" update_output.txt; then
-            echo "updated=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "updated=false" >> "$GITHUB_OUTPUT"
-          fi
+          python scripts/update_vcpkg.py $FLAGS
 
       - name: Summary
         run: |
           if [[ "${{ inputs.dry-run }}" == "true" ]]; then
             echo "ℹ️ Dry run completed - no changes made"
-          elif [[ "${{ steps.update.outputs.updated }}" == "true" ]]; then
-            echo "✅ vcpkg update PR created successfully"
           else
-            echo "ℹ️ No vcpkg update needed - already on latest version"
+            echo "✅ vcpkg update workflow completed successfully"
           fi
