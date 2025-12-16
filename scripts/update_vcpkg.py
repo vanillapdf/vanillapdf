@@ -128,11 +128,11 @@ class VcpkgUpdater:
         print(f"Successfully updated vcpkg.json.in baseline to {commit_hash}")
 
     def create_update_branch(self, version: str) -> str:
-        """Create a new branch for the vcpkg update."""
+        """Create or reset branch for the vcpkg update (idempotent)."""
         branch_name = f"automated/update-vcpkg-{version}"
         print(f"Creating branch: {branch_name}")
 
-        self.run_command(['git', 'checkout', '-b', branch_name])
+        self.run_command(['git', 'checkout', '-B', branch_name])
         return branch_name
 
     def commit_changes(self, current_version: str, new_version: str) -> None:
