@@ -8,10 +8,20 @@ on:
   # Allow manual trigger
   workflow_dispatch:
     inputs:
+      dry-run:
+        description: 'Show what would be done without making changes'
+        required: false
+        default: true
+        type: boolean
       force:
         description: 'Force update even if already on latest version'
         required: false
-        default: 'false'
+        default: false
+        type: boolean
+      no-pr:
+        description: 'Skip pull request creation'
+        required: false
+        default: false
         type: boolean
 
 permissions:
@@ -37,19 +47,25 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.14'
 
       - name: Run vcpkg update script
         id: update
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          FORCE_FLAG=""
+          FLAGS=""
+          if [[ "${{ inputs.dry-run }}" == "true" ]]; then
+            FLAGS="$FLAGS --dry-run"
+          fi
           if [[ "${{ inputs.force }}" == "true" ]]; then
-            FORCE_FLAG="--force"
+            FLAGS="$FLAGS --force"
+          fi
+          if [[ "${{ inputs.no-pr }}" == "true" ]]; then
+            FLAGS="$FLAGS --no-pr"
           fi
 
-          python scripts/update_vcpkg.py $FORCE_FLAG 2>&1 | tee update_output.txt
+          python scripts/update_vcpkg.py $FLAGS 2>&1 | tee update_output.txt
 
           # Check if update was performed
           if grep -q "Successfully updated vcpkg" update_output.txt; then
@@ -60,7 +76,9 @@ jobs:
 
       - name: Summary
         run: |
-          if [[ "${{ steps.update.outputs.updated }}" == "true" ]]; then
+          if [[ "${{ inputs.dry-run }}" == "true" ]]; then
+            echo "ℹ️ Dry run completed - no changes made"
+          elif [[ "${{ steps.update.outputs.updated }}" == "true" ]]; then
             echo "✅ vcpkg update PR created successfully"
           else
             echo "ℹ️ No vcpkg update needed - already on latest version"
