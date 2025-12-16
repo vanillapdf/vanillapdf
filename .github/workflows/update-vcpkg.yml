@@ -1,0 +1,85 @@
+name: Update vcpkg
+
+on:
+  # Run weekly on Monday at 6:00 UTC
+  schedule:
+    - cron: '0 6 * * 1'
+
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Show what would be done without making changes'
+        required: false
+        default: true
+        type: boolean
+      force:
+        description: 'Force update even if already on latest version'
+        required: false
+        default: false
+        type: boolean
+      no-pr:
+        description: 'Skip pull request creation'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-vcpkg:
+    name: Check and update vcpkg
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Run vcpkg update script
+        id: update
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          FLAGS=""
+          if [[ "${{ inputs.dry-run }}" == "true" ]]; then
+            FLAGS="$FLAGS --dry-run"
+          fi
+          if [[ "${{ inputs.force }}" == "true" ]]; then
+            FLAGS="$FLAGS --force"
+          fi
+          if [[ "${{ inputs.no-pr }}" == "true" ]]; then
+            FLAGS="$FLAGS --no-pr"
+          fi
+
+          python scripts/update_vcpkg.py $FLAGS 2>&1 | tee update_output.txt
+
+          # Check if update was performed
+          if grep -q "Successfully updated vcpkg" update_output.txt; then
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "updated=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Summary
+        run: |
+          if [[ "${{ inputs.dry-run }}" == "true" ]]; then
+            echo "ℹ️ Dry run completed - no changes made"
+          elif [[ "${{ steps.update.outputs.updated }}" == "true" ]]; then
+            echo "✅ vcpkg update PR created successfully"
+          else
+            echo "ℹ️ No vcpkg update needed - already on latest version"
+          fi
