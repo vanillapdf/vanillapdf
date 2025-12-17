@@ -83,7 +83,7 @@ post_success_comment() {
     gh pr comment "$PR_NUMBER" --body "✅ Backport to \`$target\` created: $pr_url"
 }
 
-# Post failure comment with manual instructions
+# Post failure comment with manual instructions (cherry-pick conflicts)
 post_failure_comment() {
     local target="$1"
     local branch_name="$2"
@@ -97,6 +97,26 @@ git fetch origin $target
 git checkout -b $branch_name origin/$target
 git cherry-pick -x $MERGE_COMMIT
 # Resolve conflicts, then:
+git push origin $branch_name
+gh pr create --base $target --head $branch_name
+\`\`\`"
+
+    gh pr comment "$PR_NUMBER" --body "$failure_msg"
+}
+
+# Post push/PR creation failure comment
+post_push_failure_comment() {
+    local target="$1"
+    local branch_name="$2"
+
+    local failure_msg="❌ Backport to \`$target\` failed during push or PR creation.
+
+Please check the workflow logs and try manually:
+
+\`\`\`bash
+git fetch origin $target
+git checkout -b $branch_name origin/$target
+git cherry-pick -x $MERGE_COMMIT
 git push origin $branch_name
 gh pr create --base $target --head $branch_name
 \`\`\`"
@@ -128,12 +148,15 @@ process_target() {
 
     # Create backport branch and cherry-pick
     if create_backport_branch "$target" "$branch_name"; then
-        # Cherry-pick succeeded, create PR
+        # Cherry-pick succeeded, try to create PR
         local pr_url
-        pr_url=$(create_backport_pr "$target" "$branch_name")
-
-        echo "Created backport PR: $pr_url"
-        post_success_comment "$target" "$pr_url"
+        if pr_url=$(create_backport_pr "$target" "$branch_name"); then
+            echo "Created backport PR: $pr_url"
+            post_success_comment "$target" "$pr_url"
+        else
+            echo "::error::Push or PR creation failed for $target"
+            post_push_failure_comment "$target" "$branch_name"
+        fi
     else
         # Cherry-pick failed
         git cherry-pick --abort 2>/dev/null || true

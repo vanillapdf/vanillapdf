@@ -42,20 +42,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.BOT_TOKEN }}
 
       - name: Configure Git
         if: steps.get-targets.outputs.has_targets == 'true'
         run: |
           git config --global user.name "vanillapdf-bot"
           git config --global user.email "info@vanillapdf.com"
-
-      - name: Set authenticated origin for push
-        if: steps.get-targets.outputs.has_targets == 'true'
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          REPO: ${{ github.repository }}
-        run: |
-          git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/${REPO}.git"
 
       - name: Run backport script
         if: steps.get-targets.outputs.has_targets == 'true'
@@ -110,7 +103,7 @@ jobs:
       - name: Update labels on original PR
         if: steps.extract-info.outputs.has_info == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
           ORIGINAL_PR: ${{ steps.extract-info.outputs.original_pr }}
           TARGET_BRANCH: ${{ steps.extract-info.outputs.target_branch }}
         run: |
