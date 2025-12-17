@@ -66,7 +66,7 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
           MERGE_COMMIT: ${{ github.event.pull_request.merge_commit_sha }}
           TARGETS: ${{ steps.get-targets.outputs.targets }}
-        run: ./scripts/backport.sh
+        run: ./.github/scripts/backport.sh
 
   # Job 2: Update labels when backport PR is merged
   update-labels:
