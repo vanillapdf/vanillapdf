@@ -5,40 +5,123 @@ on:
     types: [closed, labeled]
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
 
 jobs:
-  backport:
-    name: Backport PR
+  # Job 1: Create backport PRs when original PR is merged with backport labels
+  create-backport:
+    name: Create Backport PR
     runs-on: ubuntu-latest
-    # Only run when PR is merged (not just closed)
-    if: github.event.pull_request.merged == true
+    if: |
+      github.event.pull_request.merged == true &&
+      !startsWith(github.event.pull_request.title, '[Backport')
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Backport
-        uses: korthout/backport-action@v3
+      - name: Get target branches from labels
+        id: get-targets
+        uses: actions/github-script@v7
         with:
-          # Label pattern: "backport release/2.2" -> targets "release/2.2"
-          # Supports any branch name after "backport "
-          label_pattern: '^backport (?<target>[^ ]+)$'
+          script: |
+            const labels = context.payload.pull_request.labels;
+            const targets = labels
+              .map(label => label.name)
+              .filter(name => name.startsWith('backport '))
+              .map(name => name.replace('backport ', ''));
 
-          # Add label to created backport PR for tracking (includes target branch)
-          add_labels: backported ${target_branch}
+            if (targets.length === 0) {
+              console.log('No backport labels found');
+              return;
+            }
 
-          # For squash-merged PRs, cherry-pick the squashed commit
-          # For merge commits, cherry-pick the merge commit
-          merge_commits: 'skip'
+            console.log(`Found backport targets: ${targets.join(', ')}`);
+            core.setOutput('targets', JSON.stringify(targets));
+            core.setOutput('has_targets', 'true');
 
-          # Title format for backport PRs
-          pull_title: '[Backport ${target_branch}] ${pull_title}'
+      - name: Checkout
+        if: steps.get-targets.outputs.has_targets == 'true'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-          # Body format for backport PRs
-          pull_description: |
-            Backport of #${pull_number} to `${target_branch}`.
+      - name: Configure Git
+        if: steps.get-targets.outputs.has_targets == 'true'
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
 
-            ---
+      - name: Set authenticated origin for push
+        if: steps.get-targets.outputs.has_targets == 'true'
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/${REPO}.git"
 
-            ${pull_body}
+      - name: Run backport script
+        if: steps.get-targets.outputs.has_targets == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          MERGE_COMMIT: ${{ github.event.pull_request.merge_commit_sha }}
+          TARGETS: ${{ steps.get-targets.outputs.targets }}
+        run: ./.github/scripts/backport.sh
+
+  # Job 2: Update labels when backport PR is merged
+  update-labels:
+    name: Update Backport Labels
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.title, '[Backport')
+    steps:
+      - name: Extract original PR and target branch
+        id: extract-info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            const body = context.payload.pull_request.body || '';
+
+            // Extract target branch from title: "[Backport release/2.2] Original title"
+            const titleMatch = title.match(/^\[Backport ([^\]]+)\]/);
+            if (!titleMatch) {
+              console.log('Could not parse backport target from title');
+              return;
+            }
+            const targetBranch = titleMatch[1];
+
+            // Extract original PR number from body: "Backport of #123 to ..."
+            const bodyMatch = body.match(/Backport of #(\d+)/);
+            if (!bodyMatch) {
+              console.log('Could not find original PR number in body');
+              return;
+            }
+            const originalPR = bodyMatch[1];
+
+            console.log(`Target branch: ${targetBranch}`);
+            console.log(`Original PR: #${originalPR}`);
+
+            core.setOutput('target_branch', targetBranch);
+            core.setOutput('original_pr', originalPR);
+            core.setOutput('has_info', 'true');
+
+      - name: Update labels on original PR
+        if: steps.extract-info.outputs.has_info == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ORIGINAL_PR: ${{ steps.extract-info.outputs.original_pr }}
+          TARGET_BRANCH: ${{ steps.extract-info.outputs.target_branch }}
+        run: |
+          echo "Updating labels on PR #$ORIGINAL_PR for branch $TARGET_BRANCH"
+
+          # Remove 'backport <branch>' label and add 'backported <branch>' label
+          gh pr edit "$ORIGINAL_PR" \
+            --remove-label "backport $TARGET_BRANCH" \
+            --add-label "backported $TARGET_BRANCH" || true
+
+          # Post comment on original PR
+          BACKPORT_PR="${{ github.event.pull_request.number }}"
+          gh pr comment "$ORIGINAL_PR" \
+            --body "🎉 Backport to \`$TARGET_BRANCH\` has been merged via #$BACKPORT_PR"
