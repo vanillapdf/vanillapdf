@@ -5,11 +5,13 @@ on:
     types: [closed, labeled]
 
 jobs:
-  backport:
-    name: Backport PR
+  # Job 1: Create backport PRs when original PR is merged with backport labels
+  create-backport:
+    name: Create Backport PR
     runs-on: ubuntu-latest
-    # Only run when PR is merged (not just closed)
-    if: github.event.pull_request.merged == true
+    if: |
+      github.event.pull_request.merged == true &&
+      !startsWith(github.event.pull_request.title, '[Backport')
     steps:
       - name: Get target branches from labels
         id: get-targets
@@ -31,8 +33,6 @@ jobs:
             core.setOutput('targets', JSON.stringify(targets));
             core.setOutput('has_targets', 'true');
 
-      # Use BOT_TOKEN to allow triggering other workflows (e.g., CodeQL)
-      # GITHUB_TOKEN cannot trigger other workflows by design
       - name: Checkout
         if: steps.get-targets.outputs.has_targets == 'true'
         uses: actions/checkout@v4
@@ -46,7 +46,15 @@ jobs:
           git config --global user.name "vanillapdf-bot"
           git config --global user.email "info@vanillapdf.com"
 
-      - name: Backport to target branches
+      - name: Set authenticated origin for push
+        if: steps.get-targets.outputs.has_targets == 'true'
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/${REPO}.git"
+
+      - name: Run backport script
         if: steps.get-targets.outputs.has_targets == 'true'
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
@@ -55,81 +63,62 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
           MERGE_COMMIT: ${{ github.event.pull_request.merge_commit_sha }}
           TARGETS: ${{ steps.get-targets.outputs.targets }}
+        run: ./scripts/backport.sh
+
+  # Job 2: Update labels when backport PR is merged
+  update-labels:
+    name: Update Backport Labels
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.title, '[Backport')
+    steps:
+      - name: Extract original PR and target branch
+        id: extract-info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            const body = context.payload.pull_request.body || '';
+
+            // Extract target branch from title: "[Backport release/2.2] Original title"
+            const titleMatch = title.match(/^\[Backport ([^\]]+)\]/);
+            if (!titleMatch) {
+              console.log('Could not parse backport target from title');
+              return;
+            }
+            const targetBranch = titleMatch[1];
+
+            // Extract original PR number from body: "Backport of #123 to ..."
+            const bodyMatch = body.match(/Backport of #(\d+)/);
+            if (!bodyMatch) {
+              console.log('Could not find original PR number in body');
+              return;
+            }
+            const originalPR = bodyMatch[1];
+
+            console.log(`Target branch: ${targetBranch}`);
+            console.log(`Original PR: #${originalPR}`);
+
+            core.setOutput('target_branch', targetBranch);
+            core.setOutput('original_pr', originalPR);
+            core.setOutput('has_info', 'true');
+
+      - name: Update labels on original PR
+        if: steps.extract-info.outputs.has_info == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+          ORIGINAL_PR: ${{ steps.extract-info.outputs.original_pr }}
+          TARGET_BRANCH: ${{ steps.extract-info.outputs.target_branch }}
         run: |
-          set -e
+          echo "Updating labels on PR #$ORIGINAL_PR for branch $TARGET_BRANCH"
 
-          for target in $(echo "$TARGETS" | jq -r '.[]'); do
-            echo "::group::Backporting to $target"
+          # Remove 'backport <branch>' label and add 'backported <branch>' label
+          gh pr edit "$ORIGINAL_PR" \
+            --remove-label "backport $TARGET_BRANCH" \
+            --add-label "backported $TARGET_BRANCH" || true
 
-            branch_name="backport-${PR_NUMBER}-to-${target//\//-}"
-
-            # Check if target branch exists
-            if ! git ls-remote --exit-code --heads origin "$target" > /dev/null 2>&1; then
-              echo "::error::Target branch '$target' does not exist"
-              gh pr comment "$PR_NUMBER" --body "❌ Backport to \`$target\` failed: branch does not exist."
-              continue
-            fi
-
-            # Create backport branch from target
-            git fetch origin "$target"
-            git checkout -b "$branch_name" "origin/$target"
-
-            # Cherry-pick the merge commit
-            if git cherry-pick -x "$MERGE_COMMIT"; then
-              # Push the branch
-              git push origin "$branch_name"
-
-              # Create the PR body
-              pr_body=$(cat <<PRBODY
-          Backport of #${PR_NUMBER} to \`$target\`.
-
-          ---
-
-          $PR_BODY
-          PRBODY
-              )
-
-              # Create the PR
-              pr_url=$(gh pr create \
-                --base "$target" \
-                --head "$branch_name" \
-                --title "[Backport $target] $PR_TITLE" \
-                --body "$pr_body")
-
-              echo "Created backport PR: $pr_url"
-
-              # Add backported label to the new PR
-              gh pr edit "$pr_url" --add-label "backported $target"
-
-              # Comment on original PR
-              gh pr comment "$PR_NUMBER" --body "Backport to \`$target\` created: $pr_url"
-            else
-              # Cherry-pick failed - likely conflicts
-              git cherry-pick --abort || true
-
-              echo "::error::Cherry-pick failed for $target (likely conflicts)"
-
-              # Create failure comment with manual instructions
-              failure_msg=$(cat <<FAILMSG
-          Backport to \`$target\` failed due to cherry-pick conflicts. Please backport manually:
-
-          \`\`\`bash
-          git fetch origin $target
-          git checkout -b $branch_name origin/$target
-          git cherry-pick -x $MERGE_COMMIT
-          # Resolve conflicts, then:
-          git push origin $branch_name
-          gh pr create --base $target --head $branch_name
-          \`\`\`
-          FAILMSG
-              )
-
-              gh pr comment "$PR_NUMBER" --body "$failure_msg"
-            fi
-
-            # Reset for next iteration
-            git checkout main || git checkout master
-            git branch -D "$branch_name" 2>/dev/null || true
-
-            echo "::endgroup::"
-          done
+          # Post comment on original PR
+          BACKPORT_PR="${{ github.event.pull_request.number }}"
+          gh pr comment "$ORIGINAL_PR" \
+            --body "🎉 Backport to \`$TARGET_BRANCH\` has been merged via #$BACKPORT_PR"

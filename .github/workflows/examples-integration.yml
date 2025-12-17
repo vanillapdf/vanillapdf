@@ -13,7 +13,6 @@ on:
     paths:
       - 'CMakeLists.txt'
       - 'cmake/**'
-      - 'vcpkg.json'
       - 'vcpkg.json.in'
       - 'ports/**'
       - 'examples/**'
@@ -24,7 +23,6 @@ on:
     paths:
       - 'CMakeLists.txt'
       - 'cmake/**'
-      - 'vcpkg.json'
       - 'vcpkg.json.in'
       - 'ports/**'
       - 'examples/**'

@@ -15,7 +15,7 @@ on:
       - 'src/**'
       - 'include/**'
       - 'cmake/**'
-      - 'vcpkg.json'
+      - 'vcpkg.json.in'
       - 'scripts/**'
       - 'CMakeLists.txt'
       - 'CMakePresets.json'
@@ -29,7 +29,7 @@ on:
       - 'src/**'
       - 'include/**'
       - 'cmake/**'
-      - 'vcpkg.json'
+      - 'vcpkg.json.in'
       - 'scripts/**'
       - 'CMakeLists.txt'
       - 'CMakePresets.json'
@@ -96,14 +96,14 @@ jobs:
           submodules: recursive
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/buildtrees
             external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
@@ -149,14 +149,14 @@ jobs:
           submodules: recursive
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/buildtrees
             external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
@@ -200,14 +200,14 @@ jobs:
           submodules: recursive
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/buildtrees
             external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-

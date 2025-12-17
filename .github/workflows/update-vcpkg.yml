@@ -1,0 +1,82 @@
+name: Update vcpkg
+
+on:
+  # Run weekly on Monday at 6:00 UTC
+  schedule:
+    - cron: '0 6 * * 1'
+
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Show what would be done without making changes'
+        required: false
+        default: true
+        type: boolean
+      force:
+        description: 'Force update even if already on latest version'
+        required: false
+        default: false
+        type: boolean
+      no-pr:
+        description: 'Skip pull request creation'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read  # checkout only; bot token will do writes
+  pull-requests: read
+
+jobs:
+  update-vcpkg:
+    name: Check and update vcpkg
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Set authenticated origin for push
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/${REPO}.git"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Run vcpkg update script
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          FLAGS=""
+          if [[ "${{ inputs.dry-run }}" == "true" ]]; then
+            FLAGS="$FLAGS --dry-run"
+          fi
+          if [[ "${{ inputs.force }}" == "true" ]]; then
+            FLAGS="$FLAGS --force"
+          fi
+          if [[ "${{ inputs.no-pr }}" == "true" ]]; then
+            FLAGS="$FLAGS --no-pr"
+          fi
+
+          python scripts/update_vcpkg.py $FLAGS
+
+      - name: Summary
+        run: |
+          if [[ "${{ inputs.dry-run }}" == "true" ]]; then
+            echo "ℹ️ Dry run completed - no changes made"
+          else
+            echo "✅ vcpkg update workflow completed successfully"
+          fi

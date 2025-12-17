@@ -6,6 +6,10 @@ on:
       tag:
         required: true
         type: string
+      dry_run:
+        required: false
+        type: boolean
+        default: false
 
   workflow_dispatch:
     inputs:
@@ -13,6 +17,11 @@ on:
         description: "Tag name (e.g. v2.2.0)"
         required: true
         type: string
+      dry_run:
+        description: "Dry run - prepare changes but don't commit or create PR"
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -25,10 +34,11 @@ jobs:
       branch-name: update-vanillapdf-${{ inputs.tag }}
       pr-url: ${{ steps.pr-info.outputs.pr-url }}
     steps:
-      - name: Checkout vanillapdf repo
+      - name: Checkout vanillapdf repo at tag
         uses: actions/checkout@v6
         with:
           path: vanillapdf
+          ref: ${{ inputs.tag }}
 
       - name: Setup Git & GitHub CLI
         run: |
@@ -37,16 +47,32 @@ jobs:
 
       - name: Clone vcpkg fork
         run: |
-          git clone https://github.com/vanillapdf-bot/vcpkg.git
+          git clone https://github.com/vanillapdf/vcpkg.git
           cd vcpkg
           git remote add upstream https://github.com/microsoft/vcpkg.git
           git fetch upstream
           git checkout -b update-vanillapdf-${{ inputs.tag }} upstream/master
 
+      - name: Calculate SHA512 for source archive
+        id: sha512
+        run: |
+          VERSION="${{ inputs.tag }}"
+          ARCHIVE_URL="https://github.com/vanillapdf/vanillapdf/archive/refs/tags/${VERSION}.tar.gz"
+
+          echo "Downloading archive from: ${ARCHIVE_URL}"
+          curl -sL "${ARCHIVE_URL}" -o source.tar.gz
+
+          SHA512=$(sha512sum source.tar.gz | cut -d' ' -f1)
+          echo "SHA512: ${SHA512}"
+          echo "sha512=${SHA512}" >> "$GITHUB_OUTPUT"
+
+          rm source.tar.gz
+
       - name: Sync port files and update version
         run: |
           VERSION="${{ inputs.tag }}"
           VERSION_NO_V="${VERSION#v}"
+          SHA512="${{ steps.sha512.outputs.sha512 }}"
 
           # Copy our port files to vcpkg fork (syncs portfile.cmake, usage, vcpkg.json)
           cp -r vanillapdf/ports/vanillapdf/* vcpkg/ports/vanillapdf/
@@ -58,15 +84,53 @@ jobs:
           # Remove port-version field if present (required for new versions)
           sed -i '/"port-version":/d' ports/vanillapdf/vcpkg.json
 
+          # Update SHA512 in portfile.cmake
+          sed -i "s/SHA512 [a-f0-9]\{128\}/SHA512 ${SHA512}/" ports/vanillapdf/portfile.cmake
+
           # Bootstrap vcpkg if needed
           if [[ ! -f "./vcpkg" ]]; then
             ./bootstrap-vcpkg.sh
           fi
 
+          # Format the manifest to comply with vcpkg standards
+          ./vcpkg format-manifest ports/vanillapdf/vcpkg.json
+
           # Add the new version to the database
           ./vcpkg x-add-version vanillapdf --overwrite-version
 
+      - name: Show prepared changes (dry run)
+        if: ${{ inputs.dry_run }}
+        run: |
+          cd vcpkg
+          echo "=== Dry run mode - showing prepared changes ==="
+          echo ""
+          echo "=== Port files (ports/vanillapdf/) ==="
+          cat ports/vanillapdf/vcpkg.json
+          echo ""
+          echo "=== Git status ==="
+          git status
+          echo ""
+          echo "=== Git diff ==="
+          git diff
+          echo ""
+          echo "=== Staged changes ==="
+          git add ports/vanillapdf/ versions/v-/vanillapdf.json versions/baseline.json
+          git diff --cached --stat
+          echo ""
+          echo "=== Would create branch: update-vanillapdf-${{ inputs.tag }} ==="
+          echo "=== Would push to: vanillapdf/vcpkg ==="
+          echo "=== Dry run complete - no changes committed ==="
+
+      - name: Set authenticated origin for push
+        if: ${{ !inputs.dry_run }}
+        run: |
+          cd vcpkg
+          git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/vanillapdf/vcpkg.git"
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+
       - name: Commit and push changes to fork
+        if: ${{ !inputs.dry_run }}
         run: |
           cd vcpkg
           git add ports/vanillapdf/ versions/v-/vanillapdf.json versions/baseline.json
@@ -76,14 +140,15 @@ jobs:
       - name: Generate PR info
         id: pr-info
         run: |
-          echo "pr-url=https://github.com/vanillapdf-bot/vcpkg/compare/master...update-vanillapdf-${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
-          echo "Changes prepared and pushed to vanillapdf-bot/vcpkg"
-          echo "Review the changes at: https://github.com/vanillapdf-bot/vcpkg/compare/master...update-vanillapdf-${{ inputs.tag }}"
+          echo "pr-url=https://github.com/vanillapdf/vcpkg/compare/master...update-vanillapdf-${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          echo "Changes prepared and pushed to vanillapdf/vcpkg"
+          echo "Review the changes at: https://github.com/vanillapdf/vcpkg/compare/master...update-vanillapdf-${{ inputs.tag }}"
 
   create-official-pr:
     name: Create PR to official vcpkg repo
     runs-on: ubuntu-latest
     needs: prepare-vcpkg-changes
+    if: ${{ !inputs.dry_run }}
     environment: production
     steps:
       - name: Setup Git & GitHub CLI
@@ -93,10 +158,12 @@ jobs:
 
       - name: Clone vcpkg fork
         run: |
-          git clone https://github.com/vanillapdf-bot/vcpkg.git
+          gh repo clone vanillapdf/vcpkg
           cd vcpkg
           git fetch origin
           git checkout ${{ needs.prepare-vcpkg-changes.outputs.branch-name }}
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
 
       - name: Create pull request to official repo
         run: |
@@ -122,6 +189,6 @@ jobs:
             --title "[vanillapdf] update to ${{ inputs.tag }}" \
             --body "$BODY" \
             --base master \
-            --head vanillapdf-bot:${{ needs.prepare-vcpkg-changes.outputs.branch-name }}
+            --head vanillapdf:${{ needs.prepare-vcpkg-changes.outputs.branch-name }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_VCPKG }}
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}

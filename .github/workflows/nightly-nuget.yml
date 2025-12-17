@@ -11,7 +11,7 @@ on:
     branches: [ "main", "release/*" ]
     paths:
       - '.github/workflows/nightly-nuget.yml'
-      - 'vcpkg.json'
+      - 'vcpkg.json.in'
 
   # Run workflow when there is a pull request towards main branch
   # only there was a change in the workflow file
@@ -19,7 +19,7 @@ on:
     branches: [ "main", "release/*" ]
     paths:
       - '.github/workflows/nightly-nuget.yml'
-      - 'vcpkg.json'
+      - 'vcpkg.json.in'
 
   schedule:
     - cron: '0 3 * * *'  # Every day at 03:00 UTC
@@ -64,7 +64,7 @@ jobs:
     needs: build-nuget
     steps:
       - name: Download all NuGet artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ./nupkgs
 
