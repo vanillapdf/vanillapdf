@@ -104,6 +104,7 @@ jobs:
         if: steps.extract-info.outputs.has_info == 'true'
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GH_REPO: ${{ github.repository }}
           ORIGINAL_PR: ${{ steps.extract-info.outputs.original_pr }}
           TARGET_BRANCH: ${{ steps.extract-info.outputs.target_branch }}
         run: |
