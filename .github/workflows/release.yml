@@ -128,3 +128,51 @@ jobs:
     with:
       tag: ${{ needs.prepare.outputs.tag }}
     secrets: inherit
+
+  update-port:
+    name: Update Local Port
+    runs-on: ubuntu-latest
+    needs: [github-release, prepare]
+    # Only update port for official releases, not pre-releases
+    if: needs.prepare.outputs.prerelease == 'false'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run update_port.py
+        run: python scripts/update_port.py
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          VERSION="${{ needs.prepare.outputs.tag }}"
+          VERSION="${VERSION#v}"
+          BRANCH="release/port-${VERSION}"
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "chore: Update vcpkg port to version ${VERSION}" \
+            --body "## Summary
+          Update the local vcpkg overlay port to version ${VERSION}.
+
+          - Updated \`ports/vanillapdf/vcpkg.json\` version
+          - Updated \`ports/vanillapdf/portfile.cmake\` SHA512 hash
+
+          This PR was automatically created by the release workflow.
+
+          🤖 Generated with [Claude Code](https://claude.com/claude-code)"
