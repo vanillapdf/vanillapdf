@@ -117,4 +117,4 @@ jobs:
             --base master \
             --head vanillapdf-bot:${{ needs.prepare-vcpkg-changes.outputs.branch-name }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_VCPKG }}
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}

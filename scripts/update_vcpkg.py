@@ -28,7 +28,7 @@ class VcpkgUpdater:
     def __init__(self, repo_root: Path, vcpkg_root: Path = None):
         self.repo_root = repo_root
         self.vcpkg_root = vcpkg_root or repo_root / "external" / "vcpkg"
-        self.vcpkg_json_path = repo_root / "vcpkg.json"
+        self.vcpkg_json_path = repo_root / "vcpkg.json.in"
 
     def run_command(self, cmd: list, cwd: Path = None, check: bool = True) -> subprocess.CompletedProcess:
         """Run a command and return the result."""
@@ -104,13 +104,13 @@ class VcpkgUpdater:
         self.run_command(['git', 'add', 'external/vcpkg'])
 
     def update_vcpkg_json_baseline(self, commit_hash: str) -> None:
-        """Update the builtin-baseline in vcpkg.json."""
-        print(f"Updating vcpkg.json baseline to {commit_hash}...")
+        """Update the builtin-baseline in vcpkg.json.in."""
+        print(f"Updating vcpkg.json.in baseline to {commit_hash}...")
 
         if not self.vcpkg_json_path.exists():
-            raise FileNotFoundError(f"vcpkg.json not found at {self.vcpkg_json_path}")
+            raise FileNotFoundError(f"vcpkg.json.in not found at {self.vcpkg_json_path}")
 
-        # Read current vcpkg.json
+        # Read current vcpkg.json.in
         with open(self.vcpkg_json_path, 'r', encoding='utf-8') as f:
             vcpkg_config = json.load(f)
 
@@ -123,9 +123,9 @@ class VcpkgUpdater:
             f.write('\n')  # Add trailing newline
 
         # Stage the change
-        self.run_command(['git', 'add', 'vcpkg.json'])
+        self.run_command(['git', 'add', 'vcpkg.json.in'])
 
-        print(f"Successfully updated vcpkg.json baseline to {commit_hash}")
+        print(f"Successfully updated vcpkg.json.in baseline to {commit_hash}")
 
     def create_update_branch(self, version: str) -> str:
         """Create a new branch for the vcpkg update."""
@@ -140,7 +140,7 @@ class VcpkgUpdater:
         commit_message = f"""Update vcpkg to latest tag {new_version}
 
 - Updated vcpkg submodule from {current_version} to {new_version}
-- Updated builtin-baseline in vcpkg.json to match new commit hash
+- Updated builtin-baseline in vcpkg.json.in to match new commit hash
 - Manual update to ensure latest dependency versions
 
 🤖 Generated with update_vcpkg.py script"""
@@ -164,7 +164,7 @@ This is a manual update of the vcpkg dependency manager using the update_vcpkg.p
 ### Changes
 - **vcpkg version**: `{current_version}` → `{new_version}`
 - **Submodule commit**: Updated to `{commit_hash}`
-- **vcpkg.json baseline**: Updated to match new commit hash
+- **vcpkg.json.in baseline**: Updated to match new commit hash
 
 ### What's included
 - Latest dependency versions and security patches
@@ -228,8 +228,8 @@ def main():
         print(f"Error: vcpkg submodule not found at {repo_root}/external/vcpkg")
         sys.exit(1)
 
-    if not (repo_root / 'vcpkg.json').exists():
-        print(f"Error: vcpkg.json not found at {repo_root}/vcpkg.json")
+    if not (repo_root / 'vcpkg.json.in').exists():
+        print(f"Error: vcpkg.json.in not found at {repo_root}/vcpkg.json.in")
         sys.exit(1)
 
     try:
