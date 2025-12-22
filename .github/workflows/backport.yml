@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Get target branches from labels
         id: get-targets
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const labels = context.payload.pull_request.labels;
@@ -71,7 +71,7 @@ jobs:
     steps:
       - name: Extract original PR and target branch
         id: extract-info
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const title = context.payload.pull_request.title;
