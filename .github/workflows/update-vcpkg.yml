@@ -52,7 +52,7 @@ jobs:
           git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/${REPO}.git"
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.14'
 
