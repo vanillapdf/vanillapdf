@@ -54,6 +54,12 @@ option(VANILLAPDF_USE_STATIC_CRT "Use static MSVC runtime (/MT) instead of dynam
 # Option if the build should be static/dynamic link
 option(BUILD_SHARED_LIBS "Build vanillapdf as a shared library" ON)
 
+# Allow overriding version components from the command line
+# These must be set before including vcpkg_manifest.cmake so version.cmake picks them up
+set(VANILLAPDF_VERSION_PATCH_OVERRIDE "${VANILLAPDF_VERSION_PATCH_OVERRIDE}" CACHE STRING "Override patch version (e.g., 999)")
+set(VANILLAPDF_VERSION_BUILD_OVERRIDE "${VANILLAPDF_VERSION_BUILD_OVERRIDE}" CACHE STRING "Override build version (e.g., 20251228)")
+set(VANILLAPDF_VERSION_BUILD_SUFFIX "${VANILLAPDF_VERSION_BUILD_SUFFIX}" CACHE STRING "Optional build suffix (e.g., -nightly.main)")
+
 # Note: This needs to be included before defining the main project
 # Generate vcpkg.json from template with version from cmake/version.cmake
 include(cmake/vcpkg_manifest.cmake)
@@ -73,14 +79,7 @@ project(vanillapdf)
 # set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # Version information is loaded early via cmake/vcpkg_manifest.cmake (before vcpkg_init)
-# to generate vcpkg.json with the correct version.
-
-# Allow overriding the build suffix from the command line (after vcpkg.json is generated)
-set(VANILLAPDF_VERSION_BUILD_SUFFIX "${VANILLAPDF_VERSION_BUILD_SUFFIX}" CACHE STRING "Optional build suffix")
-
-# Recompose full version string if suffix was overridden via cache
-set(VANILLAPDF_VERSION
-    "${VANILLAPDF_VERSION_MAJOR}.${VANILLAPDF_VERSION_MINOR}.${VANILLAPDF_VERSION_PATCH}${VANILLAPDF_VERSION_BUILD_SUFFIX}")
+# to generate vcpkg.json with the correct version. Version overrides are set before the include.
 
 # Enable packaging (DEB, Brew, etc.) when explicitly requested
 if (VANILLAPDF_ENABLE_PACKAGING)
