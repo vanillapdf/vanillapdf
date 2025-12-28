@@ -155,7 +155,7 @@ jobs:
       - name: Run update_port.py
         run: python scripts/update_port.py
 
-      - name: Create Pull Request
+      - name: Create Pull Request for Release Branch
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
@@ -163,9 +163,54 @@ jobs:
           VERSION="${VERSION#v}"
           BRANCH="release/port-${VERSION}"
 
+          # Determine base branch from version (e.g., 2.2.1 -> release/2.2)
+          MAJOR=$(echo "$VERSION" | cut -d. -f1)
+          MINOR=$(echo "$VERSION" | cut -d. -f2)
+          BASE_BRANCH="release/${MAJOR}.${MINOR}"
+
+          gh pr create \
+            --base "$BASE_BRANCH" \
+            --head "$BRANCH" \
+            --title "chore: Update vcpkg port to version ${VERSION}" \
+            --body "## Summary
+          Update the local vcpkg overlay port to version ${VERSION}.
+
+          - Updated \`ports/vanillapdf/vcpkg.json\` version
+          - Updated \`ports/vanillapdf/portfile.cmake\` SHA512 hash
+
+          This PR was automatically created by the release workflow.
+
+          🤖 Generated with [Claude Code](https://claude.com/claude-code)"
+
+      - name: Check if Latest Version and Update Main
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          VERSION="${{ needs.prepare.outputs.tag }}"
+          VERSION="${VERSION#v}"
+
+          # Get all release tags and find the latest version
+          LATEST=$(git tag -l 'v*.*.*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          LATEST="${LATEST#v}"
+
+          echo "Current version: ${VERSION}"
+          echo "Latest version: ${LATEST}"
+
+          if [ "$VERSION" != "$LATEST" ]; then
+            echo "Not the latest version, skipping main branch update"
+            exit 0
+          fi
+
+          echo "This is the latest version, creating PR to main"
+
+          # Create a new branch for the main PR
+          BRANCH_MAIN="release/port-${VERSION}-main"
+          git checkout -b "$BRANCH_MAIN"
+          git push -u origin "$BRANCH_MAIN"
+
           gh pr create \
             --base main \
-            --head "$BRANCH" \
+            --head "$BRANCH_MAIN" \
             --title "chore: Update vcpkg port to version ${VERSION}" \
             --body "## Summary
           Update the local vcpkg overlay port to version ${VERSION}.
