@@ -7,12 +7,28 @@ on:
         required: false
         type: string
         default: ""
+      patch_override:
+        required: false
+        type: string
+        default: ""
+      build_override:
+        required: false
+        type: string
+        default: ""
 
   # Allow triggering manually from the Actions tab
   workflow_dispatch:
     inputs:
       build_suffix:
-        description: "Optional build suffix for version"
+        description: "Optional build suffix for version (e.g., -nightly.main)"
+        required: false
+        default: ""
+      patch_override:
+        description: "Optional patch version override (e.g., 999 for nightly builds)"
+        required: false
+        default: ""
+      build_override:
+        description: "Optional build version override (e.g., 20251228 for nightly builds)"
         required: false
         default: ""
 
@@ -102,7 +118,18 @@ jobs:
         shell: bash
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}" -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_ENABLE_PACKAGING=ON
+        run: |
+          CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}"
+          if [ -n "${{ inputs.patch_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_PATCH_OVERRIDE=${{ inputs.patch_override }}"
+          fi
+          if [ -n "${{ inputs.build_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_OVERRIDE=${{ inputs.build_override }}"
+          fi
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
+          cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -169,7 +196,19 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}" -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_ENABLE_PACKAGING=ON
+        shell: bash
+        run: |
+          CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}"
+          if [ -n "${{ inputs.patch_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_PATCH_OVERRIDE=${{ inputs.patch_override }}"
+          fi
+          if [ -n "${{ inputs.build_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_OVERRIDE=${{ inputs.build_override }}"
+          fi
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
+          cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type }}
@@ -250,7 +289,18 @@ jobs:
         shell: bash
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}" -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_ENABLE_PACKAGING=ON
+        run: |
+          CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}"
+          if [ -n "${{ inputs.patch_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_PATCH_OVERRIDE=${{ inputs.patch_override }}"
+          fi
+          if [ -n "${{ inputs.build_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_OVERRIDE=${{ inputs.build_override }}"
+          fi
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
+          cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -296,7 +346,15 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Generate NuGet project files
-        run: cmake -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}" -P cmake/nuget.cmake
+        run: |
+          CMAKE_ARGS="-DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}"
+          if [ -n "${{ inputs.patch_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_PATCH_OVERRIDE=${{ inputs.patch_override }}"
+          fi
+          if [ -n "${{ inputs.build_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_OVERRIDE=${{ inputs.build_override }}"
+          fi
+          cmake $CMAKE_ARGS -P cmake/nuget.cmake
 
       - name: Download runtime packages
         uses: actions/download-artifact@v7
