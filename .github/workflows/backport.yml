@@ -113,7 +113,7 @@ jobs:
           # Remove 'backport <branch>' label and add 'backported <branch>' label
           gh pr edit "$ORIGINAL_PR" \
             --remove-label "backport $TARGET_BRANCH" \
-            --add-label "backported $TARGET_BRANCH" || true
+            --add-label "backported $TARGET_BRANCH"
 
           # Post comment on original PR
           BACKPORT_PR="${{ github.event.pull_request.number }}"
