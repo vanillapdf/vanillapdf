@@ -133,9 +133,11 @@ cleanup() {
 }
 
 # Process a single backport target
+# Returns 0 on success, 1 on failure
 process_target() {
     local target="$1"
     local branch_name="backport-${PR_NUMBER}-to-${target//\//-}"
+    local result=0
 
     echo "::group::Backporting to $target"
 
@@ -143,7 +145,7 @@ process_target() {
     if ! check_target_branch "$target"; then
         gh pr comment "$PR_NUMBER" --body "❌ Backport to \`$target\` failed: branch does not exist."
         echo "::endgroup::"
-        return 0  # Continue with other targets
+        return 1
     fi
 
     # Create backport branch and cherry-pick
@@ -156,18 +158,21 @@ process_target() {
         else
             echo "::error::Push or PR creation failed for $target"
             post_push_failure_comment "$target" "$branch_name"
+            result=1
         fi
     else
         # Cherry-pick failed
         git cherry-pick --abort 2>/dev/null || true
         echo "::error::Cherry-pick failed for $target (likely conflicts)"
         post_failure_comment "$target" "$branch_name"
+        result=1
     fi
 
     # Clean up for next iteration
     cleanup "$branch_name"
 
     echo "::endgroup::"
+    return $result
 }
 
 # Main entry point
@@ -178,12 +183,21 @@ main() {
     echo "Merge commit: $MERGE_COMMIT"
     echo "Targets: $TARGETS"
 
+    local failed=0
+
     # Parse targets JSON array and process each
     for target in $(echo "$TARGETS" | jq -r '.[]'); do
-        process_target "$target"
+        if ! process_target "$target"; then
+            failed=1
+        fi
     done
 
     echo "Backport processing complete"
+
+    if [[ $failed -ne 0 ]]; then
+        echo "::error::One or more backports failed"
+        exit 1
+    fi
 }
 
 main "$@"
