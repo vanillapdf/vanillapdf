@@ -79,19 +79,20 @@ class VcpkgUpdater:
 
         return latest_tag, latest_commit
 
-    def check_update_needed(self, force: bool = False) -> Tuple[bool, str, str]:
-        """Check if vcpkg update is needed."""
-        current_version = self.get_current_vcpkg_version()
+    def check_update_needed(self, force: bool = False) -> Tuple[bool, str, str, str]:
+        """Check if vcpkg update is needed. Returns (needed, current, latest, commit)."""
+        # Fetch tags first, then get current version (git describe needs tags)
         latest_version, latest_commit = self.get_latest_vcpkg_version()
+        current_version = self.get_current_vcpkg_version()
 
         print(f"Current vcpkg version: {current_version}")
         print(f"Latest vcpkg version: {latest_version}")
 
         if current_version != latest_version or force:
-            return True, latest_version, latest_commit
+            return True, current_version, latest_version, latest_commit
         else:
             print("No update needed - already on latest version")
-            return False, latest_version, latest_commit
+            return False, current_version, latest_version, latest_commit
 
     def update_vcpkg_submodule(self, version: str) -> None:
         """Update the vcpkg submodule to the specified version."""
@@ -135,8 +136,17 @@ class VcpkgUpdater:
         self.run_command(['git', 'checkout', '-B', branch_name])
         return branch_name
 
-    def commit_changes(self, current_version: str, new_version: str) -> None:
-        """Commit the vcpkg update changes."""
+    def has_staged_changes(self) -> bool:
+        """Check if there are any staged changes to commit."""
+        result = self.run_command(['git', 'diff', '--cached', '--quiet'], check=False)
+        return result.returncode != 0
+
+    def commit_changes(self, current_version: str, new_version: str) -> bool:
+        """Commit the vcpkg update changes. Returns True if commit was made."""
+        if not self.has_staged_changes():
+            print("No changes to commit - vcpkg is already up to date")
+            return False
+
         commit_message = f"""Update vcpkg to latest tag {new_version}
 
 - Updated vcpkg submodule from {current_version} to {new_version}
@@ -147,6 +157,7 @@ class VcpkgUpdater:
 
         print(f"Committing changes...")
         self.run_command(['git', 'commit', '-s', '-m', commit_message])
+        return True
 
     def push_branch(self, branch_name: str) -> None:
         """Push the update branch to remote."""
@@ -235,9 +246,8 @@ def main():
     try:
         updater = VcpkgUpdater(repo_root)
 
-        # Check if update is needed
-        update_needed, latest_version, latest_commit = updater.check_update_needed(args.force)
-        current_version = updater.get_current_vcpkg_version()
+        # Check if update is needed (fetches tags first, then checks versions)
+        update_needed, current_version, latest_version, latest_commit = updater.check_update_needed(args.force)
 
         if not update_needed:
             print("No update needed.")
@@ -255,7 +265,11 @@ def main():
         branch_name = updater.create_update_branch(latest_version)
         updater.update_vcpkg_submodule(latest_version)
         updater.update_vcpkg_json_baseline(latest_commit)
-        updater.commit_changes(current_version, latest_version)
+
+        if not updater.commit_changes(current_version, latest_version):
+            print("\n✅ vcpkg is already up to date - no changes needed")
+            return
+
         updater.push_branch(branch_name)
 
         if not args.no_pr:
