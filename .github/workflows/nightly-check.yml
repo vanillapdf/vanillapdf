@@ -13,7 +13,7 @@ on:
     branches: [ "main", "release/*" ]
     paths:
       - '.github/workflows/nightly-check.yml'
-      - 'vcpkg.json'
+      - 'vcpkg.json.in'
 
   # Run workflow when there is a pull request towards main branch
   # only there was a change in the workflow file
@@ -21,7 +21,7 @@ on:
     branches: [ "main", "release/*" ]
     paths:
       - '.github/workflows/nightly-check.yml'
-      - 'vcpkg.json'
+      - 'vcpkg.json.in'
 
   schedule:
     - cron: '0 2 * * 1'  # Every on Monday at 2 AM UTC
