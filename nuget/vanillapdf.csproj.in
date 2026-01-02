@@ -10,7 +10,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/vanillapdf/vanillapdf</PackageProjectUrl>
     <Description>Vanilla.PDF is a cross-platform SDK for creating and modifying PDF documents</Description>
-    <Copyright>Copyright 2018-2025 Vanilla.PDF Labs s.r.o.</Copyright>
+    <Copyright>Copyright 2018-2026 Vanilla.PDF Labs s.r.o.</Copyright>
     <PackageTags>pdf parsing sign native</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <IncludeBuildOutput>false</IncludeBuildOutput>
