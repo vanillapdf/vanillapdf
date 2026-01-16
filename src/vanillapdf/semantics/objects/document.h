@@ -77,6 +77,8 @@ private:
     explicit Document(syntax::FilePtr holder);
 
     mutable OutputCatalogPtr m_catalog;
+
+    friend class SemanticUtils;
 };
 
 } // semantics
