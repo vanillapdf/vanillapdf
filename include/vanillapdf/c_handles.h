@@ -178,6 +178,9 @@ extern "C"
     DECLARE_OBJECT_HANDLE(PageAnnotations);
     DECLARE_OBJECT_HANDLE(Annotation);
     DECLARE_OBJECT_HANDLE(LinkAnnotation);
+    DECLARE_OBJECT_HANDLE(TextAnnotation);
+    DECLARE_OBJECT_HANDLE(HighlightAnnotation);
+    DECLARE_OBJECT_HANDLE(FreeTextAnnotation);
 
     DECLARE_OBJECT_HANDLE(InteractiveForm);
 

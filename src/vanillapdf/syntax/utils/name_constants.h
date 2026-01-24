@@ -243,6 +243,10 @@ extern const syntax::NameObject AdobePPKLite;
 extern const syntax::NameObject AdobePubSec;
 extern const syntax::NameObject Rect;
 extern const syntax::NameObject T;
+extern const syntax::NameObject QuadPoints;
+extern const syntax::NameObject DA;
+extern const syntax::NameObject Open;
+extern const syntax::NameObject IC;
 
 } // Constant
 } // Name

@@ -26,6 +26,7 @@ public:
 
     bool GetAnnotations(OutputPageAnnotationsPtr& result) const;
     void SetAnnotations(PageAnnotationsPtr annots);
+    PageAnnotationsPtr CreateAnnotations();
 
     bool GetContents(OutputPageContentsPtr& result) const;
     void SetContents(PageContentsPtr contents);

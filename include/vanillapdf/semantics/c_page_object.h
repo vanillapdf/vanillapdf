@@ -82,6 +82,13 @@ extern "C"
 
     /**
     * \brief
+    * Get or create the annotation array for this page.
+    * If annotations do not exist, a new empty array is created and associated with the page.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateAnnotations(PageObjectHandle* handle, PageAnnotationsHandle** result);
+
+    /**
+    * \brief
     * A rectangle expressed in default user space units,
     * that shall define the boundaries of the
     * physical medium on which the page shall

@@ -86,6 +86,19 @@ void PageObject::SetAnnotations(PageAnnotationsPtr annots) {
     _obj->Insert(Name::Annots, annots->GetObject());
 }
 
+PageAnnotationsPtr PageObject::CreateAnnotations() {
+    // If annotations already exist, return them
+    OutputPageAnnotationsPtr existing;
+    if (GetAnnotations(existing)) {
+        return *existing;
+    }
+
+    // Create new empty annotations array
+    auto annots = make_deferred<PageAnnotations>();
+    _obj->Insert(Name::Annots, annots->GetObject());
+    return annots;
+}
+
 void PageObject::SetContents(PageContentsPtr contents) {
     if (_obj->Contains(Name::Contents)) {
         bool removed = _obj->Remove(Name::Contents);

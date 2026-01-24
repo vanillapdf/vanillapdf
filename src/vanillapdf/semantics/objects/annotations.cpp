@@ -4,6 +4,7 @@
 #include "semantics/objects/destinations.h"
 #include "semantics/objects/document.h"
 #include "semantics/objects/name_dictionary.h"
+#include "semantics/objects/rectangle.h"
 
 #include "semantics/utils/semantic_utils.h"
 
@@ -206,6 +207,147 @@ bool LinkAnnotation::Destination(OutputDestinationPtr& result) const {
         spdlog::warn("Could not resolve link annotation destination: {}", ex.what());
         return false;
     }
+}
+
+// AnnotationBase property accessors
+
+syntax::DictionaryObjectPtr AnnotationBase::CreateBaseDictionary(
+    const syntax::NameObjectPtr& subtype, RectanglePtr rect) {
+    syntax::DictionaryObjectPtr dict;
+    dict->Insert(constant::Name::Type, constant::Name::Annot.Clone());
+    dict->Insert(constant::Name::Subtype, subtype->Clone());
+    dict->Insert(constant::Name::Rect, rect->GetObject());
+    return dict;
+}
+
+bool AnnotationBase::GetRect(OutputRectanglePtr& result) const {
+    if (!_obj->Contains(constant::Name::Rect)) {
+        return false;
+    }
+
+    auto rect_obj = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(constant::Name::Rect);
+    auto rect = make_deferred<Rectangle>(rect_obj);
+    result = rect;
+    return true;
+}
+
+void AnnotationBase::SetRect(RectanglePtr rect) {
+    if (_obj->Contains(constant::Name::Rect)) {
+        bool removed = _obj->Remove(constant::Name::Rect);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::Rect, rect->GetObject());
+}
+
+bool AnnotationBase::GetContents(syntax::LiteralStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::Contents)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::Contents);
+    return true;
+}
+
+void AnnotationBase::SetContents(syntax::LiteralStringObjectPtr contents) {
+    if (_obj->Contains(constant::Name::Contents)) {
+        bool removed = _obj->Remove(constant::Name::Contents);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::Contents, contents);
+}
+
+bool AnnotationBase::GetColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr>& result) const {
+    if (!_obj->Contains(constant::Name::C)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::ArrayObjectPtr<syntax::RealObjectPtr>>(constant::Name::C);
+    return true;
+}
+
+void AnnotationBase::SetColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr> color) {
+    if (_obj->Contains(constant::Name::C)) {
+        bool removed = _obj->Remove(constant::Name::C);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::C, color);
+}
+
+// TextAnnotation Create methods
+
+TextAnnotationPtr TextAnnotation::Create(RectanglePtr rect) {
+    auto dict = CreateBaseDictionary(constant::Name::Text.Clone(), rect);
+    return make_deferred<TextAnnotation>(dict);
+}
+
+TextAnnotationPtr TextAnnotation::Create(RectanglePtr rect, syntax::LiteralStringObjectPtr contents) {
+    auto dict = CreateBaseDictionary(constant::Name::Text.Clone(), rect);
+    dict->Insert(constant::Name::Contents, contents);
+    return make_deferred<TextAnnotation>(dict);
+}
+
+// HighlightAnnotation methods
+
+HighlightAnnotationPtr HighlightAnnotation::Create(RectanglePtr rect,
+    syntax::MixedArrayObjectPtr quadPoints) {
+    auto dict = CreateBaseDictionary(constant::Name::Highlight.Clone(), rect);
+    dict->Insert(constant::Name::QuadPoints, quadPoints);
+    return make_deferred<HighlightAnnotation>(dict);
+}
+
+bool HighlightAnnotation::GetQuadPoints(syntax::MixedArrayObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::QuadPoints)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::QuadPoints);
+    return true;
+}
+
+void HighlightAnnotation::SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints) {
+    if (_obj->Contains(constant::Name::QuadPoints)) {
+        bool removed = _obj->Remove(constant::Name::QuadPoints);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::QuadPoints, quadPoints);
+}
+
+// FreeTextAnnotation methods
+
+FreeTextAnnotationPtr FreeTextAnnotation::Create(RectanglePtr rect,
+    syntax::LiteralStringObjectPtr contents,
+    syntax::LiteralStringObjectPtr defaultAppearance) {
+    auto dict = CreateBaseDictionary(constant::Name::FreeText.Clone(), rect);
+    dict->Insert(constant::Name::Contents, contents);
+    dict->Insert(constant::Name::DA, defaultAppearance);
+    return make_deferred<FreeTextAnnotation>(dict);
+}
+
+bool FreeTextAnnotation::GetDefaultAppearance(syntax::LiteralStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::DA)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::DA);
+    return true;
+}
+
+void FreeTextAnnotation::SetDefaultAppearance(syntax::LiteralStringObjectPtr da) {
+    if (_obj->Contains(constant::Name::DA)) {
+        bool removed = _obj->Remove(constant::Name::DA);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::DA, da);
+}
+
+// PageAnnotations methods
+
+PageAnnotations::PageAnnotations() {
+    // Default constructor creates an empty array
+}
+
+void PageAnnotations::Append(AnnotationPtr annotation) {
+    _obj->Append(annotation->GetObject());
 }
 
 } // semantics

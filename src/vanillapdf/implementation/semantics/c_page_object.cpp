@@ -112,6 +112,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjec
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateAnnotations(PageObjectHandle* handle, PageAnnotationsHandle** result)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annots = obj->CreateAnnotations();
+        auto ptr = annots.AddRefGet();
+        *result = reinterpret_cast<PageAnnotationsHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHandle* handle, RectangleHandle** result)
 {
     PageObject* obj = reinterpret_cast<PageObject*>(handle);

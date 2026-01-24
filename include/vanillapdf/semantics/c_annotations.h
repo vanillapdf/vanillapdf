@@ -47,6 +47,36 @@ extern "C"
     */
 
     /**
+    * \class TextAnnotationHandle
+    * \extends AnnotationHandle
+    * \ingroup group_annotations
+    * \brief
+    * A text annotation represents a "sticky note" attached to a point in the PDF document.
+    * When closed, the annotation shall appear as an icon; when open, it shall display
+    * a pop-up window containing the text of the note in a font and size chosen by the
+    * conforming reader.
+    */
+
+    /**
+    * \class HighlightAnnotationHandle
+    * \extends AnnotationHandle
+    * \ingroup group_annotations
+    * \brief
+    * A highlight annotation appears as a highlight over a region of text in the document.
+    * When opened, it shall display a pop-up window containing the text of the associated note.
+    */
+
+    /**
+    * \class FreeTextAnnotationHandle
+    * \extends AnnotationHandle
+    * \ingroup group_annotations
+    * \brief
+    * A free text annotation (PDF 1.3) displays text directly on the page.
+    * Unlike an ordinary text annotation, a free text annotation has no
+    * open or closed state; instead, the text shall always be visible.
+    */
+
+    /**
     * \brief Derived types of \ref AnnotationHandle
     * \ingroup group_annotations
     */
@@ -244,10 +274,164 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Annotation_FromUnknown(IUnknownHandle* handle, AnnotationHandle** result);
 
     /**
+    * \brief Get the annotation rectangle
+    * \param handle a handle to the annotation class
+    * \param result a pointer to variable that will contain the rectangle upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetRect(AnnotationHandle* handle, RectangleHandle** result);
+
+    /**
+    * \brief Set the annotation rectangle
+    * \param handle a handle to the annotation class
+    * \param value the rectangle to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetRect(AnnotationHandle* handle, RectangleHandle* value);
+
+    /**
+    * \brief Get the annotation contents (text)
+    * \param handle a handle to the annotation class
+    * \param result a pointer to variable that will contain the contents string upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetContents(AnnotationHandle* handle, LiteralStringObjectHandle** result);
+
+    /**
+    * \brief Set the annotation contents (text)
+    * \param handle a handle to the annotation class
+    * \param value the contents string to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetContents(AnnotationHandle* handle, LiteralStringObjectHandle* value);
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Annotation_Release(AnnotationHandle* handle);
+
+    /** @} */
+
+    /**
+    * \memberof TextAnnotationHandle
+    * @{
+    */
+
+    /**
+    * \brief Create a new text annotation with the specified rectangle
+    * \param rect the bounding rectangle for the annotation
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_Create(RectangleHandle* rect, TextAnnotationHandle** result);
+
+    /**
+    * \brief Create a new text annotation with the specified rectangle and contents
+    * \param rect the bounding rectangle for the annotation
+    * \param contents the text contents of the annotation
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_CreateWithContents(RectangleHandle* rect, LiteralStringObjectHandle* contents, TextAnnotationHandle** result);
+
+    /**
+    * \brief Reinterpret current object as \ref AnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_ToBaseAnnotation(TextAnnotationHandle* handle, AnnotationHandle** result);
+
+    /**
+    * \brief Convert \ref AnnotationHandle to \ref TextAnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_FromBaseAnnotation(AnnotationHandle* handle, TextAnnotationHandle** result);
+
+    /**
+    * \copydoc Annotation_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_Release(TextAnnotationHandle* handle);
+
+    /** @} */
+
+    /**
+    * \memberof HighlightAnnotationHandle
+    * @{
+    */
+
+    /**
+    * \brief Create a new highlight annotation with the specified rectangle and quad points
+    * \param rect the bounding rectangle for the annotation
+    * \param quadPoints an array of 8 numbers specifying the coordinates of the quadrilateral
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* quadPoints, HighlightAnnotationHandle** result);
+
+    /**
+    * \brief Get the quad points array for text markup
+    * \param handle a handle to the highlight annotation
+    * \param result a pointer to variable that will contain the quad points array upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetQuadPoints(HighlightAnnotationHandle* handle, ArrayObjectHandle** result);
+
+    /**
+    * \brief Set the quad points array for text markup
+    * \param handle a handle to the highlight annotation
+    * \param value the quad points array to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetQuadPoints(HighlightAnnotationHandle* handle, ArrayObjectHandle* value);
+
+    /**
+    * \brief Reinterpret current object as \ref AnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_ToBaseAnnotation(HighlightAnnotationHandle* handle, AnnotationHandle** result);
+
+    /**
+    * \brief Convert \ref AnnotationHandle to \ref HighlightAnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_FromBaseAnnotation(AnnotationHandle* handle, HighlightAnnotationHandle** result);
+
+    /**
+    * \copydoc Annotation_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_Release(HighlightAnnotationHandle* handle);
+
+    /** @} */
+
+    /**
+    * \memberof FreeTextAnnotationHandle
+    * @{
+    */
+
+    /**
+    * \brief Create a new free text annotation
+    * \param rect the bounding rectangle for the annotation
+    * \param contents the text contents of the annotation
+    * \param defaultAppearance the default appearance string (font and size)
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_Create(RectangleHandle* rect, LiteralStringObjectHandle* contents, LiteralStringObjectHandle* defaultAppearance, FreeTextAnnotationHandle** result);
+
+    /**
+    * \brief Get the default appearance string
+    * \param handle a handle to the free text annotation
+    * \param result a pointer to variable that will contain the default appearance string upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetDefaultAppearance(FreeTextAnnotationHandle* handle, LiteralStringObjectHandle** result);
+
+    /**
+    * \brief Set the default appearance string
+    * \param handle a handle to the free text annotation
+    * \param value the default appearance string to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetDefaultAppearance(FreeTextAnnotationHandle* handle, LiteralStringObjectHandle* value);
+
+    /**
+    * \brief Reinterpret current object as \ref AnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_ToBaseAnnotation(FreeTextAnnotationHandle* handle, AnnotationHandle** result);
+
+    /**
+    * \brief Convert \ref AnnotationHandle to \ref FreeTextAnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_FromBaseAnnotation(AnnotationHandle* handle, FreeTextAnnotationHandle** result);
+
+    /**
+    * \copydoc Annotation_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_Release(FreeTextAnnotationHandle* handle);
 
     /** @} */
 
@@ -296,6 +480,14 @@ extern "C"
     * \param result a pointer to variable, that will contain annotation upon success, unchanged on failure
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_At(PageAnnotationsHandle* handle, size_type at, AnnotationHandle** result);
+
+    /**
+    * \brief
+    * Append an annotation to the collection
+    * \param handle a handle to annotation collection
+    * \param annotation the annotation to append
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Append(PageAnnotationsHandle* handle, AnnotationHandle* annotation);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle

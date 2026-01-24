@@ -81,6 +81,9 @@ class NamedDestinations; using NamedDestinationsPtr = DeferredContainer<NamedDes
 // Annotations
 class AnnotationBase; using AnnotationPtr = Deferred<AnnotationBase>;
 class LinkAnnotation; using LinkAnnotationPtr = Deferred<LinkAnnotation>;
+class TextAnnotation; using TextAnnotationPtr = Deferred<TextAnnotation>;
+class HighlightAnnotation; using HighlightAnnotationPtr = Deferred<HighlightAnnotation>;
+class FreeTextAnnotation; using FreeTextAnnotationPtr = Deferred<FreeTextAnnotation>;
 class PageAnnotations; using PageAnnotationsPtr = Deferred<PageAnnotations>; using OutputPageAnnotationsPtr = OutputPointer<PageAnnotationsPtr>;
 
 // Fonts

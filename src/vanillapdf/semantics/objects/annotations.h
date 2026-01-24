@@ -46,12 +46,27 @@ public:
     static std::unique_ptr<AnnotationBase> Create(syntax::DictionaryObjectPtr root);
 
     virtual AnnotationBase::Type GetAnnotationType() const noexcept = 0;
+
+    // Common property accessors
+    bool GetRect(OutputRectanglePtr& result) const;
+    void SetRect(RectanglePtr rect);
+    bool GetContents(syntax::LiteralStringObjectPtr& result) const;
+    void SetContents(syntax::LiteralStringObjectPtr contents);
+    bool GetColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr>& result) const;
+    void SetColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr> color);
+
+protected:
+    static syntax::DictionaryObjectPtr CreateBaseDictionary(
+        const syntax::NameObjectPtr& subtype, RectanglePtr rect);
 };
 
 class TextAnnotation : public AnnotationBase {
 public:
     explicit TextAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
+
+    static TextAnnotationPtr Create(RectanglePtr rect);
+    static TextAnnotationPtr Create(RectanglePtr rect, syntax::LiteralStringObjectPtr contents);
 };
 
 class LinkAnnotation : public AnnotationBase {
@@ -66,6 +81,13 @@ class FreeTextAnnotation : public AnnotationBase {
 public:
     explicit FreeTextAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
+
+    static FreeTextAnnotationPtr Create(RectanglePtr rect,
+        syntax::LiteralStringObjectPtr contents,
+        syntax::LiteralStringObjectPtr defaultAppearance);
+
+    bool GetDefaultAppearance(syntax::LiteralStringObjectPtr& result) const;
+    void SetDefaultAppearance(syntax::LiteralStringObjectPtr da);
 };
 
 class LineAnnotation : public AnnotationBase {
@@ -102,6 +124,12 @@ class HighlightAnnotation : public AnnotationBase {
 public:
     explicit HighlightAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
+
+    static HighlightAnnotationPtr Create(RectanglePtr rect,
+        syntax::MixedArrayObjectPtr quadPoints);
+
+    bool GetQuadPoints(syntax::MixedArrayObjectPtr& result) const;
+    void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);
 };
 
 class UnderlineAnnotation : public AnnotationBase {
@@ -210,8 +238,11 @@ public:
 class PageAnnotations : public HighLevelObject<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>> {
 public:
     explicit PageAnnotations(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root);
+    PageAnnotations();
+
     types::size_type GetSize() const;
     AnnotationPtr At(types::size_type index) const;
+    void Append(AnnotationPtr annotation);
 };
 
 inline AnnotationBase::Type TextAnnotation::GetAnnotationType() const noexcept { return Type::Text; }
