@@ -9,9 +9,6 @@ vcpkg_from_github(
 vcpkg_check_features(
     OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     FEATURES
-        encryption   VANILLAPDF_ENABLE_ENCRYPTION
-        jpeg         VANILLAPDF_ENABLE_JPEG
-        jpeg2000     VANILLAPDF_ENABLE_JPEG2000
         tests        VANILLAPDF_ENABLE_TESTS
         benchmarks   VANILLAPDF_ENABLE_BENCHMARK
 )
@@ -20,8 +17,6 @@ vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
       -DVANILLAPDF_INTERNAL_VCPKG=OFF
-      -DVANILLAPDF_ENABLE_TESTS=OFF
-      -DVANILLAPDF_ENABLE_BENCHMARK=OFF
       ${FEATURE_OPTIONS}
 )
 
