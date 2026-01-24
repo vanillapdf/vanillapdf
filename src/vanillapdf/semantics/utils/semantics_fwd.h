@@ -48,6 +48,7 @@ class ResourceDictionary; using ResourceDictionaryPtr = Deferred<ResourceDiction
 
 class Rectangle; using RectanglePtr = Deferred<Rectangle>; using OutputRectanglePtr = OutputPointer<RectanglePtr>;
 class Date; using DatePtr = Deferred<Date>; using OutputDatePtr = OutputPointer<DatePtr>;
+class Color; using ColorPtr = Deferred<Color>; using OutputColorPtr = OutputPointer<ColorPtr>;
 class Tree;
 
 class ContentStream; using ContentStreamPtr = Deferred<ContentStream>;

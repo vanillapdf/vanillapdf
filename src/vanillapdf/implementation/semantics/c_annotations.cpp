@@ -1,5 +1,7 @@
 #include "precompiled.h"
 #include "semantics/objects/annotations.h"
+#include "semantics/objects/color.h"
+#include "semantics/objects/date.h"
 #include "semantics/objects/rectangle.h"
 
 #include "vanillapdf/semantics/c_annotations.h"
@@ -217,7 +219,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetContents(AnnotationHa
 
     try
     {
-        LiteralStringObjectPtr contents;
+        OutputLiteralStringObjectPtr contents;
         bool contains = obj->GetContents(contents);
         if (!contains) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
@@ -239,6 +241,168 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetContents(AnnotationHa
     try
     {
         obj->SetContents(contents);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetColor(AnnotationHandle* handle, ColorHandle** result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputColorPtr color;
+        bool contains = obj->GetColor(color);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = color.AddRefGet();
+        *result = reinterpret_cast<ColorHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetColor(AnnotationHandle* handle, ColorHandle* value)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    Color* color = reinterpret_cast<Color*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(color);
+
+    try
+    {
+        obj->SetColor(color);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAuthor(AnnotationHandle* handle, LiteralStringObjectHandle** result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputLiteralStringObjectPtr author;
+        bool contains = obj->GetAuthor(author);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = author.AddRefGet();
+        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetAuthor(AnnotationHandle* handle, LiteralStringObjectHandle* value)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    LiteralStringObject* author = reinterpret_cast<LiteralStringObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
+
+    try
+    {
+        obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetModificationDate(AnnotationHandle* handle, DateHandle** result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetModificationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetModificationDate(AnnotationHandle* handle, DateHandle* value)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetModificationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetCreationDate(AnnotationHandle* handle, DateHandle** result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetCreationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetCreationDate(AnnotationHandle* handle, DateHandle* value)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetCreationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetFlags(AnnotationHandle* handle, AnnotationFlags* result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto flags = obj->GetFlags();
+        *result = static_cast<AnnotationFlags>(flags);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetFlags(AnnotationHandle* handle, AnnotationFlags value)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try
+    {
+        obj->SetFlags(static_cast<AnnotationBase::Flags>(value));
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

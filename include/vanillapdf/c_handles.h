@@ -215,6 +215,7 @@ extern "C"
 
     DECLARE_OBJECT_HANDLE(Date);
     DECLARE_OBJECT_HANDLE(Rectangle);
+    DECLARE_OBJECT_HANDLE(Color);
 
     #pragma endregion
 

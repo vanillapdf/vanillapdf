@@ -41,6 +41,20 @@ public:
         Redaction
     };
 
+    enum Flags : int32_t {
+        None = 0,
+        Invisible = 1,
+        Hidden = 2,
+        Print = 4,
+        NoZoom = 8,
+        NoRotate = 16,
+        NoView = 32,
+        ReadOnly = 64,
+        Locked = 128,
+        ToggleNoView = 256,
+        LockedContents = 512
+    };
+
 public:
     explicit AnnotationBase(syntax::DictionaryObjectPtr root);
     static std::unique_ptr<AnnotationBase> Create(syntax::DictionaryObjectPtr root);
@@ -50,10 +64,18 @@ public:
     // Common property accessors
     bool GetRect(OutputRectanglePtr& result) const;
     void SetRect(RectanglePtr rect);
-    bool GetContents(syntax::LiteralStringObjectPtr& result) const;
+    bool GetContents(syntax::OutputLiteralStringObjectPtr& result) const;
     void SetContents(syntax::LiteralStringObjectPtr contents);
-    bool GetColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr>& result) const;
-    void SetColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr> color);
+    bool GetColor(OutputColorPtr& result) const;
+    void SetColor(ColorPtr color);
+    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
+    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetModificationDate(OutputDatePtr& result) const;
+    void SetModificationDate(DatePtr date);
+    bool GetCreationDate(OutputDatePtr& result) const;
+    void SetCreationDate(DatePtr date);
+    Flags GetFlags() const;
+    void SetFlags(Flags flags);
 
 protected:
     static syntax::DictionaryObjectPtr CreateBaseDictionary(

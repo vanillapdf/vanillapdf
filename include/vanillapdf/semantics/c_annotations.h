@@ -252,6 +252,64 @@ extern "C"
     } AnnotationType;
 
     /**
+    * \brief Annotation flags controlling visibility and behavior
+    * \ingroup group_annotations
+    *
+    * These flags may be combined using bitwise OR operations.
+    */
+    typedef enum {
+        /**
+        * \brief No flags set
+        */
+        AnnotationFlags_None = 0,
+        /**
+        * \brief If set, do not display the annotation if it does not belong to one of the
+        * standard annotation types and no annotation handler is available.
+        */
+        AnnotationFlags_Invisible = 1,
+        /**
+        * \brief If set, do not display or print the annotation or allow it to interact
+        * with the user, regardless of its annotation type or annotation handler.
+        */
+        AnnotationFlags_Hidden = 2,
+        /**
+        * \brief If set, print the annotation when the page is printed.
+        */
+        AnnotationFlags_Print = 4,
+        /**
+        * \brief If set, do not scale the annotation's appearance to match the magnification
+        * of the page.
+        */
+        AnnotationFlags_NoZoom = 8,
+        /**
+        * \brief If set, do not rotate the annotation's appearance to match the rotation
+        * of the page.
+        */
+        AnnotationFlags_NoRotate = 16,
+        /**
+        * \brief If set, do not display the annotation on the screen or allow it to interact
+        * with the user.
+        */
+        AnnotationFlags_NoView = 32,
+        /**
+        * \brief If set, do not allow the annotation to interact with the user.
+        */
+        AnnotationFlags_ReadOnly = 64,
+        /**
+        * \brief If set, do not allow the annotation to be deleted or its properties modified.
+        */
+        AnnotationFlags_Locked = 128,
+        /**
+        * \brief If set, invert the interpretation of the NoView flag for certain events.
+        */
+        AnnotationFlags_ToggleNoView = 256,
+        /**
+        * \brief If set, do not allow the contents of the annotation to be modified.
+        */
+        AnnotationFlags_LockedContents = 512
+    } AnnotationFlags;
+
+    /**
     * \memberof AnnotationHandle
     * @{
     */
@@ -300,6 +358,76 @@ extern "C"
     * \param value the contents string to set
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetContents(AnnotationHandle* handle, LiteralStringObjectHandle* value);
+
+    /**
+    * \brief Get the annotation color
+    * \param handle a handle to the annotation class
+    * \param result a pointer to variable that will contain the color upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetColor(AnnotationHandle* handle, ColorHandle** result);
+
+    /**
+    * \brief Set the annotation color
+    * \param handle a handle to the annotation class
+    * \param value the color to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetColor(AnnotationHandle* handle, ColorHandle* value);
+
+    /**
+    * \brief Get the annotation author (T entry)
+    * \param handle a handle to the annotation class
+    * \param result a pointer to variable that will contain the author string upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAuthor(AnnotationHandle* handle, LiteralStringObjectHandle** result);
+
+    /**
+    * \brief Set the annotation author (T entry)
+    * \param handle a handle to the annotation class
+    * \param value the author string to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetAuthor(AnnotationHandle* handle, LiteralStringObjectHandle* value);
+
+    /**
+    * \brief Get the annotation modification date (M entry)
+    * \param handle a handle to the annotation class
+    * \param result a pointer to variable that will contain the date upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetModificationDate(AnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation modification date (M entry)
+    * \param handle a handle to the annotation class
+    * \param value the date to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetModificationDate(AnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Get the annotation creation date (CreationDate entry, markup annotations only)
+    * \param handle a handle to the annotation class
+    * \param result a pointer to variable that will contain the date upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetCreationDate(AnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation creation date (CreationDate entry, markup annotations only)
+    * \param handle a handle to the annotation class
+    * \param value the date to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetCreationDate(AnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Get the annotation flags (F entry)
+    * \param handle a handle to the annotation class
+    * \param result a pointer to variable that will contain the flags upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetFlags(AnnotationHandle* handle, AnnotationFlags* result);
+
+    /**
+    * \brief Set the annotation flags (F entry)
+    * \param handle a handle to the annotation class
+    * \param value the flags to set (can be combined with bitwise OR)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetFlags(AnnotationHandle* handle, AnnotationFlags value);
 
     /**
     * \copydoc IUnknown_Release

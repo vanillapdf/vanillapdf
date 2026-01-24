@@ -1,6 +1,8 @@
 #include "precompiled.h"
 
 #include "semantics/objects/annotations.h"
+#include "semantics/objects/color.h"
+#include "semantics/objects/date.h"
 #include "semantics/objects/destinations.h"
 #include "semantics/objects/document.h"
 #include "semantics/objects/name_dictionary.h"
@@ -239,7 +241,7 @@ void AnnotationBase::SetRect(RectanglePtr rect) {
     _obj->Insert(constant::Name::Rect, rect->GetObject());
 }
 
-bool AnnotationBase::GetContents(syntax::LiteralStringObjectPtr& result) const {
+bool AnnotationBase::GetContents(syntax::OutputLiteralStringObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::Contents)) {
         return false;
     }
@@ -256,21 +258,93 @@ void AnnotationBase::SetContents(syntax::LiteralStringObjectPtr contents) {
     _obj->Insert(constant::Name::Contents, contents);
 }
 
-bool AnnotationBase::GetColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr>& result) const {
+bool AnnotationBase::GetColor(OutputColorPtr& result) const {
     if (!_obj->Contains(constant::Name::C)) {
         return false;
     }
 
-    result = _obj->FindAs<syntax::ArrayObjectPtr<syntax::RealObjectPtr>>(constant::Name::C);
+    auto color_obj = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::C);
+    result = make_deferred<Color>(color_obj);
     return true;
 }
 
-void AnnotationBase::SetColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr> color) {
+void AnnotationBase::SetColor(ColorPtr color) {
     if (_obj->Contains(constant::Name::C)) {
         bool removed = _obj->Remove(constant::Name::C);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
     }
-    _obj->Insert(constant::Name::C, color);
+    _obj->Insert(constant::Name::C, color->GetObject());
+}
+
+bool AnnotationBase::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::T)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::T);
+    return true;
+}
+
+void AnnotationBase::SetAuthor(syntax::LiteralStringObjectPtr author) {
+    if (_obj->Contains(constant::Name::T)) {
+        bool removed = _obj->Remove(constant::Name::T);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::T, author);
+}
+
+bool AnnotationBase::GetModificationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::M)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::M);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void AnnotationBase::SetModificationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::M)) {
+        bool removed = _obj->Remove(constant::Name::M);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::M, date->GetObject());
+}
+
+bool AnnotationBase::GetCreationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::CreationDate)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void AnnotationBase::SetCreationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::CreationDate)) {
+        bool removed = _obj->Remove(constant::Name::CreationDate);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::CreationDate, date->GetObject());
+}
+
+AnnotationBase::Flags AnnotationBase::GetFlags() const {
+    if (!_obj->Contains(constant::Name::F)) {
+        return Flags::None;
+    }
+
+    auto flags_obj = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::F);
+    return static_cast<Flags>(flags_obj->GetIntegerValue());
+}
+
+void AnnotationBase::SetFlags(Flags flags) {
+    if (_obj->Contains(constant::Name::F)) {
+        bool removed = _obj->Remove(constant::Name::F);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    auto flags_obj = make_deferred<syntax::IntegerObject>(static_cast<int32_t>(flags));
+    _obj->Insert(constant::Name::F, flags_obj);
 }
 
 // TextAnnotation Create methods

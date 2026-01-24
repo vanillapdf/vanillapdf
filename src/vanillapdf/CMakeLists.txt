@@ -60,6 +60,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_byte_range.cpp
     implementation/semantics/c_catalog.cpp
     implementation/semantics/c_character_map.cpp
+    implementation/semantics/c_color.cpp
     implementation/semantics/c_date.cpp
     implementation/semantics/c_destination_name_tree.cpp
     implementation/semantics/c_destinations.cpp
@@ -115,6 +116,7 @@ set(VANILLAPDF_SEMANTICS_SOURCES
 
     semantics/objects/annotations.cpp
     semantics/objects/character_map.cpp
+    semantics/objects/color.cpp
     semantics/objects/date.cpp
     semantics/objects/destinations.cpp
     semantics/objects/developer_extensions.cpp
