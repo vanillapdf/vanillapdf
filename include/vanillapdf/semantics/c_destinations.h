@@ -224,6 +224,16 @@ extern "C"
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(DestinationHandle* handle, ObjectHandle** result);
 
+    /**
+    * \brief Reinterpret current object as \ref IUnknownHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Destination_ToUnknown(DestinationHandle* handle, IUnknownHandle** result);
+
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref DestinationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Destination_FromUnknown(IUnknownHandle* handle, DestinationHandle** result);
+
     /** @} */
 
     /**
