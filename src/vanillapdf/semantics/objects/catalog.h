@@ -53,6 +53,7 @@ public:
     bool NeedsRendering(syntax::BooleanObjectPtr& result) const;
     bool Destinations(OutputNamedDestinationsPtr& result) const;
     bool Names(OutputNameDictionaryPtr& result) const;
+    void SetNames(NameDictionaryPtr value);
     bool AcroForm(OuputInteractiveFormPtr& result) const;
 
     PageTreePtr CreatePages();

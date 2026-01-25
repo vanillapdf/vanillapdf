@@ -13,7 +13,11 @@ class NameDictionary : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
     explicit NameDictionary(syntax::DictionaryObjectPtr root);
 
+    static NameDictionaryPtr Create();
+    static NameTreePtr<DestinationPtr> CreateDestinationNameTree();
+
     bool Dests(OutputNameTreePtr<DestinationPtr>& result) const;
+    void SetDests(NameTreePtr<DestinationPtr> value);
 
     //NameTreePtr AP(void) const;
     //NameTreePtr JavaScript(void) const;

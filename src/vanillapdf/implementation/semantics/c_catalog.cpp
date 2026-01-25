@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "semantics/objects/catalog.h"
+#include "semantics/objects/name_dictionary.h"
 
 #include "vanillapdf/semantics/c_catalog.h"
 #include "implementation/c_helper.h"
@@ -200,6 +201,40 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHand
 
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<NamedDestinationsHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetNames(CatalogHandle* handle, NameDictionaryHandle** result)
+{
+    Catalog* obj = reinterpret_cast<Catalog*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputNameDictionaryPtr names;
+        auto contains = obj->Names(names);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = names.AddRefGet();
+        *result = reinterpret_cast<NameDictionaryHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_SetNames(CatalogHandle* handle, NameDictionaryHandle* names)
+{
+    Catalog* obj = reinterpret_cast<Catalog*>(handle);
+    NameDictionary* names_obj = reinterpret_cast<NameDictionary*>(names);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(names_obj);
+
+    try
+    {
+        obj->SetNames(names_obj);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
