@@ -14,47 +14,7 @@ using namespace vanillapdf::semantics;
 // Type aliases for convenience
 using DestinationNameTree = NameTree<DestinationPtr>;
 using DestinationNameTreePtr = NameTreePtr<DestinationPtr>;
-
-/**
- * Wrapper class for DestinationNameTree iterator that provides
- * First/Second/IsValid/Next interface compatible with C API pattern.
- */
-class DestinationNameTreeIteratorImpl : public IUnknown {
-public:
-    using TreeIterator = DestinationNameTree::Iterator;
-
-    DestinationNameTreeIteratorImpl(
-        DestinationNameTreePtr tree,
-        TreeIterator current,
-        TreeIterator end)
-        : m_tree(std::move(tree))
-        , m_current(current)
-        , m_end(end)
-    {}
-
-    syntax::StringObjectPtr First() {
-        auto pair = *m_current;
-        return pair.first;
-    }
-
-    DestinationPtr Second() {
-        auto pair = *m_current;
-        return pair.second;
-    }
-
-    bool IsValid() const {
-        return m_current != m_end;
-    }
-
-    void Next() {
-        ++m_current;
-    }
-
-private:
-    DestinationNameTreePtr m_tree;  // Keep tree alive
-    TreeIterator m_current;
-    TreeIterator m_end;
-};
+using DestinationNameTreeIterator = DestinationNameTree::Iterator;
 
 // DestinationNameTree functions
 
@@ -168,15 +128,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTree_GetIterator(Des
 
     try
     {
-        // Create a Deferred pointer to the tree to keep it alive
-        DestinationNameTreePtr tree_ptr = obj;
-
-        auto it = make_deferred<DestinationNameTreeIteratorImpl>(
-            tree_ptr,
-            obj->begin(),
-            obj->end()
-        );
-
+        auto it = make_deferred<DestinationNameTreeIterator>(obj->begin());
         auto ptr = it.AddRefGet();
         *result = reinterpret_cast<DestinationNameTreeIteratorHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -202,7 +154,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTree_Release(Destina
 
 VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_GetKey(DestinationNameTreeIteratorHandle* handle, StringObjectHandle** result)
 {
-    DestinationNameTreeIteratorImpl* obj = reinterpret_cast<DestinationNameTreeIteratorImpl*>(handle);
+    DestinationNameTreeIterator* obj = reinterpret_cast<DestinationNameTreeIterator*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
@@ -217,7 +169,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_GetKey(
 
 VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_GetValue(DestinationNameTreeIteratorHandle* handle, DestinationHandle** result)
 {
-    DestinationNameTreeIteratorImpl* obj = reinterpret_cast<DestinationNameTreeIteratorImpl*>(handle);
+    DestinationNameTreeIterator* obj = reinterpret_cast<DestinationNameTreeIterator*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
@@ -232,7 +184,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_GetValu
 
 VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_IsValid(DestinationNameTreeIteratorHandle* handle, boolean_type* result)
 {
-    DestinationNameTreeIteratorImpl* obj = reinterpret_cast<DestinationNameTreeIteratorImpl*>(handle);
+    DestinationNameTreeIterator* obj = reinterpret_cast<DestinationNameTreeIterator*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
@@ -245,17 +197,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_IsValid
 
 VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_Next(DestinationNameTreeIteratorHandle* handle)
 {
-    DestinationNameTreeIteratorImpl* obj = reinterpret_cast<DestinationNameTreeIteratorImpl*>(handle);
+    DestinationNameTreeIterator* obj = reinterpret_cast<DestinationNameTreeIterator*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
     try
     {
-        obj->Next();
+        ++(*obj);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_Release(DestinationNameTreeIteratorHandle* handle)
 {
-    return ObjectRelease<DestinationNameTreeIteratorImpl, DestinationNameTreeIteratorHandle>(handle);
+    return ObjectRelease<DestinationNameTreeIterator, DestinationNameTreeIteratorHandle>(handle);
 }

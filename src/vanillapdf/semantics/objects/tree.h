@@ -148,6 +148,14 @@ public:
             return std::pair<syntax::StringObjectPtr, ValueT>(first, second);
         }
 
+        const syntax::StringObjectPtr First() const {
+            return base_iterator_type::m_current->first;
+        }
+
+        ValueT Second() const {
+            return _conversion(base_iterator_type::m_current->second);
+        }
+
     private:
         std::function<ValueT(const syntax::ContainableObjectPtr&)> _conversion;
     };
