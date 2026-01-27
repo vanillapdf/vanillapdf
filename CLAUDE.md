@@ -41,6 +41,23 @@ git submodule sync --recursive && git submodule update --init --recursive
 - Create a new branch for every change: `feature/description` or `fix/description`
 - Base branches on `main` (or `release/*` for hotfixes)
 
+## GitHub Issues
+
+**Always add labels** when creating GitHub issues using `gh issue create`. Use appropriate labels from the repository to categorize issues for grouping and filtering. Common labels:
+- `bug` — Something isn't working
+- `enhancement` — New feature or request
+- `technical-debt` — Code quality and refactoring issues
+- `documentation` — Improvements or additions to documentation
+- `cmake` / `build-system` / `vcpkg` — Build-related issues
+- `ci-cd` / `github_actions` — CI/CD issues
+- `performance` — Performance improvements
+- `priority-high` / `priority-medium` / `priority-low` — Priority levels
+
+Example:
+```bash
+gh issue create --title "Fix iterator lifetime" --label "bug,technical-debt" --body "..."
+```
+
 ## Automation Bot
 
 The repository uses `vanillapdf-bot` (info@vanillapdf.com) for automated operations:
