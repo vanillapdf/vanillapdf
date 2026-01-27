@@ -46,6 +46,7 @@ release = _version
 
 extensions = [
     "breathe",
+    "sphinx_copybutton",
 ]
 
 breathe_projects = {
