@@ -21,19 +21,59 @@ API Usage Examples
 Utilities
 ---------
 
-Utility snippets from the integration test suite
-(`utils.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.test/utils.c>`_):
+Print library info
+^^^^^^^^^^^^^^^^^^
 
-- Print library info
-- Print last error
-- Set license file
-- Print buffer
-- Test logging
+.. literalinclude:: ../../src/vanillapdf.test/utils.c
+   :language: c
+   :start-after: //! [Print library info]
+   :end-before: //! [Print library info]
+   :dedent:
 
-Additional snippets:
+Print last error
+^^^^^^^^^^^^^^^^
 
-- `Print date <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.test/documents.c>`_ — from ``documents.c``
-- `Enumerate xref <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.test/files.c>`_ — from ``files.c``
+.. literalinclude:: ../../src/vanillapdf.test/utils.c
+   :language: c
+   :start-after: //! [Print last error]
+   :end-before: //! [Print last error]
+   :dedent:
+
+Print buffer
+^^^^^^^^^^^^
+
+.. literalinclude:: ../../src/vanillapdf.test/utils.c
+   :language: c
+   :start-after: //! [Print buffer]
+   :end-before: //! [Print buffer]
+   :dedent:
+
+Test logging
+^^^^^^^^^^^^
+
+.. literalinclude:: ../../src/vanillapdf.test/utils.c
+   :language: c
+   :start-after: //! [Test logging]
+   :end-before: //! [Test logging]
+   :dedent:
+
+Print date
+^^^^^^^^^^
+
+.. literalinclude:: ../../src/vanillapdf.test/documents.c
+   :language: c
+   :start-after: //! [Print date]
+   :end-before: //! [Print date]
+   :dedent:
+
+Enumerate xref
+^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../src/vanillapdf.test/files.c
+   :language: c
+   :start-after: //! [Enumerate xref]
+   :end-before: //! [Enumerate xref]
+   :dedent:
 
 Additional Resources
 --------------------

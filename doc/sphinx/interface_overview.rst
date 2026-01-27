@@ -96,6 +96,12 @@ Extended error information
 
 There is a code sample how to obtain the last error code with the message printed to console.
 
+.. literalinclude:: ../../src/vanillapdf.test/utils.c
+   :language: c
+   :start-after: //! [Print last error]
+   :end-before: //! [Print last error]
+   :dedent:
+
 For more detailed information please visit the ``Errors`` API.
 
 Debugging

@@ -66,12 +66,24 @@ The verifier detects the following weak algorithms:
 Creating a Trust Store
 ----------------------
 
-Create a trusted certificate store and load certificates for chain validation.
+Create a trusted certificate store and load certificates:
+
+.. literalinclude:: ../../src/vanillapdf.tools/verify.c
+   :language: c
+   :start-after: //! [Create trust store]
+   :end-before: //! [Create trust store]
+   :dedent:
 
 Configuring Verification Settings
 ----------------------------------
 
-Configure verification behavior with custom settings.
+Configure verification behavior with custom settings:
+
+.. literalinclude:: ../../src/vanillapdf.tools/verify.c
+   :language: c
+   :start-after: //! [Configure verification settings]
+   :end-before: //! [Configure verification settings]
+   :dedent:
 
 Available settings:
 
@@ -82,7 +94,13 @@ Available settings:
 Verifying a Signature
 ---------------------
 
-Call the verification API and inspect the results.
+Call the verification API and inspect the results:
+
+.. literalinclude:: ../../src/vanillapdf.tools/verify.c
+   :language: c
+   :start-after: //! [Verify signature]
+   :end-before: //! [Verify signature]
+   :dedent:
 
 Command Line Usage
 ------------------
