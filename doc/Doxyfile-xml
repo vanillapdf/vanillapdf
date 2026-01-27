@@ -25,5 +25,7 @@ EXPAND_ONLY_PREDEF     = YES
 
 # Paths
 IMAGE_PATH             = src/images
+EXAMPLE_PATH           = ../src/vanillapdf.tools \
+                         ../src/vanillapdf.test
 FULL_PATH_NAMES        = NO
 QUIET                  = YES
