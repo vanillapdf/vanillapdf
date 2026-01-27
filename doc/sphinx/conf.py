@@ -47,6 +47,7 @@ release = _version
 extensions = [
     "breathe",
     "sphinx_copybutton",
+    "sphinxext.opengraph",
 ]
 
 breathe_projects = {
@@ -59,3 +60,25 @@ breathe_default_project = "vanillapdf"
 html_theme = "sphinx_rtd_theme"
 
 html_static_path = ["_static"]
+html_logo = "_static/logo.png"
+html_favicon = "_static/favicon.ico"
+
+html_theme_options = {
+    "logo_only": False,
+    "display_version": True,
+    "navigation_depth": 3,
+}
+
+html_context = {
+    "display_github": True,
+    "github_user": "vanillapdf",
+    "github_repo": "vanillapdf",
+    "github_version": "main",
+    "conf_py_path": "/doc/sphinx/",
+}
+
+# -- OpenGraph metadata (for link previews) --------------------------------
+
+ogp_site_url = "https://vanillapdf.readthedocs.io/"
+ogp_site_name = "Vanilla.PDF Documentation"
+ogp_description_length = 200
