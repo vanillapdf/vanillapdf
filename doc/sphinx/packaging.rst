@@ -85,8 +85,8 @@ Configuration Notes
 
 **External Dependencies:**
 
-- Using system packages (EXTERNAL_\*=ON) results in smaller packages and faster builds
-- vcpkg dependencies (EXTERNAL_\*=OFF) create self-contained packages
+- Using system packages (``EXTERNAL_*=ON``) results in smaller packages and faster builds
+- vcpkg dependencies (``EXTERNAL_*=OFF``) create self-contained packages
 
 **Platform Considerations:**
 

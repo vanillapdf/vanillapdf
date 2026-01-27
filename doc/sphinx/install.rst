@@ -1,5 +1,5 @@
 Installation & Build Guide
-=========================
+==========================
 
 This comprehensive guide covers how to obtain, build, and configure Vanilla.PDF
 for all supported platforms and use cases.
