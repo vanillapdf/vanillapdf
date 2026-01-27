@@ -157,6 +157,16 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_Next(DestinationNameTreeIteratorHandle* handle);
 
     /**
+    * \brief Reinterpret current object as \ref IUnknownHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_ToUnknown(DestinationNameTreeIteratorHandle* handle, IUnknownHandle** result);
+
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref DestinationNameTreeIteratorHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_FromUnknown(IUnknownHandle* handle, DestinationNameTreeIteratorHandle** result);
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */

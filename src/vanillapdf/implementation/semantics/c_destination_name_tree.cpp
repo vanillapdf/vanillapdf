@@ -207,6 +207,16 @@ VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_Next(De
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_ToUnknown(DestinationNameTreeIteratorHandle* handle, IUnknownHandle** result)
+{
+    return SafeObjectConvert<DestinationNameTreeIterator, IUnknown, DestinationNameTreeIteratorHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_FromUnknown(IUnknownHandle* handle, DestinationNameTreeIteratorHandle** result)
+{
+    return SafeObjectConvert<IUnknown, DestinationNameTreeIterator, IUnknownHandle, DestinationNameTreeIteratorHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_Release(DestinationNameTreeIteratorHandle* handle)
 {
     return ObjectRelease<DestinationNameTreeIterator, DestinationNameTreeIteratorHandle>(handle);
