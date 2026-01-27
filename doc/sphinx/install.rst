@@ -273,8 +273,8 @@ Build Configuration Options
 
 - ``-DVANILLAPDF_INTERNAL_VCPKG=ON/OFF`` - Enable internal vcpkg dependency management (default: ON)
 - ``-DVANILLAPDF_ENABLE_PACKAGING=ON/OFF`` - Enable packaging features like CPack (auto-detected)
-- ``-DVANILLAPDF_ENABLE_TESTS=ON/OFF`` - Build and run test scenarios (default: ON)
-- ``-DVANILLAPDF_ENABLE_BENCHMARK=ON/OFF`` - Include benchmarking project (default: ON)
+- ``-DVANILLAPDF_ENABLE_TESTS=ON/OFF`` - Build and run test scenarios (default: OFF)
+- ``-DVANILLAPDF_ENABLE_BENCHMARK=ON/OFF`` - Include benchmarking project (default: OFF)
 - ``-DVANILLAPDF_USE_STATIC_CRT=ON/OFF`` - Use static MSVC runtime (/MT) instead of dynamic (/MD) (default: OFF)
 - ``-DBUILD_SHARED_LIBS=ON/OFF`` - Build vanillapdf as a shared library (default: ON)
 
@@ -298,6 +298,7 @@ External Dependency Options
 Running Tests
 -------------
 
+Tests require ``-DVANILLAPDF_ENABLE_TESTS=ON`` at configure time.
 After building, run the test suite:
 
 .. code-block:: bash
