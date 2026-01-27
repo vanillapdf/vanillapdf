@@ -19,7 +19,8 @@ GENERATE_LATEX         = NO
 
 # Preprocessing
 PREDEFINED             = VANILLAPDF_API \
-                         CALLING_CONVENTION
+                         CALLING_CONVENTION \
+                         VANILLAPDF_DEPRECATED
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 
