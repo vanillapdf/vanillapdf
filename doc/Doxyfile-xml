@@ -2,7 +2,7 @@
 # Run from the doc/ directory:  doxygen Doxyfile-xml
 
 PROJECT_NAME           = Vanilla.PDF
-PROJECT_NUMBER         = 2.3.0
+# PROJECT_NUMBER is injected by conf.py via a Doxygen override file.
 PROJECT_BRIEF          = "Cross-platform toolkit for creating and modifying PDF documents"
 
 # Input sources
