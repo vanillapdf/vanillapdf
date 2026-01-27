@@ -124,7 +124,7 @@ For a complete sample view `Complete file example`_.
 File cross-reference table
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Quote from section 7.5.4 - Cross-Reference Table of the PDF specification:
+Quote from `section 7.5.4 - Cross-Reference Table <_static/PDF32000_2008.pdf#G6.1839814>`_:
 
    The cross-reference table contains information that permits random access to indirect objects
    within the file so that the entire file need not be read to locate any particular object.
@@ -167,7 +167,7 @@ Additionaly, the document root object is indirect with identifier 1 (object numb
 Document metadata are stored in is indirect with identifier 3 (object number).
 Both document root and metadata should be defined in the cross-reference table.
 
-For more detailed information please visit section 7.5.5 - File Trailer of the PDF specification.
+For more detailed information please visit `section 7.5.5 - File Trailer <_static/PDF32000_2008.pdf#G6.1639448>`_.
 
 ----
 
@@ -258,7 +258,7 @@ The current location depends on the previous move and print instructions.
 
    (This FAQ is prepared in support of) Tj
 
-For a complete list of postscript instructions visit Table A.1 - PDF content stream operators in the PDF specification.
+For a complete list of postscript instructions visit `Table A.1 - PDF content stream operators <_static/PDF32000_2008.pdf#G14.1029307>`_.
 
 For implementation reference visit the :doc:`Page Contents API reference <api/contents>`.
 

@@ -131,7 +131,7 @@ Tokenizer
 ^^^^^^^^^
 
 Tokens are smallest syntactic elements and are separated by a whitespace or a delimiter.
-Which characters are considered whitespace and which are considered delimiter is discussed in section 7.2 - Lexical Conventions of the PDF specification.
+Which characters are considered whitespace and which are considered delimiter is discussed in `section 7.2 - Lexical Conventions <_static/PDF32000_2008.pdf#G6.1638740>`_.
 
 .. note::
 

@@ -16,4 +16,4 @@ Developer guide:
 
 External resources:
 
-- Adobe PDF specification available either at the `official site <http://www.adobe.com/devnet/pdf/pdf_reference.html>`_ or a local copy
+- Adobe PDF specification available either at the `official site <http://www.adobe.com/devnet/pdf/pdf_reference.html>`_ or a `local copy <_static/PDF32000_2008.pdf>`_
