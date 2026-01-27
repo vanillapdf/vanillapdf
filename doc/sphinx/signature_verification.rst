@@ -114,8 +114,8 @@ The vanillapdf.tools CLI provides signature verification:
 Security Recommendations
 ------------------------
 
-1. **Always use system trust store** - Let the OS manage trusted root certificates
-2. **Avoid ``--skip-certificate-validation``** - Only use for testing self-signed certificates
-3. **Avoid ``--allow-weak-algorithms``** - Only enable when absolutely necessary for legacy documents
-4. **Use ``--check-signing-time``** - For old documents where certificates may have expired
-5. **Keep certificates updated** - Ensure your system's certificate store is current
+1. **Always use system trust store** — Let the OS manage trusted root certificates
+2. **Avoid** ``--skip-certificate-validation`` — Only use for testing self-signed certificates
+3. **Avoid** ``--allow-weak-algorithms`` — Only enable when absolutely necessary for legacy documents
+4. **Use** ``--check-signing-time`` — For old documents where certificates may have expired
+5. **Keep certificates updated** — Ensure your system's certificate store is current
