@@ -100,6 +100,52 @@ TEST(TrustedCertificateStore, LoadSystemDefaults_NullCheck) {
               VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
+TEST(TrustedCertificateStore, ToUnknown_FromUnknown) {
+    TrustedCertificateStoreHandle* store = nullptr;
+    IUnknownHandle* unknown = nullptr;
+    TrustedCertificateStoreHandle* store_back = nullptr;
+
+    // Create a TrustedCertificateStore
+    ASSERT_EQ(TrustedCertificateStore_Create(&store), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(store, nullptr);
+
+    // Convert to IUnknown
+    ASSERT_EQ(TrustedCertificateStore_ToUnknown(store, &unknown), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(unknown, nullptr);
+
+    // Convert back to TrustedCertificateStore
+    ASSERT_EQ(TrustedCertificateStore_FromUnknown(unknown, &store_back), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(store_back, nullptr);
+
+    // The pointers should be the same (same underlying object)
+    EXPECT_EQ(store, store_back);
+
+    // Cleanup - only release once since it's the same object
+    ASSERT_EQ(TrustedCertificateStore_Release(store), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(TrustedCertificateStore, ToUnknown_NullChecks) {
+    TrustedCertificateStoreHandle* store = nullptr;
+    IUnknownHandle* unknown = nullptr;
+
+    ASSERT_EQ(TrustedCertificateStore_Create(&store), VANILLAPDF_ERROR_SUCCESS);
+
+    // Null handle check
+    EXPECT_EQ(TrustedCertificateStore_ToUnknown(nullptr, &unknown), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    // Null result check
+    EXPECT_EQ(TrustedCertificateStore_ToUnknown(store, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    ASSERT_EQ(TrustedCertificateStore_Release(store), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(TrustedCertificateStore, FromUnknown_NullChecks) {
+    TrustedCertificateStoreHandle* store = nullptr;
+
+    // Null handle check
+    EXPECT_EQ(TrustedCertificateStore_FromUnknown(nullptr, &store), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
 // SignatureVerifier Tests
 
 TEST(SignatureVerifier, Verify_NullChecks) {
@@ -201,6 +247,146 @@ TEST(SignatureVerificationResult, GetCertificateChainAt_NullChecks) {
 TEST(SignatureVerificationResult, Release_NullCheck) {
     EXPECT_EQ(SignatureVerificationResult_Release(nullptr),
               VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+TEST(SignatureVerificationResult, ToUnknown_FromUnknown) {
+    // Create a SignatureVerificationResult by performing a signature verification
+    const char* test_message = "Test message for ToUnknown/FromUnknown";
+    const size_t test_message_len = strlen(test_message);
+
+    BufferHandle* pkcs12_buffer = nullptr;
+    PKCS12KeyHandle* pkcs12_key = nullptr;
+    SigningKeyHandle* signing_key = nullptr;
+    BufferHandle* message_buffer = nullptr;
+    BufferHandle* signature_buffer = nullptr;
+    TrustedCertificateStoreHandle* trust_store = nullptr;
+    SignatureVerificationResultHandle* verify_result = nullptr;
+
+    // Step 1: Create signing key from test certificate
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(SIGNING_CERTIFICATE),
+                                     SIGNING_CERTIFICATE_SIZE, &pkcs12_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pkcs12_buffer, nullptr);
+
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(pkcs12_buffer, nullptr, &pkcs12_key),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pkcs12_key, nullptr);
+
+    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, &signing_key),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signing_key, nullptr);
+
+    // Step 2: Create signature
+    ASSERT_EQ(SigningKey_SignInitialize(signing_key, MessageDigestAlgorithmType_SHA256),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Buffer_CreateFromData(test_message, test_message_len, &message_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(message_buffer, nullptr);
+
+    ASSERT_EQ(SigningKey_SignUpdate(signing_key, message_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(SigningKey_SignFinal(signing_key, &signature_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signature_buffer, nullptr);
+
+    ASSERT_EQ(SigningKey_SignCleanup(signing_key), VANILLAPDF_ERROR_SUCCESS);
+
+    // Step 3: Create trust store
+    ASSERT_EQ(TrustedCertificateStore_Create(&trust_store), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(trust_store, nullptr);
+
+    // Step 4: Verify signature to get a SignatureVerificationResult
+    ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
+              nullptr, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(verify_result, nullptr);
+
+    // Step 5: Test ToUnknown/FromUnknown conversion
+    IUnknownHandle* unknown = nullptr;
+    SignatureVerificationResultHandle* result_back = nullptr;
+
+    // Convert to IUnknown
+    ASSERT_EQ(SignatureVerificationResult_ToUnknown(verify_result, &unknown), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(unknown, nullptr);
+
+    // Convert back to SignatureVerificationResult
+    ASSERT_EQ(SignatureVerificationResult_FromUnknown(unknown, &result_back), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(result_back, nullptr);
+
+    // The pointers should be the same (same underlying object)
+    EXPECT_EQ(verify_result, result_back);
+
+    // Cleanup - only release once since it's the same object
+    ASSERT_EQ(SignatureVerificationResult_Release(verify_result), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TrustedCertificateStore_Release(trust_store), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(signature_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(message_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SigningKey_Release(signing_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_Release(pkcs12_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(pkcs12_buffer), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(SignatureVerificationResult, ToUnknown_NullChecks) {
+    // Create a SignatureVerificationResult for null checks
+    const char* test_message = "Test message for null checks";
+    const size_t test_message_len = strlen(test_message);
+
+    BufferHandle* pkcs12_buffer = nullptr;
+    PKCS12KeyHandle* pkcs12_key = nullptr;
+    SigningKeyHandle* signing_key = nullptr;
+    BufferHandle* message_buffer = nullptr;
+    BufferHandle* signature_buffer = nullptr;
+    TrustedCertificateStoreHandle* trust_store = nullptr;
+    SignatureVerificationResultHandle* verify_result = nullptr;
+
+    // Create a verification result
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(SIGNING_CERTIFICATE),
+                                     SIGNING_CERTIFICATE_SIZE, &pkcs12_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(pkcs12_buffer, nullptr, &pkcs12_key),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, &signing_key),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(SigningKey_SignInitialize(signing_key, MessageDigestAlgorithmType_SHA256),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData(test_message, test_message_len, &message_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SigningKey_SignUpdate(signing_key, message_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SigningKey_SignFinal(signing_key, &signature_buffer),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SigningKey_SignCleanup(signing_key), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(TrustedCertificateStore_Create(&trust_store), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SignatureVerifier_Verify(message_buffer, signature_buffer, trust_store,
+              nullptr, &verify_result), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(verify_result, nullptr);
+
+    IUnknownHandle* unknown = nullptr;
+
+    // Null handle check
+    EXPECT_EQ(SignatureVerificationResult_ToUnknown(nullptr, &unknown), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    // Null result check
+    EXPECT_EQ(SignatureVerificationResult_ToUnknown(verify_result, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    // Cleanup
+    ASSERT_EQ(SignatureVerificationResult_Release(verify_result), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TrustedCertificateStore_Release(trust_store), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(signature_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(message_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SigningKey_Release(signing_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_Release(pkcs12_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(pkcs12_buffer), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(SignatureVerificationResult, FromUnknown_NullChecks) {
+    SignatureVerificationResultHandle* result = nullptr;
+
+    // Null handle check
+    EXPECT_EQ(SignatureVerificationResult_FromUnknown(nullptr, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 // SignatureVerificationSettings Tests
