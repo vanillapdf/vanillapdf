@@ -33,6 +33,7 @@ jobs:
     outputs:
       branch-name: vanillapdf-${{ steps.version.outputs.version }}
       pr-url: ${{ steps.pr-info.outputs.pr-url }}
+      is-latest: ${{ steps.check-latest.outputs.is_latest }}
     steps:
       - name: Parse version from tag
         id: version
@@ -47,13 +48,38 @@ jobs:
         with:
           path: vanillapdf
           ref: ${{ inputs.tag }}
+          fetch-depth: 0
+
+      - name: Check if latest version
+        id: check-latest
+        working-directory: vanillapdf
+        run: |
+          VERSION="${{ inputs.tag }}"
+          VERSION="${VERSION#v}"
+
+          # Get all release tags and find the latest version
+          LATEST=$(git tag -l 'v*.*.*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          LATEST="${LATEST#v}"
+
+          echo "Current version: ${VERSION}"
+          echo "Latest version: ${LATEST}"
+
+          if [ "$VERSION" != "$LATEST" ]; then
+            echo "Not the latest version, skipping Homebrew update"
+            echo "is_latest=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "This is the latest version, proceeding with Homebrew update"
+            echo "is_latest=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Setup Git & GitHub CLI
+        if: steps.check-latest.outputs.is_latest == 'true'
         run: |
           git config --global user.name "vanillapdf-bot"
           git config --global user.email "info@vanillapdf.com"
 
       - name: Clone homebrew-core fork
+        if: steps.check-latest.outputs.is_latest == 'true'
         run: |
           git clone https://github.com/vanillapdf/homebrew-core.git
           cd homebrew-core
@@ -62,6 +88,7 @@ jobs:
           git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/master
 
       - name: Calculate SHA256 for source archive
+        if: steps.check-latest.outputs.is_latest == 'true'
         id: sha256
         run: |
           TAG="${{ inputs.tag }}"
@@ -77,6 +104,7 @@ jobs:
           rm source.tar.gz
 
       - name: Update formula with release info
+        if: steps.check-latest.outputs.is_latest == 'true'
         run: |
           TAG="${{ steps.version.outputs.tag }}"
           SHA256="${{ steps.sha256.outputs.sha256 }}"
@@ -97,13 +125,14 @@ jobs:
           cat "$FORMULA"
 
       - name: Test formula locally
+        if: steps.check-latest.outputs.is_latest == 'true'
         run: |
           cd homebrew-core
           # Audit the formula for issues
           brew audit --strict --online Formula/v/vanillapdf.rb || true
 
       - name: Show prepared changes (dry run)
-        if: ${{ inputs.dry_run }}
+        if: ${{ steps.check-latest.outputs.is_latest == 'true' && inputs.dry_run }}
         run: |
           cd homebrew-core
           echo "=== Dry run mode - showing prepared changes ==="
@@ -122,7 +151,7 @@ jobs:
           echo "=== Dry run complete - no changes committed ==="
 
       - name: Set authenticated origin for push
-        if: ${{ !inputs.dry_run }}
+        if: ${{ steps.check-latest.outputs.is_latest == 'true' && !inputs.dry_run }}
         run: |
           cd homebrew-core
           git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/vanillapdf/homebrew-core.git"
@@ -130,7 +159,7 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
 
       - name: Commit and push changes to fork
-        if: ${{ !inputs.dry_run }}
+        if: ${{ steps.check-latest.outputs.is_latest == 'true' && !inputs.dry_run }}
         run: |
           cd homebrew-core
           VERSION="${{ steps.version.outputs.version }}"
@@ -146,6 +175,7 @@ jobs:
           git push origin vanillapdf-${{ steps.version.outputs.version }}
 
       - name: Generate PR info
+        if: steps.check-latest.outputs.is_latest == 'true'
         id: pr-info
         run: |
           echo "pr-url=https://github.com/vanillapdf/homebrew-core/compare/master...vanillapdf-${{ steps.version.outputs.version }}" >> "$GITHUB_OUTPUT"
@@ -156,7 +186,7 @@ jobs:
     name: Create PR to official Homebrew repo
     runs-on: macos-latest
     needs: prepare-homebrew-changes
-    if: ${{ !inputs.dry_run }}
+    if: ${{ !inputs.dry_run && needs.prepare-homebrew-changes.outputs.is-latest == 'true' }}
     environment: production
     steps:
       - name: Setup Git & GitHub CLI
