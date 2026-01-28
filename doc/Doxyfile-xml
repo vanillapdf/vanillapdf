@@ -1,0 +1,32 @@
+# Doxyfile for XML output consumed by Sphinx/Breathe.
+# Run from the doc/ directory:  doxygen Doxyfile-xml
+
+PROJECT_NAME           = Vanilla.PDF
+# PROJECT_NUMBER is injected by conf.py via a Doxygen override file.
+PROJECT_BRIEF          = "Cross-platform toolkit for creating and modifying PDF documents"
+
+# Input sources
+INPUT                  = ../include \
+                         src/input
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.dox
+
+# Output
+OUTPUT_DIRECTORY       = sphinx/_build/doxygen
+GENERATE_XML           = YES
+GENERATE_HTML          = NO
+GENERATE_LATEX         = NO
+
+# Preprocessing
+PREDEFINED             = VANILLAPDF_API \
+                         CALLING_CONVENTION \
+                         VANILLAPDF_DEPRECATED
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+
+# Paths
+IMAGE_PATH             = src/images
+EXAMPLE_PATH           = ../src/vanillapdf.tools \
+                         ../src/vanillapdf.test
+FULL_PATH_NAMES        = NO
+QUIET                  = YES
