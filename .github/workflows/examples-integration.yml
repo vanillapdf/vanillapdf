@@ -9,22 +9,24 @@ on:
 
   # Run on changes that could affect examples
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     paths:
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'vcpkg.json.in'
       - 'ports/**'
+      - 'homebrew/**'
       - 'examples/**'
       - '.github/workflows/examples-integration.yml'
 
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     paths:
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'vcpkg.json.in'
       - 'ports/**'
+      - 'homebrew/**'
       - 'examples/**'
       - '.github/workflows/examples-integration.yml'
 
@@ -302,4 +304,59 @@ jobs:
 
       - name: Test
         working-directory: examples/vcpkg-port-integration
+        run: ctest --preset ${{ matrix.preset }} --output-on-failure
+
+  # =============================================================================
+  # Homebrew Integration Tests (validates formula can be consumed)
+  # =============================================================================
+
+  homebrew-macos:
+    name: Homebrew - macOS ${{ matrix.preset }}
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            preset: macos-arm64-release
+          - runner: macos-15-intel
+            preset: macos-x64-release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: false  # No vcpkg needed for Homebrew test
+
+      - name: Install Homebrew dependencies
+        run: |
+          brew update
+          brew install ninja openssl@3 jpeg-turbo zlib openjpeg
+
+      - name: Update formula to use current branch
+        run: ./scripts/update_formula_branch.sh "${{ github.head_ref || github.ref_name }}"
+
+      - name: Install vanillapdf via Homebrew formula (--HEAD)
+        run: |
+          # Install using the formula from the repo, building from HEAD (current branch)
+          brew install --build-from-source --HEAD ./homebrew/vanillapdf.rb
+
+      - name: Verify installation
+        run: |
+          # Check library exists
+          ls -la $(brew --prefix)/lib/libvanillapdf*
+          # Check CLI tool works
+          vanillapdf-tools --version
+
+      - name: Configure integration test
+        working-directory: examples/homebrew-integration
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build integration test
+        working-directory: examples/homebrew-integration
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Run integration test
+        working-directory: examples/homebrew-integration
         run: ctest --preset ${{ matrix.preset }} --output-on-failure
