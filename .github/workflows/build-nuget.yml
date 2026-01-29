@@ -49,6 +49,10 @@ on:
       - 'cmake/**'
       - 'vcpkg.json.in'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read  # Needed for future GitHub release or content access
   packages: read  # Needed for publishing NuGet packages within organization
