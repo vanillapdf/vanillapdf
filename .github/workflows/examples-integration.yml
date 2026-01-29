@@ -15,6 +15,7 @@ on:
       - 'cmake/**'
       - 'vcpkg.json.in'
       - 'ports/**'
+      - 'conan/**'
       - 'examples/**'
       - '.github/workflows/examples-integration.yml'
 
@@ -25,6 +26,7 @@ on:
       - 'cmake/**'
       - 'vcpkg.json.in'
       - 'ports/**'
+      - 'conan/**'
       - 'examples/**'
       - '.github/workflows/examples-integration.yml'
 
@@ -302,4 +304,153 @@ jobs:
 
       - name: Test
         working-directory: examples/vcpkg-port-integration
+        run: ctest --preset ${{ matrix.preset }} --output-on-failure
+
+  # =============================================================================
+  # Conan Integration Tests
+  # =============================================================================
+
+  conan-linux:
+    name: Conan - Linux ${{ matrix.preset }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [linux-x64-debug, linux-x64-release]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Install Conan
+        run: pip install "conan>=2,<3"
+
+      - name: Detect Conan profile
+        run: conan profile detect
+
+      - name: Create vanillapdf Conan package
+        run: conan create conan/ --version=2.3.0 --build=missing
+
+      - name: Install example dependencies
+        working-directory: examples/conan-integration
+        run: conan install . --build=missing
+
+      - name: Configure CMake
+        working-directory: examples/conan-integration
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build
+        working-directory: examples/conan-integration
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Test
+        working-directory: examples/conan-integration
+        run: ctest --preset ${{ matrix.preset }} --output-on-failure
+
+  conan-windows:
+    name: Conan - Windows ${{ matrix.preset }}
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [windows-x64-debug, windows-x64-release]
+        include:
+          - preset: windows-x64-debug
+            build_type: Debug
+          - preset: windows-x64-release
+            build_type: Release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Visual Studio
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Install Conan
+        run: pip install "conan>=2,<3"
+
+      - name: Detect Conan profile
+        run: conan profile detect
+
+      - name: Create vanillapdf Conan package
+        run: conan create conan/ --version=2.3.0 --build=missing
+
+      - name: Install example dependencies
+        working-directory: examples/conan-integration
+        run: conan install . --build=missing -s build_type=${{ matrix.build_type }}
+
+      - name: Configure CMake
+        working-directory: examples/conan-integration
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build
+        working-directory: examples/conan-integration
+        run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.build_type }}
+
+      - name: Test
+        working-directory: examples/conan-integration
+        run: ctest --preset ${{ matrix.preset }} -C ${{ matrix.build_type }} --output-on-failure
+
+  conan-macos:
+    name: Conan - macOS ${{ matrix.preset }}
+    runs-on: macos-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [macos-arm64-debug, macos-arm64-release]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install build tools
+        run: brew install ninja
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Install Conan
+        run: pip install "conan>=2,<3"
+
+      - name: Detect Conan profile
+        run: conan profile detect
+
+      - name: Create vanillapdf Conan package
+        run: conan create conan/ --version=2.3.0 --build=missing
+
+      - name: Install example dependencies
+        working-directory: examples/conan-integration
+        run: conan install . --build=missing
+
+      - name: Configure CMake
+        working-directory: examples/conan-integration
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build
+        working-directory: examples/conan-integration
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Test
+        working-directory: examples/conan-integration
         run: ctest --preset ${{ matrix.preset }} --output-on-failure

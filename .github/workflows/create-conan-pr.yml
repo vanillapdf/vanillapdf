@@ -1,0 +1,317 @@
+name: Create Conan Center PR
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+      dry_run:
+        required: false
+        type: boolean
+        default: false
+
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag name (e.g. v2.3.0)"
+        required: true
+        type: string
+      dry_run:
+        description: "Dry run - prepare changes but don't commit or create PR"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  prepare-conan-changes:
+    name: Prepare Conan Center update
+    runs-on: ubuntu-latest
+    outputs:
+      branch-name: vanillapdf-${{ steps.version.outputs.version }}
+      pr-url: ${{ steps.pr-info.outputs.pr-url }}
+    steps:
+      - name: Parse version from tag
+        id: version
+        run: |
+          TAG="${{ inputs.tag }}"
+          VERSION="${TAG#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Version: ${VERSION}"
+
+      - name: Checkout vanillapdf repo at tag
+        uses: actions/checkout@v6
+        with:
+          path: vanillapdf
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+
+      - name: Check if latest version
+        run: |
+          cd vanillapdf
+          LATEST=$(git tag -l 'v*.*.*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          LATEST="${LATEST#v}"
+          VERSION="${{ steps.version.outputs.version }}"
+          echo "Current version: ${VERSION}"
+          echo "Latest version: ${LATEST}"
+          if [ "$VERSION" != "$LATEST" ]; then
+            echo "::warning::Version ${VERSION} is not the latest (${LATEST}). Proceeding anyway."
+          fi
+
+      - name: Setup Git & GitHub CLI
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Clone conan-center-index fork
+        run: |
+          git clone https://github.com/vanillapdf/conan-center-index.git
+          cd conan-center-index
+          git remote add upstream https://github.com/conan-io/conan-center-index.git
+          git fetch upstream
+          git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/master
+
+      - name: Calculate SHA256 for source archive
+        id: sha256
+        run: |
+          VERSION="${{ inputs.tag }}"
+          ARCHIVE_URL="https://github.com/vanillapdf/vanillapdf/archive/refs/tags/${VERSION}.tar.gz"
+
+          echo "Downloading archive from: ${ARCHIVE_URL}"
+          curl -sL "${ARCHIVE_URL}" -o source.tar.gz
+
+          SHA256=$(sha256sum source.tar.gz | cut -d' ' -f1)
+          echo "SHA256: ${SHA256}"
+          echo "sha256=${SHA256}" >> "$GITHUB_OUTPUT"
+
+          rm source.tar.gz
+
+      - name: Create CCI recipe files
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          SHA256="${{ steps.sha256.outputs.sha256 }}"
+          RECIPE_DIR="conan-center-index/recipes/vanillapdf/all"
+
+          # Create recipe directory structure
+          mkdir -p "${RECIPE_DIR}/test_package/src"
+
+          # Create CCI conanfile.py (source-only, no export_sources)
+          cat > "${RECIPE_DIR}/conanfile.py" << 'PYEOF'
+          from conan import ConanFile
+          from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps, cmake_layout
+          from conan.tools.files import get, copy
+          import os
+
+
+          class VanillaPDFConan(ConanFile):
+              name = "vanillapdf"
+              description = "Cross-platform toolkit for creating and modifying PDF documents"
+              license = "Apache-2.0"
+              url = "https://github.com/conan-io/conan-center-index"
+              homepage = "https://vanillapdf.com"
+              topics = ("pdf", "document", "toolkit")
+
+              package_type = "library"
+              settings = "os", "compiler", "build_type", "arch"
+
+              options = {
+                  "shared": [True, False],
+                  "fPIC": [True, False],
+              }
+              default_options = {
+                  "shared": False,
+                  "fPIC": True,
+              }
+
+              def source(self):
+                  get(self, **self.conan_data["sources"][self.version], strip_root=True)
+
+              def config_options(self):
+                  if self.settings.os == "Windows":
+                      del self.options.fPIC
+
+              def configure(self):
+                  if self.options.shared:
+                      self.options.rm_safe("fPIC")
+
+              def requirements(self):
+                  self.requires("spdlog/[>=1.14]")
+                  self.requires("nlohmann_json/[>=3.11]")
+                  self.requires("openssl/[>=3.0 <4]")
+                  self.requires("zlib/[>=1.2]")
+                  self.requires("libjpeg-turbo/[>=2.0]")
+                  self.requires("openjpeg/[>=2.5]")
+
+              def layout(self):
+                  cmake_layout(self, src_folder="src")
+
+              def generate(self):
+                  tc = CMakeToolchain(self)
+                  tc.variables["VANILLAPDF_INTERNAL_VCPKG"] = False
+                  tc.variables["VANILLAPDF_EXTERNAL_OPENSSL"] = True
+                  tc.variables["VANILLAPDF_EXTERNAL_JPEG"] = True
+                  tc.variables["VANILLAPDF_EXTERNAL_OPENJPEG"] = True
+                  tc.variables["VANILLAPDF_EXTERNAL_ZLIB"] = True
+                  tc.variables["VANILLAPDF_EXTERNAL_SPDLOG"] = True
+                  tc.variables["VANILLAPDF_EXTERNAL_NLOHMANN_JSON"] = True
+                  tc.variables["VANILLAPDF_ENABLE_TESTS"] = False
+                  tc.variables["VANILLAPDF_ENABLE_BENCHMARK"] = False
+                  tc.variables["VANILLAPDF_ENABLE_PACKAGING"] = False
+                  tc.generate()
+                  deps = CMakeDeps(self)
+                  deps.generate()
+
+              def build(self):
+                  cmake = CMake(self)
+                  cmake.configure()
+                  cmake.build()
+
+              def package(self):
+                  copy(self, "LICENSE.txt", src=self.source_folder, dst=os.path.join(self.package_folder, "licenses"))
+                  cmake = CMake(self)
+                  cmake.install()
+
+              def package_info(self):
+                  self.cpp_info.libs = ["vanillapdf"]
+                  self.cpp_info.set_property("cmake_file_name", "vanillapdf")
+                  self.cpp_info.set_property("cmake_target_name", "vanillapdf::vanillapdf")
+                  self.cpp_info.requires = [
+                      "openssl::openssl",
+                      "zlib::zlib",
+                      "libjpeg-turbo::libjpeg-turbo",
+                      "openjpeg::openjpeg",
+                      "spdlog::spdlog",
+                      "nlohmann_json::nlohmann_json",
+                  ]
+          PYEOF
+
+          # Remove leading whitespace from heredoc (Python is indentation-sensitive)
+          sed -i 's/^          //' "${RECIPE_DIR}/conanfile.py"
+
+          # Create conandata.yml
+          cat > "${RECIPE_DIR}/conandata.yml" << EOF
+          sources:
+            "${VERSION}":
+              url: "https://github.com/vanillapdf/vanillapdf/archive/refs/tags/v${VERSION}.tar.gz"
+              sha256: "${SHA256}"
+          EOF
+          sed -i 's/^          //' "${RECIPE_DIR}/conandata.yml"
+
+          # Copy test_package from our repo
+          cp vanillapdf/conan/test_package/conanfile.py "${RECIPE_DIR}/test_package/conanfile.py"
+          cp vanillapdf/conan/test_package/CMakeLists.txt "${RECIPE_DIR}/test_package/CMakeLists.txt"
+          cp -r vanillapdf/conan/test_package/src/ "${RECIPE_DIR}/test_package/src/"
+
+          # Create config.yml at recipes/vanillapdf/config.yml
+          cat > "conan-center-index/recipes/vanillapdf/config.yml" << EOF
+          versions:
+            "${VERSION}":
+              folder: all
+          EOF
+
+      - name: Show prepared changes (dry run)
+        if: ${{ inputs.dry_run }}
+        run: |
+          cd conan-center-index
+          echo "=== Dry run mode - showing prepared changes ==="
+          echo ""
+          echo "=== Recipe files ==="
+          echo "--- config.yml ---"
+          cat recipes/vanillapdf/config.yml
+          echo ""
+          echo "--- conanfile.py ---"
+          cat recipes/vanillapdf/all/conanfile.py
+          echo ""
+          echo "--- conandata.yml ---"
+          cat recipes/vanillapdf/all/conandata.yml
+          echo ""
+          echo "--- test_package/conanfile.py ---"
+          cat recipes/vanillapdf/all/test_package/conanfile.py
+          echo ""
+          echo "=== Git status ==="
+          git status
+          echo ""
+          echo "=== Dry run complete - no changes committed ==="
+
+      - name: Set authenticated origin for push
+        if: ${{ !inputs.dry_run }}
+        run: |
+          cd conan-center-index
+          git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/vanillapdf/conan-center-index.git"
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+
+      - name: Commit and push changes to fork
+        if: ${{ !inputs.dry_run }}
+        run: |
+          cd conan-center-index
+          git add recipes/vanillapdf/
+          git commit -m "Add vanillapdf/${{ steps.version.outputs.version }}"
+          git push origin vanillapdf-${{ steps.version.outputs.version }}
+
+      - name: Generate PR info
+        id: pr-info
+        run: |
+          echo "pr-url=https://github.com/vanillapdf/conan-center-index/compare/master...vanillapdf-${{ steps.version.outputs.version }}" >> "$GITHUB_OUTPUT"
+          echo "Changes prepared and pushed to vanillapdf/conan-center-index"
+          echo "Review the changes at: https://github.com/vanillapdf/conan-center-index/compare/master...vanillapdf-${{ steps.version.outputs.version }}"
+
+  create-official-pr:
+    name: Create PR to Conan Center Index
+    runs-on: ubuntu-latest
+    needs: prepare-conan-changes
+    if: ${{ !inputs.dry_run }}
+    environment: production
+    steps:
+      - name: Setup Git & GitHub CLI
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Clone conan-center-index fork
+        run: |
+          gh repo clone vanillapdf/conan-center-index
+          cd conan-center-index
+          git fetch origin
+          git checkout ${{ needs.prepare-conan-changes.outputs.branch-name }}
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+
+      - name: Create draft pull request to official repo
+        run: |
+          cd conan-center-index
+          VERSION="${{ inputs.tag }}"
+          VERSION_NO_V="${VERSION#v}"
+
+          BODY="## New Recipe: vanillapdf/${VERSION_NO_V}
+
+          **Description:**
+          Cross-platform toolkit for creating and modifying PDF documents.
+
+          **Homepage:** https://vanillapdf.com
+          **License:** Apache-2.0
+          **Source:** https://github.com/vanillapdf/vanillapdf
+
+          **Checklist:**
+          - [x] Recipe builds and tests pass locally
+          - [x] License file is included in package
+          - [x] \`test_package\` validates basic functionality
+          - [x] Source comes from authoritative GitHub repository
+
+          ---
+
+          Changes prepared by vanillapdf release automation.
+          Review branch: ${{ needs.prepare-conan-changes.outputs.pr-url }}"
+
+          gh pr create \
+            --repo conan-io/conan-center-index \
+            --title "Add vanillapdf/${VERSION_NO_V}" \
+            --body "$BODY" \
+            --base master \
+            --head vanillapdf:${{ needs.prepare-conan-changes.outputs.branch-name }} \
+            --draft
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
