@@ -81,6 +81,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_LoadSystemD
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_ToUnknown(
+    TrustedCertificateStoreHandle* handle,
+    IUnknownHandle** result) {
+    return SafeObjectConvert<TrustedCertificateStore, IUnknown, TrustedCertificateStoreHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_FromUnknown(
+    IUnknownHandle* handle,
+    TrustedCertificateStoreHandle** result) {
+    return SafeObjectConvert<IUnknown, TrustedCertificateStore, IUnknownHandle, TrustedCertificateStoreHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_Release(
     TrustedCertificateStoreHandle* handle) {
     return ObjectRelease<TrustedCertificateStore, TrustedCertificateStoreHandle>(handle);
@@ -268,6 +280,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetSign
         *result = reinterpret_cast<BufferHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_ToUnknown(
+    SignatureVerificationResultHandle* handle,
+    IUnknownHandle** result) {
+    return SafeObjectConvert<SignatureVerificationResult, IUnknown, SignatureVerificationResultHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_FromUnknown(
+    IUnknownHandle* handle,
+    SignatureVerificationResultHandle** result) {
+    return SafeObjectConvert<IUnknown, SignatureVerificationResult, IUnknownHandle, SignatureVerificationResultHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_Release(

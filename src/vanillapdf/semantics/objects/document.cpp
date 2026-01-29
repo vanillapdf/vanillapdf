@@ -30,13 +30,7 @@ DocumentPtr Document::Open(const std::string& path) {
 }
 
 DocumentPtr Document::OpenFile(syntax::FilePtr holder) {
-    if (SemanticUtils::HasMappedDocument(holder)) {
-        auto result = SemanticUtils::GetMappedDocument(holder);
-
-        return result.GetReference();
-    }
-
-    return DocumentPtr(pdf_new Document(holder));
+    return SemanticUtils::GetOrCreateDocument(holder);
 }
 
 DocumentPtr Document::Create(const std::string& path) {

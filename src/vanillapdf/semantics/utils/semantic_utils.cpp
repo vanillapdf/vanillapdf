@@ -118,5 +118,20 @@ void SemanticUtils::ReleaseMapping(WeakReference<syntax::File> file) {
     document_map->erase(shared.get());
 }
 
+DocumentPtr SemanticUtils::GetOrCreateDocument(syntax::FilePtr file) {
+    std::lock_guard<std::recursive_mutex> locker(document_map_lock);
+    auto document_map = GetDocumentMapInstance();
+
+    // Single lookup to check if document exists
+    auto found = document_map->find(file.get());
+    if (found != document_map->end() && found->second.IsActive()) {
+        return found->second.GetReference();
+    }
+
+    // Create new document while still holding the lock
+    // The Document constructor calls AddDocumentMapping internally
+    return DocumentPtr(pdf_new Document(file));
+}
+
 } // semantics
 } // vanillapdf
