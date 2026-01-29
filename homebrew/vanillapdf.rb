@@ -9,8 +9,10 @@ class Vanillapdf < Formula
 
   depends_on "cmake" => :build
   depends_on "jpeg-turbo"
+  depends_on "nlohmann-json"
   depends_on "openjpeg"
   depends_on "openssl@3"
+  depends_on "spdlog"
 
   uses_from_macos "zlib"
 
@@ -21,6 +23,8 @@ class Vanillapdf < Formula
       -DVANILLAPDF_EXTERNAL_JPEG=ON
       -DVANILLAPDF_EXTERNAL_OPENJPEG=ON
       -DVANILLAPDF_EXTERNAL_ZLIB=ON
+      -DVANILLAPDF_EXTERNAL_SPDLOG=ON
+      -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON
     ]
 
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
