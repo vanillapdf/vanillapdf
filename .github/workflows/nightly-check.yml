@@ -26,6 +26,10 @@ on:
   schedule:
     - cron: '0 2 * * 1'  # Every on Monday at 2 AM UTC
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 # Enable only minimum required permissions
 permissions:
   contents: read    # Download the repository source code
