@@ -339,8 +339,11 @@ jobs:
 
       - name: Install vanillapdf via Homebrew formula (--HEAD)
         run: |
-          # Install using the formula from the repo, building from HEAD (current branch)
-          brew install --build-from-source --HEAD ./homebrew/vanillapdf.rb
+          # Create a local tap so Homebrew accepts the formula
+          brew tap-new --no-git vanillapdf/test
+          cp ./homebrew/vanillapdf.rb "$(brew --repository vanillapdf/test)/Formula/vanillapdf.rb"
+          # Install from the local tap, building from HEAD (current branch)
+          brew install --build-from-source --HEAD vanillapdf/test/vanillapdf
 
       - name: Verify installation
         run: |
