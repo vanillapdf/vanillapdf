@@ -120,7 +120,11 @@ TEST(TrustedCertificateStore, ToUnknown_FromUnknown) {
     // The pointers should be the same (same underlying object)
     EXPECT_EQ(store, store_back);
 
-    // Cleanup - only release once since it's the same object
+    // Cleanup - each conversion (ToUnknown/FromUnknown) adds a reference,
+    // so we need to release: unknown (from ToUnknown), store_back (from FromUnknown),
+    // and store (from original Create call)
+    ASSERT_EQ(IUnknown_Release(unknown), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TrustedCertificateStore_Release(store_back), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TrustedCertificateStore_Release(store), VANILLAPDF_ERROR_SUCCESS);
 }
 
@@ -317,7 +321,11 @@ TEST(SignatureVerificationResult, ToUnknown_FromUnknown) {
     // The pointers should be the same (same underlying object)
     EXPECT_EQ(verify_result, result_back);
 
-    // Cleanup - only release once since it's the same object
+    // Cleanup - each conversion (ToUnknown/FromUnknown) adds a reference,
+    // so we need to release: unknown (from ToUnknown), result_back (from FromUnknown),
+    // and verify_result (from original Verify call)
+    ASSERT_EQ(IUnknown_Release(unknown), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SignatureVerificationResult_Release(result_back), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(SignatureVerificationResult_Release(verify_result), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TrustedCertificateStore_Release(trust_store), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_Release(signature_buffer), VANILLAPDF_ERROR_SUCCESS);
