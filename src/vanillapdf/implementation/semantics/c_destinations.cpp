@@ -67,6 +67,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION Destination_GetPageNumber(Destinati
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Destination_ToUnknown(DestinationHandle* handle, IUnknownHandle** result) {
+    return SafeObjectConvert<DestinationBase, IUnknown, DestinationHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Destination_FromUnknown(IUnknownHandle* handle, DestinationHandle** result) {
+    return SafeObjectConvert<IUnknown, DestinationBase, IUnknownHandle, DestinationHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHandle* handle)
 {
     return ObjectRelease<DestinationBase, DestinationHandle>(handle);

@@ -815,4 +815,76 @@ TEST(DestinationValidation, NonNameDestinationType) {
     ASSERT_EQ(ArrayObject_Release(array_handle), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(Destination, ToAndFromUnknown) {
+    // Create XYZ destination array: [0 /XYZ 100.0 200.0 1.5]
+    ArrayObjectHandle* array_handle = nullptr;
+    ASSERT_EQ(ArrayObject_Create(&array_handle), VANILLAPDF_ERROR_SUCCESS);
+
+    // Add page number (0)
+    IntegerObjectHandle* page_handle = CreateIntegerObject(0);
+    ObjectHandle* page_obj = nullptr;
+    ASSERT_EQ(IntegerObject_ToObject(page_handle, &page_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Append(array_handle, page_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Add destination type (/XYZ)
+    NameObjectHandle* type_handle = CreateNameObject("XYZ");
+    ObjectHandle* type_obj = nullptr;
+    ASSERT_EQ(NameObject_ToObject(type_handle, &type_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Append(array_handle, type_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Add left coordinate (100.0)
+    RealObjectHandle* left_handle = CreateRealObject(100.0);
+    ObjectHandle* left_obj = nullptr;
+    ASSERT_EQ(RealObject_ToObject(left_handle, &left_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Append(array_handle, left_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Add top coordinate (200.0)
+    RealObjectHandle* top_handle = CreateRealObject(200.0);
+    ObjectHandle* top_obj = nullptr;
+    ASSERT_EQ(RealObject_ToObject(top_handle, &top_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Append(array_handle, top_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Add zoom factor (1.5)
+    RealObjectHandle* zoom_handle = CreateRealObject(1.5);
+    ObjectHandle* zoom_obj = nullptr;
+    ASSERT_EQ(RealObject_ToObject(zoom_handle, &zoom_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Append(array_handle, zoom_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create destination from array
+    DestinationHandle* dest_handle = nullptr;
+    ASSERT_EQ(Destination_CreateFromArray(array_handle, &dest_handle), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dest_handle, nullptr);
+
+    // Convert to IUnknown
+    IUnknownHandle* unknown_handle = nullptr;
+    ASSERT_EQ(Destination_ToUnknown(dest_handle, &unknown_handle), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(unknown_handle, nullptr);
+
+    // Convert back from IUnknown
+    DestinationHandle* converted_dest = nullptr;
+    ASSERT_EQ(Destination_FromUnknown(unknown_handle, &converted_dest), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(converted_dest, nullptr);
+
+    // Verify destination type is preserved
+    DestinationType dest_type;
+    ASSERT_EQ(Destination_GetDestinationType(converted_dest, &dest_type), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(dest_type, DestinationType_XYZ);
+
+    // Cleanup
+    ASSERT_EQ(Destination_Release(converted_dest), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(IUnknown_Release(unknown_handle), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Destination_Release(dest_handle), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(zoom_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(RealObject_Release(zoom_handle), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(top_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(RealObject_Release(top_handle), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(left_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(RealObject_Release(left_handle), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(type_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(type_handle), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(page_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(IntegerObject_Release(page_handle), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(array_handle), VANILLAPDF_ERROR_SUCCESS);
+}
+
 } // namespace destinations
