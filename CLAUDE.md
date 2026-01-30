@@ -434,6 +434,7 @@ Use `VANILLAPDF_EXTERNAL_*` CMake options to use system dependencies instead of 
 - Uses precompiled headers (`precompiled.h`)
 - Visual Studio .natvis files for debugging support
 - Follow existing patterns in similar classes
+- Do not insert structurally different code into a group of similarly-looking lines without separating it with a blank line and a comment. Uniform blocks (e.g., a series of assignments) should stay visually cohesive.
 
 ### Testing Strategy
 

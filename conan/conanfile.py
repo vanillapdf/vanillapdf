@@ -66,7 +66,16 @@ class VanillaPDFConan(ConanFile):
         # command line, which is the recommended approach for build options.
         # This is critical for VANILLAPDF_INTERNAL_VCPKG which is checked
         # in vcpkg_init.cmake before project() loads the toolchain file.
+
+        # Library type
         tc.cache_variables["BUILD_SHARED_LIBS"] = bool(self.options.shared)
+
+        # MSVC CRT linkage — forward Conan's compiler.runtime so
+        # vanillapdf_configure_msvc_runtime() picks /MT vs /MD correctly
+        if self.settings.os == "Windows":
+            tc.cache_variables["VANILLAPDF_USE_STATIC_CRT"] = self.settings.compiler.runtime == "static"
+
+        # Dependency management
         tc.cache_variables["VANILLAPDF_INTERNAL_VCPKG"] = False
         tc.cache_variables["VANILLAPDF_EXTERNAL_OPENSSL"] = True
         tc.cache_variables["VANILLAPDF_EXTERNAL_JPEG"] = True
@@ -74,9 +83,12 @@ class VanillaPDFConan(ConanFile):
         tc.cache_variables["VANILLAPDF_EXTERNAL_ZLIB"] = True
         tc.cache_variables["VANILLAPDF_EXTERNAL_SPDLOG"] = True
         tc.cache_variables["VANILLAPDF_EXTERNAL_NLOHMANN_JSON"] = True
+
+        # Disable developer-only features
         tc.cache_variables["VANILLAPDF_ENABLE_TESTS"] = False
         tc.cache_variables["VANILLAPDF_ENABLE_BENCHMARK"] = False
         tc.cache_variables["VANILLAPDF_ENABLE_PACKAGING"] = False
+
         tc.generate()
         deps = CMakeDeps(self)
         deps.generate()
