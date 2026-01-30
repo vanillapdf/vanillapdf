@@ -361,7 +361,7 @@ jobs:
         run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing -s compiler.cppstd=17
 
       - name: Configure example conanfile
-        run: cmake -DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }} -P cmake/configure_conan_example.cmake
+        run: cmake "-DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }}" -P cmake/configure_conan_example.cmake
 
       - name: Install example dependencies
         working-directory: examples/conan-integration
@@ -415,7 +415,7 @@ jobs:
         run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing -s compiler.cppstd=17
 
       - name: Configure example conanfile
-        run: cmake -DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }} -P cmake/configure_conan_example.cmake
+        run: cmake "-DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }}" -P cmake/configure_conan_example.cmake
 
       - name: Install example dependencies
         working-directory: examples/conan-integration
@@ -469,7 +469,7 @@ jobs:
         run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing -s compiler.cppstd=17
 
       - name: Configure example conanfile
-        run: cmake -DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }} -P cmake/configure_conan_example.cmake
+        run: cmake "-DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }}" -P cmake/configure_conan_example.cmake
 
       - name: Install example dependencies
         working-directory: examples/conan-integration
