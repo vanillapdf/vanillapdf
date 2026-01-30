@@ -1,5 +1,6 @@
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps, cmake_layout
+from conan.tools.build import check_min_cppstd
 from conan.tools.files import get, copy
 import os
 
@@ -44,6 +45,9 @@ class VanillaPDFConan(ConanFile):
     def configure(self):
         if self.options.shared:
             self.options.rm_safe("fPIC")
+
+    def validate(self):
+        check_min_cppstd(self, 17)
 
     def requirements(self):
         self.requires("spdlog/[>=1.14]")
