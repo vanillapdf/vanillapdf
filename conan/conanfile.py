@@ -58,16 +58,21 @@ class VanillaPDFConan(ConanFile):
 
     def generate(self):
         tc = CMakeToolchain(self)
-        tc.variables["VANILLAPDF_INTERNAL_VCPKG"] = False
-        tc.variables["VANILLAPDF_EXTERNAL_OPENSSL"] = True
-        tc.variables["VANILLAPDF_EXTERNAL_JPEG"] = True
-        tc.variables["VANILLAPDF_EXTERNAL_OPENJPEG"] = True
-        tc.variables["VANILLAPDF_EXTERNAL_ZLIB"] = True
-        tc.variables["VANILLAPDF_EXTERNAL_SPDLOG"] = True
-        tc.variables["VANILLAPDF_EXTERNAL_NLOHMANN_JSON"] = True
-        tc.variables["VANILLAPDF_ENABLE_TESTS"] = False
-        tc.variables["VANILLAPDF_ENABLE_BENCHMARK"] = False
-        tc.variables["VANILLAPDF_ENABLE_PACKAGING"] = False
+        # Use cache_variables so values are passed as -D flags on the cmake
+        # command line, which is the recommended approach for build options.
+        # This is critical for VANILLAPDF_INTERNAL_VCPKG which is checked
+        # in vcpkg_init.cmake before project() loads the toolchain file.
+        tc.cache_variables["BUILD_SHARED_LIBS"] = bool(self.options.shared)
+        tc.cache_variables["VANILLAPDF_INTERNAL_VCPKG"] = False
+        tc.cache_variables["VANILLAPDF_EXTERNAL_OPENSSL"] = True
+        tc.cache_variables["VANILLAPDF_EXTERNAL_JPEG"] = True
+        tc.cache_variables["VANILLAPDF_EXTERNAL_OPENJPEG"] = True
+        tc.cache_variables["VANILLAPDF_EXTERNAL_ZLIB"] = True
+        tc.cache_variables["VANILLAPDF_EXTERNAL_SPDLOG"] = True
+        tc.cache_variables["VANILLAPDF_EXTERNAL_NLOHMANN_JSON"] = True
+        tc.cache_variables["VANILLAPDF_ENABLE_TESTS"] = False
+        tc.cache_variables["VANILLAPDF_ENABLE_BENCHMARK"] = False
+        tc.cache_variables["VANILLAPDF_ENABLE_PACKAGING"] = False
         tc.generate()
         deps = CMakeDeps(self)
         deps.generate()
