@@ -87,6 +87,18 @@ target_link_libraries(vanillapdf.tools PRIVATE ${VANILLAPDF_TOOLS_LIBS})
 # In case we have the dynamic link configuration add specific definitions
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(vanillapdf.tools PRIVATE VANILLAPDF_CONFIGURATION_DLL)
+
+    # Set RPATH so the installed binary can find libvanillapdf in ../lib
+    if(UNIX AND NOT APPLE)
+        set_target_properties(vanillapdf.tools PROPERTIES
+            INSTALL_RPATH "$ORIGIN/../lib"
+        )
+    elseif(APPLE)
+        set_target_properties(vanillapdf.tools PROPERTIES
+            INSTALL_RPATH "@loader_path/../lib"
+            BUILD_RPATH "@loader_path/../lib"
+        )
+    endif()
 endif()
 
 # Project install targets
