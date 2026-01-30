@@ -91,35 +91,11 @@ jobs:
 
       - name: Create CCI recipe files
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          SHA256="${{ steps.sha256.outputs.sha256 }}"
-          RECIPE_DIR="conan-center-index/recipes/vanillapdf/all"
-
-          # Create recipe directory structure
-          mkdir -p "${RECIPE_DIR}/test_package/src"
-
-          # Copy conanfile.py from our repo (single source of truth)
-          cp vanillapdf/conan/conanfile.py "${RECIPE_DIR}/conanfile.py"
-
-          # Create conandata.yml
-          printf '%s\n' \
-            "sources:" \
-            "  \"${VERSION}\":" \
-            "    url: \"https://github.com/vanillapdf/vanillapdf/archive/refs/tags/v${VERSION}.tar.gz\"" \
-            "    sha256: \"${SHA256}\"" \
-            > "${RECIPE_DIR}/conandata.yml"
-
-          # Copy test_package from our repo
-          cp vanillapdf/conan/test_package/conanfile.py "${RECIPE_DIR}/test_package/conanfile.py"
-          cp vanillapdf/conan/test_package/CMakeLists.txt "${RECIPE_DIR}/test_package/CMakeLists.txt"
-          cp -r vanillapdf/conan/test_package/src/ "${RECIPE_DIR}/test_package/src/"
-
-          # Create config.yml at recipes/vanillapdf/config.yml
-          printf '%s\n' \
-            "versions:" \
-            "  \"${VERSION}\":" \
-            "    folder: all" \
-            > "conan-center-index/recipes/vanillapdf/config.yml"
+          python3 vanillapdf/scripts/prepare_cci_recipe.py \
+            --version "${{ steps.version.outputs.version }}" \
+            --sha256 "${{ steps.sha256.outputs.sha256 }}" \
+            --source-dir vanillapdf \
+            --cci-dir conan-center-index
 
       - name: Show prepared changes (dry run)
         if: ${{ inputs.dry_run }}
