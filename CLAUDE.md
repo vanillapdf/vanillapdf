@@ -218,6 +218,7 @@ cmake --preset windows-x64-msvc-17 -DVANILLAPDF_INTERNAL_VCPKG=OFF
   - `OFF`: Disable packaging to avoid conflicts in parent projects
 - `-DVANILLAPDF_ENABLE_TESTS=ON/OFF` - Perform test scenarios (default: ON)
 - `-DVANILLAPDF_ENABLE_BENCHMARK=ON/OFF` - Include benchmarking project (default: ON)
+- `-DVANILLAPDF_SKIP_CMAKE_CONFIG_INSTALL=ON/OFF` - Skip installing CMake config files when an external package manager generates its own (default: OFF)
 - `-DVANILLAPDF_USE_STATIC_CRT=ON/OFF` - Use static MSVC runtime (/MT) instead of dynamic (/MD) (default: OFF)
 - `-DBUILD_SHARED_LIBS=ON/OFF` - Build vanillapdf as a shared library (default: ON)
 - `-DVANILLAPDF_ENABLE_COVERAGE=ON` - Enable code coverage instrumentation (for GCC/Clang only)

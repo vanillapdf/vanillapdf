@@ -84,6 +84,9 @@ class VanillaPDFConan(ConanFile):
         tc.cache_variables["VANILLAPDF_EXTERNAL_SPDLOG"] = True
         tc.cache_variables["VANILLAPDF_EXTERNAL_NLOHMANN_JSON"] = True
 
+        # Conan's CMakeDeps generates its own find_package config files
+        tc.cache_variables["VANILLAPDF_SKIP_CMAKE_CONFIG_INSTALL"] = True
+
         # Disable developer-only features
         tc.cache_variables["VANILLAPDF_ENABLE_TESTS"] = False
         tc.cache_variables["VANILLAPDF_ENABLE_BENCHMARK"] = False
