@@ -354,14 +354,14 @@ jobs:
         run: conan profile detect
 
       - name: Create vanillapdf Conan package
-        run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing
+        run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing -s compiler.cppstd=17
 
       - name: Configure example conanfile
         run: cmake -DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }} -P cmake/configure_conan_example.cmake
 
       - name: Install example dependencies
         working-directory: examples/conan-integration
-        run: conan install . --build=missing
+        run: conan install . --build=missing -s compiler.cppstd=17
 
       - name: Configure CMake
         working-directory: examples/conan-integration
@@ -409,14 +409,14 @@ jobs:
         run: conan profile detect
 
       - name: Create vanillapdf Conan package
-        run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing
+        run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing -s compiler.cppstd=17
 
       - name: Configure example conanfile
         run: cmake -DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }} -P cmake/configure_conan_example.cmake
 
       - name: Install example dependencies
         working-directory: examples/conan-integration
-        run: conan install . --build=missing -s build_type=${{ matrix.build_type }}
+        run: conan install . --build=missing -s compiler.cppstd=17 -s build_type=${{ matrix.build_type }}
 
       - name: Configure CMake
         working-directory: examples/conan-integration
@@ -459,14 +459,14 @@ jobs:
         run: conan profile detect
 
       - name: Create vanillapdf Conan package
-        run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing
+        run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing -s compiler.cppstd=17
 
       - name: Configure example conanfile
         run: cmake -DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }} -P cmake/configure_conan_example.cmake
 
       - name: Install example dependencies
         working-directory: examples/conan-integration
-        run: conan install . --build=missing
+        run: conan install . --build=missing -s compiler.cppstd=17
 
       - name: Configure CMake
         working-directory: examples/conan-integration
