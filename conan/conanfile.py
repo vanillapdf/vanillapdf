@@ -115,3 +115,10 @@ class VanillaPDFConan(ConanFile):
             "spdlog::spdlog",
             "nlohmann_json::nlohmann_json",
         ]
+
+        # Conan's CMakeDeps generates its own find_package config, so the
+        # PUBLIC compile definition from CMakeLists.txt does not propagate
+        # to consumers. Declare it here so VANILLAPDF_API resolves to
+        # __declspec(dllimport) on Windows.
+        if self.options.shared:
+            self.cpp_info.defines = ["VANILLAPDF_CONFIGURATION_DLL"]
