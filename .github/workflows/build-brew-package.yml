@@ -20,6 +20,10 @@ on:
   schedule:
     - cron: '0 3 * * 1'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -29,26 +33,25 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
-        with:
-          submodules: recursive
 
       - name: Install system dependencies
         run: |
           brew update
-          brew install openssl@3 jpeg-turbo zlib openjpeg
+          brew install ninja openssl@3 jpeg-turbo zlib openjpeg spdlog nlohmann-json googletest
 
       - name: Configure
         run: |
           cmake --preset macos-arm64 -DCMAKE_BUILD_TYPE=Release \
+            -DVANILLAPDF_INTERNAL_VCPKG=OFF \
             -DVANILLAPDF_ENABLE_PACKAGING=ON \
             -DVANILLAPDF_ENABLE_TESTS=ON \
             -DVANILLAPDF_ENABLE_ENCRYPTION=ON -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
             -DVANILLAPDF_ENABLE_JPEG=ON -DVANILLAPDF_EXTERNAL_JPEG=ON \
             -DVANILLAPDF_ENABLE_JPEG2000=ON -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
             -DVANILLAPDF_ENABLE_ZLIB=ON -DVANILLAPDF_EXTERNAL_ZLIB=ON \
-            -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
-            -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
-            -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF
+            -DVANILLAPDF_EXTERNAL_SPDLOG=ON \
+            -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON \
+            -DVANILLAPDF_EXTERNAL_GTEST=ON
 
       - name: Build
         run: cmake --build --preset macos-arm64

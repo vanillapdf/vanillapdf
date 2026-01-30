@@ -350,7 +350,7 @@ jobs:
           # Check library exists
           ls -la $(brew --prefix)/lib/libvanillapdf*
           # Check CLI tool works
-          vanillapdf-tools --version
+          vanillapdf.tools --version
 
       - name: Configure integration test
         working-directory: examples/homebrew-integration
