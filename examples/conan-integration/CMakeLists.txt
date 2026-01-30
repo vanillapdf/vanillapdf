@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.20)
 
 # This example tests the Conan package for vanillapdf
 #
-# First, create the vanillapdf Conan package from the local recipe:
-#   conan create ../../conan/ --version=2.3.0 --build=missing
+# First, configure the example and create the vanillapdf Conan package:
+#   cmake -P ../../cmake/configure_conan_example.cmake
+#   conan create ../../conan/ --version=<version> --build=missing
 #
 # Then install dependencies and build:
 #   conan install . --build=missing

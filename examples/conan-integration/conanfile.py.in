@@ -7,7 +7,7 @@ class VanillaPDFExampleConan(ConanFile):
     generators = "CMakeDeps", "CMakeToolchain"
 
     def requirements(self):
-        self.requires("vanillapdf/2.3.0")
+        self.requires("vanillapdf/@VANILLAPDF_VERSION@")
 
     def layout(self):
         cmake_layout(self)

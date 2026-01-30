@@ -46,8 +46,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       git_tag: ${{ steps.git_ref.outputs.git_tag }}
+      version: ${{ steps.version.outputs.version }}
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
       - name: Configure Git reference for testing
         id: git_ref
         run: |
@@ -60,6 +64,15 @@ jobs:
           fi
           echo "Using branch: $BRANCH_TO_TEST"
           echo "git_tag=$BRANCH_TO_TEST" >> $GITHUB_OUTPUT
+
+      - name: Extract version from cmake/version.cmake
+        id: version
+        run: |
+          MAJOR=$(grep 'VANILLAPDF_VERSION_MAJOR' cmake/version.cmake | head -1 | grep -oP '\d+')
+          MINOR=$(grep 'VANILLAPDF_VERSION_MINOR' cmake/version.cmake | head -1 | grep -oP '\d+')
+          PATCH=$(grep 'VANILLAPDF_VERSION_PATCH' cmake/version.cmake | head -1 | grep -oP '\d+')
+          echo "version=${MAJOR}.${MINOR}.${PATCH}" >> "$GITHUB_OUTPUT"
+          echo "Detected version: ${MAJOR}.${MINOR}.${PATCH}"
 
   # =============================================================================
   # FetchContent Integration Tests
@@ -313,6 +326,7 @@ jobs:
   conan-linux:
     name: Conan - Linux ${{ matrix.preset }}
     runs-on: ubuntu-latest
+    needs: setup
 
     strategy:
       fail-fast: false
@@ -340,7 +354,10 @@ jobs:
         run: conan profile detect
 
       - name: Create vanillapdf Conan package
-        run: conan create conan/ --version=2.3.0 --build=missing
+        run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing
+
+      - name: Configure example conanfile
+        run: cmake -DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }} -P cmake/configure_conan_example.cmake
 
       - name: Install example dependencies
         working-directory: examples/conan-integration
@@ -361,6 +378,7 @@ jobs:
   conan-windows:
     name: Conan - Windows ${{ matrix.preset }}
     runs-on: windows-latest
+    needs: setup
 
     strategy:
       fail-fast: false
@@ -391,7 +409,10 @@ jobs:
         run: conan profile detect
 
       - name: Create vanillapdf Conan package
-        run: conan create conan/ --version=2.3.0 --build=missing
+        run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing
+
+      - name: Configure example conanfile
+        run: cmake -DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }} -P cmake/configure_conan_example.cmake
 
       - name: Install example dependencies
         working-directory: examples/conan-integration
@@ -412,6 +433,7 @@ jobs:
   conan-macos:
     name: Conan - macOS ${{ matrix.preset }}
     runs-on: macos-latest
+    needs: setup
 
     strategy:
       fail-fast: false
@@ -437,7 +459,10 @@ jobs:
         run: conan profile detect
 
       - name: Create vanillapdf Conan package
-        run: conan create conan/ --version=2.3.0 --build=missing
+        run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing
+
+      - name: Configure example conanfile
+        run: cmake -DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }} -P cmake/configure_conan_example.cmake
 
       - name: Install example dependencies
         working-directory: examples/conan-integration
