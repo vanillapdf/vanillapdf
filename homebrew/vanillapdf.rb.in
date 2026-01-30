@@ -1,11 +1,10 @@
 class Vanillapdf < Formula
   desc "Cross-platform toolkit for creating and modifying PDF documents"
   homepage "https://vanillapdf.com"
-  # Release URL and SHA256 are updated by the release workflow
-  url "https://github.com/vanillapdf/vanillapdf/archive/refs/tags/v2.3.0.tar.gz"
-  sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+  url "https://github.com/vanillapdf/vanillapdf/archive/refs/tags/@VANILLAPDF_RELEASE_TAG@.tar.gz"
+  sha256 "@VANILLAPDF_SHA256@"
   license "Apache-2.0"
-  head "https://github.com/vanillapdf/vanillapdf.git", branch: "main"
+  head "https://github.com/vanillapdf/vanillapdf.git", branch: "@VANILLAPDF_HEAD_BRANCH@"
 
   depends_on "cmake" => :build
   depends_on "jpeg-turbo"

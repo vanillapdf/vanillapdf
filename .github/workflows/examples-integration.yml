@@ -334,8 +334,8 @@ jobs:
           brew update
           brew install ninja openssl@3 jpeg-turbo zlib openjpeg
 
-      - name: Update formula to use current branch
-        run: ./scripts/update_formula_branch.sh "${{ github.head_ref || github.ref_name }}"
+      - name: Generate formula for current branch
+        run: cmake -DVANILLAPDF_HEAD_BRANCH="${{ github.head_ref || github.ref_name }}" -P cmake/configure_homebrew_formula.cmake
 
       - name: Install vanillapdf via Homebrew formula (--HEAD)
         run: |

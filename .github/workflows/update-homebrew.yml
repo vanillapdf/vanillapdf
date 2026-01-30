@@ -103,26 +103,20 @@ jobs:
 
           rm source.tar.gz
 
-      - name: Update formula with release info
+      - name: Generate formula with release info
         if: steps.check-latest.outputs.is_latest == 'true'
         run: |
-          TAG="${{ steps.version.outputs.tag }}"
-          SHA256="${{ steps.sha256.outputs.sha256 }}"
+          cd vanillapdf
+          cmake \
+            -DVANILLAPDF_RELEASE_TAG="${{ steps.version.outputs.tag }}" \
+            -DVANILLAPDF_SHA256="${{ steps.sha256.outputs.sha256 }}" \
+            -P cmake/configure_homebrew_formula.cmake
 
-          # Copy formula from vanillapdf repo
-          mkdir -p homebrew-core/Formula/v
-          cp vanillapdf/homebrew/vanillapdf.rb homebrew-core/Formula/v/vanillapdf.rb
+          mkdir -p ../homebrew-core/Formula/v
+          cp homebrew/vanillapdf.rb ../homebrew-core/Formula/v/vanillapdf.rb
 
-          FORMULA="homebrew-core/Formula/v/vanillapdf.rb"
-
-          # Update URL to use the release tag
-          sed -i '' "s|url \"https://github.com/vanillapdf/vanillapdf/archive/refs/tags/v[^\"]*\.tar\.gz\"|url \"https://github.com/vanillapdf/vanillapdf/archive/refs/tags/${TAG}.tar.gz\"|" "$FORMULA"
-
-          # Update SHA256 (replace placeholder or existing hash)
-          sed -i '' "s|sha256 \"[a-f0-9]*\"|sha256 \"${SHA256}\"|" "$FORMULA"
-
-          echo "=== Updated formula ==="
-          cat "$FORMULA"
+          echo "=== Generated formula ==="
+          cat ../homebrew-core/Formula/v/vanillapdf.rb
 
       - name: Test formula locally
         if: steps.check-latest.outputs.is_latest == 'true'

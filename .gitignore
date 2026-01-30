@@ -5,6 +5,7 @@
 
 # Generated files (from .in templates by CMake)
 /vcpkg.json
+/homebrew/vanillapdf.rb
 
 # User specific configuration
 CMakeSettings.json
