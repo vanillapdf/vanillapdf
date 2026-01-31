@@ -16,6 +16,7 @@ on:
       - 'vcpkg.json.in'
       - 'ports/**'
       - 'homebrew/**'
+      - 'conan/**'
       - 'examples/**'
       - '.github/workflows/examples-integration.yml'
 
@@ -27,6 +28,7 @@ on:
       - 'vcpkg.json.in'
       - 'ports/**'
       - 'homebrew/**'
+      - 'conan/**'
       - 'examples/**'
       - '.github/workflows/examples-integration.yml'
 
@@ -46,8 +48,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       git_tag: ${{ steps.git_ref.outputs.git_tag }}
+      version: ${{ steps.version.outputs.version }}
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
       - name: Configure Git reference for testing
         id: git_ref
         run: |
@@ -60,6 +66,15 @@ jobs:
           fi
           echo "Using branch: $BRANCH_TO_TEST"
           echo "git_tag=$BRANCH_TO_TEST" >> $GITHUB_OUTPUT
+
+      - name: Extract version from cmake/version.cmake
+        id: version
+        run: |
+          MAJOR=$(grep 'VANILLAPDF_VERSION_MAJOR' cmake/version.cmake | head -1 | grep -oP '\d+')
+          MINOR=$(grep 'VANILLAPDF_VERSION_MINOR' cmake/version.cmake | head -1 | grep -oP '\d+')
+          PATCH=$(grep 'VANILLAPDF_VERSION_PATCH' cmake/version.cmake | head -1 | grep -oP '\d+')
+          echo "version=${MAJOR}.${MINOR}.${PATCH}" >> "$GITHUB_OUTPUT"
+          echo "Detected version: ${MAJOR}.${MINOR}.${PATCH}"
 
   # =============================================================================
   # FetchContent Integration Tests
@@ -363,3 +378,171 @@ jobs:
       - name: Run integration test
         working-directory: examples/homebrew-integration
         run: ctest --preset ${{ matrix.preset }} --output-on-failure
+
+  # =============================================================================
+  # Conan Integration Tests
+  # =============================================================================
+
+  conan-linux:
+    name: Conan - Linux ${{ matrix.build_type }}
+    runs-on: ubuntu-latest
+    needs: setup
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - build_type: Release
+            conan_preset: conan-release
+          - build_type: Debug
+            conan_preset: conan-debug
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Install Conan
+        run: pip install "conan>=2,<3"
+
+      - name: Detect Conan profile
+        run: conan profile detect
+
+      - name: Create vanillapdf Conan package
+        run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing -s compiler.cppstd=17
+
+      - name: Configure example conanfile
+        run: cmake "-DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }}" -P cmake/configure_conan_example.cmake
+
+      - name: Install example dependencies
+        working-directory: examples/conan-integration
+        run: conan install . --build=missing -s compiler.cppstd=17 -s build_type=${{ matrix.build_type }}
+
+      - name: Configure CMake
+        working-directory: examples/conan-integration
+        run: cmake --preset ${{ matrix.conan_preset }}
+
+      - name: Build
+        working-directory: examples/conan-integration
+        run: cmake --build --preset ${{ matrix.conan_preset }}
+
+      - name: Test
+        working-directory: examples/conan-integration
+        run: ctest --preset ${{ matrix.conan_preset }} --output-on-failure
+
+  conan-windows:
+    name: Conan - Windows ${{ matrix.build_type }}
+    runs-on: windows-latest
+    needs: setup
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - build_type: Release
+            conan_preset: conan-release
+          - build_type: Debug
+            conan_preset: conan-debug
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Visual Studio
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Install Conan
+        run: pip install "conan>=2,<3"
+
+      - name: Detect Conan profile
+        run: conan profile detect
+
+      - name: Create vanillapdf Conan package
+        run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing -s compiler.cppstd=17
+
+      - name: Configure example conanfile
+        run: cmake "-DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }}" -P cmake/configure_conan_example.cmake
+
+      - name: Install example dependencies
+        working-directory: examples/conan-integration
+        run: conan install . --build=missing -s compiler.cppstd=17 -s build_type=${{ matrix.build_type }}
+
+      - name: Configure CMake
+        working-directory: examples/conan-integration
+        run: cmake --preset conan-default
+
+      - name: Build
+        working-directory: examples/conan-integration
+        run: cmake --build --preset ${{ matrix.conan_preset }}
+
+      - name: Test
+        working-directory: examples/conan-integration
+        run: ctest --preset ${{ matrix.conan_preset }} --output-on-failure
+
+  conan-macos:
+    name: Conan - macOS ${{ matrix.build_type }}
+    runs-on: macos-latest
+    needs: setup
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - build_type: Release
+            conan_preset: conan-release
+          - build_type: Debug
+            conan_preset: conan-debug
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install build tools
+        run: brew install ninja
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Install Conan
+        run: pip install "conan>=2,<3"
+
+      - name: Detect Conan profile
+        run: conan profile detect
+
+      - name: Create vanillapdf Conan package
+        run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing -s compiler.cppstd=17
+
+      - name: Configure example conanfile
+        run: cmake "-DVANILLAPDF_VERSION=${{ needs.setup.outputs.version }}" -P cmake/configure_conan_example.cmake
+
+      - name: Install example dependencies
+        working-directory: examples/conan-integration
+        run: conan install . --build=missing -s compiler.cppstd=17 -s build_type=${{ matrix.build_type }}
+
+      - name: Configure CMake
+        working-directory: examples/conan-integration
+        run: cmake --preset ${{ matrix.conan_preset }}
+
+      - name: Build
+        working-directory: examples/conan-integration
+        run: cmake --build --preset ${{ matrix.conan_preset }}
+
+      - name: Test
+        working-directory: examples/conan-integration
+        run: ctest --preset ${{ matrix.conan_preset }} --output-on-failure

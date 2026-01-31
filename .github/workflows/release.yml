@@ -138,6 +138,15 @@ jobs:
       tag: ${{ needs.prepare.outputs.tag }}
     secrets: inherit
 
+  conan-pr:
+    needs: [production-gate, prepare]
+    # Only create Conan Center PR for official releases, not pre-releases (alpha, beta, rc)
+    if: needs.prepare.outputs.prerelease == 'false'
+    uses: ./.github/workflows/create-conan-pr.yml
+    with:
+      tag: ${{ needs.prepare.outputs.tag }}
+    secrets: inherit
+
   update-port:
     name: Update Local Port
     runs-on: ubuntu-latest

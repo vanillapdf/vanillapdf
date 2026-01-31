@@ -163,6 +163,29 @@ Enable features with vcpkg install:
 vcpkg install vanillapdf[openssl,zlib,spdlog]
 ```
 
+### Conan Dependencies
+
+The project also supports Conan 2 for dependency management. The Conan recipe is in `conan/`.
+
+#### Building with Conan
+
+```bash
+# Install Conan 2
+pip install "conan>=2,<3"
+
+# Detect default profile
+conan profile detect
+
+# Create the vanillapdf package locally
+conan create conan/ --version=2.3.0 --build=missing
+
+# Or build without packaging (for development)
+cd conan
+conan install . --build=missing
+cmake --preset <your-preset>
+cmake --build --preset <your-preset>
+```
+
 ### CMake Configuration Options
 
 Important build configuration options available:
@@ -209,6 +232,7 @@ cmake --preset windows-x64-msvc-17 -DVANILLAPDF_INTERNAL_VCPKG=OFF
   - `OFF`: Disable packaging to avoid conflicts in parent projects
 - `-DVANILLAPDF_ENABLE_TESTS=ON/OFF` - Perform test scenarios (default: ON)
 - `-DVANILLAPDF_ENABLE_BENCHMARK=ON/OFF` - Include benchmarking project (default: ON)
+- `-DVANILLAPDF_SKIP_CMAKE_CONFIG_INSTALL=ON/OFF` - Skip installing CMake config files when an external package manager generates its own (default: OFF)
 - `-DVANILLAPDF_USE_STATIC_CRT=ON/OFF` - Use static MSVC runtime (/MT) instead of dynamic (/MD) (default: OFF)
 - `-DBUILD_SHARED_LIBS=ON/OFF` - Build vanillapdf as a shared library (default: ON)
 - `-DVANILLAPDF_ENABLE_COVERAGE=ON` - Enable code coverage instrumentation (for GCC/Clang only)
@@ -297,6 +321,29 @@ ctest --preset windows-x64-debug --output-on-failure
 - **macOS**: Uses Homebrew packages (`brew install`) for speed
 
 The example creates actual PDF files and validates the complete integration chain from dependency resolution through PDF creation.
+
+### Conan Integration Testing
+
+The project includes a Conan integration example in `examples/conan-integration/` that validates the Conan package:
+
+#### Running Conan Integration Tests
+```bash
+# First, create the package in the local Conan cache
+conan create conan/ --version=2.3.0 --build=missing
+
+# Then build and test the example consumer project
+cd examples/conan-integration
+conan install . --build=missing
+cmake --preset linux-x64-debug  # or windows-x64-debug, macos-arm64-debug
+cmake --build --preset linux-x64-debug
+ctest --preset linux-x64-debug --output-on-failure
+```
+
+#### Key Features
+- **Local Package Testing**: Tests the Conan recipe from `conan/` directory
+- **Cross-platform Testing**: Linux, Windows, macOS via CI
+- **CMake Test Integration**: Uses `add_test()` and `enable_testing()` for proper test execution
+- **Automatic CI Testing**: Continuously validated via GitHub Actions `examples-integration.yml`
 
 ## Architecture Overview
 
@@ -402,6 +449,7 @@ Use `VANILLAPDF_EXTERNAL_*` CMake options to use system dependencies instead of 
 - Uses precompiled headers (`precompiled.h`)
 - Visual Studio .natvis files for debugging support
 - Follow existing patterns in similar classes
+- Do not insert structurally different code into a group of similarly-looking lines without separating it with a blank line and a comment. Uniform blocks (e.g., a series of assignments) should stay visually cohesive.
 
 ### Testing Strategy
 
@@ -423,6 +471,7 @@ The project includes several GitHub Actions workflows:
 - `update-vcpkg.yml` - Automated monthly vcpkg updates (uses vanillapdf-bot)
 - `create-vcpkg-pr.yml` - Manual vcpkg update workflow (uses vanillapdf-bot)
 - `update-homebrew.yml` - Homebrew formula PR workflow (uses vanillapdf-bot)
+- `create-conan-pr.yml` - Conan Center Index PR workflow (uses vanillapdf-bot)
 - `release.yml` - Release automation workflow (uses vanillapdf-bot)
 - `backport.yml` - Automatic backporting of merged PRs to release branches
 
@@ -511,6 +560,30 @@ The script will:
 3. Update vcpkg submodule and vcpkg.json baseline
 4. Commit changes with descriptive message
 5. Push branch and optionally create PR
+
+### Updating Conan Data
+
+Use the Python script to update `conan/conandata.yml` with a new version's SHA256:
+
+```bash
+# Auto-detect latest tag and update
+python scripts/update_conandata.py
+
+# Specific version
+python scripts/update_conandata.py --version 2.3.0
+
+# Dry run
+python scripts/update_conandata.py --dry-run
+```
+
+**Requirements:**
+- Python 3.6+
+- git command line
+
+The script will:
+1. Download the release archive from GitHub
+2. Calculate the SHA256 hash
+3. Add or update the version entry in `conan/conandata.yml`
 
 ## Common Tasks
 
