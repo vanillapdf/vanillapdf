@@ -8,7 +8,7 @@ on:
         type: string
       prerelease:
         required: true
-        type: string
+        type: boolean
   workflow_dispatch:
     inputs:
       tag:
@@ -17,7 +17,7 @@ on:
       prerelease:
         description: "Set to true for prerelease"
         required: true
-        type: string
+        type: boolean
 
 permissions:
   contents: write  # Required to create a release

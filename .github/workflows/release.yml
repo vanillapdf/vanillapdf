@@ -196,7 +196,7 @@ jobs:
     uses: ./.github/workflows/github-release.yml
     with:
       tag: ${{ needs.prepare.outputs.tag }}
-      prerelease: ${{ needs.prepare.outputs.prerelease }}
+      prerelease: ${{ fromJSON(needs.prepare.outputs.prerelease) }}
     secrets: inherit
 
   vcpkg-pr:
