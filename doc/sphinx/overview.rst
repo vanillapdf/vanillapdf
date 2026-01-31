@@ -1,10 +1,141 @@
 Overview
 ========
 
-**Vanilla.PDF** is a modern, open-source C++17 SDK for creating, editing,
-signing, and parsing PDF documents. Exposed through an ABI-stable C API, it
-compiles natively on Windows, Linux, macOS, and Android with no external
+**Vanilla.PDF** is a C++17 library for creating, signing, encrypting, and
+parsing PDF documents. It exposes an ABI-stable ANSI C interface, compiles
+natively on Windows, Linux, macOS, and Android, and carries no external
 runtime dependencies.
+
+Design philosophy
+-----------------
+
+**Why a C API over C++?** The C++ ABI is not stable across compilers or even
+across major versions of the same compiler. A native C++ interface would force
+every consumer to use the exact same toolchain. By exposing only ANSI C
+functions with ``cdecl`` calling conventions, Vanilla.PDF can be linked by any
+C or C++ compiler and called from any language with a C FFI -- Python, C#,
+Rust, Go, Java (via JNI), and others.
+
+**Handle-based design.** All objects are represented as opaque pointers
+(``DocumentHandle*``, ``FileHandle*``, ``PageObjectHandle*``). The internal C++
+class layout is never visible to callers, which means the library can change its
+implementation without breaking binary compatibility.
+
+**Reference-counted ownership.** Handles use intrusive reference counting.
+When you receive a handle through an output parameter, you own one reference and
+must release it when done. There are no hidden shared-ownership surprises:
+every ``_Release`` call is explicit.
+
+**No global state.** Error codes and messages are stored in thread-local
+buffers, one per thread. The library does not allocate process-wide singletons
+or require initialization/shutdown calls.
+
+Scope and non-goals
+--------------------
+
+Vanilla.PDF is a **document structure library**. It operates on the PDF object
+graph -- creating pages, embedding images, attaching digital signatures,
+encrypting content, and parsing the binary format down to individual XRef
+entries. It is not a rendering engine.
+
+**What it does:**
+
+- Create, open, modify, and save PDF documents
+- Add and verify CMS (PKCS#7) digital signatures
+- Encrypt and decrypt with AES/RC4 (password and certificate-based)
+- Extract embedded images (JPEG, JPEG2000)
+- Parse and encode content streams (PostScript-style page instructions)
+- Low-level access to XRef tables, indirect objects, and file trailers
+
+**What it does not do:**
+
+- Rasterize or render PDF pages to images or screen
+- Lay out text with font shaping or line breaking
+- Validate PAdES compliance levels (BES, T, LTV)
+- Perform CRL or OCSP revocation checking (planned: `#157 <https://github.com/vanillapdf/vanillapdf/issues/157>`_)
+- Validate RFC 3161 timestamps
+
+Architecture overview
+---------------------
+
+The library is organized into three layers:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 80
+
+   * - Layer
+     - Responsibility
+   * - **Syntax**
+     - PDF object types (boolean, integer, string, name, array, dictionary,
+       stream), tokenizer, parser, XRef tables, compression filters
+       (Flate, DCT, JPX, ASCII85, ASCIIHex, LZW)
+   * - **Semantics**
+     - High-level document model: documents, catalogs, page trees, pages,
+       annotations, interactive forms, digital signatures, outlines,
+       named destinations, fonts, and resource dictionaries
+   * - **Contents**
+     - Content stream parsing and instruction processing for PostScript-style
+       page content (text operations, graphics state, inline images)
+
+A thin C interface layer wraps the C++ implementation, mapping each internal
+object to an opaque handle. See :doc:`architecture` for the full design
+description including the object model, memory model, and extension points.
+
+Thread safety
+-------------
+
+Vanilla.PDF does not use global mutable state. Error context (error code and
+message string) is stored in ``thread_local`` buffers, so concurrent threads
+can call the library without interfering with each other's error state.
+
+**Constraints:**
+
+- A single handle instance must not be accessed from multiple threads
+  simultaneously. If you need shared access, synchronize externally.
+- The logging subsystem uses thread-safe sinks (``spdlog`` multi-threaded
+  loggers), so ``Logging_Enable`` and log output are safe to call from any
+  thread.
+- Weak reference counters use ``std::atomic<bool>`` for safe cross-thread
+  deactivation.
+
+In practice, this means you can process different PDF documents on different
+threads without locking, but you must not share a single ``DocumentHandle*``
+across threads without your own mutex.
+
+Versioning and compatibility
+----------------------------
+
+Vanilla.PDF follows `Semantic Versioning <https://semver.org/>`_:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 80
+
+   * - Component
+     - Meaning
+   * - **Major**
+     - Backward-incompatible changes to the C API
+   * - **Minor**
+     - New functionality, backward-compatible with existing callers
+   * - **Patch**
+     - Bug fixes only, no interface changes
+   * - **Build**
+     - No functional impact (CI metadata)
+
+The C API is stable within a major version. Code compiled against 2.0 will
+continue to link and run correctly against 2.1, 2.2, and so on. Query the
+version at runtime:
+
+.. code-block:: c
+
+   integer_type major, minor, patch;
+   LibraryInfo_GetVersionMajor(&major);
+   LibraryInfo_GetVersionMinor(&minor);
+   LibraryInfo_GetVersionPatch(&patch);
+
+Nightly builds use a patch override (999) and a build suffix
+(e.g. ``-nightly.main``) to distinguish them from release builds.
 
 Functionality
 -------------
@@ -111,7 +242,7 @@ Package availability
      - Recommended; pre-built binaries
    * - FetchContent
      - ``FetchContent_Declare(vanillapdf ...)``
-     - No external tools; manages deps yourself
+     - No external tools; caller manages dependencies
    * - Conan
      - ``conan install --requires="vanillapdf/2.3.0"``
      - Via Conan Center
@@ -139,8 +270,9 @@ Where to go next
 **Developer guide** -- build from source and understand the internals:
 
 - :doc:`building` -- Clone, configure, build, and test
-- :doc:`c_api` -- Handle system, memory management, error handling
-- :doc:`architecture` -- Internal design, parser, and object ownership
+- :doc:`c_api` -- Handle system, memory management, error handling, thread safety
+- :doc:`architecture` -- Three-layer design, object model, memory model
+- :doc:`signature_verification` -- Trust stores, chain validation, weak-algorithm detection
 - :doc:`cli_tools` -- sign, verify, merge, extract, encrypt, decrypt
 
 **Learning** -- understand the PDF format and see examples:

@@ -6,11 +6,13 @@
 [![NuGet](https://img.shields.io/nuget/v/vanillapdf?color=blue)](https://www.nuget.org/packages/vanillapdf)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE.txt)
 
-**Vanilla.PDF** is a modern, open-source C++17 SDK for creating, editing, signing, and parsing PDF documents. Exposed through an ABI-stable C API, it compiles natively on Windows, Linux, macOS, and Android with no external runtime dependencies.
+**Vanilla.PDF** is a C++17 library for creating, signing, encrypting, and parsing PDF documents. It exposes an ABI-stable ANSI C interface, compiles natively on Windows, Linux, macOS, and Android, and carries no external runtime dependencies.
+
+The C API uses opaque handles and `cdecl` calling conventions, so any language that can call C functions can use this library. Error state is stored in thread-local buffers; objects are managed through intrusive reference counting. The public interface is designed to remain binary-compatible across minor and patch releases.
 
 ## Quick Example
 
-Create a PDF with a blank page in C:
+Create a PDF with a blank page, then sign it:
 
 ```c
 #include <vanillapdf/c_vanillapdf_api.h>
@@ -36,16 +38,26 @@ int main(void) {
 }
 ```
 
-Sign it from the command line:
-
 ```bash
 vanillapdf-tools sign -s hello.pdf -d signed.pdf -k key.p12 -p password
 vanillapdf-tools verify -f signed.pdf
 ```
 
+## Non-Goals
+
+Vanilla.PDF is a **document structure library**, not a rendering engine. It does not rasterize pages, lay out text with font shaping, or display PDFs on screen. If you need to view a PDF, use a dedicated renderer and this library for the structural operations around it.
+
+Current known limitations:
+
+- No PDF rendering or rasterization
+- No CRL/OCSP revocation checking ([#157](https://github.com/vanillapdf/vanillapdf/issues/157))
+- No PAdES compliance levels (BES, T, LTV)
+- No RFC 3161 timestamp validation
+- No ED25519 signature support ([#158](https://github.com/vanillapdf/vanillapdf/issues/158))
+
 ## Install
 
-### vcpkg
+### vcpkg (Recommended)
 
 ```bash
 vcpkg install vanillapdf
@@ -102,14 +114,24 @@ target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 
 | Feature | C API | CLI | Description |
 |---------|:-----:|:---:|-------------|
-| **Create documents** | `Document_Create` | | Generate PDFs with pages, text, images, and paths |
-| **Digital signatures** | `Document_Sign` | `sign` | Add and verify CMS (PKCS#7) signatures |
+| **Create documents** | `Document_Create` | | Pages, text, images, vector paths |
+| **Digital signatures** | `Document_Sign` | `sign` | CMS (PKCS#7) with PKCS#12 keys or custom callbacks |
 | **Signature verification** | `DigitalSignatureExtensions_Verify` | `verify` | Chain validation, weak-algorithm detection, signing-time checks |
 | **Merge documents** | | `merge` | Combine multiple PDFs into one |
-| **Encryption** | | `encrypt` / `decrypt` | AES and RC4 with owner/user passwords |
-| **Image extraction** | | `extract` | Export embedded images from PDF streams |
+| **Encryption** | | `encrypt` / `decrypt` | AES and RC4, owner/user passwords, certificate-based decryption |
+| **Image extraction** | | `extract` | JPEG and JPEG2000 from PDF streams |
 | **Content streams** | `ContentStream_*` | `filter` | Parse and encode PostScript-style page content |
-| **Low-level parsing** | `File_Open` | | Inspect XRef tables, indirect objects, cross-reference streams |
+| **Low-level parsing** | `File_Open` | | XRef tables, indirect objects, cross-reference streams |
+
+## Architecture
+
+The library is organized into three layers:
+
+- **Syntax** -- PDF object types, tokenizer, parser, XRef tables, compression filters
+- **Semantics** -- Documents, pages, catalogs, annotations, digital signatures, forms
+- **Contents** -- Content stream parsing, PostScript instruction processing
+
+All internal C++ is hidden behind opaque C handles (`DocumentHandle*`, `FileHandle*`, `PageObjectHandle*`, etc.). Each handle is reference-counted; callers acquire and release references explicitly. This design guarantees ABI stability across compiler versions and enables bindings in any FFI-capable language.
 
 ## Platforms
 
@@ -120,20 +142,26 @@ target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 | macOS | AppleClang 15+ (Xcode 15) | x64, ARM64 |
 | Android | NDK toolchain | arm64, armv7, x86, x86_64 |
 
+## Versioning
+
+Vanilla.PDF follows [Semantic Versioning](https://semver.org/). The C API is stable within a major version: minor releases add functionality without breaking existing callers, patch releases contain only fixes. Query the version at runtime with `LibraryInfo_GetVersionMajor`, `LibraryInfo_GetVersionMinor`, `LibraryInfo_GetVersionPatch`.
+
 ## Documentation
 
 Full documentation is hosted on **[Read the Docs](https://vanillapdf.readthedocs.io/)**.
 
 | Guide | Description |
 |-------|-------------|
+| [Overview](https://vanillapdf.readthedocs.io/en/latest/overview.html) | Design philosophy, scope, and project goals |
 | [Quickstart](https://vanillapdf.readthedocs.io/en/latest/quickstart.html) | Create your first PDF document step by step |
 | [Installation](https://vanillapdf.readthedocs.io/en/latest/installation.html) | vcpkg, FetchContent, Conan, Homebrew, NuGet |
-| [C API Guide](https://vanillapdf.readthedocs.io/en/latest/c_api.html) | Handles, memory management, error handling |
+| [C API Guide](https://vanillapdf.readthedocs.io/en/latest/c_api.html) | Handles, memory management, error handling, thread safety |
+| [Architecture](https://vanillapdf.readthedocs.io/en/latest/architecture.html) | Three-layer design, object model, memory model |
 | [CLI Tools](https://vanillapdf.readthedocs.io/en/latest/cli_tools.html) | sign, verify, merge, extract, encrypt, decrypt |
+| [Signature Verification](https://vanillapdf.readthedocs.io/en/latest/signature_verification.html) | Trust stores, chain validation, weak-algorithm detection |
 | [Building](https://vanillapdf.readthedocs.io/en/latest/building.html) | Build from source with CMake presets |
 | [Examples](https://vanillapdf.readthedocs.io/en/latest/examples.html) | Code samples for signing, merging, encryption |
-| [Architecture](https://vanillapdf.readthedocs.io/en/latest/architecture.html) | Internal design, parser, object ownership |
-| [PDF Format](https://vanillapdf.readthedocs.io/en/latest/pdf_format.html) | Learn PDF syntax and document structure |
+| [PDF Format](https://vanillapdf.readthedocs.io/en/latest/pdf_format.html) | PDF syntax, objects, and document structure |
 
 ## Contributing
 

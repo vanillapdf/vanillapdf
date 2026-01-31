@@ -1,208 +1,397 @@
 Architecture
 ============
 
-The library is written in standard C++17 and can be compiled using Visual
-Studio 2022 (MSVC 17.x), Visual Studio 2026 (MSVC 18.x), GCC 8.1+, or
-Clang 10+ (including AppleClang 15 on macOS). Official CMake presets cover
-Windows, Linux, macOS, and Android targets.
+This page describes the internal design of Vanilla.PDF: the layered
+architecture, object model, memory model, thread-safety invariants, and
+extension points.
 
-Build is executed using cross-platform make tool CMake (https://cmake.org/).
-CMake also integrates packaging system to provide installable packages for each platform.
+For the public C API conventions (handles, error codes, cleanup patterns), see
+:doc:`c_api`.
 
-Currently supported package formats:
+Three-layer architecture
+------------------------
 
-- Debian ``.deb`` packages
-- Homebrew packages
-- NuGet packages
+The library is organized into three layers, each with a distinct
+responsibility. Higher layers depend on lower ones; the C interface layer
+sits alongside all three and maps internal C++ objects to opaque handles.
 
-It provides only **ANSI C** API. The reason why I did not expose native C++ interface is rooted within the incompatibility of the C++ ABI between compilers.
-Functions across the interface use standard C caller clean-up `cdecl <https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl>`_ calling convention.
+.. list-table::
+   :header-rows: 1
+   :widths: 18 30 52
+
+   * - Layer
+     - Source location
+     - Responsibility
+   * - **Syntax**
+     - ``src/vanillapdf/syntax/``
+     - PDF object types, tokenizer, parser, XRef tables, file I/O,
+       compression filters (Flate, DCT, JPX, ASCII85, ASCIIHex, LZW)
+   * - **Semantics**
+     - ``src/vanillapdf/semantics/``
+     - High-level document model: documents, catalogs, page trees, pages,
+       annotations, interactive forms, digital signatures, outlines,
+       named destinations, fonts, resource dictionaries
+   * - **Contents**
+     - ``src/vanillapdf/contents/``
+     - Content stream parsing and instruction processing for PostScript-style
+       page content (text operations, graphics state, inline images)
+
+The C interface wrappers live in ``src/vanillapdf/implementation/`` and
+translate between opaque handles and the internal C++ classes. Public headers
+are in ``include/vanillapdf/``.
+
+Why ANSI C?
+^^^^^^^^^^^
+
+The C++ ABI is not stable across compilers or across major versions of the
+same compiler. A native C++ interface would force every consumer to use the
+exact same toolchain. By exposing only ANSI C functions with ``cdecl`` calling
+conventions, the library can be linked by any C or C++ compiler and called
+from any language with a C FFI.
+
+Functions across the interface use the standard C caller-cleanup
+`cdecl <https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl>`_
+calling convention. On x86, this is enforced with ``__cdecl`` (MSVC) or
+``__attribute__((cdecl))`` (GCC). On other architectures, the default calling
+convention is used.
+
+Object model
+------------
+
+Handle types
+^^^^^^^^^^^^
+
+All objects exposed through the C API are opaque handles -- typed pointers to
+internal C++ structures. Handles are declared using the
+``DECLARE_OBJECT_HANDLE`` macro, which creates a forward-declared struct tag:
+
+.. code-block:: c
+
+   // From c_handles.h
+   #define DECLARE_OBJECT_HANDLE(x) \
+       typedef struct x##HandleTag x##Handle
+
+This ensures that ``DocumentHandle*`` and ``FileHandle*`` are distinct pointer
+types at the compiler level, preventing accidental misuse.
+
+The handles fall into four categories matching the three layers plus utilities:
+
+**Syntax layer handles** -- PDF primitive objects and file structure:
+
+- ``ObjectHandle``, ``ArrayObjectHandle``, ``BooleanObjectHandle``,
+  ``NameObjectHandle``, ``IntegerObjectHandle``, ``RealObjectHandle``,
+  ``StringObjectHandle``, ``StreamObjectHandle``, ``DictionaryObjectHandle``,
+  ``NullObjectHandle``
+- ``FileHandle``, ``FileWriterHandle``, ``XrefHandle``, ``XrefEntryHandle``
+- Filter handles: ``FlateDecodeFilterHandle``, ``DCTDecodeFilterHandle``,
+  ``ASCII85DecodeFilterHandle``, ``ASCIIHexDecodeFilterHandle``,
+  ``LZWDecodeFilterHandle``, ``JPXDecodeFilterHandle``
+
+**Semantics layer handles** -- document-level objects:
+
+- ``DocumentHandle``, ``CatalogHandle``, ``PageTreeHandle``,
+  ``PageObjectHandle``, ``PageContentsHandle``
+- ``DigitalSignatureHandle``, ``DocumentSignerHandle``,
+  ``DocumentSignatureSettingsHandle``
+- ``InteractiveFormHandle``, ``FieldHandle``, ``SignatureFieldHandle``
+- ``OutlineHandle``, ``AnnotationHandle``, ``NamedDestinationsHandle``
+- ``FontHandle``, ``ResourceDictionaryHandle``, ``DateHandle``,
+  ``RectangleHandle``
+
+**Contents layer handles** -- content stream objects:
+
+- ``ContentObjectHandle``, ``ContentOperationHandle``,
+  ``ContentInstructionHandle``, ``ContentParserHandle``
+- Text operations: ``ContentOperationTextFontHandle``,
+  ``ContentOperationTextShowHandle``, ``ContentOperationBeginTextHandle``
+
+**Utility handles** -- I/O, buffers, cryptography:
+
+- ``BufferHandle``, ``InputStreamHandle``, ``OutputStreamHandle``
+- ``SigningKeyHandle``, ``EncryptionKeyHandle``, ``PKCS12KeyHandle``
+- ``TrustedCertificateStoreHandle``,
+  ``SignatureVerificationResultHandle``
+
+Internal class hierarchy
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Internally, all syntax-layer objects inherit from ``Object``, which itself
+derives from ``IUnknown`` (the reference-counting base):
+
+.. code-block:: cpp
+
+   // Simplified from src/vanillapdf/syntax/objects/object.h
+   class Object : public virtual IUnknown,
+                  public IWeakReferenceable<Object>,
+                  public IModifyObservable {
+       // Type system, offset tracking, XRef entry, dirty flag, attributes
+   };
+
+Semantics-layer objects use a template wrapper:
+
+.. code-block:: cpp
+
+   // From src/vanillapdf/semantics/objects/high_level_object.h
+   template <typename T>
+   class HighLevelObject : public virtual IUnknown {
+       // Wraps a syntax-layer object with semantic meaning
+   };
+
+This separation means the semantic layer (``DocumentHandle``,
+``PageObjectHandle``) operates on top of the syntax layer
+(``DictionaryObjectHandle``, ``StreamObjectHandle``) without exposing the
+lower-level structure to callers.
+
+Memory model
+------------
+
+Reference counting
+^^^^^^^^^^^^^^^^^^
+
+The library uses **intrusive reference counting**. The reference counter is
+embedded directly inside each object, not in a separate control block. This
+gives two advantages over ``std::shared_ptr``:
+
+1. **Single allocation** -- object and counter are allocated together
+2. **Single dereference** -- accessing the object does not require a second
+   pointer hop through a control block
+
+When an API function returns a handle through an output parameter, the caller
+owns one reference. The caller must call the corresponding ``_Release``
+function when done. Releasing a handle decrements the counter; when it reaches
+zero, the object is destroyed.
+
+.. code-block:: c
+
+   DocumentHandle* doc = NULL;
+   Document_Create("output.pdf", &doc);   // refcount = 1
+
+   /* ... use the document ... */
+
+   Document_Release(doc);                 // refcount = 0 → destroyed
+
+**Rules:**
+
+- Always initialize handles to ``NULL`` before use.
+- Release handles in reverse order of acquisition.
+- Never use a handle after releasing it.
+- Double-releasing a handle is **undefined behavior**.
+
+Weak references
+^^^^^^^^^^^^^^^
+
+The library supports weak references for objects that need to observe other
+objects without preventing their destruction. Weak reference counters use
+``std::atomic<bool>`` for thread-safe deactivation:
+
+.. code-block:: cpp
+
+   // From src/vanillapdf/utils/unknown_interface.h
+   class WeakReferenceCounter {
+       std::atomic<bool> m_active;
+   };
+
+Thread safety
+-------------
+
+Vanilla.PDF does not use global mutable state.
+
+**Error context is thread-local.** Each thread maintains its own error code
+and message buffer:
+
+.. code-block:: cpp
+
+   // From src/vanillapdf/utils/errors.h
+   static thread_local uint32_t m_error;
+   static thread_local size_type m_message_length;
+   static thread_local char m_message[constant::MAX_MESSAGE_SIZE];
+
+This means concurrent threads can call the library without interfering with
+each other's error state. The buffer is pre-allocated to avoid allocation
+failures when reporting out-of-memory errors.
+
+**Logging is thread-safe.** The logging subsystem uses ``spdlog``
+multi-threaded sinks (``rotating_logger_mt``, ``custom_callback_sink_mt``
+with internal ``std::mutex``). Calling ``Logging_Enable()`` or writing log
+output from any thread is safe.
+
+**Handles are not thread-safe.** A single handle instance must not be
+accessed from multiple threads simultaneously. If you need to share a
+handle across threads, protect it with your own mutex. In practice, the
+recommended pattern is to process different documents on different threads
+without sharing handles.
+
+**Weak reference counters are atomic.** The ``m_active`` flag in
+``WeakReferenceCounter`` uses ``std::atomic<bool>``, so deactivation is
+visible across threads without additional synchronization.
 
 Error handling
 --------------
 
-Library uses C++ exceptions internally. Each interface function is wrapped inside try-catch block to prevent any exceptions to escape and potentially crash the application.
-
-This is example, how interface functions usually look like:
+Internally, the library uses C++ exceptions. Each C interface function wraps
+its implementation in a try-catch block that catches all exceptions, stores
+the message in the thread-local buffer, and returns an error code:
 
 .. code-block:: c
 
    error_type Buffer_SetData(BufferHandle* handle, string_type data, size_type size) {
-   	Buffer* obj = reinterpret_cast<Buffer*>(handle);
+       Buffer* obj = reinterpret_cast<Buffer*>(handle);
 
-   	if (obj == nullptr) {
-   		return VANILLAPDF_ERROR_PARAMETER_VALUE;
-   	}
+       if (obj == nullptr) {
+           return VANILLAPDF_ERROR_PARAMETER_VALUE;
+       }
 
-   	if (data == nullptr) {
-   		return VANILLAPDF_ERROR_PARAMETER_VALUE;
-   	}
-
-   	try
-   	{
-   		obj->assign(data, data + size);
-   		return VANILLAPDF_ERROR_SUCCESS;
-   	} catch (std::exception& e) {
-   		// Store the error message
-   		return VANILLAPDF_ERROR_GENERAL;
-   	} catch (...) {
-   		return VANILLAPDF_ERROR_GENERAL;
-   	}
+       try {
+           obj->assign(data, data + size);
+           return VANILLAPDF_ERROR_SUCCESS;
+       } catch (std::exception& e) {
+           // Store e.what() in thread-local buffer
+           return VANILLAPDF_ERROR_GENERAL;
+       } catch (...) {
+           return VANILLAPDF_ERROR_GENERAL;
+       }
    }
 
 .. note::
 
-   The wrapping try-catch should have `negligible performance impact <https://en.wikipedia.org/wiki/Exception_handling#Exception_handling_implementation>`_ on most compilers.
+   The wrapping try-catch has
+   `negligible performance impact <https://en.wikipedia.org/wiki/Exception_handling#Exception_handling_implementation>`_
+   on modern compilers using table-based exception handling.
 
-Error codes and messages
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-All exceptions thrown in this way are caught and their message is stored in a thread-local buffer.
-This buffer is separate for each thread and has a pre-allocated size in case of memory shortage.
-
-Following code snippet declares the structures that carries error information:
-
-.. code-block:: c
-
-   thread_local uint32_t m_error;
-   thread_local size_type m_message_length;
-   thread_local char m_message[constant::MAX_MESSAGE_SIZE];
-
-Object ownership
+Extension points
 ----------------
 
-All handles are basically opaque pointers to internal structures.
-Library uses so-called intrusive pointer reference counting mechanism.
-Usually, the structure and the reference counter are two separate objects.
-In this case, the reference counter is embedded inside the structure body.
+The library provides callback interfaces that callers can implement to
+customize behavior without modifying the library itself.
 
-Intrusive vs Shared
-^^^^^^^^^^^^^^^^^^^
+.. list-table::
+   :header-rows: 1
+   :widths: 35 65
 
-Let's compare intrusive pointer with the traditional `C++ shared pointers <http://en.cppreference.com/w/cpp/memory/shared_ptr>`_.
+   * - Interface
+     - Purpose
+   * - ``SigningKeyHandle``
+     - Custom signing implementation for smart cards or HSMs where the
+       private key is not directly accessible. Override instead of using
+       ``PKCS12KeyHandle`` when keys cannot be exported.
+   * - ``EncryptionKeyHandle``
+     - Custom encryption key provider for certificate-based decryption
+       or external key management systems.
+   * - ``FileWriterObserverHandle``
+     - Callback interface invoked during PDF file writing. Allows callers
+       to monitor or modify the output process.
 
-Transferring object handle outside library bounds is more clear.
+For signing, the standard approach uses PKCS#12 key files
+(`RFC 7292 <https://tools.ietf.org/html/rfc7292>`_):
 
 .. code-block:: c
 
-   Buffer* buffer = new Buffer();
-   *result = reinterpret_cast<BufferHandle*>(buffer);
+   PKCS12KeyHandle* pkcs12 = NULL;
+   SigningKeyHandle* key = NULL;
 
-   ...
+   PKCS12Key_CreateFromFile("key.p12", "password", &pkcs12);
+   PKCS12Key_ToSigningKey(pkcs12, &key);
+   Document_Sign(doc, file, key, settings);
 
-   Buffer* buffer = reinterpret_cast<Buffer*>(handle);
+When the private key resides on a smart card or HSM, implement
+``SigningKeyHandle`` directly and provide your own signing logic.
+See ``sign_custom.c`` for an example.
 
-Intrusive pointers can guarantee, that there are no multiple reference count objects.
+File layer internals
+--------------------
 
-Intrusive pointers should have a better performance (in some cases) comparing to traditional C++ shared pointers.
-Main reason is that accessing the object required two pointer dereferences for shared pointer, while for intrusive only one.
-The other reason is that whole object is allocated within a single allocation, while shared pointers are often not.
+The file layer provides access to PDF file contents at the syntactic level.
 
-.. note::
-
-   Shared pointer can be allocated using `make_shared <http://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared>`_.
-   In addition, to ensure (not guarantee) that there is only a single reference counter object, the objects may be derived from `shared_from_this <http://en.cppreference.com/w/cpp/memory/enable_shared_from_this>`_.
-
-File layer
-----------
-
-File layer allows access to file contents at the syntactic level.
-It has some necessary semantic features that are required for parsing its syntax.
-
-For example ``IndirectReferenceObjectHandle`` often has to be resolved to read an object.
-The ``StreamObjectHandle`` has its ``Length`` often stored as an indirect object.
-In order to validate this object, the ``Length`` has to be resolved to successfully parse an object.
-
-IO Streams
+IO streams
 ^^^^^^^^^^
 
-Library uses C++ io streams for reading source files and writing output files.
-There are already interfaces, that represents these streams and will be used throughout the library interface.
+The library uses C++ I/O streams internally. The public interface exposes
+two stream types:
 
-- Source files with ``InputStreamHandle``
-- Destination files with ``OutputStreamHandle``
+- ``InputStreamHandle`` -- for reading source files
+- ``OutputStreamHandle`` -- for writing output files
 
 .. note::
 
-   These interfaces could be overriden in the future, so that user can provide custom implementation for reading source file.
-   This is often helpful for interacting with other applications, that might need to share file access.
+   Stream interfaces may be made overridable in a future version, allowing
+   callers to provide custom I/O implementations for memory-mapped files,
+   network streams, or shared file access.
 
 Tokenizer
 ^^^^^^^^^
 
-Tokens are smallest syntactic elements and are separated by a whitespace or a delimiter.
-Which characters are considered whitespace and which are considered delimiter is discussed in `section 7.2 - Lexical Conventions <_static/PDF32000_2008.pdf#G6.1638740>`_.
+The tokenizer produces the smallest syntactic elements, separated by
+whitespace or delimiters as defined in
+`section 7.2 of the PDF specification <_static/PDF32000_2008.pdf#G6.1638740>`_.
 
-.. note::
-
-   PDF supports comments, but they are currently ignored. They might be persisted in the future.
-
-Tokenizer uses look-ahead to determine proper token type, since some of the tokens are ambiguous from the first character.
-For example hexadecimal string is enclosed with angle brackets "<", ">" and the dictionary "<<", ">>".
-
-Sample parsing loop for hexadecimal string:
+The tokenizer uses look-ahead to disambiguate tokens. For example,
+``<`` begins a hexadecimal string, while ``<<`` begins a dictionary:
 
 .. code-block:: c
 
-   int char = m_stream->Get();
-   if (char == Delimiter::LESS_THAN_SIGN) {
-
-   	int ahead = m_stream->Peek();
-   	if (ahead == Delimiter::LESS_THAN_SIGN) {
-   		return Token::Type::DICTIONARY_BEGIN;
-   	}
-
-   	for (;;) {
-   		int hex_char = m_stream->Get();
-   		if (hex_char == Delimiter::GREATER_THAN_SIGN) {
-   			break;
-   		}
-
-   		if (IsNumeric(hex_char) || IsAlpha(hex_char)) {
-   			continue;
-   		}
-
-   		// Found unknown character - terminate
-   	}
-
-   	return Token::Type::HEXADECIMAL_STRING;
+   int c = m_stream->Get();
+   if (c == Delimiter::LESS_THAN_SIGN) {
+       int ahead = m_stream->Peek();
+       if (ahead == Delimiter::LESS_THAN_SIGN) {
+           return Token::Type::DICTIONARY_BEGIN;
+       }
+       // ... read hex string ...
+       return Token::Type::HEXADECIMAL_STRING;
    }
 
 Parser
 ^^^^^^
 
-Tokens are passed to the parser, who is responsible for constructing objects.
-Parser uses look-ahead as well, since multiple tokens may form a single object.
+The parser consumes tokens and constructs PDF objects. It also uses
+look-ahead, since multiple tokens may form a single object (e.g., an
+indirect reference is three tokens: object number, generation number, ``R``).
 
 .. image:: /_images/indirect_reference_parsing.png
    :alt: Diagram for parsing indirect object references
 
-Function callbacks
-------------------
+Indirect references
+^^^^^^^^^^^^^^^^^^^
 
-Library provides multiple interfaces, that could be overriden by the calling application.
-
-For instance, when signing a document, it is possible to use classic PKCS#12 (Personal Information Exchange described in `RFC 7292 <https://tools.ietf.org/html/rfc7292>`_).
-Unfortunately, this would not work with smart cards, where the private key is not directly accessible.
-User can override ``SigningKeyHandle`` and provide signing implementation outside library boundaries.
-
-More extendable interfaces:
-
-- Document signing with ``SigningKeyHandle``
-- Document encryption with ``EncryptionKeyHandle``
-- File writer callbacks with ``FileWriterObserverHandle``
+``IndirectReferenceObjectHandle`` must often be resolved to access the
+referenced object. For example, ``StreamObjectHandle`` frequently stores its
+``Length`` as an indirect reference. The file layer resolves these references
+transparently during parsing.
 
 Dependencies
 ------------
 
-The library depends on the following libraries:
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
 
-- `OpenSSL <https://www.openssl.org/>`_ -- encryption, decryption, and digital signatures
-- `zlib <http://www.zlib.net/>`_ -- flate compression
-- `libjpeg-turbo <https://libjpeg-turbo.org/>`_ -- JPEG image decoding
-- `OpenJPEG <https://www.openjpeg.org/>`_ -- JPEG2000 image support
-- `spdlog <https://github.com/gabime/spdlog>`_ -- logging
-- `nlohmann-json <https://github.com/nlohmann/json>`_ -- configuration parsing
+   * - Library
+     - Purpose
+   * - `OpenSSL <https://www.openssl.org/>`_
+     - Encryption, decryption, and digital signatures
+   * - `zlib <http://www.zlib.net/>`_
+     - Flate compression
+   * - `libjpeg-turbo <https://libjpeg-turbo.org/>`_
+     - JPEG image decoding
+   * - `OpenJPEG <https://www.openjpeg.org/>`_
+     - JPEG2000 image support
+   * - `spdlog <https://github.com/gabime/spdlog>`_
+     - Logging
+   * - `nlohmann-json <https://github.com/nlohmann/json>`_
+     - Configuration parsing
 
 All dependencies are managed automatically via vcpkg. See :doc:`building` for
 details on using system packages instead.
+
+Build system
+------------
+
+The build uses CMake with platform-specific presets defined in
+``cmake/presets/``. CMake also integrates CPack for generating installable
+packages:
+
+- Debian ``.deb`` packages
+- Homebrew packages
+- NuGet packages
+
+See :doc:`building` for build instructions and :doc:`packaging` for package
+generation.
