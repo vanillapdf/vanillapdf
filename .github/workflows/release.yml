@@ -4,6 +4,13 @@ on:
   push:
     tags:
       - 'v*.*.*'
+  pull_request:
+    paths:
+      - '.github/workflows/release.yml'
+      - '.github/workflows/build-nuget.yml'
+      - '.github/workflows/github-release.yml'
+      - '.github/workflows/github-pages.yml'
+      - '.github/workflows/create-vcpkg-pr.yml'
   workflow_dispatch:
     inputs:
       tag:
@@ -31,11 +38,21 @@ jobs:
       prerelease: ${{ steps.parse.outputs.prerelease }}
       dry_run: ${{ steps.parse.outputs.dry_run }}
     steps:
+      - name: Checkout for version detection
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v6
+
       - name: Extract tag name and suffix
         id: parse
         run: |
-          # Use workflow_dispatch input if available, otherwise extract from tag ref
-          if [ -n "${{ inputs.tag }}" ]; then
+          # Determine tag based on event type
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # Derive synthetic tag from cmake/version.cmake
+            MAJOR=$(grep 'VANILLAPDF_VERSION_MAJOR' cmake/version.cmake | grep -o '[0-9]\+')
+            MINOR=$(grep 'VANILLAPDF_VERSION_MINOR' cmake/version.cmake | grep -o '[0-9]\+')
+            PATCH=$(grep 'VANILLAPDF_VERSION_PATCH' cmake/version.cmake | grep -o '[0-9]\+')
+            TAG="v${MAJOR}.${MINOR}.${PATCH}"
+          elif [ -n "${{ inputs.tag }}" ]; then
             TAG="${{ inputs.tag }}"
           else
             TAG="${GITHUB_REF#refs/tags/}"
@@ -56,8 +73,10 @@ jobs:
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
           fi
 
-          # workflow_dispatch defaults to dry_run=true; tag push is never dry_run
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          # pull_request and workflow_dispatch are always dry_run; tag push is never dry_run
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "dry_run=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
           else
             echo "dry_run=false" >> "$GITHUB_OUTPUT"
