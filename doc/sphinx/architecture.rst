@@ -1,19 +1,19 @@
 Architecture
 ============
 
-The library is written in standard C++17 and can be compiled using Microsoft
-Visual Studio 2019 (MSVC 16.11) or 2022 (MSVC 17.x), GCC 8.1+, or Clang 10+
-(including AppleClang 15 on macOS 13). Official CMake presets cover Windows,
-Linux, macOS and Android targets.
+The library is written in standard C++17 and can be compiled using Visual
+Studio 2022 (MSVC 17.x), Visual Studio 2026 (MSVC 18.x), GCC 8.1+, or
+Clang 10+ (including AppleClang 15 on macOS). Official CMake presets cover
+Windows, Linux, macOS, and Android targets.
 
 Build is executed using cross-platform make tool CMake (https://cmake.org/).
-CMake also integrates packaging system to provide one-click installable packages for each platform.
+CMake also integrates packaging system to provide installable packages for each platform.
 
-Currently supported package systems:
+Currently supported package formats:
 
-- Windows `.msi <https://en.wikipedia.org/wiki/Windows_Installer>`_
-- Debian `.deb <https://en.wikipedia.org/wiki/Deb_(file_format)>`_
-- Red Hat Package Manager `.rpm <https://en.wikipedia.org/wiki/Rpm_(software)>`_
+- Debian ``.deb`` packages
+- Homebrew packages
+- NuGet packages
 
 It provides only **ANSI C** API. The reason why I did not expose native C++ interface is rooted within the incompatibility of the C++ ABI between compilers.
 Functions across the interface use standard C caller clean-up `cdecl <https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl>`_ calling convention.
@@ -195,12 +195,14 @@ More extendable interfaces:
 Dependencies
 ------------
 
-Library has also following dependent libraries **with** required runtime support:
+The library depends on the following libraries:
 
-- OpenSSL (https://www.openssl.org/) - used for encrypted files
-- zlib (http://www.zlib.net/) - used for flate compression method
-- libjpeg (http://libjpeg.sourceforge.net/) - used for compressed JPEG images
+- `OpenSSL <https://www.openssl.org/>`_ -- encryption, decryption, and digital signatures
+- `zlib <http://www.zlib.net/>`_ -- flate compression
+- `libjpeg-turbo <https://libjpeg-turbo.org/>`_ -- JPEG image decoding
+- `OpenJPEG <https://www.openjpeg.org/>`_ -- JPEG2000 image support
+- `spdlog <https://github.com/gabime/spdlog>`_ -- logging
+- `nlohmann-json <https://github.com/nlohmann/json>`_ -- configuration parsing
 
-Internal dependent library **without** runtime support:
-
-- JSON for Modern C++ (https://github.com/nlohmann/json) - used for processing license files
+All dependencies are managed automatically via vcpkg. See :doc:`building` for
+details on using system packages instead.
