@@ -41,7 +41,10 @@ add_executable(vanillapdf.benchmark
 vanillapdf_target_compile_defaults(vanillapdf.benchmark)
 
 # Configure MSVC runtime library for benchmark target
-vanillapdf_configure_msvc_runtime(vanillapdf.benchmark)
+# Skip if already set externally (e.g. vcpkg toolchain, user, parent project)
+if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+    vanillapdf_configure_msvc_runtime(vanillapdf.benchmark)
+endif()
 
 # Optional stack sanitizer
 enable_stack_sanitizer_for_target(vanillapdf.benchmark)
