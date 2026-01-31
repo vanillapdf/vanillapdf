@@ -1,45 +1,113 @@
 C API Guide
 ===========
 
-The library exposes native C-style interface to allow interoperability with most languages.
-All handles are basically opaque pointers to internal structures,
-which are meant to be modified using the only the API and not the structures themselves.
+Vanilla.PDF is written in C++17 but exposes only an **ANSI C interface**,
+ensuring ABI stability across compilers and easy interop with other languages.
+
+This page covers the core concepts you need to use the API effectively.
+
+Header and linking
+------------------
+
+A single umbrella header provides the entire public API:
+
+.. code-block:: c
+
+   #include <vanillapdf/c_vanillapdf_api.h>
+
+Link with CMake:
+
+.. code-block:: cmake
+
+   find_package(vanillapdf CONFIG REQUIRED)
+   target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
+
+Handle system
+-------------
+
+All objects are represented as **opaque handles** -- typed pointers to internal
+C++ structures. You never access fields directly; all interaction goes through
+API functions.
+
+Common handle types:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 35 65
+
+   * - Handle
+     - Represents
+   * - ``DocumentHandle``
+     - A PDF document (create, open, save, sign)
+   * - ``FileHandle``
+     - Low-level file access (XRef, trailers, objects)
+   * - ``CatalogHandle``
+     - The document root (page tree, outlines, names)
+   * - ``PageTreeHandle``
+     - The page tree node containing all pages
+   * - ``PageObjectHandle``
+     - A single page (content stream, media box, annotations)
+   * - ``PKCS12KeyHandle``
+     - A PKCS#12 key for signing
+   * - ``SigningKeyHandle``
+     - Abstract signing interface (for custom/smart card signing)
+   * - ``TrustedCertificateStoreHandle``
+     - Certificate store for signature verification
+
+Typical usage pattern:
+
+.. code-block:: c
+
+   DocumentHandle* doc = NULL;
+   CatalogHandle* catalog = NULL;
+   PageTreeHandle* pages = NULL;
+
+   Document_Create("output.pdf", &doc);
+   Document_GetCatalog(doc, &catalog);
+   Catalog_GetPages(catalog, &pages);
+
+   /* ... use pages ... */
+
+   PageTree_Release(pages);
+   Catalog_Release(catalog);
+   Document_Release(doc);
 
 Types
 -----
 
-All of the basic interface types are either opaque pointers to internal structures or simply standard value types such as integers or strings.
+All basic interface types are either opaque handle pointers or standard C value
+types (integers, strings).
 
-Since boolean type is not supported in the C-style interface, we have a custom definition of ``boolean_type`` with only two possible states - ``VANILLAPDF_RV_TRUE`` and ``VANILLAPDF_RV_FALSE``.
+Since C has no built-in boolean, the library defines ``boolean_type`` with two
+states: ``VANILLAPDF_RV_TRUE`` and ``VANILLAPDF_RV_FALSE``.
 
-For more detailed information please visit the :doc:`Types API reference <api/types>`.
+For the full list, see the :doc:`Types API reference <api/types>`.
 
-Memory leaks
--------------
+Memory management
+-----------------
 
-All interface objects are reference counted.
-Whenever an object is received with an output parameter, it has to be released when no longer needed.
+All interface objects are **reference counted**. When you receive a handle
+through an output parameter, you own a reference and must release it when done.
 
 .. code-block:: c
 
    FileHandle file = NULL;
-   error_code file_opened = File_Open(argv[1], &file);
-   if (file_opened != VANILLAPDF_ERROR_SUCCESS) {
-       return file_opened;
+   error_type rc = File_Open("input.pdf", &file);
+   if (rc != VANILLAPDF_ERROR_SUCCESS) {
+       return rc;
    }
 
-   ...
+   /* ... work with the file ... */
 
-   error_code file_released = File_Release(file);
-   if (file_released != VANILLAPDF_ERROR_SUCCESS) {
-       return file_released;
-   }
+   File_Release(file);  /* caller must release */
 
-After the file has been opened successfully, the caller is responsible for calling appropriate release function.
-Calling the release multiple times is an error and causes **undefined behavior**.
-We recommend resetting the handles to their initial state of **NULL**, to prevent any errors.
+**Rules:**
 
-For example this macro may help in maintaining consistent state of the local variables:
+- Always initialize handles to ``NULL`` before use.
+- Release handles in reverse order of acquisition.
+- Releasing the same handle twice is **undefined behavior**.
+
+The following macro provides safe cleanup with NULL-guard:
 
 .. code-block:: c
 
@@ -57,44 +125,38 @@ For example this macro may help in maintaining consistent state of the local var
        handle = NULL; \
    } while(0)
 
-With this helper macro, the cleanup becomes easier as long as it is properly initialized with **NULL**.
+Usage with ``goto`` cleanup:
 
 .. code-block:: c
 
    FileHandle file = NULL;
    DocumentHandle document = NULL;
 
-   error_code file_opened = File_Open(argv[1], &file);
-   if (file_opened != VANILLAPDF_ERROR_SUCCESS) {
-       goto err;
-   }
+   error_type rc = File_Open(path, &file);
+   if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
 
-   error_code document_opened = Document_Open(argv[1], &document);
-   if (document_opened != VANILLAPDF_ERROR_SUCCESS) {
-       goto err;
-   }
+   rc = Document_Open(path, &document);
+   if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
 
-   err:
-       SAFE_RELEASE(File_Release, file);
+   /* ... work with file and document ... */
+
+   cleanup:
        SAFE_RELEASE(Document_Release, document);
-
-It is also safe to call this release macro several times.
-This code style may seem repulsive for some developers, they are free to use any kind of cleanup, as long as it serves the purpose.
+       SAFE_RELEASE(File_Release, file);
 
 .. note::
 
-   The release function should not fail as long as the parameter is valid. The error code is just to keep the interface consistent.
+   The release function should not fail as long as the parameter is valid.
+   The error code exists to keep the interface consistent.
 
 Error handling
 --------------
 
-Every function throughout the interface returns ``error_type``. On success, the return value should be ``VANILLAPDF_ERROR_SUCCESS``.
-In every other case it means that an error has occurred and it's error message is stored. The next section explains how to gather this message.
+Every function returns ``error_type``. On success, the value is
+``VANILLAPDF_ERROR_SUCCESS``. Any other value indicates an error whose message
+is stored in a thread-local buffer.
 
-Extended error information
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-There is a code sample how to obtain the last error code with the message printed to console.
+Retrieve the last error:
 
 .. literalinclude:: ../../src/vanillapdf.test/utils.c
    :language: c
@@ -102,25 +164,94 @@ There is a code sample how to obtain the last error code with the message printe
    :end-before: //! [Print last error]
    :dedent:
 
-For more detailed information please visit the ``Errors`` API.
+Common error codes:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Code
+     - Meaning
+   * - ``VANILLAPDF_ERROR_SUCCESS``
+     - Operation completed successfully
+   * - ``VANILLAPDF_ERROR_PARAMETER_VALUE``
+     - NULL or invalid parameter
+   * - ``VANILLAPDF_ERROR_GENERAL``
+     - Internal error (check error message for details)
+   * - ``VANILLAPDF_ERROR_NOT_SUPPORTED``
+     - Feature not available in this build
 
 Debugging
 ---------
 
-Sometimes the error code and message is not enough to solve the problem. Library also supports logging, that can be configured via ``Logging``.
-Logging have multiple log levels, which control the verbosity of the output.
-
-Following snippet enables the logging feature with the highest possible logging severity.
+Enable diagnostic logging to get internal trace output:
 
 .. code-block:: c
 
    #include "vanillapdf/c_logging.h"
 
-   error_type set_logging() {
-       RETURN_ERROR_IF_NOT_SUCCESS(Logging_Enable());
-       RETURN_ERROR_IF_NOT_SUCCESS(Logging_SetSeverity(LoggingSeverity_Debug));
+   Logging_Enable();
+   Logging_SetSeverity(LoggingSeverity_Debug);
 
-       return VANILLAPDF_TEST_ERROR_SUCCESS;
-   }
+Log levels from least to most verbose: ``Error``, ``Warning``, ``Info``,
+``Debug``.
 
-For more useful utilities please visit the :doc:`Utilities API reference <api/utils>`.
+Common operations
+-----------------
+
+**Open an existing PDF:**
+
+.. code-block:: c
+
+   FileHandle* file = NULL;
+   File_Open("input.pdf", &file);
+
+   DocumentHandle* doc = NULL;
+   Document_Open("input.pdf", &doc);
+
+**Create a new PDF with a page:**
+
+.. code-block:: c
+
+   DocumentHandle* doc = NULL;
+   CatalogHandle* cat = NULL;
+   PageTreeHandle* pages = NULL;
+   PageObjectHandle* page = NULL;
+
+   Document_Create("new.pdf", &doc);
+   Document_GetCatalog(doc, &cat);
+   Catalog_GetPages(cat, &pages);
+   PageObject_CreateFromDocument(doc, &page);
+   PageTree_AppendPage(pages, page);
+   Document_Save(doc, "new.pdf");
+
+**Sign a document:**
+
+.. code-block:: c
+
+   PKCS12KeyHandle* pkcs12 = NULL;
+   SigningKeyHandle* key = NULL;
+
+   PKCS12Key_CreateFromFile("key.p12", "password", &pkcs12);
+   PKCS12Key_ToSigningKey(pkcs12, &key);
+   Document_Sign(doc, file, key, settings);
+
+**Verify a signature:**
+
+.. code-block:: c
+
+   TrustedCertificateStoreHandle* store = NULL;
+   TrustedCertificateStore_Create(&store);
+   TrustedCertificateStore_LoadSystemDefaults(store);
+
+   SignatureVerificationResultHandle* result = NULL;
+   DigitalSignatureExtensions_Verify(sig, doc, store, settings, &result);
+
+   SignatureVerificationStatusType status;
+   SignatureVerificationResult_GetStatus(result, &status);
+
+See :doc:`signature_verification` for the full verification guide and
+:doc:`examples` for more code samples.
+
+For the complete API reference, see :doc:`api/documents`, :doc:`api/files`,
+:doc:`api/contents`, and :doc:`api/utils`.

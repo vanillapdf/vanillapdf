@@ -8,7 +8,7 @@ This directory contains practical examples demonstrating VanillaPDF integration 
 
 ## Documentation
 
-For detailed documentation of all examples, including integration patterns and API usage, see the **[Examples Documentation](https://vanillapdf.github.io/vanillapdf/page_examples.html)**.
+For detailed documentation of all examples, including integration patterns and API usage, see the **[Examples Documentation](https://vanillapdf.readthedocs.io/en/latest/examples.html)**.
 
 ## Quick Start
 

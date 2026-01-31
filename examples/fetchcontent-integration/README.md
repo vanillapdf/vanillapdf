@@ -20,6 +20,6 @@ ctest --preset windows-x64-debug --output-on-failure
 
 For complete documentation including dependency management, configuration options, and CI validation details, see:
 
-**[FetchContent Integration Example Documentation](https://vanillapdf.github.io/vanillapdf/example_fetchcontent_integration.html)**
+**[Installation Guide — FetchContent](https://vanillapdf.readthedocs.io/en/latest/installation.html#cmake-fetchcontent)**
 
 This example is continuously tested across all platforms via automated CI.

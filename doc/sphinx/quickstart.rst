@@ -6,86 +6,18 @@ Create your first PDF document in a few lines of C code.
 Prerequisites
 -------------
 
-Before starting, install Vanilla.PDF using one of the methods in the
-:doc:`installation guide <installation>`.
+Install Vanilla.PDF using one of the methods in the
+:doc:`installation guide <installation>`. The simplest option:
 
-You will need:
+.. code-block:: bash
 
-- A C or C++ compiler (see :doc:`building` for supported compilers)
-- CMake 3.20 or later
-- Vanilla.PDF headers and library
+   vcpkg install vanillapdf
 
 Create a PDF document
 ---------------------
 
-The following example creates a minimal PDF document with a single blank page.
-
-Step 1 -- Include the header
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: c
-
-   #include <vanillapdf/c_vanillapdf_api.h>
-
-The single umbrella header pulls in every part of the C API.
-
-Step 2 -- Print library info
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. literalinclude:: ../../src/vanillapdf.test/utils.c
-   :language: c
-   :start-after: //! [Print library info]
-   :end-before: //! [Print library info]
-   :dedent:
-
-Step 3 -- Create a document and add a page
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: c
-
-   DocumentHandle* document = NULL;
-   CatalogHandle* catalog = NULL;
-   PageTreeHandle* page_tree = NULL;
-   PageObjectHandle* page = NULL;
-
-   /* Create a new document bound to an output path */
-   error_type rc = Document_Create("output.pdf", &document);
-   if (rc != VANILLAPDF_ERROR_SUCCESS) { return rc; }
-
-   /* Retrieve the root catalog */
-   rc = Document_GetCatalog(document, &catalog);
-   if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
-
-   /* Access the page tree */
-   rc = Catalog_GetPages(catalog, &page_tree);
-   if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
-
-   /* Create a blank page and append it */
-   rc = PageObject_CreateFromDocument(document, &page);
-   if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
-
-   rc = PageTree_AppendPage(page_tree, page);
-   if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
-
-Step 4 -- Save and clean up
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: c
-
-   /* Write the document to disk */
-   rc = Document_Save(document, "output.pdf");
-
-   cleanup:
-       if (page)      PageObject_Release(page);
-       if (page_tree) PageTree_Release(page_tree);
-       if (catalog)   Catalog_Release(catalog);
-       if (document)  Document_Release(document);
-
-All handles obtained from the library must be released when no longer needed.
-See the :doc:`C API guide <c_api>` for details on memory management.
-
-Complete example
-----------------
+The following example creates a PDF document with a single blank page and
+writes it to disk.
 
 .. code-block:: c
 
@@ -99,21 +31,25 @@ Complete example
        PageObjectHandle* page = NULL;
        error_type rc;
 
+       /* Create a new document bound to an output path */
        rc = Document_Create("output.pdf", &document);
        if (rc != VANILLAPDF_ERROR_SUCCESS) { return 1; }
 
+       /* Navigate to the page tree via the root catalog */
        rc = Document_GetCatalog(document, &catalog);
        if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
 
        rc = Catalog_GetPages(catalog, &page_tree);
        if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
 
+       /* Create a blank page and append it */
        rc = PageObject_CreateFromDocument(document, &page);
        if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
 
        rc = PageTree_AppendPage(page_tree, page);
        if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
 
+       /* Write to disk */
        rc = Document_Save(document, "output.pdf");
        if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
 
@@ -128,18 +64,32 @@ Complete example
        return (rc == VANILLAPDF_ERROR_SUCCESS) ? 0 : 1;
    }
 
-Build and run
-^^^^^^^^^^^^^
+**Key patterns to notice:**
 
-Link against ``vanillapdf::vanillapdf`` in your CMakeLists.txt:
+- **Single header** -- ``<vanillapdf/c_vanillapdf_api.h>`` includes the entire C API.
+- **Handle-based** -- Every object is an opaque pointer (``DocumentHandle*``,
+  ``CatalogHandle*``, etc.). The internal C++ implementation is never exposed.
+- **Error codes** -- Every function returns ``error_type``. Check against
+  ``VANILLAPDF_ERROR_SUCCESS``.
+- **Manual cleanup** -- Each handle obtained from the library must be released.
+  Initialize to ``NULL`` and release in reverse order.
+
+Build and run
+-------------
+
+Create a ``CMakeLists.txt``:
 
 .. code-block:: cmake
 
-   find_package(vanillapdf REQUIRED)
+   cmake_minimum_required(VERSION 3.20)
+   project(QuickStart C)
+
+   find_package(vanillapdf CONFIG REQUIRED)
+
    add_executable(quickstart main.c)
    target_link_libraries(quickstart PRIVATE vanillapdf::vanillapdf)
 
-Then build and run:
+Build:
 
 .. code-block:: bash
 
@@ -147,10 +97,46 @@ Then build and run:
    cmake --build build
    ./build/quickstart    # creates output.pdf
 
+Sign the document
+-----------------
+
+Use the CLI tool to add a digital signature:
+
+.. code-block:: bash
+
+   vanillapdf-tools sign -s output.pdf -d signed.pdf -k private_key.p12 -p password
+
+Verify it:
+
+.. code-block:: bash
+
+   vanillapdf-tools verify -f signed.pdf
+
+Query library version
+---------------------
+
+.. literalinclude:: ../../src/vanillapdf.test/utils.c
+   :language: c
+   :start-after: //! [Print library info]
+   :end-before: //! [Print library info]
+   :dedent:
+
+Retrieve error details
+----------------------
+
+When a function returns an error code, extract the message:
+
+.. literalinclude:: ../../src/vanillapdf.test/utils.c
+   :language: c
+   :start-after: //! [Print last error]
+   :end-before: //! [Print last error]
+   :dedent:
+
 Next steps
 ----------
 
-- :doc:`c_api` -- Memory management, error handling, and debugging
-- :doc:`examples` -- More code samples for signing, merging, encryption
-- :doc:`signature_verification` -- Verify digital signatures in PDF documents
-- :doc:`cli_tools` -- Process PDFs from the command line
+- :doc:`c_api` -- Handle system, memory management, error handling, debugging
+- :doc:`examples` -- Signing, merging, encryption, content stream processing
+- :doc:`signature_verification` -- Verify digital signatures with trust stores
+- :doc:`cli_tools` -- All CLI commands: sign, verify, merge, extract, encrypt, decrypt
+- :doc:`pdf_format` -- Understand PDF syntax: objects, XRef tables, trailers

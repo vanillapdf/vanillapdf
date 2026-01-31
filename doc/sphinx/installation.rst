@@ -2,19 +2,18 @@ Installation
 ============
 
 This page covers how to add Vanilla.PDF to your project as a pre-built
-dependency. If you need to build from source, see :doc:`building`.
+dependency. To build from source instead, see :doc:`building`.
 
 vcpkg (Recommended)
 -------------------
 
-The fastest way to get started is using
-`vcpkg <https://github.com/microsoft/vcpkg>`_:
+Install with `vcpkg <https://github.com/microsoft/vcpkg>`_:
 
 .. code-block:: bash
 
    vcpkg install vanillapdf
 
-After installation, point CMake at your vcpkg instance:
+Then point CMake at your vcpkg toolchain:
 
 .. code-block:: bash
 
@@ -28,14 +27,35 @@ vcpkg supports feature selection to control optional dependencies:
 
    vcpkg install vanillapdf[openssl,zlib,spdlog]
 
-Available features: ``openssl``, ``libjpeg-turbo``, ``openjpeg``, ``zlib``,
-``spdlog``, ``nlohmann-json``, ``tests``, ``benchmarks``.
+Available features:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Feature
+     - Description
+   * - ``openssl``
+     - Enable encryption and decryption of secure PDF documents
+   * - ``libjpeg-turbo``
+     - Decode JPEG images into bitmaps
+   * - ``openjpeg``
+     - Support JPEG-2000 images through the OpenJPEG codec
+   * - ``zlib``
+     - Decompress PDF objects compressed with zlib
+   * - ``spdlog``
+     - High-performance logging for diagnostics and debugging
+   * - ``nlohmann-json``
+     - Parse application configuration from JSON files
+   * - ``tests``
+     - Enable unit and integration tests (includes GTest)
+   * - ``benchmarks``
+     - Enable performance benchmarking tools (includes Google Benchmark)
 
 CMake FetchContent
 ------------------
 
-For users who prefer not to introduce external package managers,
-use CMake's FetchContent mechanism:
+Self-contained approach without external package managers:
 
 .. code-block:: cmake
 
@@ -50,32 +70,31 @@ use CMake's FetchContent mechanism:
    )
    FetchContent_MakeAvailable(vanillapdf)
 
-   # Link to your target
+   add_executable(myapp main.c)
    target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 
 .. note::
 
    When using FetchContent, you are responsible for managing Vanilla.PDF's
-   dependencies. Install them via system package managers
-   (``apt-get install libssl-dev libjpeg-turbo8-dev`` on Linux,
-   ``brew install openssl libjpeg-turbo`` on macOS) or other packaging
-   systems like Conan.
+   dependencies. Install them via system package managers before configuring:
 
-FetchContent integration example
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   **Linux:**
 
-A complete working example with cross-platform CI is available in
+   .. code-block:: bash
+
+      sudo apt-get install libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev
+
+   **macOS:**
+
+   .. code-block:: bash
+
+      brew install openssl@3 jpeg-turbo zlib openjpeg
+
+A complete working example with cross-platform CI validation is available in
 `examples/fetchcontent-integration/
 <https://github.com/vanillapdf/vanillapdf/tree/main/examples/fetchcontent-integration>`_.
 
-The example demonstrates:
-
-- **Real GitHub integration** -- Fetches Vanilla.PDF from GitHub (not local source)
-- **Cross-platform testing** -- Windows (vcpkg), Linux (apt), macOS (Homebrew)
-- **CMake test integration** -- Uses ``add_test()`` and ``enable_testing()``
-- **Actual PDF creation** -- Creates real PDF files and validates functionality
-
-Run the example:
+Run it:
 
 .. code-block:: bash
 
@@ -84,35 +103,103 @@ Run the example:
    cmake --build --preset windows-x64-debug
    ctest --preset windows-x64-debug --output-on-failure
 
-Platform-specific dependency management:
-
-- **Windows**: Uses internal vcpkg for all dependencies
-- **Linux**: Uses system packages (``apt-get install``) for faster builds
-- **macOS**: Uses Homebrew packages (``brew install``) for faster builds
-
 Conan
 -----
 
-Vanilla.PDF is available via `Conan <https://conan.io/>`_:
+Install via `Conan <https://conan.io/>`_:
 
 .. code-block:: bash
 
    pip install conan
    conan install --requires="vanillapdf/2.3.0" --build=missing
 
-Refer to the ``conan/`` directory in the repository for the Conan recipe.
+Or add a ``conanfile.py`` to your project:
+
+.. code-block:: python
+
+   from conan import ConanFile
+   from conan.tools.cmake import cmake_layout
+
+   class MyApp(ConanFile):
+       settings = "os", "compiler", "build_type", "arch"
+       generators = "CMakeDeps", "CMakeToolchain"
+
+       def requirements(self):
+           self.requires("vanillapdf/2.3.0")
+
+       def layout(self):
+           cmake_layout(self)
+
+A working Conan integration example is available in
+`examples/conan-integration/
+<https://github.com/vanillapdf/vanillapdf/tree/main/examples/conan-integration>`_.
+
+Homebrew (macOS)
+----------------
+
+Install via `Homebrew <https://brew.sh/>`_:
+
+.. code-block:: bash
+
+   brew install vanillapdf
+
+The formula installs the shared library, headers, and CLI tools. Dependencies
+(OpenSSL, jpeg-turbo, openjpeg, spdlog, nlohmann-json) are pulled
+automatically.
+
+NuGet (.NET interop)
+--------------------
+
+For .NET projects, install the NuGet package:
+
+.. code-block:: bash
+
+   dotnet add package vanillapdf.net
+
+The correct native runtime is included automatically based on your target
+platform and RID. No manual DLL management is required.
 
 Linking with CMake
 ------------------
 
-Regardless of how you installed Vanilla.PDF, use ``find_package`` in your
-CMakeLists.txt:
+Regardless of installation method, use ``find_package`` in your CMakeLists.txt:
 
 .. code-block:: cmake
 
-   find_package(vanillapdf REQUIRED)
+   cmake_minimum_required(VERSION 3.20)
+   project(MyApp C)
+
+   find_package(vanillapdf CONFIG REQUIRED)
+
    add_executable(myapp main.c)
    target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 
-For a build-from-source workflow (cloning, presets, CMake options, tests, and
-troubleshooting), see :doc:`building`.
+Verify it works with a minimal ``main.c``:
+
+.. code-block:: c
+
+   #include <stdio.h>
+   #include <vanillapdf/c_vanillapdf_api.h>
+
+   int main(void) {
+       DocumentHandle* doc = NULL;
+       error_type rc = Document_Create("test.pdf", &doc);
+       if (rc != VANILLAPDF_ERROR_SUCCESS || doc == NULL) {
+           printf("Failed to create document\n");
+           return 1;
+       }
+       Document_Release(doc);
+       printf("vanillapdf is working.\n");
+       return 0;
+   }
+
+Build and run:
+
+.. code-block:: bash
+
+   cmake -S . -B build
+   cmake --build build
+   ./build/myapp
+
+For building the library from source (cloning, presets, CMake options, tests,
+and troubleshooting), see :doc:`building`.
