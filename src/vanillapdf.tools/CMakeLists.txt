@@ -54,7 +54,10 @@ add_executable(vanillapdf.tools
 vanillapdf_target_compile_defaults(vanillapdf.tools)
 
 # Configure MSVC runtime library for tools target
-vanillapdf_configure_msvc_runtime(vanillapdf.tools)
+# Skip if already set externally (e.g. vcpkg toolchain, user, parent project)
+if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+    vanillapdf_configure_msvc_runtime(vanillapdf.tools)
+endif()
 
 # Optional stack sanitizer
 enable_stack_sanitizer_for_target(vanillapdf.tools)
