@@ -5,6 +5,11 @@
 
 # Generated files (from .in templates by CMake)
 /vcpkg.json
+/examples/conan-integration/conanfile.py
+
+# Conan build artifacts
+/conan/test_package/build/
+/conan/test_package/CMakeUserPresets.json
 
 # User specific configuration
 CMakeSettings.json
