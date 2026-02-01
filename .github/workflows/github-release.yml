@@ -17,6 +17,7 @@ on:
       prerelease:
         description: "Set to true for prerelease"
         required: true
+        type: boolean
 
 permissions:
   contents: write  # Required to create a release

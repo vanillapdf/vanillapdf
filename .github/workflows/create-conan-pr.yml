@@ -43,11 +43,12 @@ jobs:
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "Version: ${VERSION}"
 
-      - name: Checkout vanillapdf repo at tag
+      - name: Checkout vanillapdf repo
         uses: actions/checkout@v6
         with:
           path: vanillapdf
-          ref: ${{ inputs.tag }}
+          # Dry-run: use current commit (has latest scripts/recipes); real run: use the tag
+          ref: ${{ inputs.dry_run && github.sha || inputs.tag }}
           fetch-depth: 0
 
       - name: Check if latest version
