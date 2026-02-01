@@ -35,13 +35,15 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.parse.outputs.tag }}
+      latest_tag: ${{ steps.parse.outputs.latest_tag }}
       build_suffix: ${{ steps.parse.outputs.build_suffix }}
       prerelease: ${{ steps.parse.outputs.prerelease }}
       dry_run: ${{ steps.parse.outputs.dry_run }}
     steps:
-      - name: Checkout for version detection
-        if: github.event_name == 'pull_request'
+      - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Extract tag name and suffix
         id: parse
@@ -81,6 +83,17 @@ jobs:
             echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
           else
             echo "dry_run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Find the latest real tag for dry-run validation workflows
+          # (synthetic tags from version.cmake don't exist as git refs)
+          LATEST_TAG=$(git tag -l 'v*.*.*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          if [ -n "$LATEST_TAG" ]; then
+            echo "latest_tag=$LATEST_TAG" >> "$GITHUB_OUTPUT"
+            echo "Latest real tag: $LATEST_TAG"
+          else
+            echo "latest_tag=$TAG" >> "$GITHUB_OUTPUT"
+            echo "No real tags found, using synthetic tag: $TAG"
           fi
 
   verify:
@@ -142,7 +155,7 @@ jobs:
     if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'true'
     uses: ./.github/workflows/create-vcpkg-pr.yml
     with:
-      tag: ${{ needs.prepare.outputs.tag }}
+      tag: ${{ needs.prepare.outputs.latest_tag }}
       dry_run: true
     secrets: inherit
 
@@ -151,7 +164,7 @@ jobs:
     if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'true'
     uses: ./.github/workflows/create-conan-pr.yml
     with:
-      tag: ${{ needs.prepare.outputs.tag }}
+      tag: ${{ needs.prepare.outputs.latest_tag }}
       dry_run: true
     secrets: inherit
 
@@ -164,6 +177,7 @@ jobs:
         run: |
           echo "=== Dry Run Summary ==="
           echo "Tag: ${{ needs.prepare.outputs.tag }}"
+          echo "Validation tag: ${{ needs.prepare.outputs.latest_tag }}"
           echo "Build suffix: ${{ needs.prepare.outputs.build_suffix }}"
           echo "Prerelease: ${{ needs.prepare.outputs.prerelease }}"
           echo ""
