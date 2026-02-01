@@ -624,7 +624,10 @@ vanillapdf_check_standard_features(vanillapdf)
 vanillapdf_target_compile_defaults(vanillapdf)
 
 # Configure MSVC runtime library for vanillapdf target only
-vanillapdf_configure_msvc_runtime(vanillapdf)
+# Skip if already set externally (e.g. vcpkg toolchain, user, parent project)
+if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+    vanillapdf_configure_msvc_runtime(vanillapdf)
+endif()
 
 # In case we would like to extract code coverage report enable the flag
 if(VANILLAPDF_ENABLE_COVERAGE)

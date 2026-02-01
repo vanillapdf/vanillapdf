@@ -1,6 +1,13 @@
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
+# Skip CMake config file installation when an external package manager
+# (e.g. Conan) generates its own find_package config files.
+if(VANILLAPDF_SKIP_CMAKE_CONFIG_INSTALL)
+  message(STATUS "Skipping CMake config file installation (VANILLAPDF_SKIP_CMAKE_CONFIG_INSTALL=ON)")
+  return()
+endif()
+
 # Export target
 install(EXPORT vanillapdfTargets
   FILE vanillapdfTargets.cmake

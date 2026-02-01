@@ -48,6 +48,10 @@ if(VANILLAPDF_ENABLE_BENCHMARK)
   option(VANILLAPDF_EXTERNAL_BENCHMARK "Use Google Benchmark from the system or a package manager" OFF)
 endif()
 
+# Skip installation of CMake config files (vanillapdfConfig.cmake, etc.)
+# Enable when an external package manager (e.g. Conan) generates its own find_package config
+option(VANILLAPDF_SKIP_CMAKE_CONFIG_INSTALL "Skip installing CMake config files" OFF)
+
 # Allow build configuration to link using static CRT, dynamic CRT link is default
 option(VANILLAPDF_USE_STATIC_CRT "Use static MSVC runtime (/MT) instead of dynamic (/MD)" OFF)
 
