@@ -20,19 +20,5 @@
         "openssl",
         "libjpeg-turbo",
         "openjpeg"
-    ],
-    "features": {
-        "tests": {
-            "description": "Enable unit and integration tests",
-            "dependencies": [
-                "gtest"
-            ]
-        },
-        "benchmarks": {
-            "description": "Enable performance benchmarking tools",
-            "dependencies": [
-                "benchmark"
-            ]
-        }
-    }
+    ]
 }
