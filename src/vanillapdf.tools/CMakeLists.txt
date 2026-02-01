@@ -88,16 +88,16 @@ target_link_libraries(vanillapdf.tools PRIVATE ${VANILLAPDF_TOOLS_LIBS})
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(vanillapdf.tools PRIVATE VANILLAPDF_CONFIGURATION_DLL)
 
-    # Set RPATH so the installed binary can find libvanillapdf in ../lib
-    if(UNIX AND NOT APPLE)
-        set_target_properties(vanillapdf.tools PROPERTIES
-            INSTALL_RPATH "$ORIGIN/../lib"
-        )
-    elseif(APPLE)
-        set_target_properties(vanillapdf.tools PROPERTIES
-            INSTALL_RPATH "@loader_path/../lib"
-            BUILD_RPATH "@loader_path/../lib"
-        )
+    # CMake strips build-time RPATHs during install, so the installed binary
+    # has no RPATH entries and cannot find libvanillapdf in ../lib.
+    # Set a default RPATH using CMAKE_INSTALL_RPATH (not a target property)
+    # so package managers can override with -DCMAKE_INSTALL_RPATH=...
+    if(NOT CMAKE_INSTALL_RPATH)
+        if(UNIX AND NOT APPLE)
+            set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+        elseif(APPLE)
+            set(CMAKE_INSTALL_RPATH "@loader_path/../lib")
+        endif()
     endif()
 endif()
 
