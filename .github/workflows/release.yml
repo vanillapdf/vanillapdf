@@ -11,6 +11,7 @@ on:
       - '.github/workflows/github-release.yml'
       - '.github/workflows/github-pages.yml'
       - '.github/workflows/create-vcpkg-pr.yml'
+      - '.github/workflows/create-conan-pr.yml'
   workflow_dispatch:
     inputs:
       tag:
@@ -128,10 +129,36 @@ jobs:
             --api-key "${{ secrets.GITHUB_TOKEN }}" \
             --skip-duplicate
 
-  dry-run-report:
-    runs-on: ubuntu-latest
+  dry-run-pages:
     needs: [build-nuget, prepare]
     if: needs.prepare.outputs.dry_run == 'true'
+    uses: ./.github/workflows/github-pages.yml
+    with:
+      deploy: false
+    secrets: inherit
+
+  dry-run-vcpkg:
+    needs: [build-nuget, prepare]
+    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'true'
+    uses: ./.github/workflows/create-vcpkg-pr.yml
+    with:
+      tag: ${{ needs.prepare.outputs.tag }}
+      dry_run: true
+    secrets: inherit
+
+  dry-run-conan:
+    needs: [build-nuget, prepare]
+    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'true'
+    uses: ./.github/workflows/create-conan-pr.yml
+    with:
+      tag: ${{ needs.prepare.outputs.tag }}
+      dry_run: true
+    secrets: inherit
+
+  dry-run-report:
+    runs-on: ubuntu-latest
+    needs: [build-nuget, dry-run-pages, dry-run-vcpkg, dry-run-conan, prepare]
+    if: always() && needs.prepare.outputs.dry_run == 'true'
     steps:
       - name: Dry run summary
         run: |
@@ -140,22 +167,28 @@ jobs:
           echo "Build suffix: ${{ needs.prepare.outputs.build_suffix }}"
           echo "Prerelease: ${{ needs.prepare.outputs.prerelease }}"
           echo ""
-          echo "NuGet build: completed successfully"
-          echo ""
-          echo "=== Steps that would execute in a real release ==="
-          echo "1. Push NuGet packages to GitHub Packages (staging)"
-          echo "2. Await production approval"
-          echo "3. Push NuGet packages to NuGet.org"
-          echo "4. Deploy GitHub Pages documentation"
-          echo "5. Create GitHub release (draft, prerelease=${{ needs.prepare.outputs.prerelease }})"
+          echo "NuGet build: ${{ needs.build-nuget.result }}"
+          echo "GitHub Pages build: ${{ needs.dry-run-pages.result }}"
           if [ "${{ needs.prepare.outputs.prerelease }}" = "false" ]; then
-            echo "6. Create vcpkg PR to microsoft/vcpkg"
-            echo "7. Update local port and create PRs"
+            echo "vcpkg PR (dry run): ${{ needs.dry-run-vcpkg.result }}"
+            echo "Conan PR (dry run): ${{ needs.dry-run-conan.result }}"
           else
-            echo "6-7. Skipped (prerelease)"
+            echo "vcpkg PR: skipped (prerelease)"
+            echo "Conan PR: skipped (prerelease)"
           fi
           echo ""
-          echo "=== Dry run complete - no side effects ==="
+          FAILED=false
+          if [ "${{ needs.build-nuget.result }}" != "success" ]; then FAILED=true; fi
+          if [ "${{ needs.dry-run-pages.result }}" != "success" ]; then FAILED=true; fi
+          if [ "${{ needs.prepare.outputs.prerelease }}" = "false" ]; then
+            if [ "${{ needs.dry-run-vcpkg.result }}" != "success" ]; then FAILED=true; fi
+            if [ "${{ needs.dry-run-conan.result }}" != "success" ]; then FAILED=true; fi
+          fi
+          if [ "$FAILED" = "true" ]; then
+            echo "::error::One or more dry-run validations failed"
+            exit 1
+          fi
+          echo "=== All dry-run validations passed ==="
 
   production-gate:
     runs-on: ubuntu-latest
@@ -211,7 +244,7 @@ jobs:
   conan-pr:
     needs: [production-gate, prepare]
     # Only create Conan Center PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.prepare.outputs.prerelease == 'false'
+    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
     uses: ./.github/workflows/create-conan-pr.yml
     with:
       tag: ${{ needs.prepare.outputs.tag }}
