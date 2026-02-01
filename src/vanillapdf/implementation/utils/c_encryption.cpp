@@ -115,6 +115,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_CreateCustom(
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_ToUnknown(EncryptionKeyHandle* handle, IUnknownHandle** result) {
+    return SafeObjectConvert<IEncryptionKey, IUnknown, EncryptionKeyHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_FromUnknown(IUnknownHandle* handle, EncryptionKeyHandle** result) {
+    return SafeObjectConvert<IUnknown, IEncryptionKey, IUnknownHandle, EncryptionKeyHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_Release(EncryptionKeyHandle* handle) {
     return ObjectRelease<IEncryptionKey, EncryptionKeyHandle>(handle);
 }

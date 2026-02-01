@@ -143,6 +143,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(Digit
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_ToUnknown(DigitalSignatureHandle* handle, IUnknownHandle** result) {
+    return SafeObjectConvert<DigitalSignature, IUnknown, DigitalSignatureHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_FromUnknown(IUnknownHandle* handle, DigitalSignatureHandle** result) {
+    return SafeObjectConvert<IUnknown, DigitalSignature, IUnknownHandle, DigitalSignatureHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_Release(DigitalSignatureHandle* handle) {
     return ObjectRelease<DigitalSignature, DigitalSignatureHandle>(handle);
 }

@@ -100,6 +100,16 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Decode(FilterBaseHandle* handle, BufferHandle* data, BufferHandle** result);
 
     /**
+    * \brief Reinterpret current object as \ref IUnknownHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_ToUnknown(FilterBaseHandle* handle, IUnknownHandle** result);
+
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref FilterBaseHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_FromUnknown(IUnknownHandle* handle, FilterBaseHandle** result);
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */

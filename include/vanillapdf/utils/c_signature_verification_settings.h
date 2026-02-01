@@ -160,6 +160,22 @@ extern "C"
     );
 
     /**
+    * \brief Reinterpret current object as \ref IUnknownHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_ToUnknown(
+        SignatureVerificationSettingsHandle* handle,
+        IUnknownHandle** result
+    );
+
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref SignatureVerificationSettingsHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_FromUnknown(
+        IUnknownHandle* handle,
+        SignatureVerificationSettingsHandle** result
+    );
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */
