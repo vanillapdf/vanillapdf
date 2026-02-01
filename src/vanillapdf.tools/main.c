@@ -4,8 +4,30 @@ const int VANILLAPDF_TOOLS_ERROR_SUCCESS = 0;
 const int VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS = 1;
 const int VANILLAPDF_TOOLS_ERROR_FAILURE = 255;
 
+void print_version() {
+    printf("vanillapdf.tools %d.%d.%d\n",
+        VANILLAPDF_TOOLS_VERSION_MAJOR,
+        VANILLAPDF_TOOLS_VERSION_MINOR,
+        VANILLAPDF_TOOLS_VERSION_PATCH);
+}
+
 void print_help() {
-    printf("Usage: [merge|filter|extract|extract_object|sign|sign_custom|verify|encrypt|decrypt|write_custom] [options]");
+    print_version();
+    printf("\nUsage: vanillapdf.tools <command> [options]\n\n");
+    printf("Commands:\n");
+    printf("  merge           Merge multiple PDF files\n");
+    printf("  filter          Filter PDF content\n");
+    printf("  extract         Extract PDF content\n");
+    printf("  extract_object  Extract PDF objects\n");
+    printf("  sign            Sign a PDF document\n");
+    printf("  sign_custom     Sign a PDF with custom handler\n");
+    printf("  verify          Verify PDF signatures\n");
+    printf("  encrypt         Encrypt a PDF document\n");
+    printf("  decrypt         Decrypt a PDF document\n");
+    printf("  write_custom    Write PDF with custom handler\n");
+    printf("\nOptions:\n");
+    printf("  --help, -h      Show this help message\n");
+    printf("  --version, -v   Show version information\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -18,6 +40,16 @@ int main(int argc, char *argv[]) {
     if (argc < 2) {
         print_help();
         return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
+    }
+
+    if (0 == strcmp(argv[1], "--version") || 0 == strcmp(argv[1], "-v")) {
+        print_version();
+        return VANILLAPDF_TOOLS_ERROR_SUCCESS;
+    }
+
+    if (0 == strcmp(argv[1], "--help") || 0 == strcmp(argv[1], "-h")) {
+        print_help();
+        return VANILLAPDF_TOOLS_ERROR_SUCCESS;
     }
 
     if (0 == strcmp(argv[1], "merge")) {

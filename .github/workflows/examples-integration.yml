@@ -9,23 +9,25 @@ on:
 
   # Run on changes that could affect examples
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     paths:
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'vcpkg.json.in'
       - 'ports/**'
+      - 'homebrew/**'
       - 'conan/**'
       - 'examples/**'
       - '.github/workflows/examples-integration.yml'
 
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     paths:
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'vcpkg.json.in'
       - 'ports/**'
+      - 'homebrew/**'
       - 'conan/**'
       - 'examples/**'
       - '.github/workflows/examples-integration.yml'
@@ -317,6 +319,64 @@ jobs:
 
       - name: Test
         working-directory: examples/vcpkg-port-integration
+        run: ctest --preset ${{ matrix.preset }} --output-on-failure
+
+  # =============================================================================
+  # Homebrew Integration Tests (validates formula can be consumed)
+  # =============================================================================
+
+  homebrew-macos:
+    name: Homebrew - macOS ${{ matrix.preset }}
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            preset: macos-arm64-release
+          - runner: macos-15-intel
+            preset: macos-x64-release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: false  # No vcpkg needed for Homebrew test
+
+      - name: Install Homebrew dependencies
+        run: |
+          brew update
+          brew install ninja openssl@3 jpeg-turbo zlib openjpeg
+
+      - name: Generate formula for current branch
+        run: cmake -DVANILLAPDF_HEAD_BRANCH="${{ github.head_ref || github.ref_name }}" -P cmake/configure_homebrew_formula.cmake
+
+      - name: Install vanillapdf via Homebrew formula (--HEAD)
+        run: |
+          # Create a local tap so Homebrew accepts the formula
+          brew tap-new --no-git vanillapdf/test
+          cp ./homebrew/vanillapdf.rb "$(brew --repository vanillapdf/test)/Formula/vanillapdf.rb"
+          # Install from the local tap, building from HEAD (current branch)
+          brew install --build-from-source --HEAD vanillapdf/test/vanillapdf
+
+      - name: Verify installation
+        run: |
+          # Check library exists
+          ls -la $(brew --prefix)/lib/libvanillapdf*
+          # Check CLI tool works
+          vanillapdf.tools --version
+
+      - name: Configure integration test
+        working-directory: examples/homebrew-integration
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build integration test
+        working-directory: examples/homebrew-integration
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Run integration test
+        working-directory: examples/homebrew-integration
         run: ctest --preset ${{ matrix.preset }} --output-on-failure
 
   # =============================================================================

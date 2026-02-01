@@ -90,6 +90,22 @@ target_link_libraries(vanillapdf.tools PRIVATE ${VANILLAPDF_TOOLS_LIBS})
 # In case we have the dynamic link configuration add specific definitions
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(vanillapdf.tools PRIVATE VANILLAPDF_CONFIGURATION_DLL)
+
+    # CMake strips build-time RPATHs during install, so the installed binary
+    # has no RPATH entries and cannot find libvanillapdf in ../lib.
+    # Only set if CMAKE_INSTALL_RPATH was not provided externally (e.g. by a
+    # package manager), so their value is respected when present.
+    if(NOT CMAKE_INSTALL_RPATH)
+        if(UNIX AND NOT APPLE)
+            set_target_properties(vanillapdf.tools PROPERTIES
+                INSTALL_RPATH "$ORIGIN/../lib"
+            )
+        elseif(APPLE)
+            set_target_properties(vanillapdf.tools PROPERTIES
+                INSTALL_RPATH "@loader_path/../lib"
+            )
+        endif()
+    endif()
 endif()
 
 # Project install targets

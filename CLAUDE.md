@@ -44,7 +44,7 @@ git submodule sync --recursive && git submodule update --init --recursive
 ## Automation Bot
 
 The repository uses `vanillapdf-bot` (info@vanillapdf.com) for automated operations:
-- Monthly vcpkg updates, release automation, vcpkg PRs to Microsoft
+- Monthly vcpkg updates, release automation, vcpkg PRs to Microsoft, Homebrew PRs
 
 When creating GitHub Actions workflows that commit or create PRs:
 ```yaml
@@ -59,6 +59,20 @@ When creating GitHub Actions workflows that commit or create PRs:
 **NEVER modify `external/vcpkg/`** - it's a Git submodule updated monthly by vanillapdf-bot.
 
 For vcpkg port development, work in `ports/vanillapdf/` (not `external/vcpkg/ports/`).
+
+## Homebrew Formula
+
+The Homebrew formula is maintained in `homebrew/vanillapdf.rb` and submitted to `Homebrew/homebrew-core` during releases.
+
+**Development:**
+- Formula source: `homebrew/vanillapdf.rb`
+- Integration test: `examples/homebrew-integration/`
+- Test locally: `brew install --build-from-source --HEAD ./homebrew/vanillapdf.rb`
+
+**Release workflow:**
+- `update-homebrew.yml` creates PRs to `Homebrew/homebrew-core` after production gate
+- Requires fork: `vanillapdf/homebrew-core`
+- Updates URL and SHA256 automatically from release tag
 
 ## Release Process
 
@@ -456,6 +470,7 @@ The project includes several GitHub Actions workflows:
 - `github-pages.yml` - Documentation deployment
 - `update-vcpkg.yml` - Automated monthly vcpkg updates (uses vanillapdf-bot)
 - `create-vcpkg-pr.yml` - Manual vcpkg update workflow (uses vanillapdf-bot)
+- `update-homebrew.yml` - Homebrew formula PR workflow (uses vanillapdf-bot)
 - `create-conan-pr.yml` - Conan Center Index PR workflow (uses vanillapdf-bot)
 - `release.yml` - Release automation workflow (uses vanillapdf-bot)
 - `backport.yml` - Automatic backporting of merged PRs to release branches

@@ -1,0 +1,265 @@
+name: Create Homebrew PR
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+      dry_run:
+        required: false
+        type: boolean
+        default: false
+
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag name (e.g. v2.3.0)"
+        required: true
+        type: string
+      dry_run:
+        description: "Dry run - prepare changes but don't commit or create PR"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  prepare-homebrew-changes:
+    name: Prepare Homebrew formula update
+    runs-on: macos-latest
+    outputs:
+      branch-name: vanillapdf-${{ steps.version.outputs.version }}
+      pr-url: ${{ steps.pr-info.outputs.pr-url }}
+      is-latest: ${{ steps.check-latest.outputs.is_latest }}
+    steps:
+      - name: Parse version from tag
+        id: version
+        run: |
+          TAG="${{ inputs.tag }}"
+          VERSION="${TAG#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout vanillapdf repo
+        uses: actions/checkout@v6
+        with:
+          path: vanillapdf
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+
+      - name: Check if latest version
+        id: check-latest
+        working-directory: vanillapdf
+        run: |
+          VERSION="${{ inputs.tag }}"
+          VERSION="${VERSION#v}"
+
+          # Get all release tags and find the latest version
+          LATEST=$(git tag -l 'v*.*.*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          LATEST="${LATEST#v}"
+
+          echo "Current version: ${VERSION}"
+          echo "Latest version: ${LATEST}"
+
+          if [ "$VERSION" != "$LATEST" ]; then
+            echo "Not the latest version, skipping Homebrew update"
+            echo "is_latest=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "This is the latest version, proceeding with Homebrew update"
+            echo "is_latest=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Git & GitHub CLI
+        if: steps.check-latest.outputs.is_latest == 'true'
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Clone homebrew-core fork
+        if: steps.check-latest.outputs.is_latest == 'true'
+        run: |
+          git clone https://github.com/vanillapdf/homebrew-core.git
+          cd homebrew-core
+          git remote add upstream https://github.com/Homebrew/homebrew-core.git
+          git fetch upstream
+          git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/master
+
+      - name: Calculate SHA256 for source archive
+        if: steps.check-latest.outputs.is_latest == 'true'
+        id: sha256
+        run: |
+          TAG="${{ inputs.tag }}"
+          ARCHIVE_URL="https://github.com/vanillapdf/vanillapdf/archive/refs/tags/${TAG}.tar.gz"
+
+          echo "Downloading archive from: ${ARCHIVE_URL}"
+          curl -sL "${ARCHIVE_URL}" -o source.tar.gz
+
+          SHA256=$(shasum -a 256 source.tar.gz | cut -d' ' -f1)
+          echo "SHA256: ${SHA256}"
+          echo "sha256=${SHA256}" >> "$GITHUB_OUTPUT"
+
+          rm source.tar.gz
+
+      - name: Generate formula with release info
+        if: steps.check-latest.outputs.is_latest == 'true'
+        run: |
+          cd vanillapdf
+          cmake \
+            -DVANILLAPDF_RELEASE_TAG="${{ steps.version.outputs.tag }}" \
+            -DVANILLAPDF_SHA256="${{ steps.sha256.outputs.sha256 }}" \
+            -P cmake/configure_homebrew_formula.cmake
+
+          mkdir -p ../homebrew-core/Formula/v
+          cp homebrew/vanillapdf.rb ../homebrew-core/Formula/v/vanillapdf.rb
+
+          echo "=== Generated formula ==="
+          cat ../homebrew-core/Formula/v/vanillapdf.rb
+
+      - name: Test formula locally
+        if: steps.check-latest.outputs.is_latest == 'true'
+        run: |
+          cd homebrew-core
+          # Audit the formula for issues
+          brew audit --strict --online Formula/v/vanillapdf.rb || true
+
+      - name: Show prepared changes (dry run)
+        if: ${{ steps.check-latest.outputs.is_latest == 'true' && inputs.dry_run }}
+        run: |
+          cd homebrew-core
+          echo "=== Dry run mode - showing prepared changes ==="
+          echo ""
+          echo "=== Formula file ==="
+          cat Formula/v/vanillapdf.rb
+          echo ""
+          echo "=== Git status ==="
+          git status
+          echo ""
+          echo "=== Git diff ==="
+          git diff
+          echo ""
+          echo "=== Would create branch: vanillapdf-${{ steps.version.outputs.version }} ==="
+          echo "=== Would push to: vanillapdf/homebrew-core ==="
+          echo "=== Dry run complete - no changes committed ==="
+
+      - name: Set authenticated origin for push
+        if: ${{ steps.check-latest.outputs.is_latest == 'true' && !inputs.dry_run }}
+        run: |
+          cd homebrew-core
+          git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/vanillapdf/homebrew-core.git"
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+
+      - name: Commit and push changes to fork
+        if: ${{ steps.check-latest.outputs.is_latest == 'true' && !inputs.dry_run }}
+        run: |
+          cd homebrew-core
+          VERSION="${{ steps.version.outputs.version }}"
+          git add Formula/v/vanillapdf.rb
+
+          # Check if formula already exists in upstream (update vs new)
+          if git ls-tree upstream/master --name-only | grep -q "Formula/v/vanillapdf.rb"; then
+            git commit -m "vanillapdf ${VERSION}"
+          else
+            git commit -m "vanillapdf ${VERSION} (new formula)"
+          fi
+
+          git push origin vanillapdf-${{ steps.version.outputs.version }}
+
+      - name: Generate PR info
+        if: steps.check-latest.outputs.is_latest == 'true'
+        id: pr-info
+        run: |
+          echo "pr-url=https://github.com/vanillapdf/homebrew-core/compare/master...vanillapdf-${{ steps.version.outputs.version }}" >> "$GITHUB_OUTPUT"
+          echo "Changes prepared and pushed to vanillapdf/homebrew-core"
+          echo "Review the changes at: https://github.com/vanillapdf/homebrew-core/compare/master...vanillapdf-${{ steps.version.outputs.version }}"
+
+  create-official-pr:
+    name: Create PR to official Homebrew repo
+    runs-on: macos-latest
+    needs: prepare-homebrew-changes
+    if: ${{ !inputs.dry_run && needs.prepare-homebrew-changes.outputs.is-latest == 'true' }}
+    environment: production
+    steps:
+      - name: Setup Git & GitHub CLI
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Clone homebrew-core fork
+        run: |
+          gh repo clone vanillapdf/homebrew-core
+          cd homebrew-core
+          git fetch origin
+          git checkout ${{ needs.prepare-homebrew-changes.outputs.branch-name }}
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+
+      - name: Create draft pull request to official repo
+        run: |
+          cd homebrew-core
+          VERSION="${{ inputs.tag }}"
+          VERSION_NO_V="${VERSION#v}"
+
+          # Check if this is a new formula or update
+          git fetch upstream master
+          if git ls-tree upstream/master --name-only | grep -q "Formula/v/vanillapdf.rb"; then
+            TITLE="vanillapdf ${VERSION_NO_V}"
+            IS_NEW="false"
+          else
+            TITLE="vanillapdf ${VERSION_NO_V} (new formula)"
+            IS_NEW="true"
+          fi
+
+          BODY="## Description
+
+          "
+          if [ "$IS_NEW" = "true" ]; then
+            BODY="${BODY}Add vanillapdf formula - a cross-platform toolkit for creating and modifying PDF documents."
+          else
+            BODY="${BODY}Update vanillapdf to version ${VERSION_NO_V}."
+          fi
+
+          BODY="${BODY}
+
+          - **Homepage**: https://vanillapdf.com
+          - **Repository**: https://github.com/vanillapdf/vanillapdf
+          - **License**: Apache-2.0
+          - **Version**: ${VERSION_NO_V}
+
+          ## Checklist
+
+          - [x] Have you followed the [guidelines for contributing](https://github.com/Homebrew/homebrew-core/blob/HEAD/CONTRIBUTING.md)?
+          - [x] Have you checked that there aren't other open [pull requests](https://github.com/Homebrew/homebrew-core/pulls) for the same formula update/change?
+          - [x] Have you built your formula locally with \`brew install --build-from-source <formula>\`?
+          - [x] Does your build pass \`brew audit --strict <formula>\`?
+
+          ---
+
+          Changes prepared by vanillapdf release automation."
+
+          gh pr create \
+            --repo Homebrew/homebrew-core \
+            --title "$TITLE" \
+            --body "$BODY" \
+            --base master \
+            --head vanillapdf:${{ needs.prepare-homebrew-changes.outputs.branch-name }} \
+            --draft
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+
+      - name: Summary
+        run: |
+          VERSION="${{ inputs.tag }}"
+          VERSION_NO_V="${VERSION#v}"
+          echo "## Homebrew PR Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${VERSION_NO_V}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ needs.prepare-homebrew-changes.outputs.branch-name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "After the PR is merged, users can install with:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "brew install vanillapdf" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
