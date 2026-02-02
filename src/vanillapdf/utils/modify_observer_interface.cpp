@@ -12,6 +12,7 @@ IModifyObservable::~IModifyObservable() {
         return;
     }
 
+    std::lock_guard<std::recursive_mutex> lock(m_observer_mutex);
     std::for_each(GetObservers()->begin(), GetObservers()->end(), CheckReferenceActive);
 }
 
@@ -19,9 +20,20 @@ IModifyObserver::~IModifyObserver() {}
 
 IModifyObservable::IModifyObservable(const IModifyObservable&) {
     // intentionally empty
+    // Each copy gets its own observer set and mutex
 }
 
 IModifyObservable& IModifyObservable::operator=(const IModifyObservable&) {
+    // intentionally empty
+    return *this;
+}
+
+IModifyObservable::IModifyObservable(IModifyObservable&&) noexcept {
+    // intentionally empty
+    // Each object gets its own observer set and mutex
+}
+
+IModifyObservable& IModifyObservable::operator=(IModifyObservable&&) noexcept {
     // intentionally empty
     return *this;
 }
@@ -35,6 +47,8 @@ void IModifyObservable::OnChanged() {
     if (!HasObservers()) {
         return;
     }
+
+    std::lock_guard<std::recursive_mutex> lock(m_observer_mutex);
 
     // This iteration does not increment iterator in the loop
     for (auto current = GetObservers()->begin(); current != GetObservers()->end();) {

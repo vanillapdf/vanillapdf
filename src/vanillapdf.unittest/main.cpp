@@ -358,11 +358,23 @@ TEST(XrefCompressedEntry, CreateRelease) {
 
 } /* xref */
 
+std::string g_test_data_dir;
+
 int main(int argc, char *argv[]) {
 
     TestEnvironment* test_environment = new TestEnvironment();
 
     ::testing::InitGoogleTest(&argc, argv);
+
+    // Parse custom flags left over after GTest consumed --gtest_* args.
+    // InitGoogleTest removes its own flags and updates argc/argv.
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg.rfind("--test_dir=", 0) == 0) {
+            g_test_data_dir = arg.substr(11);
+        }
+    }
+
     ::testing::AddGlobalTestEnvironment(test_environment);
     return RUN_ALL_TESTS();
 }

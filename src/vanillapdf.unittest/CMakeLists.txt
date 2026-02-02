@@ -126,4 +126,8 @@ include(GoogleTest)
 # Without this flag, test names include raw memory addresses making output unreadable:
 #   Before: CertificateTypes/.../40-byte object <B0-4E 79-8B F7-7F 00-00...>
 #   After:  CertificateTypes/.../2kDSA_SHA256
-gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST NO_PRETTY_VALUES)
+gtest_discover_tests(vanillapdf.unittest
+    DISCOVERY_MODE PRE_TEST
+    NO_PRETTY_VALUES
+    EXTRA_ARGS "--test_dir=${VANILLAPDF_SOLUTION_SOURCE_DIR}/test"
+)
