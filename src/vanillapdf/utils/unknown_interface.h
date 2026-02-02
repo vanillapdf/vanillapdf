@@ -185,9 +185,8 @@ public:
     IWeakReferenceable& operator= (IWeakReferenceable&&) noexcept = default;
 
     ~IWeakReferenceable() {
-        auto ref = std::atomic_load(&m_weak_ref);
-        if (ref) {
-            ref->Deactivate();
+        if (m_weak_ref) {
+            m_weak_ref->Deactivate();
         }
     }
 
@@ -202,15 +201,8 @@ public:
 
     template <typename U>
     WeakReference<U> GetWeakReference() {
-        auto current = std::atomic_load(&m_weak_ref);
-        if (!current) {
-            auto new_ref = std::make_shared<WeakReferenceCounter>();
-            std::shared_ptr<WeakReferenceCounter> expected;
-            if (std::atomic_compare_exchange_strong(&m_weak_ref, &expected, new_ref)) {
-                current = new_ref;
-            } else {
-                current = expected;
-            }
+        if (!m_weak_ref) {
+            m_weak_ref = std::make_shared<WeakReferenceCounter>();
         }
 
         T* converted = static_cast<U*>(this);
@@ -218,7 +210,7 @@ public:
             throw GeneralException("Pointer object was not set");
         }
 
-        return WeakReference<T>(converted, current);
+        return WeakReference<T>(converted, m_weak_ref);
     }
 
 private:

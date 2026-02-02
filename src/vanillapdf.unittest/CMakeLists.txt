@@ -129,5 +129,4 @@ include(GoogleTest)
 gtest_discover_tests(vanillapdf.unittest
     DISCOVERY_MODE PRE_TEST
     NO_PRETTY_VALUES
-    EXTRA_ARGS "--test_dir=${VANILLAPDF_SOLUTION_SOURCE_DIR}/test"
 )

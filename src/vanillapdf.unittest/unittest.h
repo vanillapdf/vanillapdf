@@ -4,11 +4,6 @@
 #include "vanillapdf/c_vanillapdf_api.h"
 
 #include <gtest/gtest.h>
-#include <string>
-
-// Path to test data directory, set via --test_dir command-line argument.
-// Populated in main() after InitGoogleTest parses its own flags.
-extern std::string g_test_data_dir;
 
 class TestEnvironment : public ::testing::Environment {
 public:

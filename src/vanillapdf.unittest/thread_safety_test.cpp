@@ -278,34 +278,107 @@ TEST(ThreadSafety, ConcurrentXrefAccess_Issue250) {
     ASSERT_EQ(InputOutputStream_Release(save_stream), VANILLAPDF_ERROR_SUCCESS);
 }
 
-// Reproduce thread-safety issues in concurrent semantic API access (Issue #250)
+// Self-contained reproduction of observer pattern race condition (Issue #250)
 //
-// This companion test exercises the higher-level semantic API path:
-//   C API (e.g. PageObject_GetResources)
-//     -> FindAs<T>()
-//       -> ObjectTypeFunctor::Convert()
-//         -> DereferenceHelper::Get()
-//           -> std::map::find() / operator[]
-//             -> IndirectReferenceObject::operator<()
-//               -> locks this->m_access_lock, then other.m_access_lock
+// The race is in the Real-to-Integer conversion path triggered by GetMediaBox:
+//   PageObject_GetMediaBox
+//     -> FindAs<ArrayObjectPtr<IntegerObjectPtr>>()
+//       -> ConversionHelper<IntegerObjectPtr>::Get()
+//         -> real_converted->GetNumericBackend()   // only for RealObject values
+//           -> m_value->Subscribe(this)            // unsynchronized observer set
 //
-// Requires a real PDF with fonts, content streams, and annotations to generate
-// enough indirect reference complexity. Skipped when --test_dir is not provided.
+// ConversionHelper<IntegerObjectPtr> only calls GetNumericBackend() when the
+// underlying object is a RealObject (not an IntegerObject). This test uses
+// RealObject values (0.0, 0.0, 612.0, 792.0) for the MediaBox so that the
+// parser creates RealObject instances. When threads concurrently call
+// GetMediaBox, each triggers Subscribe() on the shared NumericObjectBackend's
+// observer set — a find()+insert() without synchronization.
 //
-// If this test hangs, the ABBA deadlock in operator<() has been triggered.
-// If it crashes, a data race in the xref chain or semantic layer was triggered.
+// The race only manifests on the FIRST Subscribe per observer. To maximize
+// the window, this test creates many pages each with their own real-valued
+// MediaBox, giving NUM_PAGES * 4 fresh observer sets to race on.
 TEST(ThreadSafety, ConcurrentSemanticTraversal_Issue250) {
-    constexpr int NUM_THREADS = 2;
-    constexpr int ITERATIONS = 500;
+    constexpr int NUM_THREADS = 20;
+    constexpr int NUM_PAGES = 100;
 
-    if (g_test_data_dir.empty()) {
-        GTEST_SKIP() << "Requires --test_dir=<path> pointing to test data directory";
+    // MediaBox corner values as reals — forces Real->Integer conversion path
+    const real_type media_box_values[] = { 0.0, 0.0, 612.0, 792.0 };
+
+    // --- Phase 1: Create a document with many pages ---
+    // Each page's MediaBox uses RealObject values instead of IntegerObject.
+    InputOutputStreamHandle* create_stream = nullptr;
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(&create_stream), VANILLAPDF_ERROR_SUCCESS);
+
+    FileHandle* create_file = nullptr;
+    ASSERT_EQ(File_CreateStream(create_stream, "create", &create_file), VANILLAPDF_ERROR_SUCCESS);
+
+    DocumentHandle* create_doc = nullptr;
+    ASSERT_EQ(Document_CreateFile(create_file, &create_doc), VANILLAPDF_ERROR_SUCCESS);
+
+    CatalogHandle* create_catalog = nullptr;
+    ASSERT_EQ(Document_GetCatalog(create_doc, &create_catalog), VANILLAPDF_ERROR_SUCCESS);
+
+    PageTreeHandle* create_pages = nullptr;
+    ASSERT_EQ(Catalog_GetPages(create_catalog, &create_pages), VANILLAPDF_ERROR_SUCCESS);
+
+    for (int i = 0; i < NUM_PAGES; ++i) {
+        PageObjectHandle* page = nullptr;
+        ASSERT_EQ(PageObject_CreateFromDocument(create_doc, &page), VANILLAPDF_ERROR_SUCCESS);
+
+        // Build MediaBox as array of RealObjects via low-level syntax API
+        ArrayObjectHandle* media_box_arr = nullptr;
+        ASSERT_EQ(ArrayObject_Create(&media_box_arr), VANILLAPDF_ERROR_SUCCESS);
+
+        for (int v = 0; v < 4; ++v) {
+            RealObjectHandle* real_val = nullptr;
+            ASSERT_EQ(RealObject_CreateFromData(media_box_values[v], 1, &real_val), VANILLAPDF_ERROR_SUCCESS);
+
+            ObjectHandle* real_obj = nullptr;
+            ASSERT_EQ(RealObject_ToObject(real_val, &real_obj), VANILLAPDF_ERROR_SUCCESS);
+
+            ASSERT_EQ(ArrayObject_Append(media_box_arr, real_obj), VANILLAPDF_ERROR_SUCCESS);
+
+            Object_Release(real_obj);
+            RealObject_Release(real_val);
+        }
+
+        // Insert the real-valued array as MediaBox into the page dictionary
+        DictionaryObjectHandle* page_dict = nullptr;
+        ASSERT_EQ(PageObject_GetBaseObject(page, &page_dict), VANILLAPDF_ERROR_SUCCESS);
+
+        ObjectHandle* arr_obj = nullptr;
+        ASSERT_EQ(ArrayObject_ToObject(media_box_arr, &arr_obj), VANILLAPDF_ERROR_SUCCESS);
+
+        ASSERT_EQ(DictionaryObject_InsertConst(page_dict, NameConstant_MediaBox, arr_obj, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+
+        Object_Release(arr_obj);
+        ArrayObject_Release(media_box_arr);
+        DictionaryObject_Release(page_dict);
+
+        ASSERT_EQ(PageTree_InsertPage(create_pages, i + 1, page), VANILLAPDF_ERROR_SUCCESS);
+        PageObject_Release(page);
     }
 
-    std::string pdf_path = g_test_data_dir + "/pdfjs/basicapi.pdf";
+    // --- Phase 2: Save to memory stream ---
+    InputOutputStreamHandle* save_stream = nullptr;
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(&save_stream), VANILLAPDF_ERROR_SUCCESS);
 
+    FileHandle* save_file = nullptr;
+    ASSERT_EQ(File_CreateStream(save_stream, "saved", &save_file), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Document_SaveFile(create_doc, save_file), VANILLAPDF_ERROR_SUCCESS);
+
+    PageTree_Release(create_pages);
+    Catalog_Release(create_catalog);
+    Document_Release(create_doc);
+    File_Release(create_file);
+    InputOutputStream_Release(create_stream);
+    File_Release(save_file);
+
+    // --- Phase 3: Reopen from memory (forces full PDF parsing) ---
+    // The parser creates RealObject instances for "0.0", "612.0", etc.
     FileHandle* file = nullptr;
-    ASSERT_EQ(File_Open(pdf_path.c_str(), &file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_OpenStream(save_stream, "reopened", &file), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(file, nullptr);
     ASSERT_EQ(File_Initialize(file), VANILLAPDF_ERROR_SUCCESS);
 
@@ -313,86 +386,20 @@ TEST(ThreadSafety, ConcurrentSemanticTraversal_Issue250) {
     ASSERT_EQ(Document_OpenFile(file, &doc), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(doc, nullptr);
 
-    // Get the catalog, page tree, and page 1 in single-threaded setup.
-    // This resolves all navigation objects so we can focus on
-    // the specific concurrent GetMediaBox call.
+    // --- Phase 4: Navigate to page tree (single-threaded) ---
     CatalogHandle* catalog = nullptr;
     ASSERT_EQ(Document_GetCatalog(doc, &catalog), VANILLAPDF_ERROR_SUCCESS);
 
     PageTreeHandle* pages = nullptr;
     ASSERT_EQ(Catalog_GetPages(catalog, &pages), VANILLAPDF_ERROR_SUCCESS);
 
-    size_type page_count = 0;
-    PageTree_GetPageCount(pages, &page_count);
-    ASSERT_GT(page_count, static_cast<size_type>(0));
+    // No warmup — threads race on first GetNumericBackend()->Subscribe(this)
+    // for each page's 4 RealObject MediaBox values.
 
-    // Get page 1 once and keep it for concurrent access
-    PageObjectHandle* shared_page = nullptr;
-    ASSERT_EQ(PageTree_GetPage(pages, 1, &shared_page), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(shared_page, nullptr);
-
-    // Warmup: call GetMediaBox once to resolve all indirect references
-    {
-        RectangleHandle* box = nullptr;
-        ASSERT_EQ(PageObject_GetMediaBox(shared_page, &box), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(box, nullptr);
-        Rectangle_Release(box);
-    }
-
-    // Get the base dictionary for low-level access
-    DictionaryObjectHandle* page_dict = nullptr;
-    ASSERT_EQ(PageObject_GetBaseObject(shared_page, &page_dict), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(page_dict, nullptr);
-
-    // Stage 1: Test concurrent Dictionary Find (no type conversion)
-    // This tests only the dictionary lookup + indirect reference dereference
+    // --- Phase 5: Concurrent GetMediaBox across all pages ---
     {
         std::atomic<int> ready_count{0};
         std::atomic<bool> go{false};
-        std::atomic<int> completed{0};
-        std::atomic<int> success_count{0};
-
-        std::vector<std::thread> threads;
-
-        for (int t = 0; t < NUM_THREADS; ++t) {
-            threads.emplace_back([&]() {
-                ready_count.fetch_add(1, std::memory_order_release);
-                while (!go.load(std::memory_order_acquire)) {
-                    std::this_thread::yield();
-                }
-
-                for (int iter = 0; iter < ITERATIONS; ++iter) {
-                    ObjectHandle* obj = nullptr;
-                    error_type err = DictionaryObject_Find(
-                        page_dict, NameConstant_MediaBox, &obj);
-                    if (err == VANILLAPDF_ERROR_SUCCESS && obj != nullptr) {
-                        success_count.fetch_add(1, std::memory_order_relaxed);
-                        Object_Release(obj);
-                    }
-                }
-
-                completed.fetch_add(1, std::memory_order_relaxed);
-            });
-        }
-
-        while (ready_count.load(std::memory_order_acquire) < NUM_THREADS) {
-            std::this_thread::yield();
-        }
-        go.store(true, std::memory_order_release);
-
-        for (auto& thread : threads) {
-            thread.join();
-        }
-
-        EXPECT_EQ(completed.load(), NUM_THREADS);
-        EXPECT_EQ(success_count.load(), NUM_THREADS * ITERATIONS);
-    }
-
-    // Stage 2: Concurrent GetMediaBox with library-side logging
-    {
-        std::atomic<int> ready_count{0};
-        std::atomic<bool> go{false};
-        std::atomic<int> completed{0};
         std::atomic<int> success{0};
 
         std::vector<std::thread> threads;
@@ -404,16 +411,20 @@ TEST(ThreadSafety, ConcurrentSemanticTraversal_Issue250) {
                     std::this_thread::yield();
                 }
 
-                for (int iter = 0; iter < ITERATIONS; ++iter) {
+                for (int p = 1; p <= NUM_PAGES; ++p) {
+                    PageObjectHandle* page = nullptr;
+                    error_type err = PageTree_GetPage(pages, p, &page);
+                    if (err != VANILLAPDF_ERROR_SUCCESS || page == nullptr) continue;
+
                     RectangleHandle* box = nullptr;
-                    error_type err = PageObject_GetMediaBox(shared_page, &box);
+                    err = PageObject_GetMediaBox(page, &box);
                     if (err == VANILLAPDF_ERROR_SUCCESS && box != nullptr) {
                         success.fetch_add(1, std::memory_order_relaxed);
                         Rectangle_Release(box);
                     }
-                }
 
-                completed.fetch_add(1, std::memory_order_relaxed);
+                    PageObject_Release(page);
+                }
             });
         }
 
@@ -426,20 +437,15 @@ TEST(ThreadSafety, ConcurrentSemanticTraversal_Issue250) {
             thread.join();
         }
 
-        printf("GetMediaBox: completed=%d success=%d\n",
-               completed.load(), success.load());
-        EXPECT_EQ(completed.load(), NUM_THREADS);
-        EXPECT_EQ(success.load(), NUM_THREADS * ITERATIONS);
+        EXPECT_EQ(success.load(), NUM_THREADS * NUM_PAGES);
     }
 
-    DictionaryObject_Release(page_dict);
-
-    PageObject_Release(shared_page);
     PageTree_Release(pages);
     Catalog_Release(catalog);
 
     ASSERT_EQ(Document_Release(doc), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(File_Release(file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InputOutputStream_Release(save_stream), VANILLAPDF_ERROR_SUCCESS);
 }
 
 } /* thread_safety */
