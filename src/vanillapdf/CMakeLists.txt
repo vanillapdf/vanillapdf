@@ -246,6 +246,7 @@ set(VANILLAPDF_SEMANTICS_HEADERS
 
     semantics/objects/annotations.h
     semantics/objects/character_map.h
+    semantics/objects/color.h
     semantics/objects/date.h
     semantics/objects/destinations.h
     semantics/objects/developer_extensions.h

@@ -24,6 +24,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     main.cpp
     annotations_creation_test.cpp
     byte_range_test.cpp
+    color_test.cpp
     date_test.cpp
     document_test.cpp
     destinations_test.cpp
