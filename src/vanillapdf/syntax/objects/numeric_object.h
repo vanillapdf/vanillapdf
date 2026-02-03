@@ -73,7 +73,6 @@ public:
     }
 
     NumericObjectBackendPtr GetNumericBackend(void) {
-        m_value->Subscribe(this);
         return m_value;
     }
 

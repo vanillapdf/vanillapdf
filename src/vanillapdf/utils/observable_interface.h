@@ -3,6 +3,8 @@
 
 #include "utils/unknown_interface.h"
 
+#include <memory>
+#include <mutex>
 #include <unordered_set>
 
 namespace vanillapdf {
@@ -10,12 +12,22 @@ namespace vanillapdf {
 template <typename T>
 class IObservable {
 public:
-    virtual void Subscribe(const WeakReference<T>& observer) {
-        auto found = GetObservers()->find(observer);
+    IObservable() = default;
 
-        if (found != GetObservers()->end()) {
-            // Already subscribed - Problem?
-        }
+    IObservable(const IObservable&) {
+        // intentionally empty
+        // Each copy gets its own observer set and mutex
+    }
+
+    IObservable& operator=(const IObservable&) {
+        // intentionally empty
+        return *this;
+    }
+
+    virtual void Subscribe(const WeakReference<T>& observer) {
+        std::lock_guard<std::recursive_mutex> lock(GetMutex());
+
+        auto found = GetObservers()->find(observer);
 
         if (found == GetObservers()->end()) {
             GetObservers()->insert(observer);
@@ -23,6 +35,8 @@ public:
     }
 
     virtual bool Unsubscribe(const WeakReference<T>& observer) {
+        std::lock_guard<std::recursive_mutex> lock(GetMutex());
+
         if (!HasObservers()) {
             return false;
         }
@@ -60,6 +74,13 @@ public:
     virtual ~IObservable() = 0;
 
 protected:
+    std::recursive_mutex& GetMutex() const {
+        std::call_once(m_mutex_flag, [this]() {
+            m_mutex = std::make_unique<std::recursive_mutex>();
+        });
+        return *m_mutex;
+    }
+
     bool HasObservers() const noexcept {
         return (m_observers != nullptr);
     }
@@ -73,6 +94,8 @@ protected:
     }
 
 private:
+    mutable std::once_flag m_mutex_flag;
+    mutable std::unique_ptr<std::recursive_mutex> m_mutex;
     mutable std::shared_ptr<std::unordered_set<WeakReference<T>>> m_observers;
 };
 

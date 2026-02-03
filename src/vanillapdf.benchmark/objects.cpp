@@ -246,3 +246,69 @@ static void BM_CreateFromEncodedString_Name(benchmark::State& state, Args&&... a
 BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Name, string_empty, "");
 BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Name, string_basic, "abcdefghijklmnopqrstuvwxyz");
 BENCHMARK_CAPTURE(BM_CreateFromEncodedString_Name, string_hexadecimal, "#01#02#03#FA#FB#FC#FD#FE#FF");
+
+// ----- Object Creation/Destruction Benchmarks -----
+// Measures per-object allocation cost including mutex and member construction/destruction
+
+static void BM_IntegerObject_Create(benchmark::State& state) {
+    for (auto _ : state) {
+        IntegerObjectHandle* obj = nullptr;
+        IntegerObject_Create(&obj);
+        IntegerObject_Release(obj);
+    }
+}
+
+BENCHMARK(BM_IntegerObject_Create);
+
+static void BM_RealObject_Create(benchmark::State& state) {
+    for (auto _ : state) {
+        RealObjectHandle* obj = nullptr;
+        RealObject_Create(&obj);
+        RealObject_Release(obj);
+    }
+}
+
+BENCHMARK(BM_RealObject_Create);
+
+// ----- Bulk Object Allocation Benchmarks -----
+// Measures throughput and memory pressure when creating many objects
+
+static void BM_IntegerObject_BulkCreate(benchmark::State& state) {
+    const auto count = state.range(0);
+
+    for (auto _ : state) {
+        std::vector<IntegerObjectHandle*> objects(count, nullptr);
+
+        for (int64_t i = 0; i < count; ++i) {
+            IntegerObject_CreateFromIntegerValue(i, &objects[i]);
+        }
+
+        for (int64_t i = 0; i < count; ++i) {
+            IntegerObject_Release(objects[i]);
+        }
+    }
+
+    state.SetItemsProcessed(state.iterations() * count);
+}
+
+BENCHMARK(BM_IntegerObject_BulkCreate)->Range(64, 1 << 16);
+
+static void BM_RealObject_BulkCreate(benchmark::State& state) {
+    const auto count = state.range(0);
+
+    for (auto _ : state) {
+        std::vector<RealObjectHandle*> objects(count, nullptr);
+
+        for (int64_t i = 0; i < count; ++i) {
+            RealObject_CreateFromData(static_cast<real_type>(i) * 0.5, 2, &objects[i]);
+        }
+
+        for (int64_t i = 0; i < count; ++i) {
+            RealObject_Release(objects[i]);
+        }
+    }
+
+    state.SetItemsProcessed(state.iterations() * count);
+}
+
+BENCHMARK(BM_RealObject_BulkCreate)->Range(64, 1 << 16);

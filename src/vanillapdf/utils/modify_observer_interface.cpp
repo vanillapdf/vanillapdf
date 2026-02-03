@@ -5,6 +5,7 @@
 namespace vanillapdf {
 
 IModifyObservable::~IModifyObservable() {
+    std::lock_guard<std::recursive_mutex> lock(GetMutex());
 
     // Check if all references are active
     // All deactivated references shall remove themselves
@@ -12,7 +13,6 @@ IModifyObservable::~IModifyObservable() {
         return;
     }
 
-    std::lock_guard<std::recursive_mutex> lock(m_observer_mutex);
     std::for_each(GetObservers()->begin(), GetObservers()->end(), CheckReferenceActive);
 }
 
@@ -28,27 +28,17 @@ IModifyObservable& IModifyObservable::operator=(const IModifyObservable&) {
     return *this;
 }
 
-IModifyObservable::IModifyObservable(IModifyObservable&&) noexcept {
-    // intentionally empty
-    // Each object gets its own observer set and mutex
-}
-
-IModifyObservable& IModifyObservable::operator=(IModifyObservable&&) noexcept {
-    // intentionally empty
-    return *this;
-}
-
 void IModifyObservable::OnChanged() {
     // Skip for uninitialized objects
     if (!m_initialized) {
         return;
     }
 
+    std::lock_guard<std::recursive_mutex> lock(GetMutex());
+
     if (!HasObservers()) {
         return;
     }
-
-    std::lock_guard<std::recursive_mutex> lock(m_observer_mutex);
 
     // This iteration does not increment iterator in the loop
     for (auto current = GetObservers()->begin(); current != GetObservers()->end();) {
