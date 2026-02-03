@@ -80,6 +80,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION Color_GetColorSpace(ColorHandle* ha
         case Color::ColorSpace::DeviceCMYK:
             *result = ColorSpace_DeviceCMYK;
             break;
+        default:
+            return VANILLAPDF_ERROR_GENERAL;
         }
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS

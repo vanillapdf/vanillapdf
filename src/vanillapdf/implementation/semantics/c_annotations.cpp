@@ -279,107 +279,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetColor(AnnotationHandl
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAuthor(AnnotationHandle* handle, LiteralStringObjectHandle** result)
-{
-    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-    try
-    {
-        OutputLiteralStringObjectPtr author;
-        bool contains = obj->GetAuthor(author);
-        if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
-        }
 
-        auto ptr = author.AddRefGet();
-        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetAuthor(AnnotationHandle* handle, LiteralStringObjectHandle* value)
-{
-    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
-    LiteralStringObject* author = reinterpret_cast<LiteralStringObject*>(value);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
-
-    try
-    {
-        obj->SetAuthor(author);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetModificationDate(AnnotationHandle* handle, DateHandle** result)
-{
-    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try
-    {
-        OutputDatePtr date;
-        bool contains = obj->GetModificationDate(date);
-        if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
-        }
-
-        auto ptr = date.AddRefGet();
-        *result = reinterpret_cast<DateHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetModificationDate(AnnotationHandle* handle, DateHandle* value)
-{
-    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
-    Date* date = reinterpret_cast<Date*>(value);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
-
-    try
-    {
-        obj->SetModificationDate(date);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetCreationDate(AnnotationHandle* handle, DateHandle** result)
-{
-    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try
-    {
-        OutputDatePtr date;
-        bool contains = obj->GetCreationDate(date);
-        if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
-        }
-
-        auto ptr = date.AddRefGet();
-        *result = reinterpret_cast<DateHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetCreationDate(AnnotationHandle* handle, DateHandle* value)
-{
-    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
-    Date* date = reinterpret_cast<Date*>(value);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
-
-    try
-    {
-        obj->SetCreationDate(date);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
 
 VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetFlags(AnnotationHandle* handle, AnnotationFlags* result)
 {
@@ -437,6 +338,108 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_CreateWithContents(R
         auto annot = TextAnnotation::Create(rect_obj, contents_obj);
         auto ptr = annot.AddRefGet();
         *result = reinterpret_cast<TextAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthor(TextAnnotationHandle* handle, LiteralStringObjectHandle** result)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputLiteralStringObjectPtr author;
+        bool contains = obj->GetAuthor(author);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = author.AddRefGet();
+        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetAuthor(TextAnnotationHandle* handle, LiteralStringObjectHandle* value)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    LiteralStringObject* author = reinterpret_cast<LiteralStringObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
+
+    try
+    {
+        obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetModificationDate(TextAnnotationHandle* handle, DateHandle** result)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetModificationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetModificationDate(TextAnnotationHandle* handle, DateHandle* value)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetModificationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetCreationDate(TextAnnotationHandle* handle, DateHandle** result)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetCreationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetCreationDate(TextAnnotationHandle* handle, DateHandle* value)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetCreationDate(date);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -506,6 +509,108 @@ VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetQuadPoints(H
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthor(HighlightAnnotationHandle* handle, LiteralStringObjectHandle** result)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputLiteralStringObjectPtr author;
+        bool contains = obj->GetAuthor(author);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = author.AddRefGet();
+        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetAuthor(HighlightAnnotationHandle* handle, LiteralStringObjectHandle* value)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    LiteralStringObject* author = reinterpret_cast<LiteralStringObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
+
+    try
+    {
+        obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetModificationDate(HighlightAnnotationHandle* handle, DateHandle** result)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetModificationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetModificationDate(HighlightAnnotationHandle* handle, DateHandle* value)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetModificationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetCreationDate(HighlightAnnotationHandle* handle, DateHandle** result)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetCreationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetCreationDate(HighlightAnnotationHandle* handle, DateHandle* value)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetCreationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_ToBaseAnnotation(HighlightAnnotationHandle* handle, AnnotationHandle** result) {
     return SafeObjectConvert<HighlightAnnotation, AnnotationBase, HighlightAnnotationHandle, AnnotationHandle>(handle, result);
 }
@@ -569,6 +674,108 @@ VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetDefaultAppear
     try
     {
         obj->SetDefaultAppearance(da_obj);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthor(FreeTextAnnotationHandle* handle, LiteralStringObjectHandle** result)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputLiteralStringObjectPtr author;
+        bool contains = obj->GetAuthor(author);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = author.AddRefGet();
+        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetAuthor(FreeTextAnnotationHandle* handle, LiteralStringObjectHandle* value)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    LiteralStringObject* author = reinterpret_cast<LiteralStringObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
+
+    try
+    {
+        obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetModificationDate(FreeTextAnnotationHandle* handle, DateHandle** result)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetModificationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetModificationDate(FreeTextAnnotationHandle* handle, DateHandle* value)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetModificationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetCreationDate(FreeTextAnnotationHandle* handle, DateHandle** result)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetCreationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetCreationDate(FreeTextAnnotationHandle* handle, DateHandle* value)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetCreationDate(date);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

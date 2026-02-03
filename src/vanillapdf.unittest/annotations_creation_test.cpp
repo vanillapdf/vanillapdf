@@ -654,10 +654,9 @@ TEST(Annotation, GetAndSetColor) {
     ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
 }
 
-TEST(Annotation, GetAndSetAuthor) {
+TEST(TextAnnotation, GetAndSetAuthor) {
     RectangleHandle* rect = nullptr;
     TextAnnotationHandle* annot = nullptr;
-    AnnotationHandle* base_annot = nullptr;
     LiteralStringObjectHandle* author = nullptr;
     LiteralStringObjectHandle* retrieved_author = nullptr;
 
@@ -669,28 +668,25 @@ TEST(Annotation, GetAndSetAuthor) {
     ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(TextAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Test Author", &author), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Annotation_SetAuthor(base_annot, author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextAnnotation_SetAuthor(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
     // Get author
-    ASSERT_EQ(Annotation_GetAuthor(base_annot, &retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextAnnotation_GetAuthor(annot, &retrieved_author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(retrieved_author, nullptr);
 
     // Cleanup
     ASSERT_EQ(LiteralStringObject_Release(retrieved_author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(LiteralStringObject_Release(author), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Annotation_Release(base_annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
 }
 
-TEST(Annotation, GetAndSetModificationDate) {
+TEST(TextAnnotation, GetAndSetModificationDate) {
     RectangleHandle* rect = nullptr;
     TextAnnotationHandle* annot = nullptr;
-    AnnotationHandle* base_annot = nullptr;
     DateHandle* date = nullptr;
     DateHandle* retrieved_date = nullptr;
     integer_type year = 0;
@@ -703,15 +699,14 @@ TEST(Annotation, GetAndSetModificationDate) {
     ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(TextAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Create current date (valid date with all components)
     ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Date_SetYear(date, 2025), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Annotation_SetModificationDate(base_annot, date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextAnnotation_SetModificationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
 
     // Get date
-    ASSERT_EQ(Annotation_GetModificationDate(base_annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextAnnotation_GetModificationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(retrieved_date, nullptr);
 
     ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
@@ -720,15 +715,13 @@ TEST(Annotation, GetAndSetModificationDate) {
     // Cleanup
     ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Annotation_Release(base_annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
 }
 
-TEST(Annotation, GetAndSetCreationDate) {
+TEST(TextAnnotation, GetAndSetCreationDate) {
     RectangleHandle* rect = nullptr;
     TextAnnotationHandle* annot = nullptr;
-    AnnotationHandle* base_annot = nullptr;
     DateHandle* date = nullptr;
     DateHandle* retrieved_date = nullptr;
     integer_type year = 0;
@@ -741,15 +734,14 @@ TEST(Annotation, GetAndSetCreationDate) {
     ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(TextAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Create current date (valid date with all components)
     ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Date_SetYear(date, 2024), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Annotation_SetCreationDate(base_annot, date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextAnnotation_SetCreationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
 
     // Get date
-    ASSERT_EQ(Annotation_GetCreationDate(base_annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextAnnotation_GetCreationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(retrieved_date, nullptr);
 
     ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
@@ -758,7 +750,6 @@ TEST(Annotation, GetAndSetCreationDate) {
     // Cleanup
     ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Annotation_Release(base_annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
 }

@@ -276,7 +276,9 @@ void AnnotationBase::SetColor(ColorPtr color) {
     _obj->Insert(constant::Name::C, color->GetObject());
 }
 
-bool AnnotationBase::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const {
+// TextAnnotation - Markup annotation properties (Table 170)
+
+bool TextAnnotation::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::T)) {
         return false;
     }
@@ -285,7 +287,7 @@ bool AnnotationBase::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) con
     return true;
 }
 
-void AnnotationBase::SetAuthor(syntax::LiteralStringObjectPtr author) {
+void TextAnnotation::SetAuthor(syntax::LiteralStringObjectPtr author) {
     if (_obj->Contains(constant::Name::T)) {
         bool removed = _obj->Remove(constant::Name::T);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
@@ -293,7 +295,7 @@ void AnnotationBase::SetAuthor(syntax::LiteralStringObjectPtr author) {
     _obj->Insert(constant::Name::T, author);
 }
 
-bool AnnotationBase::GetModificationDate(OutputDatePtr& result) const {
+bool TextAnnotation::GetModificationDate(OutputDatePtr& result) const {
     if (!_obj->Contains(constant::Name::M)) {
         return false;
     }
@@ -303,7 +305,7 @@ bool AnnotationBase::GetModificationDate(OutputDatePtr& result) const {
     return true;
 }
 
-void AnnotationBase::SetModificationDate(DatePtr date) {
+void TextAnnotation::SetModificationDate(DatePtr date) {
     if (_obj->Contains(constant::Name::M)) {
         bool removed = _obj->Remove(constant::Name::M);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
@@ -311,7 +313,7 @@ void AnnotationBase::SetModificationDate(DatePtr date) {
     _obj->Insert(constant::Name::M, date->GetObject());
 }
 
-bool AnnotationBase::GetCreationDate(OutputDatePtr& result) const {
+bool TextAnnotation::GetCreationDate(OutputDatePtr& result) const {
     if (!_obj->Contains(constant::Name::CreationDate)) {
         return false;
     }
@@ -321,7 +323,117 @@ bool AnnotationBase::GetCreationDate(OutputDatePtr& result) const {
     return true;
 }
 
-void AnnotationBase::SetCreationDate(DatePtr date) {
+void TextAnnotation::SetCreationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::CreationDate)) {
+        bool removed = _obj->Remove(constant::Name::CreationDate);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::CreationDate, date->GetObject());
+}
+
+// HighlightAnnotation - Markup annotation properties (Table 170)
+
+bool HighlightAnnotation::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::T)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::T);
+    return true;
+}
+
+void HighlightAnnotation::SetAuthor(syntax::LiteralStringObjectPtr author) {
+    if (_obj->Contains(constant::Name::T)) {
+        bool removed = _obj->Remove(constant::Name::T);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::T, author);
+}
+
+bool HighlightAnnotation::GetModificationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::M)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::M);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void HighlightAnnotation::SetModificationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::M)) {
+        bool removed = _obj->Remove(constant::Name::M);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::M, date->GetObject());
+}
+
+bool HighlightAnnotation::GetCreationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::CreationDate)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void HighlightAnnotation::SetCreationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::CreationDate)) {
+        bool removed = _obj->Remove(constant::Name::CreationDate);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::CreationDate, date->GetObject());
+}
+
+// FreeTextAnnotation - Markup annotation properties (Table 170)
+
+bool FreeTextAnnotation::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::T)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::T);
+    return true;
+}
+
+void FreeTextAnnotation::SetAuthor(syntax::LiteralStringObjectPtr author) {
+    if (_obj->Contains(constant::Name::T)) {
+        bool removed = _obj->Remove(constant::Name::T);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::T, author);
+}
+
+bool FreeTextAnnotation::GetModificationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::M)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::M);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void FreeTextAnnotation::SetModificationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::M)) {
+        bool removed = _obj->Remove(constant::Name::M);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::M, date->GetObject());
+}
+
+bool FreeTextAnnotation::GetCreationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::CreationDate)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void FreeTextAnnotation::SetCreationDate(DatePtr date) {
     if (_obj->Contains(constant::Name::CreationDate)) {
         bool removed = _obj->Remove(constant::Name::CreationDate);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);

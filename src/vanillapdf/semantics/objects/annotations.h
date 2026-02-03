@@ -61,19 +61,13 @@ public:
 
     virtual AnnotationBase::Type GetAnnotationType() const noexcept = 0;
 
-    // Common property accessors
+    // Common property accessors (Table 164 - Annotation dictionary)
     bool GetRect(OutputRectanglePtr& result) const;
     void SetRect(RectanglePtr rect);
     bool GetContents(syntax::OutputLiteralStringObjectPtr& result) const;
     void SetContents(syntax::LiteralStringObjectPtr contents);
     bool GetColor(OutputColorPtr& result) const;
     void SetColor(ColorPtr color);
-    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
-    void SetAuthor(syntax::LiteralStringObjectPtr author);
-    bool GetModificationDate(OutputDatePtr& result) const;
-    void SetModificationDate(DatePtr date);
-    bool GetCreationDate(OutputDatePtr& result) const;
-    void SetCreationDate(DatePtr date);
     Flags GetFlags() const;
     void SetFlags(Flags flags);
 
@@ -89,6 +83,14 @@ public:
 
     static TextAnnotationPtr Create(RectanglePtr rect);
     static TextAnnotationPtr Create(RectanglePtr rect, syntax::LiteralStringObjectPtr contents);
+
+    // Markup annotation properties (Table 170)
+    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
+    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetModificationDate(OutputDatePtr& result) const;
+    void SetModificationDate(DatePtr date);
+    bool GetCreationDate(OutputDatePtr& result) const;
+    void SetCreationDate(DatePtr date);
 };
 
 class LinkAnnotation : public AnnotationBase {
@@ -110,6 +112,14 @@ public:
 
     bool GetDefaultAppearance(syntax::LiteralStringObjectPtr& result) const;
     void SetDefaultAppearance(syntax::LiteralStringObjectPtr da);
+
+    // Markup annotation properties (Table 170)
+    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
+    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetModificationDate(OutputDatePtr& result) const;
+    void SetModificationDate(DatePtr date);
+    bool GetCreationDate(OutputDatePtr& result) const;
+    void SetCreationDate(DatePtr date);
 };
 
 class LineAnnotation : public AnnotationBase {
@@ -152,6 +162,14 @@ public:
 
     bool GetQuadPoints(syntax::MixedArrayObjectPtr& result) const;
     void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);
+
+    // Markup annotation properties (Table 170)
+    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
+    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetModificationDate(OutputDatePtr& result) const;
+    void SetModificationDate(DatePtr date);
+    bool GetCreationDate(OutputDatePtr& result) const;
+    void SetCreationDate(DatePtr date);
 };
 
 class UnderlineAnnotation : public AnnotationBase {

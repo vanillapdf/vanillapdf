@@ -374,48 +374,6 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetColor(AnnotationHandle* handle, ColorHandle* value);
 
     /**
-    * \brief Get the annotation author (T entry)
-    * \param handle a handle to the annotation class
-    * \param result a pointer to variable that will contain the author string upon success
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAuthor(AnnotationHandle* handle, LiteralStringObjectHandle** result);
-
-    /**
-    * \brief Set the annotation author (T entry)
-    * \param handle a handle to the annotation class
-    * \param value the author string to set
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetAuthor(AnnotationHandle* handle, LiteralStringObjectHandle* value);
-
-    /**
-    * \brief Get the annotation modification date (M entry)
-    * \param handle a handle to the annotation class
-    * \param result a pointer to variable that will contain the date upon success
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetModificationDate(AnnotationHandle* handle, DateHandle** result);
-
-    /**
-    * \brief Set the annotation modification date (M entry)
-    * \param handle a handle to the annotation class
-    * \param value the date to set
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetModificationDate(AnnotationHandle* handle, DateHandle* value);
-
-    /**
-    * \brief Get the annotation creation date (CreationDate entry, markup annotations only)
-    * \param handle a handle to the annotation class
-    * \param result a pointer to variable that will contain the date upon success
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetCreationDate(AnnotationHandle* handle, DateHandle** result);
-
-    /**
-    * \brief Set the annotation creation date (CreationDate entry, markup annotations only)
-    * \param handle a handle to the annotation class
-    * \param value the date to set
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetCreationDate(AnnotationHandle* handle, DateHandle* value);
-
-    /**
     * \brief Get the annotation flags (F entry)
     * \param handle a handle to the annotation class
     * \param result a pointer to variable that will contain the flags upon success
@@ -456,6 +414,36 @@ extern "C"
     * \param result a pointer to variable that will contain the new annotation upon success
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_CreateWithContents(RectangleHandle* rect, LiteralStringObjectHandle* contents, TextAnnotationHandle** result);
+
+    /**
+    * \brief Get the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthor(TextAnnotationHandle* handle, LiteralStringObjectHandle** result);
+
+    /**
+    * \brief Set the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetAuthor(TextAnnotationHandle* handle, LiteralStringObjectHandle* value);
+
+    /**
+    * \brief Get the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetModificationDate(TextAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetModificationDate(TextAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Get the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetCreationDate(TextAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetCreationDate(TextAnnotationHandle* handle, DateHandle* value);
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
@@ -502,6 +490,36 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetQuadPoints(HighlightAnnotationHandle* handle, ArrayObjectHandle* value);
 
     /**
+    * \brief Get the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthor(HighlightAnnotationHandle* handle, LiteralStringObjectHandle** result);
+
+    /**
+    * \brief Set the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetAuthor(HighlightAnnotationHandle* handle, LiteralStringObjectHandle* value);
+
+    /**
+    * \brief Get the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetModificationDate(HighlightAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetModificationDate(HighlightAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Get the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetCreationDate(HighlightAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetCreationDate(HighlightAnnotationHandle* handle, DateHandle* value);
+
+    /**
     * \brief Reinterpret current object as \ref AnnotationHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_ToBaseAnnotation(HighlightAnnotationHandle* handle, AnnotationHandle** result);
@@ -545,6 +563,36 @@ extern "C"
     * \param value the default appearance string to set
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetDefaultAppearance(FreeTextAnnotationHandle* handle, LiteralStringObjectHandle* value);
+
+    /**
+    * \brief Get the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthor(FreeTextAnnotationHandle* handle, LiteralStringObjectHandle** result);
+
+    /**
+    * \brief Set the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetAuthor(FreeTextAnnotationHandle* handle, LiteralStringObjectHandle* value);
+
+    /**
+    * \brief Get the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetModificationDate(FreeTextAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetModificationDate(FreeTextAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Get the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetCreationDate(FreeTextAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetCreationDate(FreeTextAnnotationHandle* handle, DateHandle* value);
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
