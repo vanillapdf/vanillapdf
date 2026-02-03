@@ -181,6 +181,10 @@ extern "C"
     DECLARE_OBJECT_HANDLE(TextAnnotation);
     DECLARE_OBJECT_HANDLE(HighlightAnnotation);
     DECLARE_OBJECT_HANDLE(FreeTextAnnotation);
+    DECLARE_OBJECT_HANDLE(UnderlineAnnotation);
+    DECLARE_OBJECT_HANDLE(StrikeOutAnnotation);
+    DECLARE_OBJECT_HANDLE(SquigglyAnnotation);
+    DECLARE_OBJECT_HANDLE(InkAnnotation);
 
     DECLARE_OBJECT_HANDLE(InteractiveForm);
 

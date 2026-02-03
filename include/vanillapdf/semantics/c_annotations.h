@@ -612,6 +612,339 @@ extern "C"
     /** @} */
 
     /**
+    * \class UnderlineAnnotationHandle
+    * \extends AnnotationHandle
+    * \ingroup group_annotations
+    * \brief
+    * An underline annotation appears as an underline beneath text in the document.
+    * When opened, it shall display a pop-up window containing the text of the associated note.
+    */
+
+    /**
+    * \memberof UnderlineAnnotationHandle
+    * @{
+    */
+
+    /**
+    * \brief Create a new underline annotation with the specified rectangle and quad points
+    * \param rect the bounding rectangle for the annotation
+    * \param quadPoints an array of 8 numbers specifying the coordinates of the quadrilateral
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* quadPoints, UnderlineAnnotationHandle** result);
+
+    /**
+    * \brief Get the quad points array for text markup
+    * \param handle a handle to the underline annotation
+    * \param result a pointer to variable that will contain the quad points array upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetQuadPoints(UnderlineAnnotationHandle* handle, ArrayObjectHandle** result);
+
+    /**
+    * \brief Set the quad points array for text markup
+    * \param handle a handle to the underline annotation
+    * \param value the quad points array to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetQuadPoints(UnderlineAnnotationHandle* handle, ArrayObjectHandle* value);
+
+    /**
+    * \brief Get the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthor(UnderlineAnnotationHandle* handle, LiteralStringObjectHandle** result);
+
+    /**
+    * \brief Set the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetAuthor(UnderlineAnnotationHandle* handle, LiteralStringObjectHandle* value);
+
+    /**
+    * \brief Get the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetModificationDate(UnderlineAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetModificationDate(UnderlineAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Get the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetCreationDate(UnderlineAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetCreationDate(UnderlineAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Reinterpret current object as \ref AnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_ToBaseAnnotation(UnderlineAnnotationHandle* handle, AnnotationHandle** result);
+
+    /**
+    * \brief Convert \ref AnnotationHandle to \ref UnderlineAnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_FromBaseAnnotation(AnnotationHandle* handle, UnderlineAnnotationHandle** result);
+
+    /**
+    * \copydoc Annotation_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_Release(UnderlineAnnotationHandle* handle);
+
+    /** @} */
+
+    /**
+    * \class StrikeOutAnnotationHandle
+    * \extends AnnotationHandle
+    * \ingroup group_annotations
+    * \brief
+    * A strikeout annotation appears as a strikethrough line across text in the document.
+    * When opened, it shall display a pop-up window containing the text of the associated note.
+    */
+
+    /**
+    * \memberof StrikeOutAnnotationHandle
+    * @{
+    */
+
+    /**
+    * \brief Create a new strikeout annotation with the specified rectangle and quad points
+    * \param rect the bounding rectangle for the annotation
+    * \param quadPoints an array of 8 numbers specifying the coordinates of the quadrilateral
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* quadPoints, StrikeOutAnnotationHandle** result);
+
+    /**
+    * \brief Get the quad points array for text markup
+    * \param handle a handle to the strikeout annotation
+    * \param result a pointer to variable that will contain the quad points array upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetQuadPoints(StrikeOutAnnotationHandle* handle, ArrayObjectHandle** result);
+
+    /**
+    * \brief Set the quad points array for text markup
+    * \param handle a handle to the strikeout annotation
+    * \param value the quad points array to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetQuadPoints(StrikeOutAnnotationHandle* handle, ArrayObjectHandle* value);
+
+    /**
+    * \brief Get the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthor(StrikeOutAnnotationHandle* handle, LiteralStringObjectHandle** result);
+
+    /**
+    * \brief Set the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetAuthor(StrikeOutAnnotationHandle* handle, LiteralStringObjectHandle* value);
+
+    /**
+    * \brief Get the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetModificationDate(StrikeOutAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetModificationDate(StrikeOutAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Get the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetCreationDate(StrikeOutAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetCreationDate(StrikeOutAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Reinterpret current object as \ref AnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_ToBaseAnnotation(StrikeOutAnnotationHandle* handle, AnnotationHandle** result);
+
+    /**
+    * \brief Convert \ref AnnotationHandle to \ref StrikeOutAnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_FromBaseAnnotation(AnnotationHandle* handle, StrikeOutAnnotationHandle** result);
+
+    /**
+    * \copydoc Annotation_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_Release(StrikeOutAnnotationHandle* handle);
+
+    /** @} */
+
+    /**
+    * \class SquigglyAnnotationHandle
+    * \extends AnnotationHandle
+    * \ingroup group_annotations
+    * \brief
+    * A squiggly annotation appears as a jagged underline beneath text in the document.
+    * When opened, it shall display a pop-up window containing the text of the associated note.
+    */
+
+    /**
+    * \memberof SquigglyAnnotationHandle
+    * @{
+    */
+
+    /**
+    * \brief Create a new squiggly annotation with the specified rectangle and quad points
+    * \param rect the bounding rectangle for the annotation
+    * \param quadPoints an array of 8 numbers specifying the coordinates of the quadrilateral
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* quadPoints, SquigglyAnnotationHandle** result);
+
+    /**
+    * \brief Get the quad points array for text markup
+    * \param handle a handle to the squiggly annotation
+    * \param result a pointer to variable that will contain the quad points array upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetQuadPoints(SquigglyAnnotationHandle* handle, ArrayObjectHandle** result);
+
+    /**
+    * \brief Set the quad points array for text markup
+    * \param handle a handle to the squiggly annotation
+    * \param value the quad points array to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetQuadPoints(SquigglyAnnotationHandle* handle, ArrayObjectHandle* value);
+
+    /**
+    * \brief Get the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthor(SquigglyAnnotationHandle* handle, LiteralStringObjectHandle** result);
+
+    /**
+    * \brief Set the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetAuthor(SquigglyAnnotationHandle* handle, LiteralStringObjectHandle* value);
+
+    /**
+    * \brief Get the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetModificationDate(SquigglyAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetModificationDate(SquigglyAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Get the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetCreationDate(SquigglyAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetCreationDate(SquigglyAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Reinterpret current object as \ref AnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_ToBaseAnnotation(SquigglyAnnotationHandle* handle, AnnotationHandle** result);
+
+    /**
+    * \brief Convert \ref AnnotationHandle to \ref SquigglyAnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_FromBaseAnnotation(AnnotationHandle* handle, SquigglyAnnotationHandle** result);
+
+    /**
+    * \copydoc Annotation_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_Release(SquigglyAnnotationHandle* handle);
+
+    /** @} */
+
+    /**
+    * \class InkAnnotationHandle
+    * \extends AnnotationHandle
+    * \ingroup group_annotations
+    * \brief
+    * An ink annotation (PDF 1.3) represents a freehand "scribble" composed of
+    * one or more disjoint paths. When opened, it shall display a pop-up window
+    * containing the text of the associated note.
+    */
+
+    /**
+    * \memberof InkAnnotationHandle
+    * @{
+    */
+
+    /**
+    * \brief Create a new ink annotation with the specified rectangle and ink list
+    * \param rect the bounding rectangle for the annotation
+    * \param inkList an array of arrays, each representing a stroked path of point coordinates
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* inkList, InkAnnotationHandle** result);
+
+    /**
+    * \brief Get the ink list (array of stroked paths)
+    * \param handle a handle to the ink annotation
+    * \param result a pointer to variable that will contain the ink list array upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetInkList(InkAnnotationHandle* handle, ArrayObjectHandle** result);
+
+    /**
+    * \brief Set the ink list (array of stroked paths)
+    * \param handle a handle to the ink annotation
+    * \param value the ink list array to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetInkList(InkAnnotationHandle* handle, ArrayObjectHandle* value);
+
+    /**
+    * \brief Get the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthor(InkAnnotationHandle* handle, LiteralStringObjectHandle** result);
+
+    /**
+    * \brief Set the annotation author (T entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetAuthor(InkAnnotationHandle* handle, LiteralStringObjectHandle* value);
+
+    /**
+    * \brief Get the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetModificationDate(InkAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation modification date (M entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetModificationDate(InkAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Get the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetCreationDate(InkAnnotationHandle* handle, DateHandle** result);
+
+    /**
+    * \brief Set the annotation creation date (CreationDate entry, markup annotations)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetCreationDate(InkAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Reinterpret current object as \ref AnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_ToBaseAnnotation(InkAnnotationHandle* handle, AnnotationHandle** result);
+
+    /**
+    * \brief Convert \ref AnnotationHandle to \ref InkAnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_FromBaseAnnotation(AnnotationHandle* handle, InkAnnotationHandle** result);
+
+    /**
+    * \copydoc Annotation_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_Release(InkAnnotationHandle* handle);
+
+    /** @} */
+
+    /**
     * \memberof LinkAnnotationHandle
     * @{
     */
@@ -664,6 +997,14 @@ extern "C"
     * \param annotation the annotation to append
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Append(PageAnnotationsHandle* handle, AnnotationHandle* annotation);
+
+    /**
+    * \brief
+    * Remove an annotation from the collection at the specified position
+    * \param handle a handle to annotation collection
+    * \param at position of the element to remove from the \p handle collection
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Remove(PageAnnotationsHandle* handle, size_type at);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle

@@ -85,6 +85,10 @@ class LinkAnnotation; using LinkAnnotationPtr = Deferred<LinkAnnotation>;
 class TextAnnotation; using TextAnnotationPtr = Deferred<TextAnnotation>;
 class HighlightAnnotation; using HighlightAnnotationPtr = Deferred<HighlightAnnotation>;
 class FreeTextAnnotation; using FreeTextAnnotationPtr = Deferred<FreeTextAnnotation>;
+class UnderlineAnnotation; using UnderlineAnnotationPtr = Deferred<UnderlineAnnotation>;
+class StrikeOutAnnotation; using StrikeOutAnnotationPtr = Deferred<StrikeOutAnnotation>;
+class SquigglyAnnotation; using SquigglyAnnotationPtr = Deferred<SquigglyAnnotation>;
+class InkAnnotation; using InkAnnotationPtr = Deferred<InkAnnotation>;
 class PageAnnotations; using PageAnnotationsPtr = Deferred<PageAnnotations>; using OutputPageAnnotationsPtr = OutputPointer<PageAnnotationsPtr>;
 
 // Fonts

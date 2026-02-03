@@ -176,18 +176,60 @@ class UnderlineAnnotation : public AnnotationBase {
 public:
     explicit UnderlineAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
+
+    static UnderlineAnnotationPtr Create(RectanglePtr rect,
+        syntax::MixedArrayObjectPtr quadPoints);
+
+    bool GetQuadPoints(syntax::MixedArrayObjectPtr& result) const;
+    void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);
+
+    // Markup annotation properties (Table 170)
+    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
+    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetModificationDate(OutputDatePtr& result) const;
+    void SetModificationDate(DatePtr date);
+    bool GetCreationDate(OutputDatePtr& result) const;
+    void SetCreationDate(DatePtr date);
 };
 
 class SquigglyAnnotation : public AnnotationBase {
 public:
     explicit SquigglyAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
+
+    static SquigglyAnnotationPtr Create(RectanglePtr rect,
+        syntax::MixedArrayObjectPtr quadPoints);
+
+    bool GetQuadPoints(syntax::MixedArrayObjectPtr& result) const;
+    void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);
+
+    // Markup annotation properties (Table 170)
+    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
+    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetModificationDate(OutputDatePtr& result) const;
+    void SetModificationDate(DatePtr date);
+    bool GetCreationDate(OutputDatePtr& result) const;
+    void SetCreationDate(DatePtr date);
 };
 
 class StrikeOutAnnotation : public AnnotationBase {
 public:
     explicit StrikeOutAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
+
+    static StrikeOutAnnotationPtr Create(RectanglePtr rect,
+        syntax::MixedArrayObjectPtr quadPoints);
+
+    bool GetQuadPoints(syntax::MixedArrayObjectPtr& result) const;
+    void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);
+
+    // Markup annotation properties (Table 170)
+    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
+    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetModificationDate(OutputDatePtr& result) const;
+    void SetModificationDate(DatePtr date);
+    bool GetCreationDate(OutputDatePtr& result) const;
+    void SetCreationDate(DatePtr date);
 };
 
 class RubberStampAnnotation : public AnnotationBase {
@@ -206,6 +248,20 @@ class InkAnnotation : public AnnotationBase {
 public:
     explicit InkAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
+
+    static InkAnnotationPtr Create(RectanglePtr rect,
+        syntax::MixedArrayObjectPtr inkList);
+
+    bool GetInkList(syntax::MixedArrayObjectPtr& result) const;
+    void SetInkList(syntax::MixedArrayObjectPtr inkList);
+
+    // Markup annotation properties (Table 170)
+    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
+    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetModificationDate(OutputDatePtr& result) const;
+    void SetModificationDate(DatePtr date);
+    bool GetCreationDate(OutputDatePtr& result) const;
+    void SetCreationDate(DatePtr date);
 };
 
 class PopupAnnotation : public AnnotationBase {
@@ -283,6 +339,7 @@ public:
     types::size_type GetSize() const;
     AnnotationPtr At(types::size_type index) const;
     void Append(AnnotationPtr annotation);
+    bool Remove(types::size_type index);
 };
 
 inline AnnotationBase::Type TextAnnotation::GetAnnotationType() const noexcept { return Type::Text; }
