@@ -137,6 +137,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Release(FieldCollec
     return ObjectRelease<FieldCollection, FieldCollectionHandle>(handle);
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Field_ToUnknown(FieldHandle* handle, IUnknownHandle** result) {
+    return SafeObjectConvert<Field, IUnknown, FieldHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_FromUnknown(IUnknownHandle* handle, FieldHandle** result) {
+    return SafeObjectConvert<IUnknown, Field, IUnknownHandle, FieldHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Field_Release(FieldHandle* handle) {
     return ObjectRelease<Field, FieldHandle>(handle);
 }

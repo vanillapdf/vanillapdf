@@ -209,4 +209,16 @@ TEST(JPXDecodeFilter, Decode) {
     ASSERT_EQ(JPXDecodeFilter_Release(filter_handle), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(FilterBase, ToUnknown_NullChecks) {
+    IUnknownHandle* unknown = nullptr;
+
+    EXPECT_EQ(FilterBase_ToUnknown(nullptr, &unknown), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+TEST(FilterBase, FromUnknown_NullChecks) {
+    FilterBaseHandle* filter = nullptr;
+
+    EXPECT_EQ(FilterBase_FromUnknown(nullptr, &filter), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
 } /* filters */

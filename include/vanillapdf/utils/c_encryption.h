@@ -73,6 +73,16 @@ extern "C"
     );
 
     /**
+    * \brief Reinterpret current object as \ref IUnknownHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_ToUnknown(EncryptionKeyHandle* handle, IUnknownHandle** result);
+
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref EncryptionKeyHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION EncryptionKey_FromUnknown(IUnknownHandle* handle, EncryptionKeyHandle** result);
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */

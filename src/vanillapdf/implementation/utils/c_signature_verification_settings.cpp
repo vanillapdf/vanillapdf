@@ -133,6 +133,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_SetAl
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_ToUnknown(
+    SignatureVerificationSettingsHandle* handle,
+    IUnknownHandle** result) {
+    return SafeObjectConvert<SignatureVerificationSettings, IUnknown, SignatureVerificationSettingsHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_FromUnknown(
+    IUnknownHandle* handle,
+    SignatureVerificationSettingsHandle** result) {
+    return SafeObjectConvert<IUnknown, SignatureVerificationSettings, IUnknownHandle, SignatureVerificationSettingsHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_Release(
     SignatureVerificationSettingsHandle* handle) {
     return ObjectRelease<SignatureVerificationSettings, SignatureVerificationSettingsHandle>(handle);

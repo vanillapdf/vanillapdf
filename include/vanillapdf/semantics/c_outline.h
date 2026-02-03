@@ -256,6 +256,16 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineItemColorHandle* handle, IntegerObjectHandle** result);
 
     /**
+    * \brief Reinterpret current object as \ref IUnknownHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_ToUnknown(OutlineItemColorHandle* handle, IUnknownHandle** result);
+
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref OutlineItemColorHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_FromUnknown(IUnknownHandle* handle, OutlineItemColorHandle** result);
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */
@@ -277,6 +287,16 @@ extern "C"
     * \brief Determine if the outline item shall be displayed in \b bold
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItemFlagsHandle* handle, boolean_type* result);
+
+    /**
+    * \brief Reinterpret current object as \ref IUnknownHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_ToUnknown(OutlineItemFlagsHandle* handle, IUnknownHandle** result);
+
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref OutlineItemFlagsHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_FromUnknown(IUnknownHandle* handle, OutlineItemFlagsHandle** result);
 
     /**
     * \copydoc IUnknown_Release

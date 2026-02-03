@@ -66,6 +66,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Decode(FilterBaseHandle*
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_ToUnknown(FilterBaseHandle* handle, IUnknownHandle** result) {
+    return SafeObjectConvert<FilterBase, IUnknown, FilterBaseHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_FromUnknown(IUnknownHandle* handle, FilterBaseHandle** result) {
+    return SafeObjectConvert<IUnknown, FilterBase, IUnknownHandle, FilterBaseHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Release(FilterBaseHandle* handle) {
     return ObjectRelease<FilterBase, FilterBaseHandle>(handle);
 }

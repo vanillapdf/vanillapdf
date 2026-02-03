@@ -325,6 +325,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_GetBlue(OutlineIte
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_ToUnknown(OutlineItemColorHandle* handle, IUnknownHandle** result) {
+    return SafeObjectConvert<OutlineItemColor, IUnknown, OutlineItemColorHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_FromUnknown(IUnknownHandle* handle, OutlineItemColorHandle** result) {
+    return SafeObjectConvert<IUnknown, OutlineItemColor, IUnknownHandle, OutlineItemColorHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_Release(OutlineItemColorHandle* handle)
 {
     return ObjectRelease<OutlineItemColor, OutlineItemColorHandle>(handle);
@@ -348,6 +356,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_IsBold(OutlineItem
 
     *result = obj->Bold();
     return VANILLAPDF_ERROR_SUCCESS;
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_ToUnknown(OutlineItemFlagsHandle* handle, IUnknownHandle** result) {
+    return SafeObjectConvert<OutlineItemFlags, IUnknown, OutlineItemFlagsHandle, IUnknownHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_FromUnknown(IUnknownHandle* handle, OutlineItemFlagsHandle** result) {
+    return SafeObjectConvert<IUnknown, OutlineItemFlags, IUnknownHandle, OutlineItemFlagsHandle>(handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_Release(OutlineItemFlagsHandle* handle) {

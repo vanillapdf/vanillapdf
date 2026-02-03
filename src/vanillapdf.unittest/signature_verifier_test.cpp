@@ -1463,4 +1463,157 @@ INSTANTIATE_TEST_SUITE_P(
     }
 );
 
+// SignatureVerificationSettings ToUnknown/FromUnknown Tests
+
+TEST(SignatureVerificationSettings, ToUnknown_FromUnknown) {
+    SignatureVerificationSettingsHandle* settings = nullptr;
+    IUnknownHandle* unknown = nullptr;
+    SignatureVerificationSettingsHandle* settings_back = nullptr;
+
+    ASSERT_EQ(SignatureVerificationSettings_Create(&settings), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(settings, nullptr);
+
+    ASSERT_EQ(SignatureVerificationSettings_ToUnknown(settings, &unknown), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(unknown, nullptr);
+
+    ASSERT_EQ(SignatureVerificationSettings_FromUnknown(unknown, &settings_back), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(settings_back, nullptr);
+
+    EXPECT_EQ(settings, settings_back);
+
+    ASSERT_EQ(IUnknown_Release(unknown), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SignatureVerificationSettings_Release(settings_back), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SignatureVerificationSettings_Release(settings), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(SignatureVerificationSettings, ToUnknown_NullChecks) {
+    SignatureVerificationSettingsHandle* settings = nullptr;
+    IUnknownHandle* unknown = nullptr;
+
+    ASSERT_EQ(SignatureVerificationSettings_Create(&settings), VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_EQ(SignatureVerificationSettings_ToUnknown(nullptr, &unknown), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(SignatureVerificationSettings_ToUnknown(settings, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    ASSERT_EQ(SignatureVerificationSettings_Release(settings), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(SignatureVerificationSettings, FromUnknown_NullChecks) {
+    SignatureVerificationSettingsHandle* settings = nullptr;
+
+    EXPECT_EQ(SignatureVerificationSettings_FromUnknown(nullptr, &settings), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+// Field and DigitalSignature ToUnknown/FromUnknown Tests
+// Uses a signed document to obtain real Field and DigitalSignature handles
+
+TEST(FieldAndDigitalSignature, ToUnknown_FromUnknown) {
+    InputOutputStreamHandle* source_stream = nullptr;
+    InputOutputStreamHandle* signed_stream = nullptr;
+    FileHandle* source_file = nullptr;
+    FileHandle* signed_file = nullptr;
+    BufferHandle* pkcs12_buffer = nullptr;
+    PKCS12KeyHandle* pkcs12_key = nullptr;
+    SigningKeyHandle* signing_key = nullptr;
+    DateHandle* signing_time = nullptr;
+    DocumentSignatureSettingsHandle* signature_settings = nullptr;
+    DocumentHandle* source_document = nullptr;
+    DocumentHandle* signed_document = nullptr;
+    CatalogHandle* catalog = nullptr;
+    InteractiveFormHandle* acro_form = nullptr;
+    FieldCollectionHandle* fields = nullptr;
+    FieldHandle* field = nullptr;
+    SignatureFieldHandle* sig_field = nullptr;
+    DigitalSignatureHandle* digital_signature = nullptr;
+
+    // Create and sign a document to get Field and DigitalSignature handles
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(&source_stream), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(source_stream, "memory_source.pdf", &source_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_CreateFile(source_file, &source_document), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(SIGNING_CERTIFICATE),
+                                     SIGNING_CERTIFICATE_SIZE, &pkcs12_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(pkcs12_buffer, nullptr, &pkcs12_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, &signing_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_CreateCurrent(&signing_time), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(DocumentSignatureSettings_Create(&signature_settings), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentSignatureSettings_SetSigningKey(signature_settings, signing_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentSignatureSettings_SetDigest(signature_settings, MessageDigestAlgorithmType_SHA256), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentSignatureSettings_SetSigningTime(signature_settings, signing_time), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(&signed_stream), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(signed_stream, "memory_signed.pdf", &signed_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_Sign(source_document, signed_file, signature_settings), VANILLAPDF_ERROR_SUCCESS);
+
+    Document_Release(source_document);
+    File_Release(source_file);
+    File_Release(signed_file);
+    signed_file = nullptr;
+
+    ASSERT_EQ(File_OpenStream(signed_stream, "memory_signed.pdf", &signed_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_OpenFile(signed_file, &signed_document), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Document_GetCatalog(signed_document, &catalog), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_GetAcroForm(catalog, &acro_form), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_GetFields(acro_form, &fields), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldCollection_At(fields, 0, &field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field, nullptr);
+
+    ASSERT_EQ(SignatureField_FromField(field, &sig_field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SignatureField_GetValue(sig_field, &digital_signature), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(digital_signature, nullptr);
+
+    // Test Field_ToUnknown / Field_FromUnknown
+    {
+        IUnknownHandle* unknown = nullptr;
+        FieldHandle* field_back = nullptr;
+
+        ASSERT_EQ(Field_ToUnknown(field, &unknown), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(unknown, nullptr);
+
+        ASSERT_EQ(Field_FromUnknown(unknown, &field_back), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(field_back, nullptr);
+
+        EXPECT_EQ(field, field_back);
+
+        ASSERT_EQ(IUnknown_Release(unknown), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Field_Release(field_back), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Test DigitalSignature_ToUnknown / DigitalSignature_FromUnknown
+    {
+        IUnknownHandle* unknown = nullptr;
+        DigitalSignatureHandle* sig_back = nullptr;
+
+        ASSERT_EQ(DigitalSignature_ToUnknown(digital_signature, &unknown), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(unknown, nullptr);
+
+        ASSERT_EQ(DigitalSignature_FromUnknown(unknown, &sig_back), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(sig_back, nullptr);
+
+        EXPECT_EQ(digital_signature, sig_back);
+
+        ASSERT_EQ(IUnknown_Release(unknown), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(DigitalSignature_Release(sig_back), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Cleanup
+    if (digital_signature) DigitalSignature_Release(digital_signature);
+    if (sig_field) SignatureField_Release(sig_field);
+    if (field) Field_Release(field);
+    if (fields) FieldCollection_Release(fields);
+    if (acro_form) InteractiveForm_Release(acro_form);
+    if (catalog) Catalog_Release(catalog);
+    if (signed_document) Document_Release(signed_document);
+    if (signed_file) File_Release(signed_file);
+    if (signature_settings) DocumentSignatureSettings_Release(signature_settings);
+    if (signing_time) Date_Release(signing_time);
+    if (signing_key) SigningKey_Release(signing_key);
+    if (pkcs12_key) PKCS12Key_Release(pkcs12_key);
+    if (pkcs12_buffer) Buffer_Release(pkcs12_buffer);
+    if (signed_stream) InputOutputStream_Release(signed_stream);
+    if (source_stream) InputOutputStream_Release(source_stream);
+}
+
 } // namespace signature_verification
