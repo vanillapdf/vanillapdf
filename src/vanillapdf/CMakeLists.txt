@@ -61,6 +61,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_catalog.cpp
     implementation/semantics/c_character_map.cpp
     implementation/semantics/c_date.cpp
+    implementation/semantics/c_destination_name_tree.cpp
     implementation/semantics/c_destinations.cpp
     implementation/semantics/c_developer_extensions.cpp
     implementation/semantics/c_digital_signature.cpp
@@ -73,6 +74,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_font.cpp
     implementation/semantics/c_font_map.cpp
     implementation/semantics/c_interactive_forms.cpp
+    implementation/semantics/c_name_dictionary.cpp
     implementation/semantics/c_outline.cpp
     implementation/semantics/c_page_contents.cpp
     implementation/semantics/c_page_labels.cpp

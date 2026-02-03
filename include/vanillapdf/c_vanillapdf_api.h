@@ -46,6 +46,8 @@
 #include "vanillapdf/semantics/c_viewer_preferences.h"
 #include "vanillapdf/semantics/c_outline.h"
 #include "vanillapdf/semantics/c_destinations.h"
+#include "vanillapdf/semantics/c_name_dictionary.h"
+#include "vanillapdf/semantics/c_destination_name_tree.h"
 #include "vanillapdf/semantics/c_annotations.h"
 #include "vanillapdf/semantics/c_resource_dictionary.h"
 #include "vanillapdf/semantics/c_interactive_forms.h"

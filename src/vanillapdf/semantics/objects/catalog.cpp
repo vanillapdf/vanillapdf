@@ -119,6 +119,11 @@ bool Catalog::Names(OutputNameDictionaryPtr& result) const {
     return true;
 }
 
+void Catalog::SetNames(NameDictionaryPtr value) {
+    auto names_dict = value->GetObject();
+    _obj->Insert(constant::Name::Names, names_dict);
+}
+
 bool Catalog::Destinations(OutputNamedDestinationsPtr& result) const {
     if (!_obj->Contains(constant::Name::Dests)) {
         return false;

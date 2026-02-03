@@ -148,6 +148,14 @@ public:
             return std::pair<syntax::StringObjectPtr, ValueT>(first, second);
         }
 
+        const syntax::StringObjectPtr First() const {
+            return base_iterator_type::m_current->first;
+        }
+
+        ValueT Second() const {
+            return _conversion(base_iterator_type::m_current->second);
+        }
+
     private:
         std::function<ValueT(const syntax::ContainableObjectPtr&)> _conversion;
     };
@@ -167,6 +175,7 @@ public:
     virtual const syntax::NameObject& GetValueName(void) const override;
     bool Contains(const syntax::StringObjectPtr& key) const;
     ValueT Find(const syntax::StringObjectPtr& key) const;
+    bool TryFind(const syntax::StringObjectPtr& key, syntax::OutputPointer<ValueT>& result) const;
     void Insert(const syntax::StringObjectPtr& key, ValueT value);
     bool Remove(const syntax::StringObjectPtr& key);
 
@@ -383,11 +392,10 @@ template <typename KeyT, typename ValueT>
 bool TreeBase<KeyT, ValueT>::Remove(const KeyT& key) {
     Initialize();
 
-    bool erased = m_map.erase(key);
-    bool result = (erased == m_map.end());
+    auto erased = m_map.erase(key);
     Rebuild();
 
-    return result;
+    return erased > 0;
 }
 
 template <typename KeyT, typename ValueT>
@@ -593,6 +601,15 @@ inline bool NameTree<ValueT>::Contains(const syntax::StringObjectPtr& key) const
 template <typename ValueT>
 inline ValueT NameTree<ValueT>::Find(const syntax::StringObjectPtr& key) const {
     return _conversion(base_type::Find(key));
+}
+
+template <typename ValueT>
+inline bool NameTree<ValueT>::TryFind(const syntax::StringObjectPtr& key, syntax::OutputPointer<ValueT>& result) const {
+    if (!base_type::Contains(key)) {
+        return false;
+    }
+    result = _conversion(base_type::Find(key));
+    return true;
 }
 
 template <typename ValueT>

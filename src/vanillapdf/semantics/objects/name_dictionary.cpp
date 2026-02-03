@@ -9,6 +9,18 @@ namespace semantics {
 
 NameDictionary::NameDictionary(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
 
+NameDictionaryPtr NameDictionary::Create() {
+    syntax::DictionaryObjectPtr dict;
+    dict->SetInitialized();
+    return make_deferred<NameDictionary>(dict);
+}
+
+NameTreePtr<DestinationPtr> NameDictionary::CreateDestinationNameTree() {
+    syntax::DictionaryObjectPtr dict;
+    dict->SetInitialized();
+    return make_deferred_container<NameTree<DestinationPtr>>(dict, &DestinationConversionFunction);
+}
+
 bool NameDictionary::Dests(OutputNameTreePtr<DestinationPtr>& result) const {
     if (!_obj->Contains(constant::Name::Dests)) {
         return false;
@@ -19,6 +31,11 @@ bool NameDictionary::Dests(OutputNameTreePtr<DestinationPtr>& result) const {
 
     result = tree;
     return true;
+}
+
+void NameDictionary::SetDests(NameTreePtr<DestinationPtr> value) {
+    auto tree_dict = value->GetObject();
+    _obj->Insert(constant::Name::Dests, tree_dict);
 }
 
 DestinationPtr NameDictionary::DestinationConversionFunction(const syntax::ContainableObjectPtr& obj) {

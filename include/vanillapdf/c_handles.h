@@ -159,6 +159,11 @@ extern "C"
 
     DECLARE_OBJECT_HANDLE(ResourceDictionary);
 
+    DECLARE_OBJECT_HANDLE(NameDictionary);
+
+    DECLARE_OBJECT_HANDLE(DestinationNameTree);
+    DECLARE_OBJECT_HANDLE(DestinationNameTreeIterator);
+
     DECLARE_OBJECT_HANDLE(NamedDestinations);
     DECLARE_OBJECT_HANDLE(Destination);
     DECLARE_OBJECT_HANDLE(XYZDestination);

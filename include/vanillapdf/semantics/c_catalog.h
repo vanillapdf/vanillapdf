@@ -122,8 +122,29 @@ extern "C"
     * \brief
     * A dictionary of names and corresponding destinations
     * (see 12.3.2.3, "Named Destinations").
+    *
+    * \note This is the old-style /Dests dictionary. For PDF 1.2+,
+    * prefer using Catalog_GetNames to access the /Names dictionary.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHandle* handle, NamedDestinationsHandle** result);
+
+    /**
+    * \brief
+    * The document's name dictionary
+    * (see 7.7.4, "Name Dictionary").
+    *
+    * The name dictionary contains name trees that map strings to various
+    * document objects, including destinations, JavaScript actions,
+    * embedded files, etc.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetNames(CatalogHandle* handle, NameDictionaryHandle** result);
+
+    /**
+    * \brief
+    * Set the document's name dictionary
+    * (see 7.7.4, "Name Dictionary").
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Catalog_SetNames(CatalogHandle* handle, NameDictionaryHandle* names);
 
     /**
     * \brief
