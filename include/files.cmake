@@ -54,6 +54,7 @@ set(VANILLAPDF_INCLUDE_SYNTAX_HEADERS
 )
 
 set(VANILLAPDF_INCLUDE_SEMANTICS_HEADERS
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_actions.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_annotations.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_byte_range.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_catalog.h"

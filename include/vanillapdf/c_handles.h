@@ -175,6 +175,12 @@ extern "C"
     DECLARE_OBJECT_HANDLE(FitBoundingBoxHorizontalDestination);
     DECLARE_OBJECT_HANDLE(FitBoundingBoxVerticalDestination);
 
+    DECLARE_OBJECT_HANDLE(Action);
+    DECLARE_OBJECT_HANDLE(GoToAction);
+    DECLARE_OBJECT_HANDLE(URIAction);
+    DECLARE_OBJECT_HANDLE(GoToRemoteAction);
+    DECLARE_OBJECT_HANDLE(NamedAction);
+
     DECLARE_OBJECT_HANDLE(PageAnnotations);
     DECLARE_OBJECT_HANDLE(Annotation);
     DECLARE_OBJECT_HANDLE(LinkAnnotation);

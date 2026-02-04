@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "semantics/objects/outline.h"
+#include "semantics/objects/actions.h"
 #include "semantics/objects/destinations.h"
 
 #include "semantics/utils/semantic_exceptions.h"
@@ -141,6 +142,18 @@ bool OutlineItem::Destination(OutputDestinationPtr& result) const {
     auto dest = _obj->Find(constant::Name::Dest);
     auto destination = DestinationBase::ResolveDestination(dest);
     result = OutputDestinationPtr(destination);
+    return true;
+}
+
+bool OutlineItem::Action(OutputActionPtr& result) const {
+    if (!_obj->Contains(constant::Name::A)) {
+        return false;
+    }
+
+    auto action_dict = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::A);
+    auto action = ActionBase::Create(action_dict);
+    auto raw_ptr = action.release();
+    result = ActionPtr(raw_ptr);
     return true;
 }
 

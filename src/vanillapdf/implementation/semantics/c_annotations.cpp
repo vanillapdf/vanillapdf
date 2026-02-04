@@ -1,5 +1,6 @@
 #include "precompiled.h"
 #include "semantics/objects/annotations.h"
+#include "semantics/objects/actions.h"
 #include "semantics/objects/color.h"
 #include "semantics/objects/date.h"
 #include "semantics/objects/rectangle.h"
@@ -105,6 +106,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkA
 
         auto ptr = destination.AddRefGet();
         *result = reinterpret_cast<DestinationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetAction(LinkAnnotationHandle* handle, ActionHandle** result)
+{
+    LinkAnnotation* obj = reinterpret_cast<LinkAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputActionPtr action;
+        bool contains = obj->Action(action);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = action.AddRefGet();
+        *result = reinterpret_cast<ActionHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

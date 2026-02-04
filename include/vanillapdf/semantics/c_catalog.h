@@ -154,6 +154,27 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle* handle, InteractiveFormHandle** result);
 
     /**
+    * \brief Check if the catalog contains an OpenAction entry.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Catalog_ContainsOpenAction(CatalogHandle* handle, boolean_type* result);
+
+    /**
+    * \brief Get the open action as a destination (when OpenAction is an array).
+    *
+    * Returns VANILLAPDF_ERROR_OBJECT_MISSING if the OpenAction entry
+    * is absent or is not a destination.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOpenActionDestination(CatalogHandle* handle, DestinationHandle** result);
+
+    /**
+    * \brief Get the open action as an action dictionary (when OpenAction is a dictionary).
+    *
+    * Returns VANILLAPDF_ERROR_OBJECT_MISSING if the OpenAction entry
+    * is absent or is not an action dictionary.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOpenActionAction(CatalogHandle* handle, ActionHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref IUnknownHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Catalog_ToUnknown(CatalogHandle* handle, IUnknownHandle** result);

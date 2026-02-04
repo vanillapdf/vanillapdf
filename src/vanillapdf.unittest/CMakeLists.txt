@@ -22,6 +22,7 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
 set(VANILLAPDF_UNITTEST_SOURCES
     main.cpp
+    actions_test.cpp
     annotations_creation_test.cpp
     byte_range_test.cpp
     color_test.cpp

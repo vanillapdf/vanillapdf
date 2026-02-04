@@ -99,6 +99,7 @@ public:
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
 
     bool Destination(OutputDestinationPtr& result) const;
+    bool Action(OutputActionPtr& result) const;
 };
 
 class FreeTextAnnotation : public AnnotationBase {

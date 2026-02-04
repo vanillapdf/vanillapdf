@@ -24,6 +24,7 @@ extern "C"
     * @{
     */
 
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_A;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_AA;
 
     /**
@@ -90,9 +91,12 @@ extern "C"
     * \brief Represents FlateDecode filter, see 7.4.4.
     */
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_FlateDecode;
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_GoTo;
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_GoToR;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_Index;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_Kids;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_Lang;
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_Launch;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_Legal;
 
     /**
@@ -108,6 +112,7 @@ extern "C"
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_MediaBox;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_Metadata;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_N;
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_Named;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_Names;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_NeedsRendering;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_Nums;
@@ -452,7 +457,9 @@ extern "C"
     /**
     * \brief Represents JPXDecode filter, see 7.4.9.
     */
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_JS;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_JPXDecode;
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_JavaScript;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_XYZ;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_Fit;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_FitH;

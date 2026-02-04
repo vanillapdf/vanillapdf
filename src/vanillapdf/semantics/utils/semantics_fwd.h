@@ -79,6 +79,15 @@ class FitBoundingBoxHorizontalDestination; using FitBoundingBoxHorizontalDestina
 class FitBoundingBoxVerticalDestination; using FitBoundingBoxVerticalDestinationPtr = Deferred<FitBoundingBoxVerticalDestination>;
 class NamedDestinations; using NamedDestinationsPtr = DeferredContainer<NamedDestinations>; using OutputNamedDestinationsPtr = OutputPointer<NamedDestinationsPtr>;
 
+// Actions
+class ActionBase; using ActionPtr = Deferred<ActionBase>; using OutputActionPtr = OutputPointer<ActionPtr>;
+class GoToAction; using GoToActionPtr = Deferred<GoToAction>;
+class URIAction; using URIActionPtr = Deferred<URIAction>;
+class GoToRemoteAction; using GoToRemoteActionPtr = Deferred<GoToRemoteAction>;
+class NamedAction; using NamedActionPtr = Deferred<NamedAction>;
+class JavaScriptAction; using JavaScriptActionPtr = Deferred<JavaScriptAction>;
+class LaunchAction; using LaunchActionPtr = Deferred<LaunchAction>;
+
 // Annotations
 class AnnotationBase; using AnnotationPtr = Deferred<AnnotationBase>;
 class LinkAnnotation; using LinkAnnotationPtr = Deferred<LinkAnnotation>;

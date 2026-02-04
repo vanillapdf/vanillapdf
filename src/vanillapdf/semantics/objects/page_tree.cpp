@@ -100,6 +100,41 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::size_type page
     throw GeneralException("Page number was not found: " + std::to_string(page_number));
 }
 
+bool PageTree::FindPageIndex(DictionaryObjectPtr page_dict, types::size_type& result) const {
+    auto root = make_deferred<PageTreeNode>(_obj);
+    types::size_type current_index = 1;
+    if (FindPageIndexInternal(root, page_dict, current_index)) {
+        result = current_index;
+        return true;
+    }
+    return false;
+}
+
+bool PageTree::FindPageIndexInternal(PageTreeNodePtr node, DictionaryObjectPtr page_dict, types::size_type& current_index) const {
+    auto kids = node->Kids();
+    auto count = kids->GetSize();
+    for (decltype(count) i = 0; i < count; ++i) {
+        auto kid = kids->GetValue(i);
+
+        if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
+            auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(kid);
+            if (FindPageIndexInternal(tree_node, page_dict, current_index)) {
+                return true;
+            }
+            continue;
+        }
+
+        if (kid->GetNodeType() == PageNodeBase::NodeType::Object) {
+            auto page_object = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(kid);
+            if (page_object->GetObject()->Identity(page_dict)) {
+                return true;
+            }
+            current_index++;
+        }
+    }
+    return false;
+}
+
 bool PageTree::HasTreeChilds(PageTreeNodePtr node) const {
     auto kids = node->Kids();
     auto count = kids->GetSize();

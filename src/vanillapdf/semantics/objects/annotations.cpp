@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "semantics/objects/annotations.h"
+#include "semantics/objects/actions.h"
 #include "semantics/objects/color.h"
 #include "semantics/objects/date.h"
 #include "semantics/objects/destinations.h"
@@ -862,6 +863,24 @@ void PageAnnotations::Append(AnnotationPtr annotation) {
 
 bool PageAnnotations::Remove(types::size_type index) {
     return _obj->Remove(index);
+}
+
+bool LinkAnnotation::Action(OutputActionPtr& result) const {
+    if (!_obj->Contains(constant::Name::A)) {
+        return false;
+    }
+
+    try {
+        auto action_dict = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::A);
+        auto action = ActionBase::Create(action_dict);
+        auto raw_ptr = action.release();
+        result = ActionPtr(raw_ptr);
+        return true;
+    }
+    catch (ExceptionBase& ex) {
+        spdlog::warn("Could not resolve link annotation action: {}", ex.what());
+        return false;
+    }
 }
 
 } // semantics

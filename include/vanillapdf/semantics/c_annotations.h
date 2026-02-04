@@ -955,6 +955,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkAnnotationHandle* handle, DestinationHandle** result);
 
     /**
+    * \brief An action to be performed when the link annotation is activated
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetAction(LinkAnnotationHandle* handle, ActionHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref IUnknownHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_ToBaseAnnotation(LinkAnnotationHandle* handle, AnnotationHandle** result);
