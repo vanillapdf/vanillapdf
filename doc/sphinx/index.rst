@@ -8,20 +8,27 @@ Cross-platform toolkit for creating and modifying PDF documents.
    :caption: Getting Started
 
    overview
-   install
+   quickstart
+   installation
    licensing
 
 .. toctree::
    :maxdepth: 2
    :caption: Developer Guide
 
-   interface_overview
+   building
+   c_api
    architecture
-   pdf_course
    signature_verification
-   examples
-   fetchcontent_integration
+   cli_tools
    packaging
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Learning
+
+   pdf_format
+   examples
 
 .. toctree::
    :maxdepth: 2

@@ -4,6 +4,8 @@ Packaging
 This page details how to generate installable packages for Vanilla.PDF on
 common platforms using automated packaging workflows.
 
+For general build instructions, see :doc:`building`.
+
 Automated Package Building
 --------------------------
 
@@ -79,17 +81,9 @@ Windows NuGet packages are built using the automated workflow with vcpkg depende
 Configuration Notes
 -------------------
 
-**Automatic Detection:**
-
 - ``VANILLAPDF_ENABLE_PACKAGING`` is auto-detected for main project builds
-
-**External Dependencies:**
-
 - Using system packages (``EXTERNAL_*=ON``) results in smaller packages and faster builds
 - vcpkg dependencies (``EXTERNAL_*=OFF``) create self-contained packages
-
-**Platform Considerations:**
-
 - **Linux**: System packages are preferred for distribution packages
 - **macOS**: Homebrew dependencies are standard for macOS packages
 - **Windows**: vcpkg dependencies provide consistent, self-contained packages

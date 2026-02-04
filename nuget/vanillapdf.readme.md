@@ -12,7 +12,7 @@
 
 ## Supported Platforms & Compilers
 
-- **Windows:** Visual Studio 2019 (MSVC 16.11) or 2022 (MSVC 17.x)
+- **Windows:** Visual Studio 2022 (MSVC 17.x) or 2026 (MSVC 18.x)
 - **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
 - **macOS:** AppleClang 15+ (Xcode 15)
 - **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
@@ -24,12 +24,12 @@
    dotnet add package vanillapdf.net
    ```
 2. The correct native runtime will be included automatically based on your target platform and RID.
-3. Refer to our [documentation](https://vanillapdf.github.io/vanillapdf) for usage examples and integration details.
+3. Refer to our [documentation](https://vanillapdf.readthedocs.io/) for usage examples and integration details.
 
 ## Resources
 
 - 🔧 [GitHub Repository](https://github.com/vanillapdf/vanillapdf)
-- 📘 [Documentation](https://vanillapdf.github.io/vanillapdf)
+- 📘 [Documentation](https://vanillapdf.readthedocs.io/)
 - 💬 [FAQ](https://vanillapdf.com/faq/)
 - 📨 [Contact](https://vanillapdf.com/contact/)
 
