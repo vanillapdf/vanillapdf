@@ -1,33 +1,37 @@
 Overview
 ========
 
-**Vanilla.PDF** is a cross-platform C library for creating, signing,
-encrypting, and parsing PDF documents. It compiles natively on Windows,
-Linux, macOS, and Android with no external runtime dependencies.
+**Vanilla.PDF** is a modern, high-performance, open-source C++17 SDK for
+creating, editing, signing, and analyzing PDF documents. With no external
+runtime dependencies and full cross-platform support, it's ideal for embedding
+into desktop, server, or automation workflows.
 
-Design philosophy
------------------
+- **Create & modify** PDF documents — pages, text, images, vector graphics
+- **Sign & verify** digital signatures (CMS/PKCS#7) with certificate chain validation
+- **Encrypt & decrypt** with AES or RC4 using passwords or certificates
+- **ABI-stable C API** — opaque handles callable from any language with a C FFI
+- **Thread-safe** — no global state, process documents in parallel without locking
 
-**Why a C API over C++?** The C++ ABI is not stable across compilers or even
-across major versions of the same compiler. A native C++ interface would force
-every consumer to use the exact same toolchain. By exposing only ANSI C
-functions with ``cdecl`` calling conventions, Vanilla.PDF can be linked by any
-C or C++ compiler and called from any language with a C FFI -- Python, C#,
-Rust, Go, Java (via JNI), and others.
+Where to go next
+----------------
 
-**Handle-based design.** All objects are represented as opaque pointers
-(``DocumentHandle*``, ``FileHandle*``, ``PageObjectHandle*``). The internal C++
-class layout is never visible to callers, which means the library can change its
-implementation without breaking binary compatibility.
+**Getting started** -- install the library and create your first PDF:
 
-**Reference-counted ownership.** Handles use intrusive reference counting.
-When you receive a handle through an output parameter, you own one reference and
-must release it when done. There are no hidden shared-ownership surprises:
-every ``_Release`` call is explicit.
+- :doc:`quickstart` -- Create a PDF document in a few lines of C code
+- :doc:`installation` -- All package manager options with copy-paste commands
 
-**No global state.** Error codes and messages are stored in thread-local
-buffers, one per thread. The library does not allocate process-wide singletons
-or require initialization/shutdown calls.
+**Developer guide** -- build from source and understand the internals:
+
+- :doc:`building` -- Clone, configure, build, and test
+- :doc:`c_api` -- Handle system, memory management, error handling, thread safety
+- :doc:`architecture` -- Three-layer design, object model, memory model
+- :doc:`signature_verification` -- Trust stores, chain validation, weak-algorithm detection
+- :doc:`cli_tools` -- sign, verify, merge, extract, encrypt, decrypt
+
+**Learning** -- understand the PDF format and see examples:
+
+- :doc:`pdf_format` -- PDF syntax, objects, and document structure
+- :doc:`examples` -- Code samples from the test suite and CLI tools
 
 Scope and non-goals
 --------------------
@@ -53,6 +57,65 @@ entries. It is not a rendering engine.
 - Validate PAdES compliance levels (BES, T, LTV)
 - Perform CRL or OCSP revocation checking (planned: `#157 <https://github.com/vanillapdf/vanillapdf/issues/157>`_)
 - Validate RFC 3161 timestamps
+
+Functionality
+-------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 18 54
+
+   * - Operation
+     - Interface
+     - Description
+   * - **Create documents**
+     - C API
+     - Generate PDFs with pages, text, images, and vector paths
+   * - **Digital signatures**
+     - C API, CLI
+     - Add CMS (PKCS#7) signatures using PKCS#12 keys or custom callbacks
+   * - **Signature verification**
+     - C API, CLI
+     - Validate signatures with chain validation, weak-algorithm detection, and signing-time checks
+   * - **Merge documents**
+     - CLI
+     - Combine multiple PDFs into a single file
+   * - **Encryption / decryption**
+     - CLI
+     - AES and RC4 with owner/user passwords; certificate-based decryption
+   * - **Image extraction**
+     - CLI
+     - Export embedded JPEG and JPEG2000 images from PDF streams
+   * - **Content stream processing**
+     - C API, CLI
+     - Parse and encode PostScript-style page content; apply compression filters
+   * - **Low-level parsing**
+     - C API
+     - Inspect XRef tables, indirect objects, cross-reference streams, and file trailers
+
+Design philosophy
+-----------------
+
+**Why a C API over C++?** The C++ ABI is not stable across compilers or even
+across major versions of the same compiler. A native C++ interface would force
+every consumer to use the exact same toolchain. By exposing only ANSI C
+functions with ``cdecl`` calling conventions, Vanilla.PDF can be linked by any
+C or C++ compiler and called from any language with a C FFI -- Python, C#,
+Rust, Go, Java (via JNI), and others.
+
+**Handle-based design.** All objects are represented as opaque pointers
+(``DocumentHandle*``, ``FileHandle*``, ``PageObjectHandle*``). The internal C++
+class layout is never visible to callers, which means the library can change its
+implementation without breaking binary compatibility.
+
+**Reference-counted ownership.** Handles use intrusive reference counting.
+When you receive a handle through an output parameter, you own one reference and
+must release it when done. There are no hidden shared-ownership surprises:
+every ``_Release`` call is explicit.
+
+**No global state.** Error codes and messages are stored in thread-local
+buffers, one per thread. The library does not allocate process-wide singletons
+or require initialization/shutdown calls.
 
 Architecture overview
 ---------------------
@@ -135,41 +198,6 @@ version at runtime:
 
 Nightly builds use a patch override (999) and a build suffix
 (e.g. ``-nightly.main``) to distinguish them from release builds.
-
-Functionality
--------------
-
-.. list-table::
-   :header-rows: 1
-   :widths: 28 18 54
-
-   * - Operation
-     - Interface
-     - Description
-   * - **Create documents**
-     - C API
-     - Generate PDFs with pages, text, images, and vector paths
-   * - **Digital signatures**
-     - C API, CLI
-     - Add CMS (PKCS#7) signatures using PKCS#12 keys or custom callbacks
-   * - **Signature verification**
-     - C API, CLI
-     - Validate signatures with chain validation, weak-algorithm detection, and signing-time checks
-   * - **Merge documents**
-     - CLI
-     - Combine multiple PDFs into a single file
-   * - **Encryption / decryption**
-     - CLI
-     - AES and RC4 with owner/user passwords; certificate-based decryption
-   * - **Image extraction**
-     - CLI
-     - Export embedded JPEG and JPEG2000 images from PDF streams
-   * - **Content stream processing**
-     - C API, CLI
-     - Parse and encode PostScript-style page content; apply compression filters
-   * - **Low-level parsing**
-     - C API
-     - Inspect XRef tables, indirect objects, cross-reference streams, and file trailers
 
 Optional dependencies
 ---------------------
@@ -257,27 +285,6 @@ Package availability
    * - Source
      - ``cmake --preset <platform>``
      - See :doc:`building`
-
-Where to go next
-----------------
-
-**Getting started** -- install the library and create your first PDF:
-
-- :doc:`quickstart` -- Create a PDF document in a few lines of C code
-- :doc:`installation` -- All package manager options with copy-paste commands
-
-**Developer guide** -- build from source and understand the internals:
-
-- :doc:`building` -- Clone, configure, build, and test
-- :doc:`c_api` -- Handle system, memory management, error handling, thread safety
-- :doc:`architecture` -- Three-layer design, object model, memory model
-- :doc:`signature_verification` -- Trust stores, chain validation, weak-algorithm detection
-- :doc:`cli_tools` -- sign, verify, merge, extract, encrypt, decrypt
-
-**Learning** -- understand the PDF format and see examples:
-
-- :doc:`pdf_format` -- PDF syntax, objects, and document structure
-- :doc:`examples` -- Code samples from the test suite and CLI tools
 
 External resources
 ------------------

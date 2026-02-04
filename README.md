@@ -1,4 +1,4 @@
-# Vanilla.PDF
+# Vanilla.PDF – The Ultimate C++ PDF Toolkit
 
 [![Build](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml)
 [![Coverage](https://codecov.io/gh/vanillapdf/vanillapdf/branch/main/graph/badge.svg?token=1UO4W5XGTL)](https://codecov.io/gh/vanillapdf/vanillapdf)
@@ -6,40 +6,28 @@
 [![NuGet](https://img.shields.io/nuget/v/vanillapdf?color=blue)](https://www.nuget.org/packages/vanillapdf)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE.txt)
 
-**Vanilla.PDF** is a cross-platform C library for creating, signing, encrypting, and parsing PDF documents. It compiles natively on Windows, Linux, macOS, and Android with no external runtime dependencies.
+**Vanilla.PDF** is a modern, high-performance, open-source C++17 SDK for creating, editing, signing, and analyzing PDF documents. With no external runtime dependencies and full cross-platform support, it's ideal for embedding into desktop, server, or automation workflows.
 
-## Quick Example
+- 📄 **Create & modify** PDF documents — pages, text, images, vector graphics
+- 🔏 **Sign & verify** digital signatures (CMS/PKCS#7) with certificate chain validation
+- 🔒 **Encrypt & decrypt** with AES or RC4 using passwords or certificates
+- ⚙️ **ABI-stable C API** — opaque handles callable from any language with a C FFI
+- 🧵 **Thread-safe** — no global state, process documents in parallel without locking
 
-Create a PDF with a blank page, then sign it:
+## Contents
 
-```c
-#include <vanillapdf/c_vanillapdf_api.h>
-
-int main(void) {
-    DocumentHandle* doc = NULL;
-    CatalogHandle* cat = NULL;
-    PageTreeHandle* pages = NULL;
-    PageObjectHandle* page = NULL;
-
-    Document_Create("hello.pdf", &doc);
-    Document_GetCatalog(doc, &cat);
-    Catalog_GetPages(cat, &pages);
-    PageObject_CreateFromDocument(doc, &page);
-    PageTree_AppendPage(pages, page);
-    Document_Save(doc, "hello.pdf");
-
-    PageObject_Release(page);
-    PageTree_Release(pages);
-    Catalog_Release(cat);
-    Document_Release(doc);
-    return 0;
-}
-```
-
-```bash
-vanillapdf-tools sign -s hello.pdf -d signed.pdf -k key.p12 -p password
-vanillapdf-tools verify -f signed.pdf
-```
+- [Install](#install)
+- [Quick Example](#quick-example)
+- [Features](#features)
+- [Platforms](#platforms)
+- [Thread Safety](#thread-safety)
+- [Architecture](#architecture)
+- [Non-Goals](#non-goals)
+- [Versioning](#versioning)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact & Support](#contact--support)
 
 ## Install
 
@@ -95,6 +83,39 @@ target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 ```
 
 [Full installation guide](https://vanillapdf.readthedocs.io/en/latest/installation.html) | [Building from source](https://vanillapdf.readthedocs.io/en/latest/building.html)
+
+## Quick Example
+
+Create a PDF with a blank page, then sign it:
+
+```c
+#include <vanillapdf/c_vanillapdf_api.h>
+
+int main(void) {
+    DocumentHandle* doc = NULL;
+    CatalogHandle* cat = NULL;
+    PageTreeHandle* pages = NULL;
+    PageObjectHandle* page = NULL;
+
+    Document_Create("hello.pdf", &doc);
+    Document_GetCatalog(doc, &cat);
+    Catalog_GetPages(cat, &pages);
+    PageObject_CreateFromDocument(doc, &page);
+    PageTree_AppendPage(pages, page);
+    Document_Save(doc, "hello.pdf");
+
+    PageObject_Release(page);
+    PageTree_Release(pages);
+    Catalog_Release(cat);
+    Document_Release(doc);
+    return 0;
+}
+```
+
+```bash
+vanillapdf-tools sign -s hello.pdf -d signed.pdf -k key.p12 -p password
+vanillapdf-tools verify -f signed.pdf
+```
 
 ## Features
 
