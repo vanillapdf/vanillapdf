@@ -1379,4 +1379,1426 @@ TEST(PageAnnotations, RemoveAnnotation) {
     ASSERT_EQ(InputOutputStream_Release(io_stream), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(HighlightAnnotation, GetAndSetAuthor) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    HighlightAnnotationHandle* annot = nullptr;
+    LiteralStringObjectHandle* author = nullptr;
+    LiteralStringObjectHandle* retrieved_author = nullptr;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create highlight annotation
+    ASSERT_EQ(HighlightAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set author
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Highlight Author", &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HighlightAnnotation_SetAuthor(annot, author), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get author
+    ASSERT_EQ(HighlightAnnotation_GetAuthor(annot, &retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_author, nullptr);
+
+    // Cleanup
+    ASSERT_EQ(LiteralStringObject_Release(retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HighlightAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(HighlightAnnotation, GetAndSetModificationDate) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    HighlightAnnotationHandle* annot = nullptr;
+    DateHandle* date = nullptr;
+    DateHandle* retrieved_date = nullptr;
+    integer_type year = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create highlight annotation
+    ASSERT_EQ(HighlightAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set modification date
+    ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_SetYear(date, 2025), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HighlightAnnotation_SetModificationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get modification date
+    ASSERT_EQ(HighlightAnnotation_GetModificationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_date, nullptr);
+
+    ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(year, 2025);
+
+    // Cleanup
+    ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HighlightAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(HighlightAnnotation, GetAndSetCreationDate) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    HighlightAnnotationHandle* annot = nullptr;
+    DateHandle* date = nullptr;
+    DateHandle* retrieved_date = nullptr;
+    integer_type year = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create highlight annotation
+    ASSERT_EQ(HighlightAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set creation date
+    ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_SetYear(date, 2024), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HighlightAnnotation_SetCreationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get creation date
+    ASSERT_EQ(HighlightAnnotation_GetCreationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_date, nullptr);
+
+    ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(year, 2024);
+
+    // Cleanup
+    ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HighlightAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(FreeTextAnnotation, GetAndSetAuthor) {
+    RectangleHandle* rect = nullptr;
+    LiteralStringObjectHandle* contents = nullptr;
+    LiteralStringObjectHandle* default_appearance = nullptr;
+    FreeTextAnnotationHandle* annot = nullptr;
+    LiteralStringObjectHandle* author = nullptr;
+    LiteralStringObjectHandle* retrieved_author = nullptr;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 300), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create strings
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Free text content", &contents), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("/Helv 12 Tf 0 g", &default_appearance), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create annotation
+    ASSERT_EQ(FreeTextAnnotation_Create(rect, contents, default_appearance, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set author
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("FreeText Author", &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FreeTextAnnotation_SetAuthor(annot, author), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get author
+    ASSERT_EQ(FreeTextAnnotation_GetAuthor(annot, &retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_author, nullptr);
+
+    // Cleanup
+    ASSERT_EQ(LiteralStringObject_Release(retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FreeTextAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(default_appearance), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(contents), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(FreeTextAnnotation, GetAndSetModificationDate) {
+    RectangleHandle* rect = nullptr;
+    LiteralStringObjectHandle* contents = nullptr;
+    LiteralStringObjectHandle* default_appearance = nullptr;
+    FreeTextAnnotationHandle* annot = nullptr;
+    DateHandle* date = nullptr;
+    DateHandle* retrieved_date = nullptr;
+    integer_type year = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 300), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create strings
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Free text content", &contents), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("/Helv 12 Tf 0 g", &default_appearance), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create annotation
+    ASSERT_EQ(FreeTextAnnotation_Create(rect, contents, default_appearance, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set modification date
+    ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_SetYear(date, 2025), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FreeTextAnnotation_SetModificationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get modification date
+    ASSERT_EQ(FreeTextAnnotation_GetModificationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_date, nullptr);
+
+    ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(year, 2025);
+
+    // Cleanup
+    ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FreeTextAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(default_appearance), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(contents), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(FreeTextAnnotation, GetAndSetCreationDate) {
+    RectangleHandle* rect = nullptr;
+    LiteralStringObjectHandle* contents = nullptr;
+    LiteralStringObjectHandle* default_appearance = nullptr;
+    FreeTextAnnotationHandle* annot = nullptr;
+    DateHandle* date = nullptr;
+    DateHandle* retrieved_date = nullptr;
+    integer_type year = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 300), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create strings
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Free text content", &contents), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("/Helv 12 Tf 0 g", &default_appearance), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create annotation
+    ASSERT_EQ(FreeTextAnnotation_Create(rect, contents, default_appearance, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set creation date
+    ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_SetYear(date, 2024), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FreeTextAnnotation_SetCreationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get creation date
+    ASSERT_EQ(FreeTextAnnotation_GetCreationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_date, nullptr);
+
+    ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(year, 2024);
+
+    // Cleanup
+    ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FreeTextAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(default_appearance), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(contents), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(UnderlineAnnotation, GetAndSetAuthor) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    UnderlineAnnotationHandle* annot = nullptr;
+    LiteralStringObjectHandle* author = nullptr;
+    LiteralStringObjectHandle* retrieved_author = nullptr;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create underline annotation
+    ASSERT_EQ(UnderlineAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set author
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Underline Author", &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_SetAuthor(annot, author), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get author
+    ASSERT_EQ(UnderlineAnnotation_GetAuthor(annot, &retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_author, nullptr);
+
+    // Cleanup
+    ASSERT_EQ(LiteralStringObject_Release(retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(UnderlineAnnotation, GetAndSetModificationDate) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    UnderlineAnnotationHandle* annot = nullptr;
+    DateHandle* date = nullptr;
+    DateHandle* retrieved_date = nullptr;
+    integer_type year = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create underline annotation
+    ASSERT_EQ(UnderlineAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set modification date
+    ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_SetYear(date, 2025), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_SetModificationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get modification date
+    ASSERT_EQ(UnderlineAnnotation_GetModificationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_date, nullptr);
+
+    ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(year, 2025);
+
+    // Cleanup
+    ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(UnderlineAnnotation, GetAndSetCreationDate) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    UnderlineAnnotationHandle* annot = nullptr;
+    DateHandle* date = nullptr;
+    DateHandle* retrieved_date = nullptr;
+    integer_type year = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create underline annotation
+    ASSERT_EQ(UnderlineAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set creation date
+    ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_SetYear(date, 2024), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_SetCreationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get creation date
+    ASSERT_EQ(UnderlineAnnotation_GetCreationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_date, nullptr);
+
+    ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(year, 2024);
+
+    // Cleanup
+    ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(UnderlineAnnotation, FromBaseAnnotation) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    UnderlineAnnotationHandle* annot = nullptr;
+    AnnotationHandle* base_annot = nullptr;
+    UnderlineAnnotationHandle* converted_annot = nullptr;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create underline annotation
+    ASSERT_EQ(UnderlineAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Convert from base
+    ASSERT_EQ(UnderlineAnnotation_FromBaseAnnotation(base_annot, &converted_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(converted_annot, nullptr);
+
+    // Cleanup
+    ASSERT_EQ(UnderlineAnnotation_Release(converted_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Annotation_Release(base_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(StrikeOutAnnotation, GetAndSetAuthor) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    StrikeOutAnnotationHandle* annot = nullptr;
+    LiteralStringObjectHandle* author = nullptr;
+    LiteralStringObjectHandle* retrieved_author = nullptr;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create strikeout annotation
+    ASSERT_EQ(StrikeOutAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set author
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("StrikeOut Author", &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_SetAuthor(annot, author), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get author
+    ASSERT_EQ(StrikeOutAnnotation_GetAuthor(annot, &retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_author, nullptr);
+
+    // Cleanup
+    ASSERT_EQ(LiteralStringObject_Release(retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(StrikeOutAnnotation, GetAndSetModificationDate) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    StrikeOutAnnotationHandle* annot = nullptr;
+    DateHandle* date = nullptr;
+    DateHandle* retrieved_date = nullptr;
+    integer_type year = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create strikeout annotation
+    ASSERT_EQ(StrikeOutAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set modification date
+    ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_SetYear(date, 2025), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_SetModificationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get modification date
+    ASSERT_EQ(StrikeOutAnnotation_GetModificationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_date, nullptr);
+
+    ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(year, 2025);
+
+    // Cleanup
+    ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(StrikeOutAnnotation, GetAndSetCreationDate) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    StrikeOutAnnotationHandle* annot = nullptr;
+    DateHandle* date = nullptr;
+    DateHandle* retrieved_date = nullptr;
+    integer_type year = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create strikeout annotation
+    ASSERT_EQ(StrikeOutAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set creation date
+    ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_SetYear(date, 2024), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_SetCreationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get creation date
+    ASSERT_EQ(StrikeOutAnnotation_GetCreationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_date, nullptr);
+
+    ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(year, 2024);
+
+    // Cleanup
+    ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(StrikeOutAnnotation, FromBaseAnnotation) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    StrikeOutAnnotationHandle* annot = nullptr;
+    AnnotationHandle* base_annot = nullptr;
+    StrikeOutAnnotationHandle* converted_annot = nullptr;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create strikeout annotation
+    ASSERT_EQ(StrikeOutAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Convert from base
+    ASSERT_EQ(StrikeOutAnnotation_FromBaseAnnotation(base_annot, &converted_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(converted_annot, nullptr);
+
+    // Cleanup
+    ASSERT_EQ(StrikeOutAnnotation_Release(converted_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Annotation_Release(base_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(StrikeOutAnnotation, GetAndSetQuadPoints) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    ArrayObjectHandle* new_quad_points = nullptr;
+    ArrayObjectHandle* retrieved_quad_points = nullptr;
+    StrikeOutAnnotationHandle* annot = nullptr;
+    size_type size = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create strikeout annotation
+    ASSERT_EQ(StrikeOutAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get quad points
+    ASSERT_EQ(StrikeOutAnnotation_GetQuadPoints(annot, &retrieved_quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_quad_points, nullptr);
+    ASSERT_EQ(ArrayObject_GetSize(retrieved_quad_points, &size), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(size, 8u);
+
+    // Create new quad points and set
+    ASSERT_EQ(ArrayObject_Create(&new_quad_points), VANILLAPDF_ERROR_SUCCESS);
+    double new_values[] = {50.0, 600.0, 150.0, 600.0, 150.0, 650.0, 50.0, 650.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, new_values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(new_quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    ASSERT_EQ(StrikeOutAnnotation_SetQuadPoints(annot, new_quad_points), VANILLAPDF_ERROR_SUCCESS);
+
+    // Cleanup
+    ASSERT_EQ(ArrayObject_Release(new_quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(retrieved_quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(SquigglyAnnotation, GetAndSetAuthor) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    SquigglyAnnotationHandle* annot = nullptr;
+    LiteralStringObjectHandle* author = nullptr;
+    LiteralStringObjectHandle* retrieved_author = nullptr;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create squiggly annotation
+    ASSERT_EQ(SquigglyAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set author
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Squiggly Author", &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_SetAuthor(annot, author), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get author
+    ASSERT_EQ(SquigglyAnnotation_GetAuthor(annot, &retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_author, nullptr);
+
+    // Cleanup
+    ASSERT_EQ(LiteralStringObject_Release(retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(SquigglyAnnotation, GetAndSetModificationDate) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    SquigglyAnnotationHandle* annot = nullptr;
+    DateHandle* date = nullptr;
+    DateHandle* retrieved_date = nullptr;
+    integer_type year = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create squiggly annotation
+    ASSERT_EQ(SquigglyAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set modification date
+    ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_SetYear(date, 2025), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_SetModificationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get modification date
+    ASSERT_EQ(SquigglyAnnotation_GetModificationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_date, nullptr);
+
+    ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(year, 2025);
+
+    // Cleanup
+    ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(SquigglyAnnotation, GetAndSetCreationDate) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    SquigglyAnnotationHandle* annot = nullptr;
+    DateHandle* date = nullptr;
+    DateHandle* retrieved_date = nullptr;
+    integer_type year = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create squiggly annotation
+    ASSERT_EQ(SquigglyAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set creation date
+    ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_SetYear(date, 2024), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_SetCreationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get creation date
+    ASSERT_EQ(SquigglyAnnotation_GetCreationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_date, nullptr);
+
+    ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(year, 2024);
+
+    // Cleanup
+    ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(SquigglyAnnotation, FromBaseAnnotation) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    SquigglyAnnotationHandle* annot = nullptr;
+    AnnotationHandle* base_annot = nullptr;
+    SquigglyAnnotationHandle* converted_annot = nullptr;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create squiggly annotation
+    ASSERT_EQ(SquigglyAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Convert from base
+    ASSERT_EQ(SquigglyAnnotation_FromBaseAnnotation(base_annot, &converted_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(converted_annot, nullptr);
+
+    // Cleanup
+    ASSERT_EQ(SquigglyAnnotation_Release(converted_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Annotation_Release(base_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(SquigglyAnnotation, GetAndSetQuadPoints) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    ArrayObjectHandle* new_quad_points = nullptr;
+    ArrayObjectHandle* retrieved_quad_points = nullptr;
+    SquigglyAnnotationHandle* annot = nullptr;
+    size_type size = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create squiggly annotation
+    ASSERT_EQ(SquigglyAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get quad points
+    ASSERT_EQ(SquigglyAnnotation_GetQuadPoints(annot, &retrieved_quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_quad_points, nullptr);
+    ASSERT_EQ(ArrayObject_GetSize(retrieved_quad_points, &size), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(size, 8u);
+
+    // Create new quad points and set
+    ASSERT_EQ(ArrayObject_Create(&new_quad_points), VANILLAPDF_ERROR_SUCCESS);
+    double new_values[] = {50.0, 600.0, 150.0, 600.0, 150.0, 650.0, 50.0, 650.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, new_values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(new_quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    ASSERT_EQ(SquigglyAnnotation_SetQuadPoints(annot, new_quad_points), VANILLAPDF_ERROR_SUCCESS);
+
+    // Cleanup
+    ASSERT_EQ(ArrayObject_Release(new_quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(retrieved_quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(InkAnnotation, GetAndSetAuthor) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* ink_list = nullptr;
+    ArrayObjectHandle* stroke = nullptr;
+    InkAnnotationHandle* annot = nullptr;
+    LiteralStringObjectHandle* author = nullptr;
+    LiteralStringObjectHandle* retrieved_author = nullptr;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create ink list
+    ASSERT_EQ(ArrayObject_Create(&ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Create(&stroke), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double coords[] = {100.0, 700.0, 150.0, 730.0, 200.0, 750.0};
+    for (int i = 0; i < 6; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, coords[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(stroke, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+    ObjectHandle* stroke_obj = nullptr;
+    ASSERT_EQ(ArrayObject_ToObject(stroke, &stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Append(ink_list, stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create ink annotation
+    ASSERT_EQ(InkAnnotation_Create(rect, ink_list, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set author
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Ink Author", &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_SetAuthor(annot, author), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get author
+    ASSERT_EQ(InkAnnotation_GetAuthor(annot, &retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_author, nullptr);
+
+    // Cleanup
+    ASSERT_EQ(LiteralStringObject_Release(retrieved_author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(stroke), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(InkAnnotation, GetAndSetModificationDate) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* ink_list = nullptr;
+    ArrayObjectHandle* stroke = nullptr;
+    InkAnnotationHandle* annot = nullptr;
+    DateHandle* date = nullptr;
+    DateHandle* retrieved_date = nullptr;
+    integer_type year = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create ink list
+    ASSERT_EQ(ArrayObject_Create(&ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Create(&stroke), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double coords[] = {100.0, 700.0, 150.0, 730.0, 200.0, 750.0};
+    for (int i = 0; i < 6; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, coords[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(stroke, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+    ObjectHandle* stroke_obj = nullptr;
+    ASSERT_EQ(ArrayObject_ToObject(stroke, &stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Append(ink_list, stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create ink annotation
+    ASSERT_EQ(InkAnnotation_Create(rect, ink_list, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set modification date
+    ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_SetYear(date, 2025), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_SetModificationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get modification date
+    ASSERT_EQ(InkAnnotation_GetModificationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_date, nullptr);
+
+    ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(year, 2025);
+
+    // Cleanup
+    ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(stroke), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(InkAnnotation, GetAndSetCreationDate) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* ink_list = nullptr;
+    ArrayObjectHandle* stroke = nullptr;
+    InkAnnotationHandle* annot = nullptr;
+    DateHandle* date = nullptr;
+    DateHandle* retrieved_date = nullptr;
+    integer_type year = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create ink list
+    ASSERT_EQ(ArrayObject_Create(&ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Create(&stroke), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double coords[] = {100.0, 700.0, 150.0, 730.0, 200.0, 750.0};
+    for (int i = 0; i < 6; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, coords[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(stroke, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+    ObjectHandle* stroke_obj = nullptr;
+    ASSERT_EQ(ArrayObject_ToObject(stroke, &stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Append(ink_list, stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create ink annotation
+    ASSERT_EQ(InkAnnotation_Create(rect, ink_list, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set creation date
+    ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_SetYear(date, 2024), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_SetCreationDate(annot, date), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get creation date
+    ASSERT_EQ(InkAnnotation_GetCreationDate(annot, &retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_date, nullptr);
+
+    ASSERT_EQ(Date_GetYear(retrieved_date, &year), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(year, 2024);
+
+    // Cleanup
+    ASSERT_EQ(Date_Release(retrieved_date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_Release(date), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(stroke), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(InkAnnotation, SetInkList) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* ink_list = nullptr;
+    ArrayObjectHandle* stroke = nullptr;
+    ArrayObjectHandle* new_ink_list = nullptr;
+    ArrayObjectHandle* new_stroke = nullptr;
+    ArrayObjectHandle* retrieved_ink_list = nullptr;
+    InkAnnotationHandle* annot = nullptr;
+    size_type size = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create initial ink list with one stroke
+    ASSERT_EQ(ArrayObject_Create(&ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Create(&stroke), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double coords[] = {100.0, 700.0, 150.0, 730.0};
+    for (int i = 0; i < 4; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, coords[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(stroke, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+    ObjectHandle* stroke_obj = nullptr;
+    ASSERT_EQ(ArrayObject_ToObject(stroke, &stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Append(ink_list, stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create ink annotation
+    ASSERT_EQ(InkAnnotation_Create(rect, ink_list, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create new ink list with two strokes
+    ASSERT_EQ(ArrayObject_Create(&new_ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Create(&new_stroke), VANILLAPDF_ERROR_SUCCESS);
+    double new_coords[] = {50.0, 600.0, 100.0, 650.0};
+    for (int i = 0; i < 4; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, new_coords[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(new_stroke, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+    ObjectHandle* new_stroke_obj = nullptr;
+    ASSERT_EQ(ArrayObject_ToObject(new_stroke, &new_stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Append(new_ink_list, new_stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    // Add stroke again for second entry
+    ASSERT_EQ(ArrayObject_Append(new_ink_list, new_stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(new_stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set new ink list
+    ASSERT_EQ(InkAnnotation_SetInkList(annot, new_ink_list), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get and verify new ink list has 2 strokes
+    ASSERT_EQ(InkAnnotation_GetInkList(annot, &retrieved_ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_ink_list, nullptr);
+    ASSERT_EQ(ArrayObject_GetSize(retrieved_ink_list, &size), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(size, 2u);
+
+    // Cleanup
+    ASSERT_EQ(ArrayObject_Release(retrieved_ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(new_stroke), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(new_ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(stroke), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(InkAnnotation, FromBaseAnnotation) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* ink_list = nullptr;
+    ArrayObjectHandle* stroke = nullptr;
+    InkAnnotationHandle* annot = nullptr;
+    AnnotationHandle* base_annot = nullptr;
+    InkAnnotationHandle* converted_annot = nullptr;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create ink list
+    ASSERT_EQ(ArrayObject_Create(&ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Create(&stroke), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double coords[] = {100.0, 700.0, 150.0, 730.0, 200.0, 750.0};
+    for (int i = 0; i < 6; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, coords[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(stroke, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+    ObjectHandle* stroke_obj = nullptr;
+    ASSERT_EQ(ArrayObject_ToObject(stroke, &stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Append(ink_list, stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(stroke_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create ink annotation
+    ASSERT_EQ(InkAnnotation_Create(rect, ink_list, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Convert from base
+    ASSERT_EQ(InkAnnotation_FromBaseAnnotation(base_annot, &converted_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(converted_annot, nullptr);
+
+    // Cleanup
+    ASSERT_EQ(InkAnnotation_Release(converted_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Annotation_Release(base_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(stroke), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(ink_list), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(PageAnnotations, AtAnnotation) {
+    FileHandle* file = nullptr;
+    DocumentHandle* doc = nullptr;
+    InputOutputStreamHandle* io_stream = nullptr;
+    CatalogHandle* catalog = nullptr;
+    PageTreeHandle* page_tree = nullptr;
+    PageObjectHandle* page = nullptr;
+    PageAnnotationsHandle* annots = nullptr;
+    RectangleHandle* rect = nullptr;
+    TextAnnotationHandle* text_annot = nullptr;
+    AnnotationHandle* base_annot = nullptr;
+    AnnotationHandle* retrieved_annot = nullptr;
+    AnnotationType annot_type = AnnotationType_Undefined;
+    size_type annots_size = 0;
+
+    // Create in-memory document
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(&io_stream), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(io_stream, "temp", &file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_CreateFile(file, &doc), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_GetCatalog(doc, &catalog), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_GetPages(catalog, &page_tree), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create a new page with media box
+    ASSERT_EQ(PageObject_CreateFromDocument(doc, &page), VANILLAPDF_ERROR_SUCCESS);
+    RectangleHandle* media_box = nullptr;
+    ASSERT_EQ(Rectangle_Create(&media_box), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_SetMediaBox(page, media_box), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create annotations array
+    ASSERT_EQ(PageObject_CreateAnnotations(page, &annots), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create rectangle for annotation
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Add annotation
+    ASSERT_EQ(TextAnnotation_Create(rect, &text_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextAnnotation_ToBaseAnnotation(text_annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageAnnotations_Append(annots, base_annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Verify size
+    ASSERT_EQ(PageAnnotations_GetSize(annots, &annots_size), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(annots_size, 1u);
+
+    // Access annotation at index 0
+    ASSERT_EQ(PageAnnotations_At(annots, 0, &retrieved_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_annot, nullptr);
+
+    // Verify retrieved annotation type
+    ASSERT_EQ(Annotation_GetAnnotationType(retrieved_annot, &annot_type), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(annot_type, AnnotationType_Text);
+
+    // Cleanup
+    ASSERT_EQ(Annotation_Release(retrieved_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Annotation_Release(base_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextAnnotation_Release(text_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageAnnotations_Release(annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(media_box), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_Release(page), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageTree_Release(page_tree), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_Release(catalog), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_Release(doc), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_Release(file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InputOutputStream_Release(io_stream), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(UnderlineAnnotation, SetQuadPoints) {
+    RectangleHandle* rect = nullptr;
+    ArrayObjectHandle* quad_points = nullptr;
+    ArrayObjectHandle* new_quad_points = nullptr;
+    ArrayObjectHandle* retrieved_quad_points = nullptr;
+    UnderlineAnnotationHandle* annot = nullptr;
+    size_type size = 0;
+
+    // Create rectangle
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create quad points array
+    ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
+    RealObjectHandle* real_val = nullptr;
+    double values[] = {100.0, 700.0, 200.0, 700.0, 200.0, 750.0, 100.0, 750.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Create underline annotation
+    ASSERT_EQ(UnderlineAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create new quad points and set
+    ASSERT_EQ(ArrayObject_Create(&new_quad_points), VANILLAPDF_ERROR_SUCCESS);
+    double new_values[] = {50.0, 600.0, 150.0, 600.0, 150.0, 650.0, 50.0, 650.0};
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(RealObject_Create(&real_val), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_val, new_values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_ToObject(real_val, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(new_quad_points, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_val), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    ASSERT_EQ(UnderlineAnnotation_SetQuadPoints(annot, new_quad_points), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get and verify
+    ASSERT_EQ(UnderlineAnnotation_GetQuadPoints(annot, &retrieved_quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_quad_points, nullptr);
+    ASSERT_EQ(ArrayObject_GetSize(retrieved_quad_points, &size), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(size, 8u);
+
+    // Cleanup
+    ASSERT_EQ(ArrayObject_Release(retrieved_quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(new_quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
 } // namespace annotations
