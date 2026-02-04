@@ -6,9 +6,7 @@
 [![NuGet](https://img.shields.io/nuget/v/vanillapdf?color=blue)](https://www.nuget.org/packages/vanillapdf)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE.txt)
 
-**Vanilla.PDF** is a C++17 library for creating, signing, encrypting, and parsing PDF documents. It exposes an ABI-stable ANSI C interface, compiles natively on Windows, Linux, macOS, and Android, and carries no external runtime dependencies.
-
-The C API uses opaque handles and `cdecl` calling conventions, so any language that can call C functions can use this library. Error state is stored in thread-local buffers; objects are managed through intrusive reference counting. The public interface is designed to remain binary-compatible across minor and patch releases.
+**Vanilla.PDF** is a cross-platform C library for creating, signing, encrypting, and parsing PDF documents. It compiles natively on Windows, Linux, macOS, and Android with no external runtime dependencies.
 
 ## Quick Example
 
@@ -42,18 +40,6 @@ int main(void) {
 vanillapdf-tools sign -s hello.pdf -d signed.pdf -k key.p12 -p password
 vanillapdf-tools verify -f signed.pdf
 ```
-
-## Non-Goals
-
-Vanilla.PDF is a **document structure library**, not a rendering engine. It does not rasterize pages, lay out text with font shaping, or display PDFs on screen. If you need to view a PDF, use a dedicated renderer and this library for the structural operations around it.
-
-Current known limitations:
-
-- No PDF rendering or rasterization
-- No CRL/OCSP revocation checking ([#157](https://github.com/vanillapdf/vanillapdf/issues/157))
-- No PAdES compliance levels (BES, T, LTV)
-- No RFC 3161 timestamp validation
-- No ED25519 signature support ([#158](https://github.com/vanillapdf/vanillapdf/issues/158))
 
 ## Install
 
@@ -131,7 +117,7 @@ The library is organized into three layers:
 - **Semantics** -- Documents, pages, catalogs, annotations, digital signatures, forms
 - **Contents** -- Content stream parsing, PostScript instruction processing
 
-All internal C++ is hidden behind opaque C handles (`DocumentHandle*`, `FileHandle*`, `PageObjectHandle*`, etc.). Each handle is reference-counted; callers acquire and release references explicitly. This design guarantees ABI stability across compiler versions and enables bindings in any FFI-capable language.
+The C++ core is hidden behind an ABI-stable ANSI C interface using opaque handles (`DocumentHandle*`, `FileHandle*`, `PageObjectHandle*`, etc.) and `cdecl` calling conventions, so any language with a C FFI can use this library. Handles are reference-counted; callers acquire and release references explicitly. This design guarantees binary compatibility across compiler versions and minor/patch releases.
 
 ## Platforms
 
@@ -141,6 +127,24 @@ All internal C++ is hidden behind opaque C handles (`DocumentHandle*`, `FileHand
 | Linux | GCC 8.1+, Clang 10+ | x64, ARM64, ARM |
 | macOS | AppleClang 15+ (Xcode 15) | x64, ARM64 |
 | Android | NDK toolchain | arm64, armv7, x86, x86_64 |
+
+## Thread Safety
+
+Vanilla.PDF does not use global mutable state. Error context is stored in thread-local buffers, so concurrent threads never interfere with each other's error state. You can process different PDF documents on different threads without locking, but a single handle must not be shared across threads without external synchronization.
+
+See the [C API Guide](https://vanillapdf.readthedocs.io/en/latest/c_api.html) for the full thread safety model.
+
+## Non-Goals
+
+Vanilla.PDF is a **document structure library**, not a rendering engine. It does not rasterize pages, lay out text with font shaping, or display PDFs on screen. If you need to view a PDF, use a dedicated renderer and this library for the structural operations around it.
+
+Current known limitations:
+
+- No PDF rendering or rasterization
+- No CRL/OCSP revocation checking ([#157](https://github.com/vanillapdf/vanillapdf/issues/157))
+- No PAdES compliance levels (BES, T, LTV)
+- No RFC 3161 timestamp validation
+- No ED25519 signature support ([#158](https://github.com/vanillapdf/vanillapdf/issues/158))
 
 ## Versioning
 

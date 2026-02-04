@@ -1,10 +1,9 @@
 Overview
 ========
 
-**Vanilla.PDF** is a C++17 library for creating, signing, encrypting, and
-parsing PDF documents. It exposes an ABI-stable ANSI C interface, compiles
-natively on Windows, Linux, macOS, and Android, and carries no external
-runtime dependencies.
+**Vanilla.PDF** is a cross-platform C library for creating, signing,
+encrypting, and parsing PDF documents. It compiles natively on Windows,
+Linux, macOS, and Android with no external runtime dependencies.
 
 Design philosophy
 -----------------
