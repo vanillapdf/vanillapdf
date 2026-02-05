@@ -33,6 +33,12 @@
         "spdlog"
       ]
     },
+    "fmt": {
+      "description": "High-performance string formatting library",
+      "dependencies": [
+        "fmt"
+      ]
+    },
     "nlohmann-json": {
       "description": "Parse application configuration from JSON files",
       "dependencies": [

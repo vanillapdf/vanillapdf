@@ -1,10 +1,13 @@
 #include "precompiled.h"
 
+#include "utils/license_info.h"
+
+#ifdef VANILLAPDF_HAVE_NLOHMANN_JSON
+
 #include "utils/resource.h"
 #include "utils/crypto_utils.h"
 #include "utils/misc_utils.h"
 #include "utils/library_info.h"
-#include "utils/license_info.h"
 #include "utils/streams/input_stream.h"
 
 #include <nlohmann/json.hpp>
@@ -435,3 +438,37 @@ bool LicenseInfo::CheckCertificateChain(const std::vector<std::string>& certific
 }
 
 } // vanillapdf
+
+#else /* !VANILLAPDF_HAVE_NLOHMANN_JSON */
+
+#include <spdlog/spdlog.h>
+
+namespace vanillapdf {
+
+// Initialize static members
+bool LicenseInfo::m_update_valid = false;
+std::string LicenseInfo::m_temporary_expiration;
+
+void LicenseInfo::SetLicense(IInputStreamPtr, types::stream_size) {
+    spdlog::debug("SetLicense called but licensing support is not compiled in");
+}
+
+void LicenseInfo::SetLicense(const Buffer&) {
+    spdlog::debug("SetLicense called but licensing support is not compiled in");
+}
+
+void LicenseInfo::SetLicense(const char *) {
+    spdlog::debug("SetLicense called but licensing support is not compiled in");
+}
+
+bool LicenseInfo::IsValid() {
+    return true;
+}
+
+bool LicenseInfo::IsTemporary() {
+    return false;
+}
+
+} // vanillapdf
+
+#endif /* VANILLAPDF_HAVE_NLOHMANN_JSON */

@@ -16,7 +16,7 @@
         },
         "zlib",
         "spdlog",
-        "nlohmann-json",
+        "fmt",
         "openssl",
         "libjpeg-turbo",
         "openjpeg"

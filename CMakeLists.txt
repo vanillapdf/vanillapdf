@@ -25,6 +25,7 @@ option(VANILLAPDF_ENABLE_ENCRYPTION "Enable PDF encryption/decryption support" O
 option(VANILLAPDF_ENABLE_JPEG "Enable JPEG image support" ON)
 option(VANILLAPDF_ENABLE_JPEG2000 "Enable JPEG2000 image support" ON)
 option(VANILLAPDF_ENABLE_ZLIB "Enable zlib compression support" ON)
+option(VANILLAPDF_ENABLE_LICENSING "Enable licensing and JSON metadata support" OFF)
 
 # Option to control internal vcpkg dependency management
 # Disable when dependencies are managed by parent project (e.g., vcpkg ports, system packages)
@@ -38,6 +39,7 @@ option(VANILLAPDF_EXTERNAL_JPEG "Use libjpeg from the system or a package manage
 option(VANILLAPDF_EXTERNAL_OPENJPEG "Use openjpeg from the system or a package manager" OFF)
 option(VANILLAPDF_EXTERNAL_ZLIB "Use zlib from the system or a package manager" OFF)
 option(VANILLAPDF_EXTERNAL_SPDLOG "Use spdlog from the system or a package manager" OFF)
+option(VANILLAPDF_EXTERNAL_FMT "Use fmt from the system or a package manager" OFF)
 option(VANILLAPDF_EXTERNAL_NLOHMANN_JSON "Use nlohmann-json from the system or a package manager" OFF)
 
 if(VANILLAPDF_ENABLE_TESTS)
