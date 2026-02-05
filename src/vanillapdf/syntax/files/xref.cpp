@@ -12,28 +12,6 @@
 namespace vanillapdf {
 namespace syntax {
 
-XrefStream::~XrefStream() {
-    _stream->Unsubscribe(this);
-}
-
-XrefBase::~XrefBase() {
-    for (auto item : _entries) {
-        item->Unsubscribe(this);
-    }
-}
-
-void XrefBase::OnChanged() {
-    if (m_initialized) {
-        SetDirty();
-    }
-
-    IModifyObservable::OnChanged();
-}
-
-void XrefBase::ObserveeChanged(const IModifyObservable*) {
-    OnChanged();
-}
-
 void XrefStream::RecalculateContent() {
 
     // Recalculate only for changed streams
@@ -268,8 +246,7 @@ void XrefBase::Add(XrefEntryBasePtr entry) {
         }
     }
 
-    entry->Subscribe(this);
-    OnChanged();
+    IncrementVersion();
 }
 
 bool XrefBase::Remove(XrefEntryBasePtr entry) {
@@ -278,17 +255,9 @@ bool XrefBase::Remove(XrefEntryBasePtr entry) {
         return false;
     }
 
-    // Store the item reference
-    auto backup_item = *found;
-
-    // Erase the entry
     _entries.erase(found);
 
-    // Access the backed up item
-    // After erase the "found" is no longer available
-    backup_item->Unsubscribe(this);
-
-    OnChanged();
+    IncrementVersion();
     return true;
 }
 
@@ -454,9 +423,7 @@ StreamObjectPtr XrefStream::GetStreamObject(void) const {
 }
 
 void XrefStream::SetStreamObject(StreamObjectPtr stream) {
-    _stream->Unsubscribe(this);
     _stream = stream;
-    _stream->Subscribe(this);
 }
 
 } // syntax

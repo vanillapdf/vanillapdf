@@ -2,13 +2,13 @@
 #define _XREF_ENTRY_H
 
 #include "syntax/utils/syntax_fwd.h"
-#include "utils/modify_observer_interface.h"
+#include "utils/versionable.h"
 #include "utils/constants.h"
 
 namespace vanillapdf {
 namespace syntax {
 
-class XrefEntryBase : public virtual IUnknown, public IModifyObservable {
+class XrefEntryBase : public Versionable {
 public:
     enum class Usage {
         Undefined = 0,
@@ -32,7 +32,7 @@ public:
 
     void SetGenerationNumber(types::ushort value) {
         _gen_number = value;
-        OnChanged();
+        IncrementVersion();
     }
 
     virtual Usage GetUsage(void) const noexcept = 0;
@@ -42,8 +42,11 @@ public:
     void SetFile(WeakReference<File> file) noexcept { _file = file; }
     WeakReference<File> GetFile() const noexcept { return _file; }
 
-    bool IsDirty(void) const noexcept { return _dirty; }
-    void SetDirty(bool dirty = true) noexcept { _dirty = dirty; }
+    virtual bool IsDirty(void) const noexcept { return m_version > 0; }
+    void SetDirty(bool dirty = true) noexcept {
+        if (dirty) { if (m_version == 0) m_version.store(1, std::memory_order_relaxed); }
+        else { m_version.store(0, std::memory_order_relaxed); }
+    }
 
     bool operator==(const XrefEntryBase& other) const;
     bool operator!=(const XrefEntryBase& other) const;
@@ -53,9 +56,6 @@ protected:
     WeakReference<File> _file;
     types::big_uint _obj_number = 0;
     types::ushort _gen_number = 0;
-
-    // Same as Object::m_dirty
-    bool _dirty = false;
 
 private:
     // Private only for NullEntry
@@ -98,7 +98,7 @@ public:
 
     void SetNextFreeObjectNumber(types::big_uint value) {
         m_next_free_object = value;
-        OnChanged();
+        IncrementVersion();
     }
 
     virtual bool InUse(void) const noexcept override {
@@ -109,7 +109,7 @@ private:
     types::big_uint m_next_free_object = 0;
 };
 
-class XrefUsedEntryBase : public XrefEntryBase, public IWeakReferenceable<XrefUsedEntryBase>, public IModifyObserver {
+class XrefUsedEntryBase : public XrefEntryBase, public IWeakReferenceable<XrefUsedEntryBase> {
 public:
     XrefUsedEntryBase(types::big_uint obj_number, types::ushort gen_number);
 
@@ -118,8 +118,11 @@ public:
     void SetReference(ObjectPtr ref);
     void ReleaseReference(bool check_object_xref = true);
 
-    virtual void ObserveeChanged(const IModifyObservable*) override;
-    virtual void OnChanged() override;
+    virtual bool IsDirty(void) const noexcept override {
+        if (m_version > 0) return true;
+        if (m_used && !_reference.empty() && _reference->IsDirty()) return true;
+        return false;
+    }
 
     virtual bool InUse(void) const noexcept override;
 
@@ -154,7 +157,7 @@ public:
 
     void SetOffset(types::stream_offset value) {
         _offset = value;
-        OnChanged();
+        IncrementVersion();
     }
 
 private:
@@ -178,7 +181,7 @@ public:
 
     void SetObjectStreamNumber(types::big_uint value) {
         _object_stream_number = value;
-        OnChanged();
+        IncrementVersion();
     }
 
     types::size_type GetIndex(void) const noexcept {
@@ -187,7 +190,7 @@ public:
 
     void SetIndex(types::size_type value) {
         _index = value;
-        OnChanged();
+        IncrementVersion();
     }
 
 private:

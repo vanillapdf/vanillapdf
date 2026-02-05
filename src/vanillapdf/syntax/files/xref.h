@@ -10,7 +10,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class XrefBase : public IModifyObserver, public IModifyObservable {
+class XrefBase : public Versionable {
 public:
 
     // Changing to set from unordered_set is failing on linux GCC images.
@@ -54,9 +54,6 @@ public:
         Virtual
     };
 
-    virtual void ObserveeChanged(const IModifyObservable*) override;
-    virtual void OnChanged() override;
-
     virtual void SetFile(WeakReference<File>file) noexcept = 0;
     virtual WeakReference<File> GetFile() const noexcept = 0;
 
@@ -90,7 +87,7 @@ public:
     }
 
     virtual Type GetType(void) const noexcept = 0;
-    virtual ~XrefBase();
+    virtual ~XrefBase() = default;
 
     // stl compatibility
     iterator begin();
@@ -129,7 +126,7 @@ public:
 
     void RecalculateContent();
 
-    ~XrefStream();
+    ~XrefStream() = default;
 
 private:
     StreamObjectPtr _stream;
@@ -149,8 +146,11 @@ public:
     virtual types::stream_offset GetOffset() const override { return _offset; }
     virtual void SetOffset(types::stream_offset offset) override { _offset = offset; }
 
-    virtual bool IsDirty(void) const noexcept override { return m_dirty; }
-    virtual void SetDirty(bool dirty = true) noexcept override { m_dirty = dirty; }
+    virtual bool IsDirty(void) const noexcept override { return m_version > 0; }
+    virtual void SetDirty(bool dirty = true) noexcept override {
+        if (dirty) { if (m_version == 0) m_version.store(1, std::memory_order_relaxed); }
+        else { m_version.store(0, std::memory_order_relaxed); }
+    }
 
     virtual void Add(XrefEntryBasePtr entry) override;
     virtual XrefEntryBasePtr Find(types::big_uint obj_number) const override;
@@ -169,9 +169,6 @@ private:
     DictionaryObjectPtr m_trailer_dictionary;
 
     types::stream_offset _offset = constant::BAD_OFFSET;
-
-    // Same as Object::m_dirty
-    bool m_dirty = false;
 };
 
 class XrefVirtualTable : public XrefBase {
@@ -186,8 +183,11 @@ public:
     virtual types::stream_offset GetOffset() const override { return _offset; }
     virtual void SetOffset(types::stream_offset offset) override { _offset = offset; }
 
-    virtual bool IsDirty(void) const noexcept override { return m_dirty; }
-    virtual void SetDirty(bool dirty = true) noexcept override { m_dirty = dirty; }
+    virtual bool IsDirty(void) const noexcept override { return m_version > 0; }
+    virtual void SetDirty(bool dirty = true) noexcept override {
+        if (dirty) { if (m_version == 0) m_version.store(1, std::memory_order_relaxed); }
+        else { m_version.store(0, std::memory_order_relaxed); }
+    }
 
     virtual DictionaryObjectPtr GetTrailerDictionary(void) const override { return m_trailer_dictionary; }
     virtual void SetTrailerDictionary(DictionaryObjectPtr dictionary) override { m_trailer_dictionary = dictionary; }
@@ -197,9 +197,6 @@ private:
     DictionaryObjectPtr m_trailer_dictionary;
 
     types::stream_offset _offset = constant::BAD_OFFSET;
-
-    // Same as Object::m_dirty
-    bool m_dirty = false;
 };
 
 } // syntax

@@ -6,7 +6,7 @@
 
 #include "utils/constants.h"
 #include "utils/unknown_interface.h"
-#include "utils/modify_observer_interface.h"
+#include "utils/versionable.h"
 
 #include <memory>
 #include <string>
@@ -14,7 +14,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class Object : public virtual IUnknown, public IWeakReferenceable<Object>, public IModifyObservable {
+class Object : public Versionable, public IWeakReferenceable<Object> {
 public:
     enum class Type {
         Undefined = 0,
@@ -51,8 +51,11 @@ public:
     WeakReference<XrefUsedEntryBase> GetXrefEntry() const;
     void ClearXrefEntry(bool check_xref_reference);
 
-    bool IsDirty(void) const noexcept { return m_dirty; }
-    void SetDirty(bool dirty = true) noexcept { m_dirty = dirty; }
+    virtual bool IsDirty(void) const noexcept { return m_version > 0; }
+    void SetDirty(bool dirty = true) noexcept {
+        if (dirty) { if (m_version == 0) m_version.store(1, std::memory_order_relaxed); }
+        else { m_version.store(0, std::memory_order_relaxed); }
+    }
 
     bool IsEncryptionExempted() const;
     void SetEncryptionExempted(bool exempted = true) noexcept { m_encryption_exempted = exempted; }
@@ -95,8 +98,6 @@ public:
     // When cloning an object, it's reference counter must be zero
     void CloneBaseProperties(Object* other) const;
 
-    virtual void OnChanged() override;
-
 protected:
     WeakReference<File> m_file;
     types::stream_offset m_offset = constant::BAD_OFFSET;
@@ -104,7 +105,6 @@ protected:
     WeakReference<Object> m_owner;
 
     bool m_encryption_exempted = false;
-    bool m_dirty = false;
 
     AttributeListPtr m_attributes;
 };

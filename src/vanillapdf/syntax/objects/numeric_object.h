@@ -9,7 +9,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class NumericObjectBackend : public IUnknown, public IModifyObservable {
+class NumericObjectBackend : public Versionable {
 public:
     NumericObjectBackend();
     explicit NumericObjectBackend(int32_t value);
@@ -63,17 +63,16 @@ private:
     };
 };
 
-class NumericObject : public ContainableObject, public IModifyObserver {
+class NumericObject : public ContainableObject {
 public:
-    virtual ~NumericObject() override;
+    virtual ~NumericObject() override = default;
     virtual size_t Hash() const override;
 
-    virtual void ObserveeChanged(const IModifyObservable*) override {
-        OnChanged();
+    virtual bool IsDirty() const noexcept override {
+        return (m_version > 0) || (m_value->GetVersion() > 0);
     }
 
     NumericObjectBackendPtr GetNumericBackend(void) {
-        m_value->Subscribe(this);
         return m_value;
     }
 

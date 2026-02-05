@@ -71,7 +71,7 @@ protected:
     list_type _list;
 };
 
-class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr>, public IModifyObserver {
+class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr> {
 public:
     DictionaryObject();
     DictionaryObject(const DictionaryObject&) = delete;
@@ -84,8 +84,14 @@ public:
     virtual void SetFile(WeakReference<File> file) override;
     virtual void SetInitialized(bool initialized = true) override;
 
-    virtual void ObserveeChanged(const IModifyObservable*) override;
-    virtual void OnChanged() override;
+    virtual bool IsDirty() const noexcept override {
+        if (m_version > 0) return true;
+        for (const auto& item : _list) {
+            if (item.first->IsDirty()) return true;
+            if (item.second->IsDirty()) return true;
+        }
+        return false;
+    }
 
     virtual size_t Hash() const override;
     virtual DictionaryObject* Clone(void) const override;

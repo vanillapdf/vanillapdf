@@ -45,7 +45,7 @@ void DictionaryObject::SetFile(WeakReference<File> file) {
 void DictionaryObject::SetInitialized(bool initialized) {
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    IModifyObservable::SetInitialized(initialized);
+    Versionable::SetInitialized(initialized);
     for (auto it = _list.begin(); it != _list.end(); ++it) {
         auto item = it->second;
         item->SetInitialized(initialized);
@@ -164,10 +164,9 @@ bool DictionaryObject::Remove(const NameObjectPtr name) {
 
     found_key->ClearOwner();
     found_value->ClearOwner();
-    found_key->Unsubscribe(this);
-    found_value->Unsubscribe(this);
     _list.erase(found);
-    OnChanged();
+    IncrementVersion();
+    m_hash_cache = 0;
 
     return true;
 }
@@ -195,8 +194,6 @@ void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bo
 
         found_key->ClearOwner();
         found_value->ClearOwner();
-        found_key->Unsubscribe(this);
-        found_value->Unsubscribe(this);
 
         _list.erase(found);
     }
@@ -207,10 +204,8 @@ void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bo
     name->SetOwner(Object::GetWeakReference());
     value->SetOwner(Object::GetWeakReference());
 
-    name->Subscribe(this);
-    value->Subscribe(this);
-
-    OnChanged();
+    IncrementVersion();
+    m_hash_cache = 0;
 }
 
 bool DictionaryObject::Contains(const NameObject& name) const {
@@ -226,16 +221,6 @@ bool DictionaryObject::Contains(const NameObjectPtr name) const {
 
 DictionaryObject::~DictionaryObject() {
     Clear();
-}
-
-void DictionaryObject::ObserveeChanged(const IModifyObservable*) {
-    OnChanged();
-}
-
-void DictionaryObject::OnChanged() {
-    Object::OnChanged();
-
-    m_hash_cache = 0;
 }
 
 size_t DictionaryObject::Hash() const {
@@ -298,14 +283,13 @@ bool DictionaryObject::Equals(ObjectPtr other) const {
 void DictionaryObject::Merge(const DictionaryObject& other) {
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    // TODO: Missing add owner and subscribe
-
     // Simple insert overriding conflicting entries
     for (auto item : other) {
         _list.insert(item);
     }
 
-    OnChanged();
+    IncrementVersion();
+    m_hash_cache = 0;
 }
 
 void DictionaryObject::Clear() {
@@ -322,13 +306,12 @@ void DictionaryObject::Clear() {
 
         item_key->ClearOwner();
         item_value->ClearOwner();
-        item_key->Unsubscribe(this);
-        item_value->Unsubscribe(this);
     }
 
     _list.clear();
 
-    OnChanged();
+    IncrementVersion();
+    m_hash_cache = 0;
 }
 
 DictionaryObject::size_type DictionaryObject::GetSize() const noexcept {

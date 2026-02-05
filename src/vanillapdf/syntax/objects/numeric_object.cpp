@@ -56,7 +56,7 @@ void NumericObjectBackend::SetIntegerValue(types::big_int value) {
 
     m_type = Type::SignedInteger;
     m_int = value;
-    OnChanged();
+    IncrementVersion();
 }
 
 void NumericObjectBackend::SetUnsignedIntegerValue(types::big_uint value) {
@@ -66,7 +66,7 @@ void NumericObjectBackend::SetUnsignedIntegerValue(types::big_uint value) {
 
     m_type = Type::UnsignedInteger;
     m_uint = value;
-    OnChanged();
+    IncrementVersion();
 }
 void NumericObjectBackend::SetRealValue(types::real value) {
     if (Type::Real == m_type && m_real == value) {
@@ -75,7 +75,7 @@ void NumericObjectBackend::SetRealValue(types::real value) {
 
     m_type = Type::Real;
     m_real = value;
-    OnChanged();
+    IncrementVersion();
 }
 
 void NumericObjectBackend::ToggleBit(int pos, bool value) {
@@ -88,7 +88,7 @@ void NumericObjectBackend::ToggleBit(int pos, bool value) {
             m_int &= ~(newbit << pos);
         }
 
-        OnChanged();
+        IncrementVersion();
         return;
     }
 
@@ -101,7 +101,7 @@ void NumericObjectBackend::ToggleBit(int pos, bool value) {
             m_uint &= ~(newbit << pos);
         }
 
-        OnChanged();
+        IncrementVersion();
         return;
     }
 
@@ -268,9 +268,6 @@ size_t NumericObject::Hash() const {
     return m_value->Hash();
 }
 
-NumericObject::~NumericObject(){
-    m_value->Unsubscribe(this);
-}
 
 } // syntax
 } // vanillapdf

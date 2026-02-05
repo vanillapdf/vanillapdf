@@ -9,7 +9,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class MixedArrayObject : public ContainableObject, public IModifyObserver {
+class MixedArrayObject : public ContainableObject {
 public:
     typedef std::vector<ContainableObjectPtr> list_type;
     typedef list_type::value_type value_type;
@@ -31,8 +31,13 @@ public:
     virtual void SetFile(WeakReference<File> file) override;
     virtual void SetInitialized(bool initialized = true) override;
 
-    virtual void ObserveeChanged(const IModifyObservable*) override;
-    virtual void OnChanged() override;
+    virtual bool IsDirty() const noexcept override {
+        if (m_version > 0) return true;
+        for (const auto& item : _list) {
+            if (item->IsDirty()) return true;
+        }
+        return false;
+    }
 
     virtual size_t Hash() const override;
     virtual MixedArrayObject* Clone(void) const override;
@@ -68,7 +73,7 @@ public:
     virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
     virtual void ToPdfStreamUpdateOffset(IOutputStreamPtr output) override;
 
-    virtual ~MixedArrayObject();
+    virtual ~MixedArrayObject() = default;
 
 protected:
     list_type _list;
