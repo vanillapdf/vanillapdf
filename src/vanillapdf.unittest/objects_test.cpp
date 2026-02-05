@@ -1,4 +1,5 @@
 #include "unittest.h"
+#include "handle_guard.h"
 
 namespace objects {
 
@@ -15,14 +16,14 @@ TEST(LiteralStringObject, ParenthesesIncluded) {
     string_type buffer_data = nullptr;
     size_type buffer_size = 0;
 
-    BufferHandle* buffer_ptr = nullptr;
-    LiteralStringObjectHandle* literal_string_ptr = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> literal_string_ptr;
 
-    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString(TEST_DATA, &literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(literal_string_ptr, nullptr);
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString(TEST_DATA, literal_string_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(literal_string_ptr.get(), nullptr);
 
-    ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(buffer_ptr, nullptr);
+    ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr.get(), nullptr);
 
     ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(buffer_data, nullptr);
@@ -33,9 +34,6 @@ TEST(LiteralStringObject, ParenthesesIncluded) {
     for (uint32_t i = 0; i < buffer_size; ++i) {
         EXPECT_EQ(buffer_data[i], TEST_DATA[i]);
     }
-
-    ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(LiteralStringObject, UnbalancedParentheses) {
@@ -43,16 +41,14 @@ TEST(LiteralStringObject, UnbalancedParentheses) {
     const char TEST_DATA[] = "())";
 
     BufferHandle* buffer_ptr = nullptr;
-    LiteralStringObjectHandle* literal_string_ptr = nullptr;
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> literal_string_ptr;
 
-    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString(TEST_DATA, &literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(literal_string_ptr, nullptr);
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString(TEST_DATA, literal_string_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(literal_string_ptr.get(), nullptr);
 
     // Invalid content was provided and it should trigger and error
     EXPECT_NE(LiteralStringObject_GetValue(literal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(buffer_ptr, nullptr);
-
-    ASSERT_EQ(LiteralStringObject_Release(literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(LiteralStringObject, OctalTwoDigitCompare) {
@@ -72,23 +68,20 @@ TEST(LiteralStringObject, OctalTwoDigitCompare) {
     string_type buffer_data = nullptr;
     size_type buffer_size = 0;
 
-    BufferHandle* buffer_ptr = nullptr;
-    LiteralStringObjectHandle* literal_string_ptr = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> literal_string_ptr;
 
-    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("\\53", &literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(literal_string_ptr, nullptr);
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("\\53", literal_string_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(literal_string_ptr.get(), nullptr);
 
-    ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(buffer_ptr, nullptr);
+    ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr.get(), nullptr);
 
     ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(buffer_data, nullptr);
 
     ASSERT_EQ(buffer_size, 1);
     EXPECT_EQ(buffer_data[0], 053);
-
-    ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(LiteralStringObject, EscapeSequences) {
@@ -98,14 +91,14 @@ TEST(LiteralStringObject, EscapeSequences) {
     string_type buffer_data = nullptr;
     size_type buffer_size = 0;
 
-    BufferHandle* buffer_ptr = nullptr;
-    LiteralStringObjectHandle* literal_string_ptr = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> literal_string_ptr;
 
-    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString(TEST_DATA, &literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(literal_string_ptr, nullptr);
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString(TEST_DATA, literal_string_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(literal_string_ptr.get(), nullptr);
 
-    ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(buffer_ptr, nullptr);
+    ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr.get(), nullptr);
 
     ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(buffer_data, nullptr);
@@ -116,9 +109,6 @@ TEST(LiteralStringObject, EscapeSequences) {
     for (uint32_t i = 0; i < buffer_size; ++i) {
         EXPECT_EQ(buffer_data[i], EXPECTED[i]);
     }
-
-    ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(LiteralStringObject, BackslashEOL) {
@@ -128,14 +118,14 @@ TEST(LiteralStringObject, BackslashEOL) {
     string_type buffer_data = nullptr;
     size_type buffer_size = 0;
 
-    BufferHandle* buffer_ptr = nullptr;
-    LiteralStringObjectHandle* literal_string_ptr = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> literal_string_ptr;
 
-    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString(TEST_DATA, &literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(literal_string_ptr, nullptr);
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString(TEST_DATA, literal_string_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(literal_string_ptr.get(), nullptr);
 
-    ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(buffer_ptr, nullptr);
+    ASSERT_EQ(LiteralStringObject_GetValue(literal_string_ptr, buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr.get(), nullptr);
 
     ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(buffer_data, nullptr);
@@ -146,9 +136,6 @@ TEST(LiteralStringObject, BackslashEOL) {
     for (uint32_t i = 0; i < buffer_size; ++i) {
         EXPECT_EQ(buffer_data[i], EXPECTED[i]);
     }
-
-    ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(literal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(HexadecimalStringObject, GetValue) {
@@ -156,14 +143,14 @@ TEST(HexadecimalStringObject, GetValue) {
     string_type buffer_data = nullptr;
     size_type buffer_size = 0;
 
-    BufferHandle* buffer_ptr = nullptr;
-    HexadecimalStringObjectHandle* hexadecimal_string_ptr = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
+    HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> hexadecimal_string_ptr;
 
-    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("0027", &hexadecimal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(hexadecimal_string_ptr, nullptr);
+    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("0027", hexadecimal_string_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(hexadecimal_string_ptr.get(), nullptr);
 
-    ASSERT_EQ(HexadecimalStringObject_GetValue(hexadecimal_string_ptr, &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(buffer_ptr, nullptr);
+    ASSERT_EQ(HexadecimalStringObject_GetValue(hexadecimal_string_ptr, buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr.get(), nullptr);
 
     ASSERT_EQ(Buffer_GetData(buffer_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(buffer_data, nullptr);
@@ -171,9 +158,6 @@ TEST(HexadecimalStringObject, GetValue) {
     ASSERT_EQ(buffer_size, 2);
     EXPECT_EQ(buffer_data[0], 0x00);
     EXPECT_EQ(buffer_data[1], 0x27);
-
-    ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(HexadecimalStringObject_Release(hexadecimal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(HexadecimalStringObject, SetValue) {
@@ -183,26 +167,22 @@ TEST(HexadecimalStringObject, SetValue) {
     string_type buffer_data = nullptr;
     size_type buffer_size = 0;
 
-    BufferHandle* buffer_ptr = nullptr;
-    BufferHandle* buffer_check_ptr = nullptr;
-    HexadecimalStringObjectHandle* hexadecimal_string_ptr = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
+    HandleGuard<BufferHandle, Buffer_Release> buffer_check_ptr;
+    HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> hexadecimal_string_ptr;
 
-    ASSERT_EQ(Buffer_Create(&buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Create(buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_SetData(buffer_ptr, NEW_VALUE, sizeof(NEW_VALUE)), VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_EQ(HexadecimalStringObject_Create(&hexadecimal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HexadecimalStringObject_Create(hexadecimal_string_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(HexadecimalStringObject_SetValue(hexadecimal_string_ptr, buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(HexadecimalStringObject_GetValue(hexadecimal_string_ptr, &buffer_check_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HexadecimalStringObject_GetValue(hexadecimal_string_ptr, buffer_check_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(Buffer_GetData(buffer_check_ptr, &buffer_data, &buffer_size), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(buffer_size, static_cast<decltype(buffer_size)>(2));
     EXPECT_EQ(buffer_data[0], 0x00);
     EXPECT_EQ(buffer_data[1], 0x27);
-
-    ASSERT_EQ(Buffer_Release(buffer_check_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(HexadecimalStringObject_Release(hexadecimal_string_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(DictionaryObject, InsertOverwrite) {
@@ -210,180 +190,154 @@ TEST(DictionaryObject, InsertOverwrite) {
     const char AUTHOR_NAME[] = "Vanilla.PDF Labs s.r.o.";
     const char NEW_AUTHOR_NAME[] = "Another Author";
 
-    DictionaryObjectHandle* dictionary_object = NULL;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dictionary_object;
 
-    ObjectHandle* author_base_object = NULL;
-    StringObjectHandle* author_string_object = NULL;
-    LiteralStringObjectHandle* author_literal_string_object = NULL;
+    HandleGuard<ObjectHandle, Object_Release> author_base_object;
+    HandleGuard<StringObjectHandle, StringObject_Release> author_string_object;
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> author_literal_string_object;
 
-    ObjectHandle* new_author_base_object = NULL;
-    StringObjectHandle* new_author_string_object = NULL;
-    LiteralStringObjectHandle* new_author_literal_string_object = NULL;
+    HandleGuard<ObjectHandle, Object_Release> new_author_base_object;
+    HandleGuard<StringObjectHandle, StringObject_Release> new_author_string_object;
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> new_author_literal_string_object;
 
-    ObjectHandle* check_base_object = NULL;
-    StringObjectHandle* check_string_object = NULL;
-    LiteralStringObjectHandle* check_literal_string_object = NULL;
-
-    BufferHandle* check_string_buffer = NULL;
     string_type check_string_data = NULL;
     size_type check_string_size = 0;
 
-    ASSERT_EQ(DictionaryObject_Create(&dictionary_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(dictionary_object, nullptr);
+    ASSERT_EQ(DictionaryObject_Create(dictionary_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dictionary_object.get(), nullptr);
 
-    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString(AUTHOR_NAME, &author_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(author_literal_string_object, nullptr);
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString(AUTHOR_NAME, author_literal_string_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(author_literal_string_object.get(), nullptr);
 
-    ASSERT_EQ(LiteralStringObject_ToStringObject(author_literal_string_object, &author_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(author_string_object, nullptr);
+    ASSERT_EQ(LiteralStringObject_ToStringObject(author_literal_string_object, author_string_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(author_string_object.get(), nullptr);
 
-    ASSERT_EQ(StringObject_ToObject(author_string_object, &author_base_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(author_base_object, nullptr);
+    ASSERT_EQ(StringObject_ToObject(author_string_object, author_base_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(author_base_object.get(), nullptr);
 
     // Insert First, overwrite true
     ASSERT_EQ(DictionaryObject_InsertConst(dictionary_object, NameConstant_Author, author_base_object, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
 
     // Create a new object with a different value
-    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString(NEW_AUTHOR_NAME, &new_author_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(new_author_literal_string_object, nullptr);
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString(NEW_AUTHOR_NAME, new_author_literal_string_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(new_author_literal_string_object.get(), nullptr);
 
-    ASSERT_EQ(LiteralStringObject_ToStringObject(new_author_literal_string_object, &new_author_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(new_author_string_object, nullptr);
+    ASSERT_EQ(LiteralStringObject_ToStringObject(new_author_literal_string_object, new_author_string_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(new_author_string_object.get(), nullptr);
 
-    ASSERT_EQ(StringObject_ToObject(new_author_string_object, &new_author_base_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(new_author_base_object, nullptr);
+    ASSERT_EQ(StringObject_ToObject(new_author_string_object, new_author_base_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(new_author_base_object.get(), nullptr);
 
     // Insert Second, overwrite false, expect failure
     ASSERT_NE(DictionaryObject_InsertConst(dictionary_object, NameConstant_Author, new_author_base_object, VANILLAPDF_RV_FALSE), VANILLAPDF_ERROR_SUCCESS);
 
     // Verify dictionary still contains the original value
-    ASSERT_EQ(DictionaryObject_Find(dictionary_object, NameConstant_Author, &check_base_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(check_base_object, nullptr);
-    EXPECT_EQ(check_base_object, author_base_object);
+    {
+        HandleGuard<ObjectHandle, Object_Release> check_base_object;
+        HandleGuard<StringObjectHandle, StringObject_Release> check_string_object;
+        HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> check_literal_string_object;
+        HandleGuard<BufferHandle, Buffer_Release> check_string_buffer;
 
-    ASSERT_EQ(StringObject_FromObject(check_base_object, &check_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(check_string_object, nullptr);
+        ASSERT_EQ(DictionaryObject_Find(dictionary_object, NameConstant_Author, check_base_object.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(check_base_object.get(), nullptr);
+        EXPECT_EQ(check_base_object.get(), author_base_object.get());
 
-    ASSERT_EQ(LiteralStringObject_FromStringObject(check_string_object, &check_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(check_literal_string_object, nullptr);
+        ASSERT_EQ(StringObject_FromObject(check_base_object, check_string_object.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(check_string_object.get(), nullptr);
 
-    ASSERT_EQ(LiteralStringObject_GetValue(check_literal_string_object, &check_string_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(check_string_buffer, nullptr);
+        ASSERT_EQ(LiteralStringObject_FromStringObject(check_string_object, check_literal_string_object.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(check_literal_string_object.get(), nullptr);
 
-    ASSERT_EQ(Buffer_GetData(check_string_buffer, &check_string_data, &check_string_size), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(check_string_data, nullptr);
+        ASSERT_EQ(LiteralStringObject_GetValue(check_literal_string_object, check_string_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(check_string_buffer.get(), nullptr);
 
-    ASSERT_EQ(check_string_size, strlen(AUTHOR_NAME));
-    for (uint32_t i = 0; i < check_string_size; ++i) {
-        EXPECT_EQ(check_string_data[i], AUTHOR_NAME[i]);
+        ASSERT_EQ(Buffer_GetData(check_string_buffer, &check_string_data, &check_string_size), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(check_string_data, nullptr);
+
+        ASSERT_EQ(check_string_size, strlen(AUTHOR_NAME));
+        for (uint32_t i = 0; i < check_string_size; ++i) {
+            EXPECT_EQ(check_string_data[i], AUTHOR_NAME[i]);
+        }
     }
-
-    ASSERT_EQ(Buffer_Release(check_string_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(check_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(StringObject_Release(check_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Object_Release(check_base_object), VANILLAPDF_ERROR_SUCCESS);
 
     // Insert Second, overwrite true
     ASSERT_EQ(DictionaryObject_InsertConst(dictionary_object, NameConstant_Author, new_author_base_object, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
 
     // Find the item in the dictionary and verify it was overwritten
-    ASSERT_EQ(DictionaryObject_Find(dictionary_object, NameConstant_Author, &check_base_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(check_base_object, nullptr);
-    EXPECT_EQ(check_base_object, new_author_base_object);
+    {
+        HandleGuard<ObjectHandle, Object_Release> check_base_object;
+        HandleGuard<StringObjectHandle, StringObject_Release> check_string_object;
+        HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> check_literal_string_object;
+        HandleGuard<BufferHandle, Buffer_Release> check_string_buffer;
 
-    ASSERT_EQ(StringObject_FromObject(check_base_object, &check_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(check_string_object, nullptr);
+        ASSERT_EQ(DictionaryObject_Find(dictionary_object, NameConstant_Author, check_base_object.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(check_base_object.get(), nullptr);
+        EXPECT_EQ(check_base_object.get(), new_author_base_object.get());
 
-    ASSERT_EQ(LiteralStringObject_FromStringObject(check_string_object, &check_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(check_literal_string_object, nullptr);
+        ASSERT_EQ(StringObject_FromObject(check_base_object, check_string_object.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(check_string_object.get(), nullptr);
 
-    ASSERT_EQ(LiteralStringObject_GetValue(check_literal_string_object, &check_string_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(check_string_buffer, nullptr);
+        ASSERT_EQ(LiteralStringObject_FromStringObject(check_string_object, check_literal_string_object.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(check_literal_string_object.get(), nullptr);
 
-    ASSERT_EQ(Buffer_GetData(check_string_buffer, &check_string_data, &check_string_size), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(check_string_data, nullptr);
+        ASSERT_EQ(LiteralStringObject_GetValue(check_literal_string_object, check_string_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(check_string_buffer.get(), nullptr);
 
-    ASSERT_EQ(check_string_size, strlen(NEW_AUTHOR_NAME));
-    for (uint32_t i = 0; i < check_string_size; ++i) {
-        EXPECT_EQ(check_string_data[i], NEW_AUTHOR_NAME[i]);
+        ASSERT_EQ(Buffer_GetData(check_string_buffer, &check_string_data, &check_string_size), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(check_string_data, nullptr);
+
+        ASSERT_EQ(check_string_size, strlen(NEW_AUTHOR_NAME));
+        for (uint32_t i = 0; i < check_string_size; ++i) {
+            EXPECT_EQ(check_string_data[i], NEW_AUTHOR_NAME[i]);
+        }
     }
-
-    // Release the check objects
-    ASSERT_EQ(Buffer_Release(check_string_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(check_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(StringObject_Release(check_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Object_Release(check_base_object), VANILLAPDF_ERROR_SUCCESS);
-
-    // Release the original inserted objects
-    ASSERT_EQ(Object_Release(author_base_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(StringObject_Release(author_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(author_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
-
-    // Release the new inserted objects
-    ASSERT_EQ(Object_Release(new_author_base_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(StringObject_Release(new_author_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(new_author_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
-
-    // Release the container dictionary
-    ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(DictionaryObject, TryFind) {
 
     const char AUTHOR_NAME[] = "Vanilla.PDF Labs s.r.o.";
 
-    DictionaryObjectHandle* dictionary_object = nullptr;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dictionary_object;
 
-    ObjectHandle* author_base_object = NULL;
-    StringObjectHandle* author_string_object = NULL;
-    LiteralStringObjectHandle* author_literal_string_object = NULL;
+    HandleGuard<ObjectHandle, Object_Release> author_base_object;
+    HandleGuard<StringObjectHandle, StringObject_Release> author_string_object;
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> author_literal_string_object;
 
     boolean_type object_found = false;
-    ObjectHandle* found_object_reference = nullptr;
+    HandleGuard<ObjectHandle, Object_Release> found_object_reference;
 
-    ASSERT_EQ(DictionaryObject_Create(&dictionary_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(dictionary_object, nullptr);
+    ASSERT_EQ(DictionaryObject_Create(dictionary_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dictionary_object.get(), nullptr);
 
-    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString(AUTHOR_NAME, &author_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(author_literal_string_object, nullptr);
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString(AUTHOR_NAME, author_literal_string_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(author_literal_string_object.get(), nullptr);
 
-    ASSERT_EQ(LiteralStringObject_ToStringObject(author_literal_string_object, &author_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(author_string_object, nullptr);
+    ASSERT_EQ(LiteralStringObject_ToStringObject(author_literal_string_object, author_string_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(author_string_object.get(), nullptr);
 
-    ASSERT_EQ(StringObject_ToObject(author_string_object, &author_base_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(author_base_object, nullptr);
+    ASSERT_EQ(StringObject_ToObject(author_string_object, author_base_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(author_base_object.get(), nullptr);
 
     // Insert one element into the dictionary
     ASSERT_EQ(DictionaryObject_InsertConst(dictionary_object, NameConstant_Author, author_base_object, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
 
     // TryFind should return success with results being filled within output variables
-    ASSERT_EQ(DictionaryObject_TryFind(dictionary_object, NameConstant_Author, &object_found, &found_object_reference), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_TryFind(dictionary_object, NameConstant_Author, &object_found, found_object_reference.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Entries are present in the dictionary
     EXPECT_EQ(object_found, true);
-    EXPECT_EQ(found_object_reference, author_base_object);
-
-    // Release the found object reference
-    ASSERT_EQ(Object_Release(found_object_reference), VANILLAPDF_ERROR_SUCCESS);
-
-    // Release the original inserted objects
-    ASSERT_EQ(Object_Release(author_base_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(StringObject_Release(author_string_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(author_literal_string_object), VANILLAPDF_ERROR_SUCCESS);
-
-    // Release the container dictionary
-    ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(found_object_reference.get(), author_base_object.get());
 }
 
 TEST(DictionaryObject, TryFindMissing) {
 
-    DictionaryObjectHandle* dictionary_object = nullptr;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dictionary_object;
 
     boolean_type object_found = false;
     ObjectHandle* found_object_reference = nullptr;
 
-    ASSERT_EQ(DictionaryObject_Create(&dictionary_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(dictionary_object, nullptr);
+    ASSERT_EQ(DictionaryObject_Create(dictionary_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dictionary_object.get(), nullptr);
 
     // TryFind should return success, however the results should be empty
     ASSERT_EQ(DictionaryObject_TryFind(dictionary_object, NameConstant_Author, &object_found, &found_object_reference), VANILLAPDF_ERROR_SUCCESS);
@@ -391,33 +345,26 @@ TEST(DictionaryObject, TryFindMissing) {
     // Entries are not present in the dictionary
     EXPECT_EQ(object_found, false);
     EXPECT_EQ(found_object_reference, nullptr);
-
-    // Release the container dictionary
-    ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(StreamObject, OnChangeEvent) {
 
-    StreamObjectHandle* stream_object = NULL;
-    DictionaryObjectHandle* dictionary_object = NULL;
+    HandleGuard<StreamObjectHandle, StreamObject_Release> stream_object;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dictionary_object;
 
-    ASSERT_EQ(StreamObject_Create(&stream_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(stream_object, nullptr);
+    ASSERT_EQ(StreamObject_Create(stream_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(stream_object.get(), nullptr);
 
-    ASSERT_EQ(DictionaryObject_Create(&dictionary_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(dictionary_object, nullptr);
+    ASSERT_EQ(DictionaryObject_Create(dictionary_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dictionary_object.get(), nullptr);
 
     ASSERT_EQ(StreamObject_SetHeader(stream_object, dictionary_object), VANILLAPDF_ERROR_SUCCESS);
-
-    // Cleanup
-    ASSERT_EQ(DictionaryObject_Release(dictionary_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(StreamObject_Release(stream_object), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(RealObject, SerializationPrecision) {
-    RealObjectHandle* real_object;
-    ObjectHandle* base_object;
-    BufferHandle* object_pdf_buffer;
+    HandleGuard<RealObjectHandle, RealObject_Release> real_object;
+    HandleGuard<ObjectHandle, Object_Release> base_object;
+    HandleGuard<BufferHandle, Buffer_Release> object_pdf_buffer;
 
     string_type object_pdf_data = nullptr;
     size_type object_pdf_size = 0;
@@ -426,15 +373,15 @@ TEST(RealObject, SerializationPrecision) {
     const integer_type REAL_VALUE_DATA_PRECISION = 2;
     const char REAL_VALUE_STRING_CHECK[] = "752.43";
 
-    ASSERT_EQ(RealObject_CreateFromData(REAL_VALUE_DATA, REAL_VALUE_DATA_PRECISION, &real_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(real_object, nullptr);
+    ASSERT_EQ(RealObject_CreateFromData(REAL_VALUE_DATA, REAL_VALUE_DATA_PRECISION, real_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(real_object.get(), nullptr);
 
     ASSERT_EQ(RealObject_SetValue(real_object, REAL_VALUE_DATA), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(RealObject_ToObject(real_object, &base_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(base_object, nullptr);
+    ASSERT_EQ(RealObject_ToObject(real_object, base_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(base_object.get(), nullptr);
 
-    ASSERT_EQ(Object_ToPdf(base_object, &object_pdf_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(object_pdf_buffer, nullptr);
+    ASSERT_EQ(Object_ToPdf(base_object, object_pdf_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(object_pdf_buffer.get(), nullptr);
 
     ASSERT_EQ(Buffer_GetData(object_pdf_buffer, &object_pdf_data, &object_pdf_size), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(object_pdf_data, nullptr);
@@ -445,18 +392,13 @@ TEST(RealObject, SerializationPrecision) {
     for (uint32_t i = 0; i < object_pdf_size; ++i) {
         EXPECT_EQ(object_pdf_data[i], REAL_VALUE_STRING_CHECK[i]);
     }
-
-    ASSERT_EQ(Buffer_Release(object_pdf_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Object_Release(base_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(RealObject_Release(real_object), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(NameObject, CreateRelease) {
-    NameObjectHandle* name_ptr = nullptr;
+    HandleGuard<NameObjectHandle, NameObject_Release> name_ptr;
 
-    ASSERT_EQ(NameObject_Create(&name_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name_ptr, nullptr);
-    ASSERT_EQ(NameObject_Release(name_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Create(name_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name_ptr.get(), nullptr);
 }
 
 TEST(NameObject, NullCheck) {
@@ -476,17 +418,17 @@ TEST_P(NameObjectParamTest, CreateFromEncodedString) {
 
     const auto& param = GetParam();
 
-    NameObjectHandle* name_ptr = nullptr;
-    BufferHandle* decoded_buffer_ptr = nullptr;
+    HandleGuard<NameObjectHandle, NameObject_Release> name_ptr;
+    HandleGuard<BufferHandle, Buffer_Release> decoded_buffer_ptr;
 
     string_type decoded_buffer_data = nullptr;
     size_type decoded_buffer_size = 0;
 
-    ASSERT_EQ(NameObject_CreateFromEncodedString(param.encoded.data(), &name_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name_ptr, nullptr);
+    ASSERT_EQ(NameObject_CreateFromEncodedString(param.encoded.data(), name_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name_ptr.get(), nullptr);
 
-    ASSERT_EQ(NameObject_GetValue(name_ptr, &decoded_buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(decoded_buffer_ptr, nullptr);
+    ASSERT_EQ(NameObject_GetValue(name_ptr, decoded_buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(decoded_buffer_ptr.get(), nullptr);
 
     ASSERT_EQ(Buffer_GetData(decoded_buffer_ptr, &decoded_buffer_data, &decoded_buffer_size), VANILLAPDF_ERROR_SUCCESS);
 
@@ -496,9 +438,6 @@ TEST_P(NameObjectParamTest, CreateFromEncodedString) {
     for (uint32_t i = 0; i < decoded_buffer_size; ++i) {
         EXPECT_EQ(decoded_buffer_data[i], param.expected_decoded[i]);
     }
-
-    ASSERT_EQ(Buffer_Release(decoded_buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_Release(name_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -524,21 +463,21 @@ TEST(NameObject, ToPdfEncoding) {
     const char DECODED[] = "A#B C\nD";
     const char EXPECTED_PDF[] = "/A#23B#20C#0AD";
 
-    BufferHandle* pdf_buffer = nullptr;
-    NameObjectHandle* name_ptr = nullptr;
-    ObjectHandle* base_object = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> pdf_buffer;
+    HandleGuard<NameObjectHandle, NameObject_Release> name_ptr;
+    HandleGuard<ObjectHandle, Object_Release> base_object;
 
     string_type pdf_data = nullptr;
     size_type pdf_size = 0;
 
-    ASSERT_EQ(NameObject_CreateFromDecodedString(DECODED, &name_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name_ptr, nullptr);
+    ASSERT_EQ(NameObject_CreateFromDecodedString(DECODED, name_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name_ptr.get(), nullptr);
 
-    ASSERT_EQ(NameObject_ToObject(name_ptr, &base_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(base_object, nullptr);
+    ASSERT_EQ(NameObject_ToObject(name_ptr, base_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(base_object.get(), nullptr);
 
-    ASSERT_EQ(Object_ToPdf(base_object, &pdf_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(pdf_buffer, nullptr);
+    ASSERT_EQ(Object_ToPdf(base_object, pdf_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(pdf_buffer.get(), nullptr);
 
     ASSERT_EQ(Buffer_GetData(pdf_buffer, &pdf_data, &pdf_size), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(pdf_data, nullptr);
@@ -547,10 +486,6 @@ TEST(NameObject, ToPdfEncoding) {
     for (uint32_t i = 0; i < pdf_size; ++i) {
         EXPECT_EQ(pdf_data[i], EXPECTED_PDF[i]);
     }
-
-    ASSERT_EQ(Buffer_Release(pdf_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Object_Release(base_object), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_Release(name_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(NameObject, InvalidEncodedInput) {
@@ -566,24 +501,21 @@ TEST(NameObject, InvalidEncodedInput) {
 
 TEST(NameObject, Equals) {
 
-    NameObjectHandle* first_ptr = nullptr;
-    NameObjectHandle* second_ptr = nullptr;
+    HandleGuard<NameObjectHandle, NameObject_Release> first_ptr;
+    HandleGuard<NameObjectHandle, NameObject_Release> second_ptr;
     boolean_type are_equal = VANILLAPDF_RV_FALSE;
 
-    ASSERT_EQ(NameObject_CreateFromDecodedString("Name", &first_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_CreateFromDecodedString("Name", &second_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Name", first_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Name", second_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(NameObject_Equals(first_ptr, second_ptr, &are_equal), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(are_equal, VANILLAPDF_RV_TRUE);
 
-    ASSERT_EQ(NameObject_Release(second_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_CreateFromDecodedString("Other", &second_ptr), VANILLAPDF_ERROR_SUCCESS);
+    second_ptr = HandleGuard<NameObjectHandle, NameObject_Release>();
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Other", second_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(NameObject_Equals(first_ptr, second_ptr, &are_equal), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(are_equal, VANILLAPDF_RV_FALSE);
-
-    ASSERT_EQ(NameObject_Release(first_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_Release(second_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 } /* objects */

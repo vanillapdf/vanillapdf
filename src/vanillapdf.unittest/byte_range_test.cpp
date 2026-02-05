@@ -1,4 +1,5 @@
 #include "unittest.h"
+#include "handle_guard.h"
 
 #include "vanillapdf/c_vanillapdf_api.h"
 
@@ -7,17 +8,17 @@ namespace byte_range_objects {
 // Tests for ByteRange and ByteRangeCollection manipulation API
 
 TEST(ByteRange, CreateEmptyAndSet) {
-    ByteRangeHandle* range = nullptr;
-    ASSERT_EQ(ByteRange_Create(&range), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(range, nullptr);
+    HandleGuard<ByteRangeHandle, ByteRange_Release> range;
+    ASSERT_EQ(ByteRange_Create(range.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(range.get(), nullptr);
 
     // Create offset and length
-    IntegerObjectHandle* offset = nullptr;
-    ASSERT_EQ(IntegerObject_Create(&offset), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset;
+    ASSERT_EQ(IntegerObject_Create(offset.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(IntegerObject_SetIntegerValue(offset, 100), VANILLAPDF_ERROR_SUCCESS);
 
-    IntegerObjectHandle* length = nullptr;
-    ASSERT_EQ(IntegerObject_Create(&length), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> length;
+    ASSERT_EQ(IntegerObject_Create(length.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(IntegerObject_SetIntegerValue(length, 200), VANILLAPDF_ERROR_SUCCESS);
 
     // Set values
@@ -25,64 +26,50 @@ TEST(ByteRange, CreateEmptyAndSet) {
     ASSERT_EQ(ByteRange_SetLength(range, length), VANILLAPDF_ERROR_SUCCESS);
 
     // Verify values
-    IntegerObjectHandle* retrieved_offset = nullptr;
-    ASSERT_EQ(ByteRange_GetOffset(range, &retrieved_offset), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> retrieved_offset;
+    ASSERT_EQ(ByteRange_GetOffset(range, retrieved_offset.out()), VANILLAPDF_ERROR_SUCCESS);
     bigint_type offset_value = 0;
     ASSERT_EQ(IntegerObject_GetIntegerValue(retrieved_offset, &offset_value), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(offset_value, 100);
 
-    IntegerObjectHandle* retrieved_length = nullptr;
-    ASSERT_EQ(ByteRange_GetLength(range, &retrieved_length), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> retrieved_length;
+    ASSERT_EQ(ByteRange_GetLength(range, retrieved_length.out()), VANILLAPDF_ERROR_SUCCESS);
     bigint_type length_value = 0;
     ASSERT_EQ(IntegerObject_GetIntegerValue(retrieved_length, &length_value), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(length_value, 200);
-
-    // Cleanup
-    IntegerObject_Release(retrieved_offset);
-    IntegerObject_Release(retrieved_length);
-    IntegerObject_Release(offset);
-    IntegerObject_Release(length);
-    ByteRange_Release(range);
 }
 
 TEST(ByteRange, CreateFromData) {
-    IntegerObjectHandle* offset = nullptr;
-    ASSERT_EQ(IntegerObject_Create(&offset), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset;
+    ASSERT_EQ(IntegerObject_Create(offset.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(IntegerObject_SetIntegerValue(offset, 500), VANILLAPDF_ERROR_SUCCESS);
 
-    IntegerObjectHandle* length = nullptr;
-    ASSERT_EQ(IntegerObject_Create(&length), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> length;
+    ASSERT_EQ(IntegerObject_Create(length.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(IntegerObject_SetIntegerValue(length, 250), VANILLAPDF_ERROR_SUCCESS);
 
-    ByteRangeHandle* range = nullptr;
-    ASSERT_EQ(ByteRange_CreateFromData(offset, length, &range), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(range, nullptr);
+    HandleGuard<ByteRangeHandle, ByteRange_Release> range;
+    ASSERT_EQ(ByteRange_CreateFromData(offset, length, range.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(range.get(), nullptr);
 
     // Verify values
-    IntegerObjectHandle* retrieved_offset = nullptr;
-    ASSERT_EQ(ByteRange_GetOffset(range, &retrieved_offset), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> retrieved_offset;
+    ASSERT_EQ(ByteRange_GetOffset(range, retrieved_offset.out()), VANILLAPDF_ERROR_SUCCESS);
     bigint_type offset_value = 0;
     ASSERT_EQ(IntegerObject_GetIntegerValue(retrieved_offset, &offset_value), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(offset_value, 500);
 
-    IntegerObjectHandle* retrieved_length = nullptr;
-    ASSERT_EQ(ByteRange_GetLength(range, &retrieved_length), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> retrieved_length;
+    ASSERT_EQ(ByteRange_GetLength(range, retrieved_length.out()), VANILLAPDF_ERROR_SUCCESS);
     bigint_type length_value = 0;
     ASSERT_EQ(IntegerObject_GetIntegerValue(retrieved_length, &length_value), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(length_value, 250);
-
-    // Cleanup
-    IntegerObject_Release(retrieved_offset);
-    IntegerObject_Release(retrieved_length);
-    IntegerObject_Release(offset);
-    IntegerObject_Release(length);
-    ByteRange_Release(range);
 }
 
 TEST(ByteRangeCollection, CreateEmptyAndAppend) {
-    ByteRangeCollectionHandle* collection = nullptr;
-    ASSERT_EQ(ByteRangeCollection_Create(&collection), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(collection, nullptr);
+    HandleGuard<ByteRangeCollectionHandle, ByteRangeCollection_Release> collection;
+    ASSERT_EQ(ByteRangeCollection_Create(collection.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(collection.get(), nullptr);
 
     // Verify initially empty
     size_type size = 999;
@@ -90,50 +77,41 @@ TEST(ByteRangeCollection, CreateEmptyAndAppend) {
     EXPECT_EQ(size, 0);
 
     // Create and append a range
-    IntegerObjectHandle* offset = nullptr;
-    ASSERT_EQ(IntegerObject_Create(&offset), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset;
+    ASSERT_EQ(IntegerObject_Create(offset.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(IntegerObject_SetIntegerValue(offset, 0), VANILLAPDF_ERROR_SUCCESS);
 
-    IntegerObjectHandle* length = nullptr;
-    ASSERT_EQ(IntegerObject_Create(&length), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> length;
+    ASSERT_EQ(IntegerObject_Create(length.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(IntegerObject_SetIntegerValue(length, 1000), VANILLAPDF_ERROR_SUCCESS);
 
-    ByteRangeHandle* range = nullptr;
-    ASSERT_EQ(ByteRange_CreateFromData(offset, length, &range), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeHandle, ByteRange_Release> range;
+    ASSERT_EQ(ByteRange_CreateFromData(offset, length, range.out()), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(ByteRangeCollection_Append(collection, range), VANILLAPDF_ERROR_SUCCESS);
 
     // Verify size is now 1
     ASSERT_EQ(ByteRangeCollection_GetSize(collection, &size), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(size, 1);
-
-    // Cleanup
-    IntegerObject_Release(offset);
-    IntegerObject_Release(length);
-    ByteRange_Release(range);
-    ByteRangeCollection_Release(collection);
 }
 
 TEST(ByteRangeCollection, AppendMultipleAndRetrieve) {
-    ByteRangeCollectionHandle* collection = nullptr;
-    ASSERT_EQ(ByteRangeCollection_Create(&collection), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeCollectionHandle, ByteRangeCollection_Release> collection;
+    ASSERT_EQ(ByteRangeCollection_Create(collection.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Append 3 ranges
     for (int i = 0; i < 3; i++) {
-        IntegerObjectHandle* offset = nullptr;
-        ASSERT_EQ(IntegerObject_Create(&offset), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset;
+        ASSERT_EQ(IntegerObject_Create(offset.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(IntegerObject_SetIntegerValue(offset, i * 1000), VANILLAPDF_ERROR_SUCCESS);
 
-        IntegerObjectHandle* length = nullptr;
-        ASSERT_EQ(IntegerObject_Create(&length), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> length;
+        ASSERT_EQ(IntegerObject_Create(length.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(IntegerObject_SetIntegerValue(length, (i + 1) * 100), VANILLAPDF_ERROR_SUCCESS);
 
-        ByteRangeHandle* range = nullptr;
-        ASSERT_EQ(ByteRange_CreateFromData(offset, length, &range), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<ByteRangeHandle, ByteRange_Release> range;
+        ASSERT_EQ(ByteRange_CreateFromData(offset, length, range.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(ByteRangeCollection_Append(collection, range), VANILLAPDF_ERROR_SUCCESS);
-        IntegerObject_Release(offset);
-        IntegerObject_Release(length);
-        ByteRange_Release(range);
     }
 
     // Verify size
@@ -143,61 +121,48 @@ TEST(ByteRangeCollection, AppendMultipleAndRetrieve) {
 
     // Retrieve and verify each range - this tests the indexing bug fix!
     for (size_type i = 0; i < 3; i++) {
-        ByteRangeHandle* range = nullptr;
-        ASSERT_EQ(ByteRangeCollection_GetValue(collection, i, &range), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<ByteRangeHandle, ByteRange_Release> range;
+        ASSERT_EQ(ByteRangeCollection_GetValue(collection, i, range.out()), VANILLAPDF_ERROR_SUCCESS);
 
-        IntegerObjectHandle* offset = nullptr;
-        ASSERT_EQ(ByteRange_GetOffset(range, &offset), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset;
+        ASSERT_EQ(ByteRange_GetOffset(range, offset.out()), VANILLAPDF_ERROR_SUCCESS);
         bigint_type offset_value = 0;
         ASSERT_EQ(IntegerObject_GetIntegerValue(offset, &offset_value), VANILLAPDF_ERROR_SUCCESS);
         EXPECT_EQ(offset_value, i * 1000) << "ByteRange[" << i << "] offset mismatch";
 
-        IntegerObjectHandle* length = nullptr;
-        ASSERT_EQ(ByteRange_GetLength(range, &length), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> length;
+        ASSERT_EQ(ByteRange_GetLength(range, length.out()), VANILLAPDF_ERROR_SUCCESS);
         bigint_type length_value = 0;
         ASSERT_EQ(IntegerObject_GetIntegerValue(length, &length_value), VANILLAPDF_ERROR_SUCCESS);
         EXPECT_EQ(length_value, (i + 1) * 100) << "ByteRange[" << i << "] length mismatch";
-
-        IntegerObject_Release(offset);
-        IntegerObject_Release(length);
-        ByteRange_Release(range);
     }
-
-    // Cleanup
-    ByteRangeCollection_Release(collection);
 }
 
 TEST(ByteRangeCollection, InsertAtBeginning) {
-    ByteRangeCollectionHandle* collection = nullptr;
-    ASSERT_EQ(ByteRangeCollection_Create(&collection), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeCollectionHandle, ByteRangeCollection_Release> collection;
+    ASSERT_EQ(ByteRangeCollection_Create(collection.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Append first range
-    IntegerObjectHandle* offset1 = nullptr;
-    ASSERT_EQ(IntegerObject_Create(&offset1), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset1;
+    ASSERT_EQ(IntegerObject_Create(offset1.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(IntegerObject_SetIntegerValue(offset1, 1000), VANILLAPDF_ERROR_SUCCESS);
-    IntegerObjectHandle* length1 = nullptr;
-    ASSERT_EQ(IntegerObject_Create(&length1), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> length1;
+    ASSERT_EQ(IntegerObject_Create(length1.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(IntegerObject_SetIntegerValue(length1, 100), VANILLAPDF_ERROR_SUCCESS);
-    ByteRangeHandle* range1 = nullptr;
-    ASSERT_EQ(ByteRange_CreateFromData(offset1, length1, &range1), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeHandle, ByteRange_Release> range1;
+    ASSERT_EQ(ByteRange_CreateFromData(offset1, length1, range1.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(ByteRangeCollection_Append(collection, range1), VANILLAPDF_ERROR_SUCCESS);
-    IntegerObject_Release(offset1);
-    IntegerObject_Release(length1);
-    ByteRange_Release(range1);
 
     // Insert at beginning
-    IntegerObjectHandle* offset2 = nullptr;
-    ASSERT_EQ(IntegerObject_Create(&offset2), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset2;
+    ASSERT_EQ(IntegerObject_Create(offset2.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(IntegerObject_SetIntegerValue(offset2, 0), VANILLAPDF_ERROR_SUCCESS);
-    IntegerObjectHandle* length2 = nullptr;
-    ASSERT_EQ(IntegerObject_Create(&length2), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> length2;
+    ASSERT_EQ(IntegerObject_Create(length2.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(IntegerObject_SetIntegerValue(length2, 500), VANILLAPDF_ERROR_SUCCESS);
-    ByteRangeHandle* range2 = nullptr;
-    ASSERT_EQ(ByteRange_CreateFromData(offset2, length2, &range2), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeHandle, ByteRange_Release> range2;
+    ASSERT_EQ(ByteRange_CreateFromData(offset2, length2, range2.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(ByteRangeCollection_Insert(collection, 0, range2), VANILLAPDF_ERROR_SUCCESS);
-    IntegerObject_Release(offset2);
-    IntegerObject_Release(length2);
-    ByteRange_Release(range2);
 
     // Verify size
     size_type size = 0;
@@ -205,53 +170,42 @@ TEST(ByteRangeCollection, InsertAtBeginning) {
     EXPECT_EQ(size, 2);
 
     // Verify first element is the inserted one
-    ByteRangeHandle* retrieved_range = nullptr;
-    ASSERT_EQ(ByteRangeCollection_GetValue(collection, 0, &retrieved_range), VANILLAPDF_ERROR_SUCCESS);
-    IntegerObjectHandle* retrieved_offset = nullptr;
-    ASSERT_EQ(ByteRange_GetOffset(retrieved_range, &retrieved_offset), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeHandle, ByteRange_Release> retrieved_range;
+    ASSERT_EQ(ByteRangeCollection_GetValue(collection, 0, retrieved_range.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> retrieved_offset;
+    ASSERT_EQ(ByteRange_GetOffset(retrieved_range, retrieved_offset.out()), VANILLAPDF_ERROR_SUCCESS);
     bigint_type offset_value = 0;
     ASSERT_EQ(IntegerObject_GetIntegerValue(retrieved_offset, &offset_value), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(offset_value, 0);
-
-    // Cleanup
-    IntegerObject_Release(retrieved_offset);
-    ByteRange_Release(retrieved_range);
-    ByteRangeCollection_Release(collection);
 }
 
 TEST(ByteRangeCollection, InsertInMiddle) {
-    ByteRangeCollectionHandle* collection = nullptr;
-    ASSERT_EQ(ByteRangeCollection_Create(&collection), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeCollectionHandle, ByteRangeCollection_Release> collection;
+    ASSERT_EQ(ByteRangeCollection_Create(collection.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Append two ranges
     for (int i = 0; i < 2; i++) {
-        IntegerObjectHandle* offset = nullptr;
-        ASSERT_EQ(IntegerObject_Create(&offset), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset;
+        ASSERT_EQ(IntegerObject_Create(offset.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(IntegerObject_SetIntegerValue(offset, i * 200), VANILLAPDF_ERROR_SUCCESS);
-        IntegerObjectHandle* length = nullptr;
-        ASSERT_EQ(IntegerObject_Create(&length), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> length;
+        ASSERT_EQ(IntegerObject_Create(length.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(IntegerObject_SetIntegerValue(length, 100), VANILLAPDF_ERROR_SUCCESS);
-        ByteRangeHandle* range = nullptr;
-        ASSERT_EQ(ByteRange_CreateFromData(offset, length, &range), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<ByteRangeHandle, ByteRange_Release> range;
+        ASSERT_EQ(ByteRange_CreateFromData(offset, length, range.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(ByteRangeCollection_Append(collection, range), VANILLAPDF_ERROR_SUCCESS);
-        IntegerObject_Release(offset);
-        IntegerObject_Release(length);
-        ByteRange_Release(range);
     }
 
     // Insert in middle
-    IntegerObjectHandle* offset_mid = nullptr;
-    ASSERT_EQ(IntegerObject_Create(&offset_mid), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset_mid;
+    ASSERT_EQ(IntegerObject_Create(offset_mid.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(IntegerObject_SetIntegerValue(offset_mid, 100), VANILLAPDF_ERROR_SUCCESS);
-    IntegerObjectHandle* length_mid = nullptr;
-    ASSERT_EQ(IntegerObject_Create(&length_mid), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> length_mid;
+    ASSERT_EQ(IntegerObject_Create(length_mid.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(IntegerObject_SetIntegerValue(length_mid, 100), VANILLAPDF_ERROR_SUCCESS);
-    ByteRangeHandle* range_mid = nullptr;
-    ASSERT_EQ(ByteRange_CreateFromData(offset_mid, length_mid, &range_mid), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeHandle, ByteRange_Release> range_mid;
+    ASSERT_EQ(ByteRange_CreateFromData(offset_mid, length_mid, range_mid.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(ByteRangeCollection_Insert(collection, 1, range_mid), VANILLAPDF_ERROR_SUCCESS);
-    IntegerObject_Release(offset_mid);
-    IntegerObject_Release(length_mid);
-    ByteRange_Release(range_mid);
 
     // Verify size
     size_type size = 0;
@@ -259,38 +213,30 @@ TEST(ByteRangeCollection, InsertInMiddle) {
     EXPECT_EQ(size, 3);
 
     // Verify middle element
-    ByteRangeHandle* retrieved_range = nullptr;
-    ASSERT_EQ(ByteRangeCollection_GetValue(collection, 1, &retrieved_range), VANILLAPDF_ERROR_SUCCESS);
-    IntegerObjectHandle* retrieved_offset = nullptr;
-    ASSERT_EQ(ByteRange_GetOffset(retrieved_range, &retrieved_offset), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeHandle, ByteRange_Release> retrieved_range;
+    ASSERT_EQ(ByteRangeCollection_GetValue(collection, 1, retrieved_range.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> retrieved_offset;
+    ASSERT_EQ(ByteRange_GetOffset(retrieved_range, retrieved_offset.out()), VANILLAPDF_ERROR_SUCCESS);
     bigint_type offset_value = 0;
     ASSERT_EQ(IntegerObject_GetIntegerValue(retrieved_offset, &offset_value), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(offset_value, 100);
-
-    // Cleanup
-    IntegerObject_Release(retrieved_offset);
-    ByteRange_Release(retrieved_range);
-    ByteRangeCollection_Release(collection);
 }
 
 TEST(ByteRangeCollection, RemoveFromCollection) {
-    ByteRangeCollectionHandle* collection = nullptr;
-    ASSERT_EQ(ByteRangeCollection_Create(&collection), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeCollectionHandle, ByteRangeCollection_Release> collection;
+    ASSERT_EQ(ByteRangeCollection_Create(collection.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Append 3 ranges
     for (int i = 0; i < 3; i++) {
-        IntegerObjectHandle* offset = nullptr;
-        ASSERT_EQ(IntegerObject_Create(&offset), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset;
+        ASSERT_EQ(IntegerObject_Create(offset.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(IntegerObject_SetIntegerValue(offset, i * 100), VANILLAPDF_ERROR_SUCCESS);
-        IntegerObjectHandle* length = nullptr;
-        ASSERT_EQ(IntegerObject_Create(&length), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> length;
+        ASSERT_EQ(IntegerObject_Create(length.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(IntegerObject_SetIntegerValue(length, 50), VANILLAPDF_ERROR_SUCCESS);
-        ByteRangeHandle* range = nullptr;
-        ASSERT_EQ(ByteRange_CreateFromData(offset, length, &range), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<ByteRangeHandle, ByteRange_Release> range;
+        ASSERT_EQ(ByteRange_CreateFromData(offset, length, range.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(ByteRangeCollection_Append(collection, range), VANILLAPDF_ERROR_SUCCESS);
-        IntegerObject_Release(offset);
-        IntegerObject_Release(length);
-        ByteRange_Release(range);
     }
 
     // Remove middle element
@@ -302,49 +248,39 @@ TEST(ByteRangeCollection, RemoveFromCollection) {
     EXPECT_EQ(size, 2);
 
     // Verify first element unchanged (offset=0)
-    ByteRangeHandle* range0 = nullptr;
-    ASSERT_EQ(ByteRangeCollection_GetValue(collection, 0, &range0), VANILLAPDF_ERROR_SUCCESS);
-    IntegerObjectHandle* offset0 = nullptr;
-    ASSERT_EQ(ByteRange_GetOffset(range0, &offset0), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeHandle, ByteRange_Release> range0;
+    ASSERT_EQ(ByteRangeCollection_GetValue(collection, 0, range0.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset0;
+    ASSERT_EQ(ByteRange_GetOffset(range0, offset0.out()), VANILLAPDF_ERROR_SUCCESS);
     bigint_type value0 = 0;
     ASSERT_EQ(IntegerObject_GetIntegerValue(offset0, &value0), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(value0, 0);
-    IntegerObject_Release(offset0);
-    ByteRange_Release(range0);
 
     // Verify second element is now the third (offset=200)
-    ByteRangeHandle* range1 = nullptr;
-    ASSERT_EQ(ByteRangeCollection_GetValue(collection, 1, &range1), VANILLAPDF_ERROR_SUCCESS);
-    IntegerObjectHandle* offset1 = nullptr;
-    ASSERT_EQ(ByteRange_GetOffset(range1, &offset1), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeHandle, ByteRange_Release> range1;
+    ASSERT_EQ(ByteRangeCollection_GetValue(collection, 1, range1.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset1;
+    ASSERT_EQ(ByteRange_GetOffset(range1, offset1.out()), VANILLAPDF_ERROR_SUCCESS);
     bigint_type value1 = 0;
     ASSERT_EQ(IntegerObject_GetIntegerValue(offset1, &value1), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(value1, 200);
-    IntegerObject_Release(offset1);
-    ByteRange_Release(range1);
-
-    // Cleanup
-    ByteRangeCollection_Release(collection);
 }
 
 TEST(ByteRangeCollection, ClearCollection) {
-    ByteRangeCollectionHandle* collection = nullptr;
-    ASSERT_EQ(ByteRangeCollection_Create(&collection), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<ByteRangeCollectionHandle, ByteRangeCollection_Release> collection;
+    ASSERT_EQ(ByteRangeCollection_Create(collection.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Append several ranges
     for (int i = 0; i < 5; i++) {
-        IntegerObjectHandle* offset = nullptr;
-        ASSERT_EQ(IntegerObject_Create(&offset), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> offset;
+        ASSERT_EQ(IntegerObject_Create(offset.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(IntegerObject_SetIntegerValue(offset, i * 100), VANILLAPDF_ERROR_SUCCESS);
-        IntegerObjectHandle* length = nullptr;
-        ASSERT_EQ(IntegerObject_Create(&length), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> length;
+        ASSERT_EQ(IntegerObject_Create(length.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(IntegerObject_SetIntegerValue(length, 50), VANILLAPDF_ERROR_SUCCESS);
-        ByteRangeHandle* range = nullptr;
-        ASSERT_EQ(ByteRange_CreateFromData(offset, length, &range), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<ByteRangeHandle, ByteRange_Release> range;
+        ASSERT_EQ(ByteRange_CreateFromData(offset, length, range.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(ByteRangeCollection_Append(collection, range), VANILLAPDF_ERROR_SUCCESS);
-        IntegerObject_Release(offset);
-        IntegerObject_Release(length);
-        ByteRange_Release(range);
     }
 
     // Verify size before clear
@@ -359,9 +295,6 @@ TEST(ByteRangeCollection, ClearCollection) {
     size_type size_after = 0;
     ASSERT_EQ(ByteRangeCollection_GetSize(collection, &size_after), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(size_after, 0);
-
-    // Cleanup
-    ByteRangeCollection_Release(collection);
 }
 
 } // namespace byte_range_objects

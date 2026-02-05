@@ -1,4 +1,5 @@
 #include "unittest.h"
+#include "handle_guard.h"
 
 #include <cstring>
 
@@ -19,39 +20,31 @@ TEST(FlateDecodeFilter, EncodeDecodeCheck) {
         0x99, 0xD5, 0xE8, 0x11, 0x5C, 0x1D, 0x22, 0x63, 0x66, 0x65
     };
 
-    BufferHandle* input_data_buffer = nullptr;
-    BufferHandle* encoded_data_buffer = nullptr;
-    BufferHandle* decoded_data_buffer = nullptr;
-    FlateDecodeFilterHandle* filter_handle = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> input_data_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> encoded_data_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> decoded_data_buffer;
+    HandleGuard<FlateDecodeFilterHandle, FlateDecodeFilter_Release> filter_handle;
 
     string_type decoded_data = nullptr;
     size_type decoded_data_len = 0;
 
-    ASSERT_EQ(FlateDecodeFilter_Create(&filter_handle), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(filter_handle, nullptr);
+    ASSERT_EQ(FlateDecodeFilter_Create(filter_handle.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(filter_handle.get(), nullptr);
 
-    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), &input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(input_data_buffer, nullptr);
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), input_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(input_data_buffer.get(), nullptr);
 
-    ASSERT_EQ(FlateDecodeFilter_Encode(filter_handle, input_data_buffer, &encoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(encoded_data_buffer, nullptr);
+    ASSERT_EQ(FlateDecodeFilter_Encode(filter_handle, input_data_buffer, encoded_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(encoded_data_buffer.get(), nullptr);
 
-    ASSERT_EQ(FlateDecodeFilter_Decode(filter_handle, encoded_data_buffer, &decoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(decoded_data_buffer, nullptr);
+    ASSERT_EQ(FlateDecodeFilter_Decode(filter_handle, encoded_data_buffer, decoded_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(decoded_data_buffer.get(), nullptr);
 
     ASSERT_EQ(Buffer_GetData(decoded_data_buffer, &decoded_data, &decoded_data_len), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(decoded_data, nullptr);
 
     ASSERT_EQ(decoded_data_len, sizeof(INPUT_DATA));
     ASSERT_EQ(std::memcmp(decoded_data, INPUT_DATA, decoded_data_len), 0);
-
-    // Cleanup
-
-    ASSERT_EQ(Buffer_Release(decoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(encoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-
-    ASSERT_EQ(FlateDecodeFilter_Release(filter_handle), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(FlateDecodeFilter, InvalidDataDecodeError) {
@@ -60,23 +53,18 @@ TEST(FlateDecodeFilter, InvalidDataDecodeError) {
         0xDE, 0xAD, 0xC0, 0xDE
     };
 
-    BufferHandle* input_data_buffer = nullptr;
-    BufferHandle* decoded_data_buffer = nullptr;
-    FlateDecodeFilterHandle* filter_handle = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> input_data_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> decoded_data_buffer;
+    HandleGuard<FlateDecodeFilterHandle, FlateDecodeFilter_Release> filter_handle;
 
-    ASSERT_EQ(FlateDecodeFilter_Create(&filter_handle), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(filter_handle, nullptr);
+    ASSERT_EQ(FlateDecodeFilter_Create(filter_handle.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(filter_handle.get(), nullptr);
 
-    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), &input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(input_data_buffer, nullptr);
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), input_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(input_data_buffer.get(), nullptr);
 
-    EXPECT_NE(FlateDecodeFilter_Decode(filter_handle, input_data_buffer, &decoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(decoded_data_buffer, nullptr);
-
-    // Cleanup
-
-    ASSERT_EQ(Buffer_Release(input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(FlateDecodeFilter_Release(filter_handle), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_NE(FlateDecodeFilter_Decode(filter_handle, input_data_buffer, decoded_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(decoded_data_buffer.get(), nullptr);
 }
 
 TEST(DCTDecodeFilter, Decode) {
@@ -148,25 +136,18 @@ TEST(DCTDecodeFilter, Decode) {
         0xD9
     };
 
-    BufferHandle* input_data_buffer = nullptr;
-    BufferHandle* decoded_data_buffer = nullptr;
-    DCTDecodeFilterHandle* filter_handle = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> input_data_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> decoded_data_buffer;
+    HandleGuard<DCTDecodeFilterHandle, DCTDecodeFilter_Release> filter_handle;
 
-    ASSERT_EQ(DCTDecodeFilter_Create(&filter_handle), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(filter_handle, nullptr);
+    ASSERT_EQ(DCTDecodeFilter_Create(filter_handle.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(filter_handle.get(), nullptr);
 
-    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), &input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(input_data_buffer, nullptr);
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), input_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(input_data_buffer.get(), nullptr);
 
-    ASSERT_EQ(DCTDecodeFilter_Decode(filter_handle, input_data_buffer, &decoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(decoded_data_buffer, nullptr);
-
-    // Cleanup
-
-    ASSERT_EQ(Buffer_Release(decoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-
-    ASSERT_EQ(DCTDecodeFilter_Release(filter_handle), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DCTDecodeFilter_Decode(filter_handle, input_data_buffer, decoded_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(decoded_data_buffer.get(), nullptr);
 }
 
 TEST(JPXDecodeFilter, Decode) {
@@ -188,25 +169,18 @@ TEST(JPXDecodeFilter, Decode) {
         0x80, 0x80, 0xFF, 0xD9
     };
 
-    BufferHandle* input_data_buffer = nullptr;
-    BufferHandle* decoded_data_buffer = nullptr;
-    JPXDecodeFilterHandle* filter_handle = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> input_data_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> decoded_data_buffer;
+    HandleGuard<JPXDecodeFilterHandle, JPXDecodeFilter_Release> filter_handle;
 
-    ASSERT_EQ(JPXDecodeFilter_Create(&filter_handle), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(filter_handle, nullptr);
+    ASSERT_EQ(JPXDecodeFilter_Create(filter_handle.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(filter_handle.get(), nullptr);
 
-    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), &input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(input_data_buffer, nullptr);
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), input_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(input_data_buffer.get(), nullptr);
 
-    ASSERT_EQ(JPXDecodeFilter_Decode(filter_handle, input_data_buffer, &decoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(decoded_data_buffer, nullptr);
-
-    // Cleanup
-
-    ASSERT_EQ(Buffer_Release(decoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
-
-    ASSERT_EQ(JPXDecodeFilter_Release(filter_handle), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(JPXDecodeFilter_Decode(filter_handle, input_data_buffer, decoded_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(decoded_data_buffer.get(), nullptr);
 }
 
 TEST(FilterBase, ToUnknown_NullChecks) {

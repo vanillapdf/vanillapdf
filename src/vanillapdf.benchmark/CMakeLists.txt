@@ -16,6 +16,7 @@ set(VANILLAPDF_BENCHMARK_SOURCES
 
 set(VANILLAPDF_BENCHMARK_HEADERS
     benchmark.h
+    handle_guard.h
 )
 
 # Resource files

@@ -1,4 +1,5 @@
 #include "unittest.h"
+#include "handle_guard.h"
 
 #include <thread>
 #include <vector>
@@ -25,11 +26,11 @@ TEST_P(DocumentOpenFileTest, ConcurrentOpenSameFile) {
     std::atomic<int> error_count{0};
 
     // Create a shared file that all threads will try to open as Document
-    InputOutputStreamHandle* io_stream = nullptr;
-    FileHandle* shared_file = nullptr;
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> shared_file;
 
-    ASSERT_EQ(InputOutputStream_CreateFromMemory(&io_stream), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(File_CreateStream(io_stream, "shared_test_file", &shared_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(io_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(io_stream, "shared_test_file", shared_file.out()), VANILLAPDF_ERROR_SUCCESS);
 
     std::vector<std::thread> threads;
     std::vector<DocumentHandle*> documents(NUM_THREADS * ITERATIONS_PER_THREAD, nullptr);
@@ -75,14 +76,12 @@ TEST_P(DocumentOpenFileTest, ConcurrentOpenSameFile) {
     }
 
     // Cleanup - release all document handles
+    // These are raw pointers stored in a vector by threads, so they can't use HandleGuard
     for (auto* doc : documents) {
         if (doc != nullptr) {
             Document_Release(doc);
         }
     }
-
-    ASSERT_EQ(File_Release(shared_file), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InputOutputStream_Release(io_stream), VANILLAPDF_ERROR_SUCCESS);
 }
 
 std::string ThreadTestParamsName(const ::testing::TestParamInfo<ThreadTestParams>& info) {
@@ -106,6 +105,7 @@ TEST(DocumentOpenFile, ConcurrentOpenDifferentFiles) {
     std::atomic<int> success_count{0};
     std::atomic<int> error_count{0};
 
+    // These use raw pointer vectors because they're populated in loops/threads
     std::vector<InputOutputStreamHandle*> streams(NUM_THREADS, nullptr);
     std::vector<FileHandle*> files(NUM_THREADS, nullptr);
     std::vector<DocumentHandle*> documents(NUM_THREADS, nullptr);
@@ -151,7 +151,7 @@ TEST(DocumentOpenFile, ConcurrentOpenDifferentFiles) {
         }
     }
 
-    // Cleanup
+    // Cleanup - raw pointer vectors require manual release
     for (int i = 0; i < NUM_THREADS; ++i) {
         if (documents[i] != nullptr) {
             ASSERT_EQ(Document_Release(documents[i]), VANILLAPDF_ERROR_SUCCESS);

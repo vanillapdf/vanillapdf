@@ -3,97 +3,83 @@
 #include <vanillapdf/c_vanillapdf_api.h>
 
 #include "test_data.h"
+#include "handle_guard.h"
 
 // Test fixture for tests that require a document context with indirect objects
 // Creates a document programmatically with an indirect page - no disk files needed
 class DestinationNameTreeWithDocument : public ::testing::Test {
 protected:
-    InputOutputStreamHandle* stream = nullptr;
-    FileHandle* file = nullptr;
-    DocumentHandle* document = nullptr;
-    PageObjectHandle* page = nullptr;
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    HandleGuard<PageObjectHandle, PageObject_Release> page;
 
     void SetUp() override {
         // Create in-memory stream for the document
-        ASSERT_EQ(InputOutputStream_CreateFromMemory(&stream), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(stream, nullptr);
+        ASSERT_EQ(InputOutputStream_CreateFromMemory(stream.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(stream.get(), nullptr);
 
         // Create file on the stream
-        ASSERT_EQ(File_CreateStream(stream, "test_doc.pdf", &file), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(file, nullptr);
+        ASSERT_EQ(File_CreateStream(stream, "test_doc.pdf", file.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(file.get(), nullptr);
 
         // Create new document (this is an empty document)
-        ASSERT_EQ(Document_CreateFile(file, &document), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(document, nullptr);
+        ASSERT_EQ(Document_CreateFile(file, document.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(document.get(), nullptr);
 
         // Create a page from the document - this creates an INDIRECT page object
-        ASSERT_EQ(PageObject_CreateFromDocument(document, &page), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(page, nullptr);
+        ASSERT_EQ(PageObject_CreateFromDocument(document, page.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(page.get(), nullptr);
 
         // Add the page to the document's page tree
-        CatalogHandle* catalog = nullptr;
-        ASSERT_EQ(Document_GetCatalog(document, &catalog), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(catalog, nullptr);
+        HandleGuard<CatalogHandle, Catalog_Release> catalog;
+        ASSERT_EQ(Document_GetCatalog(document, catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(catalog.get(), nullptr);
 
-        PageTreeHandle* page_tree = nullptr;
-        ASSERT_EQ(Catalog_GetPages(catalog, &page_tree), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(page_tree, nullptr);
+        HandleGuard<PageTreeHandle, PageTree_Release> page_tree;
+        ASSERT_EQ(Catalog_GetPages(catalog, page_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(page_tree.get(), nullptr);
 
         // Note: PageTree_InsertPage(tree, 0, page) is broken - see issue #226
         // Use AppendPage as workaround
         ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
-
-        ASSERT_EQ(PageTree_Release(page_tree), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_EQ(Catalog_Release(catalog), VANILLAPDF_ERROR_SUCCESS);
-    }
-
-    void TearDown() override {
-        if (page) PageObject_Release(page);
-        if (document) Document_Release(document);
-        if (file) File_Release(file);
-        if (stream) InputOutputStream_Release(stream);
     }
 
     // Helper to create a Fit destination with an indirect array
     // The array must be made indirect for NameTree::Insert to work
+    // Note: arr ownership is transferred to caller via out_array, so it stays as raw pointer
     void CreateFitDestinationWithPage(DestinationHandle** result, ArrayObjectHandle** out_array) {
         ArrayObjectHandle* arr = nullptr;
         ASSERT_EQ(ArrayObject_Create(&arr), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_NE(arr, nullptr);
 
         // Add page number (0) as IntegerObject
-        IntegerObjectHandle* page_num = nullptr;
-        ASSERT_EQ(IntegerObject_CreateFromIntegerValue(0, &page_num), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(page_num, nullptr);
-        ObjectHandle* page_obj = nullptr;
-        ASSERT_EQ(IntegerObject_ToObject(page_num, &page_obj), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(page_obj, nullptr);
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> page_num;
+        ASSERT_EQ(IntegerObject_CreateFromIntegerValue(0, page_num.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(page_num.get(), nullptr);
+        HandleGuard<ObjectHandle, Object_Release> page_obj;
+        ASSERT_EQ(IntegerObject_ToObject(page_num, page_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(page_obj.get(), nullptr);
         ASSERT_EQ(ArrayObject_Append(arr, page_obj), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_EQ(Object_Release(page_obj), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_EQ(IntegerObject_Release(page_num), VANILLAPDF_ERROR_SUCCESS);
 
         // Add /Fit name
-        NameObjectHandle* fit_name = nullptr;
-        ASSERT_EQ(NameObject_CreateFromDecodedString("Fit", &fit_name), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(fit_name, nullptr);
-        ObjectHandle* fit_obj = nullptr;
-        ASSERT_EQ(NameObject_ToObject(fit_name, &fit_obj), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(fit_obj, nullptr);
+        HandleGuard<NameObjectHandle, NameObject_Release> fit_name;
+        ASSERT_EQ(NameObject_CreateFromDecodedString("Fit", fit_name.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(fit_name.get(), nullptr);
+        HandleGuard<ObjectHandle, Object_Release> fit_obj;
+        ASSERT_EQ(NameObject_ToObject(fit_name, fit_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(fit_obj.get(), nullptr);
         ASSERT_EQ(ArrayObject_Append(arr, fit_obj), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_EQ(Object_Release(fit_obj), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_EQ(NameObject_Release(fit_name), VANILLAPDF_ERROR_SUCCESS);
 
         // Make the array indirect by allocating an xref entry
-        ObjectHandle* arr_obj = nullptr;
-        ASSERT_EQ(ArrayObject_ToObject(arr, &arr_obj), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(arr_obj, nullptr);
+        HandleGuard<ObjectHandle, Object_Release> arr_obj;
+        ASSERT_EQ(ArrayObject_ToObject(arr, arr_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(arr_obj.get(), nullptr);
 
-        XrefUsedEntryHandle* xref_entry = nullptr;
-        ASSERT_EQ(File_AllocateNewEntry(file, &xref_entry), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(xref_entry, nullptr);
+        HandleGuard<XrefUsedEntryHandle, XrefUsedEntry_Release> xref_entry;
+        ASSERT_EQ(File_AllocateNewEntry(file, xref_entry.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(xref_entry.get(), nullptr);
         ASSERT_EQ(XrefUsedEntry_SetReference(xref_entry, arr_obj), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_EQ(XrefUsedEntry_Release(xref_entry), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_EQ(Object_Release(arr_obj), VANILLAPDF_ERROR_SUCCESS);
 
         // Create destination from array (now indirect)
         ASSERT_EQ(Destination_CreateFromArray(arr, result), VANILLAPDF_ERROR_SUCCESS);
@@ -104,152 +90,125 @@ protected:
 
 // Test creating and releasing NameDictionary
 TEST(NameDictionary, CreateAndRelease) {
-    NameDictionaryHandle* dict = nullptr;
-    ASSERT_EQ(NameDictionary_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(dict, nullptr);
-
-    ASSERT_EQ(NameDictionary_Release(dict), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<NameDictionaryHandle, NameDictionary_Release> dict;
+    ASSERT_EQ(NameDictionary_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dict.get(), nullptr);
 }
 
 // Test ContainsDestinations on empty NameDictionary
 TEST(NameDictionary, ContainsDestinations_Empty) {
-    NameDictionaryHandle* dict = nullptr;
-    ASSERT_EQ(NameDictionary_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<NameDictionaryHandle, NameDictionary_Release> dict;
+    ASSERT_EQ(NameDictionary_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
 
     boolean_type contains = VANILLAPDF_RV_TRUE;
     ASSERT_EQ(NameDictionary_ContainsDestinations(dict, &contains), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(contains, VANILLAPDF_RV_FALSE);
-
-    ASSERT_EQ(NameDictionary_Release(dict), VANILLAPDF_ERROR_SUCCESS);
 }
 
 // Test GetDestinations returns OBJECT_MISSING on empty NameDictionary
 TEST(NameDictionary, GetDestinations_Empty) {
-    NameDictionaryHandle* dict = nullptr;
-    ASSERT_EQ(NameDictionary_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<NameDictionaryHandle, NameDictionary_Release> dict;
+    ASSERT_EQ(NameDictionary_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
 
     DestinationNameTreeHandle* tree = nullptr;
     ASSERT_EQ(NameDictionary_GetDestinations(dict, &tree), VANILLAPDF_ERROR_OBJECT_MISSING);
-
-    ASSERT_EQ(NameDictionary_Release(dict), VANILLAPDF_ERROR_SUCCESS);
 }
 
 // Test ToUnknown and FromUnknown
 TEST(NameDictionary, ToAndFromUnknown) {
-    NameDictionaryHandle* dict = nullptr;
-    ASSERT_EQ(NameDictionary_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<NameDictionaryHandle, NameDictionary_Release> dict;
+    ASSERT_EQ(NameDictionary_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    IUnknownHandle* unknown = nullptr;
-    ASSERT_EQ(NameDictionary_ToUnknown(dict, &unknown), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(unknown, nullptr);
+    HandleGuard<IUnknownHandle, IUnknown_Release> unknown;
+    ASSERT_EQ(NameDictionary_ToUnknown(dict, unknown.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(unknown.get(), nullptr);
 
-    NameDictionaryHandle* dict2 = nullptr;
-    ASSERT_EQ(NameDictionary_FromUnknown(unknown, &dict2), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(dict2, nullptr);
-
-    ASSERT_EQ(NameDictionary_Release(dict2), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(IUnknown_Release(unknown), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameDictionary_Release(dict), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<NameDictionaryHandle, NameDictionary_Release> dict2;
+    ASSERT_EQ(NameDictionary_FromUnknown(unknown, dict2.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dict2.get(), nullptr);
 }
 
 // Test creating and releasing DestinationNameTree
 TEST(DestinationNameTree, CreateAndRelease) {
-    DestinationNameTreeHandle* tree = nullptr;
-    ASSERT_EQ(DestinationNameTree_Create(&tree), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(tree, nullptr);
-
-    ASSERT_EQ(DestinationNameTree_Release(tree), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree;
+    ASSERT_EQ(DestinationNameTree_Create(tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(tree.get(), nullptr);
 }
 
 // Test Contains on empty tree
 TEST(DestinationNameTree, Contains_Empty) {
-    DestinationNameTreeHandle* tree = nullptr;
-    ASSERT_EQ(DestinationNameTree_Create(&tree), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(tree, nullptr);
+    HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree;
+    ASSERT_EQ(DestinationNameTree_Create(tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(tree.get(), nullptr);
 
-    LiteralStringObjectHandle* name = nullptr;
-    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("test", &name), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name, nullptr);
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> name;
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("test", name.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name.get(), nullptr);
 
-    StringObjectHandle* name_str = nullptr;
-    ASSERT_EQ(LiteralStringObject_ToStringObject(name, &name_str), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name_str, nullptr);
+    HandleGuard<StringObjectHandle, StringObject_Release> name_str;
+    ASSERT_EQ(LiteralStringObject_ToStringObject(name, name_str.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name_str.get(), nullptr);
 
     boolean_type contains = VANILLAPDF_RV_TRUE;
     ASSERT_EQ(DestinationNameTree_Contains(tree, name_str, &contains), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(contains, VANILLAPDF_RV_FALSE);
-
-    ASSERT_EQ(StringObject_Release(name_str), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(name), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DestinationNameTree_Release(tree), VANILLAPDF_ERROR_SUCCESS);
 }
 
 // Test TryFind on empty tree
 TEST(DestinationNameTree, TryFind_Empty) {
-    DestinationNameTreeHandle* tree = nullptr;
-    ASSERT_EQ(DestinationNameTree_Create(&tree), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(tree, nullptr);
+    HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree;
+    ASSERT_EQ(DestinationNameTree_Create(tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(tree.get(), nullptr);
 
-    LiteralStringObjectHandle* name = nullptr;
-    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("test", &name), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name, nullptr);
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> name;
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("test", name.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name.get(), nullptr);
 
-    StringObjectHandle* name_str = nullptr;
-    ASSERT_EQ(LiteralStringObject_ToStringObject(name, &name_str), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name_str, nullptr);
+    HandleGuard<StringObjectHandle, StringObject_Release> name_str;
+    ASSERT_EQ(LiteralStringObject_ToStringObject(name, name_str.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name_str.get(), nullptr);
 
     DestinationHandle* dest = nullptr;
     boolean_type found = VANILLAPDF_RV_TRUE;
     ASSERT_EQ(DestinationNameTree_TryFind(tree, name_str, &dest, &found), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(found, VANILLAPDF_RV_FALSE);
-
-    ASSERT_EQ(StringObject_Release(name_str), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(name), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DestinationNameTree_Release(tree), VANILLAPDF_ERROR_SUCCESS);
 }
 
 // Test GetIterator on empty tree
 TEST(DestinationNameTree, Iterator_Empty) {
-    DestinationNameTreeHandle* tree = nullptr;
-    ASSERT_EQ(DestinationNameTree_Create(&tree), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree;
+    ASSERT_EQ(DestinationNameTree_Create(tree.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    DestinationNameTreeIteratorHandle* iter = nullptr;
-    ASSERT_EQ(DestinationNameTree_GetIterator(tree, &iter), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(iter, nullptr);
+    HandleGuard<DestinationNameTreeIteratorHandle, DestinationNameTreeIterator_Release> iter;
+    ASSERT_EQ(DestinationNameTree_GetIterator(tree, iter.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(iter.get(), nullptr);
 
     boolean_type valid = VANILLAPDF_RV_TRUE;
     ASSERT_EQ(DestinationNameTreeIterator_IsValid(iter, &valid), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(valid, VANILLAPDF_RV_FALSE);
-
-    ASSERT_EQ(DestinationNameTreeIterator_Release(iter), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DestinationNameTree_Release(tree), VANILLAPDF_ERROR_SUCCESS);
 }
 
 // Test ToUnknown and FromUnknown for DestinationNameTree
 TEST(DestinationNameTree, ToAndFromUnknown) {
-    DestinationNameTreeHandle* tree = nullptr;
-    ASSERT_EQ(DestinationNameTree_Create(&tree), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree;
+    ASSERT_EQ(DestinationNameTree_Create(tree.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    IUnknownHandle* unknown = nullptr;
-    ASSERT_EQ(DestinationNameTree_ToUnknown(tree, &unknown), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(unknown, nullptr);
+    HandleGuard<IUnknownHandle, IUnknown_Release> unknown;
+    ASSERT_EQ(DestinationNameTree_ToUnknown(tree, unknown.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(unknown.get(), nullptr);
 
-    DestinationNameTreeHandle* tree2 = nullptr;
-    ASSERT_EQ(DestinationNameTree_FromUnknown(unknown, &tree2), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(tree2, nullptr);
-
-    ASSERT_EQ(DestinationNameTree_Release(tree2), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(IUnknown_Release(unknown), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DestinationNameTree_Release(tree), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree2;
+    ASSERT_EQ(DestinationNameTree_FromUnknown(unknown, tree2.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(tree2.get(), nullptr);
 }
 
 // Test SetDestinations and GetDestinations
 TEST(NameDictionary, SetAndGetDestinations) {
-    NameDictionaryHandle* dict = nullptr;
-    ASSERT_EQ(NameDictionary_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<NameDictionaryHandle, NameDictionary_Release> dict;
+    ASSERT_EQ(NameDictionary_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    DestinationNameTreeHandle* tree = nullptr;
-    ASSERT_EQ(DestinationNameTree_Create(&tree), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree;
+    ASSERT_EQ(DestinationNameTree_Create(tree.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Set the tree
     ASSERT_EQ(NameDictionary_SetDestinations(dict, tree), VANILLAPDF_ERROR_SUCCESS);
@@ -260,20 +219,16 @@ TEST(NameDictionary, SetAndGetDestinations) {
     EXPECT_EQ(contains, VANILLAPDF_RV_TRUE);
 
     // Get the tree back
-    DestinationNameTreeHandle* tree2 = nullptr;
-    ASSERT_EQ(NameDictionary_GetDestinations(dict, &tree2), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(tree2, nullptr);
-
-    ASSERT_EQ(DestinationNameTree_Release(tree2), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DestinationNameTree_Release(tree), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameDictionary_Release(dict), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree2;
+    ASSERT_EQ(NameDictionary_GetDestinations(dict, tree2.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(tree2.get(), nullptr);
 }
 
 // Test Insert and Find (requires document context for indirect objects)
 TEST_F(DestinationNameTreeWithDocument, InsertAndFind) {
-    DestinationNameTreeHandle* tree = nullptr;
-    ASSERT_EQ(DestinationNameTree_Create(&tree), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(tree, nullptr);
+    HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree;
+    ASSERT_EQ(DestinationNameTree_Create(tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(tree.get(), nullptr);
 
     // Create a Fit destination using the page from document
     DestinationHandle* dest = nullptr;
@@ -281,13 +236,13 @@ TEST_F(DestinationNameTreeWithDocument, InsertAndFind) {
     CreateFitDestinationWithPage(&dest, &dest_arr);
 
     // Create a name
-    LiteralStringObjectHandle* name = nullptr;
-    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("TestDest", &name), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name, nullptr);
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> name;
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("TestDest", name.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name.get(), nullptr);
 
-    StringObjectHandle* name_str = nullptr;
-    ASSERT_EQ(LiteralStringObject_ToStringObject(name, &name_str), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name_str, nullptr);
+    HandleGuard<StringObjectHandle, StringObject_Release> name_str;
+    ASSERT_EQ(LiteralStringObject_ToStringObject(name, name_str.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name_str.get(), nullptr);
 
     // Insert the destination
     ASSERT_EQ(DestinationNameTree_Insert(tree, name_str, dest), VANILLAPDF_ERROR_SUCCESS);
@@ -298,77 +253,69 @@ TEST_F(DestinationNameTreeWithDocument, InsertAndFind) {
     EXPECT_EQ(contains, VANILLAPDF_RV_TRUE);
 
     // Find should return the destination
-    DestinationHandle* found_dest = nullptr;
-    ASSERT_EQ(DestinationNameTree_Find(tree, name_str, &found_dest), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(found_dest, nullptr);
+    HandleGuard<DestinationHandle, Destination_Release> found_dest;
+    ASSERT_EQ(DestinationNameTree_Find(tree, name_str, found_dest.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(found_dest.get(), nullptr);
 
     // Verify it's a Fit destination
     DestinationType dest_type = DestinationType_Undefined;
     ASSERT_EQ(Destination_GetDestinationType(found_dest, &dest_type), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(dest_type, DestinationType_Fit);
 
-    ASSERT_EQ(Destination_Release(found_dest), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(StringObject_Release(name_str), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(name), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Destination_Release(dest), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(ArrayObject_Release(dest_arr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DestinationNameTree_Release(tree), VANILLAPDF_ERROR_SUCCESS);
+    Destination_Release(dest);
+    ArrayObject_Release(dest_arr);
 }
 
 // Test TryFind with existing item (requires document context for indirect objects)
 TEST_F(DestinationNameTreeWithDocument, TryFind_Found) {
-    DestinationNameTreeHandle* tree = nullptr;
-    ASSERT_EQ(DestinationNameTree_Create(&tree), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(tree, nullptr);
+    HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree;
+    ASSERT_EQ(DestinationNameTree_Create(tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(tree.get(), nullptr);
 
     // Create and insert a destination using the page from document
     DestinationHandle* dest = nullptr;
     ArrayObjectHandle* dest_arr = nullptr;
     CreateFitDestinationWithPage(&dest, &dest_arr);
 
-    LiteralStringObjectHandle* name = nullptr;
-    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("MyDest", &name), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name, nullptr);
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> name;
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("MyDest", name.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name.get(), nullptr);
 
-    StringObjectHandle* name_str = nullptr;
-    ASSERT_EQ(LiteralStringObject_ToStringObject(name, &name_str), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name_str, nullptr);
+    HandleGuard<StringObjectHandle, StringObject_Release> name_str;
+    ASSERT_EQ(LiteralStringObject_ToStringObject(name, name_str.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name_str.get(), nullptr);
 
     ASSERT_EQ(DestinationNameTree_Insert(tree, name_str, dest), VANILLAPDF_ERROR_SUCCESS);
 
     // TryFind should return true and set the destination
-    DestinationHandle* found_dest = nullptr;
+    HandleGuard<DestinationHandle, Destination_Release> found_dest;
     boolean_type found = VANILLAPDF_RV_FALSE;
-    ASSERT_EQ(DestinationNameTree_TryFind(tree, name_str, &found_dest, &found), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DestinationNameTree_TryFind(tree, name_str, found_dest.out(), &found), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(found, VANILLAPDF_RV_TRUE);
-    ASSERT_NE(found_dest, nullptr);
+    ASSERT_NE(found_dest.get(), nullptr);
 
-    ASSERT_EQ(Destination_Release(found_dest), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(StringObject_Release(name_str), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(name), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Destination_Release(dest), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(ArrayObject_Release(dest_arr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DestinationNameTree_Release(tree), VANILLAPDF_ERROR_SUCCESS);
+    Destination_Release(dest);
+    ArrayObject_Release(dest_arr);
 }
 
 // Test Remove (requires document context)
 TEST_F(DestinationNameTreeWithDocument, Remove) {
-    DestinationNameTreeHandle* tree = nullptr;
-    ASSERT_EQ(DestinationNameTree_Create(&tree), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(tree, nullptr);
+    HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree;
+    ASSERT_EQ(DestinationNameTree_Create(tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(tree.get(), nullptr);
 
     // Create and insert a destination using the page from document
     DestinationHandle* dest = nullptr;
     ArrayObjectHandle* dest_arr = nullptr;
     CreateFitDestinationWithPage(&dest, &dest_arr);
 
-    LiteralStringObjectHandle* name = nullptr;
-    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("ToRemove", &name), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name, nullptr);
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> name;
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("ToRemove", name.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name.get(), nullptr);
 
-    StringObjectHandle* name_str = nullptr;
-    ASSERT_EQ(LiteralStringObject_ToStringObject(name, &name_str), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name_str, nullptr);
+    HandleGuard<StringObjectHandle, StringObject_Release> name_str;
+    ASSERT_EQ(LiteralStringObject_ToStringObject(name, name_str.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name_str.get(), nullptr);
 
     ASSERT_EQ(DestinationNameTree_Insert(tree, name_str, dest), VANILLAPDF_ERROR_SUCCESS);
 
@@ -392,38 +339,35 @@ TEST_F(DestinationNameTreeWithDocument, Remove) {
     ASSERT_EQ(DestinationNameTree_Remove(tree, name_str, &removed), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(removed, VANILLAPDF_RV_FALSE);
 
-    ASSERT_EQ(StringObject_Release(name_str), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(name), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Destination_Release(dest), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(ArrayObject_Release(dest_arr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DestinationNameTree_Release(tree), VANILLAPDF_ERROR_SUCCESS);
+    Destination_Release(dest);
+    ArrayObject_Release(dest_arr);
 }
 
 // Test iterator with single item (requires document context)
 // Note: Multiple inserts fail due to "Limits key already present" bug - see issue #227
 TEST_F(DestinationNameTreeWithDocument, Iterator_WithItems) {
-    DestinationNameTreeHandle* tree = nullptr;
-    ASSERT_EQ(DestinationNameTree_Create(&tree), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(tree, nullptr);
+    HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree;
+    ASSERT_EQ(DestinationNameTree_Create(tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(tree.get(), nullptr);
 
     // Create one destination (multiple inserts blocked by issue #227)
     DestinationHandle* dest1 = nullptr;
     ArrayObjectHandle* dest_arr1 = nullptr;
     CreateFitDestinationWithPage(&dest1, &dest_arr1);
 
-    LiteralStringObjectHandle* name1 = nullptr;
-    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("TestDest", &name1), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name1, nullptr);
-    StringObjectHandle* name_str1 = nullptr;
-    ASSERT_EQ(LiteralStringObject_ToStringObject(name1, &name_str1), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(name_str1, nullptr);
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> name1;
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("TestDest", name1.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name1.get(), nullptr);
+    HandleGuard<StringObjectHandle, StringObject_Release> name_str1;
+    ASSERT_EQ(LiteralStringObject_ToStringObject(name1, name_str1.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name_str1.get(), nullptr);
 
     ASSERT_EQ(DestinationNameTree_Insert(tree, name_str1, dest1), VANILLAPDF_ERROR_SUCCESS);
 
     // Get iterator
-    DestinationNameTreeIteratorHandle* iter = nullptr;
-    ASSERT_EQ(DestinationNameTree_GetIterator(tree, &iter), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(iter, nullptr);
+    HandleGuard<DestinationNameTreeIteratorHandle, DestinationNameTreeIterator_Release> iter;
+    ASSERT_EQ(DestinationNameTree_GetIterator(tree, iter.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(iter.get(), nullptr);
 
     // Count items
     int count = 0;
@@ -431,16 +375,14 @@ TEST_F(DestinationNameTreeWithDocument, Iterator_WithItems) {
     ASSERT_EQ(DestinationNameTreeIterator_IsValid(iter, &valid), VANILLAPDF_ERROR_SUCCESS);
     while (valid == VANILLAPDF_RV_TRUE) {
         // Get key
-        StringObjectHandle* key = nullptr;
-        ASSERT_EQ(DestinationNameTreeIterator_GetKey(iter, &key), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(key, nullptr);
-        ASSERT_EQ(StringObject_Release(key), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<StringObjectHandle, StringObject_Release> key;
+        ASSERT_EQ(DestinationNameTreeIterator_GetKey(iter, key.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(key.get(), nullptr);
 
         // Get value
-        DestinationHandle* value = nullptr;
-        ASSERT_EQ(DestinationNameTreeIterator_GetValue(iter, &value), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_NE(value, nullptr);
-        ASSERT_EQ(Destination_Release(value), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<DestinationHandle, Destination_Release> value;
+        ASSERT_EQ(DestinationNameTreeIterator_GetValue(iter, value.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(value.get(), nullptr);
 
         count++;
         ASSERT_EQ(DestinationNameTreeIterator_Next(iter), VANILLAPDF_ERROR_SUCCESS);
@@ -449,10 +391,6 @@ TEST_F(DestinationNameTreeWithDocument, Iterator_WithItems) {
 
     EXPECT_EQ(count, 1);
 
-    ASSERT_EQ(DestinationNameTreeIterator_Release(iter), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(StringObject_Release(name_str1), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(LiteralStringObject_Release(name1), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Destination_Release(dest1), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(ArrayObject_Release(dest_arr1), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DestinationNameTree_Release(tree), VANILLAPDF_ERROR_SUCCESS);
+    Destination_Release(dest1);
+    ArrayObject_Release(dest_arr1);
 }

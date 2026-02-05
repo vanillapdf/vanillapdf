@@ -1,32 +1,29 @@
 #include "unittest.h"
+#include "handle_guard.h"
 #include "test_data.h"
 
 namespace documents {
 
 TEST(DocumentEncryptionSettings, CreateRelease) {
-    DocumentEncryptionSettingsHandle* encryption_settings = nullptr;
+    HandleGuard<DocumentEncryptionSettingsHandle, DocumentEncryptionSettings_Release> encryption_settings;
 
-    ASSERT_EQ(DocumentEncryptionSettings_Create(&encryption_settings), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(encryption_settings, nullptr);
-
-    ASSERT_EQ(DocumentEncryptionSettings_Release(encryption_settings), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentEncryptionSettings_Create(encryption_settings.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(encryption_settings.get(), nullptr);
 }
 
 TEST(DocumentEncryptionSettings, PermissionsFlagMaxValue) {
-    DocumentEncryptionSettingsHandle* encryption_settings = nullptr;
+    HandleGuard<DocumentEncryptionSettingsHandle, DocumentEncryptionSettings_Release> encryption_settings;
 
     UserAccessPermissionFlags permissions_flags = static_cast<UserAccessPermissionFlags>(-1);
     UserAccessPermissionFlags permissions_flags_check = UserAccessPermissionFlag_None;
 
-    ASSERT_EQ(DocumentEncryptionSettings_Create(&encryption_settings), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(encryption_settings, nullptr);
+    ASSERT_EQ(DocumentEncryptionSettings_Create(encryption_settings.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(encryption_settings.get(), nullptr);
 
     ASSERT_EQ(DocumentEncryptionSettings_SetUserAccessPermissions(encryption_settings, permissions_flags), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(DocumentEncryptionSettings_GetUserAccessPermissions(encryption_settings, &permissions_flags_check), VANILLAPDF_ERROR_SUCCESS);
 
     EXPECT_EQ(permissions_flags, permissions_flags_check);
-
-    ASSERT_EQ(DocumentEncryptionSettings_Release(encryption_settings), VANILLAPDF_ERROR_SUCCESS);
 }
 
 void EncryptDocument(
@@ -36,41 +33,41 @@ void EncryptDocument(
     integer_type encryption_key_length,
     UserAccessPermissionFlags user_permissions) {
 
-    FileHandle* memory_file = nullptr;
-    DocumentHandle* memory_document = nullptr;
-    InputOutputStreamHandle* io_stream = nullptr;
-    DocumentEncryptionSettingsHandle* encryption_settings = nullptr;
+    HandleGuard<FileHandle, File_Release> memory_file;
+    HandleGuard<DocumentHandle, Document_Release> memory_document;
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<DocumentEncryptionSettingsHandle, DocumentEncryptionSettings_Release> encryption_settings;
 
-    FileHandle* destination_save_file = nullptr;
-    FileHandle* destination_load_file = nullptr;
-    InputOutputStreamHandle* destination_io_stream = nullptr;
+    HandleGuard<FileHandle, File_Release> destination_save_file;
+    HandleGuard<FileHandle, File_Release> destination_load_file;
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> destination_io_stream;
 
     boolean_type destination_is_encrypted = VANILLAPDF_RV_FALSE;
 
-    ASSERT_EQ(InputOutputStream_CreateFromMemory(&io_stream), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(io_stream, nullptr);
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(io_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(io_stream.get(), nullptr);
 
-    ASSERT_EQ(File_CreateStream(io_stream, "temp", &memory_file), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(memory_file, nullptr);
+    ASSERT_EQ(File_CreateStream(io_stream, "temp", memory_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(memory_file.get(), nullptr);
 
-    ASSERT_EQ(Document_CreateFile(memory_file, &memory_document), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(memory_document, nullptr);
+    ASSERT_EQ(Document_CreateFile(memory_file, memory_document.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(memory_document.get(), nullptr);
 
-    ASSERT_EQ(DocumentEncryptionSettings_Create(&encryption_settings), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(encryption_settings, nullptr);
+    ASSERT_EQ(DocumentEncryptionSettings_Create(encryption_settings.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(encryption_settings.get(), nullptr);
 
     ASSERT_EQ(DocumentEncryptionSettings_SetAlgorithm(encryption_settings, encryption_algorithm), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(DocumentEncryptionSettings_SetKeyLength(encryption_settings, encryption_key_length), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(DocumentEncryptionSettings_SetUserAccessPermissions(encryption_settings, user_permissions), VANILLAPDF_ERROR_SUCCESS);
 
-    BufferHandle* owner_password_buffer = nullptr;
-    BufferHandle* user_password_buffer = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> owner_password_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> user_password_buffer;
 
-    ASSERT_EQ(Buffer_CreateFromData(owner_password.data(), owner_password.length(), &owner_password_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_CreateFromData(user_password.data(), user_password.length(), &user_password_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData(owner_password.data(), owner_password.length(), owner_password_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData(user_password.data(), user_password.length(), user_password_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_NE(owner_password_buffer, nullptr);
-    ASSERT_NE(user_password_buffer, nullptr);
+    ASSERT_NE(owner_password_buffer.get(), nullptr);
+    ASSERT_NE(user_password_buffer.get(), nullptr);
 
     ASSERT_EQ(DocumentEncryptionSettings_SetOwnerPassword(encryption_settings, owner_password_buffer), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(DocumentEncryptionSettings_SetUserPassword(encryption_settings, user_password_buffer), VANILLAPDF_ERROR_SUCCESS);
@@ -79,18 +76,18 @@ void EncryptDocument(
     ASSERT_EQ(Document_AddEncryption(memory_document, encryption_settings), VANILLAPDF_ERROR_SUCCESS);
 
     // Create the destination stream file for output
-    ASSERT_EQ(InputOutputStream_CreateFromMemory(&destination_io_stream), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(destination_io_stream, nullptr);
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(destination_io_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(destination_io_stream.get(), nullptr);
 
-    ASSERT_EQ(File_CreateStream(destination_io_stream, "temp_destination", &destination_save_file), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(destination_save_file, nullptr);
+    ASSERT_EQ(File_CreateStream(destination_io_stream, "temp_destination", destination_save_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(destination_save_file.get(), nullptr);
 
     // Save the file into destination memory stream
     ASSERT_EQ(Document_SaveFile(memory_document, destination_save_file), VANILLAPDF_ERROR_SUCCESS);
 
     // Check the destination file for consistency
-    ASSERT_EQ(File_OpenStream(destination_io_stream, "temp_destination", &destination_load_file), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(destination_load_file, nullptr);
+    ASSERT_EQ(File_OpenStream(destination_io_stream, "temp_destination", destination_load_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(destination_load_file.get(), nullptr);
 
     ASSERT_EQ(File_Initialize(destination_load_file), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(File_IsEncrypted(destination_load_file, &destination_is_encrypted), VANILLAPDF_ERROR_SUCCESS);
@@ -99,21 +96,6 @@ void EncryptDocument(
 
     ASSERT_EQ(File_SetEncryptionPassword(destination_load_file, owner_password.data()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(File_SetEncryptionPassword(destination_load_file, user_password.data()), VANILLAPDF_ERROR_SUCCESS);
-
-    // Cleanup
-
-    ASSERT_EQ(File_Release(destination_load_file), VANILLAPDF_ERROR_SUCCESS);
-
-    ASSERT_EQ(File_Release(destination_save_file), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InputOutputStream_Release(destination_io_stream), VANILLAPDF_ERROR_SUCCESS);
-
-    ASSERT_EQ(Buffer_Release(owner_password_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(user_password_buffer), VANILLAPDF_ERROR_SUCCESS);
-
-    ASSERT_EQ(DocumentEncryptionSettings_Release(encryption_settings), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Document_Release(memory_document), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(File_Release(memory_file), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InputOutputStream_Release(io_stream), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(Document, Encrypt_RC4_40) {
@@ -139,50 +121,50 @@ TEST(Document, Encrypt_AES_128) {
 
 TEST(Document, Sign) {
 
-    FileHandle* source_memory_file = nullptr;
-    DocumentHandle* source_memory_document = nullptr;
-    InputOutputStreamHandle* io_stream = nullptr;
+    HandleGuard<FileHandle, File_Release> source_memory_file;
+    HandleGuard<DocumentHandle, Document_Release> source_memory_document;
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
 
-    DocumentSignatureSettingsHandle* signature_settings = nullptr;
-    DateHandle* signing_time = nullptr;
-    SigningKeyHandle* signing_key = nullptr;
-    PKCS12KeyHandle* signature_pkcs12_key = nullptr;
-    BufferHandle* signing_key_data = nullptr;
+    HandleGuard<DocumentSignatureSettingsHandle, DocumentSignatureSettings_Release> signature_settings;
+    HandleGuard<DateHandle, Date_Release> signing_time;
+    HandleGuard<SigningKeyHandle, SigningKey_Release> signing_key;
+    HandleGuard<PKCS12KeyHandle, PKCS12Key_Release> signature_pkcs12_key;
+    HandleGuard<BufferHandle, Buffer_Release> signing_key_data;
 
-    FileHandle* destination_file = nullptr;
-    InputOutputStreamHandle* destination_io_stream = nullptr;
+    HandleGuard<FileHandle, File_Release> destination_file;
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> destination_io_stream;
 
-    ASSERT_EQ(InputOutputStream_CreateFromMemory(&io_stream), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(io_stream, nullptr);
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(io_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(io_stream.get(), nullptr);
 
-    ASSERT_EQ(File_CreateStream(io_stream, "temp", &source_memory_file), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(source_memory_file, nullptr);
+    ASSERT_EQ(File_CreateStream(io_stream, "temp", source_memory_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(source_memory_file.get(), nullptr);
 
-    ASSERT_EQ(Document_CreateFile(source_memory_file, &source_memory_document), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(source_memory_document, nullptr);
+    ASSERT_EQ(Document_CreateFile(source_memory_file, source_memory_document.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(source_memory_document.get(), nullptr);
 
     // Create the destination stream file for output
-    ASSERT_EQ(InputOutputStream_CreateFromMemory(&destination_io_stream), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(destination_io_stream, nullptr);
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(destination_io_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(destination_io_stream.get(), nullptr);
 
-    ASSERT_EQ(File_CreateStream(destination_io_stream, "temp_destination", &destination_file), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(destination_file, nullptr);
+    ASSERT_EQ(File_CreateStream(destination_io_stream, "temp_destination", destination_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(destination_file.get(), nullptr);
 
     // Configure the signature settings
-    ASSERT_EQ(DocumentSignatureSettings_Create(&signature_settings), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(signature_settings, nullptr);
+    ASSERT_EQ(DocumentSignatureSettings_Create(signature_settings.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signature_settings.get(), nullptr);
 
-    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(SIGNING_CERTIFICATE), sizeof(SIGNING_CERTIFICATE), &signing_key_data), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(signing_key_data, nullptr);
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(SIGNING_CERTIFICATE), sizeof(SIGNING_CERTIFICATE), signing_key_data.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signing_key_data.get(), nullptr);
 
-    ASSERT_EQ(PKCS12Key_CreateFromBuffer(signing_key_data, nullptr, &signature_pkcs12_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(signature_pkcs12_key, nullptr);
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(signing_key_data, nullptr, signature_pkcs12_key.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signature_pkcs12_key.get(), nullptr);
 
-    ASSERT_EQ(PKCS12Key_ToSigningKey(signature_pkcs12_key, &signing_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(signing_key, nullptr);
+    ASSERT_EQ(PKCS12Key_ToSigningKey(signature_pkcs12_key, signing_key.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signing_key.get(), nullptr);
 
-    ASSERT_EQ(Date_CreateCurrent(&signing_time), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(signing_time, nullptr);
+    ASSERT_EQ(Date_CreateCurrent(signing_time.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signing_time.get(), nullptr);
 
     ASSERT_EQ(DocumentSignatureSettings_SetSigningKey(signature_settings, signing_key), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(DocumentSignatureSettings_SetDigest(signature_settings, MessageDigestAlgorithmType_SHA256), VANILLAPDF_ERROR_SUCCESS);
@@ -190,188 +172,141 @@ TEST(Document, Sign) {
 
     // Sign the document and save it to the destination file
     ASSERT_EQ(Document_Sign(source_memory_document, destination_file, signature_settings), VANILLAPDF_ERROR_SUCCESS);
-
-    // Cleanup
-
-    ASSERT_EQ(Date_Release(signing_time), VANILLAPDF_ERROR_SUCCESS);
-
-    ASSERT_EQ(File_Release(destination_file), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InputOutputStream_Release(destination_io_stream), VANILLAPDF_ERROR_SUCCESS);
-
-    ASSERT_EQ(SigningKey_Release(signing_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PKCS12Key_Release(signature_pkcs12_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(signing_key_data), VANILLAPDF_ERROR_SUCCESS);
-
-    ASSERT_EQ(DocumentSignatureSettings_Release(signature_settings), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Document_Release(source_memory_document), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(File_Release(source_memory_file), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InputOutputStream_Release(io_stream), VANILLAPDF_ERROR_SUCCESS);
 }
 
 TEST(Document, ButtonFieldConversion) {
-    DictionaryObjectHandle* dict = nullptr;
-    NameObjectHandle* ft_key = nullptr;
-    NameObjectHandle* btn_value = nullptr;
-    FieldHandle* field = nullptr;
-    ButtonFieldHandle* button_field = nullptr;
-    FieldHandle* field_back = nullptr;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    HandleGuard<NameObjectHandle, NameObject_Release> ft_key;
+    HandleGuard<NameObjectHandle, NameObject_Release> btn_value;
+    HandleGuard<FieldHandle, Field_Release> field;
+    HandleGuard<ButtonFieldHandle, ButtonField_Release> button_field;
+    HandleGuard<FieldHandle, Field_Release> field_back;
     FieldType field_type = FieldType_Undefined;
 
-    ASSERT_EQ(DictionaryObject_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(dict, nullptr);
+    ASSERT_EQ(DictionaryObject_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dict.get(), nullptr);
 
-    ASSERT_EQ(NameObject_CreateFromDecodedString("FT", &ft_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_CreateFromDecodedString("Btn", &btn_value), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("FT", ft_key.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Btn", btn_value.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_EQ(DictionaryObject_Insert(dict, ft_key, reinterpret_cast<ObjectHandle*>(btn_value), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Insert(dict, ft_key, reinterpret_cast<ObjectHandle*>(btn_value.get()), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_EQ(Field_CreateFromDictionary(dict, &field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(field, nullptr);
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field.get(), nullptr);
 
     ASSERT_EQ(Field_GetType(field, &field_type), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(field_type, FieldType_Button);
 
-    ASSERT_EQ(ButtonField_FromField(field, &button_field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(button_field, nullptr);
+    ASSERT_EQ(ButtonField_FromField(field, button_field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(button_field.get(), nullptr);
 
-    ASSERT_EQ(ButtonField_ToField(button_field, &field_back), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(field_back, nullptr);
-
-    ASSERT_EQ(Field_Release(field_back), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(ButtonField_Release(button_field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Field_Release(field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_Release(btn_value), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_Release(ft_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DictionaryObject_Release(dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ButtonField_ToField(button_field, field_back.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field_back.get(), nullptr);
 }
 
 TEST(Document, TextFieldConversion) {
-    DictionaryObjectHandle* dict = nullptr;
-    NameObjectHandle* ft_key = nullptr;
-    NameObjectHandle* tx_value = nullptr;
-    FieldHandle* field = nullptr;
-    TextFieldHandle* text_field = nullptr;
-    FieldHandle* field_back = nullptr;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    HandleGuard<NameObjectHandle, NameObject_Release> ft_key;
+    HandleGuard<NameObjectHandle, NameObject_Release> tx_value;
+    HandleGuard<FieldHandle, Field_Release> field;
+    HandleGuard<TextFieldHandle, TextField_Release> text_field;
+    HandleGuard<FieldHandle, Field_Release> field_back;
     FieldType field_type = FieldType_Undefined;
 
-    ASSERT_EQ(DictionaryObject_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(dict, nullptr);
+    ASSERT_EQ(DictionaryObject_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dict.get(), nullptr);
 
-    ASSERT_EQ(NameObject_CreateFromDecodedString("FT", &ft_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_CreateFromDecodedString("Tx", &tx_value), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("FT", ft_key.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Tx", tx_value.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_EQ(DictionaryObject_Insert(dict, ft_key, reinterpret_cast<ObjectHandle*>(tx_value), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Insert(dict, ft_key, reinterpret_cast<ObjectHandle*>(tx_value.get()), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_EQ(Field_CreateFromDictionary(dict, &field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(field, nullptr);
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field.get(), nullptr);
 
     ASSERT_EQ(Field_GetType(field, &field_type), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(field_type, FieldType_Text);
 
-    ASSERT_EQ(TextField_FromField(field, &text_field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(text_field, nullptr);
+    ASSERT_EQ(TextField_FromField(field, text_field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(text_field.get(), nullptr);
 
-    ASSERT_EQ(TextField_ToField(text_field, &field_back), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(field_back, nullptr);
-
-    ASSERT_EQ(Field_Release(field_back), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(TextField_Release(text_field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Field_Release(field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_Release(tx_value), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_Release(ft_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DictionaryObject_Release(dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextField_ToField(text_field, field_back.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field_back.get(), nullptr);
 }
 
 TEST(Document, ChoiceFieldConversion) {
-    DictionaryObjectHandle* dict = nullptr;
-    NameObjectHandle* ft_key = nullptr;
-    NameObjectHandle* ch_value = nullptr;
-    FieldHandle* field = nullptr;
-    ChoiceFieldHandle* choice_field = nullptr;
-    FieldHandle* field_back = nullptr;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    HandleGuard<NameObjectHandle, NameObject_Release> ft_key;
+    HandleGuard<NameObjectHandle, NameObject_Release> ch_value;
+    HandleGuard<FieldHandle, Field_Release> field;
+    HandleGuard<ChoiceFieldHandle, ChoiceField_Release> choice_field;
+    HandleGuard<FieldHandle, Field_Release> field_back;
     FieldType field_type = FieldType_Undefined;
 
-    ASSERT_EQ(DictionaryObject_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(dict, nullptr);
+    ASSERT_EQ(DictionaryObject_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dict.get(), nullptr);
 
-    ASSERT_EQ(NameObject_CreateFromDecodedString("FT", &ft_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_CreateFromDecodedString("Ch", &ch_value), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("FT", ft_key.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Ch", ch_value.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_EQ(DictionaryObject_Insert(dict, ft_key, reinterpret_cast<ObjectHandle*>(ch_value), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Insert(dict, ft_key, reinterpret_cast<ObjectHandle*>(ch_value.get()), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_EQ(Field_CreateFromDictionary(dict, &field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(field, nullptr);
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field.get(), nullptr);
 
     ASSERT_EQ(Field_GetType(field, &field_type), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(field_type, FieldType_Choice);
 
-    ASSERT_EQ(ChoiceField_FromField(field, &choice_field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(choice_field, nullptr);
+    ASSERT_EQ(ChoiceField_FromField(field, choice_field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(choice_field.get(), nullptr);
 
-    ASSERT_EQ(ChoiceField_ToField(choice_field, &field_back), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(field_back, nullptr);
-
-    ASSERT_EQ(Field_Release(field_back), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(ChoiceField_Release(choice_field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Field_Release(field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_Release(ch_value), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_Release(ft_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DictionaryObject_Release(dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ChoiceField_ToField(choice_field, field_back.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field_back.get(), nullptr);
 }
 
 TEST(Document, SignatureFieldConversion) {
-    DictionaryObjectHandle* dict = nullptr;
-    NameObjectHandle* ft_key = nullptr;
-    NameObjectHandle* sig_value = nullptr;
-    FieldHandle* field = nullptr;
-    SignatureFieldHandle* signature_field = nullptr;
-    FieldHandle* field_back = nullptr;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    HandleGuard<NameObjectHandle, NameObject_Release> ft_key;
+    HandleGuard<NameObjectHandle, NameObject_Release> sig_value;
+    HandleGuard<FieldHandle, Field_Release> field;
+    HandleGuard<SignatureFieldHandle, SignatureField_Release> signature_field;
+    HandleGuard<FieldHandle, Field_Release> field_back;
     FieldType field_type = FieldType_Undefined;
 
-    ASSERT_EQ(DictionaryObject_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(dict, nullptr);
+    ASSERT_EQ(DictionaryObject_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dict.get(), nullptr);
 
-    ASSERT_EQ(NameObject_CreateFromDecodedString("FT", &ft_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_CreateFromDecodedString("Sig", &sig_value), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("FT", ft_key.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Sig", sig_value.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_EQ(DictionaryObject_Insert(dict, ft_key, reinterpret_cast<ObjectHandle*>(sig_value), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Insert(dict, ft_key, reinterpret_cast<ObjectHandle*>(sig_value.get()), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_EQ(Field_CreateFromDictionary(dict, &field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(field, nullptr);
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field.get(), nullptr);
 
     ASSERT_EQ(Field_GetType(field, &field_type), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(field_type, FieldType_Signature);
 
-    ASSERT_EQ(SignatureField_FromField(field, &signature_field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(signature_field, nullptr);
+    ASSERT_EQ(SignatureField_FromField(field, signature_field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(signature_field.get(), nullptr);
 
-    ASSERT_EQ(SignatureField_ToField(signature_field, &field_back), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(field_back, nullptr);
-
-    ASSERT_EQ(Field_Release(field_back), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(SignatureField_Release(signature_field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Field_Release(field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_Release(sig_value), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(NameObject_Release(ft_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DictionaryObject_Release(dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SignatureField_ToField(signature_field, field_back.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field_back.get(), nullptr);
 }
 
 TEST(Document, NonTerminalFieldCreation) {
-    DictionaryObjectHandle* dict = nullptr;
-    FieldHandle* field = nullptr;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    HandleGuard<FieldHandle, Field_Release> field;
     FieldType field_type = FieldType_Undefined;
 
-    ASSERT_EQ(DictionaryObject_Create(&dict), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(dict, nullptr);
+    ASSERT_EQ(DictionaryObject_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(dict.get(), nullptr);
 
-    ASSERT_EQ(Field_CreateFromDictionary(dict, &field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(field, nullptr);
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(field.get(), nullptr);
 
     ASSERT_EQ(Field_GetType(field, &field_type), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(field_type, FieldType_NonTerminal);
-
-    ASSERT_EQ(Field_Release(field), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DictionaryObject_Release(dict), VANILLAPDF_ERROR_SUCCESS);
 }
 
 } /* documents */

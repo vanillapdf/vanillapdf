@@ -1,4 +1,5 @@
 #include "unittest.h"
+#include "handle_guard.h"
 
 static const char UNIT_TEST_LICENSE[] = R"({
   "version": "1.0",
@@ -23,17 +24,15 @@ void TestEnvironment::SetUp() {
 
     ASSERT_EQ(MiscUtils_InitializeOpenSSL(), VANILLAPDF_ERROR_SUCCESS);
 
-    BufferHandle* license_buffer = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> license_buffer;
     boolean_type is_valid = VANILLAPDF_RV_FALSE;
-    
-    ASSERT_EQ(Buffer_CreateFromData(UNIT_TEST_LICENSE, sizeof(UNIT_TEST_LICENSE), &license_buffer), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(license_buffer, nullptr);
+
+    ASSERT_EQ(Buffer_CreateFromData(UNIT_TEST_LICENSE, sizeof(UNIT_TEST_LICENSE), license_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(license_buffer.get(), nullptr);
 
     ASSERT_EQ(LicenseInfo_SetLicenseBuffer(license_buffer), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(LicenseInfo_IsValid(&is_valid), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(is_valid, VANILLAPDF_RV_TRUE);
-    
-    ASSERT_EQ(Buffer_Release(license_buffer), VANILLAPDF_ERROR_SUCCESS);
 }
 
 void TestEnvironment::TearDown() {

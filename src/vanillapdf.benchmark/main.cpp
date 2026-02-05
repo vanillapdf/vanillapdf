@@ -1,4 +1,5 @@
 #include "benchmark.h"
+#include "handle_guard.h"
 
 static const char SAMPLE_CONTENT_STREAM[] = R"(q
 0.000008871 0 595.32 841.92 re
@@ -23,38 +24,28 @@ BT
 ET)";
 
 static void BM_Contents_ParseContentStream(benchmark::State& state) {
-    FileHandle* test_file = nullptr;
-    InputOutputStreamHandle* file_stream = nullptr;
+    HandleGuard<FileHandle, File_Release> test_file;
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> file_stream;
 
-    InputOutputStreamHandle* content_io_stream = nullptr;
-    InputStreamHandle* content_input_stream = nullptr;
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> content_io_stream;
+    HandleGuard<InputStreamHandle, InputStream_Release> content_input_stream;
 
-    InputOutputStream_CreateFromMemory(&file_stream);
-    File_OpenStream(file_stream, "temp", &test_file);
+    InputOutputStream_CreateFromMemory(file_stream.out());
+    File_OpenStream(file_stream, "temp", test_file.out());
 
-    InputOutputStream_CreateFromMemory(&content_io_stream);
+    InputOutputStream_CreateFromMemory(content_io_stream.out());
     InputOutputStream_WriteString(content_io_stream, SAMPLE_CONTENT_STREAM);
-    InputOutputStream_ToInputStream(content_io_stream, &content_input_stream);
+    InputOutputStream_ToInputStream(content_io_stream, content_input_stream.out());
 
     for (auto _ : state) {
-        ContentParserHandle* content_parser = nullptr;
-        ContentInstructionCollectionHandle* content_instruction_collection = nullptr;
+        HandleGuard<ContentParserHandle, ContentParser_Release> content_parser;
+        HandleGuard<ContentInstructionCollectionHandle, ContentInstructionCollection_Release> content_instruction_collection;
 
         InputStream_SetInputPosition(content_input_stream, 0);
 
-        ContentParser_Create(test_file, content_input_stream, &content_parser);
-        ContentParser_ReadInstructionCollection(content_parser, &content_instruction_collection);
-
-        ContentInstructionCollection_Release(content_instruction_collection);
-        ContentParser_Release(content_parser);
+        ContentParser_Create(test_file, content_input_stream, content_parser.out());
+        ContentParser_ReadInstructionCollection(content_parser, content_instruction_collection.out());
     }
-
-    // Cleanup
-    InputStream_Release(content_input_stream);
-    InputOutputStream_Release(content_io_stream);
-
-    File_Release(test_file);
-    InputOutputStream_Release(file_stream);
 }
 
 BENCHMARK(BM_Contents_ParseContentStream);
@@ -72,10 +63,10 @@ endobj
 
 xref
 0 4
-0000000000 65535 f 
-0000000009 00000 n 
-0000000056 00000 n 
-0000000097 00000 n 
+0000000000 65535 f
+0000000009 00000 n
+0000000056 00000 n
+0000000097 00000 n
 trailer
 <</Info 3 0 R /Root 1 0 R /Size 4>>
 startxref
@@ -85,18 +76,14 @@ startxref
 
 static void BM_FileSaveParse(benchmark::State& state) {
     for (auto _ : state) {
-        FileHandle* test_file = nullptr;
-        InputOutputStreamHandle* io_stream = nullptr;
+        HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+        HandleGuard<FileHandle, File_Release> test_file;
 
-        InputOutputStream_CreateFromMemory(&io_stream);
+        InputOutputStream_CreateFromMemory(io_stream.out());
         InputOutputStream_WriteString(io_stream, MINIMALIST_DOCUMENT);
 
-        File_OpenStream(io_stream, "temp", &test_file);
+        File_OpenStream(io_stream, "temp", test_file.out());
         File_Initialize(test_file);
-        File_Release(test_file);
-
-        // Cleanup
-        InputOutputStream_Release(io_stream);
     }
 }
 
