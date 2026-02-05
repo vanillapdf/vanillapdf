@@ -39,6 +39,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
 set(VANILLAPDF_UNITTEST_HEADERS
     unittest.h
     test_data.h
+    handle_guard.h
 )
 
 # Resource files

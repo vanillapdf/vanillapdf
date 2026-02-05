@@ -1,4 +1,5 @@
 #include "unittest.h"
+#include "handle_guard.h"
 
 namespace utils {
 
@@ -8,13 +9,13 @@ class BufferParamTest : public ::testing::TestWithParam<std::string_view> {
 TEST_P(BufferParamTest, CreateFromData) {
     auto data = GetParam();
 
-    BufferHandle* buffer_ptr = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
     string_type check_data_ptr = nullptr;
     size_type check_data_len = 0;
 
     // Create buffer with data
-    ASSERT_EQ(Buffer_CreateFromData(data.data(), data.size(), &buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(buffer_ptr, nullptr);
+    ASSERT_EQ(Buffer_CreateFromData(data.data(), data.size(), buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr.get(), nullptr);
 
     // Read data information from buffer
     ASSERT_EQ(Buffer_GetData(buffer_ptr, &check_data_ptr, &check_data_len), VANILLAPDF_ERROR_SUCCESS);
@@ -24,9 +25,6 @@ TEST_P(BufferParamTest, CreateFromData) {
     for (uint32_t i = 0; i < data.size(); ++i) {
         EXPECT_EQ(check_data_ptr[i], data[i]);
     }
-
-    // Release the actual buffer allocation
-    ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -43,12 +41,10 @@ INSTANTIATE_TEST_SUITE_P(
 
 TEST(Buffer, CreateRelease) {
 
-    BufferHandle* buffer_ptr = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
 
-    ASSERT_EQ(Buffer_Create(&buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(buffer_ptr, nullptr);
-
-    ASSERT_EQ(Buffer_Release(buffer_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Create(buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr.get(), nullptr);
 }
 
 TEST(Buffer, NullCheck) {
@@ -57,17 +53,14 @@ TEST(Buffer, NullCheck) {
 }
 
 TEST(Buffer, Conversion) {
-    BufferHandle* buffer_handle = nullptr;
-    IUnknownHandle* unknown_buffer_handle = nullptr;
+    HandleGuard<BufferHandle, Buffer_Release> buffer_handle;
+    HandleGuard<IUnknownHandle, IUnknown_Release> unknown_buffer_handle;
 
-    ASSERT_EQ(Buffer_Create(&buffer_handle), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(buffer_handle, nullptr);
+    ASSERT_EQ(Buffer_Create(buffer_handle.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_handle.get(), nullptr);
 
-    ASSERT_EQ(Buffer_ToUnknown(buffer_handle, &unknown_buffer_handle), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(unknown_buffer_handle, nullptr);
-
-    ASSERT_EQ(IUnknown_Release(unknown_buffer_handle), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(buffer_handle), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_ToUnknown(buffer_handle, unknown_buffer_handle.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(unknown_buffer_handle.get(), nullptr);
 }
 
 void SetCheckLoggingSeverity(LoggingSeverity desired_severity) {

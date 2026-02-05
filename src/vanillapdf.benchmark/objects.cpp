@@ -1,4 +1,5 @@
 #include "benchmark.h"
+#include "handle_guard.h"
 
 template <class ...Args>
 static void BM_RealObjectToPdf(benchmark::State& state, Args&&... args) {
@@ -8,23 +9,18 @@ static void BM_RealObjectToPdf(benchmark::State& state, Args&&... args) {
     integer_type precision = std::get<1>(args_tuple);
 
     for (auto _ : state) {
-        RealObjectHandle* real_object = nullptr;
-        ObjectHandle* base_object = nullptr;
-        BufferHandle* object_pdf_buffer = nullptr;
+        HandleGuard<RealObjectHandle, RealObject_Release> real_object;
+        HandleGuard<ObjectHandle, Object_Release> base_object;
+        HandleGuard<BufferHandle, Buffer_Release> object_pdf_buffer;
 
         // Create data from defined value
-        RealObject_CreateFromData(value, precision, &real_object);
+        RealObject_CreateFromData(value, precision, real_object.out());
 
         // Convert to base object
-        RealObject_ToObject(real_object, &base_object);
+        RealObject_ToObject(real_object, base_object.out());
 
         // Get PDF representation of RealObject value
-        Object_ToPdf(base_object, &object_pdf_buffer);
-
-        // Cleanup
-        Buffer_Release(object_pdf_buffer);
-        Object_Release(base_object);
-        RealObject_Release(real_object);
+        Object_ToPdf(base_object, object_pdf_buffer.out());
     }
 }
 
@@ -38,26 +34,20 @@ static void BM_HexadecimalStringObjectToPdf(benchmark::State& state, Args&&... a
     const char* encoded_hex_string = std::get<0>(args_tuple);
 
     for (auto _ : state) {
-        HexadecimalStringObjectHandle* hex_string_object = nullptr;
-        StringObjectHandle* string_object = nullptr;
-        ObjectHandle* base_object = nullptr;
-        BufferHandle* object_pdf_buffer = nullptr;
+        HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> hex_string_object;
+        HandleGuard<StringObjectHandle, StringObject_Release> string_object;
+        HandleGuard<ObjectHandle, Object_Release> base_object;
+        HandleGuard<BufferHandle, Buffer_Release> object_pdf_buffer;
 
         // Create data from defined value
-        HexadecimalStringObject_CreateFromEncodedString(encoded_hex_string, &hex_string_object);
+        HexadecimalStringObject_CreateFromEncodedString(encoded_hex_string, hex_string_object.out());
 
         // Get base object as it is the only one having ToPdf exposed
-        HexadecimalStringObject_ToStringObject(hex_string_object, &string_object);
-        StringObject_ToObject(string_object, &base_object);
+        HexadecimalStringObject_ToStringObject(hex_string_object, string_object.out());
+        StringObject_ToObject(string_object, base_object.out());
 
         // Get PDF representation of HexadecimalStringObject value
-        Object_ToPdf(base_object, &object_pdf_buffer);
-
-        // Cleanup
-        Buffer_Release(object_pdf_buffer);
-        Object_Release(base_object);
-        StringObject_Release(string_object);
-        HexadecimalStringObject_Release(hex_string_object);
+        Object_ToPdf(base_object, object_pdf_buffer.out());
     }
 }
 
@@ -72,26 +62,20 @@ static void BM_LiteralStringObjectToPdf(benchmark::State& state, Args&&... args)
     const char* encoded_literal_string = std::get<0>(args_tuple);
 
     for (auto _ : state) {
-        LiteralStringObjectHandle* literal_string_object = nullptr;
-        StringObjectHandle* string_object = nullptr;
-        ObjectHandle* base_object = nullptr;
-        BufferHandle* object_pdf_buffer = nullptr;
+        HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> literal_string_object;
+        HandleGuard<StringObjectHandle, StringObject_Release> string_object;
+        HandleGuard<ObjectHandle, Object_Release> base_object;
+        HandleGuard<BufferHandle, Buffer_Release> object_pdf_buffer;
 
         // Create data from defined value
-        LiteralStringObject_CreateFromEncodedString(encoded_literal_string, &literal_string_object);
+        LiteralStringObject_CreateFromEncodedString(encoded_literal_string, literal_string_object.out());
 
         // Get base object as it is the only one having ToPdf exposed
-        LiteralStringObject_ToStringObject(literal_string_object, &string_object);
-        StringObject_ToObject(string_object, &base_object);
+        LiteralStringObject_ToStringObject(literal_string_object, string_object.out());
+        StringObject_ToObject(string_object, base_object.out());
 
         // Get PDF representation of LiteralStringObject value
-        Object_ToPdf(base_object, &object_pdf_buffer);
-
-        // Cleanup
-        Buffer_Release(object_pdf_buffer);
-        Object_Release(base_object);
-        StringObject_Release(string_object);
-        LiteralStringObject_Release(literal_string_object);
+        Object_ToPdf(base_object, object_pdf_buffer.out());
     }
 }
 
@@ -106,23 +90,18 @@ static void BM_NameObjectToPdf(benchmark::State& state, Args&&... args) {
     const char* encoded_name = std::get<0>(args_tuple);
 
     for (auto _ : state) {
-        NameObjectHandle* name_object = nullptr;
-        ObjectHandle* base_object = nullptr;
-        BufferHandle* object_pdf_buffer = nullptr;
+        HandleGuard<NameObjectHandle, NameObject_Release> name_object;
+        HandleGuard<ObjectHandle, Object_Release> base_object;
+        HandleGuard<BufferHandle, Buffer_Release> object_pdf_buffer;
 
         // Create data from defined value
-        NameObject_CreateFromEncodedString(encoded_name, &name_object);
+        NameObject_CreateFromEncodedString(encoded_name, name_object.out());
 
         // Get base object as it is the only one having ToPdf exposed
-        NameObject_ToObject(name_object, &base_object);
+        NameObject_ToObject(name_object, base_object.out());
 
         // Get PDF representation of LiteralStringObject value
-        Object_ToPdf(base_object, &object_pdf_buffer);
-
-        // Cleanup
-        Buffer_Release(object_pdf_buffer);
-        Object_Release(base_object);
-        NameObject_Release(name_object);
+        Object_ToPdf(base_object, object_pdf_buffer.out());
     }
 }
 
@@ -139,18 +118,14 @@ static void BM_StringGetValue_Literal(benchmark::State& state, Args&&... args) {
     const char* encoded_string = std::get<0>(args_tuple);
 
     for (auto _ : state) {
-        LiteralStringObjectHandle* string_object = nullptr;
-        BufferHandle* value_buffer = nullptr;
+        HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> string_object;
+        HandleGuard<BufferHandle, Buffer_Release> value_buffer;
 
         // Create data from defined value
-        LiteralStringObject_CreateFromEncodedString(encoded_string, &string_object);
+        LiteralStringObject_CreateFromEncodedString(encoded_string, string_object.out());
 
         // Get base object as it is the only one having ToPdf exposed
-        LiteralStringObject_GetValue(string_object, &value_buffer);
-
-        // Cleanup
-        Buffer_Release(value_buffer);
-        LiteralStringObject_Release(string_object);
+        LiteralStringObject_GetValue(string_object, value_buffer.out());
     }
 }
 
@@ -165,18 +140,14 @@ static void BM_StringGetValue_Hexadecimal(benchmark::State& state, Args&&... arg
     const char* encoded_string = std::get<0>(args_tuple);
 
     for (auto _ : state) {
-        HexadecimalStringObjectHandle* string_object = nullptr;
-        BufferHandle* value_buffer = nullptr;
+        HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> string_object;
+        HandleGuard<BufferHandle, Buffer_Release> value_buffer;
 
         // Create data from defined value
-        HexadecimalStringObject_CreateFromEncodedString(encoded_string, &string_object);
+        HexadecimalStringObject_CreateFromEncodedString(encoded_string, string_object.out());
 
         // Get base object as it is the only one having ToPdf exposed
-        HexadecimalStringObject_GetValue(string_object, &value_buffer);
-
-        // Cleanup
-        Buffer_Release(value_buffer);
-        HexadecimalStringObject_Release(string_object);
+        HexadecimalStringObject_GetValue(string_object, value_buffer.out());
     }
 }
 
@@ -191,13 +162,10 @@ static void BM_CreateFromEncodedString_Hexadecimal(benchmark::State& state, Args
     const char* encoded_string = std::get<0>(args_tuple);
 
     for (auto _ : state) {
-        HexadecimalStringObjectHandle* string_object = nullptr;
+        HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> string_object;
 
         // Create data from defined value
-        HexadecimalStringObject_CreateFromEncodedString(encoded_string, &string_object);
-
-        // Cleanup
-        HexadecimalStringObject_Release(string_object);
+        HexadecimalStringObject_CreateFromEncodedString(encoded_string, string_object.out());
     }
 }
 
@@ -212,13 +180,10 @@ static void BM_CreateFromEncodedString_Literal(benchmark::State& state, Args&&..
     const char* encoded_string = std::get<0>(args_tuple);
 
     for (auto _ : state) {
-        LiteralStringObjectHandle* string_object = nullptr;
+        HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> string_object;
 
         // Create data from defined value
-        LiteralStringObject_CreateFromEncodedString(encoded_string, &string_object);
-
-        // Cleanup
-        LiteralStringObject_Release(string_object);
+        LiteralStringObject_CreateFromEncodedString(encoded_string, string_object.out());
     }
 }
 
@@ -233,13 +198,10 @@ static void BM_CreateFromEncodedString_Name(benchmark::State& state, Args&&... a
     const char* encoded_string = std::get<0>(args_tuple);
 
     for (auto _ : state) {
-        NameObjectHandle* name_object = nullptr;
+        HandleGuard<NameObjectHandle, NameObject_Release> name_object;
 
         // Create data from defined value
-        NameObject_CreateFromEncodedString(encoded_string, &name_object);
-
-        // Cleanup
-        NameObject_Release(name_object);
+        NameObject_CreateFromEncodedString(encoded_string, name_object.out());
     }
 }
 
