@@ -166,19 +166,9 @@ TEST(OutlineItem, GetActionNull) {
     EXPECT_EQ(OutlineItem_GetAction(nullptr, &action), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
-TEST(Catalog, ContainsOpenActionNull) {
-    boolean_type result;
-    EXPECT_EQ(Catalog_ContainsOpenAction(nullptr, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
-}
-
-TEST(Catalog, GetOpenActionDestinationNull) {
-    DestinationHandle* dest = nullptr;
-    EXPECT_EQ(Catalog_GetOpenActionDestination(nullptr, &dest), VANILLAPDF_ERROR_PARAMETER_VALUE);
-}
-
-TEST(Catalog, GetOpenActionActionNull) {
-    ActionHandle* action = nullptr;
-    EXPECT_EQ(Catalog_GetOpenActionAction(nullptr, &action), VANILLAPDF_ERROR_PARAMETER_VALUE);
+TEST(Catalog, GetOpenActionNull) {
+    ObjectHandle* obj = nullptr;
+    EXPECT_EQ(Catalog_GetOpenAction(nullptr, &obj), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 TEST(PageTree, FindPageIndexNull) {
@@ -186,12 +176,11 @@ TEST(PageTree, FindPageIndexNull) {
     EXPECT_EQ(PageTree_FindPageIndex(nullptr, nullptr, &result), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
-TEST(Catalog, ContainsOpenActionFreshDocument) {
+TEST(Catalog, GetOpenActionFreshDocument) {
     FileHandle* file = nullptr;
     DocumentHandle* doc = nullptr;
     InputOutputStreamHandle* io_stream = nullptr;
     CatalogHandle* catalog = nullptr;
-    boolean_type contains = VANILLAPDF_RV_TRUE;
 
     // Create in-memory document
     ASSERT_EQ(InputOutputStream_CreateFromMemory(&io_stream), VANILLAPDF_ERROR_SUCCESS);
@@ -200,16 +189,8 @@ TEST(Catalog, ContainsOpenActionFreshDocument) {
     ASSERT_EQ(Document_GetCatalog(doc, &catalog), VANILLAPDF_ERROR_SUCCESS);
 
     // Fresh document should not have OpenAction
-    ASSERT_EQ(Catalog_ContainsOpenAction(catalog, &contains), VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(contains, VANILLAPDF_RV_FALSE);
-
-    // GetOpenActionDestination should return OBJECT_MISSING
-    DestinationHandle* dest = nullptr;
-    EXPECT_EQ(Catalog_GetOpenActionDestination(catalog, &dest), VANILLAPDF_ERROR_OBJECT_MISSING);
-
-    // GetOpenActionAction should return OBJECT_MISSING
-    ActionHandle* action = nullptr;
-    EXPECT_EQ(Catalog_GetOpenActionAction(catalog, &action), VANILLAPDF_ERROR_OBJECT_MISSING);
+    ObjectHandle* open_action = nullptr;
+    EXPECT_EQ(Catalog_GetOpenAction(catalog, &open_action), VANILLAPDF_ERROR_OBJECT_MISSING);
 
     // Cleanup
     ASSERT_EQ(Catalog_Release(catalog), VANILLAPDF_ERROR_SUCCESS);

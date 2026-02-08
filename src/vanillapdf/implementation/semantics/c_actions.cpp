@@ -42,6 +42,23 @@ VANILLAPDF_API error_type CALLING_CONVENTION Action_FromUnknown(IUnknownHandle* 
     return SafeObjectConvert<IUnknown, ActionBase, IUnknownHandle, ActionHandle>(handle, result);
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Action_CreateFromDictionary(DictionaryObjectHandle* handle, ActionHandle** result)
+{
+    DictionaryObject* dict_obj = reinterpret_cast<DictionaryObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(dict_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto action = ActionBase::Create(dict_obj);
+        auto raw_ptr = action.release();
+        ActionPtr action_ptr(raw_ptr);
+        auto ptr = action_ptr.AddRefGet();
+        *result = reinterpret_cast<ActionHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Action_Release(ActionHandle* handle) {
     return ObjectRelease<ActionBase, ActionHandle>(handle);
 }

@@ -234,6 +234,13 @@ extern "C"
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Destination_FromUnknown(IUnknownHandle* handle, DestinationHandle** result);
 
+    /**
+    * \brief Create a \ref DestinationHandle from a low-level \ref ObjectHandle.
+    *
+    * The object should be an array (explicit destination) or a name/string (named destination).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Destination_CreateFromObject(ObjectHandle* handle, DestinationHandle** result);
+
     /** @} */
 
     /**

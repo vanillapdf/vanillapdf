@@ -57,9 +57,7 @@ public:
     void SetNames(NameDictionaryPtr value);
     bool AcroForm(OuputInteractiveFormPtr& result) const;
 
-    bool ContainsOpenAction() const;
-    bool OpenActionAsDestination(OutputDestinationPtr& result) const;
-    bool OpenActionAsAction(OutputActionPtr& result) const;
+    bool GetOpenAction(syntax::ObjectPtr& result) const;
 
     PageTreePtr CreatePages();
 

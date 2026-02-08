@@ -257,49 +257,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle* 
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_ContainsOpenAction(CatalogHandle* handle, boolean_type* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOpenAction(CatalogHandle* handle, ObjectHandle** result) {
     Catalog* obj = reinterpret_cast<Catalog*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        *result = obj->ContainsOpenAction();
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOpenActionDestination(CatalogHandle* handle, DestinationHandle** result) {
-    Catalog* obj = reinterpret_cast<Catalog*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        OutputDestinationPtr destination;
-        bool found = obj->OpenActionAsDestination(destination);
+        syntax::ObjectPtr open_action;
+        bool found = obj->GetOpenAction(open_action);
         if (!found) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
-        auto ptr = destination.AddRefGet();
-        *result = reinterpret_cast<DestinationHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOpenActionAction(CatalogHandle* handle, ActionHandle** result) {
-    Catalog* obj = reinterpret_cast<Catalog*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        OutputActionPtr action;
-        bool found = obj->OpenActionAsAction(action);
-        if (!found) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
-        }
-
-        auto ptr = action.AddRefGet();
-        *result = reinterpret_cast<ActionHandle*>(ptr);
+        auto ptr = open_action.AddRefGet();
+        *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

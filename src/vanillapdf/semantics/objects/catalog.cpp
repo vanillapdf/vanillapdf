@@ -194,44 +194,13 @@ bool Catalog::AcroForm(OuputInteractiveFormPtr& result) const {
     return true;
 }
 
-bool Catalog::ContainsOpenAction() const {
-    return _obj->Contains(constant::Name::OpenAction);
-}
-
-bool Catalog::OpenActionAsDestination(OutputDestinationPtr& result) const {
+bool Catalog::GetOpenAction(syntax::ObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::OpenAction)) {
         return false;
     }
 
-    auto open_action = _obj->Find(constant::Name::OpenAction);
-
-    // If it's not a dictionary, treat as a destination (array or name)
-    if (!ObjectUtils::IsType<DictionaryObjectPtr>(open_action)) {
-        auto destination = DestinationBase::ResolveDestination(open_action);
-        result = destination;
-        return true;
-    }
-
-    return false;
-}
-
-bool Catalog::OpenActionAsAction(OutputActionPtr& result) const {
-    if (!_obj->Contains(constant::Name::OpenAction)) {
-        return false;
-    }
-
-    auto open_action = _obj->Find(constant::Name::OpenAction);
-
-    // If it's a dictionary, treat as an action
-    if (ObjectUtils::IsType<DictionaryObjectPtr>(open_action)) {
-        auto action_dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(open_action);
-        auto action = ActionBase::Create(action_dict);
-        auto raw_ptr = action.release();
-        result = ActionPtr(raw_ptr);
-        return true;
-    }
-
-    return false;
+    result = _obj->Find(constant::Name::OpenAction);
+    return true;
 }
 
 PageTreePtr Catalog::CreatePages() {

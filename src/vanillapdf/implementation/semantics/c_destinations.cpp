@@ -75,6 +75,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION Destination_FromUnknown(IUnknownHan
     return SafeObjectConvert<IUnknown, DestinationBase, IUnknownHandle, DestinationHandle>(handle, result);
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Destination_CreateFromObject(ObjectHandle* handle, DestinationHandle** result)
+{
+    Object* obj = reinterpret_cast<Object*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto destination = DestinationBase::ResolveDestination(obj);
+        auto ptr = destination.AddRefGet();
+        *result = reinterpret_cast<DestinationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Destination_Release(DestinationHandle* handle)
 {
     return ObjectRelease<DestinationBase, DestinationHandle>(handle);

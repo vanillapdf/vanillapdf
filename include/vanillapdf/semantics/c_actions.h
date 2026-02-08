@@ -123,6 +123,13 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Action_FromUnknown(IUnknownHandle* handle, ActionHandle** result);
 
     /**
+    * \brief Create an \ref ActionHandle from a \ref DictionaryObjectHandle.
+    *
+    * The dictionary should contain a valid action type (S entry).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Action_CreateFromDictionary(DictionaryObjectHandle* handle, ActionHandle** result);
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */
