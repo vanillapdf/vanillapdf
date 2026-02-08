@@ -5,8 +5,6 @@
 #include "utils/time_utils.h"
 
 #include <regex>
-#include <iomanip>
-#include <sstream>
 
 namespace vanillapdf {
 namespace semantics {
@@ -83,37 +81,95 @@ Date::Date(syntax::StringObjectPtr root) : HighLevelObject(root) {
 DatePtr Date::GetCurrentDate() {
     TimeInfo local_time = TimeUtils::GetCurrentTime();
 
-    std::stringstream ss;
-    ss << "D:";
-    ss << std::setw(4) << std::setfill('0') << local_time.GetYear();
-    ss << std::setw(2) << std::setfill('0') << local_time.GetMonth();
-    ss << std::setw(2) << std::setfill('0') << local_time.GetDay();
-    ss << std::setw(2) << std::setfill('0') << local_time.GetHour();
-    ss << std::setw(2) << std::setfill('0') << local_time.GetMinute();
-    ss << std::setw(2) << std::setfill('0') << local_time.GetSecond();
-
+    std::string formatted_time;
     Timezone timezone = local_time.GetTimezone();
+
     if (timezone == Timezone::UTC) {
-        ss << "Z";
+        formatted_time = fmt::format("D:{:04d}{:02d}{:02d}{:02d}{:02d}{:02d}Z",
+            local_time.GetYear(), local_time.GetMonth(), local_time.GetDay(),
+            local_time.GetHour(), local_time.GetMinute(), local_time.GetSecond());
     } else if (timezone == Timezone::Earlier) {
-        ss << "-";
+        formatted_time = fmt::format("D:{:04d}{:02d}{:02d}{:02d}{:02d}{:02d}-{:02d}'{:02d}'",
+            local_time.GetYear(), local_time.GetMonth(), local_time.GetDay(),
+            local_time.GetHour(), local_time.GetMinute(), local_time.GetSecond(),
+            local_time.GetHourOffset(), local_time.GetMinuteOffset());
     } else if (timezone == Timezone::Later) {
-        ss << "+";
+        formatted_time = fmt::format("D:{:04d}{:02d}{:02d}{:02d}{:02d}{:02d}+{:02d}'{:02d}'",
+            local_time.GetYear(), local_time.GetMonth(), local_time.GetDay(),
+            local_time.GetHour(), local_time.GetMinute(), local_time.GetSecond(),
+            local_time.GetHourOffset(), local_time.GetMinuteOffset());
     } else {
         throw GeneralException("Unknown timezone type");
     }
 
-    if (timezone == Timezone::Earlier || timezone == Timezone::Later) {
-        ss << std::setw(2) << std::setfill('0') << local_time.GetHourOffset();
-        ss << '\'';
-        ss << std::setw(2) << std::setfill('0') << local_time.GetMinuteOffset();
-        ss << '\'';
+    auto string_object = syntax::LiteralStringObject::CreateFromDecoded(formatted_time);
+    return make_deferred<Date>(string_object);
+}
+
+void Date::UpdateObject() {
+    std::string formatted_time;
+
+    if (m_timezone == Timezone::UTC) {
+        formatted_time = fmt::format("D:{:04d}{:02d}{:02d}{:02d}{:02d}{:02d}Z",
+            m_year, m_month, m_day, m_hour, m_minute, m_second);
+    } else if (m_timezone == Timezone::Earlier) {
+        formatted_time = fmt::format("D:{:04d}{:02d}{:02d}{:02d}{:02d}{:02d}-{:02d}'{:02d}'",
+            m_year, m_month, m_day, m_hour, m_minute, m_second,
+            m_hour_offset, m_minute_offset);
+    } else if (m_timezone == Timezone::Later) {
+        formatted_time = fmt::format("D:{:04d}{:02d}{:02d}{:02d}{:02d}{:02d}+{:02d}'{:02d}'",
+            m_year, m_month, m_day, m_hour, m_minute, m_second,
+            m_hour_offset, m_minute_offset);
+    } else {
+        throw GeneralException("Unknown timezone type");
     }
 
-    auto formatted_time = ss.str();
-    auto string_object = syntax::LiteralStringObject::CreateFromDecoded(formatted_time);
+    SetObject(syntax::LiteralStringObject::CreateFromDecoded(formatted_time));
+}
 
-    return make_deferred<Date>(string_object);
+void Date::SetYear(int32_t value) {
+    m_year = value;
+    UpdateObject();
+}
+
+void Date::SetMonth(int32_t value) {
+    m_month = value;
+    UpdateObject();
+}
+
+void Date::SetDay(int32_t value) {
+    m_day = value;
+    UpdateObject();
+}
+
+void Date::SetHour(int32_t value) {
+    m_hour = value;
+    UpdateObject();
+}
+
+void Date::SetMinute(int32_t value) {
+    m_minute = value;
+    UpdateObject();
+}
+
+void Date::SetSecond(int32_t value) {
+    m_second = value;
+    UpdateObject();
+}
+
+void Date::SetTimezone(Timezone value) {
+    m_timezone = value;
+    UpdateObject();
+}
+
+void Date::SetHourOffset(int32_t value) {
+    m_hour_offset = value;
+    UpdateObject();
+}
+
+void Date::SetMinuteOffset(int32_t value) {
+    m_minute_offset = value;
+    UpdateObject();
 }
 
 } // semantics

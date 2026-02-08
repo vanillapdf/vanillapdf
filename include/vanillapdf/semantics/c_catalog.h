@@ -154,6 +154,15 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle* handle, InteractiveFormHandle** result);
 
     /**
+    * \brief Get the open action entry from the catalog.
+    *
+    * The returned object can be either an array (destination) or a dictionary (action).
+    * Use \ref Object_GetType to determine the type, then convert using
+    * \ref Destination_FromObject or \ref Action_FromDictionary.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOpenAction(CatalogHandle* handle, ObjectHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref IUnknownHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Catalog_ToUnknown(CatalogHandle* handle, IUnknownHandle** result);

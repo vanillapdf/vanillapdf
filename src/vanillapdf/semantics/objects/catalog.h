@@ -10,6 +10,7 @@
 #include "semantics/objects/viewer_preferences.h"
 #include "semantics/objects/outline.h"
 #include "semantics/objects/destinations.h"
+#include "semantics/objects/actions.h"
 #include "semantics/objects/interactive_forms.h"
 
 #include "utils/pdf_version.h"
@@ -55,6 +56,8 @@ public:
     bool Names(OutputNameDictionaryPtr& result) const;
     void SetNames(NameDictionaryPtr value);
     bool AcroForm(OuputInteractiveFormPtr& result) const;
+
+    bool GetOpenAction(syntax::ObjectPtr& result) const;
 
     PageTreePtr CreatePages();
 

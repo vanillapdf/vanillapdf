@@ -18,6 +18,8 @@ public:
     PageObjectPtr Page(types::size_type page_number) const { return GetCachedPage(page_number); }
     PageObjectPtr operator[](types::size_type page_number) const { return GetCachedPage(page_number); }
 
+    bool FindPageIndex(syntax::DictionaryObjectPtr page_dict, types::size_type& result) const;
+
     void Insert(PageObjectPtr object, types::size_type page_index);
     void Append(PageObjectPtr object);
     void Remove(types::size_type page_index);
@@ -25,6 +27,7 @@ public:
 private:
     PageObjectPtr GetCachedPage(types::size_type page_number) const;
     PageObjectPtr PageInternal(PageTreeNodePtr node, types::size_type page_number, types::size_type& processed) const;
+    bool FindPageIndexInternal(PageTreeNodePtr node, syntax::DictionaryObjectPtr page_dict, types::size_type& current_index) const;
     bool HasTreeChilds(PageTreeNodePtr node) const;
     types::size_type PageCount(PageNodeBasePtr node);
     void UpdateKidsCount();

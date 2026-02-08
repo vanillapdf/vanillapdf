@@ -175,9 +175,22 @@ extern "C"
     DECLARE_OBJECT_HANDLE(FitBoundingBoxHorizontalDestination);
     DECLARE_OBJECT_HANDLE(FitBoundingBoxVerticalDestination);
 
+    DECLARE_OBJECT_HANDLE(Action);
+    DECLARE_OBJECT_HANDLE(GoToAction);
+    DECLARE_OBJECT_HANDLE(URIAction);
+    DECLARE_OBJECT_HANDLE(GoToRemoteAction);
+    DECLARE_OBJECT_HANDLE(NamedAction);
+
     DECLARE_OBJECT_HANDLE(PageAnnotations);
     DECLARE_OBJECT_HANDLE(Annotation);
     DECLARE_OBJECT_HANDLE(LinkAnnotation);
+    DECLARE_OBJECT_HANDLE(TextAnnotation);
+    DECLARE_OBJECT_HANDLE(HighlightAnnotation);
+    DECLARE_OBJECT_HANDLE(FreeTextAnnotation);
+    DECLARE_OBJECT_HANDLE(UnderlineAnnotation);
+    DECLARE_OBJECT_HANDLE(StrikeOutAnnotation);
+    DECLARE_OBJECT_HANDLE(SquigglyAnnotation);
+    DECLARE_OBJECT_HANDLE(InkAnnotation);
 
     DECLARE_OBJECT_HANDLE(InteractiveForm);
 
@@ -212,6 +225,7 @@ extern "C"
 
     DECLARE_OBJECT_HANDLE(Date);
     DECLARE_OBJECT_HANDLE(Rectangle);
+    DECLARE_OBJECT_HANDLE(Color);
 
     #pragma endregion
 

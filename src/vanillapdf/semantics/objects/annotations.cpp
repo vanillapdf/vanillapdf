@@ -1,9 +1,13 @@
 #include "precompiled.h"
 
 #include "semantics/objects/annotations.h"
+#include "semantics/objects/actions.h"
+#include "semantics/objects/color.h"
+#include "semantics/objects/date.h"
 #include "semantics/objects/destinations.h"
 #include "semantics/objects/document.h"
 #include "semantics/objects/name_dictionary.h"
+#include "semantics/objects/rectangle.h"
 
 #include "semantics/utils/semantic_utils.h"
 
@@ -204,6 +208,702 @@ bool LinkAnnotation::Destination(OutputDestinationPtr& result) const {
     }
     catch (ExceptionBase& ex) {
         spdlog::warn("Could not resolve link annotation destination: {}", ex.what());
+        return false;
+    }
+}
+
+// AnnotationBase property accessors
+
+syntax::DictionaryObjectPtr AnnotationBase::CreateBaseDictionary(
+    const syntax::NameObjectPtr& subtype, RectanglePtr rect) {
+    syntax::DictionaryObjectPtr dict;
+    dict->Insert(constant::Name::Type, constant::Name::Annot.Clone());
+    dict->Insert(constant::Name::Subtype, subtype->Clone());
+    dict->Insert(constant::Name::Rect, rect->GetObject());
+    return dict;
+}
+
+bool AnnotationBase::GetRect(OutputRectanglePtr& result) const {
+    if (!_obj->Contains(constant::Name::Rect)) {
+        return false;
+    }
+
+    auto rect_obj = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(constant::Name::Rect);
+    auto rect = make_deferred<Rectangle>(rect_obj);
+    result = rect;
+    return true;
+}
+
+void AnnotationBase::SetRect(RectanglePtr rect) {
+    if (_obj->Contains(constant::Name::Rect)) {
+        bool removed = _obj->Remove(constant::Name::Rect);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::Rect, rect->GetObject());
+}
+
+bool AnnotationBase::GetContents(syntax::OutputLiteralStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::Contents)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::Contents);
+    return true;
+}
+
+void AnnotationBase::SetContents(syntax::LiteralStringObjectPtr contents) {
+    if (_obj->Contains(constant::Name::Contents)) {
+        bool removed = _obj->Remove(constant::Name::Contents);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::Contents, contents);
+}
+
+bool AnnotationBase::GetColor(OutputColorPtr& result) const {
+    if (!_obj->Contains(constant::Name::C)) {
+        return false;
+    }
+
+    auto color_obj = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::C);
+    result = make_deferred<Color>(color_obj);
+    return true;
+}
+
+void AnnotationBase::SetColor(ColorPtr color) {
+    if (_obj->Contains(constant::Name::C)) {
+        bool removed = _obj->Remove(constant::Name::C);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::C, color->GetObject());
+}
+
+// TextAnnotation - Markup annotation properties (Table 170)
+
+bool TextAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::T)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
+    return true;
+}
+
+void TextAnnotation::SetAuthor(syntax::StringObjectPtr author) {
+    if (_obj->Contains(constant::Name::T)) {
+        bool removed = _obj->Remove(constant::Name::T);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::T, author);
+}
+
+bool TextAnnotation::GetModificationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::M)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::M);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void TextAnnotation::SetModificationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::M)) {
+        bool removed = _obj->Remove(constant::Name::M);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::M, date->GetObject());
+}
+
+bool TextAnnotation::GetCreationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::CreationDate)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void TextAnnotation::SetCreationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::CreationDate)) {
+        bool removed = _obj->Remove(constant::Name::CreationDate);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::CreationDate, date->GetObject());
+}
+
+// HighlightAnnotation - Markup annotation properties (Table 170)
+
+bool HighlightAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::T)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
+    return true;
+}
+
+void HighlightAnnotation::SetAuthor(syntax::StringObjectPtr author) {
+    if (_obj->Contains(constant::Name::T)) {
+        bool removed = _obj->Remove(constant::Name::T);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::T, author);
+}
+
+bool HighlightAnnotation::GetModificationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::M)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::M);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void HighlightAnnotation::SetModificationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::M)) {
+        bool removed = _obj->Remove(constant::Name::M);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::M, date->GetObject());
+}
+
+bool HighlightAnnotation::GetCreationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::CreationDate)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void HighlightAnnotation::SetCreationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::CreationDate)) {
+        bool removed = _obj->Remove(constant::Name::CreationDate);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::CreationDate, date->GetObject());
+}
+
+// FreeTextAnnotation - Markup annotation properties (Table 170)
+
+bool FreeTextAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::T)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
+    return true;
+}
+
+void FreeTextAnnotation::SetAuthor(syntax::StringObjectPtr author) {
+    if (_obj->Contains(constant::Name::T)) {
+        bool removed = _obj->Remove(constant::Name::T);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::T, author);
+}
+
+bool FreeTextAnnotation::GetModificationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::M)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::M);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void FreeTextAnnotation::SetModificationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::M)) {
+        bool removed = _obj->Remove(constant::Name::M);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::M, date->GetObject());
+}
+
+bool FreeTextAnnotation::GetCreationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::CreationDate)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void FreeTextAnnotation::SetCreationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::CreationDate)) {
+        bool removed = _obj->Remove(constant::Name::CreationDate);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::CreationDate, date->GetObject());
+}
+
+AnnotationBase::Flags AnnotationBase::GetFlags() const {
+    if (!_obj->Contains(constant::Name::F)) {
+        return Flags::None;
+    }
+
+    auto flags_obj = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::F);
+    return static_cast<Flags>(flags_obj->GetIntegerValue());
+}
+
+void AnnotationBase::SetFlags(Flags flags) {
+    if (_obj->Contains(constant::Name::F)) {
+        bool removed = _obj->Remove(constant::Name::F);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    auto flags_obj = make_deferred<syntax::IntegerObject>(static_cast<int32_t>(flags));
+    _obj->Insert(constant::Name::F, flags_obj);
+}
+
+// TextAnnotation Create methods
+
+TextAnnotationPtr TextAnnotation::Create(RectanglePtr rect) {
+    auto dict = CreateBaseDictionary(constant::Name::Text.Clone(), rect);
+    return make_deferred<TextAnnotation>(dict);
+}
+
+TextAnnotationPtr TextAnnotation::Create(RectanglePtr rect, syntax::LiteralStringObjectPtr contents) {
+    auto dict = CreateBaseDictionary(constant::Name::Text.Clone(), rect);
+    dict->Insert(constant::Name::Contents, contents);
+    return make_deferred<TextAnnotation>(dict);
+}
+
+// HighlightAnnotation methods
+
+HighlightAnnotationPtr HighlightAnnotation::Create() {
+    syntax::DictionaryObjectPtr dict;
+    dict->Insert(constant::Name::Type, constant::Name::Annot.Clone());
+    dict->Insert(constant::Name::Subtype, constant::Name::Highlight.Clone());
+    return make_deferred<HighlightAnnotation>(dict);
+}
+
+HighlightAnnotationPtr HighlightAnnotation::CreateFromRect(RectanglePtr rect) {
+    auto dict = CreateBaseDictionary(constant::Name::Highlight.Clone(), rect);
+    return make_deferred<HighlightAnnotation>(dict);
+}
+
+bool HighlightAnnotation::GetQuadPoints(syntax::MixedArrayObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::QuadPoints)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::QuadPoints);
+    return true;
+}
+
+void HighlightAnnotation::SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints) {
+    if (_obj->Contains(constant::Name::QuadPoints)) {
+        bool removed = _obj->Remove(constant::Name::QuadPoints);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::QuadPoints, quadPoints);
+}
+
+// FreeTextAnnotation methods
+
+FreeTextAnnotationPtr FreeTextAnnotation::Create(RectanglePtr rect,
+    syntax::LiteralStringObjectPtr contents,
+    syntax::LiteralStringObjectPtr defaultAppearance) {
+    auto dict = CreateBaseDictionary(constant::Name::FreeText.Clone(), rect);
+    dict->Insert(constant::Name::Contents, contents);
+    dict->Insert(constant::Name::DA, defaultAppearance);
+    return make_deferred<FreeTextAnnotation>(dict);
+}
+
+bool FreeTextAnnotation::GetDefaultAppearance(syntax::LiteralStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::DA)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::DA);
+    return true;
+}
+
+void FreeTextAnnotation::SetDefaultAppearance(syntax::LiteralStringObjectPtr da) {
+    if (_obj->Contains(constant::Name::DA)) {
+        bool removed = _obj->Remove(constant::Name::DA);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::DA, da);
+}
+
+// UnderlineAnnotation methods
+
+UnderlineAnnotationPtr UnderlineAnnotation::Create() {
+    syntax::DictionaryObjectPtr dict;
+    dict->Insert(constant::Name::Type, constant::Name::Annot.Clone());
+    dict->Insert(constant::Name::Subtype, constant::Name::Underline.Clone());
+    return make_deferred<UnderlineAnnotation>(dict);
+}
+
+UnderlineAnnotationPtr UnderlineAnnotation::CreateFromRect(RectanglePtr rect) {
+    auto dict = CreateBaseDictionary(constant::Name::Underline.Clone(), rect);
+    return make_deferred<UnderlineAnnotation>(dict);
+}
+
+bool UnderlineAnnotation::GetQuadPoints(syntax::MixedArrayObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::QuadPoints)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::QuadPoints);
+    return true;
+}
+
+void UnderlineAnnotation::SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints) {
+    if (_obj->Contains(constant::Name::QuadPoints)) {
+        bool removed = _obj->Remove(constant::Name::QuadPoints);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::QuadPoints, quadPoints);
+}
+
+// UnderlineAnnotation - Markup annotation properties (Table 170)
+
+bool UnderlineAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::T)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
+    return true;
+}
+
+void UnderlineAnnotation::SetAuthor(syntax::StringObjectPtr author) {
+    if (_obj->Contains(constant::Name::T)) {
+        bool removed = _obj->Remove(constant::Name::T);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::T, author);
+}
+
+bool UnderlineAnnotation::GetModificationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::M)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::M);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void UnderlineAnnotation::SetModificationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::M)) {
+        bool removed = _obj->Remove(constant::Name::M);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::M, date->GetObject());
+}
+
+bool UnderlineAnnotation::GetCreationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::CreationDate)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void UnderlineAnnotation::SetCreationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::CreationDate)) {
+        bool removed = _obj->Remove(constant::Name::CreationDate);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::CreationDate, date->GetObject());
+}
+
+// SquigglyAnnotation methods
+
+SquigglyAnnotationPtr SquigglyAnnotation::Create() {
+    syntax::DictionaryObjectPtr dict;
+    dict->Insert(constant::Name::Type, constant::Name::Annot.Clone());
+    dict->Insert(constant::Name::Subtype, constant::Name::Squiggly.Clone());
+    return make_deferred<SquigglyAnnotation>(dict);
+}
+
+SquigglyAnnotationPtr SquigglyAnnotation::CreateFromRect(RectanglePtr rect) {
+    auto dict = CreateBaseDictionary(constant::Name::Squiggly.Clone(), rect);
+    return make_deferred<SquigglyAnnotation>(dict);
+}
+
+bool SquigglyAnnotation::GetQuadPoints(syntax::MixedArrayObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::QuadPoints)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::QuadPoints);
+    return true;
+}
+
+void SquigglyAnnotation::SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints) {
+    if (_obj->Contains(constant::Name::QuadPoints)) {
+        bool removed = _obj->Remove(constant::Name::QuadPoints);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::QuadPoints, quadPoints);
+}
+
+// SquigglyAnnotation - Markup annotation properties (Table 170)
+
+bool SquigglyAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::T)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
+    return true;
+}
+
+void SquigglyAnnotation::SetAuthor(syntax::StringObjectPtr author) {
+    if (_obj->Contains(constant::Name::T)) {
+        bool removed = _obj->Remove(constant::Name::T);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::T, author);
+}
+
+bool SquigglyAnnotation::GetModificationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::M)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::M);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void SquigglyAnnotation::SetModificationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::M)) {
+        bool removed = _obj->Remove(constant::Name::M);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::M, date->GetObject());
+}
+
+bool SquigglyAnnotation::GetCreationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::CreationDate)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void SquigglyAnnotation::SetCreationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::CreationDate)) {
+        bool removed = _obj->Remove(constant::Name::CreationDate);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::CreationDate, date->GetObject());
+}
+
+// StrikeOutAnnotation methods
+
+StrikeOutAnnotationPtr StrikeOutAnnotation::Create() {
+    syntax::DictionaryObjectPtr dict;
+    dict->Insert(constant::Name::Type, constant::Name::Annot.Clone());
+    dict->Insert(constant::Name::Subtype, constant::Name::StrikeOut.Clone());
+    return make_deferred<StrikeOutAnnotation>(dict);
+}
+
+StrikeOutAnnotationPtr StrikeOutAnnotation::CreateFromRect(RectanglePtr rect) {
+    auto dict = CreateBaseDictionary(constant::Name::StrikeOut.Clone(), rect);
+    return make_deferred<StrikeOutAnnotation>(dict);
+}
+
+bool StrikeOutAnnotation::GetQuadPoints(syntax::MixedArrayObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::QuadPoints)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::QuadPoints);
+    return true;
+}
+
+void StrikeOutAnnotation::SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints) {
+    if (_obj->Contains(constant::Name::QuadPoints)) {
+        bool removed = _obj->Remove(constant::Name::QuadPoints);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::QuadPoints, quadPoints);
+}
+
+// StrikeOutAnnotation - Markup annotation properties (Table 170)
+
+bool StrikeOutAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::T)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
+    return true;
+}
+
+void StrikeOutAnnotation::SetAuthor(syntax::StringObjectPtr author) {
+    if (_obj->Contains(constant::Name::T)) {
+        bool removed = _obj->Remove(constant::Name::T);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::T, author);
+}
+
+bool StrikeOutAnnotation::GetModificationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::M)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::M);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void StrikeOutAnnotation::SetModificationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::M)) {
+        bool removed = _obj->Remove(constant::Name::M);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::M, date->GetObject());
+}
+
+bool StrikeOutAnnotation::GetCreationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::CreationDate)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void StrikeOutAnnotation::SetCreationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::CreationDate)) {
+        bool removed = _obj->Remove(constant::Name::CreationDate);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::CreationDate, date->GetObject());
+}
+
+// InkAnnotation methods
+
+InkAnnotationPtr InkAnnotation::Create() {
+    syntax::DictionaryObjectPtr dict;
+    dict->Insert(constant::Name::Type, constant::Name::Annot.Clone());
+    dict->Insert(constant::Name::Subtype, constant::Name::Ink.Clone());
+    return make_deferred<InkAnnotation>(dict);
+}
+
+InkAnnotationPtr InkAnnotation::CreateFromRect(RectanglePtr rect) {
+    auto dict = CreateBaseDictionary(constant::Name::Ink.Clone(), rect);
+    return make_deferred<InkAnnotation>(dict);
+}
+
+bool InkAnnotation::GetInkList(syntax::MixedArrayObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::InkList)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::InkList);
+    return true;
+}
+
+void InkAnnotation::SetInkList(syntax::MixedArrayObjectPtr inkList) {
+    if (_obj->Contains(constant::Name::InkList)) {
+        bool removed = _obj->Remove(constant::Name::InkList);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::InkList, inkList);
+}
+
+// InkAnnotation - Markup annotation properties (Table 170)
+
+bool InkAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::T)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
+    return true;
+}
+
+void InkAnnotation::SetAuthor(syntax::StringObjectPtr author) {
+    if (_obj->Contains(constant::Name::T)) {
+        bool removed = _obj->Remove(constant::Name::T);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::T, author);
+}
+
+bool InkAnnotation::GetModificationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::M)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::M);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void InkAnnotation::SetModificationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::M)) {
+        bool removed = _obj->Remove(constant::Name::M);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::M, date->GetObject());
+}
+
+bool InkAnnotation::GetCreationDate(OutputDatePtr& result) const {
+    if (!_obj->Contains(constant::Name::CreationDate)) {
+        return false;
+    }
+
+    auto date_obj = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::CreationDate);
+    result = make_deferred<Date>(date_obj);
+    return true;
+}
+
+void InkAnnotation::SetCreationDate(DatePtr date) {
+    if (_obj->Contains(constant::Name::CreationDate)) {
+        bool removed = _obj->Remove(constant::Name::CreationDate);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::CreationDate, date->GetObject());
+}
+
+// PageAnnotations methods
+
+PageAnnotations::PageAnnotations() {
+    // Default constructor creates an empty array
+}
+
+void PageAnnotations::Append(AnnotationPtr annotation) {
+    _obj->Append(annotation->GetObject());
+}
+
+bool PageAnnotations::Remove(types::size_type index) {
+    return _obj->Remove(index);
+}
+
+bool LinkAnnotation::Action(OutputActionPtr& result) const {
+    if (!_obj->Contains(constant::Name::A)) {
+        return false;
+    }
+
+    try {
+        auto action_dict = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::A);
+        auto action = ActionBase::Create(action_dict);
+        auto raw_ptr = action.release();
+        result = ActionPtr(raw_ptr);
+        return true;
+    }
+    catch (ExceptionBase& ex) {
+        spdlog::warn("Could not resolve link annotation action: {}", ex.what());
         return false;
     }
 }
