@@ -75,7 +75,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Destination_FromUnknown(IUnknownHan
     return SafeObjectConvert<IUnknown, DestinationBase, IUnknownHandle, DestinationHandle>(handle, result);
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Destination_CreateFromObject(ObjectHandle* handle, DestinationHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION Destination_Resolve(ObjectHandle* handle, DestinationHandle** result)
 {
     Object* obj = reinterpret_cast<Object*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

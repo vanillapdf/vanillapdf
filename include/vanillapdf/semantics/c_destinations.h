@@ -239,7 +239,7 @@ extern "C"
     *
     * The object should be an array (explicit destination) or a name/string (named destination).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Destination_CreateFromObject(ObjectHandle* handle, DestinationHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION Destination_Resolve(ObjectHandle* handle, DestinationHandle** result);
 
     /** @} */
 
