@@ -257,6 +257,24 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle* 
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOpenAction(CatalogHandle* handle, ObjectHandle** result) {
+    Catalog* obj = reinterpret_cast<Catalog*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        syntax::ObjectPtr open_action;
+        bool found = obj->GetOpenAction(open_action);
+        if (!found) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = open_action.AddRefGet();
+        *result = reinterpret_cast<ObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Catalog_ToUnknown(CatalogHandle* handle, IUnknownHandle** result) {
     return SafeObjectConvert<Catalog, IUnknown, CatalogHandle, IUnknownHandle>(handle, result);
 }

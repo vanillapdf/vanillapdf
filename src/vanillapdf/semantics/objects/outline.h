@@ -3,6 +3,7 @@
 
 #include "semantics/utils/semantics_fwd.h"
 #include "semantics/objects/high_level_object.h"
+#include "semantics/objects/actions.h"
 
 #include "syntax/objects/name_object.h"
 #include "syntax/objects/dictionary_object.h"
@@ -55,11 +56,7 @@ public:
     bool Count(syntax::IntegerObjectPtr& result) const;
 
     bool Destination(OutputDestinationPtr& result) const;
-
-    //TODO action dictionary
-    //bool Action(syntax::ObjectPtr& result) const
-    //{
-    //}
+    bool Action(OutputActionPtr& result) const;
 
     //TODO structure hierarchy
     //bool StructureElement(syntax::ObjectPtr& result) const

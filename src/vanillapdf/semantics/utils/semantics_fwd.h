@@ -48,6 +48,7 @@ class ResourceDictionary; using ResourceDictionaryPtr = Deferred<ResourceDiction
 
 class Rectangle; using RectanglePtr = Deferred<Rectangle>; using OutputRectanglePtr = OutputPointer<RectanglePtr>;
 class Date; using DatePtr = Deferred<Date>; using OutputDatePtr = OutputPointer<DatePtr>;
+class Color; using ColorPtr = Deferred<Color>; using OutputColorPtr = OutputPointer<ColorPtr>;
 class Tree;
 
 class ContentStream; using ContentStreamPtr = Deferred<ContentStream>;
@@ -78,9 +79,25 @@ class FitBoundingBoxHorizontalDestination; using FitBoundingBoxHorizontalDestina
 class FitBoundingBoxVerticalDestination; using FitBoundingBoxVerticalDestinationPtr = Deferred<FitBoundingBoxVerticalDestination>;
 class NamedDestinations; using NamedDestinationsPtr = DeferredContainer<NamedDestinations>; using OutputNamedDestinationsPtr = OutputPointer<NamedDestinationsPtr>;
 
+// Actions
+class ActionBase; using ActionPtr = Deferred<ActionBase>; using OutputActionPtr = OutputPointer<ActionPtr>;
+class GoToAction; using GoToActionPtr = Deferred<GoToAction>;
+class URIAction; using URIActionPtr = Deferred<URIAction>;
+class GoToRemoteAction; using GoToRemoteActionPtr = Deferred<GoToRemoteAction>;
+class NamedAction; using NamedActionPtr = Deferred<NamedAction>;
+class JavaScriptAction; using JavaScriptActionPtr = Deferred<JavaScriptAction>;
+class LaunchAction; using LaunchActionPtr = Deferred<LaunchAction>;
+
 // Annotations
 class AnnotationBase; using AnnotationPtr = Deferred<AnnotationBase>;
 class LinkAnnotation; using LinkAnnotationPtr = Deferred<LinkAnnotation>;
+class TextAnnotation; using TextAnnotationPtr = Deferred<TextAnnotation>;
+class HighlightAnnotation; using HighlightAnnotationPtr = Deferred<HighlightAnnotation>;
+class FreeTextAnnotation; using FreeTextAnnotationPtr = Deferred<FreeTextAnnotation>;
+class UnderlineAnnotation; using UnderlineAnnotationPtr = Deferred<UnderlineAnnotation>;
+class StrikeOutAnnotation; using StrikeOutAnnotationPtr = Deferred<StrikeOutAnnotation>;
+class SquigglyAnnotation; using SquigglyAnnotationPtr = Deferred<SquigglyAnnotation>;
+class InkAnnotation; using InkAnnotationPtr = Deferred<InkAnnotation>;
 class PageAnnotations; using PageAnnotationsPtr = Deferred<PageAnnotations>; using OutputPageAnnotationsPtr = OutputPointer<PageAnnotationsPtr>;
 
 // Fonts

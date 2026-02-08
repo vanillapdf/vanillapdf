@@ -34,6 +34,7 @@
 #include "vanillapdf/syntax/c_object_attribute_list.h"
 
 /* semantics */
+#include "vanillapdf/semantics/c_actions.h"
 #include "vanillapdf/semantics/c_document.h"
 #include "vanillapdf/semantics/c_document_encryption_settings.h"
 #include "vanillapdf/semantics/c_document_info.h"
@@ -60,6 +61,7 @@
 #include "vanillapdf/semantics/c_character_map.h"
 #include "vanillapdf/semantics/c_date.h"
 #include "vanillapdf/semantics/c_rectangle.h"
+#include "vanillapdf/semantics/c_color.h"
 #include "vanillapdf/semantics/c_page_contents.h"
 
 /* contents */

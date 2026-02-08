@@ -205,7 +205,12 @@ extern "C"
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetDestination(OutlineItemHandle* handle, DestinationHandle** result);
 
-    //VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetActions(OutlineItemHandle* handle, IntegerObjectHandle** result);
+    /**
+    * \brief
+    * An action to be performed when this outline item is activated.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetAction(OutlineItemHandle* handle, ActionHandle** result);
+
     //VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetStructureElement(OutlineItemHandle* handle, IntegerObjectHandle** result);
 
     /**

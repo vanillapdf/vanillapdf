@@ -64,6 +64,14 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION PageTree_RemovePage(PageTreeHandle* handle, size_type at);
 
     /**
+    * \brief Find the 1-based page index for a given page dictionary object.
+    *
+    * Walks the page tree and returns the 1-based index of the page
+    * whose underlying dictionary matches the provided object.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageTree_FindPageIndex(PageTreeHandle* handle, ObjectHandle* page_ref, size_type* result);
+
+    /**
     * \brief Reinterpret current object as \ref IUnknownHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageTree_ToUnknown(PageTreeHandle* handle, IUnknownHandle** result);

@@ -7,6 +7,7 @@ namespace vanillapdf {
 namespace constant {
 namespace Name {
 
+extern const syntax::NameObject A;
 extern const syntax::NameObject AA;
 extern const syntax::NameObject ASCII85Decode;
 extern const syntax::NameObject ASCIIHexDecode;
@@ -30,15 +31,19 @@ extern const syntax::NameObject Extensions;
 extern const syntax::NameObject Filter;
 extern const syntax::NameObject First;
 extern const syntax::NameObject FlateDecode;
+extern const syntax::NameObject GoTo;
+extern const syntax::NameObject GoToR;
 extern const syntax::NameObject Index;
 extern const syntax::NameObject Kids;
 extern const syntax::NameObject Lang;
+extern const syntax::NameObject Launch;
 extern const syntax::NameObject Legal;
 extern const syntax::NameObject Length;
 extern const syntax::NameObject Limits;
 extern const syntax::NameObject MediaBox;
 extern const syntax::NameObject Metadata;
 extern const syntax::NameObject N;
+extern const syntax::NameObject Named;
 extern const syntax::NameObject Names;
 extern const syntax::NameObject NeedsRendering;
 extern const syntax::NameObject Nums;
@@ -156,7 +161,9 @@ extern const syntax::NameObject False;
 extern const syntax::NameObject NeedsRendering;
 extern const syntax::NameObject DCTDecode;
 extern const syntax::NameObject LZWDecode;
+extern const syntax::NameObject JS;
 extern const syntax::NameObject JPXDecode;
+extern const syntax::NameObject JavaScript;
 extern const syntax::NameObject XYZ;
 extern const syntax::NameObject Fit;
 extern const syntax::NameObject FitH;
@@ -243,6 +250,11 @@ extern const syntax::NameObject AdobePPKLite;
 extern const syntax::NameObject AdobePubSec;
 extern const syntax::NameObject Rect;
 extern const syntax::NameObject T;
+extern const syntax::NameObject QuadPoints;
+extern const syntax::NameObject DA;
+extern const syntax::NameObject Open;
+extern const syntax::NameObject IC;
+extern const syntax::NameObject InkList;
 
 } // Constant
 } // Name

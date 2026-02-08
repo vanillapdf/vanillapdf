@@ -1,5 +1,9 @@
 #include "precompiled.h"
 #include "semantics/objects/annotations.h"
+#include "semantics/objects/actions.h"
+#include "semantics/objects/color.h"
+#include "semantics/objects/date.h"
+#include "semantics/objects/rectangle.h"
 
 #include "vanillapdf/semantics/c_annotations.h"
 #include "implementation/c_helper.h"
@@ -106,6 +110,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkA
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetAction(LinkAnnotationHandle* handle, ActionHandle** result)
+{
+    LinkAnnotation* obj = reinterpret_cast<LinkAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputActionPtr action;
+        bool contains = obj->Action(action);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = action.AddRefGet();
+        *result = reinterpret_cast<ActionHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_ToBaseAnnotation(LinkAnnotationHandle* handle, AnnotationHandle** result) {
     return SafeObjectConvert<LinkAnnotation, AnnotationBase, LinkAnnotationHandle, AnnotationHandle>(handle, result);
 }
@@ -156,4 +180,1388 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_FromUnknown(IUnknow
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Release(PageAnnotationsHandle* handle) {
     return ObjectRelease<PageAnnotations, PageAnnotationsHandle>(handle);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Create(PageAnnotationsHandle** result)
+{
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annots = make_deferred<PageAnnotations>();
+        auto ptr = annots.AddRefGet();
+        *result = reinterpret_cast<PageAnnotationsHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Append(PageAnnotationsHandle* handle, AnnotationHandle* annotation)
+{
+    PageAnnotations* obj = reinterpret_cast<PageAnnotations*>(handle);
+    AnnotationBase* annot = reinterpret_cast<AnnotationBase*>(annotation);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(annot);
+
+    try
+    {
+        obj->Append(annot);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+// Annotation property accessors
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetRect(AnnotationHandle* handle, RectangleHandle** result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputRectanglePtr rect;
+        bool contains = obj->GetRect(rect);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = rect.AddRefGet();
+        *result = reinterpret_cast<RectangleHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetRect(AnnotationHandle* handle, RectangleHandle* value)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    Rectangle* rect = reinterpret_cast<Rectangle*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect);
+
+    try
+    {
+        obj->SetRect(rect);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetContents(AnnotationHandle* handle, LiteralStringObjectHandle** result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputLiteralStringObjectPtr contents;
+        bool contains = obj->GetContents(contents);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = contents.AddRefGet();
+        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetContents(AnnotationHandle* handle, LiteralStringObjectHandle* value)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    LiteralStringObject* contents = reinterpret_cast<LiteralStringObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(contents);
+
+    try
+    {
+        obj->SetContents(contents);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetColor(AnnotationHandle* handle, ColorHandle** result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputColorPtr color;
+        bool contains = obj->GetColor(color);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = color.AddRefGet();
+        *result = reinterpret_cast<ColorHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetColor(AnnotationHandle* handle, ColorHandle* value)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    Color* color = reinterpret_cast<Color*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(color);
+
+    try
+    {
+        obj->SetColor(color);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+
+
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetFlags(AnnotationHandle* handle, AnnotationFlags* result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto flags = obj->GetFlags();
+        *result = static_cast<AnnotationFlags>(flags);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetFlags(AnnotationHandle* handle, AnnotationFlags value)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try
+    {
+        obj->SetFlags(static_cast<AnnotationBase::Flags>(value));
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+// TextAnnotation
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_Create(RectangleHandle* rect, TextAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = TextAnnotation::Create(rect_obj);
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<TextAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_CreateWithContents(RectangleHandle* rect, LiteralStringObjectHandle* contents, TextAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    LiteralStringObject* contents_obj = reinterpret_cast<LiteralStringObject*>(contents);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(contents_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = TextAnnotation::Create(rect_obj, contents_obj);
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<TextAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthor(TextAnnotationHandle* handle, StringObjectHandle** result)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputStringObjectPtr author;
+        bool contains = obj->GetAuthor(author);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = author.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetAuthor(TextAnnotationHandle* handle, StringObjectHandle* value)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
+
+    try
+    {
+        obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetModificationDate(TextAnnotationHandle* handle, DateHandle** result)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetModificationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetModificationDate(TextAnnotationHandle* handle, DateHandle* value)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetModificationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetCreationDate(TextAnnotationHandle* handle, DateHandle** result)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetCreationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetCreationDate(TextAnnotationHandle* handle, DateHandle* value)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetCreationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_ToBaseAnnotation(TextAnnotationHandle* handle, AnnotationHandle** result) {
+    return SafeObjectConvert<TextAnnotation, AnnotationBase, TextAnnotationHandle, AnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_FromBaseAnnotation(AnnotationHandle* handle, TextAnnotationHandle** result) {
+    return SafeObjectConvert<AnnotationBase, TextAnnotation, AnnotationHandle, TextAnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_Release(TextAnnotationHandle* handle) {
+    return ObjectRelease<TextAnnotation, TextAnnotationHandle>(handle);
+}
+
+// HighlightAnnotation
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_Create(HighlightAnnotationHandle** result)
+{
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = HighlightAnnotation::Create();
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<HighlightAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_CreateFromRect(RectangleHandle* rect, HighlightAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = HighlightAnnotation::CreateFromRect(rect_obj);
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<HighlightAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetQuadPoints(HighlightAnnotationHandle* handle, ArrayObjectHandle** result)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        MixedArrayObjectPtr quadPoints;
+        bool contains = obj->GetQuadPoints(quadPoints);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = quadPoints.AddRefGet();
+        *result = reinterpret_cast<ArrayObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetQuadPoints(HighlightAnnotationHandle* handle, ArrayObjectHandle* value)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    MixedArrayObject* quad_obj = reinterpret_cast<MixedArrayObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(quad_obj);
+
+    try
+    {
+        obj->SetQuadPoints(quad_obj);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthor(HighlightAnnotationHandle* handle, StringObjectHandle** result)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputStringObjectPtr author;
+        bool contains = obj->GetAuthor(author);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = author.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetAuthor(HighlightAnnotationHandle* handle, StringObjectHandle* value)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
+
+    try
+    {
+        obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetModificationDate(HighlightAnnotationHandle* handle, DateHandle** result)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetModificationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetModificationDate(HighlightAnnotationHandle* handle, DateHandle* value)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetModificationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetCreationDate(HighlightAnnotationHandle* handle, DateHandle** result)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetCreationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetCreationDate(HighlightAnnotationHandle* handle, DateHandle* value)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetCreationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_ToBaseAnnotation(HighlightAnnotationHandle* handle, AnnotationHandle** result) {
+    return SafeObjectConvert<HighlightAnnotation, AnnotationBase, HighlightAnnotationHandle, AnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_FromBaseAnnotation(AnnotationHandle* handle, HighlightAnnotationHandle** result) {
+    return SafeObjectConvert<AnnotationBase, HighlightAnnotation, AnnotationHandle, HighlightAnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_Release(HighlightAnnotationHandle* handle) {
+    return ObjectRelease<HighlightAnnotation, HighlightAnnotationHandle>(handle);
+}
+
+// FreeTextAnnotation
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_Create(RectangleHandle* rect, LiteralStringObjectHandle* contents, LiteralStringObjectHandle* defaultAppearance, FreeTextAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    LiteralStringObject* contents_obj = reinterpret_cast<LiteralStringObject*>(contents);
+    LiteralStringObject* da_obj = reinterpret_cast<LiteralStringObject*>(defaultAppearance);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(contents_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(da_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = FreeTextAnnotation::Create(rect_obj, contents_obj, da_obj);
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<FreeTextAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetDefaultAppearance(FreeTextAnnotationHandle* handle, LiteralStringObjectHandle** result)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        LiteralStringObjectPtr da;
+        bool contains = obj->GetDefaultAppearance(da);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = da.AddRefGet();
+        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetDefaultAppearance(FreeTextAnnotationHandle* handle, LiteralStringObjectHandle* value)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    LiteralStringObject* da_obj = reinterpret_cast<LiteralStringObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(da_obj);
+
+    try
+    {
+        obj->SetDefaultAppearance(da_obj);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthor(FreeTextAnnotationHandle* handle, StringObjectHandle** result)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputStringObjectPtr author;
+        bool contains = obj->GetAuthor(author);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = author.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetAuthor(FreeTextAnnotationHandle* handle, StringObjectHandle* value)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
+
+    try
+    {
+        obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetModificationDate(FreeTextAnnotationHandle* handle, DateHandle** result)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetModificationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetModificationDate(FreeTextAnnotationHandle* handle, DateHandle* value)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetModificationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetCreationDate(FreeTextAnnotationHandle* handle, DateHandle** result)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetCreationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetCreationDate(FreeTextAnnotationHandle* handle, DateHandle* value)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetCreationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_ToBaseAnnotation(FreeTextAnnotationHandle* handle, AnnotationHandle** result) {
+    return SafeObjectConvert<FreeTextAnnotation, AnnotationBase, FreeTextAnnotationHandle, AnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_FromBaseAnnotation(AnnotationHandle* handle, FreeTextAnnotationHandle** result) {
+    return SafeObjectConvert<AnnotationBase, FreeTextAnnotation, AnnotationHandle, FreeTextAnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_Release(FreeTextAnnotationHandle* handle) {
+    return ObjectRelease<FreeTextAnnotation, FreeTextAnnotationHandle>(handle);
+}
+
+// UnderlineAnnotation
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_Create(UnderlineAnnotationHandle** result)
+{
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = UnderlineAnnotation::Create();
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<UnderlineAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_CreateFromRect(RectangleHandle* rect, UnderlineAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = UnderlineAnnotation::CreateFromRect(rect_obj);
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<UnderlineAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetQuadPoints(UnderlineAnnotationHandle* handle, ArrayObjectHandle** result)
+{
+    UnderlineAnnotation* obj = reinterpret_cast<UnderlineAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        MixedArrayObjectPtr quadPoints;
+        bool contains = obj->GetQuadPoints(quadPoints);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = quadPoints.AddRefGet();
+        *result = reinterpret_cast<ArrayObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetQuadPoints(UnderlineAnnotationHandle* handle, ArrayObjectHandle* value)
+{
+    UnderlineAnnotation* obj = reinterpret_cast<UnderlineAnnotation*>(handle);
+    MixedArrayObject* quad_obj = reinterpret_cast<MixedArrayObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(quad_obj);
+
+    try
+    {
+        obj->SetQuadPoints(quad_obj);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthor(UnderlineAnnotationHandle* handle, StringObjectHandle** result)
+{
+    UnderlineAnnotation* obj = reinterpret_cast<UnderlineAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputStringObjectPtr author;
+        bool contains = obj->GetAuthor(author);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = author.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetAuthor(UnderlineAnnotationHandle* handle, StringObjectHandle* value)
+{
+    UnderlineAnnotation* obj = reinterpret_cast<UnderlineAnnotation*>(handle);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
+
+    try
+    {
+        obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetModificationDate(UnderlineAnnotationHandle* handle, DateHandle** result)
+{
+    UnderlineAnnotation* obj = reinterpret_cast<UnderlineAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetModificationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetModificationDate(UnderlineAnnotationHandle* handle, DateHandle* value)
+{
+    UnderlineAnnotation* obj = reinterpret_cast<UnderlineAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetModificationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetCreationDate(UnderlineAnnotationHandle* handle, DateHandle** result)
+{
+    UnderlineAnnotation* obj = reinterpret_cast<UnderlineAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetCreationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetCreationDate(UnderlineAnnotationHandle* handle, DateHandle* value)
+{
+    UnderlineAnnotation* obj = reinterpret_cast<UnderlineAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetCreationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_ToBaseAnnotation(UnderlineAnnotationHandle* handle, AnnotationHandle** result) {
+    return SafeObjectConvert<UnderlineAnnotation, AnnotationBase, UnderlineAnnotationHandle, AnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_FromBaseAnnotation(AnnotationHandle* handle, UnderlineAnnotationHandle** result) {
+    return SafeObjectConvert<AnnotationBase, UnderlineAnnotation, AnnotationHandle, UnderlineAnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_Release(UnderlineAnnotationHandle* handle) {
+    return ObjectRelease<UnderlineAnnotation, UnderlineAnnotationHandle>(handle);
+}
+
+// StrikeOutAnnotation
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_Create(StrikeOutAnnotationHandle** result)
+{
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = StrikeOutAnnotation::Create();
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<StrikeOutAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_CreateFromRect(RectangleHandle* rect, StrikeOutAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = StrikeOutAnnotation::CreateFromRect(rect_obj);
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<StrikeOutAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetQuadPoints(StrikeOutAnnotationHandle* handle, ArrayObjectHandle** result)
+{
+    StrikeOutAnnotation* obj = reinterpret_cast<StrikeOutAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        MixedArrayObjectPtr quadPoints;
+        bool contains = obj->GetQuadPoints(quadPoints);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = quadPoints.AddRefGet();
+        *result = reinterpret_cast<ArrayObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetQuadPoints(StrikeOutAnnotationHandle* handle, ArrayObjectHandle* value)
+{
+    StrikeOutAnnotation* obj = reinterpret_cast<StrikeOutAnnotation*>(handle);
+    MixedArrayObject* quad_obj = reinterpret_cast<MixedArrayObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(quad_obj);
+
+    try
+    {
+        obj->SetQuadPoints(quad_obj);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthor(StrikeOutAnnotationHandle* handle, StringObjectHandle** result)
+{
+    StrikeOutAnnotation* obj = reinterpret_cast<StrikeOutAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputStringObjectPtr author;
+        bool contains = obj->GetAuthor(author);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = author.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetAuthor(StrikeOutAnnotationHandle* handle, StringObjectHandle* value)
+{
+    StrikeOutAnnotation* obj = reinterpret_cast<StrikeOutAnnotation*>(handle);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
+
+    try
+    {
+        obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetModificationDate(StrikeOutAnnotationHandle* handle, DateHandle** result)
+{
+    StrikeOutAnnotation* obj = reinterpret_cast<StrikeOutAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetModificationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetModificationDate(StrikeOutAnnotationHandle* handle, DateHandle* value)
+{
+    StrikeOutAnnotation* obj = reinterpret_cast<StrikeOutAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetModificationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetCreationDate(StrikeOutAnnotationHandle* handle, DateHandle** result)
+{
+    StrikeOutAnnotation* obj = reinterpret_cast<StrikeOutAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetCreationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetCreationDate(StrikeOutAnnotationHandle* handle, DateHandle* value)
+{
+    StrikeOutAnnotation* obj = reinterpret_cast<StrikeOutAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetCreationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_ToBaseAnnotation(StrikeOutAnnotationHandle* handle, AnnotationHandle** result) {
+    return SafeObjectConvert<StrikeOutAnnotation, AnnotationBase, StrikeOutAnnotationHandle, AnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_FromBaseAnnotation(AnnotationHandle* handle, StrikeOutAnnotationHandle** result) {
+    return SafeObjectConvert<AnnotationBase, StrikeOutAnnotation, AnnotationHandle, StrikeOutAnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_Release(StrikeOutAnnotationHandle* handle) {
+    return ObjectRelease<StrikeOutAnnotation, StrikeOutAnnotationHandle>(handle);
+}
+
+// SquigglyAnnotation
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_Create(SquigglyAnnotationHandle** result)
+{
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = SquigglyAnnotation::Create();
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<SquigglyAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_CreateFromRect(RectangleHandle* rect, SquigglyAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = SquigglyAnnotation::CreateFromRect(rect_obj);
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<SquigglyAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetQuadPoints(SquigglyAnnotationHandle* handle, ArrayObjectHandle** result)
+{
+    SquigglyAnnotation* obj = reinterpret_cast<SquigglyAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        MixedArrayObjectPtr quadPoints;
+        bool contains = obj->GetQuadPoints(quadPoints);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = quadPoints.AddRefGet();
+        *result = reinterpret_cast<ArrayObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetQuadPoints(SquigglyAnnotationHandle* handle, ArrayObjectHandle* value)
+{
+    SquigglyAnnotation* obj = reinterpret_cast<SquigglyAnnotation*>(handle);
+    MixedArrayObject* quad_obj = reinterpret_cast<MixedArrayObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(quad_obj);
+
+    try
+    {
+        obj->SetQuadPoints(quad_obj);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthor(SquigglyAnnotationHandle* handle, StringObjectHandle** result)
+{
+    SquigglyAnnotation* obj = reinterpret_cast<SquigglyAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputStringObjectPtr author;
+        bool contains = obj->GetAuthor(author);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = author.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetAuthor(SquigglyAnnotationHandle* handle, StringObjectHandle* value)
+{
+    SquigglyAnnotation* obj = reinterpret_cast<SquigglyAnnotation*>(handle);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
+
+    try
+    {
+        obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetModificationDate(SquigglyAnnotationHandle* handle, DateHandle** result)
+{
+    SquigglyAnnotation* obj = reinterpret_cast<SquigglyAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetModificationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetModificationDate(SquigglyAnnotationHandle* handle, DateHandle* value)
+{
+    SquigglyAnnotation* obj = reinterpret_cast<SquigglyAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetModificationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetCreationDate(SquigglyAnnotationHandle* handle, DateHandle** result)
+{
+    SquigglyAnnotation* obj = reinterpret_cast<SquigglyAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetCreationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetCreationDate(SquigglyAnnotationHandle* handle, DateHandle* value)
+{
+    SquigglyAnnotation* obj = reinterpret_cast<SquigglyAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetCreationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_ToBaseAnnotation(SquigglyAnnotationHandle* handle, AnnotationHandle** result) {
+    return SafeObjectConvert<SquigglyAnnotation, AnnotationBase, SquigglyAnnotationHandle, AnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_FromBaseAnnotation(AnnotationHandle* handle, SquigglyAnnotationHandle** result) {
+    return SafeObjectConvert<AnnotationBase, SquigglyAnnotation, AnnotationHandle, SquigglyAnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_Release(SquigglyAnnotationHandle* handle) {
+    return ObjectRelease<SquigglyAnnotation, SquigglyAnnotationHandle>(handle);
+}
+
+// InkAnnotation
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_Create(InkAnnotationHandle** result)
+{
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = InkAnnotation::Create();
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<InkAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_CreateFromRect(RectangleHandle* rect, InkAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = InkAnnotation::CreateFromRect(rect_obj);
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<InkAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetInkList(InkAnnotationHandle* handle, ArrayObjectHandle** result)
+{
+    InkAnnotation* obj = reinterpret_cast<InkAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        MixedArrayObjectPtr inkList;
+        bool contains = obj->GetInkList(inkList);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = inkList.AddRefGet();
+        *result = reinterpret_cast<ArrayObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetInkList(InkAnnotationHandle* handle, ArrayObjectHandle* value)
+{
+    InkAnnotation* obj = reinterpret_cast<InkAnnotation*>(handle);
+    MixedArrayObject* ink_obj = reinterpret_cast<MixedArrayObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(ink_obj);
+
+    try
+    {
+        obj->SetInkList(ink_obj);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthor(InkAnnotationHandle* handle, StringObjectHandle** result)
+{
+    InkAnnotation* obj = reinterpret_cast<InkAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputStringObjectPtr author;
+        bool contains = obj->GetAuthor(author);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = author.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetAuthor(InkAnnotationHandle* handle, StringObjectHandle* value)
+{
+    InkAnnotation* obj = reinterpret_cast<InkAnnotation*>(handle);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
+
+    try
+    {
+        obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetModificationDate(InkAnnotationHandle* handle, DateHandle** result)
+{
+    InkAnnotation* obj = reinterpret_cast<InkAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetModificationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetModificationDate(InkAnnotationHandle* handle, DateHandle* value)
+{
+    InkAnnotation* obj = reinterpret_cast<InkAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetModificationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetCreationDate(InkAnnotationHandle* handle, DateHandle** result)
+{
+    InkAnnotation* obj = reinterpret_cast<InkAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputDatePtr date;
+        bool contains = obj->GetCreationDate(date);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = date.AddRefGet();
+        *result = reinterpret_cast<DateHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetCreationDate(InkAnnotationHandle* handle, DateHandle* value)
+{
+    InkAnnotation* obj = reinterpret_cast<InkAnnotation*>(handle);
+    Date* date = reinterpret_cast<Date*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(date);
+
+    try
+    {
+        obj->SetCreationDate(date);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_ToBaseAnnotation(InkAnnotationHandle* handle, AnnotationHandle** result) {
+    return SafeObjectConvert<InkAnnotation, AnnotationBase, InkAnnotationHandle, AnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_FromBaseAnnotation(AnnotationHandle* handle, InkAnnotationHandle** result) {
+    return SafeObjectConvert<AnnotationBase, InkAnnotation, AnnotationHandle, InkAnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_Release(InkAnnotationHandle* handle) {
+    return ObjectRelease<InkAnnotation, InkAnnotationHandle>(handle);
+}
+
+// PageAnnotations_Remove
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Remove(PageAnnotationsHandle* handle, size_type at)
+{
+    PageAnnotations* obj = reinterpret_cast<PageAnnotations*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try
+    {
+        bool removed = obj->Remove(at);
+        if (!removed) {
+            return VANILLAPDF_ERROR_GENERAL;
+        }
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }

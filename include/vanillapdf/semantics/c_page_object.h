@@ -82,6 +82,14 @@ extern "C"
 
     /**
     * \brief
+    * Set the annotation array for this page.
+    * \param handle a handle to the page object
+    * \param value the annotation collection to set
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetAnnotations(PageObjectHandle* handle, PageAnnotationsHandle* value);
+
+    /**
+    * \brief
     * A rectangle expressed in default user space units,
     * that shall define the boundaries of the
     * physical medium on which the page shall

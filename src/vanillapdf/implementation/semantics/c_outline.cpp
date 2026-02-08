@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "semantics/objects/outline.h"
+#include "semantics/objects/actions.h"
 #include "semantics/objects/destinations.h"
 
 #include "vanillapdf/semantics/c_outline.h"
@@ -230,6 +231,23 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetDestination(OutlineI
         if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<DestinationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetAction(OutlineItemHandle* handle, ActionHandle** result)
+{
+    OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputActionPtr action;
+        auto contains = obj->Action(action);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = action.AddRefGet();
+        *result = reinterpret_cast<ActionHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

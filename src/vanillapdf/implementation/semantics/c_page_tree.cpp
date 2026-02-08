@@ -6,6 +6,7 @@
 #include "implementation/c_helper.h"
 
 using namespace vanillapdf;
+using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle* handle, size_type* result)
@@ -72,6 +73,28 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageTree_RemovePage(PageTreeHandle*
     try
     {
         obj->Remove(at);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageTree_FindPageIndex(PageTreeHandle* handle, ObjectHandle* page_ref, size_type* result)
+{
+    PageTree* obj = reinterpret_cast<PageTree*>(handle);
+    Object* page_obj = reinterpret_cast<Object*>(page_ref);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(page_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto page_dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(page_obj);
+        types::size_type index = 0;
+        bool found = obj->FindPageIndex(page_dict, index);
+        if (!found) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        *result = index;
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

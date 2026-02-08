@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "semantics/objects/catalog.h"
+#include "semantics/objects/actions.h"
 #include "semantics/objects/page_tree.h"
 #include "semantics/objects/outline.h"
 #include "semantics/objects/name_dictionary.h"
@@ -190,6 +191,15 @@ bool Catalog::AcroForm(OuputInteractiveFormPtr& result) const {
     auto form_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::AcroForm);
     auto interactive_form = make_deferred<InteractiveForm>(form_obj);
     result = interactive_form;
+    return true;
+}
+
+bool Catalog::GetOpenAction(syntax::ObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::OpenAction)) {
+        return false;
+    }
+
+    result = _obj->Find(constant::Name::OpenAction);
     return true;
 }
 

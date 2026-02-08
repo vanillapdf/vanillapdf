@@ -130,7 +130,7 @@ using IntegerObjectPtr = Deferred<IntegerObject>; using OutputIntegerObjectPtr =
 using NullObjectPtr = Deferred<NullObject>;
 using RealObjectPtr = Deferred<RealObject>;
 using StreamObjectPtr = Deferred<StreamObject>;
-using LiteralStringObjectPtr = Deferred<LiteralStringObject>;
+using LiteralStringObjectPtr = Deferred<LiteralStringObject>; using OutputLiteralStringObjectPtr = OutputPointer<LiteralStringObjectPtr>;
 using HexadecimalStringObjectPtr = Deferred<HexadecimalStringObject>;
 
 // Parsers

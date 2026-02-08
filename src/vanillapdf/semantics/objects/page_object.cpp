@@ -86,6 +86,7 @@ void PageObject::SetAnnotations(PageAnnotationsPtr annots) {
     _obj->Insert(Name::Annots, annots->GetObject());
 }
 
+
 void PageObject::SetContents(PageContentsPtr contents) {
     if (_obj->Contains(Name::Contents)) {
         bool removed = _obj->Remove(Name::Contents);

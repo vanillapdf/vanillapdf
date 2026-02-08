@@ -56,10 +56,12 @@ set(VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES
 )
 
 set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
+    implementation/semantics/c_actions.cpp
     implementation/semantics/c_annotations.cpp
     implementation/semantics/c_byte_range.cpp
     implementation/semantics/c_catalog.cpp
     implementation/semantics/c_character_map.cpp
+    implementation/semantics/c_color.cpp
     implementation/semantics/c_date.cpp
     implementation/semantics/c_destination_name_tree.cpp
     implementation/semantics/c_destinations.cpp
@@ -113,8 +115,10 @@ set(VANILLAPDF_SEMANTICS_SOURCES
     semantics/objects/page_tree_node.cpp
     semantics/objects/resource_dictionary.cpp
 
+    semantics/objects/actions.cpp
     semantics/objects/annotations.cpp
     semantics/objects/character_map.cpp
+    semantics/objects/color.cpp
     semantics/objects/date.cpp
     semantics/objects/destinations.cpp
     semantics/objects/developer_extensions.cpp
@@ -242,8 +246,10 @@ set(VANILLAPDF_SEMANTICS_HEADERS
     semantics/objects/resource_dictionary.h
     semantics/objects/signature_flags.h
 
+    semantics/objects/actions.h
     semantics/objects/annotations.h
     semantics/objects/character_map.h
+    semantics/objects/color.h
     semantics/objects/date.h
     semantics/objects/destinations.h
     semantics/objects/developer_extensions.h
