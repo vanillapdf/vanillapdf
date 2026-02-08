@@ -107,6 +107,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION Object_ToPdf(ObjectHandle* handle, 
     CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Object_IsDirty(ObjectHandle* handle, boolean_type* result) {
+    Object* obj = reinterpret_cast<Object*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    *result = obj->IsDirty() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
+    return VANILLAPDF_ERROR_SUCCESS;
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Object_ToUnknown(ObjectHandle* handle, IUnknownHandle** result) {
     return SafeObjectConvert<Object, IUnknown, ObjectHandle, IUnknownHandle>(handle, result);
 }

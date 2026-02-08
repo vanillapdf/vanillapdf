@@ -52,6 +52,17 @@ void DictionaryObject::SetInitialized(bool initialized) {
     }
 }
 
+bool DictionaryObject::IsDirty() const noexcept {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
+    if (m_version > 0) return true;
+    for (const auto& item : _list) {
+        if (item.first->IsDirty()) return true;
+        if (item.second->IsDirty()) return true;
+    }
+    return false;
+}
+
 std::string DictionaryObject::ToString(void) const {
     ACCESS_LOCK_GUARD(m_access_lock);
 

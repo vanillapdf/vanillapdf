@@ -174,6 +174,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetLastXrefOffset(XrefHandle* handle, offset_type* result);
 
     /**
+    * \brief Determine if the cross-reference table has been structurally modified
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Xref_IsDirty(XrefHandle* handle, boolean_type* result);
+
+    /**
     * \brief Get cross-reference entry iterator
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetIterator(XrefHandle* handle, XrefIteratorHandle** result);

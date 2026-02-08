@@ -113,6 +113,19 @@ void StreamObject::SetInitialized(bool initialized) {
     }
 }
 
+bool StreamObject::IsDirty() const noexcept {
+    ACCESS_LOCK_GUARD(_access_lock);
+
+    if (m_version > 0) return true;
+    if (_header->IsDirty()) return true;
+
+    // Only check the decoded body buffer (user-facing layer).
+    // Raw and decrypted buffers are internal lazy-loading caches
+    // that should not be modified directly by users.
+    if (_body_decoded->GetVersion() > 0) return true;
+    return false;
+}
+
 BufferPtr StreamObject::GetBodyRaw() const {
 
     if (_body_raw->IsInitialized()) {
