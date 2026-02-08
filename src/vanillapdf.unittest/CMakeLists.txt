@@ -25,6 +25,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     actions_test.cpp
     annotations_creation_test.cpp
     byte_range_test.cpp
+    catalog_test.cpp
     color_test.cpp
     date_test.cpp
     document_test.cpp
@@ -33,6 +34,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     test_environment.cpp
     attributes_test.cpp
     objects_test.cpp
+    page_tree_test.cpp
     utils_test.cpp
     digital_signature_test.cpp
     signature_verifier_test.cpp
