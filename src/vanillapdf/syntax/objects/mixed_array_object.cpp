@@ -8,13 +8,19 @@
 namespace vanillapdf {
 namespace syntax {
 
+MixedArrayObject::MixedArrayObject() {
+    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+}
+
 MixedArrayObject::MixedArrayObject(const list_type& list) : _list(list) {
+    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
     for (auto item : _list) {
         item->SetOwner(Object::GetWeakReference());
     }
 }
 
 MixedArrayObject::MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list) : _list(list) {
+    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
     for (auto item : _list) {
         item->SetOwner(Object::GetWeakReference());
     }
@@ -22,6 +28,7 @@ MixedArrayObject::MixedArrayObject(const std::initializer_list<ContainableObject
 
 MixedArrayObject::MixedArrayObject(const ContainableObject& other, list_type& list)
     : ContainableObject(other), _list(list) {
+    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
     for (auto item : _list) {
         item->SetOwner(Object::GetWeakReference());
     }
@@ -45,6 +52,16 @@ void MixedArrayObject::SetInitialized(bool initialized) {
         auto item = _list[i];
         item->SetInitialized(initialized);
     }
+}
+
+bool MixedArrayObject::IsDirty() const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
+    if (m_version > 0) return true;
+    for (const auto& item : _list) {
+        if (item->IsDirty()) return true;
+    }
+    return false;
 }
 
 MixedArrayObject* MixedArrayObject::Clone(void) const {

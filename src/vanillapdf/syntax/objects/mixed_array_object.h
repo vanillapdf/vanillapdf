@@ -4,6 +4,7 @@
 #include "syntax/utils/syntax_fwd.h"
 #include "syntax/objects/containable.h"
 
+#include <mutex>
 #include <vector>
 
 namespace vanillapdf {
@@ -21,7 +22,7 @@ public:
     typedef list_type::difference_type difference_type;
 
 public:
-    MixedArrayObject() = default;
+    MixedArrayObject();
     MixedArrayObject(const MixedArrayObject&) = delete;
 
     explicit MixedArrayObject(const list_type& list);
@@ -31,13 +32,7 @@ public:
     virtual void SetFile(WeakReference<File> file) override;
     virtual void SetInitialized(bool initialized = true) override;
 
-    virtual bool IsDirty() const override {
-        if (m_version > 0) return true;
-        for (const auto& item : _list) {
-            if (item->IsDirty()) return true;
-        }
-        return false;
-    }
+    virtual bool IsDirty() const override;
 
     virtual size_t Hash() const override;
     virtual MixedArrayObject* Clone(void) const override;
@@ -77,7 +72,8 @@ public:
 
 protected:
     list_type _list;
-    
+    std::shared_ptr<std::recursive_mutex> m_access_lock;
+
     mutable std::size_t m_hash_cache = 0;
 };
 
