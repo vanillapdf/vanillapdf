@@ -51,7 +51,7 @@ public:
     WeakReference<XrefUsedEntryBase> GetXrefEntry() const;
     void ClearXrefEntry(bool check_xref_reference);
 
-    virtual bool IsDirty(void) const noexcept { return m_version > 0; }
+    virtual bool IsDirty(void) const { return m_version > 0; }
     void SetDirty(bool dirty = true) noexcept {
         if (dirty) { if (m_version == 0) m_version.store(1, std::memory_order_relaxed); }
         else { m_version.store(0, std::memory_order_relaxed); }

@@ -390,7 +390,7 @@ void XrefStream::SetOffset(types::stream_offset offset) {
     stream->SetOffset(offset);
 }
 
-bool XrefStream::IsDirty(void) const noexcept {
+bool XrefStream::IsDirty(void) const {
     auto stream = GetStreamObject();
     return stream->IsDirty();
 }

@@ -42,7 +42,7 @@ public:
     void SetFile(WeakReference<File> file) noexcept { _file = file; }
     WeakReference<File> GetFile() const noexcept { return _file; }
 
-    virtual bool IsDirty(void) const noexcept { return m_version > 0; }
+    virtual bool IsDirty(void) const { return m_version > 0; }
     void SetDirty(bool dirty = true) noexcept {
         if (dirty) { if (m_version == 0) m_version.store(1, std::memory_order_relaxed); }
         else { m_version.store(0, std::memory_order_relaxed); }
@@ -118,7 +118,7 @@ public:
     void SetReference(ObjectPtr ref);
     void ReleaseReference(bool check_object_xref = true);
 
-    virtual bool IsDirty(void) const noexcept override {
+    virtual bool IsDirty(void) const override {
         if (m_version > 0) return true;
         if (m_used && !_reference.empty() && _reference->IsDirty()) return true;
         return false;

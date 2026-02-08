@@ -108,15 +108,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetLastXrefOffset(XrefHandle* 
     return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Xref_IsDirty(XrefHandle* handle, boolean_type* result) {
-    XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    *result = xref->IsDirty() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
-    return VANILLAPDF_ERROR_SUCCESS;
-}
-
 VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetIterator(XrefHandle* handle, XrefIteratorHandle** result)
 {
     XrefBase* xref = reinterpret_cast<XrefBase*>(handle);

@@ -84,7 +84,7 @@ public:
     virtual void SetFile(WeakReference<File> file) override;
     virtual void SetInitialized(bool initialized = true) override;
 
-    virtual bool IsDirty() const noexcept override;
+    virtual bool IsDirty() const override;
 
     virtual size_t Hash() const override;
     virtual DictionaryObject* Clone(void) const override;

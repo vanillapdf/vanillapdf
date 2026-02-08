@@ -31,6 +31,19 @@ StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offs
     _access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
+bool StreamObject::IsDirty() const {
+    ACCESS_LOCK_GUARD(_access_lock);
+
+    if (m_version > 0) return true;
+    if (_header->IsDirty()) return true;
+
+    // Only check the decoded body buffer (user-facing layer).
+    // Raw and decrypted buffers are internal lazy-loading caches
+    // that should not be modified directly by users.
+    if (_body_decoded->GetVersion() > 0) return true;
+    return false;
+}
+
 DictionaryObjectPtr StreamObject::GetHeader() const {
     return _header;
 }
@@ -111,19 +124,6 @@ void StreamObject::SetInitialized(bool initialized) {
     if (initialized && _raw_data_offset == constant::BAD_OFFSET) {
         _body_raw->SetInitialized();
     }
-}
-
-bool StreamObject::IsDirty() const noexcept {
-    ACCESS_LOCK_GUARD(_access_lock);
-
-    if (m_version > 0) return true;
-    if (_header->IsDirty()) return true;
-
-    // Only check the decoded body buffer (user-facing layer).
-    // Raw and decrypted buffers are internal lazy-loading caches
-    // that should not be modified directly by users.
-    if (_body_decoded->GetVersion() > 0) return true;
-    return false;
 }
 
 BufferPtr StreamObject::GetBodyRaw() const {

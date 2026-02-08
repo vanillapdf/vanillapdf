@@ -52,7 +52,7 @@ public:
     static HexadecimalStringObjectPtr CreateFromDecoded(const char * value);
     static HexadecimalStringObjectPtr CreateFromDecoded(std::string_view value);
 
-    virtual bool IsDirty() const noexcept override {
+    virtual bool IsDirty() const override {
         return (m_version > 0) || (_value->GetVersion() > 0);
     }
 
@@ -90,7 +90,7 @@ public:
     static LiteralStringObjectPtr CreateFromDecoded(const char * value);
     static LiteralStringObjectPtr CreateFromDecoded(std::string_view value);
 
-    virtual bool IsDirty() const noexcept override {
+    virtual bool IsDirty() const override {
         return (m_version > 0) || (_value->GetVersion() > 0);
     }
 

@@ -21,7 +21,7 @@ public:
     virtual std::string ToString(void) const override;
     virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
-    virtual bool IsDirty() const noexcept override;
+    virtual bool IsDirty() const override;
 
     DictionaryObjectPtr GetHeader() const;
     void SetHeader(DictionaryObjectPtr header);

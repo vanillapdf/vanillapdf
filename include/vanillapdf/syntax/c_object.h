@@ -130,11 +130,6 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Object_ToPdf(ObjectHandle* handle, BufferHandle** result);
 
     /**
-    * \brief Determine if the object has been modified since it was loaded or created
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION Object_IsDirty(ObjectHandle* handle, boolean_type* result);
-
-    /**
     * \brief Reinterpret current object as \ref IUnknownHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Object_ToUnknown(ObjectHandle* handle, IUnknownHandle** result);

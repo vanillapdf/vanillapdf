@@ -21,7 +21,7 @@ public:
     static NameObjectPtr CreateFromDecoded(BufferPtr value);
     static NameObjectPtr CreateFromDecoded(std::string_view value);
 
-    virtual bool IsDirty() const noexcept override {
+    virtual bool IsDirty() const override {
         return (m_version > 0) || (_value->GetVersion() > 0);
     }
 

@@ -52,7 +52,7 @@ void DictionaryObject::SetInitialized(bool initialized) {
     }
 }
 
-bool DictionaryObject::IsDirty() const noexcept {
+bool DictionaryObject::IsDirty() const {
     ACCESS_LOCK_GUARD(m_access_lock);
 
     if (m_version > 0) return true;

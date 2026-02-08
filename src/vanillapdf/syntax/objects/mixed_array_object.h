@@ -31,7 +31,7 @@ public:
     virtual void SetFile(WeakReference<File> file) override;
     virtual void SetInitialized(bool initialized = true) override;
 
-    virtual bool IsDirty() const noexcept override {
+    virtual bool IsDirty() const override {
         if (m_version > 0) return true;
         for (const auto& item : _list) {
             if (item->IsDirty()) return true;

@@ -68,7 +68,7 @@ public:
     virtual ~NumericObject() override = default;
     virtual size_t Hash() const override;
 
-    virtual bool IsDirty() const noexcept override {
+    virtual bool IsDirty() const override {
         return (m_version > 0) || (m_value->GetVersion() > 0);
     }
 

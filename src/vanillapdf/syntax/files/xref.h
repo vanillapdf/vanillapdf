@@ -66,7 +66,7 @@ public:
     types::stream_offset GetLastXrefOffset() const noexcept { return _last_xref_offset; }
     void SetLastXrefOffset(types::stream_offset offset) noexcept { _last_xref_offset = offset; }
 
-    virtual bool IsDirty(void) const noexcept = 0;
+    virtual bool IsDirty(void) const = 0;
     virtual void SetDirty(bool dirty = true) noexcept = 0;
 
     IteratorPtr Begin(void) const { return make_deferred_iterator<Iterator>(_entries.begin(), _entries.end()); }
@@ -115,7 +115,7 @@ public:
     virtual types::stream_offset GetOffset() const override;
     virtual void SetOffset(types::stream_offset offset) override;
 
-    virtual bool IsDirty(void) const noexcept override;
+    virtual bool IsDirty(void) const override;
     virtual void SetDirty(bool dirty = true) noexcept override;
 
     virtual DictionaryObjectPtr GetTrailerDictionary(void) const override;
