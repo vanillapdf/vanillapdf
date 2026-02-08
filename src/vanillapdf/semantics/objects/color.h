@@ -25,33 +25,33 @@ public:
     Color() = default;
     explicit Color(syntax::MixedArrayObjectPtr root);
 
-    ColorSpace GetColorSpace() const noexcept { return m_color_space; }
+    ColorSpace GetColorSpace() const;
 
     // Grayscale
-    double GetGray() const noexcept { return m_components[0]; }
+    double GetGray() const;
     void SetGray(double value);
 
     // RGB
-    double GetRed() const noexcept { return m_components[0]; }
+    double GetRed() const;
     void SetRed(double value);
 
-    double GetGreen() const noexcept { return m_components[1]; }
+    double GetGreen() const;
     void SetGreen(double value);
 
-    double GetBlue() const noexcept { return m_components[2]; }
+    double GetBlue() const;
     void SetBlue(double value);
 
     // CMYK
-    double GetCyan() const noexcept { return m_components[0]; }
+    double GetCyan() const;
     void SetCyan(double value);
 
-    double GetMagenta() const noexcept { return m_components[1]; }
+    double GetMagenta() const;
     void SetMagenta(double value);
 
-    double GetYellow() const noexcept { return m_components[2]; }
+    double GetYellow() const;
     void SetYellow(double value);
 
-    double GetBlack() const noexcept { return m_components[3]; }
+    double GetBlack() const;
     void SetBlack(double value);
 
     // Factory methods
@@ -61,10 +61,8 @@ public:
     static ColorPtr CreateCMYK(double cyan, double magenta, double yellow, double black);
 
 private:
-    void RebuildArray();
-
-    ColorSpace m_color_space = ColorSpace::Transparent;
-    double m_components[4] = {0.0, 0.0, 0.0, 0.0};
+    double GetComponent(types::size_type index) const;
+    void SetComponent(types::size_type index, double value);
 };
 
 } // semantics
