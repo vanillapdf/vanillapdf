@@ -279,16 +279,16 @@ void AnnotationBase::SetColor(ColorPtr color) {
 
 // TextAnnotation - Markup annotation properties (Table 170)
 
-bool TextAnnotation::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const {
+bool TextAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::T)) {
         return false;
     }
 
-    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::T);
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
     return true;
 }
 
-void TextAnnotation::SetAuthor(syntax::LiteralStringObjectPtr author) {
+void TextAnnotation::SetAuthor(syntax::StringObjectPtr author) {
     if (_obj->Contains(constant::Name::T)) {
         bool removed = _obj->Remove(constant::Name::T);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
@@ -334,16 +334,16 @@ void TextAnnotation::SetCreationDate(DatePtr date) {
 
 // HighlightAnnotation - Markup annotation properties (Table 170)
 
-bool HighlightAnnotation::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const {
+bool HighlightAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::T)) {
         return false;
     }
 
-    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::T);
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
     return true;
 }
 
-void HighlightAnnotation::SetAuthor(syntax::LiteralStringObjectPtr author) {
+void HighlightAnnotation::SetAuthor(syntax::StringObjectPtr author) {
     if (_obj->Contains(constant::Name::T)) {
         bool removed = _obj->Remove(constant::Name::T);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
@@ -389,16 +389,16 @@ void HighlightAnnotation::SetCreationDate(DatePtr date) {
 
 // FreeTextAnnotation - Markup annotation properties (Table 170)
 
-bool FreeTextAnnotation::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const {
+bool FreeTextAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::T)) {
         return false;
     }
 
-    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::T);
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
     return true;
 }
 
-void FreeTextAnnotation::SetAuthor(syntax::LiteralStringObjectPtr author) {
+void FreeTextAnnotation::SetAuthor(syntax::StringObjectPtr author) {
     if (_obj->Contains(constant::Name::T)) {
         bool removed = _obj->Remove(constant::Name::T);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
@@ -555,16 +555,16 @@ void UnderlineAnnotation::SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints) 
 
 // UnderlineAnnotation - Markup annotation properties (Table 170)
 
-bool UnderlineAnnotation::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const {
+bool UnderlineAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::T)) {
         return false;
     }
 
-    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::T);
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
     return true;
 }
 
-void UnderlineAnnotation::SetAuthor(syntax::LiteralStringObjectPtr author) {
+void UnderlineAnnotation::SetAuthor(syntax::StringObjectPtr author) {
     if (_obj->Contains(constant::Name::T)) {
         bool removed = _obj->Remove(constant::Name::T);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
@@ -636,16 +636,16 @@ void SquigglyAnnotation::SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints) {
 
 // SquigglyAnnotation - Markup annotation properties (Table 170)
 
-bool SquigglyAnnotation::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const {
+bool SquigglyAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::T)) {
         return false;
     }
 
-    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::T);
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
     return true;
 }
 
-void SquigglyAnnotation::SetAuthor(syntax::LiteralStringObjectPtr author) {
+void SquigglyAnnotation::SetAuthor(syntax::StringObjectPtr author) {
     if (_obj->Contains(constant::Name::T)) {
         bool removed = _obj->Remove(constant::Name::T);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
@@ -717,16 +717,16 @@ void StrikeOutAnnotation::SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints) 
 
 // StrikeOutAnnotation - Markup annotation properties (Table 170)
 
-bool StrikeOutAnnotation::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const {
+bool StrikeOutAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::T)) {
         return false;
     }
 
-    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::T);
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
     return true;
 }
 
-void StrikeOutAnnotation::SetAuthor(syntax::LiteralStringObjectPtr author) {
+void StrikeOutAnnotation::SetAuthor(syntax::StringObjectPtr author) {
     if (_obj->Contains(constant::Name::T)) {
         bool removed = _obj->Remove(constant::Name::T);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
@@ -798,16 +798,16 @@ void InkAnnotation::SetInkList(syntax::MixedArrayObjectPtr inkList) {
 
 // InkAnnotation - Markup annotation properties (Table 170)
 
-bool InkAnnotation::GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const {
+bool InkAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::T)) {
         return false;
     }
 
-    result = _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::T);
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
     return true;
 }
 
-void InkAnnotation::SetAuthor(syntax::LiteralStringObjectPtr author) {
+void InkAnnotation::SetAuthor(syntax::StringObjectPtr author) {
     if (_obj->Contains(constant::Name::T)) {
         bool removed = _obj->Remove(constant::Name::T);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);

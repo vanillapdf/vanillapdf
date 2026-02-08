@@ -363,7 +363,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_CreateWithContents(R
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthor(TextAnnotationHandle* handle, LiteralStringObjectHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthor(TextAnnotationHandle* handle, StringObjectHandle** result)
 {
     TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -371,22 +371,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthor(TextAnnota
 
     try
     {
-        OutputLiteralStringObjectPtr author;
+        OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
         auto ptr = author.AddRefGet();
-        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetAuthor(TextAnnotationHandle* handle, LiteralStringObjectHandle* value)
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetAuthor(TextAnnotationHandle* handle, StringObjectHandle* value)
 {
     TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
-    LiteralStringObject* author = reinterpret_cast<LiteralStringObject*>(value);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
 
@@ -530,7 +530,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetQuadPoints(H
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthor(HighlightAnnotationHandle* handle, LiteralStringObjectHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthor(HighlightAnnotationHandle* handle, StringObjectHandle** result)
 {
     HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -538,22 +538,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthor(Highl
 
     try
     {
-        OutputLiteralStringObjectPtr author;
+        OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
         auto ptr = author.AddRefGet();
-        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetAuthor(HighlightAnnotationHandle* handle, LiteralStringObjectHandle* value)
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetAuthor(HighlightAnnotationHandle* handle, StringObjectHandle* value)
 {
     HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
-    LiteralStringObject* author = reinterpret_cast<LiteralStringObject*>(value);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
 
@@ -699,7 +699,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetDefaultAppear
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthor(FreeTextAnnotationHandle* handle, LiteralStringObjectHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthor(FreeTextAnnotationHandle* handle, StringObjectHandle** result)
 {
     FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -707,22 +707,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthor(FreeTe
 
     try
     {
-        OutputLiteralStringObjectPtr author;
+        OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
         auto ptr = author.AddRefGet();
-        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetAuthor(FreeTextAnnotationHandle* handle, LiteralStringObjectHandle* value)
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetAuthor(FreeTextAnnotationHandle* handle, StringObjectHandle* value)
 {
     FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
-    LiteralStringObject* author = reinterpret_cast<LiteralStringObject*>(value);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
 
@@ -866,7 +866,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetQuadPoints(U
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthor(UnderlineAnnotationHandle* handle, LiteralStringObjectHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthor(UnderlineAnnotationHandle* handle, StringObjectHandle** result)
 {
     UnderlineAnnotation* obj = reinterpret_cast<UnderlineAnnotation*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -874,22 +874,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthor(Under
 
     try
     {
-        OutputLiteralStringObjectPtr author;
+        OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
         auto ptr = author.AddRefGet();
-        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetAuthor(UnderlineAnnotationHandle* handle, LiteralStringObjectHandle* value)
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetAuthor(UnderlineAnnotationHandle* handle, StringObjectHandle* value)
 {
     UnderlineAnnotation* obj = reinterpret_cast<UnderlineAnnotation*>(handle);
-    LiteralStringObject* author = reinterpret_cast<LiteralStringObject*>(value);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
 
@@ -1033,7 +1033,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetQuadPoints(S
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthor(StrikeOutAnnotationHandle* handle, LiteralStringObjectHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthor(StrikeOutAnnotationHandle* handle, StringObjectHandle** result)
 {
     StrikeOutAnnotation* obj = reinterpret_cast<StrikeOutAnnotation*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -1041,22 +1041,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthor(Strik
 
     try
     {
-        OutputLiteralStringObjectPtr author;
+        OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
         auto ptr = author.AddRefGet();
-        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetAuthor(StrikeOutAnnotationHandle* handle, LiteralStringObjectHandle* value)
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetAuthor(StrikeOutAnnotationHandle* handle, StringObjectHandle* value)
 {
     StrikeOutAnnotation* obj = reinterpret_cast<StrikeOutAnnotation*>(handle);
-    LiteralStringObject* author = reinterpret_cast<LiteralStringObject*>(value);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
 
@@ -1200,7 +1200,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetQuadPoints(Sq
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthor(SquigglyAnnotationHandle* handle, LiteralStringObjectHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthor(SquigglyAnnotationHandle* handle, StringObjectHandle** result)
 {
     SquigglyAnnotation* obj = reinterpret_cast<SquigglyAnnotation*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -1208,22 +1208,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthor(Squigg
 
     try
     {
-        OutputLiteralStringObjectPtr author;
+        OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
         auto ptr = author.AddRefGet();
-        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetAuthor(SquigglyAnnotationHandle* handle, LiteralStringObjectHandle* value)
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetAuthor(SquigglyAnnotationHandle* handle, StringObjectHandle* value)
 {
     SquigglyAnnotation* obj = reinterpret_cast<SquigglyAnnotation*>(handle);
-    LiteralStringObject* author = reinterpret_cast<LiteralStringObject*>(value);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
 
@@ -1367,7 +1367,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetInkList(InkAnnotat
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthor(InkAnnotationHandle* handle, LiteralStringObjectHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthor(InkAnnotationHandle* handle, StringObjectHandle** result)
 {
     InkAnnotation* obj = reinterpret_cast<InkAnnotation*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -1375,22 +1375,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthor(InkAnnotati
 
     try
     {
-        OutputLiteralStringObjectPtr author;
+        OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
         auto ptr = author.AddRefGet();
-        *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetAuthor(InkAnnotationHandle* handle, LiteralStringObjectHandle* value)
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetAuthor(InkAnnotationHandle* handle, StringObjectHandle* value)
 {
     InkAnnotation* obj = reinterpret_cast<InkAnnotation*>(handle);
-    LiteralStringObject* author = reinterpret_cast<LiteralStringObject*>(value);
+    StringObjectBase* author = reinterpret_cast<StringObjectBase*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(author);
 

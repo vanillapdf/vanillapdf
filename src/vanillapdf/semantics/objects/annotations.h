@@ -85,8 +85,8 @@ public:
     static TextAnnotationPtr Create(RectanglePtr rect, syntax::LiteralStringObjectPtr contents);
 
     // Markup annotation properties (Table 170)
-    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
-    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetAuthor(syntax::OutputStringObjectPtr& result) const;
+    void SetAuthor(syntax::StringObjectPtr author);
     bool GetModificationDate(OutputDatePtr& result) const;
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
@@ -115,8 +115,8 @@ public:
     void SetDefaultAppearance(syntax::LiteralStringObjectPtr da);
 
     // Markup annotation properties (Table 170)
-    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
-    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetAuthor(syntax::OutputStringObjectPtr& result) const;
+    void SetAuthor(syntax::StringObjectPtr author);
     bool GetModificationDate(OutputDatePtr& result) const;
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
@@ -165,8 +165,8 @@ public:
     void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);
 
     // Markup annotation properties (Table 170)
-    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
-    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetAuthor(syntax::OutputStringObjectPtr& result) const;
+    void SetAuthor(syntax::StringObjectPtr author);
     bool GetModificationDate(OutputDatePtr& result) const;
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
@@ -185,8 +185,8 @@ public:
     void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);
 
     // Markup annotation properties (Table 170)
-    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
-    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetAuthor(syntax::OutputStringObjectPtr& result) const;
+    void SetAuthor(syntax::StringObjectPtr author);
     bool GetModificationDate(OutputDatePtr& result) const;
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
@@ -205,8 +205,8 @@ public:
     void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);
 
     // Markup annotation properties (Table 170)
-    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
-    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetAuthor(syntax::OutputStringObjectPtr& result) const;
+    void SetAuthor(syntax::StringObjectPtr author);
     bool GetModificationDate(OutputDatePtr& result) const;
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
@@ -225,8 +225,8 @@ public:
     void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);
 
     // Markup annotation properties (Table 170)
-    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
-    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetAuthor(syntax::OutputStringObjectPtr& result) const;
+    void SetAuthor(syntax::StringObjectPtr author);
     bool GetModificationDate(OutputDatePtr& result) const;
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
@@ -257,8 +257,8 @@ public:
     void SetInkList(syntax::MixedArrayObjectPtr inkList);
 
     // Markup annotation properties (Table 170)
-    bool GetAuthor(syntax::OutputLiteralStringObjectPtr& result) const;
-    void SetAuthor(syntax::LiteralStringObjectPtr author);
+    bool GetAuthor(syntax::OutputStringObjectPtr& result) const;
+    void SetAuthor(syntax::StringObjectPtr author);
     bool GetModificationDate(OutputDatePtr& result) const;
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
