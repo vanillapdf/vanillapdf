@@ -95,6 +95,7 @@ TEST(ActionType, JavaScriptAction) {
 }
 
 TEST(ActionType, InvalidActionType) {
+    // Create dictionary with an invalid /S value - this should not crash
     HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict(CreateActionDict("InvalidType"));
 
     ActionHandle* action = nullptr;
@@ -102,6 +103,7 @@ TEST(ActionType, InvalidActionType) {
 }
 
 TEST(ActionType, MissingSEntry) {
+    // Create dictionary without /S entry
     HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
     ASSERT_EQ(DictionaryObject_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
 
@@ -116,14 +118,18 @@ TEST(Action, CreateFromDictionaryNull) {
 }
 
 TEST(Action, ToAndFromUnknown) {
+    // Verify Action_ToUnknown and Action_FromUnknown are available
+    // These are tested indirectly through the C API declarations
     ActionHandle* null_action = nullptr;
     IUnknownHandle* unknown = nullptr;
 
+    // Calling with null should return parameter error
     EXPECT_EQ(Action_ToUnknown(null_action, &unknown), VANILLAPDF_ERROR_PARAMETER_VALUE);
     EXPECT_EQ(Action_FromUnknown(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 TEST(Action, ReleaseNull) {
+    // Action_Release with null should return parameter error
     EXPECT_EQ(Action_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
@@ -149,6 +155,7 @@ TEST(Action, GetActionTypeNull) {
 }
 
 TEST(LinkAnnotation, GetActionNull) {
+    // Calling with null should return parameter error
     ActionHandle* action = nullptr;
     EXPECT_EQ(LinkAnnotation_GetAction(nullptr, &action), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
