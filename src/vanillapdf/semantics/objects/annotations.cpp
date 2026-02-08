@@ -475,10 +475,15 @@ TextAnnotationPtr TextAnnotation::Create(RectanglePtr rect, syntax::LiteralStrin
 
 // HighlightAnnotation methods
 
-HighlightAnnotationPtr HighlightAnnotation::Create(RectanglePtr rect,
-    syntax::MixedArrayObjectPtr quadPoints) {
+HighlightAnnotationPtr HighlightAnnotation::Create() {
+    syntax::DictionaryObjectPtr dict;
+    dict->Insert(constant::Name::Type, constant::Name::Annot.Clone());
+    dict->Insert(constant::Name::Subtype, constant::Name::Highlight.Clone());
+    return make_deferred<HighlightAnnotation>(dict);
+}
+
+HighlightAnnotationPtr HighlightAnnotation::CreateFromRect(RectanglePtr rect) {
     auto dict = CreateBaseDictionary(constant::Name::Highlight.Clone(), rect);
-    dict->Insert(constant::Name::QuadPoints, quadPoints);
     return make_deferred<HighlightAnnotation>(dict);
 }
 
@@ -529,10 +534,15 @@ void FreeTextAnnotation::SetDefaultAppearance(syntax::LiteralStringObjectPtr da)
 
 // UnderlineAnnotation methods
 
-UnderlineAnnotationPtr UnderlineAnnotation::Create(RectanglePtr rect,
-    syntax::MixedArrayObjectPtr quadPoints) {
+UnderlineAnnotationPtr UnderlineAnnotation::Create() {
+    syntax::DictionaryObjectPtr dict;
+    dict->Insert(constant::Name::Type, constant::Name::Annot.Clone());
+    dict->Insert(constant::Name::Subtype, constant::Name::Underline.Clone());
+    return make_deferred<UnderlineAnnotation>(dict);
+}
+
+UnderlineAnnotationPtr UnderlineAnnotation::CreateFromRect(RectanglePtr rect) {
     auto dict = CreateBaseDictionary(constant::Name::Underline.Clone(), rect);
-    dict->Insert(constant::Name::QuadPoints, quadPoints);
     return make_deferred<UnderlineAnnotation>(dict);
 }
 
@@ -610,10 +620,15 @@ void UnderlineAnnotation::SetCreationDate(DatePtr date) {
 
 // SquigglyAnnotation methods
 
-SquigglyAnnotationPtr SquigglyAnnotation::Create(RectanglePtr rect,
-    syntax::MixedArrayObjectPtr quadPoints) {
+SquigglyAnnotationPtr SquigglyAnnotation::Create() {
+    syntax::DictionaryObjectPtr dict;
+    dict->Insert(constant::Name::Type, constant::Name::Annot.Clone());
+    dict->Insert(constant::Name::Subtype, constant::Name::Squiggly.Clone());
+    return make_deferred<SquigglyAnnotation>(dict);
+}
+
+SquigglyAnnotationPtr SquigglyAnnotation::CreateFromRect(RectanglePtr rect) {
     auto dict = CreateBaseDictionary(constant::Name::Squiggly.Clone(), rect);
-    dict->Insert(constant::Name::QuadPoints, quadPoints);
     return make_deferred<SquigglyAnnotation>(dict);
 }
 
@@ -691,10 +706,15 @@ void SquigglyAnnotation::SetCreationDate(DatePtr date) {
 
 // StrikeOutAnnotation methods
 
-StrikeOutAnnotationPtr StrikeOutAnnotation::Create(RectanglePtr rect,
-    syntax::MixedArrayObjectPtr quadPoints) {
+StrikeOutAnnotationPtr StrikeOutAnnotation::Create() {
+    syntax::DictionaryObjectPtr dict;
+    dict->Insert(constant::Name::Type, constant::Name::Annot.Clone());
+    dict->Insert(constant::Name::Subtype, constant::Name::StrikeOut.Clone());
+    return make_deferred<StrikeOutAnnotation>(dict);
+}
+
+StrikeOutAnnotationPtr StrikeOutAnnotation::CreateFromRect(RectanglePtr rect) {
     auto dict = CreateBaseDictionary(constant::Name::StrikeOut.Clone(), rect);
-    dict->Insert(constant::Name::QuadPoints, quadPoints);
     return make_deferred<StrikeOutAnnotation>(dict);
 }
 

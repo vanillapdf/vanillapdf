@@ -479,17 +479,28 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_Release(TextAnnotati
 
 // HighlightAnnotation
 
-VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* quadPoints, HighlightAnnotationHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_Create(HighlightAnnotationHandle** result)
 {
-    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
-    MixedArrayObject* quad_obj = reinterpret_cast<MixedArrayObject*>(quadPoints);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(quad_obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try
     {
-        auto annot = HighlightAnnotation::Create(rect_obj, quad_obj);
+        auto annot = HighlightAnnotation::Create();
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<HighlightAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_CreateFromRect(RectangleHandle* rect, HighlightAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = HighlightAnnotation::CreateFromRect(rect_obj);
         auto ptr = annot.AddRefGet();
         *result = reinterpret_cast<HighlightAnnotationHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -815,17 +826,28 @@ VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_Release(FreeText
 
 // UnderlineAnnotation
 
-VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* quadPoints, UnderlineAnnotationHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_Create(UnderlineAnnotationHandle** result)
 {
-    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
-    MixedArrayObject* quad_obj = reinterpret_cast<MixedArrayObject*>(quadPoints);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(quad_obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try
     {
-        auto annot = UnderlineAnnotation::Create(rect_obj, quad_obj);
+        auto annot = UnderlineAnnotation::Create();
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<UnderlineAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_CreateFromRect(RectangleHandle* rect, UnderlineAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = UnderlineAnnotation::CreateFromRect(rect_obj);
         auto ptr = annot.AddRefGet();
         *result = reinterpret_cast<UnderlineAnnotationHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -982,17 +1004,28 @@ VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_Release(Underli
 
 // StrikeOutAnnotation
 
-VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* quadPoints, StrikeOutAnnotationHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_Create(StrikeOutAnnotationHandle** result)
 {
-    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
-    MixedArrayObject* quad_obj = reinterpret_cast<MixedArrayObject*>(quadPoints);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(quad_obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try
     {
-        auto annot = StrikeOutAnnotation::Create(rect_obj, quad_obj);
+        auto annot = StrikeOutAnnotation::Create();
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<StrikeOutAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_CreateFromRect(RectangleHandle* rect, StrikeOutAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = StrikeOutAnnotation::CreateFromRect(rect_obj);
         auto ptr = annot.AddRefGet();
         *result = reinterpret_cast<StrikeOutAnnotationHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -1149,17 +1182,28 @@ VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_Release(StrikeO
 
 // SquigglyAnnotation
 
-VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* quadPoints, SquigglyAnnotationHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_Create(SquigglyAnnotationHandle** result)
 {
-    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
-    MixedArrayObject* quad_obj = reinterpret_cast<MixedArrayObject*>(quadPoints);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(quad_obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try
     {
-        auto annot = SquigglyAnnotation::Create(rect_obj, quad_obj);
+        auto annot = SquigglyAnnotation::Create();
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<SquigglyAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_CreateFromRect(RectangleHandle* rect, SquigglyAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = SquigglyAnnotation::CreateFromRect(rect_obj);
         auto ptr = annot.AddRefGet();
         *result = reinterpret_cast<SquigglyAnnotationHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

@@ -108,7 +108,7 @@ TEST(HighlightAnnotation, CreateWithQuadPoints) {
     }
 
     // Create highlight annotation
-    ASSERT_EQ(HighlightAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HighlightAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(annot, nullptr);
 
     // Convert to base and verify type
@@ -883,7 +883,7 @@ TEST(HighlightAnnotation, GetAndSetQuadPoints) {
     }
 
     // Create highlight annotation
-    ASSERT_EQ(HighlightAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HighlightAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Get quad points
     ASSERT_EQ(HighlightAnnotation_GetQuadPoints(annot, &retrieved_quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -944,7 +944,7 @@ TEST(HighlightAnnotation, FromBaseAnnotation) {
     }
 
     // Create highlight annotation
-    ASSERT_EQ(HighlightAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HighlightAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(HighlightAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Convert from base
@@ -1119,7 +1119,7 @@ TEST(UnderlineAnnotation, CreateWithQuadPoints) {
     }
 
     // Create underline annotation
-    ASSERT_EQ(UnderlineAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(annot, nullptr);
 
     // Convert to base and verify type
@@ -1174,7 +1174,7 @@ TEST(StrikeOutAnnotation, CreateWithQuadPoints) {
     }
 
     // Create strikeout annotation
-    ASSERT_EQ(StrikeOutAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(annot, nullptr);
 
     // Convert to base and verify type
@@ -1220,7 +1220,7 @@ TEST(SquigglyAnnotation, CreateWithQuadPoints) {
     }
 
     // Create squiggly annotation
-    ASSERT_EQ(SquigglyAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(annot, nullptr);
 
     // Convert to base and verify type
@@ -1412,7 +1412,7 @@ TEST(HighlightAnnotation, GetAndSetAuthor) {
     }
 
     // Create highlight annotation
-    ASSERT_EQ(HighlightAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HighlightAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Highlight Author", &author), VANILLAPDF_ERROR_SUCCESS);
@@ -1462,7 +1462,7 @@ TEST(HighlightAnnotation, GetAndSetModificationDate) {
     }
 
     // Create highlight annotation
-    ASSERT_EQ(HighlightAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HighlightAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set modification date
     ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
@@ -1514,7 +1514,7 @@ TEST(HighlightAnnotation, GetAndSetCreationDate) {
     }
 
     // Create highlight annotation
-    ASSERT_EQ(HighlightAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HighlightAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set creation date
     ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
@@ -1696,7 +1696,7 @@ TEST(UnderlineAnnotation, GetAndSetAuthor) {
     }
 
     // Create underline annotation
-    ASSERT_EQ(UnderlineAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Underline Author", &author), VANILLAPDF_ERROR_SUCCESS);
@@ -1746,7 +1746,7 @@ TEST(UnderlineAnnotation, GetAndSetModificationDate) {
     }
 
     // Create underline annotation
-    ASSERT_EQ(UnderlineAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set modification date
     ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
@@ -1798,7 +1798,7 @@ TEST(UnderlineAnnotation, GetAndSetCreationDate) {
     }
 
     // Create underline annotation
-    ASSERT_EQ(UnderlineAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set creation date
     ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
@@ -1849,7 +1849,7 @@ TEST(UnderlineAnnotation, FromBaseAnnotation) {
     }
 
     // Create underline annotation
-    ASSERT_EQ(UnderlineAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(UnderlineAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Convert from base
@@ -1894,7 +1894,7 @@ TEST(StrikeOutAnnotation, GetAndSetAuthor) {
     }
 
     // Create strikeout annotation
-    ASSERT_EQ(StrikeOutAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("StrikeOut Author", &author), VANILLAPDF_ERROR_SUCCESS);
@@ -1944,7 +1944,7 @@ TEST(StrikeOutAnnotation, GetAndSetModificationDate) {
     }
 
     // Create strikeout annotation
-    ASSERT_EQ(StrikeOutAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set modification date
     ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
@@ -1996,7 +1996,7 @@ TEST(StrikeOutAnnotation, GetAndSetCreationDate) {
     }
 
     // Create strikeout annotation
-    ASSERT_EQ(StrikeOutAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set creation date
     ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
@@ -2047,7 +2047,7 @@ TEST(StrikeOutAnnotation, FromBaseAnnotation) {
     }
 
     // Create strikeout annotation
-    ASSERT_EQ(StrikeOutAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(StrikeOutAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Convert from base
@@ -2092,7 +2092,7 @@ TEST(StrikeOutAnnotation, GetAndSetQuadPoints) {
     }
 
     // Create strikeout annotation
-    ASSERT_EQ(StrikeOutAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StrikeOutAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Get quad points
     ASSERT_EQ(StrikeOutAnnotation_GetQuadPoints(annot, &retrieved_quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -2153,7 +2153,7 @@ TEST(SquigglyAnnotation, GetAndSetAuthor) {
     }
 
     // Create squiggly annotation
-    ASSERT_EQ(SquigglyAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Squiggly Author", &author), VANILLAPDF_ERROR_SUCCESS);
@@ -2203,7 +2203,7 @@ TEST(SquigglyAnnotation, GetAndSetModificationDate) {
     }
 
     // Create squiggly annotation
-    ASSERT_EQ(SquigglyAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set modification date
     ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
@@ -2255,7 +2255,7 @@ TEST(SquigglyAnnotation, GetAndSetCreationDate) {
     }
 
     // Create squiggly annotation
-    ASSERT_EQ(SquigglyAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set creation date
     ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
@@ -2306,7 +2306,7 @@ TEST(SquigglyAnnotation, FromBaseAnnotation) {
     }
 
     // Create squiggly annotation
-    ASSERT_EQ(SquigglyAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(SquigglyAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Convert from base
@@ -2351,7 +2351,7 @@ TEST(SquigglyAnnotation, GetAndSetQuadPoints) {
     }
 
     // Create squiggly annotation
-    ASSERT_EQ(SquigglyAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(SquigglyAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Get quad points
     ASSERT_EQ(SquigglyAnnotation_GetQuadPoints(annot, &retrieved_quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -2791,7 +2791,7 @@ TEST(UnderlineAnnotation, SetQuadPoints) {
     }
 
     // Create underline annotation
-    ASSERT_EQ(UnderlineAnnotation_Create(rect, quad_points, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(UnderlineAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Create new quad points and set
     ASSERT_EQ(ArrayObject_Create(&new_quad_points), VANILLAPDF_ERROR_SUCCESS);

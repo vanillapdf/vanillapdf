@@ -158,8 +158,8 @@ public:
     explicit HighlightAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
 
-    static HighlightAnnotationPtr Create(RectanglePtr rect,
-        syntax::MixedArrayObjectPtr quadPoints);
+    static HighlightAnnotationPtr Create();
+    static HighlightAnnotationPtr CreateFromRect(RectanglePtr rect);
 
     bool GetQuadPoints(syntax::MixedArrayObjectPtr& result) const;
     void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);
@@ -178,8 +178,8 @@ public:
     explicit UnderlineAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
 
-    static UnderlineAnnotationPtr Create(RectanglePtr rect,
-        syntax::MixedArrayObjectPtr quadPoints);
+    static UnderlineAnnotationPtr Create();
+    static UnderlineAnnotationPtr CreateFromRect(RectanglePtr rect);
 
     bool GetQuadPoints(syntax::MixedArrayObjectPtr& result) const;
     void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);
@@ -198,8 +198,8 @@ public:
     explicit SquigglyAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
 
-    static SquigglyAnnotationPtr Create(RectanglePtr rect,
-        syntax::MixedArrayObjectPtr quadPoints);
+    static SquigglyAnnotationPtr Create();
+    static SquigglyAnnotationPtr CreateFromRect(RectanglePtr rect);
 
     bool GetQuadPoints(syntax::MixedArrayObjectPtr& result) const;
     void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);
@@ -218,8 +218,8 @@ public:
     explicit StrikeOutAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
 
-    static StrikeOutAnnotationPtr Create(RectanglePtr rect,
-        syntax::MixedArrayObjectPtr quadPoints);
+    static StrikeOutAnnotationPtr Create();
+    static StrikeOutAnnotationPtr CreateFromRect(RectanglePtr rect);
 
     bool GetQuadPoints(syntax::MixedArrayObjectPtr& result) const;
     void SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints);

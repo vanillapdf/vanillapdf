@@ -468,12 +468,17 @@ extern "C"
     */
 
     /**
-    * \brief Create a new highlight annotation with the specified rectangle and quad points
-    * \param rect the bounding rectangle for the annotation
-    * \param quadPoints an array of 8 numbers specifying the coordinates of the quadrilateral
+    * \brief Create a new empty highlight annotation
     * \param result a pointer to variable that will contain the new annotation upon success
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* quadPoints, HighlightAnnotationHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_Create(HighlightAnnotationHandle** result);
+
+    /**
+    * \brief Create a new highlight annotation with the specified rectangle
+    * \param rect the bounding rectangle for the annotation
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_CreateFromRect(RectangleHandle* rect, HighlightAnnotationHandle** result);
 
     /**
     * \brief Get the quad points array for text markup
@@ -626,12 +631,17 @@ extern "C"
     */
 
     /**
-    * \brief Create a new underline annotation with the specified rectangle and quad points
-    * \param rect the bounding rectangle for the annotation
-    * \param quadPoints an array of 8 numbers specifying the coordinates of the quadrilateral
+    * \brief Create a new empty underline annotation
     * \param result a pointer to variable that will contain the new annotation upon success
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* quadPoints, UnderlineAnnotationHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_Create(UnderlineAnnotationHandle** result);
+
+    /**
+    * \brief Create a new underline annotation with the specified rectangle
+    * \param rect the bounding rectangle for the annotation
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_CreateFromRect(RectangleHandle* rect, UnderlineAnnotationHandle** result);
 
     /**
     * \brief Get the quad points array for text markup
@@ -709,12 +719,17 @@ extern "C"
     */
 
     /**
-    * \brief Create a new strikeout annotation with the specified rectangle and quad points
-    * \param rect the bounding rectangle for the annotation
-    * \param quadPoints an array of 8 numbers specifying the coordinates of the quadrilateral
+    * \brief Create a new empty strikeout annotation
     * \param result a pointer to variable that will contain the new annotation upon success
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* quadPoints, StrikeOutAnnotationHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_Create(StrikeOutAnnotationHandle** result);
+
+    /**
+    * \brief Create a new strikeout annotation with the specified rectangle
+    * \param rect the bounding rectangle for the annotation
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_CreateFromRect(RectangleHandle* rect, StrikeOutAnnotationHandle** result);
 
     /**
     * \brief Get the quad points array for text markup
@@ -792,12 +807,17 @@ extern "C"
     */
 
     /**
-    * \brief Create a new squiggly annotation with the specified rectangle and quad points
-    * \param rect the bounding rectangle for the annotation
-    * \param quadPoints an array of 8 numbers specifying the coordinates of the quadrilateral
+    * \brief Create a new empty squiggly annotation
     * \param result a pointer to variable that will contain the new annotation upon success
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* quadPoints, SquigglyAnnotationHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_Create(SquigglyAnnotationHandle** result);
+
+    /**
+    * \brief Create a new squiggly annotation with the specified rectangle
+    * \param rect the bounding rectangle for the annotation
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_CreateFromRect(RectangleHandle* rect, SquigglyAnnotationHandle** result);
 
     /**
     * \brief Get the quad points array for text markup
