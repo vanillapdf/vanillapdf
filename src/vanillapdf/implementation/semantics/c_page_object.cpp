@@ -112,17 +112,16 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjec
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateAnnotations(PageObjectHandle* handle, PageAnnotationsHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetAnnotations(PageObjectHandle* handle, PageAnnotationsHandle* value)
 {
     PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    PageAnnotations* annots = reinterpret_cast<PageAnnotations*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(annots);
 
     try
     {
-        auto annots = obj->CreateAnnotations();
-        auto ptr = annots.AddRefGet();
-        *result = reinterpret_cast<PageAnnotationsHandle*>(ptr);
+        obj->SetAnnotations(annots);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

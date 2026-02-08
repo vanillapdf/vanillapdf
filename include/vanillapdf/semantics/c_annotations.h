@@ -1007,6 +1007,12 @@ extern "C"
     */
 
     /**
+    * \brief Create a new empty annotation collection
+    * \param result a pointer to variable that will contain the new collection upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Create(PageAnnotationsHandle** result);
+
+    /**
     * \brief Get size of annotation array
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_GetSize(PageAnnotationsHandle* handle, size_type* result);

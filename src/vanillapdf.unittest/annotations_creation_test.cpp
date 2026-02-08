@@ -221,7 +221,8 @@ TEST(PageAnnotations, AppendAnnotation) {
     ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
 
     // Create annotations array for the page
-    ASSERT_EQ(PageObject_CreateAnnotations(page, &annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageAnnotations_Create(&annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_SetAnnotations(page, annots), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(annots, nullptr);
 
     // Create rectangle for annotation
@@ -320,7 +321,8 @@ TEST(AnnotationIntegration, CreateAndSave) {
     ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
 
     // Create annotations array for the page
-    ASSERT_EQ(PageObject_CreateAnnotations(page, &annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageAnnotations_Create(&annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_SetAnnotations(page, annots), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(annots, nullptr);
 
     // Create rectangle for annotation
@@ -454,7 +456,8 @@ TEST(AnnotationIntegration, CreateAndSaveToSeparateStream) {
     ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
 
     // Create annotations array for the page
-    ASSERT_EQ(PageObject_CreateAnnotations(page, &annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageAnnotations_Create(&annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_SetAnnotations(page, annots), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(annots, nullptr);
 
     // Create rectangle for annotation
@@ -1067,7 +1070,8 @@ TEST(PageAnnotations, ToAndFromUnknown) {
     ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
 
     // Create annotations
-    ASSERT_EQ(PageObject_CreateAnnotations(page, &annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageAnnotations_Create(&annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_SetAnnotations(page, annots), VANILLAPDF_ERROR_SUCCESS);
 
     // Convert to unknown
     ASSERT_EQ(PageAnnotations_ToUnknown(annots, &unknown), VANILLAPDF_ERROR_SUCCESS);
@@ -1337,7 +1341,8 @@ TEST(PageAnnotations, RemoveAnnotation) {
     ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
 
     // Create annotations array
-    ASSERT_EQ(PageObject_CreateAnnotations(page, &annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageAnnotations_Create(&annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_SetAnnotations(page, annots), VANILLAPDF_ERROR_SUCCESS);
 
     // Create rectangle for annotations
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
@@ -2720,7 +2725,8 @@ TEST(PageAnnotations, AtAnnotation) {
     ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
 
     // Create annotations array
-    ASSERT_EQ(PageObject_CreateAnnotations(page, &annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageAnnotations_Create(&annots), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_SetAnnotations(page, annots), VANILLAPDF_ERROR_SUCCESS);
 
     // Create rectangle for annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);

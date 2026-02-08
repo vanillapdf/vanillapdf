@@ -182,6 +182,19 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Release(PageAnnotat
     return ObjectRelease<PageAnnotations, PageAnnotationsHandle>(handle);
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Create(PageAnnotationsHandle** result)
+{
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annots = make_deferred<PageAnnotations>();
+        auto ptr = annots.AddRefGet();
+        *result = reinterpret_cast<PageAnnotationsHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Append(PageAnnotationsHandle* handle, AnnotationHandle* annotation)
 {
     PageAnnotations* obj = reinterpret_cast<PageAnnotations*>(handle);

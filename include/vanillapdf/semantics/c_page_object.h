@@ -82,10 +82,11 @@ extern "C"
 
     /**
     * \brief
-    * Get or create the annotation array for this page.
-    * If annotations do not exist, a new empty array is created and associated with the page.
+    * Set the annotation array for this page.
+    * \param handle a handle to the page object
+    * \param value the annotation collection to set
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateAnnotations(PageObjectHandle* handle, PageAnnotationsHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetAnnotations(PageObjectHandle* handle, PageAnnotationsHandle* value);
 
     /**
     * \brief
