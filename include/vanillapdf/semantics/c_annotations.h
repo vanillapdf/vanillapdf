@@ -896,12 +896,17 @@ extern "C"
     */
 
     /**
-    * \brief Create a new ink annotation with the specified rectangle and ink list
-    * \param rect the bounding rectangle for the annotation
-    * \param inkList an array of arrays, each representing a stroked path of point coordinates
+    * \brief Create a new empty ink annotation
     * \param result a pointer to variable that will contain the new annotation upon success
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* inkList, InkAnnotationHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_Create(InkAnnotationHandle** result);
+
+    /**
+    * \brief Create a new ink annotation with the specified rectangle
+    * \param rect the bounding rectangle for the annotation
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_CreateFromRect(RectangleHandle* rect, InkAnnotationHandle** result);
 
     /**
     * \brief Get the ink list (array of stroked paths)

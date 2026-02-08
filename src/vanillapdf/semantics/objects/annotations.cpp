@@ -792,10 +792,15 @@ void StrikeOutAnnotation::SetCreationDate(DatePtr date) {
 
 // InkAnnotation methods
 
-InkAnnotationPtr InkAnnotation::Create(RectanglePtr rect,
-    syntax::MixedArrayObjectPtr inkList) {
+InkAnnotationPtr InkAnnotation::Create() {
+    syntax::DictionaryObjectPtr dict;
+    dict->Insert(constant::Name::Type, constant::Name::Annot.Clone());
+    dict->Insert(constant::Name::Subtype, constant::Name::Ink.Clone());
+    return make_deferred<InkAnnotation>(dict);
+}
+
+InkAnnotationPtr InkAnnotation::CreateFromRect(RectanglePtr rect) {
     auto dict = CreateBaseDictionary(constant::Name::Ink.Clone(), rect);
-    dict->Insert(constant::Name::InkList, inkList);
     return make_deferred<InkAnnotation>(dict);
 }
 

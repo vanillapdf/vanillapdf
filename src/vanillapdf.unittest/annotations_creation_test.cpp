@@ -1276,7 +1276,7 @@ TEST(InkAnnotation, CreateWithInkList) {
     ASSERT_EQ(Object_Release(stroke_obj), VANILLAPDF_ERROR_SUCCESS);
 
     // Create ink annotation
-    ASSERT_EQ(InkAnnotation_Create(rect, ink_list, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(annot, nullptr);
 
     // Convert to base and verify type
@@ -2418,7 +2418,7 @@ TEST(InkAnnotation, GetAndSetAuthor) {
     ASSERT_EQ(Object_Release(stroke_obj), VANILLAPDF_ERROR_SUCCESS);
 
     // Create ink annotation
-    ASSERT_EQ(InkAnnotation_Create(rect, ink_list, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Ink Author", &author), VANILLAPDF_ERROR_SUCCESS);
@@ -2475,7 +2475,7 @@ TEST(InkAnnotation, GetAndSetModificationDate) {
     ASSERT_EQ(Object_Release(stroke_obj), VANILLAPDF_ERROR_SUCCESS);
 
     // Create ink annotation
-    ASSERT_EQ(InkAnnotation_Create(rect, ink_list, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set modification date
     ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
@@ -2534,7 +2534,7 @@ TEST(InkAnnotation, GetAndSetCreationDate) {
     ASSERT_EQ(Object_Release(stroke_obj), VANILLAPDF_ERROR_SUCCESS);
 
     // Create ink annotation
-    ASSERT_EQ(InkAnnotation_Create(rect, ink_list, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set creation date
     ASSERT_EQ(Date_CreateCurrent(&date), VANILLAPDF_ERROR_SUCCESS);
@@ -2594,7 +2594,7 @@ TEST(InkAnnotation, SetInkList) {
     ASSERT_EQ(Object_Release(stroke_obj), VANILLAPDF_ERROR_SUCCESS);
 
     // Create ink annotation
-    ASSERT_EQ(InkAnnotation_Create(rect, ink_list, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Create new ink list with two strokes
     ASSERT_EQ(ArrayObject_Create(&new_ink_list), VANILLAPDF_ERROR_SUCCESS);
@@ -2670,7 +2670,7 @@ TEST(InkAnnotation, FromBaseAnnotation) {
     ASSERT_EQ(Object_Release(stroke_obj), VANILLAPDF_ERROR_SUCCESS);
 
     // Create ink annotation
-    ASSERT_EQ(InkAnnotation_Create(rect, ink_list, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InkAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(InkAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Convert from base

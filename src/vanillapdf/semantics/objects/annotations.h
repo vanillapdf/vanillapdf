@@ -250,8 +250,8 @@ public:
     explicit InkAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
 
-    static InkAnnotationPtr Create(RectanglePtr rect,
-        syntax::MixedArrayObjectPtr inkList);
+    static InkAnnotationPtr Create();
+    static InkAnnotationPtr CreateFromRect(RectanglePtr rect);
 
     bool GetInkList(syntax::MixedArrayObjectPtr& result) const;
     void SetInkList(syntax::MixedArrayObjectPtr inkList);

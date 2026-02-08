@@ -1360,17 +1360,28 @@ VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_Release(Squiggly
 
 // InkAnnotation
 
-VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_Create(RectangleHandle* rect, ArrayObjectHandle* inkList, InkAnnotationHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_Create(InkAnnotationHandle** result)
 {
-    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
-    MixedArrayObject* ink_obj = reinterpret_cast<MixedArrayObject*>(inkList);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(ink_obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try
     {
-        auto annot = InkAnnotation::Create(rect_obj, ink_obj);
+        auto annot = InkAnnotation::Create();
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<InkAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_CreateFromRect(RectangleHandle* rect, InkAnnotationHandle** result)
+{
+    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = InkAnnotation::CreateFromRect(rect_obj);
         auto ptr = annot.AddRefGet();
         *result = reinterpret_cast<InkAnnotationHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
