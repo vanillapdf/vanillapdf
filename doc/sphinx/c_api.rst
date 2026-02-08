@@ -5,8 +5,7 @@ Vanilla.PDF is written in C++17 but exposes only an **ANSI C interface**,
 ensuring ABI stability across compilers and easy interop with other languages.
 
 This page covers the core concepts you need to use the API effectively:
-handles, types, memory management, error handling, thread safety, and
-versioning.
+handles, types, memory management, error handling, and versioning.
 
 Header and linking
 ------------------
@@ -253,24 +252,12 @@ All error codes are defined as ``extern const error_type`` in ``c_values.h``:
 Thread safety
 -------------
 
-Vanilla.PDF does not use global mutable state. Error context is stored in
-``thread_local`` buffers -- one per thread -- so concurrent threads do not
-interfere with each other's error state.
+Vanilla.PDF is thread-safe. Key internal objects are protected by mutexes,
+reference counting is atomic, and error context is stored in ``thread_local``
+buffers so concurrent threads never interfere with each other.
 
-**Safe across threads:**
-
-- Calling any API function from different threads on different handles
-- Logging (``Logging_Enable``, ``Logging_SetSeverity``) -- uses
-  thread-safe ``spdlog`` sinks internally
-- Reading ``LibraryInfo_*`` functions (version, author, build date)
-
-**Not safe across threads:**
-
-- Accessing the same handle instance from multiple threads simultaneously.
-  If shared access is needed, synchronize externally with your own mutex.
-- ``MemoryBufferOutputStreamHandle`` is explicitly not thread-safe.
-
-The recommended pattern is: one document per thread, no shared handles.
+See :doc:`architecture` for the full list of protected objects and
+implementation details.
 
 Versioning
 ----------

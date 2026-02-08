@@ -23,7 +23,7 @@ Where to go next
 **Developer guide** -- build from source and understand the internals:
 
 - :doc:`building` -- Clone, configure, build, and test
-- :doc:`c_api` -- Handle system, memory management, error handling, thread safety
+- :doc:`c_api` -- Handle system, memory management, error handling
 - :doc:`architecture` -- Three-layer design, object model, memory model
 - :doc:`signature_verification` -- Trust stores, chain validation, weak-algorithm detection
 - :doc:`cli_tools` -- sign, verify, merge, extract, encrypt, decrypt
@@ -147,23 +147,10 @@ description including the object model, memory model, and extension points.
 Thread safety
 -------------
 
-Vanilla.PDF does not use global mutable state. Error context (error code and
-message string) is stored in ``thread_local`` buffers, so concurrent threads
-can call the library without interfering with each other's error state.
-
-**Constraints:**
-
-- A single handle instance must not be accessed from multiple threads
-  simultaneously. If you need shared access, synchronize externally.
-- The logging subsystem uses thread-safe sinks (``spdlog`` multi-threaded
-  loggers), so ``Logging_Enable`` and log output are safe to call from any
-  thread.
-- Weak reference counters use ``std::atomic<bool>`` for safe cross-thread
-  deactivation.
-
-In practice, this means you can process different PDF documents on different
-threads without locking, but you must not share a single ``DocumentHandle*``
-across threads without your own mutex.
+Vanilla.PDF is thread-safe. Key internal objects are protected by
+``std::recursive_mutex``, reference counting is atomic, and error context is
+stored in ``thread_local`` buffers so concurrent threads never interfere with
+each other. See :doc:`architecture` for implementation details.
 
 Versioning and compatibility
 ----------------------------

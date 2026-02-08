@@ -130,9 +130,7 @@ protected:
     bool m_used = false;
     ObjectPtr _reference;
 
-    // The library interface wants to be thread-safe as much as possible
-    // Accessing to the reference of an used entry starts the initialization process.
-    // During this process a duplicate initialization can be invoked.
+    // Protects concurrent access during lazy initialization of the entry reference
     std::shared_ptr<std::recursive_mutex> m_access_lock;
 
     virtual void Initialize(void) = 0;

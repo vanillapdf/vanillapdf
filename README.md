@@ -151,9 +151,9 @@ The C++ core is hidden behind an ABI-stable ANSI C interface using opaque handle
 
 ## Thread Safety
 
-Vanilla.PDF does not use global mutable state. Error context is stored in thread-local buffers, so concurrent threads never interfere with each other's error state. You can process different PDF documents on different threads without locking, but a single handle must not be shared across threads without external synchronization.
+Vanilla.PDF is thread-safe. Key internal objects (dictionaries, streams, strings, indirect references) are protected by `std::recursive_mutex`, reference counting is atomic, and error context is stored in thread-local buffers so concurrent threads never interfere with each other.
 
-See the [C API Guide](https://vanillapdf.readthedocs.io/en/latest/c_api.html) for the full thread safety model.
+See the [Architecture Guide](https://vanillapdf.readthedocs.io/en/latest/architecture.html) for implementation details.
 
 ## Non-Goals
 
@@ -180,8 +180,8 @@ Full documentation is hosted on **[Read the Docs](https://vanillapdf.readthedocs
 | [Overview](https://vanillapdf.readthedocs.io/en/latest/overview.html) | Design philosophy, scope, and project goals |
 | [Quickstart](https://vanillapdf.readthedocs.io/en/latest/quickstart.html) | Create your first PDF document step by step |
 | [Installation](https://vanillapdf.readthedocs.io/en/latest/installation.html) | vcpkg, FetchContent, Conan, Homebrew, NuGet |
-| [C API Guide](https://vanillapdf.readthedocs.io/en/latest/c_api.html) | Handles, memory management, error handling, thread safety |
-| [Architecture](https://vanillapdf.readthedocs.io/en/latest/architecture.html) | Three-layer design, object model, memory model |
+| [C API Guide](https://vanillapdf.readthedocs.io/en/latest/c_api.html) | Handles, memory management, error handling |
+| [Architecture](https://vanillapdf.readthedocs.io/en/latest/architecture.html) | Three-layer design, object model, memory model, thread safety |
 | [CLI Tools](https://vanillapdf.readthedocs.io/en/latest/cli_tools.html) | sign, verify, merge, extract, encrypt, decrypt |
 | [Signature Verification](https://vanillapdf.readthedocs.io/en/latest/signature_verification.html) | Trust stores, chain validation, weak-algorithm detection |
 | [Building](https://vanillapdf.readthedocs.io/en/latest/building.html) | Build from source with CMake presets |

@@ -194,7 +194,8 @@ objects without preventing their destruction. Weak reference counters use
 Thread safety
 -------------
 
-Vanilla.PDF does not use global mutable state.
+Vanilla.PDF is thread-safe. The library does not use global mutable state,
+and key internal objects are protected by mutexes and atomics.
 
 **Error context is thread-local.** Each thread maintains its own error code
 and message buffer:
@@ -206,24 +207,30 @@ and message buffer:
    static thread_local size_type m_message_length;
    static thread_local char m_message[constant::MAX_MESSAGE_SIZE];
 
-This means concurrent threads can call the library without interfering with
-each other's error state. The buffer is pre-allocated to avoid allocation
-failures when reporting out-of-memory errors.
+The buffer is pre-allocated to avoid allocation failures when reporting
+out-of-memory errors.
+
+**Object-level locking.** Core PDF objects use ``std::recursive_mutex`` to
+protect concurrent access:
+
+- ``DictionaryObject`` -- ``std::shared_ptr<std::recursive_mutex>``
+- ``StreamObject`` -- ``std::shared_ptr<std::recursive_mutex>``
+- ``StringObjectBase`` (literal and hexadecimal) -- ``std::shared_ptr<std::recursive_mutex>``
+- ``IndirectReferenceObject`` -- ``std::recursive_mutex``
+- ``XrefUsedEntryBase`` -- ``std::shared_ptr<std::recursive_mutex>``
+
+**Reference counting is atomic.** ``IUnknown::m_ref_counter`` uses
+``std::atomic<uint32_t>``, and ``WeakReferenceCounter::m_active`` uses
+``std::atomic<bool>``, so reference management is safe across threads.
+
+**Document opening is thread-safe.** ``Document::OpenFile`` atomically
+returns the existing document or creates a new one for a given file,
+preventing race conditions when multiple threads open the same file.
 
 **Logging is thread-safe.** The logging subsystem uses ``spdlog``
 multi-threaded sinks (``rotating_logger_mt``, ``custom_callback_sink_mt``
 with internal ``std::mutex``). Calling ``Logging_Enable()`` or writing log
 output from any thread is safe.
-
-**Handles are not thread-safe.** A single handle instance must not be
-accessed from multiple threads simultaneously. If you need to share a
-handle across threads, protect it with your own mutex. In practice, the
-recommended pattern is to process different documents on different threads
-without sharing handles.
-
-**Weak reference counters are atomic.** The ``m_active`` flag in
-``WeakReferenceCounter`` uses ``std::atomic<bool>``, so deactivation is
-visible across threads without additional synchronization.
 
 Error handling
 --------------

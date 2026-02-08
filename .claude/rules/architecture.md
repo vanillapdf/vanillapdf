@@ -260,19 +260,20 @@ Maps 1:1 to C API error codes via `CATCH_VANILLAPDF_EXCEPTIONS` macro.
 
 ## Thread Safety
 
-**Thread-safe components** (use `std::recursive_mutex` or atomics):
+The library is thread-safe. Key objects use `std::recursive_mutex` for concurrent access, and reference counting is atomic:
 - `IUnknown::m_ref_counter` - `std::atomic<uint32_t>`
 - `WeakReferenceCounter::m_active` - `std::atomic<bool>`
 - `DictionaryObject` - `std::shared_ptr<std::recursive_mutex> m_access_lock`
 - `StreamObject` - `std::shared_ptr<std::recursive_mutex> _access_lock`
 - `StringObjectBase` (both variants) - `std::shared_ptr<std::recursive_mutex> _access_lock`
 - `IndirectReferenceObject` - `std::recursive_mutex m_access_lock`
+- `XrefUsedEntryBase` - `std::shared_ptr<std::recursive_mutex> m_access_lock`
+- `Document::OpenFile` - atomically returns existing or creates new document per file
 - Streams: `ExclusiveInputLock()` / `ExclusiveInputUnlock()`
+- Error context: `thread_local` buffers (no cross-thread interference)
+- Logging: `spdlog` multi-threaded sinks
 
-**Not thread-safe** (single-threaded model assumed):
-- Most objects don't use locks
-- Content stream parsing and file reading not fully protected
-- Locks are "infrastructure for future" per code comments
+Thread safety is validated by `thread_safety_test.cpp` (concurrent `Document::OpenFile` with 50 threads x 2000 iterations).
 
 ## Feature Dependencies
 
