@@ -294,6 +294,7 @@ bool DictionaryObject::Equals(ObjectPtr other) const {
 void DictionaryObject::Merge(const DictionaryObject& other) {
     ACCESS_LOCK_GUARD(m_access_lock);
 
+    // TODO: https://github.com/vanillapdf/vanillapdf/issues/270 - SetOwner on merged entries blocked by const Deferred key in std::map
     // Simple insert overriding conflicting entries
     for (auto item : other) {
         _list.insert(item);
