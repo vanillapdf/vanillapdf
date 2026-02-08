@@ -888,6 +888,9 @@ TEST(HighlightAnnotation, GetAndSetQuadPoints) {
     // Create highlight annotation
     ASSERT_EQ(HighlightAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
+    // Set quad points
+    ASSERT_EQ(HighlightAnnotation_SetQuadPoints(annot, quad_points), VANILLAPDF_ERROR_SUCCESS);
+
     // Get quad points
     ASSERT_EQ(HighlightAnnotation_GetQuadPoints(annot, &retrieved_quad_points), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(retrieved_quad_points, nullptr);
@@ -1126,6 +1129,9 @@ TEST(UnderlineAnnotation, CreateWithQuadPoints) {
     ASSERT_EQ(UnderlineAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(annot, nullptr);
 
+    // Set quad points
+    ASSERT_EQ(UnderlineAnnotation_SetQuadPoints(annot, quad_points), VANILLAPDF_ERROR_SUCCESS);
+
     // Convert to base and verify type
     ASSERT_EQ(UnderlineAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(base_annot, nullptr);
@@ -1282,6 +1288,9 @@ TEST(InkAnnotation, CreateWithInkList) {
     // Create ink annotation
     ASSERT_EQ(InkAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(annot, nullptr);
+
+    // Set ink list
+    ASSERT_EQ(InkAnnotation_SetInkList(annot, ink_list), VANILLAPDF_ERROR_SUCCESS);
 
     // Convert to base and verify type
     ASSERT_EQ(InkAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
@@ -2099,6 +2108,9 @@ TEST(StrikeOutAnnotation, GetAndSetQuadPoints) {
     // Create strikeout annotation
     ASSERT_EQ(StrikeOutAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
+    // Set quad points
+    ASSERT_EQ(StrikeOutAnnotation_SetQuadPoints(annot, quad_points), VANILLAPDF_ERROR_SUCCESS);
+
     // Get quad points
     ASSERT_EQ(StrikeOutAnnotation_GetQuadPoints(annot, &retrieved_quad_points), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(retrieved_quad_points, nullptr);
@@ -2357,6 +2369,9 @@ TEST(SquigglyAnnotation, GetAndSetQuadPoints) {
 
     // Create squiggly annotation
     ASSERT_EQ(SquigglyAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
+
+    // Set quad points
+    ASSERT_EQ(SquigglyAnnotation_SetQuadPoints(annot, quad_points), VANILLAPDF_ERROR_SUCCESS);
 
     // Get quad points
     ASSERT_EQ(SquigglyAnnotation_GetQuadPoints(annot, &retrieved_quad_points), VANILLAPDF_ERROR_SUCCESS);
