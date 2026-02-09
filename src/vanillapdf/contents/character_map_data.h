@@ -22,6 +22,7 @@ public:
 
     bool Contains(BufferPtr key) const;
     BufferPtr GetMappedValue(BufferPtr key) const;
+    bool TryGetMappedValue(BufferPtr key, BufferPtr& result) const;
 
 private:
     syntax::HexadecimalStringObjectPtr m_low;

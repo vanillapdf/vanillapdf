@@ -80,5 +80,41 @@ BufferPtr BaseFontRange::GetMappedValueInternal(BufferPtr key) const {
     LOG_ERROR_AND_THROW_GENERAL("Unknown destination type: {}", static_cast<int>(m_dest->GetObjectType()));
 }
 
+bool BaseFontRange::TryGetMappedValue(BufferPtr key, BufferPtr& result) const {
+    auto low_buf = m_low->GetValue();
+
+    if (key->size() != low_buf->size()) {
+        return false;
+    }
+
+    auto k = key->ToInteger<uint32_t>(endian::big);
+    auto low = low_buf->ToInteger<uint32_t>(endian::big);
+    auto high = m_high->GetValue()->ToInteger<uint32_t>(endian::big);
+
+    if (k < low || k > high) {
+        return false;
+    }
+
+    auto offset = k - low;
+
+    if (ObjectUtils::IsType<HexadecimalStringObjectPtr>(m_dest)) {
+        auto dest_hex = ObjectUtils::ConvertTo<HexadecimalStringObjectPtr>(m_dest);
+        auto dest_value = dest_hex->GetValue();
+        auto dest = dest_value->ToInteger<uint32_t>(endian::big);
+
+        result = Buffer::FromInteger(dest + offset, dest_value->size(), endian::big);
+        return true;
+    }
+
+    if (ObjectUtils::IsType<ArrayObjectPtr<HexadecimalStringObjectPtr>>(m_dest)) {
+        auto arr = ObjectUtils::ConvertTo<ArrayObjectPtr<HexadecimalStringObjectPtr>>(m_dest);
+        auto result_obj = arr->GetValue(offset);
+        result = result_obj->GetValue();
+        return true;
+    }
+
+    LOG_ERROR_AND_THROW_GENERAL("Unknown destination type: {}", static_cast<int>(m_dest->GetObjectType()));
+}
+
 } // contents
 } // vanillapdf
