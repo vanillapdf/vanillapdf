@@ -1,4 +1,7 @@
 #include "unittest.h"
+#include "handle_guard.h"
+
+#include <cstring>
 
 namespace license_info {
 
@@ -32,11 +35,28 @@ TEST(LicenseInfo, IsTemporaryNull) {
     EXPECT_EQ(LicenseInfo_IsTemporary(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
+TEST(LicenseInfo, SetLicenseBufferInvalidData) {
+    HandleGuard<BufferHandle, Buffer_Release> buffer;
+    const char* data = "not a valid license";
+    ASSERT_EQ(Buffer_CreateFromData(data, static_cast<size_type>(strlen(data)), buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+
+#ifdef VANILLAPDF_ENABLE_LICENSING
+    // Invalid data is not valid JSON, so parsing fails
+    EXPECT_EQ(LicenseInfo_SetLicenseBuffer(buffer.get()), VANILLAPDF_ERROR_GENERAL);
+#else
+    // Licensing disabled, SetLicense is a no-op
+    EXPECT_EQ(LicenseInfo_SetLicenseBuffer(buffer.get()), VANILLAPDF_ERROR_SUCCESS);
+#endif
+}
+
 TEST(LicenseInfo, SetLicenseFileNonExistent) {
-    // In stub mode (licensing disabled), SetLicenseFile is a no-op that returns success.
-    // In full mode (licensing enabled), it would fail because the file doesn't exist.
-    auto result = LicenseInfo_SetLicenseFile("nonexistent_license_file.json");
-    EXPECT_TRUE(result == VANILLAPDF_ERROR_SUCCESS || result == VANILLAPDF_ERROR_GENERAL);
+#ifdef VANILLAPDF_ENABLE_LICENSING
+    // File does not exist, so opening fails
+    EXPECT_EQ(LicenseInfo_SetLicenseFile("nonexistent_license_file.json"), VANILLAPDF_ERROR_GENERAL);
+#else
+    // Licensing disabled, SetLicense is a no-op
+    EXPECT_EQ(LicenseInfo_SetLicenseFile("nonexistent_license_file.json"), VANILLAPDF_ERROR_SUCCESS);
+#endif
 }
 
 } /* license_info */

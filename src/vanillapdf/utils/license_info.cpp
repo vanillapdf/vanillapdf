@@ -66,8 +66,9 @@ namespace vanillapdf {
 bool LicenseInfo::m_update_valid = false;
 std::string LicenseInfo::m_temporary_expiration;
 
-void LicenseInfo::SetLicense([[maybe_unused]] IInputStreamPtr stream, [[maybe_unused]] types::stream_size length) {
 #ifdef VANILLAPDF_ENABLE_LICENSING
+
+void LicenseInfo::SetLicense(IInputStreamPtr stream, types::stream_size length) {
     Buffer buffer(length);
     auto read = stream->Read(buffer, length);
     if (read != length) {
@@ -76,10 +77,9 @@ void LicenseInfo::SetLicense([[maybe_unused]] IInputStreamPtr stream, [[maybe_un
 
     // Forward content
     SetLicense(buffer);
-#else
-    spdlog::debug("SetLicense called but licensing support is not compiled in");
-#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
+
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 
 void LicenseInfo::SetLicense([[maybe_unused]] const Buffer& data) {
 #ifdef VANILLAPDF_ENABLE_LICENSING
@@ -245,8 +245,9 @@ bool LicenseInfo::IsTemporary() {
     return !m_temporary_expiration.empty();
 }
 
-bool LicenseInfo::CheckBlacklist([[maybe_unused]] const std::string& serial) {
 #ifdef VANILLAPDF_ENABLE_LICENSING
+
+bool LicenseInfo::CheckBlacklist(const std::string& serial) {
 
     // Serial blacklist is embedded in the library resources
     auto serial_blacklist_raw = Resource::Load(ResourceID::SERIAL_BLACKLIST);
@@ -262,19 +263,16 @@ bool LicenseInfo::CheckBlacklist([[maybe_unused]] const std::string& serial) {
         }
     }
 
-#endif /* VANILLAPDF_ENABLE_LICENSING */
-
     // Presented serial does not appear on blacklist
     return false;
 }
 
 bool LicenseInfo::CheckSignature(
-    [[maybe_unused]] const std::string& signed_content,
-    [[maybe_unused]] const std::string& signature_value,
-    [[maybe_unused]] const std::string& signing_certificate,
-    [[maybe_unused]] MessageDigestAlgorithm digest_algorithm) {
+    const std::string& signed_content,
+    const std::string& signature_value,
+    const std::string& signing_certificate,
+    MessageDigestAlgorithm digest_algorithm) {
 
-#ifdef VANILLAPDF_ENABLE_LICENSING
     auto signing_certificate_x509 = LoadCertificate(signing_certificate);
 
     SCOPE_GUARD([signing_certificate_x509]() { X509_free(signing_certificate_x509); });
@@ -316,14 +314,9 @@ bool LicenseInfo::CheckSignature(
     }
 
     return true;
-
-#else
-    return false;
-#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
 
-bool LicenseInfo::CheckTemporaryExpiration([[maybe_unused]] const std::string& expiration) {
-#ifdef VANILLAPDF_ENABLE_LICENSING
+bool LicenseInfo::CheckTemporaryExpiration(const std::string& expiration) {
     std::stringstream expiration_stream;
     expiration_stream << expiration;
 
@@ -340,14 +333,9 @@ bool LicenseInfo::CheckTemporaryExpiration([[maybe_unused]] const std::string& e
 
     // Returns true if already expired
     return (expiration_time < current_time);
-
-#else
-    return false;
-#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
 
-bool LicenseInfo::CheckUpdateExpiration([[maybe_unused]] const std::string& expiration) {
-#ifdef VANILLAPDF_ENABLE_LICENSING
+bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
 
     std::stringstream expiration_stream;
     expiration_stream << expiration;
@@ -380,14 +368,9 @@ bool LicenseInfo::CheckUpdateExpiration([[maybe_unused]] const std::string& expi
 
     // Returns true if already expired
     return (expiration_time < build_time);
-
-#else
-    return false;
-#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
 
-bool LicenseInfo::CheckCertificateChain([[maybe_unused]] const std::vector<std::string>& certificates) {
-#ifdef VANILLAPDF_ENABLE_LICENSING
+bool LicenseInfo::CheckCertificateChain(const std::vector<std::string>& certificates) {
 
     // Initialize algorithms is required before validating certificates
     CryptoUtils::InitializeOpenSSL();
@@ -469,10 +452,8 @@ bool LicenseInfo::CheckCertificateChain([[maybe_unused]] const std::vector<std::
 
     // The signing certificate is valid and was issued with the master certificate
     return true;
-
-#else
-    return false;
-#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
+
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 
 } // vanillapdf
