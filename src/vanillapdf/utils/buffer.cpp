@@ -45,31 +45,6 @@ bool Buffer::LessThan(const Buffer& other) const {
     return (m_data < other.m_data);
 }
 
-bool Buffer::ValueEqualLessThan(const Buffer& other) const {
-    auto src_size = size();
-    auto dest_size = other.size();
-
-    if (src_size != dest_size) {
-        return (src_size < dest_size);
-    }
-
-    for (decltype(src_size) i = 0; i < src_size; ++i) {
-        auto src_byte = (*this)[i];
-        auto dest_byte = other[i];
-
-        using unsigned_src_type = std::make_unsigned<decltype(src_byte)>::type;
-        using unsigned_dest_type = std::make_unsigned<decltype(dest_byte)>::type;
-
-        auto unsigned_src = reinterpret_cast<unsigned_src_type&>(src_byte);
-        auto unsigned_dest = reinterpret_cast<unsigned_dest_type&>(dest_byte);
-
-        if (unsigned_src != unsigned_dest) {
-            return (unsigned_src < unsigned_dest);
-        }
-    }
-
-    return true;
-}
 
 bool operator==(const char * left, const Buffer& right) {
     assert(nullptr != left);

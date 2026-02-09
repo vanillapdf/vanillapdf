@@ -78,8 +78,6 @@ public:
     bool Equals(const Buffer& other) const;
     bool LessThan(const Buffer& other) const;
 
-    bool ValueEqualLessThan(const Buffer& other) const;
-
     /**
      * @brief Interpret buffer bytes as an integer of type T.
      */
