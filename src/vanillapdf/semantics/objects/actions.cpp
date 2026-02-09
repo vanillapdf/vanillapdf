@@ -16,7 +16,7 @@ NamedAction::NamedAction(syntax::DictionaryObjectPtr root) : ActionBase(root) {}
 JavaScriptAction::JavaScriptAction(syntax::DictionaryObjectPtr root) : ActionBase(root) {}
 LaunchAction::LaunchAction(syntax::DictionaryObjectPtr root) : ActionBase(root) {}
 
-std::unique_ptr<ActionBase> ActionBase::Create(syntax::DictionaryObjectPtr root) {
+ActionPtr ActionBase::Create(syntax::DictionaryObjectPtr root) {
     if (!root->Contains(constant::Name::S)) {
         throw GeneralException("Action dictionary does not contain /S entry");
     }
@@ -30,27 +30,27 @@ std::unique_ptr<ActionBase> ActionBase::Create(syntax::DictionaryObjectPtr root)
     syntax::NameObjectPtr s = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(s_obj);
 
     if (s == constant::Name::GoTo) {
-        return make_unique<GoToAction>(root);
+        return make_deferred<GoToAction>(root);
     }
 
     if (s == constant::Name::GoToR) {
-        return make_unique<GoToRemoteAction>(root);
+        return make_deferred<GoToRemoteAction>(root);
     }
 
     if (s == constant::Name::URI) {
-        return make_unique<URIAction>(root);
+        return make_deferred<URIAction>(root);
     }
 
     if (s == constant::Name::Launch) {
-        return make_unique<LaunchAction>(root);
+        return make_deferred<LaunchAction>(root);
     }
 
     if (s == constant::Name::Named) {
-        return make_unique<NamedAction>(root);
+        return make_deferred<NamedAction>(root);
     }
 
     if (s == constant::Name::JavaScript) {
-        return make_unique<JavaScriptAction>(root);
+        return make_deferred<JavaScriptAction>(root);
     }
 
     throw GeneralException("Unknown action type: " + s->ToString());
