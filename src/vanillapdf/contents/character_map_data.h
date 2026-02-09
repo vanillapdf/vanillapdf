@@ -28,13 +28,6 @@ private:
     syntax::HexadecimalStringObjectPtr m_high;
     syntax::ObjectPtr m_dest;
 
-    bool ValueEqualLessThan(BufferPtr source, BufferPtr dest) const;
-    uint32_t Difference(BufferPtr source, BufferPtr dest) const;
-    uint8_t Difference(uint8_t source, uint8_t dest, bool& borrow) const;
-
-    BufferPtr Increment(BufferPtr data, uint32_t count) const;
-    BufferPtr IncrementInternal(BufferPtr data, uint32_t count) const;
-
     BufferPtr GetMappedValueInternal(BufferPtr key) const;
 };
 

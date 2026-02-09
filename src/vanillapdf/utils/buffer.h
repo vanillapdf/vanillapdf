@@ -1,6 +1,7 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
+#include "utils/byte_order.h"
 #include "utils/character.h"
 #include "utils/conversion_utils.h"
 #include "utils/unknown_interface.h"
@@ -12,6 +13,7 @@
 #include <string>
 #include <ostream>
 #include <cassert>
+#include <type_traits>
 
 namespace vanillapdf {
 
@@ -77,6 +79,51 @@ public:
     bool LessThan(const Buffer& other) const;
 
     bool ValueEqualLessThan(const Buffer& other) const;
+
+    /**
+     * @brief Interpret buffer bytes as an integer of type T.
+     */
+    template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+    T ToInteger(endian order) const {
+        assert(m_data.size() <= sizeof(T));
+
+        T result = 0;
+        if (order == endian::big) {
+            for (size_type i = 0; i < m_data.size(); ++i) {
+                result = static_cast<T>((result << 8) | static_cast<uint8_t>(m_data[i]));
+            }
+        } else if (order == endian::little) {
+            for (size_type i = 0; i < m_data.size(); ++i) {
+                result |= static_cast<T>(static_cast<uint8_t>(m_data[i])) << (i * 8);
+            }
+        } else {
+            throw GeneralException("Unsupported byte order");
+        }
+
+        return result;
+    }
+
+    /**
+     * @brief Create a buffer from an integer value with the specified byte width.
+     */
+    template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+    static BufferPtr FromInteger(T value, size_t byte_width, endian order) {
+        auto buf = make_deferred_container<Buffer>();
+
+        if (order == endian::big) {
+            for (int i = static_cast<int>(byte_width) - 1; i >= 0; --i) {
+                buf->push_back(static_cast<char>((value >> (i * 8)) & 0xFF));
+            }
+        } else if (order == endian::little) {
+            for (size_t i = 0; i < byte_width; ++i) {
+                buf->push_back(static_cast<char>((value >> (i * 8)) & 0xFF));
+            }
+        } else {
+            throw GeneralException("Unsupported byte order");
+        }
+
+        return buf;
+    }
 
     // stl compatibility
     bool empty(void) const noexcept { return m_data.empty(); }
