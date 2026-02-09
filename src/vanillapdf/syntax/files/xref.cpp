@@ -424,6 +424,7 @@ StreamObjectPtr XrefStream::GetStreamObject(void) const {
 
 void XrefStream::SetStreamObject(StreamObjectPtr stream) {
     _stream = stream;
+    IncrementVersion();
 }
 
 } // syntax

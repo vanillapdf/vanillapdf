@@ -41,25 +41,29 @@ public:
     Versionable(Versionable&&) noexcept : m_version(0), m_initialized(false) {}
     Versionable& operator=(Versionable&&) noexcept { return *this; }
 
-    uint32_t GetVersion() const noexcept { return m_version.load(std::memory_order_relaxed); }
+    uint32_t GetVersion() const noexcept {
+        return m_version.load(std::memory_order_relaxed);
+    }
 
     void IncrementVersion() noexcept {
-        if (m_initialized) {
+        if (m_initialized.load(std::memory_order_relaxed)) {
             m_version.fetch_add(1, std::memory_order_relaxed);
         }
     }
 
-    bool IsInitialized() const noexcept { return m_initialized; }
+    bool IsInitialized() const noexcept {
+        return m_initialized.load(std::memory_order_relaxed);
+    }
 
     virtual void SetInitialized(bool initialized = true) {
-        m_initialized = initialized;
+        m_initialized.store(initialized, std::memory_order_relaxed);
     }
 
     virtual ~Versionable() = 0;
 
 protected:
     std::atomic<uint32_t> m_version = 0;
-    bool m_initialized = false;
+    std::atomic<bool> m_initialized = false;
 };
 
 } // vanillapdf

@@ -148,8 +148,7 @@ public:
 
     virtual bool IsDirty(void) const noexcept override { return m_version > 0; }
     virtual void SetDirty(bool dirty = true) noexcept override {
-        if (dirty) { if (m_version == 0) m_version.store(1, std::memory_order_relaxed); }
-        else { m_version.store(0, std::memory_order_relaxed); }
+        m_version.store(dirty ? 1 : 0, std::memory_order_relaxed);
     }
 
     virtual void Add(XrefEntryBasePtr entry) override;
@@ -185,8 +184,7 @@ public:
 
     virtual bool IsDirty(void) const noexcept override { return m_version > 0; }
     virtual void SetDirty(bool dirty = true) noexcept override {
-        if (dirty) { if (m_version == 0) m_version.store(1, std::memory_order_relaxed); }
-        else { m_version.store(0, std::memory_order_relaxed); }
+        m_version.store(dirty ? 1 : 0, std::memory_order_relaxed);
     }
 
     virtual DictionaryObjectPtr GetTrailerDictionary(void) const override { return m_trailer_dictionary; }
