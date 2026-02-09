@@ -2,7 +2,7 @@
 
 #include "utils/license_info.h"
 
-#ifdef VANILLAPDF_HAVE_NLOHMANN_JSON
+#ifdef VANILLAPDF_ENABLE_LICENSING
 
 #include "utils/resource.h"
 #include "utils/crypto_utils.h"
@@ -20,8 +20,6 @@
 #include <chrono>
 #include <fstream>
 
-namespace vanillapdf {
-
 using namespace nlohmann;
 
 static const char VERSION_NODE[] =				"version";
@@ -34,33 +32,42 @@ static const char TEMPORARY_EXPIRATION_NODE[] =	"temporary_expiration";
 static const char SIGNATURE_NODE[] =			"signature";
 static const char CERTIFICATES_NODE[] =			"certificates";
 
-// Initialize static members
-bool LicenseInfo::m_update_valid = false;
-std::string LicenseInfo::m_temporary_expiration;
-
 static X509* LoadCertificate(const std::string& certificate) {
     auto signing_certificate_bio = BIO_new(BIO_s_mem());
     if (signing_certificate_bio == nullptr) {
-        throw GeneralException("Could not create memory buffer");
+        throw vanillapdf::GeneralException("Could not create memory buffer");
     }
 
     SCOPE_GUARD([signing_certificate_bio]() { BIO_free(signing_certificate_bio); });
 
-    auto signing_certificate_size = ValueConvertUtils::SafeConvert<int>(certificate.size());
+    auto signing_certificate_size = vanillapdf::ValueConvertUtils::SafeConvert<int>(certificate.size());
     auto bytes_written = BIO_write(signing_certificate_bio, certificate.data(), signing_certificate_size);
     if (bytes_written <= 0) {
-        throw GeneralException("Could not write certificate data");
+        throw vanillapdf::GeneralException("Could not write certificate data");
     }
 
     auto certificate_x509 = PEM_read_bio_X509(signing_certificate_bio, nullptr, nullptr, nullptr);
     if (certificate_x509 == nullptr) {
-        throw GeneralException("Could not read PEM certificate");
+        throw vanillapdf::GeneralException("Could not read PEM certificate");
     }
 
     return certificate_x509;
 }
 
-void LicenseInfo::SetLicense(IInputStreamPtr stream, types::stream_size length) {
+#else /* !VANILLAPDF_ENABLE_LICENSING */
+
+#include <spdlog/spdlog.h>
+
+#endif /* VANILLAPDF_ENABLE_LICENSING */
+
+namespace vanillapdf {
+
+// Initialize static members
+bool LicenseInfo::m_update_valid = false;
+std::string LicenseInfo::m_temporary_expiration;
+
+void LicenseInfo::SetLicense([[maybe_unused]] IInputStreamPtr stream, [[maybe_unused]] types::stream_size length) {
+#ifdef VANILLAPDF_ENABLE_LICENSING
     Buffer buffer(length);
     auto read = stream->Read(buffer, length);
     if (read != length) {
@@ -69,9 +76,13 @@ void LicenseInfo::SetLicense(IInputStreamPtr stream, types::stream_size length) 
 
     // Forward content
     SetLicense(buffer);
+#else
+    spdlog::debug("SetLicense called but licensing support is not compiled in");
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
 
-void LicenseInfo::SetLicense(const Buffer& data) {
+void LicenseInfo::SetLicense([[maybe_unused]] const Buffer& data) {
+#ifdef VANILLAPDF_ENABLE_LICENSING
 
     // Parse JSON
     auto json_data = json::parse(data);
@@ -183,9 +194,14 @@ void LicenseInfo::SetLicense(const Buffer& data) {
 
     // None of the known license format matches
     throw GeneralException("Unknown license version: " + version_string);
+
+#else
+    spdlog::debug("SetLicense called but licensing support is not compiled in");
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
 
-void LicenseInfo::SetLicense(const char * filename) {
+void LicenseInfo::SetLicense([[maybe_unused]] const char * filename) {
+#ifdef VANILLAPDF_ENABLE_LICENSING
 
     // Determine file size
     auto file = std::make_shared<std::ifstream>(filename, std::ios::binary | std::ios::ate);
@@ -201,15 +217,15 @@ void LicenseInfo::SetLicense(const char * filename) {
     // Forward content
     auto stream = make_deferred<InputStream>(file);
     SetLicense(stream, length);
+
+#else
+    spdlog::debug("SetLicense called but licensing support is not compiled in");
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
 
 bool LicenseInfo::IsValid() {
 
-    // Since we are now open source, we will not enforce license checks.
-    // The API remains for the time being to keep backwards compatibility.
-
-#if ENFORCE_LICENSE_CHECKS
-
+#ifdef VANILLAPDF_ENABLE_LICENSING
     if (!m_update_valid) {
         return false;
     }
@@ -220,8 +236,7 @@ bool LicenseInfo::IsValid() {
             return false;
         }
     }
-
-#endif /* ENFORCE_LICENSE_CHECKS */
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 
     return true;
 }
@@ -230,7 +245,8 @@ bool LicenseInfo::IsTemporary() {
     return !m_temporary_expiration.empty();
 }
 
-bool LicenseInfo::CheckBlacklist(const std::string& serial) {
+bool LicenseInfo::CheckBlacklist([[maybe_unused]] const std::string& serial) {
+#ifdef VANILLAPDF_ENABLE_LICENSING
 
     // Serial blacklist is embedded in the library resources
     auto serial_blacklist_raw = Resource::Load(ResourceID::SERIAL_BLACKLIST);
@@ -246,16 +262,19 @@ bool LicenseInfo::CheckBlacklist(const std::string& serial) {
         }
     }
 
+#endif /* VANILLAPDF_ENABLE_LICENSING */
+
     // Presented serial does not appear on blacklist
     return false;
 }
 
 bool LicenseInfo::CheckSignature(
-    const std::string& signed_content,
-    const std::string& signature_value,
-    const std::string& signing_certificate,
-    MessageDigestAlgorithm digest_algorithm) {
+    [[maybe_unused]] const std::string& signed_content,
+    [[maybe_unused]] const std::string& signature_value,
+    [[maybe_unused]] const std::string& signing_certificate,
+    [[maybe_unused]] MessageDigestAlgorithm digest_algorithm) {
 
+#ifdef VANILLAPDF_ENABLE_LICENSING
     auto signing_certificate_x509 = LoadCertificate(signing_certificate);
 
     SCOPE_GUARD([signing_certificate_x509]() { X509_free(signing_certificate_x509); });
@@ -297,9 +316,14 @@ bool LicenseInfo::CheckSignature(
     }
 
     return true;
+
+#else
+    return false;
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
 
-bool LicenseInfo::CheckTemporaryExpiration(const std::string& expiration) {
+bool LicenseInfo::CheckTemporaryExpiration([[maybe_unused]] const std::string& expiration) {
+#ifdef VANILLAPDF_ENABLE_LICENSING
     std::stringstream expiration_stream;
     expiration_stream << expiration;
 
@@ -316,9 +340,14 @@ bool LicenseInfo::CheckTemporaryExpiration(const std::string& expiration) {
 
     // Returns true if already expired
     return (expiration_time < current_time);
+
+#else
+    return false;
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
 
-bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
+bool LicenseInfo::CheckUpdateExpiration([[maybe_unused]] const std::string& expiration) {
+#ifdef VANILLAPDF_ENABLE_LICENSING
 
     std::stringstream expiration_stream;
     expiration_stream << expiration;
@@ -351,9 +380,14 @@ bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
 
     // Returns true if already expired
     return (expiration_time < build_time);
+
+#else
+    return false;
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
 
-bool LicenseInfo::CheckCertificateChain(const std::vector<std::string>& certificates) {
+bool LicenseInfo::CheckCertificateChain([[maybe_unused]] const std::vector<std::string>& certificates) {
+#ifdef VANILLAPDF_ENABLE_LICENSING
 
     // Initialize algorithms is required before validating certificates
     CryptoUtils::InitializeOpenSSL();
@@ -435,40 +469,10 @@ bool LicenseInfo::CheckCertificateChain(const std::vector<std::string>& certific
 
     // The signing certificate is valid and was issued with the master certificate
     return true;
-}
 
-} // vanillapdf
-
-#else /* !VANILLAPDF_HAVE_NLOHMANN_JSON */
-
-#include <spdlog/spdlog.h>
-
-namespace vanillapdf {
-
-// Initialize static members
-bool LicenseInfo::m_update_valid = false;
-std::string LicenseInfo::m_temporary_expiration;
-
-void LicenseInfo::SetLicense(IInputStreamPtr, types::stream_size) {
-    spdlog::debug("SetLicense called but licensing support is not compiled in");
-}
-
-void LicenseInfo::SetLicense(const Buffer&) {
-    spdlog::debug("SetLicense called but licensing support is not compiled in");
-}
-
-void LicenseInfo::SetLicense(const char *) {
-    spdlog::debug("SetLicense called but licensing support is not compiled in");
-}
-
-bool LicenseInfo::IsValid() {
-    return true;
-}
-
-bool LicenseInfo::IsTemporary() {
+#else
     return false;
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
 
 } // vanillapdf
-
-#endif /* VANILLAPDF_HAVE_NLOHMANN_JSON */

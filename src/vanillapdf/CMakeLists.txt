@@ -762,7 +762,7 @@ target_link_libraries(vanillapdf PRIVATE spdlog::spdlog)
 
 if (VANILLAPDF_ENABLE_LICENSING)
     target_link_libraries(vanillapdf PRIVATE nlohmann_json::nlohmann_json)
-    target_compile_definitions(vanillapdf PRIVATE VANILLAPDF_HAVE_NLOHMANN_JSON)
+    target_compile_definitions(vanillapdf PRIVATE VANILLAPDF_ENABLE_LICENSING)
     message(STATUS "Licensing support enabled (nlohmann-json)")
 else()
     message(STATUS "Licensing support disabled")
