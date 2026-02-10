@@ -18,10 +18,6 @@ StreamObject::StreamObject() : StreamObject(false) {
 
 StreamObject::StreamObject(bool initialized) {
     _header->SetOwner(Object::GetWeakReference());
-    _header->Subscribe(this);
-    _body_raw->Subscribe(this);
-    _body_decrypted->Subscribe(this);
-    _body_decoded->Subscribe(this);
 
     _access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 
@@ -31,42 +27,21 @@ StreamObject::StreamObject(bool initialized) {
 StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offset)
     : _header(header), _raw_data_offset(offset) {
     _header->SetOwner(Object::GetWeakReference());
-    _header->Subscribe(this);
-    _body_raw->Subscribe(this);
-    _body_decrypted->Subscribe(this);
-    _body_decoded->Subscribe(this);
 
     _access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
-StreamObject::~StreamObject() {
-    _header->Unsubscribe(this);
-    _body_raw->Unsubscribe(this);
-    _body_decrypted->Unsubscribe(this);
-    _body_decoded->Unsubscribe(this);
-}
-
-void StreamObject::ObserveeChanged(const IModifyObservable*) {
-    OnChanged();
-}
-
-void StreamObject::OnChanged() {
+bool StreamObject::IsDirty() const {
     ACCESS_LOCK_GUARD(_access_lock);
 
-    Object::OnChanged();
+    if (m_version > 0) return true;
+    if (_header->IsDirty()) return true;
 
-    if (IsDirty()) {
-
-        // In case the object is within a file and has object number specified
-        if (IsIndirect() || HasOwner()) {
-            auto obj_number = GetRootObjectNumber();
-            auto gen_number = GetRootGenerationNumber();
-
-            spdlog::debug("Stream object {} {} change triggered, object is dirty", obj_number, gen_number);
-        }
-
-        // Do we need to log something otherwise for other stream objects?
-    }
+    // Only check the decoded body buffer (user-facing layer).
+    // Raw and decrypted buffers are internal lazy-loading caches
+    // that should not be modified directly by users.
+    if (_body_decoded->GetVersion() > 0) return true;
+    return false;
 }
 
 DictionaryObjectPtr StreamObject::GetHeader() const {
@@ -76,10 +51,8 @@ DictionaryObjectPtr StreamObject::GetHeader() const {
 void StreamObject::SetHeader(DictionaryObjectPtr header) {
     ACCESS_LOCK_GUARD(_access_lock);
 
-    _header->Unsubscribe(this);
-    header->Subscribe(this);
     _header = header;
-    OnChanged();
+    IncrementVersion();
 }
 
 void StreamObject::SetBody(BufferPtr value) {
@@ -88,8 +61,7 @@ void StreamObject::SetBody(BufferPtr value) {
     _body_decoded->assign(value.begin(), value.end());
     _body_decoded->SetInitialized();
 
-    // Trigger change event
-    OnChanged();
+    IncrementVersion();
 }
 
 types::stream_offset StreamObject::GetDataOffset() const {
@@ -100,7 +72,7 @@ void StreamObject::SetDataOffset(types::stream_offset offset) {
     ACCESS_LOCK_GUARD(_access_lock);
 
     _raw_data_offset = offset;
-    OnChanged();
+    IncrementVersion();
 }
 
 Object::Type StreamObject::GetObjectType(void) const noexcept {
@@ -113,22 +85,18 @@ StreamObject* StreamObject::Clone(void) const {
     ACCESS_LOCK_GUARD(_access_lock);
 
     result->_header = _header->Clone();
-    result->_header->Subscribe(result.get());
     result->_header->SetInitialized();
 
     result->_body_raw = GetBodyRaw()->Clone();
-    result->_body_raw->Subscribe(result.get());
     result->_body_raw->SetInitialized();
 
     if (_body_decrypted->IsInitialized()) {
         result->_body_decrypted = GetBodyDecrypted()->Clone();
-        result->_body_decrypted->Subscribe(result.get());
         result->_body_decrypted->SetInitialized();
     }
 
     if (_body_decoded->IsInitialized()) {
         result->_body_decoded = GetBody()->Clone();
-        result->_body_decoded->Subscribe(result.get());
         result->_body_decoded->SetInitialized();
     }
 
@@ -148,7 +116,7 @@ void StreamObject::SetFile(WeakReference<File> file) {
 void StreamObject::SetInitialized(bool initialized) {
     ACCESS_LOCK_GUARD(_access_lock);
 
-    IModifyObservable::SetInitialized(initialized);
+    Versionable::SetInitialized(initialized);
     _header->SetInitialized(initialized);
 
     // In case the object is already initialized without data offset

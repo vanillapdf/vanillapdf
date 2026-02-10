@@ -13,10 +13,6 @@
 namespace vanillapdf {
 namespace syntax {
 
-NameObject::NameObject() {
-    _value->Subscribe(this);
-}
-
 NameObjectPtr NameObject::CreateFromEncoded(BufferPtr value) {
     auto str = value->ToStringView();
     return CreateFromEncoded(str);
@@ -98,10 +94,6 @@ size_t NameObject::Hash() const {
     return _value->Hash();
 }
 
-void NameObject::ObserveeChanged(const IModifyObservable*) {
-    OnChanged();
-}
-
 BufferPtr NameObject::GetValue() const {
     return _value;
 }
@@ -115,7 +107,7 @@ void NameObject::SetValue(std::string_view value) {
     _value->assign(value.begin(), value.end());
     _value->SetInitialized();
 
-    OnChanged();
+    IncrementVersion();
 }
 
 bool NameObject::Equals(const NameObject& other) const {
@@ -146,10 +138,6 @@ NameObject* NameObject::Clone(void) const {
 
     CloneBaseProperties(result);
     return result.detach();
-}
-
-NameObject::~NameObject() {
-    _value->Unsubscribe(this);
 }
 
 std::string NameObject::GetHexadecimalNotation(char ch) const {

@@ -15,12 +15,10 @@ namespace vanillapdf {
 namespace syntax {
 
 LiteralStringObject::LiteralStringObject() {
-    _value->Subscribe(this);
     _access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 HexadecimalStringObject::HexadecimalStringObject() {
-    _value->Subscribe(this);
     _access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
@@ -66,10 +64,6 @@ LiteralStringObjectPtr LiteralStringObject::CreateFromDecoded(std::string_view v
     return result;
 }
 
-void LiteralStringObject::ObserveeChanged(const IModifyObservable*) {
-    OnChanged();
-}
-
 HexadecimalStringObjectPtr HexadecimalStringObject::CreateFromEncoded(BufferPtr value) {
     HexadecimalStringObjectPtr result;
 
@@ -112,19 +106,7 @@ HexadecimalStringObjectPtr HexadecimalStringObject::CreateFromDecoded(std::strin
     return result;
 }
 
-void HexadecimalStringObject::ObserveeChanged(const IModifyObservable*) {
-    OnChanged();
-}
-
 StringObjectPtr::StringObjectPtr() : Deferred<StringObjectBase>(LiteralStringObjectPtr()) {
-}
-
-HexadecimalStringObject::~HexadecimalStringObject() {
-    _value->Unsubscribe(this);
-}
-
-LiteralStringObject::~LiteralStringObject() {
-    _value->Unsubscribe(this);
 }
 
 size_t StringObjectBase::Hash() const {

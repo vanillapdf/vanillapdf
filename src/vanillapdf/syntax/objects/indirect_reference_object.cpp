@@ -47,7 +47,8 @@ void IndirectReferenceObject::SetReferencedObjectNumber(types::big_uint value) {
     m_reference_object_number = value;
     m_reference.Reset();
 
-    OnChanged();
+    IncrementVersion();
+    m_hash_cache = 0;
 }
 
 void IndirectReferenceObject::SetReferencedGenerationNumber(types::ushort value) {
@@ -56,7 +57,8 @@ void IndirectReferenceObject::SetReferencedGenerationNumber(types::ushort value)
     m_reference_generation_number = value;
     m_reference.Reset();
 
-    OnChanged();
+    IncrementVersion();
+    m_hash_cache = 0;
 }
 
 bool IndirectReferenceObject::IsReferenceInitialized(void) const {
@@ -114,12 +116,6 @@ bool IndirectReferenceObject::IsReferenceInitialized(void) const {
 //	return false;
 //}
 
-void IndirectReferenceObject::OnChanged() {
-    Object::OnChanged();
-
-    m_hash_cache = 0;
-}
-
 size_t IndirectReferenceObject::Hash() const {
 
     if (m_hash_cache != 0) {
@@ -169,7 +165,8 @@ void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) {
     }
 
     m_reference = obj;
-    OnChanged();
+    IncrementVersion();
+    m_hash_cache = 0;
 }
 
 ObjectPtr IndirectReferenceObject::GetReferencedObject() const {

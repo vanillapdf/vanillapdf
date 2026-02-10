@@ -86,6 +86,8 @@ For vcpkg port development, work in `ports/vanillapdf/` (not `external/vcpkg/por
 - Visual Studio .natvis files for debugging support
 - Follow existing patterns in similar classes
 - Do not insert structurally different code into a group of similarly-looking lines without separating it with a blank line and a comment. Uniform blocks (e.g., a series of assignments) should stay visually cohesive.
+- Prefer `= value` assignment over `{value}` brace initialization for member variables (e.g., `int m_count = 0;` not `int m_count{0};`)
+- When two consecutive single-line `if` statements can be combined with `||`, prefer the combined form: `return (A) || (B);` instead of `if (A) return true; return B;`
 
 ### Contribution Guidelines
 

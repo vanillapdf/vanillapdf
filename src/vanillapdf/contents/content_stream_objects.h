@@ -6,7 +6,6 @@
 
 #include "syntax/utils/syntax_fwd.h"
 
-#include "utils/modify_observer_interface.h"
 #include "utils/constants.h"
 
 #include <vector>
