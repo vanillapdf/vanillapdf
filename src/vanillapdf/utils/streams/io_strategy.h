@@ -7,10 +7,10 @@ namespace vanillapdf {
 * \brief Specifies the I/O strategy used for file access.
 *
 * Controls how the library accesses file data:
-* - Undefined: Uses the default implementation (currently fstream)
-* - Memory: Loads entire file into memory (not yet supported)
+* - Undefined: Caller must pick a concrete strategy (throws InvalidParameterException)
+* - Memory: Loads entire file into an fmt::memory_buffer, all parsing happens from memory
 * - MemoryMapped: Uses memory-mapped file access (not yet supported)
-* - FileStream: Uses FILE*-based streaming I/O
+* - FileStream: Uses fstream-based streaming I/O (default for Open/Create)
 */
 enum class IOStrategy {
     Undefined,

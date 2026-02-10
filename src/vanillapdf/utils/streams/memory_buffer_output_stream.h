@@ -3,10 +3,15 @@
 
 #include "utils/streams/output_stream_interface.h"
 
+#include <memory>
+
 namespace vanillapdf {
 
 class MemoryBufferOutputStream : public virtual IOutputStream {
 public:
+    MemoryBufferOutputStream();
+    explicit MemoryBufferOutputStream(std::shared_ptr<fmt::memory_buffer> buffer);
+
     virtual void Write(const Buffer& data) override;
     virtual void Write(const Buffer& data, types::stream_size size) override;
     virtual void Write(std::string_view data) override;
@@ -30,9 +35,12 @@ public:
     virtual void ExclusiveOutputUnlock() override;
 
     std::string ToString() const;
+    std::shared_ptr<fmt::memory_buffer> GetBuffer() const { return m_buffer; }
 
-private:
-    fmt::memory_buffer m_buffer;
+protected:
+    static std::shared_ptr<fmt::memory_buffer> CreateBuffer();
+
+    std::shared_ptr<fmt::memory_buffer> m_buffer;
     types::stream_size m_position = 0;
 };
 

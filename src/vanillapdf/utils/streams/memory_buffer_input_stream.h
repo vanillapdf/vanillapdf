@@ -1,17 +1,16 @@
-#ifndef _FILE_STREAM_INPUT_STREAM_H
-#define _FILE_STREAM_INPUT_STREAM_H
+#ifndef _MEMORY_BUFFER_INPUT_STREAM_H
+#define _MEMORY_BUFFER_INPUT_STREAM_H
 
 #include "utils/streams/input_stream_interface.h"
 
-#include <cstdio>
 #include <memory>
 #include <mutex>
 
 namespace vanillapdf {
 
-class FileStreamInputStream : public virtual IInputStream {
+class MemoryBufferInputStream : public virtual IInputStream {
 public:
-    explicit FileStreamInputStream(std::shared_ptr<FILE> file);
+    explicit MemoryBufferInputStream(std::shared_ptr<fmt::memory_buffer> buffer);
 
     virtual BufferPtr Read(types::stream_size len) override;
     virtual types::stream_size Read(char* result, types::stream_size len) override;
@@ -34,7 +33,8 @@ public:
     virtual operator bool(void) const override;
 
 protected:
-    std::shared_ptr<FILE> m_file;
+    std::shared_ptr<fmt::memory_buffer> m_buffer;
+    types::stream_size m_position = 0;
     std::shared_ptr<std::recursive_mutex> m_input_lock;
     mutable bool m_eof = false;
     mutable bool m_fail = false;
@@ -42,4 +42,4 @@ protected:
 
 } // vanillapdf
 
-#endif /* _FILE_STREAM_INPUT_STREAM_H */
+#endif /* _MEMORY_BUFFER_INPUT_STREAM_H */

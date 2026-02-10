@@ -29,8 +29,7 @@ public:
 
     static FilePtr OpenStream(IInputOutputStreamPtr stream, const std::string& name);
     static FilePtr CreateStream(IInputOutputStreamPtr stream, const std::string& name);
-    static IInputOutputStreamPtr GetFilestream(const std::string& path, std::ios_base::openmode mode);
-    static IInputOutputStreamPtr GetFilestreamFileStream(const std::string& path, std::ios_base::openmode mode);
+    static IInputOutputStreamPtr CreateIOStream(const std::string& path, std::ios_base::openmode mode, IOStrategy strategy);
 
     BufferPtr GetByteRange(types::stream_size begin, types::size_type length);
     IInputStreamPtr GetByteRangeStream(types::stream_size begin, types::size_type length);

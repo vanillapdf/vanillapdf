@@ -215,9 +215,8 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/streams/input_reverse_stream.cpp
     utils/streams/input_stream.cpp
     utils/streams/output_stream.cpp
-    utils/streams/file_stream_input_stream.cpp
-    utils/streams/file_stream_output_stream.cpp
     utils/streams/stream_utils.cpp
+    utils/streams/memory_buffer_input_stream.cpp
     utils/streams/memory_buffer_output_stream.cpp
 )
 
@@ -383,14 +382,12 @@ set(VANILLAPDF_UTILS_HEADERS
 
     utils/streams/output_stream_interface.h
     utils/streams/output_stream.h
+    utils/streams/memory_buffer_input_stream.h
     utils/streams/memory_buffer_output_stream.h
+    utils/streams/memory_buffer_input_output_stream.h
 
     utils/streams/input_output_stream_interface.h
     utils/streams/input_output_stream.h
-
-    utils/streams/file_stream_input_stream.h
-    utils/streams/file_stream_output_stream.h
-    utils/streams/file_stream_input_output_stream.h
 
     utils/streams/io_strategy.h
     utils/streams/stream_utils.h

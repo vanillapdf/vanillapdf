@@ -107,6 +107,13 @@ public:
     virtual Type code() const noexcept override { return Type::LicenseRequired; }
 };
 
+class InvalidParameterException : public ExceptionBase {
+public:
+    explicit InvalidParameterException(const char * const & msg);
+    explicit InvalidParameterException(const std::string& msg);
+    virtual Type code() const noexcept override { return Type::InvalidParameter; }
+};
+
 class InvalidPasswordException : public ExceptionBase {
 public:
     explicit InvalidPasswordException(const char * const & msg);

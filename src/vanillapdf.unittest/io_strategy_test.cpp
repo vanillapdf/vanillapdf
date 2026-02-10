@@ -11,25 +11,18 @@ static std::string GetTempFilePath(const char* suffix) {
     return temp_file.string();
 }
 
-TEST(IOStrategy, FileOpenWithUndefinedStrategy) {
+TEST(IOStrategy, FileOpenWithUndefinedStrategyReturnsInvalidParameter) {
     HandleGuard<FileHandle, File_Release> file;
-    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
 
-    // Create a document in memory first
-    ASSERT_EQ(InputOutputStream_CreateFromMemory(io_stream.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(io_stream.get(), nullptr);
-
-    HandleGuard<FileHandle, File_Release> create_file;
-    ASSERT_EQ(File_CreateStream(io_stream, "test_undefined_strategy", create_file.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(create_file.get(), nullptr);
+    auto result = File_OpenWithStrategy("nonexistent.pdf", IOStrategy_Undefined, file.out());
+    ASSERT_EQ(result, VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
-TEST(IOStrategy, FileOpenWithMemoryStrategyReturnsNotSupported) {
+TEST(IOStrategy, FileCreateWithUndefinedStrategyReturnsInvalidParameter) {
     HandleGuard<FileHandle, File_Release> file;
 
-    // Memory strategy is not yet supported
-    auto result = File_OpenWithStrategy("nonexistent.pdf", IOStrategy_Memory, file.out());
-    ASSERT_EQ(result, VANILLAPDF_ERROR_NOT_SUPPORTED);
+    auto result = File_CreateWithStrategy("nonexistent.pdf", IOStrategy_Undefined, file.out());
+    ASSERT_EQ(result, VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 TEST(IOStrategy, FileOpenWithMemoryMappedStrategyReturnsNotSupported) {
@@ -37,14 +30,6 @@ TEST(IOStrategy, FileOpenWithMemoryMappedStrategyReturnsNotSupported) {
 
     // MemoryMapped strategy is not yet supported
     auto result = File_OpenWithStrategy("nonexistent.pdf", IOStrategy_MemoryMapped, file.out());
-    ASSERT_EQ(result, VANILLAPDF_ERROR_NOT_SUPPORTED);
-}
-
-TEST(IOStrategy, FileCreateWithMemoryStrategyReturnsNotSupported) {
-    HandleGuard<FileHandle, File_Release> file;
-
-    // Memory strategy is not yet supported
-    auto result = File_CreateWithStrategy("nonexistent.pdf", IOStrategy_Memory, file.out());
     ASSERT_EQ(result, VANILLAPDF_ERROR_NOT_SUPPORTED);
 }
 
@@ -56,18 +41,19 @@ TEST(IOStrategy, FileCreateWithMemoryMappedStrategyReturnsNotSupported) {
     ASSERT_EQ(result, VANILLAPDF_ERROR_NOT_SUPPORTED);
 }
 
-TEST(IOStrategy, DocumentOpenWithMemoryStrategyReturnsNotSupported) {
-    HandleGuard<DocumentHandle, Document_Release> doc;
+TEST(IOStrategy, DocumentCreateWithMemoryStrategy) {
+    std::string temp_file = GetTempFilePath("create_memory");
 
-    auto result = Document_OpenWithStrategy("nonexistent.pdf", IOStrategy_Memory, doc.out());
-    ASSERT_EQ(result, VANILLAPDF_ERROR_NOT_SUPPORTED);
-}
+    {
+        HandleGuard<DocumentHandle, Document_Release> doc;
 
-TEST(IOStrategy, DocumentCreateWithMemoryStrategyReturnsNotSupported) {
-    HandleGuard<DocumentHandle, Document_Release> doc;
+        auto result = Document_CreateWithStrategy(temp_file.c_str(), IOStrategy_Memory, doc.out());
+        ASSERT_EQ(result, VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(doc.get(), nullptr);
+    }
 
-    auto result = Document_CreateWithStrategy("nonexistent.pdf", IOStrategy_Memory, doc.out());
-    ASSERT_EQ(result, VANILLAPDF_ERROR_NOT_SUPPORTED);
+    // Clean up temporary file after releasing the document
+    std::filesystem::remove(temp_file);
 }
 
 TEST(IOStrategy, DocumentCreateWithFileStreamStrategy) {
@@ -102,6 +88,36 @@ TEST(IOStrategy, FileCreateAndOpenWithFileStreamStrategy) {
     {
         HandleGuard<DocumentHandle, Document_Release> doc;
         auto result = Document_OpenWithStrategy(temp_file.c_str(), IOStrategy_FileStream, doc.out());
+        ASSERT_EQ(result, VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(doc.get(), nullptr);
+
+        // Verify we can read the catalog
+        HandleGuard<CatalogHandle, Catalog_Release> catalog;
+        ASSERT_EQ(Document_GetCatalog(doc, catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(catalog.get(), nullptr);
+    }
+
+    // Clean up temporary file
+    std::filesystem::remove(temp_file);
+}
+
+TEST(IOStrategy, FileCreateAndOpenWithMemoryStrategy) {
+    std::string temp_file = GetTempFilePath("roundtrip_memory");
+
+    {
+        HandleGuard<DocumentHandle, Document_Release> doc;
+        auto result = Document_CreateWithStrategy(temp_file.c_str(), IOStrategy_FileStream, doc.out());
+        ASSERT_EQ(result, VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_NE(doc.get(), nullptr);
+
+        // Save the document
+        ASSERT_EQ(Document_Save(doc, temp_file.c_str()), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Reopen with Memory strategy
+    {
+        HandleGuard<DocumentHandle, Document_Release> doc;
+        auto result = Document_OpenWithStrategy(temp_file.c_str(), IOStrategy_Memory, doc.out());
         ASSERT_EQ(result, VANILLAPDF_ERROR_SUCCESS);
         ASSERT_NE(doc.get(), nullptr);
 
