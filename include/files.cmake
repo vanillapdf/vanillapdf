@@ -19,6 +19,7 @@ set(VANILLAPDF_INCLUDE_UTILS_HEADERS
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_license_info.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_logging.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_misc_utils.h"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_object_diagnostics.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_message_digest_algorithm.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_output_stream.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_memory_buffer_output_stream.h"
