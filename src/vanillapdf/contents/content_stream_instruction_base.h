@@ -4,7 +4,7 @@
 #include "contents/content_fwd.h"
 
 #include "utils/unknown_interface.h"
-#include "utils/modify_observer_interface.h"
+#include "utils/versionable.h"
 
 #include <vector>
 
@@ -23,7 +23,7 @@ public:
     virtual std::string ToPdf() const = 0;
 };
 
-class BaseInstructionCollection : public IUnknown, public IModifyObservable {
+class BaseInstructionCollection : public Versionable {
 public:
     using data_type = std::vector<InstructionBasePtr>;
 
@@ -85,24 +85,14 @@ public:
 
     template <class InputIterator>
     void assign(InputIterator first, InputIterator last) {
-
         m_data.assign(first, last);
-        for (; first != last; ++first) {
-            (*first)->Subscribe(this);
-        }
-
-        OnChanged();
+        IncrementVersion();
     }
 
     template <class InputIterator>
     void insert(iterator position, InputIterator first, InputIterator last) {
-
         m_data.insert(position, first, last);
-        for (; first != last; ++first) {
-            (*first)->Subscribe(this);
-        }
-
-        OnChanged();
+        IncrementVersion();
     }
 
     // Modifying operations

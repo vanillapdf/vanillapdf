@@ -10,9 +10,9 @@
 namespace vanillapdf {
 namespace syntax {
 
-class NameObject : public ContainableObject, public IModifyObserver {
+class NameObject : public ContainableObject {
 public:
-    NameObject();
+    NameObject() = default;
     //NameObject(const NameObject&) = delete;
 
     static NameObjectPtr CreateFromEncoded(BufferPtr value);
@@ -21,7 +21,9 @@ public:
     static NameObjectPtr CreateFromDecoded(BufferPtr value);
     static NameObjectPtr CreateFromDecoded(std::string_view value);
 
-    virtual void ObserveeChanged(const IModifyObservable*) override;
+    virtual bool IsDirty() const override {
+        return (m_version > 0) || (_value->GetVersion() > 0);
+    }
 
     BufferPtr GetValue() const;
     void SetValue(BufferPtr value);
@@ -37,7 +39,7 @@ public:
     virtual size_t Hash() const override;
     virtual NameObject* Clone(void) const override;
 
-    virtual ~NameObject();
+    virtual ~NameObject() = default;
 
 private:
     BufferPtr _value;

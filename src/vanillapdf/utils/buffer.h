@@ -4,8 +4,7 @@
 #include "utils/byte_order.h"
 #include "utils/character.h"
 #include "utils/conversion_utils.h"
-#include "utils/unknown_interface.h"
-#include "utils/modify_observer_interface.h"
+#include "utils/versionable.h"
 
 #include "utils/streams/input_stream_interface.h"
 
@@ -17,7 +16,7 @@
 
 namespace vanillapdf {
 
-class Buffer : public IUnknown, public IModifyObservable {
+class Buffer : public Versionable {
 public:
     using storage_type = std::vector<char>;
 
@@ -146,41 +145,41 @@ public:
     size_t std_size(void) const { return ValueConvertUtils::SafeConvert<size_t>(m_data.size()); }
 
     // Modifying operations
-    void resize(size_type new_size) { m_data.resize(new_size); OnChanged(); }
-    void reserve(size_type count) { m_data.reserve(count); OnChanged(); }
-    void push_back(const_reference val) { m_data.push_back(val); OnChanged(); }
-    void push_back(value_type&& val) { m_data.push_back(val); OnChanged(); }
+    void resize(size_type new_size) { m_data.resize(new_size); IncrementVersion(); }
+    void reserve(size_type count) { m_data.reserve(count); IncrementVersion(); }
+    void push_back(const_reference val) { m_data.push_back(val); IncrementVersion(); }
+    void push_back(value_type&& val) { m_data.push_back(val); IncrementVersion(); }
     void push_back(WhiteSpace val) { push_back(static_cast<char>(val)); }
     void push_back(Delimiter val) { push_back(static_cast<char>(val)); }
 
     iterator insert(const_iterator where, const value_type& val) {
         auto result = m_data.insert(where, val);
-        OnChanged();
+        IncrementVersion();
         return result;
     }
 
     iterator insert(const_iterator where, value_type&& val) {
         auto result = m_data.insert(where, val);
-        OnChanged();
+        IncrementVersion();
         return result;
     }
 
     iterator insert(iterator pos, size_type count, const_reference val) {
         auto result = m_data.insert(pos, count, val);
-        OnChanged();
+        IncrementVersion();
         return result;
     }
 
     template <class InputIterator>
     void assign(InputIterator first, InputIterator last) {
         m_data.assign(first, last);
-        OnChanged();
+        IncrementVersion();
     }
 
     template <class InputIterator>
     void insert(iterator position, InputIterator first, InputIterator last) {
         m_data.insert(position, first, last);
-        OnChanged();
+        IncrementVersion();
     }
 
 private:

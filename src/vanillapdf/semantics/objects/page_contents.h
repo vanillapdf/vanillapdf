@@ -8,15 +8,13 @@
 namespace vanillapdf {
 namespace semantics {
 
-class PageContents : public HighLevelObject<syntax::ObjectPtr>, public IModifyObserver {
+class PageContents : public HighLevelObject<syntax::ObjectPtr> {
 public:
     explicit PageContents(syntax::StreamObjectPtr obj);
     explicit PageContents(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> obj);
-    ~PageContents();
+    ~PageContents() = default;
 
     contents::BaseInstructionCollectionPtr Instructions(void) const;
-
-    virtual void ObserveeChanged(const IModifyObservable*) override;
 
     bool IsDirty() const;
     void SetDirty(bool dirty);

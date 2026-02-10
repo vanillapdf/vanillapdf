@@ -3,6 +3,7 @@
 
 #include "syntax/utils/syntax_fwd.h"
 #include "syntax/files/file.h"
+#include "utils/observable_interface.h"
 
 #include <memory>
 #include <unordered_map>

@@ -39,7 +39,7 @@ protected:
     std::shared_ptr<std::recursive_mutex> _access_lock;
 };
 
-class HexadecimalStringObject : public StringObjectBase, public IModifyObserver {
+class HexadecimalStringObject : public StringObjectBase {
 public:
     HexadecimalStringObject();
     HexadecimalStringObject(const HexadecimalStringObject&) = delete;
@@ -52,7 +52,9 @@ public:
     static HexadecimalStringObjectPtr CreateFromDecoded(const char * value);
     static HexadecimalStringObjectPtr CreateFromDecoded(std::string_view value);
 
-    virtual void ObserveeChanged(const IModifyObservable*) override;
+    virtual bool IsDirty() const override {
+        return (m_version > 0) || (_value->GetVersion() > 0);
+    }
 
     virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Hexadecimal; }
 
@@ -63,7 +65,7 @@ public:
 
     virtual HexadecimalStringObject* Clone(void) const override;
 
-    virtual ~HexadecimalStringObject();
+    virtual ~HexadecimalStringObject() = default;
 
 private:
     BufferPtr GetRawValue() const;
@@ -75,7 +77,7 @@ private:
     mutable BufferPtr _value;
 };
 
-class LiteralStringObject : public StringObjectBase, public IModifyObserver {
+class LiteralStringObject : public StringObjectBase {
 public:
     LiteralStringObject();
     LiteralStringObject(const LiteralStringObject&) = delete;
@@ -88,7 +90,9 @@ public:
     static LiteralStringObjectPtr CreateFromDecoded(const char * value);
     static LiteralStringObjectPtr CreateFromDecoded(std::string_view value);
 
-    virtual void ObserveeChanged(const IModifyObservable*) override;
+    virtual bool IsDirty() const override {
+        return (m_version > 0) || (_value->GetVersion() > 0);
+    }
 
     virtual StringObjectBase::StringType GetStringType(void) const noexcept override { return StringObjectBase::StringType::Literal; }
     virtual BufferPtr GetValue() const override;
@@ -98,7 +102,7 @@ public:
 
     virtual LiteralStringObject* Clone(void) const override;
 
-    virtual ~LiteralStringObject();
+    virtual ~LiteralStringObject() = default;
 
 private:
     BufferPtr GetRawValue() const;

@@ -55,19 +55,6 @@ XrefUsedEntryBase::~XrefUsedEntryBase() {
     ReleaseReference(false);
 }
 
-void XrefUsedEntryBase::ObserveeChanged(const IModifyObservable*) {
-    // Notify observers
-    OnChanged();
-}
-
-void XrefUsedEntryBase::OnChanged() {
-    if (m_initialized) {
-        _dirty = true;
-    }
-
-    IModifyObservable::OnChanged();
-}
-
 bool XrefEntryBase::operator==(const XrefEntryBase& other) const {
     return (_obj_number == other._obj_number);
 }
@@ -107,7 +94,6 @@ void XrefUsedEntryBase::SetReference(ObjectPtr ref) {
     _reference = ref;
     m_used = true;
 
-    _reference->Subscribe(this);
     _reference->SetXrefEntry(this);
 
     if (IsInitialized()) {
@@ -140,9 +126,6 @@ void XrefUsedEntryBase::ReleaseReference(bool check_object_xref) {
     }
 
     ACCESS_LOCK_GUARD(m_access_lock);
-
-    bool unsubscribed = _reference->Unsubscribe(this);
-    assert(unsubscribed && "Could not unsubscribe"); UNUSED(unsubscribed);
 
     if (check_object_xref) {
         auto weak_ref_entry = _reference->GetXrefEntry();

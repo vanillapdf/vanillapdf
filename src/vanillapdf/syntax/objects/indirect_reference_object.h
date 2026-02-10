@@ -43,7 +43,6 @@ public:
     bool IsReferenceInitialized(void) const;
 
     virtual size_t Hash() const override;
-    virtual void OnChanged() override;
 
     virtual IndirectReferenceObject* Clone(void) const override;
 

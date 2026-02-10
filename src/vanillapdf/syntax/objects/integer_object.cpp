@@ -15,7 +15,6 @@ IntegerObject::IntegerObject() {
 
 IntegerObject::IntegerObject(NumericObjectBackendPtr value) {
     m_value = value;
-    m_value->Subscribe(this);
 }
 
 bool IntegerObject::Equals(ObjectPtr other) const {

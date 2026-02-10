@@ -23,9 +23,6 @@ class ExceptionBase;
 class GeneralException;
 class ConversionException;
 
-class IModifyObserver;
-class IModifyObservable;
-
 class IUnknown;
 class WeakReferenceCounter;
 

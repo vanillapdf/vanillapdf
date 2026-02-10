@@ -201,7 +201,6 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/license_info.cpp
     utils/log.cpp
     utils/misc_utils.cpp
-    utils/modify_observer_interface.cpp
     utils/pkcs12_key.cpp
     utils/resource.cpp
     utils/signature_verification_result.cpp
@@ -209,6 +208,7 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/time_utils.cpp
     utils/trusted_certificate_store.cpp
     utils/unknown_interface.cpp
+    utils/versionable.cpp
     utils/windows_utils.cpp
     utils/zlib_wrapper.cpp
 
@@ -357,8 +357,8 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/log.h
     utils/math_utils.h
     utils/message_digest_algorithm.h
-    utils/modify_observer_interface.h
     utils/observable_interface.h
+    utils/versionable.h
     utils/misc_utils.h
     utils/pdf_version.h
     utils/pkcs12_key.h
