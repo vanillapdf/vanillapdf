@@ -40,6 +40,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     signature_verifier_test.cpp
     thread_safety_test.cpp
     name_dictionary_test.cpp
+    io_strategy_test.cpp
 )
 
 set(VANILLAPDF_UNITTEST_HEADERS

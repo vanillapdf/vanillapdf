@@ -17,6 +17,7 @@
 #include "utils/streams/input_stream.h"
 #include "utils/streams/output_stream.h"
 #include "utils/streams/input_output_stream.h"
+#include "utils/streams/file_stream_input_output_stream.h"
 #include "utils/streams/stream_utils.h"
 
 #include "utils/misc_utils.h"
@@ -29,14 +30,30 @@ namespace vanillapdf {
 namespace syntax {
 
 FilePtr File::Open(const std::string& path) {
+    return Open(path, IOStrategy::Undefined);
+}
+
+FilePtr File::Open(const std::string& path, IOStrategy strategy) {
 
     std::ios_base::openmode flags = static_cast<std::ios_base::openmode>(0);
     flags |= std::ios_base::in;
     flags |= std::ios_base::binary;
     flags |= std::ios_base::ate;
 
-    auto input_stream = GetFilestream(path, flags);
-    return FilePtr(pdf_new File(input_stream, path));
+    switch (strategy) {
+        case IOStrategy::FileStream: {
+            auto input_stream = GetFilestreamFileStream(path, flags);
+            return FilePtr(pdf_new File(input_stream, path));
+        }
+        case IOStrategy::Memory:
+        case IOStrategy::MemoryMapped:
+            throw NotSupportedException("IOStrategy not yet supported");
+        case IOStrategy::Undefined:
+        default: {
+            auto input_stream = GetFilestream(path, flags);
+            return FilePtr(pdf_new File(input_stream, path));
+        }
+    }
 }
 
 FilePtr File::OpenStream(IInputOutputStreamPtr stream, const std::string& name) {
@@ -44,6 +61,10 @@ FilePtr File::OpenStream(IInputOutputStreamPtr stream, const std::string& name) 
 }
 
 FilePtr File::Create(const std::string& path) {
+    return Create(path, IOStrategy::Undefined);
+}
+
+FilePtr File::Create(const std::string& path, IOStrategy strategy) {
 
     std::ios_base::openmode flags = static_cast<std::ios_base::openmode>(0);
     flags |= std::ios_base::in;
@@ -51,9 +72,20 @@ FilePtr File::Create(const std::string& path) {
     flags |= std::ios_base::binary;
     flags |= std::ios_base::trunc;
 
-    auto input_stream = GetFilestream(path, flags);
-
-    return CreateStream(input_stream, path);
+    switch (strategy) {
+        case IOStrategy::FileStream: {
+            auto input_stream = GetFilestreamFileStream(path, flags);
+            return CreateStream(input_stream, path);
+        }
+        case IOStrategy::Memory:
+        case IOStrategy::MemoryMapped:
+            throw NotSupportedException("IOStrategy not yet supported");
+        case IOStrategy::Undefined:
+        default: {
+            auto input_stream = GetFilestream(path, flags);
+            return CreateStream(input_stream, path);
+        }
+    }
 }
 
 FilePtr File::CreateStream(IInputOutputStreamPtr stream, const std::string& name) {
@@ -100,6 +132,55 @@ IInputOutputStreamPtr File::GetFilestream(const std::string& path, std::ios_base
     //}
 
     return make_deferred<InputOutputStream>(input_file);
+}
+
+IInputOutputStreamPtr File::GetFilestreamFileStream(const std::string& path, std::ios_base::openmode mode) {
+
+    // Map fstream openmode to fopen mode string
+    const char* fopen_mode = nullptr;
+
+    // in|binary|ate → "rb" (read binary, then seek to end after open)
+    if ((mode & std::ios_base::in) && !(mode & std::ios_base::out) && (mode & std::ios_base::binary)) {
+        fopen_mode = "rb";
+    }
+    // in|out|binary|trunc → "w+b" (read/write binary, truncate)
+    else if ((mode & std::ios_base::in) && (mode & std::ios_base::out) && (mode & std::ios_base::binary) && (mode & std::ios_base::trunc)) {
+        fopen_mode = "w+b";
+    }
+    // in|out|binary → "r+b" (read/write binary, no truncate)
+    else if ((mode & std::ios_base::in) && (mode & std::ios_base::out) && (mode & std::ios_base::binary)) {
+        fopen_mode = "r+b";
+    }
+    else {
+        LOG_ERROR_AND_THROW_GENERAL("Unsupported fopen mode mapping for path: {}", path);
+    }
+
+    FILE* raw_fp = nullptr;
+
+#if _WIN32
+    auto wide_path = WindowsUtils::MultiByteToWideChar(path);
+    auto wide_mode = WindowsUtils::MultiByteToWideChar(fopen_mode);
+    raw_fp = _wfopen(wide_path.c_str(), wide_mode.c_str());
+#else
+    raw_fp = std::fopen(path.c_str(), fopen_mode);
+#endif
+
+    if (raw_fp == nullptr) {
+        LOG_ERROR_AND_THROW_GENERAL("Could not open file: {}, errno: {}", path, errno);
+    }
+
+    auto file_ptr = std::shared_ptr<FILE>(raw_fp, std::fclose);
+
+    // Handle ate (at-end) flag: seek to end after opening
+    if (mode & std::ios_base::ate) {
+#if _WIN32
+        _fseeki64(raw_fp, 0, SEEK_END);
+#else
+        fseeko(raw_fp, 0, SEEK_END);
+#endif
+    }
+
+    return make_deferred<FileStreamInputOutputStream>(file_ptr);
 }
 
 File::File(IInputOutputStreamPtr stream, const std::string& path) : _full_path(path), _input(stream) {

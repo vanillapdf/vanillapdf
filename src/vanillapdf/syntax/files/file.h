@@ -10,6 +10,7 @@
 #include "utils/streams/input_stream_interface.h"
 #include "utils/streams/output_stream_interface.h"
 #include "utils/streams/input_output_stream_interface.h"
+#include "utils/streams/io_strategy.h"
 
 #include <ios>
 #include <vector>
@@ -22,11 +23,14 @@ class File : public IUnknown, public IWeakReferenceable<File> {
 public:
     // Filesystem
     static FilePtr Open(const std::string& path);
+    static FilePtr Open(const std::string& path, IOStrategy strategy);
     static FilePtr Create(const std::string& path);
+    static FilePtr Create(const std::string& path, IOStrategy strategy);
 
     static FilePtr OpenStream(IInputOutputStreamPtr stream, const std::string& name);
     static FilePtr CreateStream(IInputOutputStreamPtr stream, const std::string& name);
     static IInputOutputStreamPtr GetFilestream(const std::string& path, std::ios_base::openmode mode);
+    static IInputOutputStreamPtr GetFilestreamFileStream(const std::string& path, std::ios_base::openmode mode);
 
     BufferPtr GetByteRange(types::stream_size begin, types::size_type length);
     IInputStreamPtr GetByteRangeStream(types::stream_size begin, types::size_type length);

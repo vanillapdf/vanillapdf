@@ -90,6 +90,7 @@
 #include "vanillapdf/utils/c_message_digest_algorithm.h"
 #include "vanillapdf/utils/c_name_constants.h"
 
+#include "vanillapdf/utils/c_io_strategy.h"
 #include "vanillapdf/utils/c_input_stream.h"
 #include "vanillapdf/utils/c_output_stream.h"
 #include "vanillapdf/utils/c_memory_buffer_output_stream.h"

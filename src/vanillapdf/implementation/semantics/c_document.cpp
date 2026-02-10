@@ -2,11 +2,22 @@
 #include "semantics/objects/document.h"
 
 #include "vanillapdf/semantics/c_document.h"
+#include "vanillapdf/utils/c_io_strategy.h"
 #include "implementation/c_helper.h"
 
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
+
+static IOStrategy ConvertIOStrategy(IOStrategyType strategy) {
+    switch (strategy) {
+        case IOStrategy_Undefined: return IOStrategy::Undefined;
+        case IOStrategy_Memory: return IOStrategy::Memory;
+        case IOStrategy_MemoryMapped: return IOStrategy::MemoryMapped;
+        case IOStrategy_FileStream: return IOStrategy::FileStream;
+        default: return IOStrategy::Undefined;
+    }
+}
 
 VANILLAPDF_API error_type CALLING_CONVENTION Document_Open(string_type filename, DocumentHandle** result)
 {
@@ -17,6 +28,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_Open(string_type filename,
     {
         std::string name(filename);
         DocumentPtr doc = Document::Open(name);
+        auto ptr = doc.AddRefGet();
+        *result = reinterpret_cast<DocumentHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Document_OpenWithStrategy(string_type filename, IOStrategyType strategy, DocumentHandle** result)
+{
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        std::string name(filename);
+        DocumentPtr doc = Document::Open(name, ConvertIOStrategy(strategy));
         auto ptr = doc.AddRefGet();
         *result = reinterpret_cast<DocumentHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -43,6 +69,19 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_Create(string_type filenam
     try {
         std::string name(filename);
         DocumentPtr doc = Document::Create(name);
+        auto ptr = doc.AddRefGet();
+        *result = reinterpret_cast<DocumentHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Document_CreateWithStrategy(string_type filename, IOStrategyType strategy, DocumentHandle** result) {
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        std::string name(filename);
+        DocumentPtr doc = Document::Create(name, ConvertIOStrategy(strategy));
         auto ptr = doc.AddRefGet();
         *result = reinterpret_cast<DocumentHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

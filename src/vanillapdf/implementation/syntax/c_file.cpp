@@ -4,10 +4,21 @@
 #include "syntax/files/xref_chain.h"
 
 #include "vanillapdf/syntax/c_file.h"
+#include "vanillapdf/utils/c_io_strategy.h"
 #include "implementation/c_helper.h"
 
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
+
+static IOStrategy ConvertIOStrategy(IOStrategyType strategy) {
+    switch (strategy) {
+        case IOStrategy_Undefined: return IOStrategy::Undefined;
+        case IOStrategy_Memory: return IOStrategy::Memory;
+        case IOStrategy_MemoryMapped: return IOStrategy::MemoryMapped;
+        case IOStrategy_FileStream: return IOStrategy::FileStream;
+        default: return IOStrategy::Undefined;
+    }
+}
 
 VANILLAPDF_API error_type CALLING_CONVENTION File_Open(string_type filename, FileHandle** result)
 {
@@ -17,6 +28,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_Open(string_type filename, Fil
     try
     {
         FilePtr file = File::Open(filename);
+        auto ptr = file.AddRefGet();
+        *result = reinterpret_cast<FileHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION File_OpenWithStrategy(string_type filename, IOStrategyType strategy, FileHandle** result)
+{
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        FilePtr file = File::Open(filename, ConvertIOStrategy(strategy));
         auto ptr = file.AddRefGet();
         *result = reinterpret_cast<FileHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -46,6 +71,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_Create(string_type filename, F
     try
     {
         FilePtr file = File::Create(filename);
+        auto ptr = file.AddRefGet();
+        *result = reinterpret_cast<FileHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION File_CreateWithStrategy(string_type filename, IOStrategyType strategy, FileHandle** result)
+{
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(filename);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        FilePtr file = File::Create(filename, ConvertIOStrategy(strategy));
         auto ptr = file.AddRefGet();
         *result = reinterpret_cast<FileHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
