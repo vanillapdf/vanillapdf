@@ -4,7 +4,7 @@
     "description": "FetchContent integration test with optional dependencies for faster builds",
     "dependencies": [
         "spdlog",
-        "nlohmann-json"
+        "fmt"
     ],
     "features": {
         "encryption": {

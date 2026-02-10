@@ -1,6 +1,7 @@
 #include "unittest.h"
 #include "handle_guard.h"
 
+#ifdef VANILLAPDF_ENABLE_LICENSING
 static const char UNIT_TEST_LICENSE[] = R"({
   "version": "1.0",
   "data": {
@@ -15,6 +16,7 @@ static const char UNIT_TEST_LICENSE[] = R"({
     "-----BEGIN CERTIFICATE-----\r\nMIIDEzCCAfugAwIBAgIBATANBgkqhkiG9w0BAQ0FADAiMSAwHgYDVQQDExdWYW5pbGxhLlBERiBM\r\nYWJzIG1hc3RlcjAgFw0xODA0MTEyMTI5MDBaGA8yMTE4MDQxMTIxMjkwMFowIjEgMB4GA1UEAxMX\r\nVmFuaWxsYS5QREYgTGFicyBtYXN0ZXIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC8\r\n9467IYqcH1omPml0GcQr4KWfTH88885g/+TiJBTc5K3LpZyqpm18stIltqrnFOxiHAALG5j4+0/0\r\n9qs+1N3Q4xoCykyAv1YbtrXaPTS/kx2RE7SsdtLVh0AzpJTxTmcz0zQ0ebubFEPI4JuGdayYf/Zg\r\npfy+x5iKmMypRw2gtZooA6Ffzb6CIBxWxkRgRY0RSXaJVBP3xRt0i6MHWrXZ1A0DnY6HzIRUgH4h\r\nNk/Cpstthj4AAGZq0hTxd16MNIstOt55n2ljSX5PSrh5j4RlwdwBcBbBW5S+sMVWYOBBkjfxYY0c\r\nzdiFqLe7g0NtOCeQdkfNhwVALrG9Gd+0R3/FAgMBAAGjUjBQMA8GA1UdEwEB/wQFMAMBAf8wHQYD\r\nVR0OBBYEFNklCDo8+0G8TL7MH06KyPkxrMWRMAsGA1UdDwQEAwIBBjARBglghkgBhvhCAQEEBAMC\r\nAAcwDQYJKoZIhvcNAQENBQADggEBALVvk/7OvFXNoRekMxg+THcvNcxEtclGPAXms0jj/J0ESH6+\r\ndBu78nUBpRs2QBdormWIGJVwZ4BAzlVvAe0leQquGo4I4xeLr7y9UV3m85a8jAOfgwSJnATmFIwL\r\nv11ScvqKn/+uN16c+U/OBw+wX4AjBzGYsECD83xdmq10AGqd+vYCOI3Ku2KEMLkQnwALkT188Q4/\r\nBQwRbFn4+aZVHyf8tYY+YvtPZ/nb9uoxS5lVKEOTg5VjW4qlS4ZaTinPuxNXRGc1oV6+OO92R6BY\r\n0JPEkWRRMbJvYsxWH/JdGIaySmS41FKnqEaO0QssBKjVg6B0kKPUNG0YApkdFPQBDLY=\r\n-----END CERTIFICATE-----\r\n"
   ]
 })";
+#endif // VANILLAPDF_ENABLE_LICENSING
 
 TestEnvironment::~TestEnvironment() {
 
@@ -24,6 +26,7 @@ void TestEnvironment::SetUp() {
 
     ASSERT_EQ(MiscUtils_InitializeOpenSSL(), VANILLAPDF_ERROR_SUCCESS);
 
+#ifdef VANILLAPDF_ENABLE_LICENSING
     HandleGuard<BufferHandle, Buffer_Release> license_buffer;
     boolean_type is_valid = VANILLAPDF_RV_FALSE;
 
@@ -33,6 +36,7 @@ void TestEnvironment::SetUp() {
     ASSERT_EQ(LicenseInfo_SetLicenseBuffer(license_buffer), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(LicenseInfo_IsValid(&is_valid), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(is_valid, VANILLAPDF_RV_TRUE);
+#endif // VANILLAPDF_ENABLE_LICENSING
 }
 
 void TestEnvironment::TearDown() {
