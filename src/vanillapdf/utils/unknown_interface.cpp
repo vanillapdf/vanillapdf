@@ -7,9 +7,9 @@
 
 namespace vanillapdf {
 
-std::atomic<int64_t> IUnknown::s_active_object_count{0};
-std::atomic<int64_t> IUnknown::s_peak_object_count{0};
-std::atomic<int64_t> IUnknown::s_total_objects_created{0};
+std::atomic<int64_t> IUnknown::s_active_object_count = 0;
+std::atomic<int64_t> IUnknown::s_peak_object_count = 0;
+std::atomic<int64_t> IUnknown::s_total_objects_created = 0;
 
 WeakReferenceCounter::WeakReferenceCounter() noexcept : m_active(true) {
 }
@@ -23,12 +23,12 @@ void WeakReferenceCounter::Deactivate() noexcept {
 }
 
 IUnknown::~IUnknown() {
-    s_active_object_count--;
+    s_active_object_count -= 1;
 }
 
 IUnknown::IUnknown() noexcept : m_ref_counter(0) {
     auto current = ++s_active_object_count;
-    s_total_objects_created++;
+    s_total_objects_created += 1;
 
     // Update peak using compare-exchange loop
     auto peak = s_peak_object_count.load();
@@ -38,7 +38,7 @@ IUnknown::IUnknown() noexcept : m_ref_counter(0) {
 
 IUnknown::IUnknown(const IUnknown&) noexcept : m_ref_counter(0) {
     auto current = ++s_active_object_count;
-    s_total_objects_created++;
+    s_total_objects_created += 1;
 
     auto peak = s_peak_object_count.load();
     while (current > peak && !s_peak_object_count.compare_exchange_weak(peak, current)) {
