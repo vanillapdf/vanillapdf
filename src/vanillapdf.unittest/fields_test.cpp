@@ -115,11 +115,11 @@ TEST(Field, GetAndSetFieldFlags) {
     ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Initially missing
-    integer_type flags = 0;
+    FieldFlags flags = FieldFlags_None;
     ASSERT_EQ(Field_GetFieldFlags(field, &flags), VANILLAPDF_ERROR_OBJECT_MISSING);
 
     // Set flags
-    ASSERT_EQ(Field_SetFieldFlags(field, FieldFlags_ReadOnly | FieldFlags_Required), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Field_SetFieldFlags(field, static_cast<FieldFlags>(FieldFlags_ReadOnly | FieldFlags_Required)), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back
     ASSERT_EQ(Field_GetFieldFlags(field, &flags), VANILLAPDF_ERROR_SUCCESS);
@@ -136,7 +136,7 @@ TEST(Field, SetFieldFlagsOverwrite) {
     HandleGuard<FieldHandle, Field_Release> field;
     ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    integer_type flags = 0;
+    FieldFlags flags = FieldFlags_None;
     ASSERT_EQ(Field_GetFieldFlags(field, &flags), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(flags, FieldFlags_ReadOnly);
 
@@ -163,8 +163,10 @@ TEST(TextField, GetAndSetValue) {
     ASSERT_EQ(TextField_GetValue(text_field, value.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 
     // Set value
-    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> new_value;
-    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("John Doe", new_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> new_literal;
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("John Doe", new_literal.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<StringObjectHandle, StringObject_Release> new_value;
+    ASSERT_EQ(LiteralStringObject_ToStringObject(new_literal, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextField_SetValue(text_field, new_value), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back
@@ -214,9 +216,12 @@ TEST(TextField, GetMaxLength) {
     HandleGuard<TextFieldHandle, TextField_Release> text_field;
     ASSERT_EQ(TextField_FromField(field, text_field.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    integer_type max_len = 0;
-    ASSERT_EQ(TextField_GetMaxLength(text_field, &max_len), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(max_len, 50);
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> max_len;
+    ASSERT_EQ(TextField_GetMaxLength(text_field, max_len.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    bigint_type max_len_value = 0;
+    ASSERT_EQ(IntegerObject_GetIntegerValue(max_len, &max_len_value), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(max_len_value, 50);
 }
 
 TEST(TextField, SetValueOverwrite) {
@@ -231,8 +236,10 @@ TEST(TextField, SetValueOverwrite) {
     ASSERT_EQ(TextField_FromField(field, text_field.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Overwrite existing value
-    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> new_value;
-    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("new value", new_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> new_literal;
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("new value", new_literal.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<StringObjectHandle, StringObject_Release> new_value;
+    ASSERT_EQ(LiteralStringObject_ToStringObject(new_literal, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextField_SetValue(text_field, new_value), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back
@@ -312,8 +319,10 @@ TEST(ChoiceField, GetAndSetValue) {
     ASSERT_EQ(ChoiceField_GetValue(choice_field, value.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 
     // Set value
-    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> new_value;
-    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Option B", new_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> new_literal;
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Option B", new_literal.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<StringObjectHandle, StringObject_Release> new_value;
+    ASSERT_EQ(LiteralStringObject_ToStringObject(new_literal, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(ChoiceField_SetValue(choice_field, new_value), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back

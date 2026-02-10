@@ -76,7 +76,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateName(FieldHandle*
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Field_GetFieldFlags(FieldHandle* handle, integer_type* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetFieldFlags(FieldHandle* handle, FieldFlags* result) {
     Field* obj = reinterpret_cast<Field*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
@@ -85,17 +85,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetFieldFlags(FieldHandle* ha
         types::big_int flags;
         bool contains = obj->GetFieldFlags(flags);
         if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
-        *result = static_cast<integer_type>(flags);
+        *result = static_cast<FieldFlags>(flags);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION Field_SetFieldFlags(FieldHandle* handle, integer_type value) {
+VANILLAPDF_API error_type CALLING_CONVENTION Field_SetFieldFlags(FieldHandle* handle, FieldFlags value) {
     Field* obj = reinterpret_cast<Field*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
     try {
-        obj->SetFieldFlags(value);
+        obj->SetFieldFlags(static_cast<types::big_int>(value));
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -142,9 +142,9 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetValue(TextFieldHandle*
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION TextField_SetValue(TextFieldHandle* handle, LiteralStringObjectHandle* value) {
+VANILLAPDF_API error_type CALLING_CONVENTION TextField_SetValue(TextFieldHandle* handle, StringObjectHandle* value) {
     TextField* obj = reinterpret_cast<TextField*>(handle);
-    LiteralStringObject* str = reinterpret_cast<LiteralStringObject*>(value);
+    StringObjectBase* str = reinterpret_cast<StringObjectBase*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(str);
 
@@ -169,16 +169,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetDefaultValue(TextField
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetMaxLength(TextFieldHandle* handle, integer_type* result) {
+VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetMaxLength(TextFieldHandle* handle, IntegerObjectHandle** result) {
     TextField* obj = reinterpret_cast<TextField*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        types::big_int max_len;
-        bool contains = obj->GetMaxLength(max_len);
+        OutputIntegerObjectPtr direct;
+        bool contains = obj->GetMaxLength(direct);
         if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
-        *result = static_cast<integer_type>(max_len);
+        auto ptr = direct.AddRefGet();
+        *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -198,9 +199,9 @@ VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetValue(ChoiceFieldHan
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_SetValue(ChoiceFieldHandle* handle, LiteralStringObjectHandle* value) {
+VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_SetValue(ChoiceFieldHandle* handle, StringObjectHandle* value) {
     ChoiceField* obj = reinterpret_cast<ChoiceField*>(handle);
-    LiteralStringObject* str = reinterpret_cast<LiteralStringObject*>(value);
+    StringObjectBase* str = reinterpret_cast<StringObjectBase*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(str);
 

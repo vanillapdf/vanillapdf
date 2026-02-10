@@ -1844,7 +1844,7 @@ error_type process_field(FieldHandle* obj, int nested) {
     ChoiceFieldHandle* choice_field = NULL;
     StringObjectHandle* field_name = NULL;
     StringObjectHandle* alt_name = NULL;
-    integer_type flags = 0;
+    FieldFlags flags = FieldFlags_None;
 
     print_spaces(nested);
     print_text("Field begin\n");
@@ -1924,7 +1924,7 @@ error_type process_button_field(ButtonFieldHandle* obj, int nested) {
 error_type process_text_field(TextFieldHandle* obj, int nested) {
     StringObjectHandle* value = NULL;
     StringObjectHandle* default_value = NULL;
-    integer_type max_length = 0;
+    IntegerObjectHandle* max_length = NULL;
 
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(TextField_GetValue(obj, &value),
         process_string(value, nested + 1),
@@ -1934,8 +1934,9 @@ error_type process_text_field(TextFieldHandle* obj, int nested) {
         process_string(default_value, nested + 1),
         StringObject_Release(default_value));
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(TextField_GetMaxLength(obj, &max_length),
-        VANILLAPDF_TEST_ERROR_SUCCESS);
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(TextField_GetMaxLength(obj, &max_length),
+        VANILLAPDF_TEST_ERROR_SUCCESS,
+        IntegerObject_Release(max_length));
 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }

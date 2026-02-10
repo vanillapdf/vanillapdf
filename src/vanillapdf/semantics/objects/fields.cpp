@@ -107,7 +107,7 @@ bool TextField::GetValue(syntax::OutputStringObjectPtr& result) const {
     return true;
 }
 
-void TextField::SetValue(syntax::LiteralStringObjectPtr value) {
+void TextField::SetValue(syntax::StringObjectPtr value) {
     if (_obj->Contains(constant::Name::V)) {
         bool removed = _obj->Remove(constant::Name::V);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
@@ -124,13 +124,12 @@ bool TextField::GetDefaultValue(syntax::OutputStringObjectPtr& result) const {
     return true;
 }
 
-bool TextField::GetMaxLength(types::big_int& result) const {
+bool TextField::GetMaxLength(syntax::OutputIntegerObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::MaxLen)) {
         return false;
     }
 
-    auto max_len = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::MaxLen);
-    result = max_len->GetIntegerValue();
+    result = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::MaxLen);
     return true;
 }
 
@@ -145,7 +144,7 @@ bool ChoiceField::GetValue(syntax::OutputStringObjectPtr& result) const {
     return true;
 }
 
-void ChoiceField::SetValue(syntax::LiteralStringObjectPtr value) {
+void ChoiceField::SetValue(syntax::StringObjectPtr value) {
     if (_obj->Contains(constant::Name::V)) {
         bool removed = _obj->Remove(constant::Name::V);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);

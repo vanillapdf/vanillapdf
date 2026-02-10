@@ -59,9 +59,9 @@ public:
     virtual Field::Type GetFieldType() const noexcept override { return Field::Type::Text; }
 
     bool GetValue(syntax::OutputStringObjectPtr& result) const;
-    void SetValue(syntax::LiteralStringObjectPtr value);
+    void SetValue(syntax::StringObjectPtr value);
     bool GetDefaultValue(syntax::OutputStringObjectPtr& result) const;
-    bool GetMaxLength(types::big_int& result) const;
+    bool GetMaxLength(syntax::OutputIntegerObjectPtr& result) const;
 };
 
 class ChoiceField : public Field {
@@ -70,7 +70,7 @@ public:
     virtual Field::Type GetFieldType() const noexcept override { return Field::Type::Choice; }
 
     bool GetValue(syntax::OutputStringObjectPtr& result) const;
-    void SetValue(syntax::LiteralStringObjectPtr value);
+    void SetValue(syntax::StringObjectPtr value);
     bool GetOptionCount(types::size_type& result) const;
     bool GetOptionAt(types::size_type index, syntax::OutputContainableObjectPtr& result) const;
 };

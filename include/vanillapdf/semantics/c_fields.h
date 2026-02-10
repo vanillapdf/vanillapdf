@@ -217,13 +217,13 @@ extern "C"
     * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
     * \see FieldFlags
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetFieldFlags(FieldHandle* handle, integer_type* result);
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetFieldFlags(FieldHandle* handle, FieldFlags* result);
 
     /**
     * \brief Set the field flags (/Ff entry).
     * \see FieldFlags
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Field_SetFieldFlags(FieldHandle* handle, integer_type value);
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_SetFieldFlags(FieldHandle* handle, FieldFlags value);
 
     /**
     * \brief Reinterpret current object as \ref ButtonFieldHandle.
@@ -313,7 +313,7 @@ extern "C"
     /**
     * \brief Set the text field value (/V entry).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION TextField_SetValue(TextFieldHandle* handle, LiteralStringObjectHandle* value);
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_SetValue(TextFieldHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Get the default value (/DV entry).
@@ -322,8 +322,9 @@ extern "C"
 
     /**
     * \brief Get the maximum length of the text field (/MaxLen entry).
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetMaxLength(TextFieldHandle* handle, integer_type* result);
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetMaxLength(TextFieldHandle* handle, IntegerObjectHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref FieldHandle
@@ -355,7 +356,7 @@ extern "C"
     /**
     * \brief Set the selected value (/V entry).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_SetValue(ChoiceFieldHandle* handle, LiteralStringObjectHandle* value);
+    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_SetValue(ChoiceFieldHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Get the number of available options (/Opt entry).
