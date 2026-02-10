@@ -202,19 +202,19 @@ extern "C"
 
     /**
     * \brief Get the partial field name (/T entry).
-    * \returns \ref CYCLOPDF_ERROR_OBJECT_MISSING if the entry is not present.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetName(FieldHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Get the alternate field name (/TU entry), used as tooltip text.
-    * \returns \ref CYCLOPDF_ERROR_OBJECT_MISSING if the entry is not present.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateName(FieldHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Get the field flags (/Ff entry).
-    * \returns \ref CYCLOPDF_ERROR_OBJECT_MISSING if the entry is not present.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
     * \see FieldFlags
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetFieldFlags(FieldHandle* handle, integer_type* result);
@@ -363,9 +363,13 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionCount(ChoiceFieldHandle* handle, size_type* result);
 
     /**
-    * \brief Get the display text of an option at the given index.
+    * \brief Get the option at the given index.
+    *
+    * Each element is either a text string (serving as both export value and display text)
+    * or a two-element array where the first element is the export value
+    * and the second element is the display text (Table 231).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionAt(ChoiceFieldHandle* handle, size_type index, StringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionAt(ChoiceFieldHandle* handle, size_type index, ObjectHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref FieldHandle

@@ -72,7 +72,7 @@ public:
     bool GetValue(syntax::OutputStringObjectPtr& result) const;
     void SetValue(syntax::LiteralStringObjectPtr value);
     bool GetOptionCount(types::size_type& result) const;
-    bool GetOptionAt(types::size_type index, syntax::OutputStringObjectPtr& result) const;
+    bool GetOptionAt(types::size_type index, syntax::OutputContainableObjectPtr& result) const;
 };
 
 class SignatureField : public Field {

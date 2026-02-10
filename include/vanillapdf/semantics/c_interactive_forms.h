@@ -47,7 +47,7 @@ extern "C"
     /**
     * \brief
     * Set the NeedAppearances flag.
-    * Set to \ref CYCLOPDF_RV_TRUE to instruct the viewer to regenerate all field appearances from their values.
+    * Set to \ref VANILLAPDF_RV_TRUE to instruct the viewer to regenerate all field appearances from their values.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetNeedAppearances(InteractiveFormHandle* handle, boolean_type value);
 

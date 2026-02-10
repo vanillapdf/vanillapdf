@@ -70,14 +70,11 @@ bool Field::GetFieldFlags(types::big_int& result) const {
 
 void Field::SetFieldFlags(types::big_int value) {
     if (_obj->Contains(constant::Name::Ff)) {
-        auto flags = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::Ff);
-        flags->SetValue(value);
-    } else {
-        auto flags = make_deferred<syntax::IntegerObject>(value);
-        flags->SetFile(_obj->GetFile());
-        flags->SetInitialized();
-        _obj->Insert(constant::Name::Ff, flags);
+        bool removed = _obj->Remove(constant::Name::Ff);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
     }
+    auto flags = make_deferred<syntax::IntegerObject>(value);
+    _obj->Insert(constant::Name::Ff, flags);
 }
 
 // ButtonField properties
@@ -166,29 +163,14 @@ bool ChoiceField::GetOptionCount(types::size_type& result) const {
     return true;
 }
 
-bool ChoiceField::GetOptionAt(types::size_type index, syntax::OutputStringObjectPtr& result) const {
+bool ChoiceField::GetOptionAt(types::size_type index, syntax::OutputContainableObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::Opt)) {
         return false;
     }
 
     auto opts = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Opt);
-    auto item = opts->GetValue(index);
-
-    // Options can be either a string directly or a 2-element array [export_value, display_text]
-    if (syntax::ObjectUtils::IsType<syntax::StringObjectPtr>(item)) {
-        result = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(item);
-        return true;
-    }
-
-    if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(item)) {
-        auto pair = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(item);
-        if (pair->GetSize() >= 2) {
-            result = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(pair->GetValue(1));
-            return true;
-        }
-    }
-
-    return false;
+    result = opts->GetValue(index);
+    return true;
 }
 
 // SignatureField properties

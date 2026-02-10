@@ -224,17 +224,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionCount(ChoiceFi
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionAt(ChoiceFieldHandle* handle, size_type index, StringObjectHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionAt(ChoiceFieldHandle* handle, size_type index, ObjectHandle** result) {
     ChoiceField* obj = reinterpret_cast<ChoiceField*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        OutputStringObjectPtr direct;
+        OutputContainableObjectPtr direct;
         bool contains = obj->GetOptionAt(index, direct);
         if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = direct.AddRefGet();
-        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

@@ -43,14 +43,11 @@ bool InteractiveForm::GetNeedAppearances(bool& result) const {
 
 void InteractiveForm::SetNeedAppearances(bool value) {
     if (_obj->Contains(constant::Name::NeedAppearances)) {
-        auto existing = _obj->FindAs<syntax::BooleanObjectPtr>(constant::Name::NeedAppearances);
-        existing->SetValue(value);
-    } else {
-        auto bool_obj = make_deferred<syntax::BooleanObject>(value);
-        bool_obj->SetFile(_obj->GetFile());
-        bool_obj->SetInitialized();
-        _obj->Insert(constant::Name::NeedAppearances, bool_obj);
+        bool removed = _obj->Remove(constant::Name::NeedAppearances);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
     }
+    auto bool_obj = make_deferred<syntax::BooleanObject>(value);
+    _obj->Insert(constant::Name::NeedAppearances, bool_obj);
 }
 
 FieldCollectionPtr InteractiveForm::CreateFields() {
