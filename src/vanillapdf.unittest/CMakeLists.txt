@@ -26,6 +26,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     annotations_creation_test.cpp
     byte_range_test.cpp
     catalog_test.cpp
+    character_map_test.cpp
     color_test.cpp
     date_test.cpp
     document_test.cpp

@@ -46,19 +46,17 @@ void CheckBaseFontRangeValue(BaseFontRangeHandle* font_range, const std::vector<
     }
 }
 
-TEST(BaseFontRange, IncrementMapping) {
-
-    HandleGuard<BaseFontRangeHandle, BaseFontRange_Release> font_range_ptr;
-    ASSERT_EQ(BaseFontRange_Create(font_range_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(font_range_ptr.get(), nullptr);
-
+void SetupBaseFontRange(HandleGuard<BaseFontRangeHandle, BaseFontRange_Release>& range,
+                        const char* low, const char* high, const char* dest) {
     HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> range_low_ptr;
     HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> range_high_ptr;
     HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> range_destination;
 
-    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("0001", range_low_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("0002", range_high_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("00FF", range_destination.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(BaseFontRange_Create(range.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString(low, range_low_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString(high, range_high_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString(dest, range_destination.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<StringObjectHandle, StringObject_Release> range_destination_str;
     HandleGuard<ObjectHandle, Object_Release> range_destination_obj;
@@ -66,14 +64,112 @@ TEST(BaseFontRange, IncrementMapping) {
     ASSERT_EQ(HexadecimalStringObject_ToStringObject(range_destination, range_destination_str.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(StringObject_ToObject(range_destination_str, range_destination_obj.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_EQ(BaseFontRange_SetRangeLow(font_range_ptr, range_low_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(BaseFontRange_SetRangeHigh(font_range_ptr, range_high_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(BaseFontRange_SetDestination(font_range_ptr, range_destination_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(BaseFontRange_SetRangeLow(range, range_low_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(BaseFontRange_SetRangeHigh(range, range_high_ptr), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(BaseFontRange_SetDestination(range, range_destination_obj), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(BaseFontRange, IncrementMapping) {
+
+    HandleGuard<BaseFontRangeHandle, BaseFontRange_Release> font_range_ptr;
+    SetupBaseFontRange(font_range_ptr, "0001", "0002", "00FF");
 
     // 0001 -> 00FF
     // 0002 -> 0100
     CheckBaseFontRangeValue(font_range_ptr, std::vector<char> { '\x00', '\x01' }, std::vector<char> { '\x00', '\xFF' });
     CheckBaseFontRangeValue(font_range_ptr, std::vector<char> { '\x00', '\x02' }, std::vector<char> { '\x01', '\x00' });
+}
+
+TEST(BaseFontRange, ContainsInRange) {
+    HandleGuard<BaseFontRangeHandle, BaseFontRange_Release> range;
+    SetupBaseFontRange(range, "0020", "007E", "0020");
+
+    // Key in range
+    HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> key_hex;
+    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("0041", key_hex.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<BufferHandle, Buffer_Release> key_buf;
+    ASSERT_EQ(HexadecimalStringObject_GetValue(key_hex, key_buf.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type result = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(BaseFontRange_Contains(range, key_buf, &result), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(result, VANILLAPDF_RV_TRUE);
+}
+
+TEST(BaseFontRange, ContainsOutOfRange) {
+    HandleGuard<BaseFontRangeHandle, BaseFontRange_Release> range;
+    SetupBaseFontRange(range, "0020", "007E", "0020");
+
+    // Key out of range
+    HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> key_hex;
+    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("00FF", key_hex.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<BufferHandle, Buffer_Release> key_buf;
+    ASSERT_EQ(HexadecimalStringObject_GetValue(key_hex, key_buf.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type result = VANILLAPDF_RV_TRUE;
+    ASSERT_EQ(BaseFontRange_Contains(range, key_buf, &result), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(result, VANILLAPDF_RV_FALSE);
+}
+
+TEST(BaseFontRange, ContainsBoundaryValues) {
+    HandleGuard<BaseFontRangeHandle, BaseFontRange_Release> range;
+    SetupBaseFontRange(range, "0020", "007E", "0020");
+
+    // Low boundary (inclusive)
+    HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> low_hex;
+    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("0020", low_hex.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<BufferHandle, Buffer_Release> low_buf;
+    ASSERT_EQ(HexadecimalStringObject_GetValue(low_hex, low_buf.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type low_result = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(BaseFontRange_Contains(range, low_buf, &low_result), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(low_result, VANILLAPDF_RV_TRUE);
+
+    // High boundary (inclusive)
+    HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> high_hex;
+    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("007E", high_hex.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<BufferHandle, Buffer_Release> high_buf;
+    ASSERT_EQ(HexadecimalStringObject_GetValue(high_hex, high_buf.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type high_result = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(BaseFontRange_Contains(range, high_buf, &high_result), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(high_result, VANILLAPDF_RV_TRUE);
+}
+
+TEST(BaseFontRange, ContainsDifferentByteWidth) {
+    HandleGuard<BaseFontRangeHandle, BaseFontRange_Release> range;
+    SetupBaseFontRange(range, "0020", "007E", "0020");
+
+    // 4-byte key against 2-byte range should not match
+    HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> key_hex;
+    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("00000041", key_hex.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<BufferHandle, Buffer_Release> key_buf;
+    ASSERT_EQ(HexadecimalStringObject_GetValue(key_hex, key_buf.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type result = VANILLAPDF_RV_TRUE;
+    ASSERT_EQ(BaseFontRange_Contains(range, key_buf, &result), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(result, VANILLAPDF_RV_FALSE);
+}
+
+TEST(BaseFontRange, GetMappedValueOutOfRange) {
+    HandleGuard<BaseFontRangeHandle, BaseFontRange_Release> range;
+    SetupBaseFontRange(range, "0020", "007E", "0020");
+
+    // Key out of range should fail
+    HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> key_hex;
+    ASSERT_EQ(HexadecimalStringObject_CreateFromEncodedString("00FF", key_hex.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<BufferHandle, Buffer_Release> key_buf;
+    ASSERT_EQ(HexadecimalStringObject_GetValue(key_hex, key_buf.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> result;
+    EXPECT_NE(BaseFontRange_GetMappedValue(range, key_buf, result.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(BaseFontRange, GetMappedValue4Byte) {
+    HandleGuard<BaseFontRangeHandle, BaseFontRange_Release> range;
+    SetupBaseFontRange(range, "00004E00", "00009FFF", "00004E00");
+
+    // Identity mapping: 00006F22 -> 00006F22
+    CheckBaseFontRangeValue(range, std::vector<char> { '\x00', '\x00', '\x6F', '\x22' }, std::vector<char> { '\x00', '\x00', '\x6F', '\x22' });
 }
 
 TEST(Rectangle, CreateRelease) {
