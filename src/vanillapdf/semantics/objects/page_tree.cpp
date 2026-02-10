@@ -42,7 +42,7 @@ types::size_type PageTree::PageCount(PageNodeBasePtr node) {
         return 1;
     }
 
-    throw NotSupportedException("Unknown page object type");
+    throw syntax::ParseException("Unknown page object type");
 }
 
 PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
@@ -206,7 +206,7 @@ types::size_type PageTree::UpdateKidsCount(PageNodeBasePtr node) {
         return kid_count;
     }
 
-    throw NotSupportedException("Unknown page object type");
+    throw syntax::ParseException("Unknown page object type");
 }
 
 ArrayObjectPtr<IndirectReferenceObjectPtr> PageTree::GetKidsInternal() {

@@ -3,6 +3,7 @@
 #include "semantics/objects/viewer_preferences.h"
 #include "semantics/utils/semantic_exceptions.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
@@ -105,7 +106,7 @@ bool ViewerPreferences::NonFullScreenPageMode(NonFullScreenPageModeType& result)
     } else if (name == constant::Name::UseOC) {
         result = NonFullScreenPageModeType::UseOC;
     } else {
-        throw NotSupportedException("Unknown page mode type: " + name->ToString());
+        throw syntax::ParseException("Unknown page mode type: " + name->ToString());
     }
 
     return true;
@@ -122,7 +123,7 @@ bool ViewerPreferences::Direction(ReadingOrderType& result) const {
     } else if (name == constant::Name::R2L) {
         result = ReadingOrderType::RightToLeft;
     } else {
-        throw NotSupportedException("Unknown reading order: " + name->ToString());
+        throw syntax::ParseException("Unknown reading order: " + name->ToString());
     }
 
     return true;
@@ -175,7 +176,7 @@ bool ViewerPreferences::PrintScaling(PrintScalingType& result) const {
     } else if (name == constant::Name::None) {
         result = PrintScalingType::None;
     } else {
-        throw NotSupportedException("Unknown print scaling: " + name->ToString());
+        throw syntax::ParseException("Unknown print scaling: " + name->ToString());
     }
 
     return true;
@@ -202,7 +203,7 @@ bool ViewerPreferences::Duplex(DuplexType& result) const {
         return true;
     }
 
-    throw NotSupportedException("Unknown duplex: " + name->ToString());
+    throw syntax::ParseException("Unknown duplex: " + name->ToString());
 }
 
 bool ViewerPreferences::PickTrayByPDFSize(syntax::BooleanObjectPtr& result) const {

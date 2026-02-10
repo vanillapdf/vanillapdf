@@ -348,7 +348,7 @@ void Document::FixDestinationPage(ObjectPtr cloned_page, PageObjectPtr other_pag
         || ObjectUtils::IsType<IntegerObjectPtr>(cloned_page));
     if (!ObjectUtils::IsType<IndirectReferenceObjectPtr>(cloned_page)
         && !ObjectUtils::IsType<IntegerObjectPtr>(cloned_page)) {
-        throw NotSupportedException("Unknown object type");
+        throw InvalidParameterException("Unknown object type");
     }
 
     OutputCatalogPtr original_catalog;
@@ -428,7 +428,7 @@ bool Document::IsDestinationReferencingPage(DestinationPtr destination, PageObje
         || ObjectUtils::IsType<IntegerObjectPtr>(destination_page_object));
     if (!ObjectUtils::IsType<IndirectReferenceObjectPtr>(destination_page_object)
         && !ObjectUtils::IsType<IntegerObjectPtr>(destination_page_object)) {
-        throw NotSupportedException("Unknown object type");
+        throw InvalidParameterException("Unknown object type");
     }
 
     if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(destination_page_object)) {

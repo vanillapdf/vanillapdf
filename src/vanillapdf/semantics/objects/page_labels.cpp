@@ -3,6 +3,7 @@
 #include "semantics/objects/page_labels.h"
 #include "semantics/utils/semantic_exceptions.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/objects/name_object.h"
 #include "syntax/utils/object_utils.h"
 #include "syntax/utils/name_constants.h"
@@ -45,7 +46,7 @@ bool PageLabel::Style(NumberingStyle& result) const {
     auto value = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::S);
     auto buf = value->GetValue();
     if (buf->size() != 1) {
-        throw NotSupportedException("Unknown numbering style" + buf->ToString());
+        throw syntax::ParseException("Unknown numbering style" + buf->ToString());
     }
 
     if (buf[0] != static_cast<char>(NumberingStyle::Decimal)
@@ -53,7 +54,7 @@ bool PageLabel::Style(NumberingStyle& result) const {
         && buf[0] != static_cast<char>(NumberingStyle::LowerRoman)
         && buf[0] != static_cast<char>(NumberingStyle::UpperLetters)
         && buf[0] != static_cast<char>(NumberingStyle::LowerLetters)) {
-        throw NotSupportedException("Unknown numbering style" + buf->ToString());
+        throw syntax::ParseException("Unknown numbering style" + buf->ToString());
     }
 
     result = static_cast<NumberingStyle>(buf[0]);

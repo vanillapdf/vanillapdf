@@ -1298,7 +1298,7 @@ void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
     case Version::PDF20:
         output->Write("2.0"); break;
     default:
-        throw NotSupportedException("Unknown PDF version: " + std::to_string(static_cast<int32_t>(version)));
+        throw InvalidParameterException("Unknown PDF version: " + std::to_string(static_cast<int32_t>(version)));
     }
 
     output->Write(WhiteSpace::LINE_FEED);

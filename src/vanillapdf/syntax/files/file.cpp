@@ -896,7 +896,7 @@ ObjectPtr File::GetIndirectObjectInternal(
         case XrefEntryBase::Usage::Free:
             return NullObject::GetInstance();
         default:
-            throw NotSupportedException("Unknown xref entry type: " + std::to_string(static_cast<int>(item->GetUsage())));
+            throw ParseException("Unknown xref entry type: " + std::to_string(static_cast<int>(item->GetUsage())));
     }
 }
 
