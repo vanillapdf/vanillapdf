@@ -38,6 +38,161 @@ FieldPtr Field::Create(syntax::DictionaryObjectPtr root) {
     LOG_ERROR_AND_THROW_GENERAL("Unknown field type: {}", type->ToString());
 }
 
+// Field base class properties
+
+bool Field::GetName(syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::T)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::T);
+    return true;
+}
+
+bool Field::GetAlternateName(syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::TU)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::TU);
+    return true;
+}
+
+bool Field::GetFieldFlags(types::big_int& result) const {
+    if (!_obj->Contains(constant::Name::Ff)) {
+        return false;
+    }
+
+    auto flags = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::Ff);
+    result = flags->GetIntegerValue();
+    return true;
+}
+
+void Field::SetFieldFlags(types::big_int value) {
+    if (_obj->Contains(constant::Name::Ff)) {
+        auto flags = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::Ff);
+        flags->SetValue(value);
+    } else {
+        auto flags = make_deferred<syntax::IntegerObject>(value);
+        flags->SetFile(_obj->GetFile());
+        flags->SetInitialized();
+        _obj->Insert(constant::Name::Ff, flags);
+    }
+}
+
+// ButtonField properties
+
+bool ButtonField::GetValue(syntax::OutputNameObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::V)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::V);
+    return true;
+}
+
+void ButtonField::SetValue(syntax::NameObjectPtr value) {
+    if (_obj->Contains(constant::Name::V)) {
+        bool removed = _obj->Remove(constant::Name::V);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::V, value);
+}
+
+// TextField properties
+
+bool TextField::GetValue(syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::V)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::V);
+    return true;
+}
+
+void TextField::SetValue(syntax::LiteralStringObjectPtr value) {
+    if (_obj->Contains(constant::Name::V)) {
+        bool removed = _obj->Remove(constant::Name::V);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::V, value);
+}
+
+bool TextField::GetDefaultValue(syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::DV)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::DV);
+    return true;
+}
+
+bool TextField::GetMaxLength(types::big_int& result) const {
+    if (!_obj->Contains(constant::Name::MaxLen)) {
+        return false;
+    }
+
+    auto max_len = _obj->FindAs<syntax::IntegerObjectPtr>(constant::Name::MaxLen);
+    result = max_len->GetIntegerValue();
+    return true;
+}
+
+// ChoiceField properties
+
+bool ChoiceField::GetValue(syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::V)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::V);
+    return true;
+}
+
+void ChoiceField::SetValue(syntax::LiteralStringObjectPtr value) {
+    if (_obj->Contains(constant::Name::V)) {
+        bool removed = _obj->Remove(constant::Name::V);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    _obj->Insert(constant::Name::V, value);
+}
+
+bool ChoiceField::GetOptionCount(types::size_type& result) const {
+    if (!_obj->Contains(constant::Name::Opt)) {
+        return false;
+    }
+
+    auto opts = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Opt);
+    result = opts->GetSize();
+    return true;
+}
+
+bool ChoiceField::GetOptionAt(types::size_type index, syntax::OutputStringObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::Opt)) {
+        return false;
+    }
+
+    auto opts = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Opt);
+    auto item = opts->GetValue(index);
+
+    // Options can be either a string directly or a 2-element array [export_value, display_text]
+    if (syntax::ObjectUtils::IsType<syntax::StringObjectPtr>(item)) {
+        result = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(item);
+        return true;
+    }
+
+    if (syntax::ObjectUtils::IsType<syntax::MixedArrayObjectPtr>(item)) {
+        auto pair = syntax::ObjectUtils::ConvertTo<syntax::MixedArrayObjectPtr>(item);
+        if (pair->GetSize() >= 2) {
+            result = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(pair->GetValue(1));
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// SignatureField properties
+
 bool SignatureField::Value(OuputDigitalSignaturePtr& result) const {
     if (!_obj->Contains(constant::Name::V)) {
         return false;

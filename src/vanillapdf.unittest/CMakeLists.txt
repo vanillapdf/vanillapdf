@@ -30,6 +30,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     date_test.cpp
     document_test.cpp
     destinations_test.cpp
+    fields_test.cpp
     filter_test.cpp
     test_environment.cpp
     attributes_test.cpp
