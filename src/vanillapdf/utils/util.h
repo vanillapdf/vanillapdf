@@ -50,59 +50,6 @@ private:
     ScopeGuardFactory();
 };
 
-// The AutoSubscribe concept is something I was thinking about for a long time.
-// Unfortunately I am still not able to create a working POC, however I want to keep the code.
-// In case I will be thinking about such functionality in the future, this could be the starting point.
-
-template <
-    typename T,
-    typename U,
-    typename = typename std::enable_if<instantiation_of<Deferred, T>::value ||
-    std::is_base_of<IModifyObservable, typename T::deferred_ptr_type>::value>::type,
-    typename = typename std::enable_if<std::is_base_of<IModifyObservable, U>::value>::type>
-class AutoSubscribe {
-public:
-    explicit AutoSubscribe(const T& observable, U* observer) : _observable(observable), _observer(observer) {
-        if (_observer) {
-            _observable->Subscribe(_observer);
-        }
-    }
-
-    AutoSubscribe(const AutoSubscribe& rhs) = delete;
-
-    // Moving simply transfers ownership of the subscription. The observer
-    // remains subscribed to the same observable and the moved-from instance no
-    // longer unsubscribes on destruction.
-    AutoSubscribe(AutoSubscribe&& rhs) noexcept
-        : _observable(std::move(rhs._observable)),
-          _observer(rhs._observer) {
-        rhs._observer = nullptr;
-    }
-
-    AutoSubscribe& operator=(const AutoSubscribe& rhs) = delete;
-
-    AutoSubscribe& operator=(AutoSubscribe&& rhs) noexcept {
-        AutoSubscribe(std::move(rhs)).swap(*this);
-        return *this;
-    }
-
-    void swap(AutoSubscribe& rhs) noexcept {
-        using std::swap;
-        swap(_observable, rhs._observable);
-        swap(_observer, rhs._observer);
-    }
-
-    ~AutoSubscribe() {
-        if (_observer) {
-            _observable->Unsubscribe(_observer);
-        }
-    }
-
-private:
-    T _observable;
-    U* _observer = nullptr;
-};
-
 #if (__cplusplus < 201402L) && !defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
     // Use custom implementation if not
     // supporting c++14

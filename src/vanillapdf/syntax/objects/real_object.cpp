@@ -20,7 +20,6 @@ RealObject::RealObject(types::real value, uint32_t precision) {
 
 RealObject::RealObject(NumericObjectBackendPtr value) {
     m_value = value;
-    m_value->Subscribe(this);
 }
 
 RealObject* RealObject::Clone(void) const {

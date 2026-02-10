@@ -8,25 +8,29 @@
 namespace vanillapdf {
 namespace syntax {
 
+MixedArrayObject::MixedArrayObject() {
+    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+}
+
 MixedArrayObject::MixedArrayObject(const list_type& list) : _list(list) {
+    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
     for (auto item : _list) {
         item->SetOwner(Object::GetWeakReference());
-        item->Subscribe(this);
     }
 }
 
 MixedArrayObject::MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list) : _list(list) {
+    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
     for (auto item : _list) {
         item->SetOwner(Object::GetWeakReference());
-        item->Subscribe(this);
     }
 }
 
 MixedArrayObject::MixedArrayObject(const ContainableObject& other, list_type& list)
     : ContainableObject(other), _list(list) {
+    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
     for (auto item : _list) {
         item->SetOwner(Object::GetWeakReference());
-        item->Subscribe(this);
     }
 }
 
@@ -41,7 +45,7 @@ void MixedArrayObject::SetFile(WeakReference<File> file) {
 }
 
 void MixedArrayObject::SetInitialized(bool initialized) {
-    IModifyObservable::SetInitialized(initialized);
+    Versionable::SetInitialized(initialized);
 
     auto size = _list.size();
     for (decltype(size) i = 0; i < size; ++i) {
@@ -50,14 +54,14 @@ void MixedArrayObject::SetInitialized(bool initialized) {
     }
 }
 
-void MixedArrayObject::ObserveeChanged(const IModifyObservable*) {
-    OnChanged();
-}
+bool MixedArrayObject::IsDirty() const {
+    ACCESS_LOCK_GUARD(m_access_lock);
 
-void MixedArrayObject::OnChanged() {
-    Object::OnChanged();
-
-    m_hash_cache = 0;
+    if (m_version > 0) return true;
+    for (const auto& item : _list) {
+        if (item->IsDirty()) return true;
+    }
+    return false;
 }
 
 MixedArrayObject* MixedArrayObject::Clone(void) const {
@@ -75,8 +79,8 @@ MixedArrayObject* MixedArrayObject::Clone(void) const {
 void MixedArrayObject::Append(ContainableObjectPtr value) {
     _list.push_back(value);
     value->SetOwner(Object::GetWeakReference());
-    value->Subscribe(this);
-    OnChanged();
+    IncrementVersion();
+    m_hash_cache = 0;
 }
 
 void MixedArrayObject::Insert(size_type at, ContainableObjectPtr value) {
@@ -86,8 +90,8 @@ void MixedArrayObject::Insert(size_type at, ContainableObjectPtr value) {
 
     _list.insert(_list.begin() + at, value);
     value->SetOwner(Object::GetWeakReference());
-    value->Subscribe(this);
-    OnChanged();
+    IncrementVersion();
+    m_hash_cache = 0;
 }
 
 bool MixedArrayObject::Remove(size_type at) {
@@ -98,15 +102,21 @@ bool MixedArrayObject::Remove(size_type at) {
     auto item = _list.begin() + at;
 
     (*item)->ClearOwner();
-    (*item)->Unsubscribe(this);
     _list.erase(item);
-    OnChanged();
+    IncrementVersion();
+    m_hash_cache = 0;
 
     return true;
 }
 
 void MixedArrayObject::Clear() {
+    for (auto& item : _list) {
+        item->ClearOwner();
+    }
+
     _list.clear();
+    IncrementVersion();
+    m_hash_cache = 0;
 }
 
 void MixedArrayObject::SetValue(size_type at, ContainableObjectPtr value) {
@@ -117,15 +127,15 @@ void MixedArrayObject::SetValue(size_type at, ContainableObjectPtr value) {
     _list[at] = value;
 
     value->SetOwner(Object::GetWeakReference());
-    value->Subscribe(this);
-    OnChanged();
+    IncrementVersion();
+    m_hash_cache = 0;
 }
 
 // stl compatibility
 void MixedArrayObject::push_back(ContainableObjectPtr value) {
     _list.push_back(value);
-    value->Subscribe(this);
-    OnChanged();
+    IncrementVersion();
+    m_hash_cache = 0;
 }
 
 std::string MixedArrayObject::ToString(void) const {
@@ -172,12 +182,6 @@ void MixedArrayObject::ToPdfStreamUpdateOffset(IOutputStreamPtr output) {
     }
 
     output << "]";
-}
-
-MixedArrayObject::~MixedArrayObject() {
-    for (auto item : _list) {
-        item->Unsubscribe(this);
-    }
 }
 
 size_t MixedArrayObject::Hash() const {

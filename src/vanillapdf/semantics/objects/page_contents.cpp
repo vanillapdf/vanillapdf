@@ -23,20 +23,10 @@ using namespace syntax;
 using namespace contents;
 
 PageContents::PageContents(StreamObjectPtr obj) : HighLevelObject(obj) {
-    m_instructions->Subscribe(this);
 }
 
 PageContents::PageContents(ArrayObjectPtr<IndirectReferenceObjectPtr> obj)
     : HighLevelObject(obj->Data()) {
-    m_instructions->Subscribe(this);
-}
-
-PageContents::~PageContents() {
-    m_instructions->Unsubscribe(this);
-}
-
-void PageContents::ObserveeChanged(const IModifyObservable*) {
-    SetDirty(true);
 }
 
 bool PageContents::IsDirty() const {

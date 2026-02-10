@@ -51,7 +51,7 @@ class VanillaPDFConan(ConanFile):
 
     def requirements(self):
         self.requires("spdlog/[>=1.14]")
-        self.requires("nlohmann_json/[>=3.11]")
+        self.requires("fmt/[>=10.0]")
         self.requires("openssl/[>=3.0 <4]")
         self.requires("zlib/[>=1.2]")
         self.requires("libjpeg-turbo/[>=2.0]")
@@ -82,7 +82,7 @@ class VanillaPDFConan(ConanFile):
         tc.cache_variables["VANILLAPDF_EXTERNAL_OPENJPEG"] = True
         tc.cache_variables["VANILLAPDF_EXTERNAL_ZLIB"] = True
         tc.cache_variables["VANILLAPDF_EXTERNAL_SPDLOG"] = True
-        tc.cache_variables["VANILLAPDF_EXTERNAL_NLOHMANN_JSON"] = True
+        tc.cache_variables["VANILLAPDF_EXTERNAL_FMT"] = True
 
         # Conan's CMakeDeps generates its own find_package config files
         tc.cache_variables["VANILLAPDF_SKIP_CMAKE_CONFIG_INSTALL"] = True
@@ -116,7 +116,7 @@ class VanillaPDFConan(ConanFile):
             "libjpeg-turbo::libjpeg-turbo",
             "openjpeg::openjpeg",
             "spdlog::spdlog",
-            "nlohmann_json::nlohmann_json",
+            "fmt::fmt",
         ]
 
         # Conan's CMakeDeps generates its own find_package config, so the
