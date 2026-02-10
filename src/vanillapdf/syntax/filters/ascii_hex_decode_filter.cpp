@@ -3,6 +3,7 @@
 #include "utils/character.h"
 
 #include "syntax/filters/ascii_hex_decode_filter.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 
 namespace vanillapdf {
 namespace syntax {
@@ -25,7 +26,7 @@ BufferPtr ASCIIHexDecodeFilter::Decode(IInputStreamPtr src, types::stream_size l
     for (decltype(length) i = 0; i < length; ++i) {
         auto meta = src->Get();
         if (meta == std::char_traits<char>::eof()) {
-            throw GeneralException("Unexpected end of file inside stream");
+            throw ParseException("Unexpected end of file inside stream");
         }
 
         auto ch = ValueConvertUtils::SafeConvert<unsigned char>(meta);

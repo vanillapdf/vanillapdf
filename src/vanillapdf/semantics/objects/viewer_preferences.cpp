@@ -105,7 +105,7 @@ bool ViewerPreferences::NonFullScreenPageMode(NonFullScreenPageModeType& result)
     } else if (name == constant::Name::UseOC) {
         result = NonFullScreenPageModeType::UseOC;
     } else {
-        throw GeneralException("Unknown page mode type: " + name->ToString());
+        throw NotSupportedException("Unknown page mode type: " + name->ToString());
     }
 
     return true;
@@ -122,7 +122,7 @@ bool ViewerPreferences::Direction(ReadingOrderType& result) const {
     } else if (name == constant::Name::R2L) {
         result = ReadingOrderType::RightToLeft;
     } else {
-        throw GeneralException("Unknown reading order: " + name->ToString());
+        throw NotSupportedException("Unknown reading order: " + name->ToString());
     }
 
     return true;
@@ -175,7 +175,7 @@ bool ViewerPreferences::PrintScaling(PrintScalingType& result) const {
     } else if (name == constant::Name::None) {
         result = PrintScalingType::None;
     } else {
-        throw GeneralException("Unknown print scaling: " + name->ToString());
+        throw NotSupportedException("Unknown print scaling: " + name->ToString());
     }
 
     return true;
@@ -202,7 +202,7 @@ bool ViewerPreferences::Duplex(DuplexType& result) const {
         return true;
     }
 
-    throw GeneralException("Unknown duplex: " + name->ToString());
+    throw NotSupportedException("Unknown duplex: " + name->ToString());
 }
 
 bool ViewerPreferences::PickTrayByPDFSize(syntax::BooleanObjectPtr& result) const {

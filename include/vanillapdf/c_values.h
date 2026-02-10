@@ -96,6 +96,30 @@ extern "C"
 
     /**
     * \brief
+    * Data corruption was detected during processing.
+    */
+    VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_DATA_CORRUPTION;
+
+    /**
+    * \brief
+    * An I/O error occurred during file or stream operations.
+    */
+    VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_IO;
+
+    /**
+    * \brief
+    * A cryptographic operation failed.
+    */
+    VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_CRYPTO;
+
+    /**
+    * \brief
+    * An image encoding or decoding operation failed.
+    */
+    VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_IMAGE_CODEC;
+
+    /**
+    * \brief
     * An unknown error has occurred.
     *
     * Try to turn on \ref Logging for extended informations.

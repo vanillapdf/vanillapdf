@@ -2,6 +2,7 @@
 
 #include "contents/character_map_data.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
 #include "utils/math_utils.h"
 
 namespace vanillapdf {
@@ -33,7 +34,7 @@ BufferPtr BaseFontRange::GetMappedValue(BufferPtr key) const {
 BufferPtr BaseFontRange::GetMappedValueInternal(BufferPtr key) const {
     if (!Contains(key)) {
 
-        LOG_ERROR_AND_THROW_GENERAL("Key: is out of range: [{},{}]", key->ToHexString(), m_low->GetValue()->ToHexString(), m_high->GetValue()->ToHexString());
+        LOG_ERROR_AND_THROW(syntax::ParseException, "Key: is out of range: [{},{}]", key->ToHexString(), m_low->GetValue()->ToHexString(), m_high->GetValue()->ToHexString());
     }
 
     if (ObjectUtils::IsType<HexadecimalStringObjectPtr>(m_dest)) {
@@ -55,7 +56,7 @@ BufferPtr BaseFontRange::GetMappedValueInternal(BufferPtr key) const {
     std::stringstream error_stream;
     error_stream << "Unknown destination type: " << (int)m_dest->GetObjectType();
 
-    throw GeneralException(error_stream.str());
+    throw syntax::ParseException(error_stream.str());
 }
 
 uint8_t BaseFontRange::Difference(uint8_t source, uint8_t dest, bool& borrow) const {

@@ -25,7 +25,7 @@ public:
 
     void OnWriteCheck(Version file_version) {
         if (static_cast<unsigned char>(ver) > static_cast<unsigned char>(file_version))
-            throw GeneralException("Expected file version does not match");
+            throw NotSupportedException("Expected file version does not match");
     }
 };
 

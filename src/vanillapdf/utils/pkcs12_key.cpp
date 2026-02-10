@@ -127,7 +127,7 @@ PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path, std::string_vie
     SCOPE_GUARD_CAPTURE_REFERENCES(file.close());
 
     if (!file || !file.good()) {
-        throw GeneralException("Could not open file: " + path);
+        throw CryptoErrorException("Could not open file: " + path);
     }
 
     Buffer data;
@@ -167,7 +167,7 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, std::string_view passwor
 
     PKCS12* p12_raw = d2i_PKCS12_bio(bio, nullptr);
     if (nullptr == p12_raw) {
-        throw GeneralException("Could not parse der structure PKCS#12, " + CryptoUtils::GetLastOpensslError());
+        throw CryptoErrorException("Could not parse der structure PKCS#12, " + CryptoUtils::GetLastOpensslError());
     }
     p12 = std::unique_ptr<PKCS12, PKCS12Deleter>(p12_raw);
 
@@ -176,7 +176,7 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, std::string_view passwor
     X509* cert_raw = nullptr;
     int parsed = PKCS12_parse(p12.get(), password.data(), &key_raw, &cert_raw, &additional_certs);
     if (1 != parsed) {
-        throw GeneralException("Could not parse PKCS#12, " + CryptoUtils::GetLastOpensslError());
+        throw CryptoErrorException("Could not parse PKCS#12, " + CryptoUtils::GetLastOpensslError());
     }
 
     key = std::unique_ptr<EVP_PKEY, EVPPKEYDeleter>(key_raw);
@@ -193,14 +193,14 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, std::string_view passwor
 
         int length = i2d_X509(additional_cert, nullptr);
         if (length < 0) {
-            throw GeneralException("Could not get PKCS#7 size, " + CryptoUtils::GetLastOpensslError());
+            throw CryptoErrorException("Could not get PKCS#7 size, " + CryptoUtils::GetLastOpensslError());
         }
 
         BufferPtr additional_cert_data = make_deferred_container<Buffer>(length);
         auto data_pointer = (unsigned char *) additional_cert_data->data();
         int converted = i2d_X509(additional_cert, &data_pointer);
         if (converted < 0) {
-            throw GeneralException("Could not convert PKCS#7, " + CryptoUtils::GetLastOpensslError());
+            throw CryptoErrorException("Could not convert PKCS#7, " + CryptoUtils::GetLastOpensslError());
         }
 
         m_certificates->Append(additional_cert_data);
@@ -216,7 +216,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
         if (evp_pkey_context == nullptr) {
             auto openssl_error = CryptoUtils::GetLastOpensslError();
             spdlog::error("Could not create PKEY context: {}", openssl_error);
-            throw GeneralException("Could not create PKEY context" + openssl_error);
+            throw CryptoErrorException("Could not create PKEY context" + openssl_error);
         }
 
         encryption_context = std::unique_ptr<EVP_PKEY_CTX, EVPPKEYCTXDeleter>(evp_pkey_context);
@@ -226,7 +226,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
     if (init_result != 1) {
         auto openssl_error = CryptoUtils::GetLastOpensslError();
         spdlog::error("Could not initialize encryption engine: {}", openssl_error);
-        throw GeneralException("Could not initialize encryption engine: " + std::to_string(init_result));
+        throw CryptoErrorException("Could not initialize encryption engine: " + std::to_string(init_result));
     }
 
     size_t outlen = 0;
@@ -234,7 +234,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
     if (length_result != 1) {
         auto openssl_error = CryptoUtils::GetLastOpensslError();
         spdlog::error("Could not get decrypt message length: {}", openssl_error);
-        throw GeneralException("Could not get decrypt message length: " + std::to_string(length_result));
+        throw CryptoErrorException("Could not get decrypt message length: " + std::to_string(length_result));
     }
 
     BufferPtr output = make_deferred_container<Buffer>(outlen);
@@ -242,7 +242,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
     if (decrypt_result != 1) {
         auto openssl_error = CryptoUtils::GetLastOpensslError();
         spdlog::error("Could not get decrypt message: {}", openssl_error);
-        throw GeneralException("Could not get decrypt message: " + std::to_string(decrypt_result));
+        throw CryptoErrorException("Could not get decrypt message: " + std::to_string(decrypt_result));
     }
 
     return output;
@@ -295,34 +295,34 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 
     PKCS7* p7_raw = PKCS7_new();
     if (p7_raw == nullptr) {
-        throw GeneralException("Could not create PKCS#7");
+        throw CryptoErrorException("Could not create PKCS#7");
     }
     p7 = std::unique_ptr<PKCS7, PKCS7Deleter>(p7_raw);
 
     int type_set = PKCS7_set_type(p7.get(), NID_pkcs7_signed);
     if (type_set != 1) {
-        throw GeneralException("Could not set PKCS#7 type");
+        throw CryptoErrorException("Could not set PKCS#7 type");
     }
 
     auto message_digest = CryptoUtils::GetAlgorithm(algorithm);
     auto signer_info = PKCS7_add_signature(p7.get(), cert.get(), key.get(), message_digest);
     if (signer_info == nullptr) {
-        throw GeneralException("Could not add signature");
+        throw CryptoErrorException("Could not add signature");
     }
 
     int content_type_added = PKCS7_add_signed_attribute(signer_info, NID_pkcs9_contentType, V_ASN1_OBJECT, OBJ_nid2obj(NID_pkcs7_data));
     if (content_type_added != 1) {
-        throw GeneralException("Could not add signed attribute");
+        throw CryptoErrorException("Could not add signed attribute");
     }
 
     int signing_time_added = PKCS7_add0_attrib_signing_time(signer_info, nullptr);
     if (signing_time_added != 1) {
-        throw GeneralException("Could not add signing time");
+        throw CryptoErrorException("Could not add signing time");
     }
 
     int certificate_added = PKCS7_add_certificate(p7.get(), cert.get());
     if (certificate_added != 1) {
-        throw GeneralException("Could not add certificate");
+        throw CryptoErrorException("Could not add certificate");
     }
 
     auto extra_certificates_size = m_certificates->GetSize();
@@ -333,25 +333,25 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
         auto extra_certificate_raw_data_size = ValueConvertUtils::SafeConvert<long>(extra_certificate_data->size());
         auto extra_certificate = d2i_X509(nullptr, &extra_certificate_raw_data, extra_certificate_raw_data_size);
         if (extra_certificate == nullptr) {
-            throw GeneralException("Extra certificate is invalid");
+            throw CryptoErrorException("Extra certificate is invalid");
         }
 
         SCOPE_GUARD([extra_certificate]() { X509_free(extra_certificate); });
 
         int extra_certificate_added = PKCS7_add_certificate(p7.get(), extra_certificate);
         if (extra_certificate_added != 1) {
-            throw GeneralException("Could not add extra certificate");
+            throw CryptoErrorException("Could not add extra certificate");
         }
     }
 
     int content_set = PKCS7_content_new(p7.get(), NID_pkcs7_data);
     if (content_set != 1) {
-        throw GeneralException("Could not set signing content");
+        throw CryptoErrorException("Could not set signing content");
     }
 
     int detached_set = PKCS7_set_detached(p7.get(), 1);
     if (detached_set != 1) {
-        throw GeneralException("Could not set PKCS#7 detached");
+        throw CryptoErrorException("Could not set PKCS#7 detached");
     }
 
     // Reset existing BIO if present
@@ -359,7 +359,7 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
 
     BIO* p7bio_raw = PKCS7_dataInit(p7.get(), nullptr);
     if (p7bio_raw == nullptr) {
-        throw GeneralException("Could not initialize signing data");
+        throw CryptoErrorException("Could not initialize signing data");
     }
     p7bio = std::unique_ptr<BIO, BIODeleter>(p7bio_raw);
 
@@ -396,7 +396,7 @@ void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_si
 
         int written = BIO_write(p7bio.get(), buffer.data(), read_converted);
         if (written != read_converted) {
-            throw GeneralException("Could not write data");
+            throw CryptoErrorException("Could not write data");
         }
 
         read_total = read_total + read;
@@ -417,19 +417,19 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
 
     int finalized = PKCS7_dataFinal(p7.get(), p7bio.get());
     if (finalized != 1) {
-        throw GeneralException("Could not finalize PKCS#7");
+        throw CryptoErrorException("Could not finalize PKCS#7");
     }
 
     int length = i2d_PKCS7(p7.get(), nullptr);
     if (length < 0) {
-        throw GeneralException("Could not get PKCS#7 size");
+        throw CryptoErrorException("Could not get PKCS#7 size");
     }
 
     BufferPtr result = make_deferred_container<Buffer>(length);
     auto data_pointer = (unsigned char *) result->data();
     int converted = i2d_PKCS7(p7.get(), &data_pointer);
     if (converted < 0) {
-        throw GeneralException("Could not convert PKCS#7");
+        throw CryptoErrorException("Could not convert PKCS#7");
     }
 
     return result;
@@ -458,20 +458,20 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::GetCertificate() const {
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
     if (!cert) {
-        throw GeneralException("No certificate available in PKCS12 key");
+        throw CryptoErrorException("No certificate available in PKCS12 key");
     }
 
     // Convert X509* to DER format (same technique used for additional certs)
     int length = i2d_X509(cert.get(), nullptr);
     if (length < 0) {
-        throw GeneralException("Could not get certificate size, " + CryptoUtils::GetLastOpensslError());
+        throw CryptoErrorException("Could not get certificate size, " + CryptoUtils::GetLastOpensslError());
     }
 
     BufferPtr cert_data = make_deferred_container<Buffer>(length);
     auto data_pointer = (unsigned char *) cert_data->data();
     int converted = i2d_X509(cert.get(), &data_pointer);
     if (converted < 0) {
-        throw GeneralException("Could not convert certificate to DER, " + CryptoUtils::GetLastOpensslError());
+        throw CryptoErrorException("Could not convert certificate to DER, " + CryptoUtils::GetLastOpensslError());
     }
 
     return cert_data;

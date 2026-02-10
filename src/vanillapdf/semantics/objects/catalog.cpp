@@ -94,7 +94,7 @@ bool Catalog::PageLayout(Catalog::PageLayoutType& result) const {
     } else if (layout == constant::Name::TwoPageRight) {
         result = PageLayoutType::TwoPageRight;
     } else {
-        throw GeneralException("Unknown value in PageLayout entry: " + layout->ToString());
+        throw NotSupportedException("Unknown value in PageLayout entry: " + layout->ToString());
     }
 
     return true;
@@ -166,7 +166,7 @@ bool Catalog::PageMode(PageModeType& result) const {
     } else if (page_mode == constant::Name::UseAttachments) {
         result = PageModeType::UseAttachments;
     } else {
-        throw GeneralException("Unknown page mode type: " + page_mode->ToString());
+        throw NotSupportedException("Unknown page mode type: " + page_mode->ToString());
     }
 
     return true;

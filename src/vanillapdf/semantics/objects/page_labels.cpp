@@ -45,7 +45,7 @@ bool PageLabel::Style(NumberingStyle& result) const {
     auto value = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::S);
     auto buf = value->GetValue();
     if (buf->size() != 1) {
-        throw GeneralException("Unknown numbering style" + buf->ToString());
+        throw NotSupportedException("Unknown numbering style" + buf->ToString());
     }
 
     if (buf[0] != static_cast<char>(NumberingStyle::Decimal)
@@ -53,7 +53,7 @@ bool PageLabel::Style(NumberingStyle& result) const {
         && buf[0] != static_cast<char>(NumberingStyle::LowerRoman)
         && buf[0] != static_cast<char>(NumberingStyle::UpperLetters)
         && buf[0] != static_cast<char>(NumberingStyle::LowerLetters)) {
-        throw GeneralException("Unknown numbering style" + buf->ToString());
+        throw NotSupportedException("Unknown numbering style" + buf->ToString());
     }
 
     result = static_cast<NumberingStyle>(buf[0]);

@@ -4,6 +4,7 @@
 #include "contents/character_map_parser.h"
 
 #include "semantics/objects/character_map.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 
 namespace vanillapdf {
 namespace semantics {
@@ -62,7 +63,7 @@ BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
             spdlog::error("Codespace ranges [{}] {}:{}", i, m_data.CodeSpaceRanges[i].Begin->ToString(), m_data.CodeSpaceRanges[i].End->ToString());
         }
 
-        throw GeneralException(error_message);
+        throw syntax::ParseException(error_message);
     }
 
     // Check base font ranges
@@ -103,7 +104,7 @@ BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
         spdlog::error("Font char mapping [{}] {}:{}", i, m_data.BaseFontCharMapping[i].Source->ToString(), m_data.BaseFontCharMapping[i].Destination->ToString());
     }
 
-    throw GeneralException(error_message);
+    throw syntax::ParseException(error_message);
 }
 
 } // semantics

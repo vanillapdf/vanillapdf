@@ -39,7 +39,7 @@ void error_exit(j_common_ptr cinfo) {
 
     spdlog::error("JPEG decompression exited with error: {}", buffer);
 
-    throw GeneralException(buffer);
+    throw ImageCodecErrorException(buffer);
 }
 
 void output_message(j_common_ptr cinfo) {
@@ -65,11 +65,11 @@ boolean fill_input_buffer(j_decompress_ptr cinfo) {
 void skip_input_data(j_decompress_ptr cinfo, long num_bytes) {
 
     if (cinfo == nullptr) {
-        throw GeneralException("Invalid jpeg pointer");
+        throw ImageCodecErrorException("Invalid jpeg pointer");
     }
 
     if (cinfo->src == nullptr) {
-        throw GeneralException("Missing jpeg source manager");
+        throw ImageCodecErrorException("Missing jpeg source manager");
     }
 
     cinfo->src->next_input_byte += num_bytes;
@@ -88,11 +88,11 @@ boolean resync_to_restart(j_decompress_ptr cinfo, int desired) {
 void init_destination(j_compress_ptr cinfo) {
 
     if (cinfo == nullptr) {
-        throw GeneralException("Invalid jpeg pointer");
+        throw ImageCodecErrorException("Invalid jpeg pointer");
     }
 
     if (cinfo->dest == nullptr) {
-        throw GeneralException("Missing jpeg dest manager");
+        throw ImageCodecErrorException("Missing jpeg dest manager");
     }
 
     CustomDestinationManager* destination = reinterpret_cast<CustomDestinationManager*>(cinfo->dest);
@@ -105,11 +105,11 @@ void init_destination(j_compress_ptr cinfo) {
 boolean empty_output_buffer(j_compress_ptr cinfo) {
 
     if (cinfo == nullptr) {
-        throw GeneralException("Invalid jpeg pointer");
+        throw ImageCodecErrorException("Invalid jpeg pointer");
     }
 
     if (cinfo->dest == nullptr) {
-        throw GeneralException("Missing jpeg dest manager");
+        throw ImageCodecErrorException("Missing jpeg dest manager");
     }
 
     CustomDestinationManager* destination = reinterpret_cast<CustomDestinationManager*>(cinfo->dest);
@@ -124,11 +124,11 @@ boolean empty_output_buffer(j_compress_ptr cinfo) {
 void term_destination(j_compress_ptr cinfo) {
 
     if (cinfo == nullptr) {
-        throw GeneralException("Invalid jpeg pointer");
+        throw ImageCodecErrorException("Invalid jpeg pointer");
     }
 
     if (cinfo->dest == nullptr) {
-        throw GeneralException("Missing jpeg dest manager");
+        throw ImageCodecErrorException("Missing jpeg dest manager");
     }
 
     CustomDestinationManager* destination = reinterpret_cast<CustomDestinationManager*>(cinfo->dest);
@@ -215,15 +215,15 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
     // In case the input parameters are missing, terminate immediately
     if (width.empty()) {
-        throw GeneralException("Missing parameter Width");
+        throw ImageCodecErrorException("Missing parameter Width");
     }
 
     if (height.empty()) {
-        throw GeneralException("Missing parameter Height");
+        throw ImageCodecErrorException("Missing parameter Height");
     }
 
     if (color_space.empty()) {
-        throw GeneralException("Missing parameter ColorSpace");
+        throw ImageCodecErrorException("Missing parameter ColorSpace");
     }
 
     jpeg_compress_struct jpeg = { };
@@ -268,7 +268,7 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
         auto read_plus_row = SafeAddition<decltype(length)>(read_total, row_size);
         if (read_plus_row > length) {
-            throw GeneralException(
+            throw ImageCodecErrorException(
                 "Insufficient source data, read_plus_row: " +
                 std::to_string(read_plus_row) +
                 ", length: " +
@@ -278,7 +278,7 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
         auto read = src->Read(buffer, row_size);
         if (read != row_size) {
-            throw GeneralException(
+            throw ImageCodecErrorException(
                 "Insufficient source data, read: " +
                 std::to_string(read) +
                 ", row_size: " +
@@ -337,12 +337,12 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
     int header = jpeg_read_header(&jpeg, TRUE);
     if (header != JPEG_HEADER_OK) {
-        throw GeneralException("Could not read jpeg header");
+        throw ImageCodecErrorException("Could not read jpeg header");
     }
 
     boolean started = jpeg_start_decompress(&jpeg);
     if (started != TRUE) {
-        throw GeneralException("Could not start jpeg decompression");
+        throw ImageCodecErrorException("Could not start jpeg decompression");
     }
 
     JDIMENSION row_bytes = SafeMultiply<JDIMENSION, JDIMENSION>(jpeg.output_width, jpeg.output_components);
@@ -385,7 +385,7 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
     boolean finished = jpeg_finish_decompress(&jpeg);
     if (finished != TRUE) {
-        throw GeneralException("Could not finish jpeg decompression");
+        throw ImageCodecErrorException("Could not finish jpeg decompression");
     }
 
     ImageMetadataObjectAttribute::ColorSpaceType attribute_color_space = ImageMetadataObjectAttribute::ColorSpaceType::Undefined;

@@ -53,12 +53,12 @@ NameObjectPtr NameObject::CreateFromEncoded(std::string_view value) {
         auto current = value[i];
 
         if (!IsRegular(current)) {
-            LOG_ERROR_AND_THROW_GENERAL("Unexpected character found in NameObject: {}", value);
+            LOG_ERROR_AND_THROW(InvalidParameterException, "Unexpected character found in NameObject: {}", value);
         }
 
         if (current == '#') {
             if (i + 3 > buffer_size) {
-                LOG_ERROR_AND_THROW_GENERAL("Could not parse hexadecimal character in NameObject: {}", value);
+                LOG_ERROR_AND_THROW(InvalidParameterException, "Could not parse hexadecimal character in NameObject: {}", value);
             }
 
             auto current_ptr = value.data() + i;

@@ -43,14 +43,14 @@ void XrefStream::RecalculateContent() {
 
     auto header = _stream->GetHeader();
     if (!header->Contains(constant::Name::W)) {
-        throw GeneralException("Stream header does not contain width");
+        throw ObjectMissingException("Stream header does not contain width");
     }
 
     auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
 
     assert(fields->GetSize() == 3);
     if (fields->GetSize() != 3) {
-        throw GeneralException("Xref stream width does not contain three integers");
+        throw ObjectMissingException("Xref stream width does not contain three integers");
     }
 
     auto field1_size = fields->GetValue(0);
@@ -219,7 +219,7 @@ void XrefStream::WriteValue(std::ostream& dest, types::big_uint value, int64_t w
     // This means, that the operation would overflow
     assert(shifted_value == 0 && "Xref stream value overflow");
     if (shifted_value != 0) {
-        throw GeneralException("Xref stream width is too small");
+        throw ObjectMissingException("Xref stream width is too small");
     }
 
     // Writes <value> as a sequence of <width> bytes into <dest>
@@ -237,7 +237,7 @@ void XrefTable::Add(XrefEntryBasePtr entry) {
     // Xref table can only stored free and used entries
     assert((is_free || is_used) && "Adding unsupported entry type into the xref table");
     if (!is_free && !is_used) {
-        throw GeneralException("Adding unsupported entry type into the xref table");
+        throw ObjectMissingException("Adding unsupported entry type into the xref table");
     }
 
     // Perform the addition
@@ -258,13 +258,13 @@ void XrefBase::Add(XrefEntryBasePtr entry) {
         // Remove the item as there was a conflict
         bool removed = Remove(entry);
         if (!removed) {
-            throw GeneralException("Failed to remove xref entry from the list");
+            throw ObjectMissingException("Failed to remove xref entry from the list");
         }
 
         // Retry the insertion
         auto retry_result = _entries.insert(entry);
         if (!retry_result.second) {
-            throw GeneralException("Failed to insert xref entry into the list");
+            throw ObjectMissingException("Failed to insert xref entry into the list");
         }
     }
 
@@ -391,7 +391,7 @@ XrefStreamPtr XrefTable::GetHybridStream(void) const {
     assert(has_stream && "Trying to access hybrid stream, that was not set");
 
     if (!has_stream) {
-        throw GeneralException("Trying to access hybrid stream, that was not set");
+        throw ObjectMissingException("Trying to access hybrid stream, that was not set");
     }
 
     return m_xref_stm;
@@ -447,7 +447,7 @@ StreamObjectPtr XrefStream::GetStreamObject(void) const {
     assert(has_stream && "Trying to access stream object, that was not set");
 
     if (!has_stream) {
-        throw GeneralException("Trying to access stream object, that was not set");
+        throw ObjectMissingException("Trying to access stream object, that was not set");
     }
 
     return _stream;

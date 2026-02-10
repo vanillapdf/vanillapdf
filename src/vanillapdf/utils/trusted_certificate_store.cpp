@@ -76,7 +76,7 @@ TrustedCertificateStore::TrustedCertificateStoreImpl::TrustedCertificateStoreImp
 
     m_store = X509_STORE_new();
     if (!m_store) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to create X509_STORE");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to create X509_STORE");
     }
 }
 
@@ -90,14 +90,14 @@ TrustedCertificateStore::TrustedCertificateStoreImpl::~TrustedCertificateStoreIm
 void TrustedCertificateStore::TrustedCertificateStoreImpl::AddCertificateFromPEM(const Buffer& pem_data) {
     BIO* bio = BIO_new_mem_buf(pem_data.data(), ValueConvertUtils::SafeConvert<int>(pem_data.size()));
     if (!bio) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to create BIO from PEM data");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to create BIO from PEM data");
     }
 
     SCOPE_GUARD([bio]() { BIO_free(bio); });
 
     X509* cert = PEM_read_bio_X509(bio, nullptr, nullptr, nullptr);
     if (!cert) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to parse PEM certificate");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to parse PEM certificate");
     }
 
     SCOPE_GUARD([cert]() { X509_free(cert); });
@@ -109,7 +109,7 @@ void TrustedCertificateStore::TrustedCertificateStoreImpl::AddCertificateFromPEM
         unsigned long err = ERR_peek_last_error();
         if (ERR_GET_REASON(err) != X509_R_CERT_ALREADY_IN_HASH_TABLE) {
             std::string error = CryptoUtils::GetLastOpensslError();
-            LOG_ERROR_AND_THROW_GENERAL("Failed to add PEM certificate to store: {}", error);
+            LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to add PEM certificate to store: {}", error);
         }
     }
 }
@@ -119,7 +119,7 @@ void TrustedCertificateStore::TrustedCertificateStoreImpl::AddCertificateFromDER
     X509* cert = d2i_X509(nullptr, &data_ptr, ValueConvertUtils::SafeConvert<long>(der_data.size()));
 
     if (!cert) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to parse DER certificate");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to parse DER certificate");
     }
 
     SCOPE_GUARD([cert]() { X509_free(cert); });
@@ -131,7 +131,7 @@ void TrustedCertificateStore::TrustedCertificateStoreImpl::AddCertificateFromDER
         unsigned long err = ERR_peek_last_error();
         if (ERR_GET_REASON(err) != X509_R_CERT_ALREADY_IN_HASH_TABLE) {
             std::string error = CryptoUtils::GetLastOpensslError();
-            LOG_ERROR_AND_THROW_GENERAL("Failed to add DER certificate to store: {}", error);
+            LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to add DER certificate to store: {}", error);
         }
     }
 }
@@ -140,14 +140,14 @@ void TrustedCertificateStore::TrustedCertificateStoreImpl::LoadFromDirectory(con
 
     int result = X509_STORE_load_locations(m_store, nullptr, directory_path.c_str());
     if (result != 1) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to load certificates from directory: {}", directory_path);
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to load certificates from directory: {}", directory_path);
     }
 }
 
 void TrustedCertificateStore::TrustedCertificateStoreImpl::LoadSystemDefaults() {
     int result = X509_STORE_set_default_paths(m_store);
     if (result != 1) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to load system default certificates");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to load system default certificates");
     }
 }
 
@@ -160,25 +160,25 @@ X509_STORE* TrustedCertificateStore::TrustedCertificateStoreImpl::GetNativeHandl
 // Stub implementation when OpenSSL is not available
 
 TrustedCertificateStore::TrustedCertificateStoreImpl::TrustedCertificateStoreImpl() {
-    LOG_ERROR_AND_THROW_GENERAL("TrustedCertificateStore requires OpenSSL support");
+    LOG_ERROR_AND_THROW(CryptoErrorException,"TrustedCertificateStore requires OpenSSL support");
 }
 
 TrustedCertificateStore::TrustedCertificateStoreImpl::~TrustedCertificateStoreImpl() = default;
 
 void TrustedCertificateStore::TrustedCertificateStoreImpl::AddCertificateFromPEM(const std::string&) {
-    LOG_ERROR_AND_THROW_GENERAL("TrustedCertificateStore requires OpenSSL support");
+    LOG_ERROR_AND_THROW(CryptoErrorException,"TrustedCertificateStore requires OpenSSL support");
 }
 
 void TrustedCertificateStore::TrustedCertificateStoreImpl::AddCertificateFromDER(const Buffer&) {
-    LOG_ERROR_AND_THROW_GENERAL("TrustedCertificateStore requires OpenSSL support");
+    LOG_ERROR_AND_THROW(CryptoErrorException,"TrustedCertificateStore requires OpenSSL support");
 }
 
 void TrustedCertificateStore::TrustedCertificateStoreImpl::LoadFromDirectory(const std::string&) {
-    LOG_ERROR_AND_THROW_GENERAL("TrustedCertificateStore requires OpenSSL support");
+    LOG_ERROR_AND_THROW(CryptoErrorException,"TrustedCertificateStore requires OpenSSL support");
 }
 
 void TrustedCertificateStore::TrustedCertificateStoreImpl::LoadSystemDefaults() {
-    LOG_ERROR_AND_THROW_GENERAL("TrustedCertificateStore requires OpenSSL support");
+    LOG_ERROR_AND_THROW(CryptoErrorException,"TrustedCertificateStore requires OpenSSL support");
 }
 
 #endif

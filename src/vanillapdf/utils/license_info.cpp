@@ -38,7 +38,7 @@ std::string LicenseInfo::m_temporary_expiration;
 static X509* LoadCertificate(const std::string& certificate) {
     auto signing_certificate_bio = BIO_new(BIO_s_mem());
     if (signing_certificate_bio == nullptr) {
-        throw GeneralException("Could not create memory buffer");
+        throw IOErrorException("Could not create memory buffer");
     }
 
     SCOPE_GUARD([signing_certificate_bio]() { BIO_free(signing_certificate_bio); });
@@ -46,12 +46,12 @@ static X509* LoadCertificate(const std::string& certificate) {
     auto signing_certificate_size = ValueConvertUtils::SafeConvert<int>(certificate.size());
     auto bytes_written = BIO_write(signing_certificate_bio, certificate.data(), signing_certificate_size);
     if (bytes_written <= 0) {
-        throw GeneralException("Could not write certificate data");
+        throw IOErrorException("Could not write certificate data");
     }
 
     auto certificate_x509 = PEM_read_bio_X509(signing_certificate_bio, nullptr, nullptr, nullptr);
     if (certificate_x509 == nullptr) {
-        throw GeneralException("Could not read PEM certificate");
+        throw IOErrorException("Could not read PEM certificate");
     }
 
     return certificate_x509;
@@ -61,7 +61,7 @@ void LicenseInfo::SetLicense(IInputStreamPtr stream, types::stream_size length) 
     Buffer buffer(length);
     auto read = stream->Read(buffer, length);
     if (read != length) {
-        throw GeneralException("Could not read license file");
+        throw IOErrorException("Could not read license file");
     }
 
     // Forward content
@@ -179,7 +179,7 @@ void LicenseInfo::SetLicense(const Buffer& data) {
     }
 
     // None of the known license format matches
-    throw GeneralException("Unknown license version: " + version_string);
+    throw IOErrorException("Unknown license version: " + version_string);
 }
 
 void LicenseInfo::SetLicense(const char * filename) {
@@ -187,7 +187,7 @@ void LicenseInfo::SetLicense(const char * filename) {
     // Determine file size
     auto file = std::make_shared<std::ifstream>(filename, std::ios::binary | std::ios::ate);
     if (!file || !file->good()) {
-        throw GeneralException("Could not open license file " + std::string(filename));
+        throw IOErrorException("Could not open license file " + std::string(filename));
     }
 
     auto length = file->tellg();
@@ -305,7 +305,7 @@ bool LicenseInfo::CheckTemporaryExpiration(const std::string& expiration) {
 
     auto expiration_since_epoch = std::mktime(&expiration_tm);
     if (expiration_since_epoch == -1) {
-        throw GeneralException("Could not interpret expiration time as valid date time");
+        throw IOErrorException("Could not interpret expiration time as valid date time");
     }
 
     auto expiration_time = std::chrono::system_clock::from_time_t(expiration_since_epoch);
@@ -325,7 +325,7 @@ bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
 
     auto expiration_since_epoch = std::mktime(&expiration_tm);
     if (expiration_since_epoch == -1) {
-        throw GeneralException("Could not interpret expiration time as valid date time");
+        throw IOErrorException("Could not interpret expiration time as valid date time");
     }
 
     auto expiration_time = std::chrono::system_clock::from_time_t(expiration_since_epoch);
@@ -341,7 +341,7 @@ bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
 
     auto build_since_epoch = std::mktime(&build_tm);
     if (build_since_epoch == -1) {
-        throw GeneralException("Could not interpret build time as valid date time");
+        throw IOErrorException("Could not interpret build time as valid date time");
     }
 
     auto build_time = std::chrono::system_clock::from_time_t(build_since_epoch);

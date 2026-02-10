@@ -172,10 +172,10 @@ types::big_uint Object::GetObjectNumber() const {
     }
 
     if (has_owner) {
-        throw GeneralException("Object does not an indirect object, but is a composite of another object");
+        throw InvalidParameterException("Object does not an indirect object, but is a composite of another object");
     }
 
-    throw GeneralException("Object does not have assigned object number");
+    throw InvalidParameterException("Object does not have assigned object number");
 }
 
 types::ushort Object::GetGenerationNumber() const {
@@ -192,10 +192,10 @@ types::ushort Object::GetGenerationNumber() const {
     }
 
     if (has_owner) {
-        throw GeneralException("Object does not an indirect object, but a composite of another object");
+        throw InvalidParameterException("Object does not an indirect object, but a composite of another object");
     }
 
-    throw GeneralException("Object does not have assigned generation number");
+    throw InvalidParameterException("Object does not have assigned generation number");
 }
 
 types::big_uint Object::GetRootObjectNumber() const {
@@ -216,7 +216,7 @@ types::big_uint Object::GetRootObjectNumber() const {
         return owner->GetRootObjectNumber();
     }
 
-    throw GeneralException("Object does not have assigned object number");
+    throw InvalidParameterException("Object does not have assigned object number");
 }
 
 types::ushort Object::GetRootGenerationNumber() const {
@@ -237,7 +237,7 @@ types::ushort Object::GetRootGenerationNumber() const {
         return owner->GetRootGenerationNumber();
     }
 
-    throw GeneralException("Object does not have assigned generation number");
+    throw InvalidParameterException("Object does not have assigned generation number");
 }
 
 bool Object::IsEncryptionExempted() const {
@@ -294,7 +294,7 @@ const char* Object::TypeName(Type type) {
 void Object::CloneBaseProperties(Object* other) const {
     assert(other != nullptr && "Invalid clone object parameter");
     if (other == nullptr) {
-        throw GeneralException("Invalid clone object parameter");
+        throw InvalidParameterException("Invalid clone object parameter");
     }
 
     other->SetFile(m_file);

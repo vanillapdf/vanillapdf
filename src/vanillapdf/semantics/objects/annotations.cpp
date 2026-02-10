@@ -11,6 +11,7 @@
 
 #include "semantics/utils/semantic_utils.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
@@ -61,24 +62,24 @@ std::unique_ptr<AnnotationBase> AnnotationBase::Create(syntax::DictionaryObjectP
     if (root->Contains(constant::Name::Type)) {
         syntax::ObjectPtr type_obj = root->Find(constant::Name::Type);
         if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
-            throw GeneralException("Invalid annotation type");
+            throw syntax::ObjectMissingException("Invalid annotation type");
         }
 
         syntax::NameObjectPtr type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
 
         if (type != constant::Name::Annot) {
-            throw GeneralException("Invalid annotation type");
+            throw syntax::ObjectMissingException("Invalid annotation type");
         }
     }
 
     if (!root->Contains(constant::Name::Subtype)) {
-        throw GeneralException("Dictionary does not contain subtype");
+        throw syntax::ObjectMissingException("Dictionary does not contain subtype");
     }
 
     syntax::ObjectPtr subtype_obj = root->Find(constant::Name::Subtype);
 
     if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(subtype_obj)) {
-        throw GeneralException("Invalid annotation subtype");
+        throw syntax::ObjectMissingException("Invalid annotation subtype");
     }
 
     syntax::NameObjectPtr subtype = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(subtype_obj);
@@ -186,7 +187,7 @@ std::unique_ptr<AnnotationBase> AnnotationBase::Create(syntax::DictionaryObjectP
         return make_unique<RedactionAnnotation>(root);
     }
 
-    throw GeneralException("Unknown annotation subtype");
+    throw syntax::ObjectMissingException("Unknown annotation subtype");
 }
 
 bool LinkAnnotation::Destination(OutputDestinationPtr& result) const {

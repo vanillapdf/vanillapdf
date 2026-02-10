@@ -128,7 +128,7 @@ bool PageObject::GetContents(OutputPageContentsPtr& result) const {
         assert(!(is_ref && is_array) && "Error in object utils, object is stream and array at the same time");
 
         auto base_type_str = Object::TypeName(content->GetObjectType());
-        throw GeneralException("Invalid contents type: " + std::string(base_type_str));
+        throw NotSupportedException("Invalid contents type: " + std::string(base_type_str));
     }
 
     if (is_ref) {
@@ -147,7 +147,7 @@ bool PageObject::GetContents(OutputPageContentsPtr& result) const {
         return true;
     }
 
-    throw GeneralException("Unreachable code");
+    throw NotSupportedException("Unreachable code");
 }
 
 PageObjectPtr PageObject::Create(DocumentPtr document) {

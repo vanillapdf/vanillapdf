@@ -78,7 +78,7 @@ bool DocumentInfo::CreationDate(OutputDatePtr& result) const {
         result = make_deferred<Date>(date_string);
         return true;
     }
-    catch (GeneralException& ex) {
+    catch (ExceptionBase& ex) {
         auto file = _obj->GetFile();
         auto locked_file = file.GetReference();
         auto filename = locked_file->GetFilenameString();
@@ -191,7 +191,7 @@ void DocumentInfo::SetTrapped(DocumentTrapped value) {
             name = syntax::ObjectUtils::Clone<syntax::NameObjectPtr>(constant::Name::False);
             break;
         default:
-            throw GeneralException("Unknown trapped type");
+            throw NotSupportedException("Unknown trapped type");
     }
 
     _obj->Insert(constant::Name::Trapped, name);
