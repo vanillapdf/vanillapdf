@@ -73,8 +73,9 @@ extern "C"
     /**
     * \brief
     * Error in compressed data.
+    * \deprecated Use \ref VANILLAPDF_ERROR_DATA_CORRUPTION instead
     */
-    VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_ZLIB_DATA;
+    VANILLAPDF_DEPRECATED VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_ZLIB_DATA;
 
     /**
     * \brief
