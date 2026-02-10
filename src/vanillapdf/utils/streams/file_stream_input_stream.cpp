@@ -70,11 +70,7 @@ types::stream_size FileStreamInputStream::GetInputPosition() {
         return constant::BAD_OFFSET;
     }
 
-#if _WIN32
-    auto pos = _ftelli64(m_file.get());
-#else
-    auto pos = ftello(m_file.get());
-#endif
+    auto pos = std::ftell(m_file.get());
 
     if (pos < 0) {
         m_fail = true;
@@ -108,11 +104,7 @@ void FileStreamInputStream::SetInputPosition(types::stream_size pos, SeekDirecti
     }
 
     // seek to the actual position
-#if _WIN32
-    int result = _fseeki64(m_file.get(), static_cast<int64_t>(pos), origin);
-#else
-    int result = fseeko(m_file.get(), static_cast<off_t>(pos), origin);
-#endif
+    int result = std::fseek(m_file.get(), static_cast<long>(pos), origin);
 
     if (result != 0) {
         m_fail = true;

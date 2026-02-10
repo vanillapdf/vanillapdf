@@ -155,15 +155,8 @@ IInputOutputStreamPtr File::GetFilestreamFileStream(const std::string& path, std
         LOG_ERROR_AND_THROW_GENERAL("Unsupported fopen mode mapping for path: {}", path);
     }
 
-    FILE* raw_fp = nullptr;
-
-#if _WIN32
-    auto wide_path = WindowsUtils::MultiByteToWideChar(path);
-    auto wide_mode = WindowsUtils::MultiByteToWideChar(fopen_mode);
-    raw_fp = _wfopen(wide_path.c_str(), wide_mode.c_str());
-#else
-    raw_fp = std::fopen(path.c_str(), fopen_mode);
-#endif
+    auto fs_path = std::filesystem::path(path);
+    FILE* raw_fp = std::fopen(fs_path.string().c_str(), fopen_mode);
 
     if (raw_fp == nullptr) {
         LOG_ERROR_AND_THROW_GENERAL("Could not open file: {}, errno: {}", path, errno);
@@ -173,11 +166,7 @@ IInputOutputStreamPtr File::GetFilestreamFileStream(const std::string& path, std
 
     // Handle ate (at-end) flag: seek to end after opening
     if (mode & std::ios_base::ate) {
-#if _WIN32
-        _fseeki64(raw_fp, 0, SEEK_END);
-#else
-        fseeko(raw_fp, 0, SEEK_END);
-#endif
+        std::fseek(raw_fp, 0, SEEK_END);
     }
 
     return make_deferred<FileStreamInputOutputStream>(file_ptr);

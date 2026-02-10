@@ -71,21 +71,13 @@ void FileStreamOutputStream::Flush(void) {
 }
 
 types::stream_size FileStreamOutputStream::GetOutputPosition(void) {
-#if _WIN32
-    auto pos = _ftelli64(m_file.get());
-#else
-    auto pos = ftello(m_file.get());
-#endif
+    auto pos = std::ftell(m_file.get());
 
     return static_cast<types::stream_size>(pos);
 }
 
 void FileStreamOutputStream::SetOutputPosition(types::stream_size pos) {
-#if _WIN32
-    _fseeki64(m_file.get(), static_cast<int64_t>(pos), SEEK_SET);
-#else
-    fseeko(m_file.get(), static_cast<off_t>(pos), SEEK_SET);
-#endif
+    std::fseek(m_file.get(), static_cast<long>(pos), SEEK_SET);
 }
 
 void FileStreamOutputStream::SetOutputPosition(types::stream_size pos, SeekDirection way) {
@@ -96,11 +88,7 @@ void FileStreamOutputStream::SetOutputPosition(types::stream_size pos, SeekDirec
         case SeekDirection::End: origin = SEEK_END; break;
     }
 
-#if _WIN32
-    _fseeki64(m_file.get(), static_cast<int64_t>(pos), origin);
-#else
-    fseeko(m_file.get(), static_cast<off_t>(pos), origin);
-#endif
+    std::fseek(m_file.get(), static_cast<long>(pos), origin);
 }
 
 void FileStreamOutputStream::ExclusiveOutputLock() {
