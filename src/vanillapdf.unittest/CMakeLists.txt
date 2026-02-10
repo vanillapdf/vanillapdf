@@ -26,6 +26,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     annotations_creation_test.cpp
     byte_range_test.cpp
     catalog_test.cpp
+    character_map_test.cpp
     color_test.cpp
     date_test.cpp
     document_test.cpp
@@ -41,6 +42,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     thread_safety_test.cpp
     name_dictionary_test.cpp
     io_strategy_test.cpp
+    license_info_test.cpp
 )
 
 set(VANILLAPDF_UNITTEST_HEADERS
@@ -106,6 +108,11 @@ target_link_libraries(vanillapdf.unittest PRIVATE ${VANILLAPDF_UNITTEST_LIBS})
 # In case we have the dynamic link configuration add specific definitions
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_CONFIGURATION_DLL)
+endif()
+
+# Pass licensing flag to test code so it can skip license loading when disabled
+if(VANILLAPDF_ENABLE_LICENSING)
+    target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_ENABLE_LICENSING)
 endif()
 
 # We do not need unit test project to be shipped

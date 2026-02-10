@@ -26,7 +26,7 @@ Three distinct layers, each with C++ internals and a C API surface:
 ### PDF Object Hierarchy (syntax/objects/)
 
 ```
-Object (abstract) : IUnknown, IWeakReferenceable<Object>, IModifyObservable
+Object (abstract) : Versionable, IWeakReferenceable<Object>
 ├── ContainableObject (abstract marker - objects that go inside arrays/dicts)
 │   ├── MixedArrayObject (concrete, stores vector<ContainableObjectPtr>)
 │   │   └── ArrayObject<T> (template wrapper with type-safe access)
@@ -73,7 +73,7 @@ Object::Type { Null, Array, Boolean, Dictionary, Integer, Name, Real, Stream, St
 2. **File Association**: `SetFile(WeakReference<File>)` links to owning PDF
 3. **Xref Registration**: `SetXrefEntry()` registers in cross-reference table
 4. **Ownership**: `SetOwner()` establishes parent-child relationships
-5. **Mutation**: Changes trigger `OnChanged()` → observer notifications
+5. **Mutation**: Changes call `IncrementVersion()` to mark object dirty
 6. **Serialization**: `ToPdfStream()` outputs to PDF format
 7. **Cleanup**: `Release()` via reference counting
 
@@ -252,11 +252,18 @@ ExceptionBase : std::exception
 
 Maps 1:1 to C API error codes via `CATCH_VANILLAPDF_EXCEPTIONS` macro.
 
-## Observer Pattern
+## Dirty Tracking (Versionable)
 
-- `IModifyObservable` / `IModifyObserver` for change notifications
-- Objects notify observers on mutation via `OnChanged()`
-- Used for dirty tracking and cascading updates through object graph
+Objects use poll-based version counters instead of push-based observers:
+
+- **Versionable base class**: `std::atomic<uint32_t> m_version` + `bool m_initialized`
+- Each object increments its own version on mutation via `IncrementVersion()`
+- **Leaf objects**: `IsDirty() = m_version > 0`
+- **Containers** (MixedArrayObject, DictionaryObject, StreamObject): `IsDirty()` checks own version + iterates children
+- **NumericObject/NameObject/StringObjects**: Check own version + backend/buffer version
+- **XrefUsedEntryBase**: Checks own version + referenced object's `IsDirty()`
+- **Xref tables**: Track structural changes only (Add/Remove entries)
+- `IObservable<T>` template preserved for `IFileWriterObservable` (file writer events)
 
 ## Thread Safety
 

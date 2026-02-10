@@ -4,12 +4,13 @@
 #include "syntax/utils/syntax_fwd.h"
 #include "syntax/objects/containable.h"
 
+#include <mutex>
 #include <vector>
 
 namespace vanillapdf {
 namespace syntax {
 
-class MixedArrayObject : public ContainableObject, public IModifyObserver {
+class MixedArrayObject : public ContainableObject {
 public:
     typedef std::vector<ContainableObjectPtr> list_type;
     typedef list_type::value_type value_type;
@@ -21,7 +22,7 @@ public:
     typedef list_type::difference_type difference_type;
 
 public:
-    MixedArrayObject() = default;
+    MixedArrayObject();
     MixedArrayObject(const MixedArrayObject&) = delete;
 
     explicit MixedArrayObject(const list_type& list);
@@ -31,8 +32,7 @@ public:
     virtual void SetFile(WeakReference<File> file) override;
     virtual void SetInitialized(bool initialized = true) override;
 
-    virtual void ObserveeChanged(const IModifyObservable*) override;
-    virtual void OnChanged() override;
+    virtual bool IsDirty() const override;
 
     virtual size_t Hash() const override;
     virtual MixedArrayObject* Clone(void) const override;
@@ -68,11 +68,12 @@ public:
     virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
     virtual void ToPdfStreamUpdateOffset(IOutputStreamPtr output) override;
 
-    virtual ~MixedArrayObject();
+    virtual ~MixedArrayObject() = default;
 
 protected:
     list_type _list;
-    
+    std::shared_ptr<std::recursive_mutex> m_access_lock;
+
     mutable std::size_t m_hash_cache = 0;
 };
 

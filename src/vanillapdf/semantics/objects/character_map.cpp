@@ -5,6 +5,20 @@
 
 #include "semantics/objects/character_map.h"
 
+// Benchmark results (Release, Windows x64 MSVC 17, 16x 3792 MHz, L3 16384 KiB):
+//
+// Before (copy-by-value loops, ValueEqualLessThan codespace check, Contains+GetMappedValue double decode):
+// --------------------------------------------------------------------------------
+// Benchmark                                      Time             CPU   Iterations
+// --------------------------------------------------------------------------------
+// BM_UnicodeCharacterMap_GetMappedValue        546 ns          544 ns      1120000
+//
+// After (const auto& loops, ToInteger codespace check, TryGetMappedValue single pass):
+// --------------------------------------------------------------------------------
+// Benchmark                                      Time             CPU   Iterations
+// --------------------------------------------------------------------------------
+// BM_UnicodeCharacterMap_GetMappedValue        440 ns          439 ns      1600000
+
 namespace vanillapdf {
 namespace semantics {
 
@@ -18,6 +32,7 @@ EmbeddedCharacterMap::EmbeddedCharacterMap(syntax::StreamObjectPtr root)
 
 UnicodeCharacterMap::UnicodeCharacterMap(syntax::StreamObjectPtr root)
     : CharacterMapBase(root) {
+    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 std::unique_ptr<CharacterMapBase> CharacterMapBase::Create(syntax::StreamObjectPtr root, WeakReference<Document> doc) {
@@ -26,6 +41,13 @@ std::unique_ptr<CharacterMapBase> CharacterMapBase::Create(syntax::StreamObjectP
 }
 
 void UnicodeCharacterMap::Initialize() const {
+    if (m_initialized) {
+        return;
+    }
+
+    ACCESS_LOCK_GUARD(m_access_lock);
+
+    // Double-check after acquiring the lock
     if (m_initialized) {
         return;
     }
@@ -41,12 +63,14 @@ void UnicodeCharacterMap::Initialize() const {
 BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
     Initialize();
 
-    bool in_codespace = false;
-    for (auto range : m_data.CodeSpaceRanges) {
-        auto begin_range = range.Begin->GetValue();
-        auto end_range = range.End->GetValue();
+    auto k = key->ToInteger<uint32_t>(endian::big);
 
-        if (key->ValueEqualLessThan(end_range) && begin_range->ValueEqualLessThan(key)) {
+    bool in_codespace = false;
+    for (const auto& range : m_data.CodeSpaceRanges) {
+        auto begin = range.Begin->GetValue()->ToInteger<uint32_t>(endian::big);
+        auto end = range.End->GetValue()->ToInteger<uint32_t>(endian::big);
+
+        if (k >= begin && k <= end) {
             in_codespace = true;
             break;
         }
@@ -66,14 +90,15 @@ BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
     }
 
     // Check base font ranges
-    for (auto range : m_data.BaseFontRanges) {
-        if (range.Contains(key)) {
-            return range.GetMappedValue(key);
+    for (const auto& range : m_data.BaseFontRanges) {
+        BufferPtr result;
+        if (range.TryGetMappedValue(key, result)) {
+            return result;
         }
     }
 
     // Check base font chars
-    for (auto char_mapping : m_data.BaseFontCharMapping) {
+    for (const auto& char_mapping : m_data.BaseFontCharMapping) {
         if (char_mapping.Source->GetValue() == key) {
             return char_mapping.Destination->GetValue();
         }

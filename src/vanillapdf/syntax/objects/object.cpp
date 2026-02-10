@@ -253,15 +253,6 @@ bool Object::IsEncryptionExempted() const {
     return false;
 }
 
-void Object::OnChanged() {
-    if (!m_initialized) {
-        return;
-    }
-
-    m_dirty = true;
-    IModifyObservable::OnChanged();
-}
-
 const char* Object::TypeName(Type type) {
     // TODO this should be a single line solution using preprocessor
 
@@ -298,7 +289,7 @@ void Object::CloneBaseProperties(Object* other) const {
     }
 
     other->SetFile(m_file);
-    other->SetDirty(m_dirty);
+    other->SetDirty(IsDirty());
     other->SetEncryptionExempted(m_encryption_exempted);
 
     for (auto attribute : m_attributes) {

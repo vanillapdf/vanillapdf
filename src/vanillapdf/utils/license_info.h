@@ -11,7 +11,9 @@ namespace vanillapdf {
 
 class LicenseInfo {
 public:
+#ifdef VANILLAPDF_ENABLE_LICENSING
     static void SetLicense(IInputStreamPtr stream, types::stream_size length);
+#endif
     static void SetLicense(const Buffer& data);
     static void SetLicense(const char * filename);
 
@@ -21,6 +23,7 @@ public:
 private:
     LicenseInfo() = default;
 
+#ifdef VANILLAPDF_ENABLE_LICENSING
     static bool CheckBlacklist(const std::string& serial);
     static bool CheckUpdateExpiration(const std::string& expiration);
     static bool CheckTemporaryExpiration(const std::string& expiration);
@@ -31,6 +34,7 @@ private:
         MessageDigestAlgorithm digest_algorithm);
 
     static bool CheckCertificateChain(const std::vector<std::string>& certificates);
+#endif
 
     static bool m_update_valid;
     static std::string m_temporary_expiration;

@@ -81,6 +81,90 @@ TEST(Logging, Severity) {
     SetCheckLoggingSeverity(LoggingSeverity_Off);
 }
 
+TEST(ObjectDiagnostics, NullCheck) {
+    EXPECT_EQ(ObjectDiagnostics_GetActiveObjectCount(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(ObjectDiagnostics_GetPeakObjectCount(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(ObjectDiagnostics_GetTotalObjectsCreated(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+TEST(ObjectDiagnostics, ActiveCountTracksCreateRelease) {
+    bigint_type baseline = 0;
+    ASSERT_EQ(ObjectDiagnostics_GetActiveObjectCount(&baseline), VANILLAPDF_ERROR_SUCCESS);
+
+    {
+        HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
+        ASSERT_EQ(Buffer_Create(buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+
+        bigint_type after_create = 0;
+        ASSERT_EQ(ObjectDiagnostics_GetActiveObjectCount(&after_create), VANILLAPDF_ERROR_SUCCESS);
+        EXPECT_GT(after_create, baseline);
+    }
+
+    bigint_type after_release = 0;
+    ASSERT_EQ(ObjectDiagnostics_GetActiveObjectCount(&after_release), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(after_release, baseline);
+}
+
+TEST(ObjectDiagnostics, PeakTracksHighWatermark) {
+    ASSERT_EQ(ObjectDiagnostics_ResetCounters(), VANILLAPDF_ERROR_SUCCESS);
+
+    bigint_type peak_before = 0;
+    ASSERT_EQ(ObjectDiagnostics_GetPeakObjectCount(&peak_before), VANILLAPDF_ERROR_SUCCESS);
+
+    {
+        HandleGuard<BufferHandle, Buffer_Release> buf1;
+        HandleGuard<BufferHandle, Buffer_Release> buf2;
+        ASSERT_EQ(Buffer_Create(buf1.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Buffer_Create(buf2.out()), VANILLAPDF_ERROR_SUCCESS);
+
+        bigint_type peak_during = 0;
+        ASSERT_EQ(ObjectDiagnostics_GetPeakObjectCount(&peak_during), VANILLAPDF_ERROR_SUCCESS);
+        EXPECT_GT(peak_during, peak_before);
+    }
+
+    // Peak should not decrease after releasing objects
+    bigint_type peak_after = 0;
+    bigint_type active_after = 0;
+    ASSERT_EQ(ObjectDiagnostics_GetPeakObjectCount(&peak_after), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ObjectDiagnostics_GetActiveObjectCount(&active_after), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_GT(peak_after, active_after);
+}
+
+TEST(ObjectDiagnostics, TotalOnlyIncreases) {
+    bigint_type total_before = 0;
+    ASSERT_EQ(ObjectDiagnostics_GetTotalObjectsCreated(&total_before), VANILLAPDF_ERROR_SUCCESS);
+
+    {
+        HandleGuard<BufferHandle, Buffer_Release> buf;
+        ASSERT_EQ(Buffer_Create(buf.out()), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    bigint_type total_after = 0;
+    ASSERT_EQ(ObjectDiagnostics_GetTotalObjectsCreated(&total_after), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_GT(total_after, total_before);
+}
+
+TEST(ObjectDiagnostics, ResetCounters) {
+    // Create and release an object to ensure counters are non-trivial
+    {
+        HandleGuard<BufferHandle, Buffer_Release> buf;
+        ASSERT_EQ(Buffer_Create(buf.out()), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    ASSERT_EQ(ObjectDiagnostics_ResetCounters(), VANILLAPDF_ERROR_SUCCESS);
+
+    bigint_type active = 0;
+    bigint_type peak = 0;
+    bigint_type total = 0;
+    ASSERT_EQ(ObjectDiagnostics_GetActiveObjectCount(&active), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ObjectDiagnostics_GetPeakObjectCount(&peak), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ObjectDiagnostics_GetTotalObjectsCreated(&total), VANILLAPDF_ERROR_SUCCESS);
+
+    // After reset, peak and total should equal active
+    EXPECT_EQ(peak, active);
+    EXPECT_EQ(total, active);
+}
+
 } /* utils */
 
 namespace errors {

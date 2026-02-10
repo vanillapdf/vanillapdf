@@ -25,6 +25,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_license_info.cpp
     implementation/utils/c_logging.cpp
     implementation/utils/c_misc_utils.cpp
+    implementation/utils/c_object_diagnostics.cpp
     implementation/utils/c_output_stream.cpp
     implementation/utils/c_memory_buffer_output_stream.cpp
     implementation/utils/c_pkcs12_key.cpp
@@ -201,7 +202,6 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/license_info.cpp
     utils/log.cpp
     utils/misc_utils.cpp
-    utils/modify_observer_interface.cpp
     utils/pkcs12_key.cpp
     utils/resource.cpp
     utils/signature_verification_result.cpp
@@ -209,6 +209,7 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/time_utils.cpp
     utils/trusted_certificate_store.cpp
     utils/unknown_interface.cpp
+    utils/versionable.cpp
     utils/windows_utils.cpp
     utils/zlib_wrapper.cpp
 
@@ -343,6 +344,7 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/base_iterator.h
     utils/buffer.h
     utils/buffer_array.h
+    utils/byte_order.h
     utils/character.h
     utils/constants.h
     utils/conversion_utils.h
@@ -357,8 +359,8 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/log.h
     utils/math_utils.h
     utils/message_digest_algorithm.h
-    utils/modify_observer_interface.h
     utils/observable_interface.h
+    utils/versionable.h
     utils/misc_utils.h
     utils/pdf_version.h
     utils/pkcs12_key.h
@@ -697,10 +699,12 @@ else ()
     find_package(spdlog CONFIG REQUIRED)
 endif()
 
-if (VANILLAPDF_EXTERNAL_NLOHMANN_JSON)
-    find_package(nlohmann_json CONFIG REQUIRED)
-else ()
-    find_package(nlohmann_json CONFIG REQUIRED)
+if (VANILLAPDF_ENABLE_LICENSING)
+    if (VANILLAPDF_EXTERNAL_NLOHMANN_JSON)
+        find_package(nlohmann_json CONFIG REQUIRED)
+    else ()
+        find_package(nlohmann_json CONFIG REQUIRED)
+    endif()
 endif()
 
 if (COMPILE_SKIA)
@@ -750,21 +754,25 @@ else()
     message(STATUS "JPEG2000 support disabled. JPEG2000 images will not be supported")
 endif ()
 
-# Update 30.08.2024:
-# fmtlib is part of spdlog which is a required dependency of the solution
-# Maybe it can be configured to use an external fmtlib, however I do not see any value in investigating this
-# For the time being I am removing the fmtlib dependency and submodule, but keeping the code for tracking purposes
+# fmtlib is used directly in ~12 source files for string formatting.
+# It is also a transitive dependency of spdlog (SPDLOG_FMT_EXTERNAL),
+# but we declare it explicitly to keep the dependency graph correct.
+if (VANILLAPDF_EXTERNAL_FMT)
+    find_package(fmt CONFIG REQUIRED)
+else ()
+    find_package(fmt CONFIG REQUIRED)
+endif()
 
-# Add fmtlib dependency as git external submodule
-
-# Use header only version as under linux there are some compilation issues
-# relocation R_X86_64_PC32 against symbol `stderr@@GLIBC_2.2.5' can not be used when making a shared object; recompile with -fPIC
-# https://stackoverflow.com/questions/38296756/what-is-the-idiomatic-way-in-cmake-to-add-the-fpic-compiler-option
-
-#add_subdirectory("${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
-
+target_link_libraries(vanillapdf PRIVATE fmt::fmt)
 target_link_libraries(vanillapdf PRIVATE spdlog::spdlog)
-target_link_libraries(vanillapdf PRIVATE nlohmann_json::nlohmann_json)
+
+if (VANILLAPDF_ENABLE_LICENSING)
+    target_link_libraries(vanillapdf PRIVATE nlohmann_json::nlohmann_json)
+    target_compile_definitions(vanillapdf PRIVATE VANILLAPDF_ENABLE_LICENSING)
+    message(STATUS "Licensing support enabled (nlohmann-json)")
+else()
+    message(STATUS "Licensing support disabled")
+endif()
 
 # This includes the public headers in the project as well as publishing them outside to be consumed
 target_include_directories(vanillapdf PUBLIC

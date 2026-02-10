@@ -15,7 +15,7 @@ bool BooleanObject::GetValue(void) const noexcept {
 
 void BooleanObject::SetValue(bool value) {
     m_value = value;
-    OnChanged();
+    IncrementVersion();
 }
 
 BooleanObject::operator bool() const noexcept {
