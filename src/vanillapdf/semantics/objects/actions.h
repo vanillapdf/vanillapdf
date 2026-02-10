@@ -23,7 +23,7 @@ public:
 
 public:
     explicit ActionBase(syntax::DictionaryObjectPtr root);
-    static std::unique_ptr<ActionBase> Create(syntax::DictionaryObjectPtr root);
+    static ActionPtr Create(syntax::DictionaryObjectPtr root);
 
     virtual ActionBase::Type GetActionType() const noexcept = 0;
 };

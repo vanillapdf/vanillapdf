@@ -51,9 +51,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Action_CreateFromDictionary(Diction
     try
     {
         auto action = ActionBase::Create(dict_obj);
-        auto raw_ptr = action.release();
-        ActionPtr action_ptr(raw_ptr);
-        auto ptr = action_ptr.AddRefGet();
+        auto ptr = action.AddRefGet();
         *result = reinterpret_cast<ActionHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
