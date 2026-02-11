@@ -31,6 +31,25 @@ bool InteractiveForm::GetSignatureFlags(OutputSignatureFlagsPtr& result) const {
     return true;
 }
 
+bool InteractiveForm::GetNeedAppearances(bool& result) const {
+    if (!_obj->Contains(constant::Name::NeedAppearances)) {
+        return false;
+    }
+
+    auto value = _obj->FindAs<syntax::BooleanObjectPtr>(constant::Name::NeedAppearances);
+    result = value->GetValue();
+    return true;
+}
+
+void InteractiveForm::SetNeedAppearances(bool value) {
+    if (_obj->Contains(constant::Name::NeedAppearances)) {
+        bool removed = _obj->Remove(constant::Name::NeedAppearances);
+        assert(removed && "Unable to remove existing item"); UNUSED(removed);
+    }
+    auto bool_obj = make_deferred<syntax::BooleanObject>(value);
+    _obj->Insert(constant::Name::NeedAppearances, bool_obj);
+}
+
 FieldCollectionPtr InteractiveForm::CreateFields() {
     if (!_obj->Contains(constant::Name::Fields)) {
         syntax::MixedArrayObjectPtr mixed_array;

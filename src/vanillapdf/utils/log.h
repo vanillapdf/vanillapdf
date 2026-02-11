@@ -9,4 +9,8 @@
     spdlog::error(__VA_ARGS__); \
     throw GeneralException(fmt::format(__VA_ARGS__))
 
+#define LOG_ERROR_AND_THROW(ExceptionType, ...) \
+    spdlog::error(__VA_ARGS__); \
+    throw ExceptionType(fmt::format(__VA_ARGS__))
+
 #endif /* _LOG_H */

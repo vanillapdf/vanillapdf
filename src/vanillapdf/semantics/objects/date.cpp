@@ -43,7 +43,7 @@ Date::Date(syntax::StringObjectPtr root) : HighLevelObject(root) {
 
     std::smatch sm;
     if (!std::regex_match(str, sm, header_regex)) {
-        LOG_ERROR_AND_THROW_GENERAL("Could not parse datetime: {}", str);
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Could not parse datetime: {}", str);
     }
 
     auto length = sm.size();
@@ -65,17 +65,17 @@ Date::Date(syntax::StringObjectPtr root) : HighLevelObject(root) {
         } else if (sm[7].str() == "-") {
             m_timezone = Timezone::Earlier;
         } else {
-            LOG_ERROR_AND_THROW_GENERAL("Could not parse datetime: {}",str);
+            LOG_ERROR_AND_THROW(InvalidParameterException, "Could not parse datetime: {}",str);
         }
     }
 
-    if (m_month < 1 || m_month > 12) throw GeneralException("Month is out of range: " + std::to_string(m_month));
-    if (m_day < 1 || m_day > 31) throw GeneralException("Day is out of range: " + std::to_string(m_day));
-    if (m_hour < 0 || m_hour > 23) throw GeneralException("Hour is out of range: " + std::to_string(m_hour));
-    if (m_minute < 0 || m_minute > 59) throw GeneralException("Minute is out of range: " + std::to_string(m_minute));
-    if (m_second < 0 || m_second > 59) throw GeneralException("Second is out of range: " + std::to_string(m_second));
-    if (m_hour_offset < 0 || m_hour_offset > 23) throw GeneralException("Hour offset is out of range: " + std::to_string(m_hour_offset));
-    if (m_minute_offset < 0 || m_minute_offset > 59) throw GeneralException("Minute offset is out of range: " + std::to_string(m_minute_offset));
+    if (m_month < 1 || m_month > 12) throw InvalidParameterException("Month is out of range: " + std::to_string(m_month));
+    if (m_day < 1 || m_day > 31) throw InvalidParameterException("Day is out of range: " + std::to_string(m_day));
+    if (m_hour < 0 || m_hour > 23) throw InvalidParameterException("Hour is out of range: " + std::to_string(m_hour));
+    if (m_minute < 0 || m_minute > 59) throw InvalidParameterException("Minute is out of range: " + std::to_string(m_minute));
+    if (m_second < 0 || m_second > 59) throw InvalidParameterException("Second is out of range: " + std::to_string(m_second));
+    if (m_hour_offset < 0 || m_hour_offset > 23) throw InvalidParameterException("Hour offset is out of range: " + std::to_string(m_hour_offset));
+    if (m_minute_offset < 0 || m_minute_offset > 59) throw InvalidParameterException("Minute offset is out of range: " + std::to_string(m_minute_offset));
 }
 
 DatePtr Date::GetCurrentDate() {
@@ -99,7 +99,7 @@ DatePtr Date::GetCurrentDate() {
             local_time.GetHour(), local_time.GetMinute(), local_time.GetSecond(),
             local_time.GetHourOffset(), local_time.GetMinuteOffset());
     } else {
-        throw GeneralException("Unknown timezone type");
+        throw InvalidParameterException("Unknown timezone type");
     }
 
     auto string_object = syntax::LiteralStringObject::CreateFromDecoded(formatted_time);
@@ -121,7 +121,7 @@ void Date::UpdateObject() {
             m_year, m_month, m_day, m_hour, m_minute, m_second,
             m_hour_offset, m_minute_offset);
     } else {
-        throw GeneralException("Unknown timezone type");
+        throw InvalidParameterException("Unknown timezone type");
     }
 
     SetObject(syntax::LiteralStringObject::CreateFromDecoded(formatted_time));

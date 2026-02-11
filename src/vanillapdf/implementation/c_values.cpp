@@ -16,6 +16,10 @@ VANILLAPDF_API const error_type VANILLAPDF_ERROR_ZLIB_DATA				= static_cast<erro
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_INVALID_LICENSE		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::InvalidLicense);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_LICENSE_REQUIRED		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::LicenseRequired);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_INSUFFICIENT_SPACE		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::InsufficientSpace);
+VANILLAPDF_API const error_type VANILLAPDF_ERROR_DATA_CORRUPTION		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::DataCorruption);
+VANILLAPDF_API const error_type VANILLAPDF_ERROR_IO						= static_cast<error_type>(vanillapdf::ExceptionBase::Type::IOError);
+VANILLAPDF_API const error_type VANILLAPDF_ERROR_CRYPTO					= static_cast<error_type>(vanillapdf::ExceptionBase::Type::CryptoError);
+VANILLAPDF_API const error_type VANILLAPDF_ERROR_IMAGE_CODEC			= static_cast<error_type>(vanillapdf::ExceptionBase::Type::ImageCodecError);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_GENERAL				= static_cast<error_type>(vanillapdf::ExceptionBase::Type::General);
 
 // syntax errors

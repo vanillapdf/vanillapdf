@@ -147,7 +147,7 @@ public:
         if (found != visited.end() && found->second) {
             std::stringstream ss;
             ss << "Cyclic reference was found for " << converted->GetReferencedObjectNumber() << " " << converted->GetReferencedGenerationNumber() << " R";
-            throw GeneralException(ss.str());
+            throw ConversionException(ss.str());
         }
 
         visited[*converted] = true;

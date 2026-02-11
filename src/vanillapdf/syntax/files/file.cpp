@@ -177,7 +177,7 @@ void File::InitializeObjectStream(types::big_uint object_stream_number) {
     auto input_stream = body->ToInputStream();
 
     if (body->empty()) {
-        LOG_ERROR_AND_THROW_GENERAL("Could not find data for the ObjStm {:d}", object_stream_number);
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not find data for the ObjStm {:d}", object_stream_number);
     }
 
     spdlog::debug("Initializing object stream {}", object_stream_number);
@@ -288,7 +288,7 @@ bool File::SetEncryptionKey(IEncryptionKey& key) {
     try {
         _decryption_key = EncryptionUtils::GetRecipientKey(recipients, length_bits, algorithm, key);
         return true;
-    } catch (GeneralException& ex) {
+    } catch (ExceptionBase& ex) {
         spdlog::error("Error setting recepient encryption key: {}", ex.what());
         return false;
     } catch (...) {
@@ -315,12 +315,12 @@ bool File::SetEncryptionPassword(const Buffer& password) {
     auto trailer_dictionary = xref->GetTrailerDictionary();
 
     if (!trailer_dictionary->Contains(constant::Name::ID)) {
-        LOG_ERROR_AND_THROW_GENERAL("Trailer dictionary does not contain document ID");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Trailer dictionary does not contain document ID");
     }
 
     auto document_ids = trailer_dictionary->FindAs<MixedArrayObjectPtr>(constant::Name::ID);
     if (document_ids->GetSize() == 0) {
-        LOG_ERROR_AND_THROW_GENERAL("Document ID list is empty");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Document ID list is empty");
     }
 
     // Identify the document ID object - it could be other types than string
@@ -333,7 +333,7 @@ bool File::SetEncryptionPassword(const Buffer& password) {
     }
 
     if (document_id_buffer->empty()) {
-        LOG_ERROR_AND_THROW_GENERAL("Could not decrypt document with empty document ID");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not decrypt document with empty document ID");
     }
 
     auto dict = ObjectUtils::ConvertTo<DictionaryObjectPtr>(_encryption_dictionary);
@@ -715,7 +715,7 @@ void File::ReadXref(types::stream_offset offset) {
             auto hybrid_xref = stream.ReadXref(stm_offset);
 
             if (!ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(hybrid_xref)) {
-                throw GeneralException("Hybrid xref is not a stream");
+                throw ParseException("Hybrid xref is not a stream");
             }
 
             auto hybrid_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(hybrid_xref);
@@ -754,13 +754,13 @@ types::stream_offset File::GetLastXrefOffset(types::stream_size file_size) {
 
     _input->SetInputPosition(-to_read, SeekDirection::End);
     if (_input->IsFail()) {
-        throw GeneralException("Failed to seek for reading the file trailer");
+        throw IOErrorException("Failed to seek for reading the file trailer");
     }
 
     BufferPtr file_trailer(make_deferred_container<Buffer>(to_read));
     auto bytes_read = _input->Read(file_trailer, to_read);
     if (bytes_read != to_read) {
-        throw GeneralException("Failed to read file trailer");
+        throw IOErrorException("Failed to read file trailer");
     }
 
     std::reverse(file_trailer.begin(), file_trailer.end());
@@ -876,7 +876,7 @@ ObjectPtr File::GetIndirectObjectInternal(
         case XrefEntryBase::Usage::Free:
             return NullObject::GetInstance();
         default:
-            throw GeneralException("Unknown xref entry type: " + std::to_string(static_cast<int>(item->GetUsage())));
+            throw ParseException("Unknown xref entry type: " + std::to_string(static_cast<int>(item->GetUsage())));
     }
 }
 
@@ -978,7 +978,7 @@ XrefUsedEntryBasePtr File::AllocateNewEntry() {
         return new_entry;
     }
 
-    throw GeneralException("Unable to allocate new entry");
+    throw IOErrorException("Unable to allocate new entry");
 }
 
 void File::FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr copied) {

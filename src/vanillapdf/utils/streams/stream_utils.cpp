@@ -24,7 +24,7 @@ std::shared_ptr<std::fstream> StreamUtils::OpenFileStream(const std::string& pat
     fstream->open(fs_path, mode);
 
     if (!fstream || !fstream->good()) {
-        LOG_ERROR_AND_THROW_GENERAL("Could not open file: {}", path);
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not open file: {}, errno: {}", path, errno);
     }
 
     return fstream;
@@ -85,7 +85,7 @@ SeekDirection StreamUtils::ConvertToSeekDirection(std::ios_base::seekdir value) 
         return SeekDirection::End;
     }
 
-    throw GeneralException("Unknown seek direction: " + std::to_string(value));
+    throw IOErrorException("Unknown seek direction: " + std::to_string(value));
 }
 
 std::ios_base::seekdir StreamUtils::ConvertFromSeekDirection(SeekDirection value) {
@@ -101,7 +101,7 @@ std::ios_base::seekdir StreamUtils::ConvertFromSeekDirection(SeekDirection value
         return std::ios_base::end;
     }
 
-    throw GeneralException("Unknown seek direction: " + std::to_string(static_cast<int>(value)));
+    throw IOErrorException("Unknown seek direction: " + std::to_string(static_cast<int>(value)));
 }
 
 IInputOutputStreamPtr StreamUtils::CreateFileStream(const std::string& path, std::ios_base::openmode mode) {

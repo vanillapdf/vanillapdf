@@ -38,6 +38,20 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(InteractiveFormHandle* handle, FieldCollectionHandle** result);
 
     /**
+    * \brief
+    * Get the NeedAppearances flag.
+    * When true, the viewer application should regenerate field appearances.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetNeedAppearances(InteractiveFormHandle* handle, boolean_type* result);
+
+    /**
+    * \brief
+    * Set the NeedAppearances flag.
+    * Set to \ref VANILLAPDF_RV_TRUE to instruct the viewer to regenerate all field appearances from their values.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetNeedAppearances(InteractiveFormHandle* handle, boolean_type value);
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */

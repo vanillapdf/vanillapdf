@@ -1,5 +1,11 @@
 # Build System
 
+## CRITICAL: Test Performance
+
+- **NEVER run the full test suite (`ctest` without `-R`) in Debug mode** — it takes 40+ minutes on Windows.
+- Use Debug only for targeted tests: `ctest --preset <preset> --build-config Debug -R "TestPattern" --output-on-failure`
+- Use **Release** (`--build-config Release`) for full test suite runs.
+
 ## CMake Presets (Recommended)
 
 List available presets:

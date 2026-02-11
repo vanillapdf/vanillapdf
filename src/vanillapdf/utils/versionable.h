@@ -52,11 +52,11 @@ public:
     }
 
     bool IsInitialized() const noexcept {
-        return m_initialized.load(std::memory_order_relaxed);
+        return m_initialized.load(std::memory_order_acquire);
     }
 
     virtual void SetInitialized(bool initialized = true) {
-        m_initialized.store(initialized, std::memory_order_relaxed);
+        m_initialized.store(initialized, std::memory_order_release);
     }
 
     virtual ~Versionable() = 0;

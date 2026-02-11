@@ -4,6 +4,7 @@
 #include "semantics/utils/semantics_fwd.h"
 #include "semantics/objects/high_level_object.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/files/xref.h"
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/objects/string_object.h"
@@ -105,7 +106,7 @@ protected:
 private:
     TreeNodeRootPtr _root;
     mutable map_type m_map;
-    mutable bool m_initialized = false;
+    mutable std::atomic<bool> m_initialized = false;
 
     void InsertPairsToMap(std::map<KeyT, syntax::ContainableObjectPtr>& map, const syntax::MixedArrayObjectPtr values) const;
     std::map<KeyT, syntax::ContainableObjectPtr> GetAllKeys(const TreeNodeBasePtr node) const;
@@ -257,17 +258,17 @@ typename TreeBase<KeyT, ValueT>::const_iterator TreeBase<KeyT, ValueT>::end() co
 
 template <typename KeyT, typename ValueT>
 bool TreeBase<KeyT, ValueT>::IsInitialized() const {
-    return m_initialized;
+    return m_initialized.load(std::memory_order_acquire);
 }
 
 template <typename KeyT, typename ValueT>
 void TreeBase<KeyT, ValueT>::Initialize() const {
-    if (m_initialized) {
+    if (m_initialized.load(std::memory_order_acquire)) {
         return;
     }
 
     m_map = GetAllKeys(_root);
-    m_initialized = true;
+    m_initialized.store(true, std::memory_order_release);
 }
 
 template <typename KeyT, typename ValueT>
@@ -356,7 +357,7 @@ void TreeBase<KeyT, ValueT>::Rebuild() {
     _obj->Insert(GetValueName(), leaf_values);
 
     // Force tree reinitialization
-    m_initialized = false;
+    m_initialized.store(false, std::memory_order_release);
     Initialize();
 }
 
@@ -372,7 +373,7 @@ syntax::ContainableObjectPtr TreeBase<KeyT, ValueT>::Find(const KeyT& key) const
 
     auto found = m_map.find(key);
     if (found == m_map.end()) {
-        throw GeneralException("Item was not found");
+        throw syntax::ObjectMissingException("Item was not found");
     }
 
     return found->second;
@@ -457,7 +458,7 @@ std::map<KeyT, syntax::ContainableObjectPtr> TreeBase<KeyT, ValueT>::GetAllKeys(
         return result_map;
     }
 
-    throw GeneralException("Unknown node type");
+    throw syntax::ObjectMissingException("Unknown node type");
 }
 
 template <typename KeyT, typename ValueT>
@@ -492,7 +493,7 @@ bool TreeBase<KeyT, ValueT>::ContainsInternal(const TreeNodeBasePtr node, const 
             return ContainsInternal(root->Values(), key);
         }
 
-        throw GeneralException("Unknown tree root type");
+        throw syntax::ObjectMissingException("Unknown tree root type");
     }
 
     if (node_type == TreeNodeBase::TreeNodeType::Intermediate) {
@@ -513,7 +514,7 @@ bool TreeBase<KeyT, ValueT>::ContainsInternal(const TreeNodeBasePtr node, const 
         return ContainsInternal(leaf->Values(), key);
     }
 
-    throw GeneralException("Unknown node type");
+    throw syntax::ObjectMissingException("Unknown node type");
 }
 
 template <typename KeyT, typename ValueT>
@@ -525,7 +526,7 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const syntax::MixedArrayObjectPtr va
         }
     }
 
-    throw GeneralException("Tree node does not contain required item");
+    throw syntax::ObjectMissingException("Tree node does not contain required item");
 }
 
 template <typename KeyT, typename ValueT>
@@ -541,14 +542,14 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
                 }
             }
 
-            throw GeneralException("Tree node does not contain required item");
+            throw syntax::ObjectMissingException("Tree node does not contain required item");
         }
 
         if (root->HasValues()) {
             return FindInternal(root->Values(), key);
         }
 
-        throw GeneralException("Unknown tree root type");
+        throw syntax::ObjectMissingException("Unknown tree root type");
     }
 
     if (node_type == TreeNodeBase::TreeNodeType::Intermediate) {
@@ -559,7 +560,7 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
             }
         }
 
-        throw GeneralException("Tree node does not contain required item");
+        throw syntax::ObjectMissingException("Tree node does not contain required item");
     }
 
     if (node_type == TreeNodeBase::TreeNodeType::Leaf) {
@@ -567,15 +568,15 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
         auto limits = leaf->Limits();
         assert(limits->GetSize() == 2);
         if (limits->GetSize() != 2)
-            throw GeneralException("Tree node has incorrect size");
+            throw syntax::ObjectMissingException("Tree node has incorrect size");
 
         if (key < limits->GetValue(0) || limits->GetValue(1) < key)
-            throw GeneralException("Tree node does not contain required item");
+            throw syntax::ObjectMissingException("Tree node does not contain required item");
 
         return FindInternal(leaf->Values(), key);
     }
 
-    throw GeneralException("Unknown node type");
+    throw syntax::ObjectMissingException("Unknown node type");
 }
 
 #pragma endregion

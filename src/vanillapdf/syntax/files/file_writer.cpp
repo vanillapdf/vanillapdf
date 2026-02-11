@@ -51,7 +51,7 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
     // Verify that configuration flags are valid
     bool valid_configuration = ValidateConfiguration(source, reason);
     if (!valid_configuration) {
-        throw GeneralException(reason);
+        throw InvalidParameterException(reason);
     }
 
     // Get destination output stream
@@ -224,7 +224,7 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 
         assert(object_stream_found && "Object stream was not found");
         if (!object_stream_found) {
-            throw GeneralException("Object stream was not found");
+            throw ParseException("Object stream was not found");
         }
 
         auto object_stream_entry = chain->GetXrefEntry(object_stream_number, 0);
@@ -232,7 +232,7 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 
         assert(object_stream_entry_used && "Object stream is not in use");
         if (!object_stream_entry_used) {
-            throw GeneralException("Object stream is not in use");
+            throw ParseException("Object stream is not in use");
         }
 
         auto object_stream_used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(object_stream_entry);
@@ -244,7 +244,7 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 
         assert(is_stream && "Object stream has incorrect type");
         if (!is_stream) {
-            throw GeneralException("Object stream has incorrect type");
+            throw ParseException("Object stream has incorrect type");
         }
 
         auto object_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(object_stream_object);
@@ -347,7 +347,7 @@ void FileWriter::CloneHybridStreams(FilePtr source, FilePtr destination) {
     assert(source_chain->GetSize() == destination_chain->GetSize() && "Error in xref cloning");
 
     if (source_chain->GetSize() != destination_chain->GetSize()) {
-        throw GeneralException("Invalid xref size");
+        throw ParseException("Invalid xref size");
     }
 
     for (; dest_iterator != destination_chain->end(); ++dest_iterator, ++source_iterator) {
@@ -356,7 +356,7 @@ void FileWriter::CloneHybridStreams(FilePtr source, FilePtr destination) {
 
         assert(new_xref->GetType() == original_xref->GetType() && "Cloning error");
         if (new_xref->GetType() != original_xref->GetType()) {
-            throw GeneralException("Error in cloning xref");
+            throw ParseException("Error in cloning xref");
         }
 
         if (original_xref->GetType() != XrefBase::Type::Table) {
@@ -377,13 +377,13 @@ void FileWriter::CloneHybridStreams(FilePtr source, FilePtr destination) {
 
         auto destination_hybrid_entry = destination_chain->GetXrefEntry(source_hybrid_stream_object_number, source_hybrid_stream_generation_number);
         if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(destination_hybrid_entry)) {
-            throw GeneralException("Destination xref is not in use");
+            throw ParseException("Destination xref is not in use");
         }
 
         auto destination_hybrid_used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(destination_hybrid_entry);
         auto destination_hybrid_object = destination_hybrid_used_entry->GetReference();
         if (!ConvertUtils<ObjectPtr>::IsType<StreamObjectPtr>(destination_hybrid_object)) {
-            throw GeneralException("Cloned hybrid xref is not a stream");
+            throw ParseException("Cloned hybrid xref is not a stream");
         }
 
         auto cloned_hybrid_xref = CloneXref(destination, source_hybrid_stream);
@@ -405,7 +405,7 @@ void FileWriter::FixStreamReferences(XrefChainPtr source, XrefChainPtr destinati
     assert(source->GetSize() == destination->GetSize() && "Error in xref cloning");
 
     if (source->GetSize() != destination->GetSize()) {
-        throw GeneralException("Invalid xref size");
+        throw ParseException("Invalid xref size");
     }
 
     for (; dest_iterator != destination->end(); ++dest_iterator, ++source_iterator) {
@@ -414,7 +414,7 @@ void FileWriter::FixStreamReferences(XrefChainPtr source, XrefChainPtr destinati
 
         assert(new_xref->GetType() == original_xref->GetType() && "Cloning error");
         if (new_xref->GetType() != original_xref->GetType()) {
-            throw GeneralException("Error in cloning xref");
+            throw ParseException("Error in cloning xref");
         }
 
         bool is_original_stream = ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(original_xref);
@@ -475,7 +475,7 @@ void FileWriter::SetEncryptionData(FilePtr source, FilePtr destination) {
         auto trailer_dictionary = chain_value->GetTrailerDictionary();
 
         if (!trailer_dictionary->Contains(constant::Name::Encrypt)) {
-            throw GeneralException("Destination trailer dictionary does not contain encryption entry");
+            throw ParseException("Destination trailer dictionary does not contain encryption entry");
         }
 
         // TODO Compare the source and destination dictionaries?
@@ -484,7 +484,7 @@ void FileWriter::SetEncryptionData(FilePtr source, FilePtr destination) {
     }
 
     if (!ObjectUtils::IsType<DictionaryObjectPtr>(destination_encryption_object)) {
-        throw GeneralException("Destination encryption object is not a dictionary");
+        throw ParseException("Destination encryption object is not a dictionary");
     }
 
     auto dictionary_obj = ObjectUtils::ConvertTo<DictionaryObjectPtr>(destination_encryption_object);
@@ -738,7 +738,7 @@ void FileWriter::RecalculateStreamsLength(XrefBasePtr source) {
             assert(!ObjectUtils::IsType<StreamObjectPtr>(new_obj));
 
             if (ObjectUtils::IsType<StreamObjectPtr>(new_obj)) {
-                throw GeneralException("Stream object should not be inside object stream");
+                throw ParseException("Stream object should not be inside object stream");
             }
 
             continue;
@@ -757,7 +757,7 @@ XrefBasePtr FileWriter::FindPreviousXref(XrefChainPtr chain, XrefBasePtr source)
 
         if (Identity(current_xref, source)) {
             if (first_xref) {
-                throw GeneralException("First xref does not have a previous entry");
+                throw InvalidParameterException("First xref does not have a previous entry");
             }
 
             return *prev_xref_iterator;
@@ -772,7 +772,7 @@ XrefBasePtr FileWriter::FindPreviousXref(XrefChainPtr chain, XrefBasePtr source)
         first_xref = false;
     }
 
-    throw GeneralException("Could not find previous xref");
+    throw InvalidParameterException("Could not find previous xref");
 }
 
 HeaderPtr FileWriter::CloneHeader(FilePtr source, FilePtr destination) {
@@ -1298,7 +1298,7 @@ void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
     case Version::PDF20:
         output->Write("2.0"); break;
     default:
-        throw GeneralException("Unknown PDF version: " + std::to_string(static_cast<int32_t>(version)));
+        throw InvalidParameterException("Unknown PDF version: " + std::to_string(static_cast<int32_t>(version)));
     }
 
     output->Write(WhiteSpace::LINE_FEED);

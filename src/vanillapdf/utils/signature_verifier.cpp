@@ -23,17 +23,17 @@ namespace vanillapdf {
 
 // Helper to check if signature uses weak cryptographic algorithms
 // Returns true if weak algorithm detected, false otherwise
-// Throws GeneralException for logic errors (parsing failures, structure errors)
+// Throws CryptoErrorException for logic errors (parsing failures, structure errors)
 bool SignatureVerifier::IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPtr& result) {
     // Get signer info
     STACK_OF(PKCS7_SIGNER_INFO)* signer_info_stack = PKCS7_get_signer_info(p7);
     if (!signer_info_stack || sk_PKCS7_SIGNER_INFO_num(signer_info_stack) == 0) {
-        LOG_ERROR_AND_THROW_GENERAL("No signer info found in PKCS#7 signature");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"No signer info found in PKCS#7 signature");
     }
 
     PKCS7_SIGNER_INFO* si = sk_PKCS7_SIGNER_INFO_value(signer_info_stack, 0);
     if (!si) {
-        LOG_ERROR_AND_THROW_GENERAL("Signer info is null (PKCS#7 structure error)");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Signer info is null (PKCS#7 structure error)");
     }
 
     // Check digest algorithm
@@ -77,18 +77,18 @@ bool SignatureVerifier::IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPt
     // Check public key size
     STACK_OF(X509)* signers = PKCS7_get0_signers(p7, nullptr, 0);
     if (!signers || sk_X509_num(signers) == 0) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to get signer certificates from PKCS#7");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to get signer certificates from PKCS#7");
     }
     SCOPE_GUARD([signers]() { sk_X509_free(signers); });
 
     X509* signer_cert = sk_X509_value(signers, 0);
     if (!signer_cert) {
-        LOG_ERROR_AND_THROW_GENERAL("Signer certificate is null");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Signer certificate is null");
     }
 
     EVP_PKEY* pkey = X509_get0_pubkey(signer_cert);
     if (!pkey) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to get public key from signer certificate");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to get public key from signer certificate");
     }
 
     int key_type = EVP_PKEY_base_id(pkey);
@@ -189,21 +189,21 @@ void SignatureVerifier::ExtractCertificateChain(PKCS7* p7, SignatureVerification
 
 // Helper to extract signing time from PKCS7 authenticated attributes
 // Returns true if signing time was found and extracted, false if not present (valid per spec)
-// Throws GeneralException for logic errors (parsing failures, memory allocation, etc.)
+// Throws CryptoErrorException for logic errors (parsing failures, memory allocation, etc.)
 bool SignatureVerifier::ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
     if (!signing_time) {
-        LOG_ERROR_AND_THROW_GENERAL("signing_time parameter is null");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"signing_time parameter is null");
     }
 
     // Get signer info
     STACK_OF(PKCS7_SIGNER_INFO)* signer_info_stack = PKCS7_get_signer_info(p7);
     if (!signer_info_stack || sk_PKCS7_SIGNER_INFO_num(signer_info_stack) == 0) {
-        LOG_ERROR_AND_THROW_GENERAL("No signer info found in PKCS#7 signature");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"No signer info found in PKCS#7 signature");
     }
 
     PKCS7_SIGNER_INFO* si = sk_PKCS7_SIGNER_INFO_value(signer_info_stack, 0);
     if (!si) {
-        LOG_ERROR_AND_THROW_GENERAL("Signer info is null (PKCS#7 structure error)");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Signer info is null (PKCS#7 structure error)");
     }
 
     // Get authenticated attributes
@@ -224,13 +224,13 @@ bool SignatureVerifier::ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
 
     X509_ATTRIBUTE* attr = X509at_get_attr(auth_attrs, idx);
     if (!attr) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to get signing time attribute (X509at_get_attr returned null)");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to get signing time attribute (X509at_get_attr returned null)");
     }
 
     // Get the ASN1_TYPE from the attribute
     ASN1_TYPE* asn1_time = X509_ATTRIBUTE_get0_type(attr, 0);
     if (!asn1_time) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to get ASN1_TYPE from signing time attribute");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to get ASN1_TYPE from signing time attribute");
     }
 
     // Get ASN1_TIME from ASN1_TYPE
@@ -240,27 +240,27 @@ bool SignatureVerifier::ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
     }
 
     if (!time_value) {
-        LOG_ERROR_AND_THROW_GENERAL("Signing time has unexpected ASN1 type: {}", asn1_time->type);
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Signing time has unexpected ASN1 type: {}", asn1_time->type);
     }
 
     // Use ASN1_TIME_diff to convert to time_t (avoids timezone/DST/leap second complexity)
     // Create epoch time (1970-01-01 00:00:00 UTC)
     ASN1_TIME* epoch = ASN1_TIME_new();
     if (!epoch) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to create ASN1_TIME for epoch: {}", CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to create ASN1_TIME for epoch: {}", CryptoUtils::GetLastOpensslError());
     }
     SCOPE_GUARD([epoch]() { ASN1_TIME_free(epoch); });
 
     // Set epoch using time_t(0) instead of string
     if (!ASN1_TIME_set(epoch, 0)) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to set epoch time: {}", CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to set epoch time: {}", CryptoUtils::GetLastOpensslError());
     }
 
     // Calculate difference between signing time and epoch
     int days = 0;
     int seconds = 0;
     if (!ASN1_TIME_diff(&days, &seconds, epoch, time_value)) {
-        LOG_ERROR_AND_THROW_GENERAL("Failed to calculate time difference: {}", CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to calculate time difference: {}", CryptoUtils::GetLastOpensslError());
     }
 
     // Convert to time_t using chrono for clean duration calculation

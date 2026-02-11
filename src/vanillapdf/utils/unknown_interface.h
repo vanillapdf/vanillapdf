@@ -70,13 +70,13 @@ public:
 
     Deferred<T> GetReference() const {
         if (!IsActive()) {
-            throw GeneralException("Object has been already disposed");
+            throw InvalidParameterException("Object has been already disposed");
         }
 
         // This shall not happen, because IsActive should check m_ptr
         assert(m_ptr && "Referenced pointer is empty");
         if (m_ptr == nullptr) {
-            throw GeneralException("Pointer object was not set");
+            throw InvalidParameterException("Pointer object was not set");
         }
 
         return Deferred<T>(m_ptr);
@@ -217,7 +217,7 @@ public:
 
         T* converted = static_cast<U*>(this);
         if (converted == nullptr) {
-            throw GeneralException("Pointer object was not set");
+            throw InvalidParameterException("Pointer object was not set");
         }
 
         return WeakReference<T>(converted, m_weak_ref);

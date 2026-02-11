@@ -40,7 +40,7 @@ public:
 
     T* GetValue() const {
         if (m_value == nullptr) {
-            throw GeneralException("Uninitialized pointer");
+            throw InvalidParameterException("Uninitialized pointer");
         }
 
         return m_value.get();

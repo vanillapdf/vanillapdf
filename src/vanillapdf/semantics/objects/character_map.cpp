@@ -4,6 +4,7 @@
 #include "contents/character_map_parser.h"
 
 #include "semantics/objects/character_map.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 
 // Benchmark results (Release, Windows x64 MSVC 17, 16x 3792 MHz, L3 16384 KiB):
 //
@@ -41,14 +42,14 @@ std::unique_ptr<CharacterMapBase> CharacterMapBase::Create(syntax::StreamObjectP
 }
 
 void UnicodeCharacterMap::Initialize() const {
-    if (m_initialized) {
+    if (m_initialized.load(std::memory_order_acquire)) {
         return;
     }
 
     ACCESS_LOCK_GUARD(m_access_lock);
 
     // Double-check after acquiring the lock
-    if (m_initialized) {
+    if (m_initialized.load(std::memory_order_relaxed)) {
         return;
     }
 
@@ -57,7 +58,7 @@ void UnicodeCharacterMap::Initialize() const {
 
     contents::CharacterMapParser parser(_obj->GetFile(), input_stream);
     m_data = parser.ReadCharacterMapData();
-    m_initialized = true;
+    m_initialized.store(true, std::memory_order_release);
 }
 
 BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
@@ -86,7 +87,7 @@ BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
             spdlog::error("Codespace ranges [{}] {}:{}", i, m_data.CodeSpaceRanges[i].Begin->ToString(), m_data.CodeSpaceRanges[i].End->ToString());
         }
 
-        throw GeneralException(error_message);
+        throw syntax::ParseException(error_message);
     }
 
     // Check base font ranges
@@ -128,7 +129,7 @@ BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {
         spdlog::error("Font char mapping [{}] {}:{}", i, m_data.BaseFontCharMapping[i].Source->ToString(), m_data.BaseFontCharMapping[i].Destination->ToString());
     }
 
-    throw GeneralException(error_message);
+    throw syntax::ParseException(error_message);
 }
 
 } // semantics

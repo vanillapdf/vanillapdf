@@ -31,6 +31,11 @@ public:
     static FieldPtr Create(syntax::DictionaryObjectPtr root);
 
     virtual Field::Type GetFieldType() const noexcept = 0;
+
+    bool GetName(syntax::OutputStringObjectPtr& result) const;
+    bool GetAlternateName(syntax::OutputStringObjectPtr& result) const;
+    bool GetFieldFlags(types::big_int& result) const;
+    void SetFieldFlags(types::big_int value);
 };
 
 class NonTerminalField : public Field {
@@ -43,18 +48,31 @@ class ButtonField : public Field {
 public:
     explicit ButtonField(syntax::DictionaryObjectPtr root) : Field(root) {}
     virtual Field::Type GetFieldType() const noexcept override { return Field::Type::Button; }
+
+    bool GetValue(syntax::OutputNameObjectPtr& result) const;
+    void SetValue(syntax::NameObjectPtr value);
 };
 
 class TextField : public Field {
 public:
     explicit TextField(syntax::DictionaryObjectPtr root) : Field(root) {}
     virtual Field::Type GetFieldType() const noexcept override { return Field::Type::Text; }
+
+    bool GetValue(syntax::OutputStringObjectPtr& result) const;
+    void SetValue(syntax::StringObjectPtr value);
+    bool GetDefaultValue(syntax::OutputStringObjectPtr& result) const;
+    bool GetMaxLength(syntax::OutputIntegerObjectPtr& result) const;
 };
 
 class ChoiceField : public Field {
 public:
     explicit ChoiceField(syntax::DictionaryObjectPtr root) : Field(root) {}
     virtual Field::Type GetFieldType() const noexcept override { return Field::Type::Choice; }
+
+    bool GetValue(syntax::OutputStringObjectPtr& result) const;
+    void SetValue(syntax::StringObjectPtr value);
+    bool GetOptionCount(types::size_type& result) const;
+    bool GetOptionAt(types::size_type index, syntax::OutputContainableObjectPtr& result) const;
 };
 
 class SignatureField : public Field {

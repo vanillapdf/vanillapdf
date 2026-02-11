@@ -68,7 +68,7 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     // Initialize the JPEG2000 decoder
     auto codec = opj_create_decompress(OPJ_CODEC_JP2);
     if (codec == nullptr) {
-        throw GeneralException("Failed to create JPEG2000 decoder");
+        throw ImageCodecErrorException("Failed to create JPEG2000 decoder");
     }
 
     SCOPE_GUARD([codec]() { opj_destroy_codec(codec); });
@@ -83,7 +83,7 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     // Set up the stream
     opj_stream_t* stream = opj_stream_create(length_converted, OPJ_TRUE);
     if (stream == nullptr) {
-        throw GeneralException("Failed to create JPEG2000 stream");
+        throw ImageCodecErrorException("Failed to create JPEG2000 stream");
     }
 
     SCOPE_GUARD([stream]() { opj_stream_destroy(stream); });
@@ -97,21 +97,21 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     // Setup the decoder
     bool decoder_setup_result = opj_setup_decoder(codec, &parameters);
     if (!decoder_setup_result) {
-        throw GeneralException("Failed to setup JPEG2000 decoder");
+        throw ImageCodecErrorException("Failed to setup JPEG2000 decoder");
     }
 
     opj_image_t* image = nullptr;
     if (!opj_read_header(stream, codec, &image)) {
-        throw GeneralException("Failed to read JPEG2000 header");
+        throw ImageCodecErrorException("Failed to read JPEG2000 header");
     }
 
     if (!opj_set_decode_area(codec, image, parameters.DA_x0, parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)) {
-        throw GeneralException("Failed to decode JPEG2000 area");
+        throw ImageCodecErrorException("Failed to decode JPEG2000 area");
     }
 
     // Decode the image
     if (!opj_decode(codec, stream, image)) {
-        throw GeneralException("Failed to decode JPEG2000 image");
+        throw ImageCodecErrorException("Failed to decode JPEG2000 image");
     }
 
     SCOPE_GUARD([image]() { opj_image_destroy(image); });
@@ -123,7 +123,7 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
     // JPEG decompression returned empty results
     if (image->comps == nullptr) {
-        throw GeneralException("Received empty image components in JPEG2000 decompression");
+        throw ImageCodecErrorException("Received empty image components in JPEG2000 decompression");
     }
 
     if (image->color_space == OPJ_CLRSPC_SRGB ||
@@ -182,7 +182,7 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
         return make_deferred_container<Buffer>(result.begin(), result.end());
     }
 
-    throw GeneralException("Unknown JPEG2000 color space: " + std::to_string(image->color_space));
+    throw ImageCodecErrorException("Unknown JPEG2000 color space: " + std::to_string(image->color_space));
 }
 
 BufferPtr JPXDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {

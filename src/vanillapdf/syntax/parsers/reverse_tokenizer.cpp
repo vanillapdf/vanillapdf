@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "syntax/parsers/reverse_tokenizer.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 #include "utils/character.h"
 #include "utils/util.h"
 
@@ -135,7 +136,7 @@ TokenPtr ReverseTokenizer::PeekToken() {
 TokenPtr ReverseTokenizer::ReadTokenWithType(Token::Type type) {
     auto current_type = PeekTokenType();
     if (current_type != type) {
-        throw GeneralException("Unexpected token type");
+        throw ParseException(m_stream->GetInputPosition());
     }
 
     return ReadToken();

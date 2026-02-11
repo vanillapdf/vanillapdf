@@ -3,6 +3,7 @@
 
 #include "semantics/utils/semantic_exceptions.h"
 #include "semantics/utils/semantic_utils.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 
 #include "syntax/utils/name_constants.h"
 
@@ -12,7 +13,7 @@ namespace semantics {
 DeveloperExtensionPtr DeveloperExtensions::Iterator::Second() const {
     auto containable = BaseIterator<syntax::DictionaryObject::const_iterator>::m_current->second;
     if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(containable)) {
-        throw GeneralException("Developer extension value is not dictionary");
+        throw syntax::ParseException("Developer extension value is not dictionary");
     }
 
     auto converted = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(containable);

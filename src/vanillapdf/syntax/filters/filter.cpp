@@ -28,7 +28,7 @@ FilterBasePtr FilterBase::GetFilterByName(const NameObject& name) {
         return JPXDecodeFilterPtr();
     }
 
-    LOG_ERROR_AND_THROW_GENERAL("Unknown filter type: {}", name.GetValue()->ToString());
+    LOG_ERROR_AND_THROW(NotSupportedException, "Unknown filter type: {}", name.GetValue()->ToString());
 }
 
 } // syntax

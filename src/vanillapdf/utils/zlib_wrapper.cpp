@@ -35,7 +35,7 @@ static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length, types
     strm.next_in = Z_NULL;
     rv = inflateInit(&strm);
     if (rv != Z_OK) {
-        throw GeneralException("Zlib initialization failed");
+        throw DataCorruptionException("Zlib initialization failed");
     }
 
     /* clean up */
@@ -67,7 +67,7 @@ static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length, types
 
             assert(rv != Z_STREAM_ERROR);
             if (rv == Z_STREAM_ERROR) {
-                throw ZlibDataErrorException(result->size(), "Stream structure is inconsistent");
+                throw DataCorruptionException(result->size(), "Stream structure is inconsistent");
             }
 
             if (rv == Z_DATA_ERROR) {
@@ -76,18 +76,18 @@ static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length, types
                 }
 
                 if (nullptr != strm.msg) {
-                    throw ZlibDataErrorException(result->size(), std::string(strm.msg));
+                    throw DataCorruptionException(result->size(), std::string(strm.msg));
                 }
 
-                throw ZlibDataErrorException(result->size());
+                throw DataCorruptionException(result->size());
             }
 
             if (rv == Z_NEED_DICT || rv == Z_MEM_ERROR) {
                 if (nullptr != strm.msg) {
-                    throw GeneralException("Could not decompress data: " + std::string(strm.msg));
+                    throw DataCorruptionException("Could not decompress data: " + std::string(strm.msg));
                 }
 
-                throw GeneralException("Could not decompress data");
+                throw DataCorruptionException("Could not decompress data");
             }
 
             unsigned int have = constant::BUFFER_SIZE - strm.avail_out;
@@ -127,7 +127,7 @@ static BufferPtr Deflate(IInputStreamPtr input, types::stream_size length) {
     strm.opaque = Z_NULL;
     rv = deflateInit(&strm, Z_DEFAULT_COMPRESSION);
     if (rv != Z_OK) {
-        throw GeneralException("Zlib initialization failed: " + std::to_string(rv));
+        throw DataCorruptionException("Zlib initialization failed: " + std::to_string(rv));
     }
 
     /* clean up */
@@ -149,7 +149,7 @@ static BufferPtr Deflate(IInputStreamPtr input, types::stream_size length) {
 
             assert(rv != Z_STREAM_ERROR);
             if (rv == Z_STREAM_ERROR) {
-                throw ZlibDataErrorException(result->size(), "Stream structure is inconsistent");
+                throw DataCorruptionException(result->size(), "Stream structure is inconsistent");
             }
 
             unsigned int have = constant::BUFFER_SIZE - strm.avail_out;
@@ -175,7 +175,7 @@ BufferPtr ZlibWrapper::Deflate(IInputStreamPtr input, types::stream_size length)
 BufferPtr ZlibWrapper::Inflate(IInputStreamPtr input, types::stream_size length) {
     try {
         return vanillapdf::Inflate(input, length);
-    } catch (ZlibDataErrorException& ex) {
+    } catch (DataCorruptionException& ex) {
         auto size = ex.Size();
 
         // I really believe that error at the first byte of data stream should be escalated.

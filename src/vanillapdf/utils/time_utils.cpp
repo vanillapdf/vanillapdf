@@ -19,7 +19,7 @@ TimeInfo TimeUtils::GetCurrentTime() {
     std::lock_guard<std::mutex> locker(m_chrono);
     auto gm_time = std::gmtime(&rawtime);
     if (gm_time == nullptr) {
-        throw GeneralException("Could not get local time");
+        throw IOErrorException("Could not get local time");
     }
 
     TimeInfo result;
@@ -33,7 +33,7 @@ TimeInfo TimeUtils::GetCurrentTime() {
 
     //auto gm_time = std::gmtime(&rawtime);
     //if (gm_time == nullptr) {
-    //	throw GeneralException("Could not get gm time");
+    //	throw IOErrorException("Could not get gm time");
     //}
 
     //int hour_offset = result.GetHour() - gm_time->tm_hour;
