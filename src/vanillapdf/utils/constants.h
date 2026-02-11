@@ -30,6 +30,10 @@ extern const types::ushort MAX_GENERATION_NUMBER;
 // Compiler time required
 const uint32_t MAX_MESSAGE_SIZE = 256;
 
+// FNV-1a hash parameters (64-bit)
+constexpr size_t FNV1A_OFFSET_BASIS = 14695981039346656037ULL;
+constexpr size_t FNV1A_PRIME = 1099511628211ULL;
+
 } // constant
 } // vanillapdf
 
