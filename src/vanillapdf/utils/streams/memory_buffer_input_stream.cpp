@@ -108,6 +108,8 @@ void MemoryBufferInputStream::SetInputPosition(types::stream_size pos, SeekDirec
         case SeekDirection::End:
             m_position = buffer_size + pos;
             break;
+        default:
+            throw GeneralException("Unknown seek direction: " + std::to_string(static_cast<int>(way)));
     }
 
     if (m_position < 0) {
