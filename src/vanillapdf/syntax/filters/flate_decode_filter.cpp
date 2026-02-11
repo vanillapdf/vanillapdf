@@ -83,7 +83,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
     if (*predictor == 2) {
         throw NotSupportedException("TIFF predictor is currently not supported");
     } else if (*predictor < 10) {
-        throw GeneralException("Unknown predictor type");
+        throw DataCorruptionException("Unknown predictor type");
     }
 
     uint32_t colors_int = colors->SafeConvert<uint32_t>();
@@ -107,7 +107,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
 
         assert(read == bytes_per_row);
         if (read != bytes_per_row) {
-            throw GeneralException("Corrupted deflate compressed data");
+            throw DataCorruptionException("Corrupted deflate compressed data");
         }
 
         switch (filter) {

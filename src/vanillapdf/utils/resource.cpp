@@ -41,7 +41,7 @@ BufferPtr Resource::Load(ResourceID id) {
         case ResourceID::SERIAL_BLACKLIST:
             return make_deferred_container<Buffer>(SERIAL_BLACKLIST, sizeof(SERIAL_BLACKLIST));
         default:
-            throw GeneralException("Undefined resource ID: " + std::to_string(static_cast<int>(id)));
+            throw InvalidParameterException("Undefined resource ID: " + std::to_string(static_cast<int>(id)));
     }
 }
 

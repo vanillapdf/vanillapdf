@@ -13,6 +13,13 @@ public:
     virtual Type code() const noexcept { return Type::SemanticContext; }
 };
 
+class OptionalEntryMissingException : public ExceptionBase {
+public:
+    explicit OptionalEntryMissingException(const char * const & msg) : ExceptionBase(msg) {}
+    explicit OptionalEntryMissingException(const std::string& msg) : ExceptionBase(msg) {}
+    virtual Type code() const noexcept { return Type::OptionalEntryMissing; }
+};
+
 class SemanticContextExceptionFactory {
 public:
     template <typename SyntacticObjectT, typename SemanticObjectT>

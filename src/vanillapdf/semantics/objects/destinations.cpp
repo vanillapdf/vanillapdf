@@ -6,6 +6,7 @@
 #include "semantics/utils/semantic_exceptions.h"
 #include "semantics/utils/semantic_utils.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
@@ -160,7 +161,7 @@ NamedDestinations::NamedDestinations(syntax::DictionaryObjectPtr root) : HighLev
 
 syntax::NameObjectPtr DestinationBase::ValidateAndGetDestinationType(syntax::MixedArrayObjectPtr array) {
     if (array->GetSize() < 2) {
-        throw GeneralException("Invalid destination array");
+        throw syntax::ObjectMissingException("Invalid destination array");
     }
 
     syntax::ObjectPtr page_number_obj = array->GetValue(0);
@@ -175,12 +176,12 @@ syntax::NameObjectPtr DestinationBase::ValidateAndGetDestinationType(syntax::Mix
     if (!syntax::ObjectUtils::IsType<syntax::IntegerObjectPtr>(page_number_obj)
         && !syntax::ObjectUtils::IsType<syntax::IndirectReferenceObjectPtr>(page_number_obj)
         && !syntax::ObjectUtils::IsType<syntax::NullObjectPtr>(page_number_obj)) {
-        LOG_ERROR_AND_THROW_GENERAL("Invalid page object type in destination: {}",
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid page object type in destination: {}",
             static_cast<int32_t>(page_number_obj->GetObjectType()));
     }
 
     if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
-        LOG_ERROR_AND_THROW_GENERAL("Destination type is not name object: {}",
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Destination type is not name object: {}",
             static_cast<int32_t>(type_obj->GetObjectType()));
     }
 
@@ -220,7 +221,7 @@ DestinationBase::Type DestinationBase::GetDestinationClassType(syntax::NameObjec
         return DestinationBase::Type::FitBoundingBoxVertical;
     }
 
-    LOG_ERROR_AND_THROW_GENERAL("Unknown destination type: {}", type->ToString());
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown destination type: {}", type->ToString());
 }
 
 DestinationPtr DestinationBase::CreateFromArray(syntax::MixedArrayObjectPtr root) {
@@ -245,7 +246,7 @@ DestinationPtr DestinationBase::CreateFromArray(syntax::MixedArrayObjectPtr root
         case DestinationBase::Type::FitBoundingBoxVertical:
             return make_deferred<FitBoundingBoxVerticalDestination>(root);
         default:
-            LOG_ERROR_AND_THROW_GENERAL("Unknown destination type: {}", static_cast<int>(type));
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown destination type: {}", static_cast<int>(type));
     }
 }
 
@@ -269,7 +270,7 @@ DestinationPtr DestinationBase::ResolveDestination(syntax::ObjectPtr dest_obj) {
 
         assert(!document_ref.IsEmpty() && "Document reference was not set");
         if (!document_ref.IsActive()) {
-            throw GeneralException("Document reference is not active");
+            throw syntax::ObjectMissingException("Document reference is not active");
         }
 
         DocumentPtr document = document_ref.GetReference();
@@ -277,26 +278,26 @@ DestinationPtr DestinationBase::ResolveDestination(syntax::ObjectPtr dest_obj) {
         OutputCatalogPtr catalog_ptr;
         bool has_catalog = document->GetDocumentCatalog(catalog_ptr);
         if (!has_catalog) {
-            throw GeneralException("Document does not have a catalog");
+            throw syntax::ObjectMissingException("Document does not have a catalog");
         }
 
         OutputNameDictionaryPtr name_dictionary;
         bool has_dictionary = catalog_ptr->Names(name_dictionary);
         if (!has_dictionary) {
-            throw GeneralException("Document does not have a name dictionary");
+            throw syntax::ObjectMissingException("Document does not have a name dictionary");
         }
 
         OutputNameTreePtr<DestinationPtr> destinations;
         bool contains = name_dictionary->Dests(destinations);
         if (!contains) {
-            throw GeneralException("Document does not have destinations in name dictionary");
+            throw syntax::ObjectMissingException("Document does not have destinations in name dictionary");
         }
 
         auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(dest_obj);
 
         assert(destinations->Contains(destination_name) && "Referenced destination does not exist");
         if (!destinations->Contains(destination_name)) {
-            throw GeneralException("Referenced destination does not exist");
+            throw syntax::ObjectMissingException("Referenced destination does not exist");
         }
 
         auto found_dest = destinations->Find(destination_name);
@@ -310,7 +311,7 @@ DestinationPtr DestinationBase::ResolveDestination(syntax::ObjectPtr dest_obj) {
 
         assert(!document_ref.IsEmpty() && "Document reference was not set");
         if (!document_ref.IsActive()) {
-            throw GeneralException("Document reference is not active");
+            throw syntax::ObjectMissingException("Document reference is not active");
         }
 
         DocumentPtr document = document_ref.GetReference();
@@ -318,31 +319,31 @@ DestinationPtr DestinationBase::ResolveDestination(syntax::ObjectPtr dest_obj) {
         OutputCatalogPtr catalog;
         bool has_catalog = document->GetDocumentCatalog(catalog);
         if (!has_catalog) {
-            throw GeneralException("Document does not have a catalog");
+            throw syntax::ObjectMissingException("Document does not have a catalog");
         }
 
         OutputNamedDestinationsPtr destinations;
         bool has_destinations = catalog->Destinations(destinations);
         if (!has_destinations) {
-            throw GeneralException("Document does not have named destinations");
+            throw syntax::ObjectMissingException("Document does not have named destinations");
         }
 
         auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(dest_obj);
 
         assert(destinations->Contains(destination_name) && "Referenced destination does not exist");
         if (!destinations->Contains(destination_name)) {
-            throw GeneralException("Referenced destination does not exist");
+            throw syntax::ObjectMissingException("Referenced destination does not exist");
         }
 
         return destinations->Find(destination_name);
     }
 
-    LOG_ERROR_AND_THROW_GENERAL("Unknown destination reference type: {}", static_cast<int32_t>(dest_obj->GetObjectType()));
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown destination reference type: {}", static_cast<int32_t>(dest_obj->GetObjectType()));
 }
 
 DestinationPtr DestinationBase::CreateFromDictionary(syntax::DictionaryObjectPtr root) {
     if (!root->Contains(constant::Name::D)) {
-        throw GeneralException("Invalid destination dictionary");
+        throw syntax::ObjectMissingException("Invalid destination dictionary");
     }
 
     auto destination_array = root->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::D);
@@ -367,7 +368,7 @@ DestinationPtr DestinationBase::CreateFromDictionary(syntax::DictionaryObjectPtr
         case DestinationBase::Type::FitBoundingBoxVertical:
             return make_deferred<FitBoundingBoxVerticalDestination>(root);
         default:
-            LOG_ERROR_AND_THROW_GENERAL("Unknown destination type: {}", static_cast<int>(type));
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown destination type: {}", static_cast<int>(type));
     }
 }
 
@@ -382,7 +383,7 @@ DestinationPtr DestinationBase::CreateFromObject(syntax::ObjectPtr root) {
         return CreateFromDictionary(dict);
     }
 
-    LOG_ERROR_AND_THROW_GENERAL("Invalid object type: {}", static_cast<int32_t>(root->GetObjectType()));
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid object type: {}", static_cast<int32_t>(root->GetObjectType()));
 }
 
 syntax::MixedArrayObjectPtr DestinationBase::GetDestinationArray() const {
@@ -396,7 +397,7 @@ syntax::MixedArrayObjectPtr DestinationBase::GetDestinationArray() const {
     }
 
     assert(false && "Destination was created but object is neither array nor dictionary");
-    throw GeneralException("Destination was created but object is neither array nor dictionary");
+    throw syntax::ObjectMissingException("Destination was created but object is neither array nor dictionary");
 }
 
 syntax::ObjectPtr DestinationBase::GetPage() const {

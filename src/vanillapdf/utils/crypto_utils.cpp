@@ -34,7 +34,7 @@ static OSSL_PROVIDER* g_default_provider = nullptr;
 const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
 
     if (algorithm == MessageDigestAlgorithm::Undefined) {
-        throw GeneralException("No message digest algorithm was selected");
+        throw CryptoErrorException("No message digest algorithm was selected");
     }
 
     if (algorithm == MessageDigestAlgorithm::MDNULL) {
@@ -93,7 +93,7 @@ const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
         return EVP_whirlpool();
     }
 
-    throw GeneralException("Unknown message digest algorithm");
+    throw CryptoErrorException("Unknown message digest algorithm");
 }
 
 std::string CryptoUtils::GetLastOpensslError() {
@@ -143,12 +143,12 @@ void CryptoUtils::InitializeOpenSSL() {
 
     g_legacy_provider = OSSL_PROVIDER_load(nullptr, "legacy");
     if (g_legacy_provider == nullptr) {
-        throw GeneralException("Failed to initialize legacy OSSL provider, " + GetLastOpensslError());
+        throw CryptoErrorException("Failed to initialize legacy OSSL provider, " + GetLastOpensslError());
     }
 
     g_default_provider = OSSL_PROVIDER_load(nullptr, "default");
     if (g_default_provider == nullptr) {
-        throw GeneralException("Failed to initialize default OSSL provider, " + GetLastOpensslError());
+        throw CryptoErrorException("Failed to initialize default OSSL provider, " + GetLastOpensslError());
     }
 
     OpenSSL_add_all_algorithms();

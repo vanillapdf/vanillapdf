@@ -13,6 +13,8 @@
 #include "semantics/objects/annotations.h"
 #include "semantics/objects/name_dictionary.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
+
 #include "semantics/utils/semantic_utils.h"
 #include "semantics/utils/document_signer.h"
 #include "semantics/utils/document_encryption_settings.h"
@@ -43,7 +45,7 @@ DocumentPtr Document::CreateFile(syntax::FilePtr holder) {
     if (SemanticUtils::HasMappedDocument(holder)) {
         auto log_scope = holder->GetFilenameString();
 
-        LOG_ERROR_AND_THROW_GENERAL("Trying to create new document for file {}, but the file instance was already opened", log_scope);
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Trying to create new document for file {}, but the file instance was already opened", log_scope);
     }
 
     HeaderPtr header = holder->GetHeader();
@@ -346,7 +348,7 @@ void Document::FixDestinationPage(ObjectPtr cloned_page, PageObjectPtr other_pag
         || ObjectUtils::IsType<IntegerObjectPtr>(cloned_page));
     if (!ObjectUtils::IsType<IndirectReferenceObjectPtr>(cloned_page)
         && !ObjectUtils::IsType<IntegerObjectPtr>(cloned_page)) {
-        throw GeneralException("Unknown object type");
+        throw InvalidParameterException("Unknown object type");
     }
 
     OutputCatalogPtr original_catalog;
@@ -426,7 +428,7 @@ bool Document::IsDestinationReferencingPage(DestinationPtr destination, PageObje
         || ObjectUtils::IsType<IntegerObjectPtr>(destination_page_object));
     if (!ObjectUtils::IsType<IndirectReferenceObjectPtr>(destination_page_object)
         && !ObjectUtils::IsType<IntegerObjectPtr>(destination_page_object)) {
-        throw GeneralException("Unknown object type");
+        throw InvalidParameterException("Unknown object type");
     }
 
     if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(destination_page_object)) {
@@ -609,7 +611,7 @@ void Document::AppendPage(DocumentPtr other, PageObjectPtr other_page) {
 
     assert(ObjectUtils::IsType<DictionaryObjectPtr>(new_page_object) && "Page object is not dictionary");
     if (!ObjectUtils::IsType<DictionaryObjectPtr>(new_page_object)) {
-        throw GeneralException("Cloned page object is not dictionary");
+        throw syntax::ObjectMissingException("Cloned page object is not dictionary");
     }
 
     DictionaryObjectPtr new_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(new_page_object);
@@ -667,7 +669,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     auto digest = options->GetDigest();
 
     if (!has_key) {
-        throw GeneralException("Signing key is not set");
+        throw InvalidParameterException("Signing key is not set");
     }
 
     // Create new signature dictionary
@@ -731,12 +733,12 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     OutputPageTreePtr page_tree;
     bool has_pages = catalog->Pages(page_tree);
     if (!has_pages) {
-        throw GeneralException("Cannot sign document without pages");
+        throw syntax::ObjectMissingException("Cannot sign document without pages");
     }
 
     auto page_count = page_tree->PageCount();
     if (page_count == 0) {
-        throw GeneralException("Cannot sign document without pages");
+        throw syntax::ObjectMissingException("Cannot sign document without pages");
     }
 
     auto first_page = page_tree->Page(1);
@@ -824,7 +826,7 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
 
     // Terminate in case the document is already encrypted
     if (m_holder->IsEncrypted()) {
-        throw GeneralException("Cannot encrypt an encrypted document, please remove the encryption first");
+        throw CryptoErrorException("Cannot encrypt an encrypted document, please remove the encryption first");
     }
 
     // Initialize all entries, to load them into cache
@@ -850,7 +852,7 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
     auto document_ids = trailer_dictionary->FindAs<MixedArrayObjectPtr>(constant::Name::ID);
     if (document_ids->GetSize() < 2) {
         // TODO: Generate document ID
-        LOG_ERROR_AND_THROW_GENERAL("The target document has invalid ID: {}", document_ids->ToPdf());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "The target document has invalid ID: {}", document_ids->ToPdf());
     }
 
     // Identify the document ID object - it could be other types than string
@@ -863,7 +865,7 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
     }
 
     if (document_id_buffer->empty()) {
-        LOG_ERROR_AND_THROW_GENERAL("Could not encrypt document with empty document ID");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not encrypt document with empty document ID");
     }
 
     auto key_length = settings->GetKeyLength();
@@ -944,7 +946,7 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
     bool password_set = m_holder->SetEncryptionPassword(settings->GetUserPassword());
 
     if (!password_set) {
-        throw GeneralException("Could not verify the encryption password");
+        throw CryptoErrorException("Could not verify the encryption password");
     }
 }
 

@@ -15,14 +15,14 @@ BufferPtr MiscUtils::ToBase64(const Buffer& value) {
 
     auto memory_bio = BIO_new(BIO_s_mem());
     if (memory_bio == nullptr) {
-        throw GeneralException("Could not create memory buffer");
+        throw IOErrorException("Could not create memory buffer");
     }
 
     SCOPE_GUARD([memory_bio]() { BIO_free_all(memory_bio); });
 
     auto base64_bio = BIO_new(BIO_f_base64());
     if (base64_bio == nullptr) {
-        throw GeneralException("Could not create base64 filter");
+        throw IOErrorException("Could not create base64 filter");
     }
 
     SCOPE_GUARD([base64_bio]() { BIO_free_all(base64_bio); });
@@ -36,18 +36,18 @@ BufferPtr MiscUtils::ToBase64(const Buffer& value) {
     auto value_size = ValueConvertUtils::SafeConvert<int>(value.size());
     auto bytes_written = BIO_write(memory_bio, value.data(), value_size);
     if (bytes_written <= 0) {
-        throw GeneralException("Could not write data");
+        throw IOErrorException("Could not write data");
     }
 
     auto flushed = BIO_flush(base64_bio);
     if (flushed != 1) {
-        throw GeneralException("Could not flush buffer");
+        throw IOErrorException("Could not flush buffer");
     }
 
     BUF_MEM* memory_buffer = nullptr;
     auto have_mem_ptr = BIO_get_mem_ptr(memory_bio, &memory_buffer);
     if (have_mem_ptr != 1) {
-        throw GeneralException("Could not get memory pointer");
+        throw IOErrorException("Could not get memory pointer");
     }
 
     return make_deferred_container<Buffer>(memory_buffer->data, memory_buffer->length);
@@ -57,14 +57,14 @@ BufferPtr MiscUtils::FromBase64(const Buffer& value) {
 
     auto memory_bio = BIO_new(BIO_s_mem());
     if (memory_bio == nullptr) {
-        throw GeneralException("Could not create memory buffer");
+        throw IOErrorException("Could not create memory buffer");
     }
 
     SCOPE_GUARD([memory_bio]() { BIO_free(memory_bio); });
 
     auto base64_bio = BIO_new(BIO_f_base64());
     if (base64_bio == nullptr) {
-        throw GeneralException("Could not create base64 filter");
+        throw IOErrorException("Could not create base64 filter");
     }
 
     SCOPE_GUARD([base64_bio]() { BIO_free(base64_bio); });
@@ -72,12 +72,12 @@ BufferPtr MiscUtils::FromBase64(const Buffer& value) {
     auto value_size = ValueConvertUtils::SafeConvert<int>(value.size());
     auto bytes_written = BIO_write(memory_bio, value.data(), value_size);
     if (bytes_written <= 0) {
-        throw GeneralException("Could not write data into buffer: " + std::to_string(bytes_written));
+        throw IOErrorException("Could not write data into buffer: " + std::to_string(bytes_written));
     }
 
     auto flushed = BIO_flush(memory_bio);
     if (flushed != 1) {
-        throw GeneralException("Could not flush buffer: " + std::to_string(flushed));
+        throw IOErrorException("Could not flush buffer: " + std::to_string(flushed));
     }
 
     // Insert base64 filter into bio chain
@@ -97,7 +97,7 @@ BufferPtr MiscUtils::FromBase64(const Buffer& value) {
         }
 
         if (bytes_read == -2) {
-            throw GeneralException("Could not read data");
+            throw IOErrorException("Could not read data");
         }
 
         // Assume the byte count is positive
@@ -116,14 +116,14 @@ BufferPtr MiscUtils::FromBase64(const Buffer& value) {
 BufferPtr MiscUtils::CalculateHash(const Buffer& data, MessageDigestAlgorithm digest_algorithm) {
     auto memory_bio = BIO_new(BIO_s_mem());
     if (memory_bio == nullptr) {
-        throw GeneralException("Could not create memory buffer");
+        throw IOErrorException("Could not create memory buffer");
     }
 
     SCOPE_GUARD([memory_bio]() { BIO_free(memory_bio); });
 
     auto md_bio = BIO_new(BIO_f_md());
     if (md_bio == nullptr) {
-        throw GeneralException("Could not create hash filter");
+        throw IOErrorException("Could not create hash filter");
     }
 
     SCOPE_GUARD([md_bio]() { BIO_free(md_bio); });
@@ -131,7 +131,7 @@ BufferPtr MiscUtils::CalculateHash(const Buffer& data, MessageDigestAlgorithm di
     auto algorithm = CryptoUtils::GetAlgorithm(digest_algorithm);
     auto md_set = BIO_set_md(md_bio, algorithm);
     if (md_set != 1) {
-        throw GeneralException("Could not set digest algorithm");
+        throw IOErrorException("Could not set digest algorithm");
     }
 
     // Insert md into bio chain
@@ -140,12 +140,12 @@ BufferPtr MiscUtils::CalculateHash(const Buffer& data, MessageDigestAlgorithm di
     auto data_size = ValueConvertUtils::SafeConvert<int>(data.size());
     auto bytes_written = BIO_write(memory_bio, data.data(), data_size);
     if (bytes_written <= 0) {
-        throw GeneralException("");
+        throw IOErrorException("");
     }
 
     auto flushed = BIO_flush(memory_bio);
     if (flushed != 1) {
-        throw GeneralException("Could not flush buffer");
+        throw IOErrorException("Could not flush buffer");
     }
 
     BufferPtr hash_buffer = make_deferred_container<Buffer>(EVP_MAX_MD_SIZE);
@@ -153,7 +153,7 @@ BufferPtr MiscUtils::CalculateHash(const Buffer& data, MessageDigestAlgorithm di
     auto hash_buffer_size = ValueConvertUtils::SafeConvert<int>(hash_buffer->size());
     auto bytes_read = BIO_gets(md_bio, hash_buffer->data(), hash_buffer_size);
     if (bytes_read <= 0) {
-        throw GeneralException("Could not calculate hash");
+        throw IOErrorException("Could not calculate hash");
     }
 
     return hash_buffer;

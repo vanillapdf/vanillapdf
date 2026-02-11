@@ -37,7 +37,7 @@ public:
         }
 
         if (result.ec != std::errc()) {
-            LOG_ERROR_AND_THROW_GENERAL("Could not parse {} from {}: {}",
+            LOG_ERROR_AND_THROW(InvalidParameterException, "Could not parse {} from {}: {}",
                 typeid(T).name(),
                 first,
                 std::make_error_code(result.ec).message());
@@ -70,7 +70,7 @@ inline double MiscUtils::FromChars<double>(const char* const first, const char* 
     char* endptr = nullptr;
     double value = std::strtod(str.data(), &endptr);
     if (endptr != last) {
-        LOG_ERROR_AND_THROW_GENERAL("Could not parse double from '{}'", str);
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Could not parse double from '{}'", str);
     }
 
     return value;

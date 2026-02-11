@@ -38,5 +38,27 @@ LicenseRequiredException::LicenseRequiredException(const std::string& msg) : Exc
 InvalidPasswordException::InvalidPasswordException(const char * const & msg) : ExceptionBase(msg) {}
 InvalidPasswordException::InvalidPasswordException(const std::string& msg) : ExceptionBase(msg) {}
 
+InvalidParameterException::InvalidParameterException(const char * const & msg) : ExceptionBase(msg) {}
+InvalidParameterException::InvalidParameterException(const std::string& msg) : ExceptionBase(msg) {}
+
+InsufficientSpaceException::InsufficientSpaceException(const char * const & msg) : ExceptionBase(msg) {}
+InsufficientSpaceException::InsufficientSpaceException(const std::string& msg) : ExceptionBase(msg) {}
+
+DataCorruptionException::DataCorruptionException(const char * const & msg) : ExceptionBase(msg) {}
+DataCorruptionException::DataCorruptionException(const std::string& msg) : ExceptionBase(msg) {}
+DataCorruptionException::DataCorruptionException(types::stream_size size) : m_size(size) {}
+DataCorruptionException::DataCorruptionException(types::stream_size size, const std::string& message) : m_size(size) {
+    m_msg = "Corrupted data after " + std::to_string(size) + " bytes. Error: " + message;
+}
+
+IOErrorException::IOErrorException(const char * const & msg) : ExceptionBase(msg) {}
+IOErrorException::IOErrorException(const std::string& msg) : ExceptionBase(msg) {}
+
+CryptoErrorException::CryptoErrorException(const char * const & msg) : ExceptionBase(msg) {}
+CryptoErrorException::CryptoErrorException(const std::string& msg) : ExceptionBase(msg) {}
+
+ImageCodecErrorException::ImageCodecErrorException(const char * const & msg) : ExceptionBase(msg) {}
+ImageCodecErrorException::ImageCodecErrorException(const std::string& msg) : ExceptionBase(msg) {}
+
 } // vanillapdf
 

@@ -128,7 +128,7 @@ ContainableObjectPtr DictionaryObject::Find(const NameObjectPtr name) const {
 
     auto result = _list.find(name);
     if (result == _list.end()) {
-        LOG_ERROR_AND_THROW_GENERAL("Item with name {} was not found in dictionary", name->ToString());
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Item with name {} was not found in dictionary", name->ToString());
     }
 
     return result->second;

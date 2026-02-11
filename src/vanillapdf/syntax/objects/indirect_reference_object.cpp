@@ -156,7 +156,7 @@ void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) {
     assert(indirect_or_null && "Referenced object is neither indirect nor null");
 
     if (!indirect_or_null) {
-        throw GeneralException("Indirect reference must point to indirect object");
+        throw InvalidParameterException("Indirect reference must point to indirect object");
     }
 
     if (obj->IsIndirect()) {
