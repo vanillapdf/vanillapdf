@@ -146,8 +146,11 @@ error_type process_constants() {
     dummy_error = VANILLAPDF_ERROR_PARAMETER_VALUE;
     dummy_error = VANILLAPDF_ERROR_NOT_SUPPORTED;
     dummy_error = VANILLAPDF_ERROR_USER_CANCELLED;
-    dummy_error = VANILLAPDF_ERROR_ZLIB_DATA;
     dummy_error = VANILLAPDF_ERROR_INVALID_LICENSE;
+    dummy_error = VANILLAPDF_ERROR_DATA_CORRUPTION;
+    dummy_error = VANILLAPDF_ERROR_IO;
+    dummy_error = VANILLAPDF_ERROR_CRYPTO;
+    dummy_error = VANILLAPDF_ERROR_IMAGE_CODEC;
     dummy_error = VANILLAPDF_ERROR_GENERAL;
 
     // Syntax errors
