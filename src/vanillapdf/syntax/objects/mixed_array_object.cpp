@@ -189,9 +189,11 @@ size_t MixedArrayObject::Hash() const {
         return m_hash_cache;
     }
 
-    size_t result = 0;
+    // FNV-1a combine: element order matters for arrays (e.g. [842 595] vs [595 842])
+    size_t result = constant::FNV1A_OFFSET_BASIS;
     for (auto item : _list) {
         result ^= item->Hash();
+        result *= constant::FNV1A_PRIME;
     }
 
     m_hash_cache = result;
