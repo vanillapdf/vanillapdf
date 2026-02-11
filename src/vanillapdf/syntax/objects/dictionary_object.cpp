@@ -241,10 +241,16 @@ size_t DictionaryObject::Hash() const {
         return m_hash_cache;
     }
 
-    size_t result = 0;
+    // XOR is order-independent, which is correct for dictionaries since key
+    // order is not significant in PDF. Each key-value pair is combined with
+    // FNV-1a multiply before XOR to avoid cross-pair cancellation
+    // (e.g. {A: 1, B: 2} vs {A: 2, B: 1}).
+    size_t result = constant::FNV1A_OFFSET_BASIS;
     for (auto item : _list) {
-        result ^= item.first->Hash();
-        result ^= item.second->Hash();
+        size_t pair_hash = item.first->Hash();
+        pair_hash ^= item.second->Hash();
+        pair_hash *= constant::FNV1A_PRIME;
+        result ^= pair_hash;
     }
 
     m_hash_cache = result;
