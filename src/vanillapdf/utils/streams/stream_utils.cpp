@@ -17,11 +17,11 @@ std::shared_ptr<std::fstream> StreamUtils::OpenFileStream(const std::string& pat
     auto fs_path = std::filesystem::path(path);
 
 #if _WIN32
-    auto wide_path = WindowsUtils::MultiByteToWideChar(fs_path.string());
-    auto fstream = std::make_shared<std::fstream>(wide_path, mode);
-#else
-    auto fstream = std::make_shared<std::fstream>(fs_path, mode);
-#endif
+    fs_path = WindowsUtils::MultiByteToWideChar(path);
+#endif /* _WIN32 */
+
+    auto fstream = std::make_shared<std::fstream>();
+    fstream->open(fs_path, mode);
 
     if (!fstream || !fstream->good()) {
         LOG_ERROR_AND_THROW_GENERAL("Could not open file: {}", path);
@@ -31,39 +31,18 @@ std::shared_ptr<std::fstream> StreamUtils::OpenFileStream(const std::string& pat
 }
 
 IOutputStreamPtr StreamUtils::OutputStreamFromFile(const std::string& filename) {
-
-    auto output = std::make_shared<std::fstream>();
-    output->open(filename, std::ios::out | std::ios::binary);
-
-    if (!output || !output->good()) {
-        throw GeneralException("Could not open file: " + filename);
-    }
-
-    return make_deferred<OutputStream>(output);
+    auto fstream = OpenFileStream(filename, std::ios::out | std::ios::binary);
+    return make_deferred<OutputStream>(fstream);
 }
 
 IInputStreamPtr StreamUtils::InputStreamFromFile(const std::string& filename) {
-
-    auto input = std::make_shared<std::fstream>();
-    input->open(filename, std::ios::in |std::ios::binary);
-
-    if (!input || !input->good()) {
-        throw GeneralException("Could not open file: " + filename);
-    }
-
-    return make_deferred<InputStream>(input);
+    auto fstream = OpenFileStream(filename, std::ios::in | std::ios::binary);
+    return make_deferred<InputStream>(fstream);
 }
 
 IInputOutputStreamPtr StreamUtils::InputOutputStreamFromFile(const std::string& filename) {
-
-    auto input = std::make_shared<std::fstream>();
-    input->open(filename, std::ios::in | std::ios::out | std::ios::binary);
-
-    if (!input || !input->good()) {
-        throw GeneralException("Could not open file: " + filename);
-    }
-
-    return make_deferred<InputOutputStream>(input);
+    auto fstream = OpenFileStream(filename, std::ios::in | std::ios::out | std::ios::binary);
+    return make_deferred<InputOutputStream>(fstream);
 }
 
 IInputOutputStreamPtr StreamUtils::InputOutputStreamFromMemory() {

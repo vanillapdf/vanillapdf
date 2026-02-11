@@ -13,7 +13,7 @@ namespace vanillapdf {
 * - FileStream: Uses fstream-based streaming I/O (default for Open/Create)
 */
 enum class IOStrategy {
-    Undefined,
+    Undefined = 0,
     Memory,
     MemoryMapped,
     FileStream
