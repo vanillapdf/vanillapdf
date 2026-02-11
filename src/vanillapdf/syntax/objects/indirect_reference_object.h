@@ -7,10 +7,27 @@
 namespace vanillapdf {
 namespace syntax {
 
+struct IndirectReferenceId {
+    types::big_uint obj_number;
+    types::ushort gen_number;
+
+    IndirectReferenceId(types::big_uint obj, types::ushort gen)
+        : obj_number(obj), gen_number(gen) {
+    }
+
+    bool operator<(const IndirectReferenceId& other) const {
+        if (obj_number != other.obj_number) {
+            return obj_number < other.obj_number;
+        }
+
+        return gen_number < other.gen_number;
+    }
+};
+
 class IndirectReferenceObject : public ContainableObject {
 public:
     IndirectReferenceObject() = default;
-    //IndirectReferenceObject(const IndirectReferenceObject&) = delete;
+    IndirectReferenceObject(const IndirectReferenceObject&) = delete;
 
     explicit IndirectReferenceObject(ObjectPtr obj);
     IndirectReferenceObject(types::big_uint obj, types::ushort gen);
@@ -56,7 +73,7 @@ private:
     // The library interface wants to be thread-safe as much as possible
     // Even though the are currently no cases for multi-thread access
     // to the dictonary, let's try to be visionary and prepare for this
-    std::shared_ptr<std::recursive_mutex> m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    std::unique_ptr<std::recursive_mutex> m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 
     //bool IsCyclicReference(ObjectPtr object, std::map<ObjectPtr, bool>& visited) const;
 

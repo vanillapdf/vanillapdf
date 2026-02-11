@@ -9,18 +9,18 @@ namespace vanillapdf {
 namespace syntax {
 
 MixedArrayObject::MixedArrayObject() {
-    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 MixedArrayObject::MixedArrayObject(const list_type& list) : _list(list) {
-    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
     for (auto item : _list) {
         item->SetOwner(Object::GetWeakReference());
     }
 }
 
 MixedArrayObject::MixedArrayObject(const std::initializer_list<ContainableObjectPtr>& list) : _list(list) {
-    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
     for (auto item : _list) {
         item->SetOwner(Object::GetWeakReference());
     }
@@ -28,13 +28,45 @@ MixedArrayObject::MixedArrayObject(const std::initializer_list<ContainableObject
 
 MixedArrayObject::MixedArrayObject(const ContainableObject& other, list_type& list)
     : ContainableObject(other), _list(list) {
-    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
     for (auto item : _list) {
         item->SetOwner(Object::GetWeakReference());
     }
 }
 
+MixedArrayObject::size_type MixedArrayObject::GetSize(void) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
+    return _list.size();
+}
+
+ContainableObjectPtr MixedArrayObject::operator[](size_type i) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
+    return _list[i];
+}
+
+ContainableObjectPtr MixedArrayObject::operator[](size_type i) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
+    return _list[i];
+}
+
+ContainableObjectPtr MixedArrayObject::GetValue(size_type at) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
+    return _list.at(at);
+}
+
+ContainableObjectPtr MixedArrayObject::GetValue(size_type at) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
+    return _list.at(at);
+}
+
 void MixedArrayObject::SetFile(WeakReference<File> file) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     Object::SetFile(file);
 
     auto size = _list.size();
@@ -45,6 +77,8 @@ void MixedArrayObject::SetFile(WeakReference<File> file) {
 }
 
 void MixedArrayObject::SetInitialized(bool initialized) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     Versionable::SetInitialized(initialized);
 
     auto size = _list.size();
@@ -67,6 +101,8 @@ bool MixedArrayObject::IsDirty() const {
 MixedArrayObject* MixedArrayObject::Clone(void) const {
     MixedArrayObjectPtr result(pdf_new MixedArrayObject(), false);
 
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     for (auto item : _list) {
         auto cloned = ObjectUtils::Clone<ContainableObjectPtr>(item);
         result->Append(cloned);
@@ -77,6 +113,8 @@ MixedArrayObject* MixedArrayObject::Clone(void) const {
 }
 
 void MixedArrayObject::Append(ContainableObjectPtr value) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     _list.push_back(value);
     value->SetOwner(Object::GetWeakReference());
     IncrementVersion();
@@ -84,6 +122,8 @@ void MixedArrayObject::Append(ContainableObjectPtr value) {
 }
 
 void MixedArrayObject::Insert(size_type at, ContainableObjectPtr value) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     if (at > _list.size()) {
         throw GeneralException("Index was outside the bounds of the array");
     }
@@ -95,6 +135,8 @@ void MixedArrayObject::Insert(size_type at, ContainableObjectPtr value) {
 }
 
 bool MixedArrayObject::Remove(size_type at) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     if (at >= _list.size()) {
         return false;
     }
@@ -110,6 +152,8 @@ bool MixedArrayObject::Remove(size_type at) {
 }
 
 void MixedArrayObject::Clear() {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     for (auto& item : _list) {
         item->ClearOwner();
     }
@@ -120,6 +164,8 @@ void MixedArrayObject::Clear() {
 }
 
 void MixedArrayObject::SetValue(size_type at, ContainableObjectPtr value) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     if (at >= _list.size()) {
         throw GeneralException("Index was outside the bounds of the array");
     }
@@ -133,12 +179,16 @@ void MixedArrayObject::SetValue(size_type at, ContainableObjectPtr value) {
 
 // stl compatibility
 void MixedArrayObject::push_back(ContainableObjectPtr value) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     _list.push_back(value);
     IncrementVersion();
     m_hash_cache = 0;
 }
 
 std::string MixedArrayObject::ToString(void) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     std::stringstream ss;
     ss << "[";
     bool first = true;
@@ -152,6 +202,8 @@ std::string MixedArrayObject::ToString(void) const {
 }
 
 void MixedArrayObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     output << "[";
     bool first = true;
     for (auto item : _list) {
@@ -164,6 +216,8 @@ void MixedArrayObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 }
 
 void MixedArrayObject::ToPdfStreamUpdateOffset(IOutputStreamPtr output) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     UpdateOffset(output);
 
     // If the object contains attribute, that controls it's serialization
@@ -185,6 +239,8 @@ void MixedArrayObject::ToPdfStreamUpdateOffset(IOutputStreamPtr output) {
 }
 
 size_t MixedArrayObject::Hash() const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     if (m_hash_cache != 0) {
         return m_hash_cache;
     }
@@ -199,6 +255,8 @@ size_t MixedArrayObject::Hash() const {
 }
 
 bool MixedArrayObject::Equals(ObjectPtr other) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     if (!ObjectUtils::IsType<MixedArrayObjectPtr>(other)) {
         return false;
     }

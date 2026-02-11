@@ -15,11 +15,11 @@ namespace vanillapdf {
 namespace syntax {
 
 LiteralStringObject::LiteralStringObject() {
-    _access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    _access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 HexadecimalStringObject::HexadecimalStringObject() {
-    _access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    _access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 LiteralStringObjectPtr LiteralStringObject::CreateFromEncoded(BufferPtr value) {

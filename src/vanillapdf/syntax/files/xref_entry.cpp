@@ -16,7 +16,7 @@ XrefEntryBase::XrefEntryBase(types::big_uint obj_number, types::ushort gen_numbe
 
 XrefUsedEntryBase::XrefUsedEntryBase(types::big_uint obj_number, types::ushort gen_number)
     : XrefEntryBase(obj_number, gen_number) {
-    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 XrefFreeEntry::XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number)

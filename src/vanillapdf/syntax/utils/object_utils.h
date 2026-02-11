@@ -132,7 +132,7 @@ public:
 template <typename T>
 class DereferenceHelper {
 public:
-    static T Get(Object* ptr, std::map<IndirectReferenceObject, bool>& visited, bool& result) {
+    static T Get(Object* ptr, std::map<IndirectReferenceId, bool>& visited, bool& result) {
         bool is_ref = (ptr->GetObjectType() == Object::Type::IndirectReference);
         if (!is_ref) {
             return ConversionHelper<T>::Get(ptr, result);
@@ -143,14 +143,18 @@ public:
             throw ConversionExceptionFactory<IndirectReferenceObject>::Construct(ptr);
         }
 
-        auto found = visited.find(*converted);
+        auto obj_number = converted->GetReferencedObjectNumber();
+        auto gen_number = converted->GetReferencedGenerationNumber();
+        IndirectReferenceId id(obj_number, gen_number);
+
+        auto found = visited.find(id);
         if (found != visited.end() && found->second) {
             std::stringstream ss;
-            ss << "Cyclic reference was found for " << converted->GetReferencedObjectNumber() << " " << converted->GetReferencedGenerationNumber() << " R";
+            ss << "Cyclic reference was found for " << obj_number << " " << gen_number << " R";
             throw GeneralException(ss.str());
         }
 
-        visited[*converted] = true;
+        visited[id] = true;
 
         auto direct = converted->GetReferencedObject();
         auto direct_ptr = direct.get();
@@ -169,7 +173,7 @@ public:
         bool passed = false;
         bool is_ref = (obj->GetObjectType() == Object::Type::IndirectReference);
         if (is_ref) {
-            std::map<IndirectReferenceObject, bool> visited;
+            std::map<IndirectReferenceId, bool> visited;
             auto result = DereferenceHelper<T>::Get(obj, visited, passed);
             return passed;
         }
@@ -182,7 +186,7 @@ public:
         bool passed = false;
         bool is_ref = (obj->GetObjectType() == Object::Type::IndirectReference);
         if (is_ref) {
-            std::map<IndirectReferenceObject, bool> visited;
+            std::map<IndirectReferenceId, bool> visited;
             auto result = DereferenceHelper<T>::Get(obj, visited, passed);
 
             if (!passed) {
@@ -226,7 +230,7 @@ public:
         bool is_ref = (obj->GetObjectType() == Object::Type::IndirectReference);
         if (is_ref) {
             bool found = false;
-            std::map<IndirectReferenceObject, bool> visited;
+            std::map<IndirectReferenceId, bool> visited;
             auto converted = DereferenceHelper<ArrayObjectPtr<T>>::Get(obj, visited, found);
             if (found) {
                 return true;
@@ -252,7 +256,7 @@ public:
         bool is_ref = (obj->GetObjectType() == Object::Type::IndirectReference);
         if (is_ref) {
             bool found = false;
-            std::map<IndirectReferenceObject, bool> visited;
+            std::map<IndirectReferenceId, bool> visited;
             auto converted = DereferenceHelper<ArrayObjectPtr<T>>::Get(obj, visited, found);
             if (found) {
                 return converted;
