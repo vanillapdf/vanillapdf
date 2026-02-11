@@ -2,6 +2,8 @@
 
 #include "contents/character_map_data.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
+
 // Benchmark results (Release, Windows x64 MSVC 17, 16x 3792 MHz, L3 16384 KiB):
 //
 // Before (custom bit-by-bit arithmetic):
@@ -58,7 +60,7 @@ BufferPtr BaseFontRange::GetMappedValueInternal(BufferPtr key) const {
     auto high = m_high->GetValue()->ToInteger<uint32_t>(endian::big);
 
     if (key->size() != low_buf->size() || k < low || k > high) {
-        LOG_ERROR_AND_THROW_GENERAL("Key: is out of range: [{},{}]", key->ToHexString(), low_buf->ToHexString(), m_high->GetValue()->ToHexString());
+        LOG_ERROR_AND_THROW(syntax::ParseException, "Key: is out of range: [{},{}]", key->ToHexString(), low_buf->ToHexString(), m_high->GetValue()->ToHexString());
     }
 
     auto offset = k - low;
@@ -77,7 +79,7 @@ BufferPtr BaseFontRange::GetMappedValueInternal(BufferPtr key) const {
         return result_obj->GetValue();
     }
 
-    LOG_ERROR_AND_THROW_GENERAL("Unknown destination type: {}", static_cast<int>(m_dest->GetObjectType()));
+    LOG_ERROR_AND_THROW(syntax::ParseException, "Unknown destination type: {}", static_cast<int>(m_dest->GetObjectType()));
 }
 
 bool BaseFontRange::TryGetMappedValue(BufferPtr key, BufferPtr& result) const {

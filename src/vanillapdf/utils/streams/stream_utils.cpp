@@ -16,7 +16,7 @@ IOutputStreamPtr StreamUtils::OutputStreamFromFile(const std::string& filename) 
     output->open(filename, std::ios::out | std::ios::binary);
 
     if (!output || !output->good()) {
-        throw GeneralException("Could not open file: " + filename);
+        throw IOErrorException("Could not open file: " + filename);
     }
 
     return make_deferred<OutputStream>(output);
@@ -28,7 +28,7 @@ IInputStreamPtr StreamUtils::InputStreamFromFile(const std::string& filename) {
     input->open(filename, std::ios::in |std::ios::binary);
 
     if (!input || !input->good()) {
-        throw GeneralException("Could not open file: " + filename);
+        throw IOErrorException("Could not open file: " + filename);
     }
 
     return make_deferred<InputStream>(input);
@@ -40,7 +40,7 @@ IInputOutputStreamPtr StreamUtils::InputOutputStreamFromFile(const std::string& 
     input->open(filename, std::ios::in | std::ios::out | std::ios::binary);
 
     if (!input || !input->good()) {
-        throw GeneralException("Could not open file: " + filename);
+        throw IOErrorException("Could not open file: " + filename);
     }
 
     return make_deferred<InputOutputStream>(input);
@@ -86,7 +86,7 @@ SeekDirection StreamUtils::ConvertToSeekDirection(std::ios_base::seekdir value) 
         return SeekDirection::End;
     }
 
-    throw GeneralException("Unknown seek direction: " + std::to_string(value));
+    throw IOErrorException("Unknown seek direction: " + std::to_string(value));
 }
 
 std::ios_base::seekdir StreamUtils::ConvertFromSeekDirection(SeekDirection value) {
@@ -102,7 +102,7 @@ std::ios_base::seekdir StreamUtils::ConvertFromSeekDirection(SeekDirection value
         return std::ios_base::end;
     }
 
-    throw GeneralException("Unknown seek direction: " + std::to_string(static_cast<int>(value)));
+    throw IOErrorException("Unknown seek direction: " + std::to_string(static_cast<int>(value)));
 }
 
 } // vanillapdf

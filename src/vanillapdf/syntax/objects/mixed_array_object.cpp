@@ -107,7 +107,7 @@ void MixedArrayObject::Insert(size_type at, ContainableObjectPtr value) {
     ACCESS_LOCK_GUARD(m_access_lock);
 
     if (at > _list.size()) {
-        throw GeneralException("Index was outside the bounds of the array");
+        throw InvalidParameterException("Index was outside the bounds of the array");
     }
 
     _list.insert(_list.begin() + at, value);
@@ -149,7 +149,7 @@ void MixedArrayObject::SetValue(size_type at, ContainableObjectPtr value) {
     ACCESS_LOCK_GUARD(m_access_lock);
 
     if (at >= _list.size()) {
-        throw GeneralException("Index was outside the bounds of the array");
+        throw InvalidParameterException("Index was outside the bounds of the array");
     }
 
     _list[at] = value;

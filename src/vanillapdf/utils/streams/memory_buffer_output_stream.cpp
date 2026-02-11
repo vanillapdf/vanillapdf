@@ -110,7 +110,7 @@ void MemoryBufferOutputStream::SetOutputPosition(types::stream_size pos, SeekDir
         auto desired = SafeAddition<types::stream_size>(m_position, pos);
         auto desired_unsigned = ValueConvertUtils::SafeConvert<size_t>(desired);
         if (m_buffer.size() < desired_unsigned) {
-            LOG_ERROR_AND_THROW_GENERAL("Could not seek memory buffer to {}/{}, buffer size {}",
+            LOG_ERROR_AND_THROW(IOErrorException, "Could not seek memory buffer to {}/{}, buffer size {}",
                 pos, static_cast<int>(way), m_buffer.size());
         }
 
@@ -120,14 +120,14 @@ void MemoryBufferOutputStream::SetOutputPosition(types::stream_size pos, SeekDir
     if (way == SeekDirection::End) {
         auto destination_converted = ValueConvertUtils::SafeConvert<size_t>(pos);
         if (m_buffer.size() < destination_converted) {
-            LOG_ERROR_AND_THROW_GENERAL("Could not seek memory buffer to {}/{}, buffer size {}",
+            LOG_ERROR_AND_THROW(IOErrorException, "Could not seek memory buffer to {}/{}, buffer size {}",
                 pos, static_cast<int>(way), m_buffer.size());
         }
 
         m_position = (m_buffer.size() - pos);
     }
 
-    LOG_ERROR_AND_THROW_GENERAL("Unknown seek direction: {}", static_cast<int>(way));
+    LOG_ERROR_AND_THROW(IOErrorException, "Unknown seek direction: {}", static_cast<int>(way));
 }
 
 void MemoryBufferOutputStream::ExclusiveOutputLock() {

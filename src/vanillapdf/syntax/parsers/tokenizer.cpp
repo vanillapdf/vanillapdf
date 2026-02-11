@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "syntax/parsers/tokenizer.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/constants.h"
 #include "utils/character.h"
@@ -70,7 +71,7 @@ TokenPtr Tokenizer::ReadToken() {
                     return make_deferred<Token>(Token::Type::DICTIONARY_END);
                 }
 
-                throw GeneralException("Unexpected character at offset: " + std::to_string(m_stream->GetInputPosition()));
+                throw ParseException(m_stream->GetInputPosition());
             }
             case static_cast<int>(Delimiter::LESS_THAN_SIGN):
             {
@@ -223,7 +224,7 @@ TokenPtr Tokenizer::ReadHexadecimalString(void) {
             continue;
         }
 
-        throw GeneralException("Unexpected character in hexadecimal string " + std::to_string(current));
+        throw ParseException(m_stream->GetInputPosition());
     }
 
     return make_deferred<Token>(Token::Type::HEXADECIMAL_STRING, chars);
@@ -265,7 +266,7 @@ TokenPtr Tokenizer::ReadLiteralString(void) {
 
         auto eof_test = m_stream->Peek();
         if (eof_test == std::char_traits<char>::eof()) {
-            throw GeneralException("Improperly terminated literal string sequence: " + chars);
+            throw ParseException(m_stream->GetInputPosition());
         }
 
         int current_meta = m_stream->Get();
@@ -338,7 +339,7 @@ TokenPtr Tokenizer::PeekToken() {
 TokenPtr Tokenizer::ReadTokenWithType(Token::Type type) {
     auto result = ReadToken();
     if (result->GetType() != type) {
-        throw GeneralException("Unexpected token type");
+        throw ParseException(m_stream->GetInputPosition());
     }
 
     return result;

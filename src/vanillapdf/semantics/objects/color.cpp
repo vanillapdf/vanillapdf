@@ -15,7 +15,7 @@ Color::Color(syntax::MixedArrayObjectPtr root) : HighLevelObject(root) {
     case 4:
         break;
     default:
-        throw GeneralException("Invalid color array size: " + std::to_string(size));
+        throw InvalidParameterException("Invalid color array size: " + std::to_string(size));
     }
 }
 
@@ -28,7 +28,7 @@ Color::ColorSpace Color::GetColorSpace() const {
     case 3: return ColorSpace::DeviceRGB;
     case 4: return ColorSpace::DeviceCMYK;
     default:
-        throw GeneralException("Invalid color array size: " + std::to_string(size));
+        throw InvalidParameterException("Invalid color array size: " + std::to_string(size));
     }
 }
 

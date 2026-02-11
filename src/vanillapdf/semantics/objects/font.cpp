@@ -1,6 +1,7 @@
 #include "precompiled.h"
 #include "semantics/objects/font.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
@@ -38,24 +39,24 @@ FontBase* FontBase::Create(syntax::DictionaryObjectPtr root) {
     if (root->Contains(constant::Name::Type)) {
         syntax::ObjectPtr type_obj = root->Find(constant::Name::Type);
         if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
-            throw GeneralException("Invalid font type object");
+            throw syntax::ObjectMissingException("Invalid font type object");
         }
 
         syntax::NameObjectPtr font_type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
 
         if (font_type != constant::Name::Font) {
-            throw GeneralException("Invalid font type: " + font_type->ToString());
+            throw syntax::ObjectMissingException("Invalid font type: " + font_type->ToString());
         }
     }
 
     if (!root->Contains(constant::Name::Subtype)) {
-        throw GeneralException("Dictionary does not contain subtype");
+        throw syntax::ObjectMissingException("Dictionary does not contain subtype");
     }
 
     syntax::ObjectPtr subtype_obj = root->Find(constant::Name::Subtype);
 
     if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(subtype_obj)) {
-        throw GeneralException("Invalid font subtype object");
+        throw syntax::ObjectMissingException("Invalid font subtype object");
     }
 
     syntax::NameObjectPtr subtype = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(subtype_obj);
@@ -95,7 +96,7 @@ FontBase* FontBase::Create(syntax::DictionaryObjectPtr root) {
         return result.release();
     }
 
-    throw GeneralException("Unknown font subtype: " + subtype->ToString());
+    throw syntax::ObjectMissingException("Unknown font subtype: " + subtype->ToString());
 }
 
 bool FontBase::ToUnicode(OuputUnicodeCharacterMapPtr& result) const {

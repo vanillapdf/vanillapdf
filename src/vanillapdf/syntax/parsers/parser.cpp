@@ -561,7 +561,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 
     assert(fields->GetSize() == 3);
     if (fields->GetSize() != 3) {
-        throw GeneralException("Xref stream width does not contain three integers");
+        throw ParseException("Xref stream width does not contain three integers");
     }
 
     auto size = header->FindAs<IntegerObjectPtr>(constant::Name::Size);
@@ -644,7 +644,7 @@ XrefStreamPtr Parser::ParseXrefStream(
                 continue;
             }
 
-            throw GeneralException("Unknown entry type");
+            throw ParseException("Unknown entry type");
         }
     }
 
@@ -692,7 +692,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 
         if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry)) {
             assert(false && "How could this be entry of different type");
-            throw GeneralException("Xref entry has incorrect type");
+            throw ParseException("Xref entry has incorrect type");
         }
 
         auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
@@ -788,7 +788,7 @@ HeaderPtr Parser::ReadHeader(void) {
         }
     }
 
-    LOG_ERROR_AND_THROW_GENERAL("Could not find PDF header");
+    LOG_ERROR_AND_THROW(syntax::ParseException, "Could not find PDF header");
 }
 
 XrefChainPtr Parser::FindAllObjects(void) {

@@ -2,6 +2,7 @@
 
 #include "semantics/objects/fields.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
@@ -14,7 +15,7 @@ FieldPtr Field::Create(syntax::DictionaryObjectPtr root) {
 
     syntax::ObjectPtr type_obj = root->Find(constant::Name::FT);
     if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
-        LOG_ERROR_AND_THROW_GENERAL("Invalid field type: {}", static_cast<int32_t>(type_obj->GetObjectType()));
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid field type: {}", static_cast<int32_t>(type_obj->GetObjectType()));
     }
 
     syntax::NameObjectPtr type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
@@ -35,7 +36,7 @@ FieldPtr Field::Create(syntax::DictionaryObjectPtr root) {
         return make_deferred<SignatureField>(root);
     }
 
-    LOG_ERROR_AND_THROW_GENERAL("Unknown field type: {}", type->ToString());
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown field type: {}", type->ToString());
 }
 
 // Field base class properties

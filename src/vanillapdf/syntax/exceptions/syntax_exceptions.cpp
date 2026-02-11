@@ -7,6 +7,8 @@ namespace syntax {
 ParseException::ParseException(types::stream_offset offset)
     : ExceptionBase("Could not parse object at offset " + std::to_string(offset)) {
 }
+ParseException::ParseException(const char * const & msg) : ExceptionBase(msg) {}
+ParseException::ParseException(const std::string& msg) : ExceptionBase(msg) {}
 
 FileDisposedException::FileDisposedException() : ExceptionBase("Current file has been already disposed") {}
 
@@ -24,6 +26,8 @@ ObjectMissingException::ObjectMissingException(types::big_uint objNumber)
 ObjectMissingException::ObjectMissingException(types::big_uint objNumber, types::ushort genNumber)
     : ExceptionBase("Object " + std::to_string(objNumber) + " " + std::to_string(genNumber) + " is missing") {
 }
+ObjectMissingException::ObjectMissingException(const char * const & msg) : ExceptionBase(msg) {}
+ObjectMissingException::ObjectMissingException(const std::string& msg) : ExceptionBase(msg) {}
 
 DuplicateKeyException::DuplicateKeyException(const std::string& key)
     : ExceptionBase("The key " + key + " was already present in the dictionary") {

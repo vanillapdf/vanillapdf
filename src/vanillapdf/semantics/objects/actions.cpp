@@ -3,6 +3,7 @@
 #include "semantics/objects/actions.h"
 #include "semantics/objects/destinations.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
@@ -18,13 +19,13 @@ LaunchAction::LaunchAction(syntax::DictionaryObjectPtr root) : ActionBase(root) 
 
 ActionPtr ActionBase::Create(syntax::DictionaryObjectPtr root) {
     if (!root->Contains(constant::Name::S)) {
-        throw GeneralException("Action dictionary does not contain /S entry");
+        throw syntax::ObjectMissingException("Action dictionary does not contain /S entry");
     }
 
     syntax::ObjectPtr s_obj = root->Find(constant::Name::S);
 
     if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(s_obj)) {
-        throw GeneralException("Invalid action type");
+        throw syntax::ObjectMissingException("Invalid action type");
     }
 
     syntax::NameObjectPtr s = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(s_obj);
@@ -53,7 +54,7 @@ ActionPtr ActionBase::Create(syntax::DictionaryObjectPtr root) {
         return make_deferred<JavaScriptAction>(root);
     }
 
-    throw GeneralException("Unknown action type: " + s->ToString());
+    throw syntax::ObjectMissingException("Unknown action type: " + s->ToString());
 }
 
 bool GoToAction::Destination(OutputDestinationPtr& result) const {

@@ -2,6 +2,7 @@
 
 #include "syntax/parsers/reverse_parser.h"
 #include "syntax/parsers/parser_utils.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/misc_utils.h"
 
@@ -38,7 +39,7 @@ TokenPtr ReverseParser::ReadTokenWithTypeSkip(Token::Type type) {
             continue;
         }
 
-        LOG_ERROR_AND_THROW_GENERAL(
+        LOG_ERROR_AND_THROW(syntax::ParseException,
             "Could not find token type {} at offset {}, instead token type {} with value {} was found",
             static_cast<int>(type),
             offset,

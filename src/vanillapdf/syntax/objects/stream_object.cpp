@@ -143,7 +143,7 @@ BufferPtr StreamObject::GetBodyRaw() const {
     }
 
     if (_raw_data_offset == constant::BAD_OFFSET) {
-        throw GeneralException("Stream object data offset is not initialized");
+        throw ParseException("Stream object data offset is not initialized");
     }
 
     auto locked_file = m_file.GetReference();
@@ -272,7 +272,7 @@ BufferPtr StreamObject::GetBody() const {
     }
 
     assert(is_filter_name ^ is_filter_array);
-    throw GeneralException("Filter is neither name nor array of names");
+    throw ParseException("Filter is neither name nor array of names");
 }
 
 BufferPtr StreamObject::GetBodyEncoded() const {
@@ -394,7 +394,7 @@ BufferPtr StreamObject::GetBodyEncoded() const {
     }
 
     assert(is_filter_name ^ is_filter_array);
-    throw GeneralException("Filter is neither name nor array of names");
+    throw ParseException("Filter is neither name nor array of names");
 }
 
 BufferPtr StreamObject::GetBodyDecrypted() const {

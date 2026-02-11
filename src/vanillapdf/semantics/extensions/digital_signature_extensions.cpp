@@ -26,19 +26,19 @@ SignatureVerificationResultPtr DigitalSignatureExtensions::Verify(
     // Get the file from the document
     auto file = document->GetFile();
     if (file.empty()) {
-        LOG_ERROR_AND_THROW_GENERAL("Document file is not available");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Document file is not available");
     }
 
     // Extract ByteRange from signature
     OuputByteRangeCollectionPtr byte_range_collection;
     if (!signature->ByteRange(byte_range_collection) || byte_range_collection.empty()) {
-        LOG_ERROR_AND_THROW_GENERAL("Signature does not contain valid ByteRange");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Signature does not contain valid ByteRange");
     }
 
     // Read and concatenate all byte ranges
     auto range_count = byte_range_collection->GetSize();
     if (range_count == 0) {
-        LOG_ERROR_AND_THROW_GENERAL("ByteRange collection is empty");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"ByteRange collection is empty");
     }
 
     // Calculate total size of signed data
@@ -77,7 +77,7 @@ SignatureVerificationResultPtr DigitalSignatureExtensions::Verify(
     // Extract signature contents (PKCS#7 blob)
     auto signature_contents_obj = signature->Contents();
     if (signature_contents_obj.empty()) {
-        LOG_ERROR_AND_THROW_GENERAL("Signature does not contain valid Contents");
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Signature does not contain valid Contents");
     }
 
     // GetValue() returns the decoded bytes (not hex-encoded)

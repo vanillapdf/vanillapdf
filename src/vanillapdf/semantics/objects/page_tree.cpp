@@ -4,6 +4,7 @@
 #include "syntax/files/file.h"
 #include "syntax/objects/array_object.h"
 #include "syntax/utils/name_constants.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 
 #include <fmt/core.h>
 
@@ -41,7 +42,7 @@ types::size_type PageTree::PageCount(PageNodeBasePtr node) {
         return 1;
     }
 
-    throw GeneralException("Unknown page object type");
+    throw syntax::ParseException("Unknown page object type");
 }
 
 PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
@@ -52,7 +53,7 @@ PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
     spdlog::debug("Searching for page {}", page_number);
 
     if (page_number < 1) {
-        throw GeneralException(fmt::format("Invalid page number: {}", page_number));
+        throw InvalidParameterException(fmt::format("Invalid page number: {}", page_number));
     }
 
     auto root = make_deferred<PageTreeNode>(_obj);
@@ -97,7 +98,7 @@ PageObjectPtr PageTree::PageInternal(PageTreeNodePtr node, types::size_type page
         }
     }
 
-    throw GeneralException("Page number was not found: " + std::to_string(page_number));
+    throw ObjectMissingException("Page number was not found: " + std::to_string(page_number));
 }
 
 bool PageTree::FindPageIndex(DictionaryObjectPtr page_dict, types::size_type& result) const {
@@ -205,7 +206,7 @@ types::size_type PageTree::UpdateKidsCount(PageNodeBasePtr node) {
         return kid_count;
     }
 
-    throw GeneralException("Unknown page object type");
+    throw syntax::ParseException("Unknown page object type");
 }
 
 ArrayObjectPtr<IndirectReferenceObjectPtr> PageTree::GetKidsInternal() {
