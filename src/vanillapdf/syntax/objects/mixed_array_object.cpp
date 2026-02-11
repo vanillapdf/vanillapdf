@@ -34,24 +34,6 @@ MixedArrayObject::MixedArrayObject(const ContainableObject& other, list_type& li
     }
 }
 
-MixedArrayObject::size_type MixedArrayObject::GetSize(void) const {
-    ACCESS_LOCK_GUARD(m_access_lock);
-
-    return _list.size();
-}
-
-ContainableObjectPtr MixedArrayObject::operator[](size_type i) const {
-    ACCESS_LOCK_GUARD(m_access_lock);
-
-    return _list[i];
-}
-
-ContainableObjectPtr MixedArrayObject::operator[](size_type i) {
-    ACCESS_LOCK_GUARD(m_access_lock);
-
-    return _list[i];
-}
-
 ContainableObjectPtr MixedArrayObject::GetValue(size_type at) const {
     ACCESS_LOCK_GUARD(m_access_lock);
 
