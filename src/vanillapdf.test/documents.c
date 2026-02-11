@@ -1790,9 +1790,13 @@ error_type process_document_edit(
 
 error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
     FieldCollectionHandle* fields = NULL;
+    boolean_type need_appearances = VANILLAPDF_RV_FALSE;
 
     print_spaces(nested);
     print_text("Interactive form begin\n");
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(InteractiveForm_GetNeedAppearances(obj, &need_appearances),
+        VANILLAPDF_TEST_ERROR_SUCCESS);
 
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(InteractiveForm_GetFields(obj, &fields),
         process_field_collection(fields, nested + 1),
@@ -1838,9 +1842,24 @@ error_type process_field(FieldHandle* obj, int nested) {
     ButtonFieldHandle* button_field = NULL;
     TextFieldHandle* text_field = NULL;
     ChoiceFieldHandle* choice_field = NULL;
+    StringObjectHandle* field_name = NULL;
+    StringObjectHandle* alt_name = NULL;
+    FieldFlags flags = FieldFlags_None;
 
     print_spaces(nested);
     print_text("Field begin\n");
+
+    // Common field properties
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Field_GetName(obj, &field_name),
+        process_string(field_name, nested + 1),
+        StringObject_Release(field_name));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Field_GetAlternateName(obj, &alt_name),
+        process_string(alt_name, nested + 1),
+        StringObject_Release(alt_name));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Field_GetFieldFlags(obj, &flags),
+        VANILLAPDF_TEST_ERROR_SUCCESS);
 
     RETURN_ERROR_IF_NOT_SUCCESS(Field_GetType(obj, &type));
 
@@ -1855,6 +1874,7 @@ error_type process_field(FieldHandle* obj, int nested) {
             print_spaces(nested + 1);
             print_text("Type: Button\n");
             RETURN_ERROR_IF_NOT_SUCCESS(ButtonField_FromField(obj, &button_field));
+            RETURN_ERROR_IF_NOT_SUCCESS(process_button_field(button_field, nested + 1));
             RETURN_ERROR_IF_NOT_SUCCESS(ButtonField_Release(button_field));
             break;
 
@@ -1862,6 +1882,7 @@ error_type process_field(FieldHandle* obj, int nested) {
             print_spaces(nested + 1);
             print_text("Type: Text\n");
             RETURN_ERROR_IF_NOT_SUCCESS(TextField_FromField(obj, &text_field));
+            RETURN_ERROR_IF_NOT_SUCCESS(process_text_field(text_field, nested + 1));
             RETURN_ERROR_IF_NOT_SUCCESS(TextField_Release(text_field));
             break;
 
@@ -1869,6 +1890,7 @@ error_type process_field(FieldHandle* obj, int nested) {
             print_spaces(nested + 1);
             print_text("Type: Choice\n");
             RETURN_ERROR_IF_NOT_SUCCESS(ChoiceField_FromField(obj, &choice_field));
+            RETURN_ERROR_IF_NOT_SUCCESS(process_choice_field(choice_field, nested + 1));
             RETURN_ERROR_IF_NOT_SUCCESS(ChoiceField_Release(choice_field));
             break;
 
@@ -1885,6 +1907,59 @@ error_type process_field(FieldHandle* obj, int nested) {
 
     print_spaces(nested);
     print_text("Field end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_button_field(ButtonFieldHandle* obj, int nested) {
+    NameObjectHandle* value = NULL;
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ButtonField_GetValue(obj, &value),
+        process_name(value, nested + 1),
+        NameObject_Release(value));
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_text_field(TextFieldHandle* obj, int nested) {
+    StringObjectHandle* value = NULL;
+    StringObjectHandle* default_value = NULL;
+    IntegerObjectHandle* max_length = NULL;
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(TextField_GetValue(obj, &value),
+        process_string(value, nested + 1),
+        StringObject_Release(value));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(TextField_GetDefaultValue(obj, &default_value),
+        process_string(default_value, nested + 1),
+        StringObject_Release(default_value));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(TextField_GetMaxLength(obj, &max_length),
+        VANILLAPDF_TEST_ERROR_SUCCESS,
+        IntegerObject_Release(max_length));
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_choice_field(ChoiceFieldHandle* obj, int nested) {
+    StringObjectHandle* value = NULL;
+    size_type option_count = 0;
+    size_type i = 0;
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ChoiceField_GetValue(obj, &value),
+        process_string(value, nested + 1),
+        StringObject_Release(value));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(ChoiceField_GetOptionCount(obj, &option_count),
+        VANILLAPDF_TEST_ERROR_SUCCESS);
+
+    for (i = 0; i < option_count; ++i) {
+        ObjectHandle* option = NULL;
+
+        RETURN_ERROR_IF_NOT_SUCCESS(ChoiceField_GetOptionAt(obj, i, &option));
+        RETURN_ERROR_IF_NOT_SUCCESS(process_object(option, nested + 1));
+        RETURN_ERROR_IF_NOT_SUCCESS(Object_Release(option));
+    }
 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }

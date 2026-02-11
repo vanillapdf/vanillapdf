@@ -16,6 +16,8 @@ public:
 
     bool GetFields(OuputFieldCollectionPtr& result) const;
     bool GetSignatureFlags(OutputSignatureFlagsPtr& result) const;
+    bool GetNeedAppearances(bool& result) const;
+    void SetNeedAppearances(bool value);
 
     FieldCollectionPtr CreateFields();
     SignatureFlagsPtr CreateSignatureFlags();

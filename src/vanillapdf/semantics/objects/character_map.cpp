@@ -41,14 +41,14 @@ std::unique_ptr<CharacterMapBase> CharacterMapBase::Create(syntax::StreamObjectP
 }
 
 void UnicodeCharacterMap::Initialize() const {
-    if (m_initialized) {
+    if (m_initialized.load(std::memory_order_acquire)) {
         return;
     }
 
     ACCESS_LOCK_GUARD(m_access_lock);
 
     // Double-check after acquiring the lock
-    if (m_initialized) {
+    if (m_initialized.load(std::memory_order_relaxed)) {
         return;
     }
 
@@ -57,7 +57,7 @@ void UnicodeCharacterMap::Initialize() const {
 
     contents::CharacterMapParser parser(_obj->GetFile(), input_stream);
     m_data = parser.ReadCharacterMapData();
-    m_initialized = true;
+    m_initialized.store(true, std::memory_order_release);
 }
 
 BufferPtr UnicodeCharacterMap::GetMappedValue(BufferPtr key) const {

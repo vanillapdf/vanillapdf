@@ -105,7 +105,7 @@ protected:
 private:
     TreeNodeRootPtr _root;
     mutable map_type m_map;
-    mutable bool m_initialized = false;
+    mutable std::atomic<bool> m_initialized = false;
 
     void InsertPairsToMap(std::map<KeyT, syntax::ContainableObjectPtr>& map, const syntax::MixedArrayObjectPtr values) const;
     std::map<KeyT, syntax::ContainableObjectPtr> GetAllKeys(const TreeNodeBasePtr node) const;
@@ -257,17 +257,17 @@ typename TreeBase<KeyT, ValueT>::const_iterator TreeBase<KeyT, ValueT>::end() co
 
 template <typename KeyT, typename ValueT>
 bool TreeBase<KeyT, ValueT>::IsInitialized() const {
-    return m_initialized;
+    return m_initialized.load(std::memory_order_acquire);
 }
 
 template <typename KeyT, typename ValueT>
 void TreeBase<KeyT, ValueT>::Initialize() const {
-    if (m_initialized) {
+    if (m_initialized.load(std::memory_order_acquire)) {
         return;
     }
 
     m_map = GetAllKeys(_root);
-    m_initialized = true;
+    m_initialized.store(true, std::memory_order_release);
 }
 
 template <typename KeyT, typename ValueT>
@@ -356,7 +356,7 @@ void TreeBase<KeyT, ValueT>::Rebuild() {
     _obj->Insert(GetValueName(), leaf_values);
 
     // Force tree reinitialization
-    m_initialized = false;
+    m_initialized.store(false, std::memory_order_release);
     Initialize();
 }
 
