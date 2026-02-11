@@ -46,6 +46,200 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle* handle, 
     return VANILLAPDF_ERROR_SUCCESS;
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetName(FieldHandle* handle, StringObjectHandle** result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputStringObjectPtr direct;
+        bool contains = obj->GetName(direct);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = direct.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateName(FieldHandle* handle, StringObjectHandle** result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputStringObjectPtr direct;
+        bool contains = obj->GetAlternateName(direct);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = direct.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetFieldFlags(FieldHandle* handle, FieldFlags* result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        types::big_int flags;
+        bool contains = obj->GetFieldFlags(flags);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        *result = static_cast<FieldFlags>(flags);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_SetFieldFlags(FieldHandle* handle, FieldFlags value) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try {
+        obj->SetFieldFlags(static_cast<types::big_int>(value));
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_GetValue(ButtonFieldHandle* handle, NameObjectHandle** result) {
+    ButtonField* obj = reinterpret_cast<ButtonField*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputNameObjectPtr direct;
+        bool contains = obj->GetValue(direct);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = direct.AddRefGet();
+        *result = reinterpret_cast<NameObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_SetValue(ButtonFieldHandle* handle, NameObjectHandle* value) {
+    ButtonField* obj = reinterpret_cast<ButtonField*>(handle);
+    NameObject* name = reinterpret_cast<NameObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
+
+    try {
+        obj->SetValue(name);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetValue(TextFieldHandle* handle, StringObjectHandle** result) {
+    TextField* obj = reinterpret_cast<TextField*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputStringObjectPtr direct;
+        bool contains = obj->GetValue(direct);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = direct.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextField_SetValue(TextFieldHandle* handle, StringObjectHandle* value) {
+    TextField* obj = reinterpret_cast<TextField*>(handle);
+    StringObjectBase* str = reinterpret_cast<StringObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(str);
+
+    try {
+        obj->SetValue(str);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetDefaultValue(TextFieldHandle* handle, StringObjectHandle** result) {
+    TextField* obj = reinterpret_cast<TextField*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputStringObjectPtr direct;
+        bool contains = obj->GetDefaultValue(direct);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = direct.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetMaxLength(TextFieldHandle* handle, IntegerObjectHandle** result) {
+    TextField* obj = reinterpret_cast<TextField*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputIntegerObjectPtr direct;
+        bool contains = obj->GetMaxLength(direct);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = direct.AddRefGet();
+        *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetValue(ChoiceFieldHandle* handle, StringObjectHandle** result) {
+    ChoiceField* obj = reinterpret_cast<ChoiceField*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputStringObjectPtr direct;
+        bool contains = obj->GetValue(direct);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = direct.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_SetValue(ChoiceFieldHandle* handle, StringObjectHandle* value) {
+    ChoiceField* obj = reinterpret_cast<ChoiceField*>(handle);
+    StringObjectBase* str = reinterpret_cast<StringObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(str);
+
+    try {
+        obj->SetValue(str);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionCount(ChoiceFieldHandle* handle, size_type* result) {
+    ChoiceField* obj = reinterpret_cast<ChoiceField*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        types::size_type count;
+        bool contains = obj->GetOptionCount(count);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        *result = count;
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionAt(ChoiceFieldHandle* handle, size_type index, ObjectHandle** result) {
+    ChoiceField* obj = reinterpret_cast<ChoiceField*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputContainableObjectPtr direct;
+        bool contains = obj->GetOptionAt(index, direct);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = direct.AddRefGet();
+        *result = reinterpret_cast<ObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_GetSize(FieldCollectionHandle* handle, size_type* result) {
     FieldCollection* collection = reinterpret_cast<FieldCollection*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);
