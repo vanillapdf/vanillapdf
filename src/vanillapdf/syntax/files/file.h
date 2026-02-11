@@ -131,7 +131,7 @@ private:
     HeaderPtr _header;
     XrefChainPtr _xref;
 
-    bool _initialized = false;
+    std::atomic<bool> _initialized = false;
     std::string _full_path;
     BufferPtr _filename;
 
