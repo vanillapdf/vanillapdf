@@ -5,6 +5,7 @@
 
 #include "syntax/parsers/parser.h"
 #include "syntax/utils/name_constants.h"
+#include "syntax/utils/output_pointer.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 
 namespace vanillapdf {
@@ -195,11 +196,12 @@ void XrefUsedEntry::Initialize(void) {
     auto xref_chain = locked_file->GetXrefChain(false);
 
     for (auto xref : xref_chain) {
-        if (!xref->Contains(_obj_number)) {
+        OutputXrefEntryBasePtr xref_entry_result;
+        if (!xref->TryFind(_obj_number, xref_entry_result)) {
             continue;
         }
 
-        auto xref_entry = xref->Find(_obj_number);
+        auto xref_entry = *xref_entry_result;
         if (xref_entry->GetGenerationNumber() != _gen_number) {
             continue;
         }
@@ -301,8 +303,10 @@ namespace std {
 size_t hash<vanillapdf::syntax::XrefEntryBasePtr>::operator()(const vanillapdf::syntax::XrefEntryBasePtr& entry) const {
     auto object_number = entry->GetObjectNumber();
 
-    std::hash<decltype(object_number)> hasher;
-    return hasher(object_number);
+    size_t hash = vanillapdf::constant::FNV1A_OFFSET_BASIS;
+    hash ^= static_cast<size_t>(object_number);
+    hash *= vanillapdf::constant::FNV1A_PRIME;
+    return hash;
 }
 
 } // std

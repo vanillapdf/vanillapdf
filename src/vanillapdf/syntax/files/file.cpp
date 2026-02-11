@@ -845,7 +845,7 @@ ObjectPtr File::GetIndirectObjectInternal(
                 // The object numbering does take precedence before the XREF
                 // Forcing the initialization will immediately resolve the differences
                 for (auto xref_table : _xref) {
-                    for (auto xref_entry : xref_table) {
+                    for (auto& [obj_num, xref_entry] : xref_table) {
                         auto is_used_entry = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(xref_entry);
                         if (!is_used_entry) {
                             continue;

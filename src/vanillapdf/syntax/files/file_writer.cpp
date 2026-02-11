@@ -197,7 +197,7 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
     // Store array of objects for every object stream
     std::unordered_map<types::big_uint, std::vector<XrefCompressedEntryPtr>> object_stream_map;
 
-    for (auto entry : xref_stream) {
+    for (auto& [obj_num, entry] : xref_stream) {
 
         // Ignore non-compressed entries
         if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(entry)) {
@@ -713,7 +713,7 @@ void FileWriter::RecalculateStreamsLength(XrefBasePtr source) {
     }
 
     // Iteration may be unordered, but I don't really care
-    for (auto entry : source) {
+    for (auto& [obj_num, entry] : source) {
         if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
             continue;
         }
@@ -1844,7 +1844,7 @@ void FileWriter::RemoveFreedObjects(XrefChainPtr xref) {
             }
 
             // Remove if not used
-            bool removed = current_xref->Remove(current_entry);
+            bool removed = current_xref->Remove(current_entry->GetObjectNumber());
             assert(removed && "Could not release xref entry"); UNUSED(removed);
         }
     }
@@ -1929,7 +1929,7 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
         auto current = *iterator;
 
         // All conflicts are overwritten
-        for (auto item : current) {
+        for (auto& [obj_num, item] : current) {
 
             // Skip unused entries
             if (!item->InUse()) {
@@ -1944,7 +1944,7 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
             if (xref_table->HasHybridStream()) {
                 auto hybrid_stream = xref_table->GetHybridStream();
 
-                for (auto item : hybrid_stream) {
+                for (auto& [obj_num, item] : hybrid_stream) {
 
                     // Skip unused entries
                     if (!item->InUse()) {
@@ -1998,7 +1998,7 @@ void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
     for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
         auto current = *iterator;
 
-        for (auto item : current) {
+        for (auto& [obj_num, item] : current) {
 
             // Accept either used and compressed entries
             if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
@@ -2017,7 +2017,7 @@ void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
             if (xref_table->HasHybridStream()) {
                 auto hybrid_stream = xref_table->GetHybridStream();
 
-                for (auto item : hybrid_stream) {
+                for (auto& [obj_num, item] : hybrid_stream) {
                     // Accept either used and compressed entries
                     if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
                         continue;
@@ -2072,7 +2072,7 @@ void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
                 used_entries[xref_stream_entry] = true;
             }
 
-            for (auto stream_entry : xref_stream) {
+            for (auto& [obj_num, stream_entry] : xref_stream) {
                 if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(stream_entry)) {
                     continue;
                 }
@@ -2154,8 +2154,9 @@ void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
         for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
             auto current = *iterator;
 
-            if (current->Contains(used_entry.first->GetObjectNumber())) {
-                removed = current->Remove(used_entry.first);
+            auto obj_number = used_entry.first->GetObjectNumber();
+            if (current->Contains(obj_number)) {
+                removed = current->Remove(obj_number);
                 break;
             }
         }
@@ -2205,7 +2206,7 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
     for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
         auto current = *iterator;
 
-        for (auto item : current) {
+        for (auto& [obj_num, item] : current) {
 
             // Accept either used and compressed entries
             if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item)) {
@@ -2256,7 +2257,7 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
     for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
         auto current_xref = *iterator;
 
-        for (auto item : current_xref) {
+        for (auto& [obj_num, item] : current_xref) {
 
             // Accept either used and compressed entries
             if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
@@ -2344,7 +2345,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
     for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
         auto current_xref = *iterator;
 
-        for (auto item : current_xref) {
+        for (auto& [obj_num, item] : current_xref) {
 
             // Initialize used and compressed entries as well
             if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
@@ -2405,7 +2406,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
                 new_entry->SetFile(entry->GetFile());
                 new_entry->SetInitialized();
 
-                bool removed = current_xref->Remove(entry);
+                bool removed = current_xref->Remove(entry->GetObjectNumber());
                 assert(removed && "Could not release xref entry"); UNUSED(removed);
 
                 current_xref->Add(new_entry);
@@ -2431,7 +2432,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
                 new_entry->SetReference(referenced_object);
                 new_entry->SetInitialized();
 
-                bool removed = current_xref->Remove(entry);
+                bool removed = current_xref->Remove(entry->GetObjectNumber());
                 assert(removed && "Could not release xref entry"); UNUSED(removed);
 
                 current_xref->Add(new_entry);
@@ -2459,7 +2460,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
                 new_entry->SetReference(referenced_object);
                 new_entry->SetInitialized();
 
-                bool removed = current_xref->Remove(entry);
+                bool removed = current_xref->Remove(entry->GetObjectNumber());
                 assert(removed && "Could not release xref entry"); UNUSED(removed);
 
                 current_xref->Add(new_entry);
@@ -2475,7 +2476,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
     for (auto& item : xref) {
 
         // For every xref
-        for (auto& xref_entry : item) {
+        for (auto& [obj_num, xref_entry] : item) {
 
             // Accept only compressed entries
             if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(xref_entry)) {

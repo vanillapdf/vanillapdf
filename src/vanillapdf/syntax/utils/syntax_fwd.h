@@ -61,7 +61,7 @@ using XrefVirtualTablePtr = DeferredContainer<XrefVirtualTable>;
 using XrefStreamPtr = DeferredContainer<XrefStream>;
 
 using XrefChainPtr = DeferredContainer<XrefChain>;
-using XrefEntryBasePtr = Deferred<XrefEntryBase>;
+using XrefEntryBasePtr = Deferred<XrefEntryBase>; using OutputXrefEntryBasePtr = OutputPointer<XrefEntryBasePtr>;
 using XrefUsedEntryBasePtr = Deferred<XrefUsedEntryBase>;
 using XrefNullEntryPtr = Deferred<XrefNullEntry>;
 using XrefFreeEntryPtr = Deferred<XrefFreeEntry>;
