@@ -23,7 +23,6 @@ BufferPtr MemoryBufferInputStream::Read(types::stream_size len) {
 
     auto available = static_cast<types::stream_size>(m_buffer->size()) - m_position;
     if (available <= 0) {
-        m_eof = true;
         result->resize(0);
         return result;
     }
@@ -37,27 +36,18 @@ BufferPtr MemoryBufferInputStream::Read(types::stream_size len) {
         result->resize(to_read_converted);
     }
 
-    if (m_position >= static_cast<types::stream_size>(m_buffer->size())) {
-        m_eof = true;
-    }
-
     return result;
 }
 
 types::stream_size MemoryBufferInputStream::Read(char* result, types::stream_size len) {
     auto available = static_cast<types::stream_size>(m_buffer->size()) - m_position;
     if (available <= 0) {
-        m_eof = true;
         return 0;
     }
 
     auto to_read = (len < available) ? len : available;
     std::memcpy(result, m_buffer->data() + m_position, static_cast<size_t>(to_read));
     m_position += to_read;
-
-    if (m_position >= static_cast<types::stream_size>(m_buffer->size())) {
-        m_eof = true;
-    }
 
     return to_read;
 }
@@ -74,9 +64,7 @@ types::stream_size MemoryBufferInputStream::Read(Buffer& result, types::stream_s
 }
 
 types::stream_size MemoryBufferInputStream::GetInputPosition() {
-    assert(!m_fail);
-
-    if (m_eof) {
+    if (m_position >= static_cast<types::stream_size>(m_buffer->size())) {
         return constant::BAD_OFFSET;
     }
 
@@ -84,16 +72,10 @@ types::stream_size MemoryBufferInputStream::GetInputPosition() {
 }
 
 void MemoryBufferInputStream::SetInputPosition(types::stream_size pos, SeekDirection way) {
-    // if badoff is specified, set eof flag
+    // if badoff is specified, move to end (makes Eof() true)
     if (pos == constant::BAD_OFFSET) {
-        m_eof = true;
+        m_position = static_cast<types::stream_size>(m_buffer->size());
         return;
-    }
-
-    // clear eof and fail
-    if (m_eof || m_fail) {
-        m_eof = false;
-        m_fail = false;
     }
 
     auto buffer_size = static_cast<types::stream_size>(m_buffer->size());
@@ -113,8 +95,8 @@ void MemoryBufferInputStream::SetInputPosition(types::stream_size pos, SeekDirec
     }
 
     if (m_position < 0) {
-        m_position = 0;
-        m_fail = true;
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not seek memory buffer to {}/{}, resulting position is negative",
+            pos, static_cast<int>(way));
     }
 }
 
@@ -125,32 +107,24 @@ void MemoryBufferInputStream::SetInputPosition(types::stream_size pos) {
 BufferPtr MemoryBufferInputStream::Readline(void) {
     BufferPtr result;
 
-    bool stream_failed = m_fail;
-    assert(!stream_failed && "Stream is in failed state");
-    if (stream_failed) {
-        throw GeneralException("Stream is in failed state");
-    }
+    auto buffer_size = static_cast<types::stream_size>(m_buffer->size());
 
-    bool stream_eof = m_eof;
-    assert(!stream_eof && "Stream reached eof");
-    if (stream_eof) {
+    assert(m_position < buffer_size && "Stream reached eof");
+    if (m_position >= buffer_size) {
         throw GeneralException("Stream reached eof");
     }
 
-    auto buffer_size = static_cast<types::stream_size>(m_buffer->size());
-
     for (;;) {
         if (m_position >= buffer_size) {
-            m_eof = true;
             break;
         }
 
         auto ch = static_cast<unsigned char>(m_buffer->data()[m_position]);
-        m_position++;
+        m_position += 1;
 
         if (ch == '\r') {
             if (m_position < buffer_size && m_buffer->data()[m_position] == '\n') {
-                m_position++;
+                m_position += 1;
             }
 
             break;
@@ -175,56 +149,42 @@ void MemoryBufferInputStream::ExclusiveInputUnlock() {
 }
 
 bool MemoryBufferInputStream::Eof(void) const {
-    assert(!m_fail);
-    return m_eof || m_position >= static_cast<types::stream_size>(m_buffer->size());
+    return m_position >= static_cast<types::stream_size>(m_buffer->size());
 }
 
 bool MemoryBufferInputStream::Ignore(void) {
-    assert(!m_eof);
-
     if (m_position >= static_cast<types::stream_size>(m_buffer->size())) {
-        m_eof = true;
         return false;
     }
 
-    m_position++;
-    assert(!m_fail);
+    m_position += 1;
     return true;
 }
 
 int MemoryBufferInputStream::Get(void) {
-    assert(!m_eof);
-
     if (m_position >= static_cast<types::stream_size>(m_buffer->size())) {
-        m_eof = true;
         return EOF;
     }
 
     auto result = static_cast<unsigned char>(m_buffer->data()[m_position]);
-    m_position++;
-    assert(!m_fail);
+    m_position += 1;
     return result;
 }
 
 int MemoryBufferInputStream::Peek(void) {
-    assert(!m_eof);
-
     if (m_position >= static_cast<types::stream_size>(m_buffer->size())) {
-        m_eof = true;
         return EOF;
     }
 
-    assert(!m_fail);
     return static_cast<unsigned char>(m_buffer->data()[m_position]);
 }
 
 bool MemoryBufferInputStream::IsFail(void) const {
-    return m_fail;
+    return false;
 }
 
 MemoryBufferInputStream::operator bool(void) const {
-    assert(!m_fail);
-    return !m_eof && !m_fail;
+    return m_position < static_cast<types::stream_size>(m_buffer->size());
 }
 
 } // vanillapdf

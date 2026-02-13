@@ -36,8 +36,6 @@ protected:
     std::shared_ptr<fmt::memory_buffer> m_buffer;
     types::stream_size m_position = 0;
     std::shared_ptr<std::recursive_mutex> m_input_lock;
-    mutable bool m_eof = false;
-    mutable bool m_fail = false;
 };
 
 } // vanillapdf
