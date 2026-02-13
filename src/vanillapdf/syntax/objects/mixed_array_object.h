@@ -42,8 +42,8 @@ public:
     size_type GetSize(void) const noexcept { return _list.size(); }
     const ContainableObjectPtr& operator[](size_type i) const { return _list[i]; }
     ContainableObjectPtr& operator[](size_type i) { return _list[i]; }
-    const ContainableObjectPtr& GetValue(size_type at) const { return _list.at(at); }
-    ContainableObjectPtr& GetValue(size_type at) { return _list.at(at); }
+    ContainableObjectPtr GetValue(size_type at) const;
+    ContainableObjectPtr GetValue(size_type at);
     void SetValue(size_type at, ContainableObjectPtr value);
 
     void Append(ContainableObjectPtr value);
@@ -72,7 +72,7 @@ public:
 
 protected:
     list_type _list;
-    std::shared_ptr<std::recursive_mutex> m_access_lock;
+    std::unique_ptr<std::recursive_mutex> m_access_lock;
 
     mutable std::size_t m_hash_cache = 0;
 };

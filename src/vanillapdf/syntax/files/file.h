@@ -149,7 +149,7 @@ private:
 
     types::big_uint m_next_allocation = 0;
 
-    std::shared_ptr<std::recursive_mutex> m_object_stream_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    std::unique_ptr<std::recursive_mutex> m_object_stream_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 
 private:
     File(IInputOutputStreamPtr stream, const std::string& path);

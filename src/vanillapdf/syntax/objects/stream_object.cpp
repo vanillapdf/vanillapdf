@@ -13,13 +13,13 @@ namespace vanillapdf {
 namespace syntax {
 
 StreamObject::StreamObject() : StreamObject(false) {
-    _access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    _access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 StreamObject::StreamObject(bool initialized) {
     _header->SetOwner(Object::GetWeakReference());
 
-    _access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    _access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 
     SetInitialized(initialized);
 }
@@ -28,7 +28,7 @@ StreamObject::StreamObject(DictionaryObjectPtr header, types::stream_offset offs
     : _header(header), _raw_data_offset(offset) {
     _header->SetOwner(Object::GetWeakReference());
 
-    _access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    _access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 bool StreamObject::IsDirty() const {

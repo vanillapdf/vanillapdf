@@ -33,7 +33,7 @@ EmbeddedCharacterMap::EmbeddedCharacterMap(syntax::StreamObjectPtr root)
 
 UnicodeCharacterMap::UnicodeCharacterMap(syntax::StreamObjectPtr root)
     : CharacterMapBase(root) {
-    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 std::unique_ptr<CharacterMapBase> CharacterMapBase::Create(syntax::StreamObjectPtr root, WeakReference<Document> doc) {

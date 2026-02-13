@@ -44,7 +44,7 @@ public:
 private:
     mutable contents::CharacterMapData m_data;
     mutable std::atomic<bool> m_initialized = false;
-    mutable std::shared_ptr<std::recursive_mutex> m_access_lock;
+    mutable std::unique_ptr<std::recursive_mutex> m_access_lock;
 
     void Initialize() const;
 };
