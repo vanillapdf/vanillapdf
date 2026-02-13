@@ -32,3 +32,22 @@ Detailed coding style preferences for C++ code in this project. This file is con
 - Before defining new constants, search `constants.h` and the codebase for existing ones (e.g., FNV-1a constants)
 - When modifying a data structure (e.g., changing container type), think through ALL implications on hash, equality, comparison, and API signatures upfront — ensure they are consistent with each other before implementing
 - Prefer keeping existing infrastructure (e.g., `std::hash` specializations) over introducing local alternatives (e.g., per-use hash structs)
+
+## Memory Allocation
+
+- Use `pdf_new` instead of `std::make_unique` or raw `new` for heap allocations — it enables debug memory tracking on MSVC (`_CRTDBG_MAP_ALLOC`)
+  - Good: `auto obj = pdf_new IntegerObject(42);`
+  - Avoid: `auto obj = std::make_unique<IntegerObject>(42);`
+
+## Operator Conventions
+
+- `operator[]` MUST return by reference — this is standard C++ convention and required for `DeferredContainer<T>` compatibility
+- For thread-safe by-value access, provide a separate `GetValue()` method that acquires a lock guard and returns a copy
+  - `operator[]` → fast, no lock, returns `T&`
+  - `GetValue()` → thread-safe, holds lock, returns `T` by value
+
+## Header Dependencies
+
+- NEVER include public C API headers (`include/vanillapdf/`) from internal C++ headers (`src/vanillapdf/`) — this is an inverted dependency
+- Internal C++ code should only include other internal headers
+- The C API implementation layer (`src/vanillapdf/implementation/`) bridges between C headers and C++ internals
