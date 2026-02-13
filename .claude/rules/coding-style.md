@@ -26,6 +26,13 @@ Detailed coding style preferences for C++ code in this project. This file is con
 - Do not insert structurally different code into a group of similarly-looking lines without separating it with a blank line and a comment
 - Uniform blocks (e.g., a series of assignments, a series of `if`/`return` checks) should stay visually cohesive
 
+## Consistency with Existing Patterns
+
+- Before proposing a new method signature, search the codebase for similar methods and match their pattern (e.g., `TryFind()` with `OutputPointer<T>&` out param + `bool` return, not `FindOptional()` returning nullable)
+- Before defining new constants, search `constants.h` and the codebase for existing ones (e.g., FNV-1a constants)
+- When modifying a data structure (e.g., changing container type), think through ALL implications on hash, equality, comparison, and API signatures upfront — ensure they are consistent with each other before implementing
+- Prefer keeping existing infrastructure (e.g., `std::hash` specializations) over introducing local alternatives (e.g., per-use hash structs)
+
 ## Memory Allocation
 
 - Use `pdf_new` instead of `std::make_unique` or raw `new` for heap allocations — it enables debug memory tracking on MSVC (`_CRTDBG_MAP_ALLOC`)
