@@ -25,3 +25,22 @@ Detailed coding style preferences for C++ code in this project. This file is con
 
 - Do not insert structurally different code into a group of similarly-looking lines without separating it with a blank line and a comment
 - Uniform blocks (e.g., a series of assignments, a series of `if`/`return` checks) should stay visually cohesive
+
+## Memory Allocation
+
+- Use `pdf_new` instead of `std::make_unique` or raw `new` for heap allocations — it enables debug memory tracking on MSVC (`_CRTDBG_MAP_ALLOC`)
+  - Good: `auto obj = pdf_new IntegerObject(42);`
+  - Avoid: `auto obj = std::make_unique<IntegerObject>(42);`
+
+## Operator Conventions
+
+- `operator[]` MUST return by reference — this is standard C++ convention and required for `DeferredContainer<T>` compatibility
+- For thread-safe by-value access, provide a separate `GetValue()` method that acquires a lock guard and returns a copy
+  - `operator[]` → fast, no lock, returns `T&`
+  - `GetValue()` → thread-safe, holds lock, returns `T` by value
+
+## Header Dependencies
+
+- NEVER include public C API headers (`include/vanillapdf/`) from internal C++ headers (`src/vanillapdf/`) — this is an inverted dependency
+- Internal C++ code should only include other internal headers
+- The C API implementation layer (`src/vanillapdf/implementation/`) bridges between C headers and C++ internals
