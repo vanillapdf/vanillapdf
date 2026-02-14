@@ -35,18 +35,10 @@ TokenPtr ReverseTokenizer::ReadToken() {
     }
 
     for (;;) {
-
-        if (m_stream->Eof()) {
-            return make_deferred<Token>(Token::Type::END_OF_INPUT);
-        }
-
-        // Test if the next character is EOF
-        int peek_test = m_stream->Peek();
-        if (peek_test == std::char_traits<char>::eof()) {
-            return make_deferred<Token>(Token::Type::END_OF_INPUT);
-        }
-
         int ch = m_stream->Get();
+        if (ch == std::char_traits<char>::eof()) {
+            return make_deferred<Token>(Token::Type::END_OF_INPUT);
+        }
 
         switch (ch) {
             case static_cast<int>(WhiteSpace::LINE_FEED):
@@ -78,14 +70,22 @@ TokenPtr ReverseTokenizer::ReadUnknown(int ch) {
     chars.push_back(current);
 
     if (IsNumeric(current)) {
-        while (IsNumeric(m_stream->Peek())) {
-            auto numeric = static_cast<unsigned char>(m_stream->Get());
-            chars.push_back(numeric);
+        for (;;) {
+            auto next = m_stream->Peek();
+            if (!IsNumeric(next)) {
+                break;
+            }
+            chars.push_back(static_cast<unsigned char>(next));
+            m_stream->Ignore();
         }
 
-        while ((m_stream->Peek() == '+') || (m_stream->Peek() == '-')) {
-            auto next = static_cast<unsigned char>(m_stream->Get());
-            chars.push_back(next);
+        for (;;) {
+            auto next = m_stream->Peek();
+            if (next != '+' && next != '-') {
+                break;
+            }
+            chars.push_back(static_cast<unsigned char>(next));
+            m_stream->Ignore();
         }
 
         return make_deferred<Token>(Token::Type::REVERSE_INTEGER_OBJECT, chars);

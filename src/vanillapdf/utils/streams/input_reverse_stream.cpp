@@ -261,7 +261,8 @@ void InputReverseStream::ExclusiveInputUnlock() {
 }
 
 bool InputReverseStream::Eof(void) const {
-    assert(!m_stream->fail());
+    // fail() can be set alongside eof() after get() returns EOF
+    assert(!m_stream->fail() || m_stream->eof());
     return m_stream->eof();
 }
 
@@ -272,13 +273,15 @@ bool InputReverseStream::Ignore(void) {
 }
 
 int InputReverseStream::Get(void) {
-    assert(!m_stream->fail());
-    return m_stream->get();
+    int result = m_stream->get();
+    assert(result != std::char_traits<char>::eof() || m_stream->eof());
+    return result;
 }
 
 int InputReverseStream::Peek(void) {
-    assert(!m_stream->fail());
-    return m_stream->peek();
+    int result = m_stream->peek();
+    assert(result != std::char_traits<char>::eof() || m_stream->eof());
+    return result;
 }
 
 bool InputReverseStream::IsFail(void) const {
@@ -286,7 +289,8 @@ bool InputReverseStream::IsFail(void) const {
 }
 
 InputReverseStream::operator bool(void) const {
-    assert(!m_stream->fail());
+    // fail() can be set alongside eof() after get() returns EOF
+    assert(!m_stream->fail() || m_stream->eof());
     return m_stream->operator bool();
 }
 

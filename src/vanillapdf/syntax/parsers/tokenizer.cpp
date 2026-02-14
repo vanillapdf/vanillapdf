@@ -29,17 +29,10 @@ TokenPtr Tokenizer::ReadToken() {
     }
 
     for (;;) {
-        if (m_stream->Eof()) {
-            return make_deferred<Token>(Token::Type::END_OF_INPUT);
-        }
-
-        // Test if the next character is EOF
-        int peek_test = m_stream->Peek();
-        if (peek_test == std::char_traits<char>::eof()) {
-            return make_deferred<Token>(Token::Type::END_OF_INPUT);
-        }
-
         int ch = m_stream->Get();
+        if (ch == std::char_traits<char>::eof()) {
+            return make_deferred<Token>(Token::Type::END_OF_INPUT);
+        }
 
         switch (ch) {
             case static_cast<int>(WhiteSpace::SPACE):
@@ -108,16 +101,20 @@ TokenPtr Tokenizer::ReadUnknown(int ch) {
         std::string chars;
 
         chars.push_back(current);
-        while (IsNumeric(m_stream->Peek())) {
-            auto numeric = static_cast<char>(m_stream->Get());
-            chars.push_back(numeric);
+        for (;;) {
+            auto next = m_stream->Peek();
+            if (!IsNumeric(next)) {
+                break;
+            }
+            chars.push_back(static_cast<char>(next));
+            m_stream->Ignore();
         }
 
         if (has_dot) {
             return make_deferred<Token>(Token::Type::REAL_OBJECT, chars);
         }
 
-        if (m_stream->Eof() || m_stream->Peek() != '.') {
+        if (m_stream->Peek() != '.') {
             return make_deferred<Token>(Token::Type::INTEGER_OBJECT, chars);
         }
 
@@ -127,9 +124,13 @@ TokenPtr Tokenizer::ReadUnknown(int ch) {
         // Consume it
         m_stream->Ignore();
 
-        while (IsNumeric(m_stream->Peek())) {
-            auto next = static_cast<char>(m_stream->Get());
-            chars.push_back(next);
+        for (;;) {
+            auto next = m_stream->Peek();
+            if (!IsNumeric(next)) {
+                break;
+            }
+            chars.push_back(static_cast<char>(next));
+            m_stream->Ignore();
         }
 
         return make_deferred<Token>(Token::Type::REAL_OBJECT, chars);
@@ -141,10 +142,6 @@ TokenPtr Tokenizer::ReadUnknown(int ch) {
     chars.push_back(current);
 
     for (;;) {
-        if (m_stream->Eof()) {
-            break;
-        }
-
         auto next_meta = m_stream->Peek();
 
         // Terminate at the end of the stream
@@ -162,7 +159,7 @@ TokenPtr Tokenizer::ReadUnknown(int ch) {
         // Insert regular character into collection
         chars.push_back(next);
 
-        // Ignore the input, because we used peek and not get
+        // Consume the peeked character
         m_stream->Ignore();
     }
 
@@ -174,15 +171,13 @@ TokenPtr Tokenizer::ReadComment(void) {
     // Comments are currently discarded
 
     for (;;) {
-        auto eof_test = m_stream->Peek();
-        if (eof_test == std::char_traits<char>::eof()) {
+        auto current_meta = m_stream->Get();
+        if (current_meta == std::char_traits<char>::eof()) {
             break;
         }
 
-        auto current_meta = m_stream->Get();
         if (current_meta == '\r') {
-            auto line_feed = m_stream->Peek();
-            if (line_feed == '\n') {
+            if (m_stream->Peek() == '\n') {
                 m_stream->Ignore();
             }
 
@@ -201,12 +196,11 @@ TokenPtr Tokenizer::ReadHexadecimalString(void) {
     std::string chars;
 
     for (;;) {
-        auto eof_test = m_stream->Peek();
-        if (eof_test == std::char_traits<char>::eof()) {
+        auto current_meta = m_stream->Get();
+        if (current_meta == std::char_traits<char>::eof()) {
             break;
         }
 
-        auto current_meta = m_stream->Get();
         auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
         if (current == Delimiter::GREATER_THAN_SIGN) {
             break;
@@ -233,8 +227,14 @@ TokenPtr Tokenizer::ReadHexadecimalString(void) {
 TokenPtr Tokenizer::ReadName(void) {
     std::string chars;
 
-    while (IsRegular(m_stream->Peek())) {
-        auto current = static_cast<char>(m_stream->Get());
+    for (;;) {
+        auto peeked = m_stream->Peek();
+        if (!IsRegular(peeked)) {
+            break;
+        }
+
+        m_stream->Ignore();
+        auto current = static_cast<char>(peeked);
         if (current == '#') {
             auto values = m_stream->Read(2);
             auto str = values->ToString();
@@ -264,12 +264,11 @@ TokenPtr Tokenizer::ReadLiteralString(void) {
         // Nested count should not be negative
         assert(nested_count >= 0);
 
-        auto eof_test = m_stream->Peek();
-        if (eof_test == std::char_traits<char>::eof()) {
+        int current_meta = m_stream->Get();
+        if (current_meta == std::char_traits<char>::eof()) {
             throw ParseException(m_stream->GetInputPosition());
         }
 
-        int current_meta = m_stream->Get();
         auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
 
         // If the previous character was a backslash we consume the next one without questions
