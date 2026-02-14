@@ -231,7 +231,8 @@ jobs:
 
   github-pages:
     needs: [production-gate, prepare]
-    if: needs.prepare.outputs.dry_run == 'false'
+    # Only deploy documentation for official releases, not pre-releases (alpha, beta, rc)
+    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
     uses: ./.github/workflows/github-pages.yml
     with:
       deploy: true
@@ -258,7 +259,7 @@ jobs:
   homebrew-pr:
     needs: [production-gate, prepare]
     # Only create Homebrew PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.prepare.outputs.prerelease == 'false'
+    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
     uses: ./.github/workflows/update-homebrew.yml
     with:
       tag: ${{ needs.prepare.outputs.tag }}
