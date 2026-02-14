@@ -4,8 +4,7 @@
 #include "syntax/utils/syntax_fwd.h"
 #include "syntax/files/xref_entry.h"
 
-#include <set>
-#include <unordered_set>
+#include <unordered_map>
 
 namespace vanillapdf {
 namespace syntax {
@@ -13,11 +12,7 @@ namespace syntax {
 class XrefBase : public Versionable {
 public:
 
-    // Changing to set from unordered_set is failing on linux GCC images.
-    // I have not found the reason, however it seems to be connected with the comparison operator.
-    // The same test case works on MSVC for both set and unordered_set and it is not trivial to resolve.
-    // Failing test case issue918.pdf from pdfjs.
-    using map_type = std::unordered_set<XrefEntryBasePtr>;
+    using map_type = std::unordered_map<types::big_uint, XrefEntryBasePtr>;
 
     typedef map_type::value_type value_type;
     typedef map_type::iterator iterator;
@@ -31,6 +26,9 @@ public:
     class Iterator : public BaseIterator<map_type::const_iterator> {
     public:
         using BaseIterator<map_type::const_iterator>::BaseIterator;
+
+        XrefEntryBasePtr Value() const { return m_current->second; }
+        XrefEntryBasePtr operator*() { return m_current->second; }
 
         const Iterator& operator++() {
             ++BaseIterator<map_type::const_iterator>::m_current;
@@ -73,9 +71,10 @@ public:
     IteratorPtr End(void) const { return make_deferred_iterator<Iterator>(_entries.end(), _entries.end()); }
 
     virtual void Add(XrefEntryBasePtr entry);
-    bool Remove(XrefEntryBasePtr entry);
+    bool Remove(types::big_uint obj_number);
     types::size_type GetSize(void) const noexcept;
     virtual XrefEntryBasePtr Find(types::big_uint obj_number) const;
+    virtual bool TryFind(types::big_uint obj_number, OutputXrefEntryBasePtr& result) const;
     virtual bool Contains(types::big_uint obj_number) const;
     std::vector<XrefEntryBasePtr> Entries(void) const;
     void Clear(void) noexcept;
@@ -153,6 +152,7 @@ public:
 
     virtual void Add(XrefEntryBasePtr entry) override;
     virtual XrefEntryBasePtr Find(types::big_uint obj_number) const override;
+    virtual bool TryFind(types::big_uint obj_number, OutputXrefEntryBasePtr& result) const override;
     virtual bool Contains(types::big_uint obj_number) const override;
 
     virtual DictionaryObjectPtr GetTrailerDictionary(void) const override;
