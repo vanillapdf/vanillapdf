@@ -6,18 +6,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Configure and build (Windows)
-cmake --preset windows-x64-msvc-17
-cmake --build --preset windows-x64-msvc-17
+cmake --preset windows-x64-msvc-18
+cmake --build --preset windows-x64-msvc-18
 
 # Configure and build (Linux/macOS)
 cmake --preset linux-x64-gcc      # or macos-arm64
 cmake --build --preset linux-x64-gcc
 
 # Run all tests (Windows - must specify build config)
-ctest --preset windows-x64-msvc-17 --build-config Debug
+ctest --preset windows-x64-msvc-18 --build-config Debug
 
 # Run specific test
-ctest --preset windows-x64-msvc-17 --build-config Debug -R "TestName" --output-on-failure
+ctest --preset windows-x64-msvc-18 --build-config Debug -R "TestName" --output-on-failure
 
 # Initialize submodules (required before first build)
 git submodule sync --recursive && git submodule update --init --recursive

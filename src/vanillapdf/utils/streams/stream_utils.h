@@ -23,7 +23,12 @@ public:
 
     static SeekDirection ConvertToSeekDirection(std::ios_base::seekdir value);
     static std::ios_base::seekdir ConvertFromSeekDirection(SeekDirection value);
-    
+
+    static IInputOutputStreamPtr CreateFileStream(const std::string& path, std::ios_base::openmode mode);
+    static IInputOutputStreamPtr CreateMemoryBufferStream(const std::string& path, std::ios_base::openmode mode);
+
+private:
+    static std::shared_ptr<std::fstream> OpenFileStream(const std::string& path, std::ios_base::openmode mode);
 };
 
 } // vanillapdf

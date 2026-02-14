@@ -35,11 +35,11 @@ InvalidLicenseException::InvalidLicenseException(const std::string& msg) : Excep
 LicenseRequiredException::LicenseRequiredException(const char * const & msg) : ExceptionBase(msg) {}
 LicenseRequiredException::LicenseRequiredException(const std::string& msg) : ExceptionBase(msg) {}
 
-InvalidPasswordException::InvalidPasswordException(const char * const & msg) : ExceptionBase(msg) {}
-InvalidPasswordException::InvalidPasswordException(const std::string& msg) : ExceptionBase(msg) {}
-
 InvalidParameterException::InvalidParameterException(const char * const & msg) : ExceptionBase(msg) {}
 InvalidParameterException::InvalidParameterException(const std::string& msg) : ExceptionBase(msg) {}
+
+InvalidPasswordException::InvalidPasswordException(const char * const & msg) : ExceptionBase(msg) {}
+InvalidPasswordException::InvalidPasswordException(const std::string& msg) : ExceptionBase(msg) {}
 
 InsufficientSpaceException::InsufficientSpaceException(const char * const & msg) : ExceptionBase(msg) {}
 InsufficientSpaceException::InsufficientSpaceException(const std::string& msg) : ExceptionBase(msg) {}

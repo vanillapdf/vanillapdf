@@ -15,6 +15,7 @@ set(VANILLAPDF_TOOLS_SOURCES
     extract_object.c
     filter.c
     merge.c
+    read.c
     sign.c
     sign_custom.c
     verify.c
@@ -136,4 +137,24 @@ if(VANILLAPDF_ENABLE_TESTS)
         COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/custom/Granizo-signed.PDF"
     )
     set_tests_properties("Tools.verify.Granizo-signed.without-flag" PROPERTIES WILL_FAIL TRUE)
+
+    # Read tests using memory IO strategy
+    set(MEMORY_STRATEGY_TEST_FILES
+        "test/example.pdf"
+        "test/19005-1_FAQ.PDF"
+        "test/custom/minimalist.pdf"
+        "test/pdf-association/pdf20examples/Simple-PDF-2.0-file.pdf"
+    )
+
+    foreach(TEST_FILE ${MEMORY_STRATEGY_TEST_FILES})
+        # Derive test name from file path: replace / and \ with . and remove extension
+        string(REPLACE "/" "." TEST_NAME "${TEST_FILE}")
+        string(REPLACE "\\" "." TEST_NAME "${TEST_NAME}")
+        string(REGEX REPLACE "\\.[pP][dD][fF]$" "" TEST_NAME "${TEST_NAME}")
+
+        add_test(
+            NAME "Tools.read.${TEST_NAME}"
+            COMMAND $<TARGET_FILE:vanillapdf.tools> read -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/${TEST_FILE}"
+        )
+    endforeach()
 endif()

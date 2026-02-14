@@ -3,47 +3,46 @@
 #include "utils/streams/input_stream.h"
 #include "utils/streams/output_stream.h"
 #include "utils/streams/input_output_stream.h"
+#include "utils/streams/memory_buffer_input_output_stream.h"
 
 #include "utils/streams/stream_utils.h"
+#include "utils/windows_utils.h"
 
 #include <fstream>
+#include <filesystem>
 
 namespace vanillapdf {
 
-IOutputStreamPtr StreamUtils::OutputStreamFromFile(const std::string& filename) {
+std::shared_ptr<std::fstream> StreamUtils::OpenFileStream(const std::string& path, std::ios_base::openmode mode) {
+    auto fs_path = std::filesystem::path(path);
 
-    auto output = std::make_shared<std::fstream>();
-    output->open(filename, std::ios::out | std::ios::binary);
+#if _WIN32
+    fs_path = WindowsUtils::MultiByteToWideChar(path);
+#endif /* _WIN32 */
 
-    if (!output || !output->good()) {
-        throw IOErrorException("Could not open file: " + filename);
+    auto fstream = std::make_shared<std::fstream>();
+    fstream->open(fs_path, mode);
+
+    if (!fstream || !fstream->good()) {
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not open file: {}, errno: {}", path, errno);
     }
 
-    return make_deferred<OutputStream>(output);
+    return fstream;
+}
+
+IOutputStreamPtr StreamUtils::OutputStreamFromFile(const std::string& filename) {
+    auto fstream = OpenFileStream(filename, std::ios::out | std::ios::binary);
+    return make_deferred<OutputStream>(fstream);
 }
 
 IInputStreamPtr StreamUtils::InputStreamFromFile(const std::string& filename) {
-
-    auto input = std::make_shared<std::fstream>();
-    input->open(filename, std::ios::in |std::ios::binary);
-
-    if (!input || !input->good()) {
-        throw IOErrorException("Could not open file: " + filename);
-    }
-
-    return make_deferred<InputStream>(input);
+    auto fstream = OpenFileStream(filename, std::ios::in | std::ios::binary);
+    return make_deferred<InputStream>(fstream);
 }
 
 IInputOutputStreamPtr StreamUtils::InputOutputStreamFromFile(const std::string& filename) {
-
-    auto input = std::make_shared<std::fstream>();
-    input->open(filename, std::ios::in | std::ios::out | std::ios::binary);
-
-    if (!input || !input->good()) {
-        throw IOErrorException("Could not open file: " + filename);
-    }
-
-    return make_deferred<InputOutputStream>(input);
+    auto fstream = OpenFileStream(filename, std::ios::in | std::ios::out | std::ios::binary);
+    return make_deferred<InputOutputStream>(fstream);
 }
 
 IInputOutputStreamPtr StreamUtils::InputOutputStreamFromMemory() {
@@ -103,6 +102,53 @@ std::ios_base::seekdir StreamUtils::ConvertFromSeekDirection(SeekDirection value
     }
 
     throw IOErrorException("Unknown seek direction: " + std::to_string(static_cast<int>(value)));
+}
+
+IInputOutputStreamPtr StreamUtils::CreateFileStream(const std::string& path, std::ios_base::openmode mode) {
+    auto fstream = OpenFileStream(path, mode);
+    return make_deferred<InputOutputStream>(fstream);
+}
+
+IInputOutputStreamPtr StreamUtils::CreateMemoryBufferStream(const std::string& path, std::ios_base::openmode mode) {
+    bool has_in = (mode & std::ios_base::in) != 0;
+    bool has_trunc = (mode & std::ios_base::trunc) != 0;
+
+    // Create mode (trunc): return empty buffer
+    if (has_trunc) {
+        return make_deferred<MemoryBufferInputOutputStream>();
+    }
+
+    // Open mode: read entire file into buffer
+    if (has_in) {
+        auto fstream = OpenFileStream(path, std::ios::binary | std::ios::in | std::ios::ate);
+
+        auto file_size = fstream->tellg();
+        fstream->seekg(0, std::ios::beg);
+
+        auto buffer = std::make_shared<fmt::memory_buffer>();
+        if (file_size <= 0) {
+            return make_deferred<MemoryBufferInputOutputStream>(buffer);
+        }
+
+        auto size = static_cast<size_t>(file_size);
+        buffer->resize(size);
+        fstream->read(buffer->data(), static_cast<std::streamsize>(size));
+
+        if (!fstream->good() && !fstream->eof()) {
+            LOG_ERROR_AND_THROW_GENERAL("Could not read file: {}", path);
+        }
+
+        auto result = make_deferred<MemoryBufferInputOutputStream>(buffer);
+
+        // ate (at-end): position at end after loading
+        if (mode & std::ios_base::ate) {
+            result->SetInputPosition(0, SeekDirection::End);
+        }
+
+        return result;
+    }
+
+    LOG_ERROR_AND_THROW_GENERAL("Unsupported memory buffer stream mode: {}", static_cast<int>(mode));
 }
 
 } // vanillapdf

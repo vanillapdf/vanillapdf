@@ -6,6 +6,7 @@
 #include "vanillapdf/c_values.h"
 
 #include "vanillapdf/utils/c_pdf_version.h"
+#include "vanillapdf/utils/c_io_strategy.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -50,6 +51,14 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION File_Open(string_type filename, FileHandle** result);
 
     /**
+    * \brief Opens a file for reading using the specified I/O strategy.
+    *
+    * The file must exist.
+    * \see IOStrategyType
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION File_OpenWithStrategy(string_type filename, IOStrategyType strategy, FileHandle** result);
+
+    /**
     * \brief Opens an input stream for reading.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION File_OpenStream(InputOutputStreamHandle* input_stream, string_type name, FileHandle** result);
@@ -60,6 +69,14 @@ extern "C"
     * Truncates the contents if it already exists.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION File_Create(string_type filename, FileHandle** result);
+
+    /**
+    * \brief Creates a file for writing using the specified I/O strategy.
+    *
+    * Truncates the contents if it already exists.
+    * \see IOStrategyType
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION File_CreateWithStrategy(string_type filename, IOStrategyType strategy, FileHandle** result);
 
     /**
     * \brief Uses arbitrary stream as a file.

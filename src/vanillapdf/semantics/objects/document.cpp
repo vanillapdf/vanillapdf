@@ -31,12 +31,22 @@ DocumentPtr Document::Open(const std::string& path) {
     return OpenFile(file);
 }
 
+DocumentPtr Document::Open(const std::string& path, IOStrategy strategy) {
+    FilePtr file = File::Open(path, strategy);
+    return OpenFile(file);
+}
+
 DocumentPtr Document::OpenFile(syntax::FilePtr holder) {
     return SemanticUtils::GetOrCreateDocument(holder);
 }
 
 DocumentPtr Document::Create(const std::string& path) {
     FilePtr file = File::Create(path);
+    return CreateFile(file);
+}
+
+DocumentPtr Document::Create(const std::string& path, IOStrategy strategy) {
+    FilePtr file = File::Create(path, strategy);
     return CreateFile(file);
 }
 

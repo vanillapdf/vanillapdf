@@ -5,6 +5,8 @@
 #include "vanillapdf/c_handles.h"
 #include "vanillapdf/c_values.h"
 
+#include "vanillapdf/utils/c_io_strategy.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -33,6 +35,12 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Document_Open(string_type filename, DocumentHandle** result);
 
     /**
+    * \brief Opens a new document using the specified I/O strategy
+    * \see IOStrategyType
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Document_OpenWithStrategy(string_type filename, IOStrategyType strategy, DocumentHandle** result);
+
+    /**
     * \brief Opens a document using already existing file handle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Document_OpenFile(FileHandle* holder, DocumentHandle** result);
@@ -41,6 +49,12 @@ extern "C"
     * \brief Creates a new document
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Document_Create(string_type filename, DocumentHandle** result);
+
+    /**
+    * \brief Creates a new document using the specified I/O strategy
+    * \see IOStrategyType
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Document_CreateWithStrategy(string_type filename, IOStrategyType strategy, DocumentHandle** result);
 
     /**
     * \brief Creates a new document

@@ -13,6 +13,7 @@ set(VANILLAPDF_BENCHMARK_SOURCES
     buffer_hash.cpp
     character_map.cpp
     filters.cpp
+    io_strategy.cpp
     objects.cpp
     tokenizer_stream.cpp
     xref.cpp
@@ -96,3 +97,4 @@ target_compile_definitions(vanillapdf.benchmark PRIVATE -DVANILLAPDF_BENCHMARK_V
 target_compile_definitions(vanillapdf.benchmark PRIVATE -DVANILLAPDF_BENCHMARK_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
 target_compile_definitions(vanillapdf.benchmark PRIVATE -DVANILLAPDF_BENCHMARK_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanilla_logo.ico")
+target_compile_definitions(vanillapdf.benchmark PRIVATE -DVANILLAPDF_TEST_DIR="${VANILLAPDF_SOLUTION_SOURCE_DIR}/test")

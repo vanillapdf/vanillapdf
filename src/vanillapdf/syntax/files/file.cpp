@@ -20,22 +20,22 @@
 #include "utils/streams/stream_utils.h"
 
 #include "utils/misc_utils.h"
-#include "utils/windows_utils.h"
-
-#include <fstream>
-#include <filesystem>
 
 namespace vanillapdf {
 namespace syntax {
 
 FilePtr File::Open(const std::string& path) {
+    return Open(path, IOStrategy::FileStream);
+}
+
+FilePtr File::Open(const std::string& path, IOStrategy strategy) {
 
     std::ios_base::openmode flags = static_cast<std::ios_base::openmode>(0);
     flags |= std::ios_base::in;
     flags |= std::ios_base::binary;
     flags |= std::ios_base::ate;
 
-    auto input_stream = GetFilestream(path, flags);
+    auto input_stream = CreateIOStream(path, flags, strategy);
     return FilePtr(pdf_new File(input_stream, path));
 }
 
@@ -44,6 +44,10 @@ FilePtr File::OpenStream(IInputOutputStreamPtr stream, const std::string& name) 
 }
 
 FilePtr File::Create(const std::string& path) {
+    return Create(path, IOStrategy::FileStream);
+}
+
+FilePtr File::Create(const std::string& path, IOStrategy strategy) {
 
     std::ios_base::openmode flags = static_cast<std::ios_base::openmode>(0);
     flags |= std::ios_base::in;
@@ -51,8 +55,7 @@ FilePtr File::Create(const std::string& path) {
     flags |= std::ios_base::binary;
     flags |= std::ios_base::trunc;
 
-    auto input_stream = GetFilestream(path, flags);
-
+    auto input_stream = CreateIOStream(path, flags, strategy);
     return CreateStream(input_stream, path);
 }
 
@@ -64,42 +67,19 @@ FilePtr File::CreateStream(IInputOutputStreamPtr stream, const std::string& name
     return result;
 }
 
-IInputOutputStreamPtr File::GetFilestream(const std::string& path, std::ios_base::openmode mode) {
-
-    auto fs_path = std::filesystem::path(path);
-
-    // On windows there is an issue with unicode filenames.
-    // By default the std::string does not work even if the path is in UTF-8 encoding.
-    // This can be switched in the OS regional settings, however requires a user interaction.
-    // The std::wstring seems to be capable of opening such file, however it's not portable.
-
-#if _WIN32
-    fs_path = WindowsUtils::MultiByteToWideChar(path);
-#endif /* _WIN32 */
-
-    auto input_file = std::make_shared<std::fstream>();
-    input_file->open(fs_path, mode);
-
-    if (!input_file || !input_file->good()) {
-        LOG_ERROR_AND_THROW(IOErrorException, "Could not open file: {}, errno: {}", path, errno);
+IInputOutputStreamPtr File::CreateIOStream(const std::string& path, std::ios_base::openmode mode, IOStrategy strategy) {
+    switch (strategy) {
+        case IOStrategy::Undefined:
+            throw InvalidParameterException("IOStrategy::Undefined is not a valid strategy, caller must pick a concrete strategy");
+        case IOStrategy::FileStream:
+            return StreamUtils::CreateFileStream(path, mode);
+        case IOStrategy::Memory:
+            return StreamUtils::CreateMemoryBufferStream(path, mode);
+        case IOStrategy::MemoryMapped:
+            throw NotSupportedException("IOStrategy::MemoryMapped is not yet supported");
+        default:
+            throw GeneralException("Unknown IOStrategy: " + std::to_string(static_cast<int>(strategy)));
     }
-
-    // TODO: Add file open flag support
-    //// Support the option, where the file is not held for the entire duration
-    //// This is handy, when another tool is generating output files and we need
-    //// to quickly reopen the file, without closing the entire application.
-    //bool flag = false;
-    //if (flag) {
-    //	// Seek to the end of file
-    //	input_file->seekg(0, std::ios::beg);
-    //	
-    //	auto input_memory_file = std::make_shared<std::stringstream>();
-    //	*input_memory_file << input_file->rdbuf();
-    //
-    //	return make_deferred<InputOutputStream>(input_memory_file);
-    //}
-
-    return make_deferred<InputOutputStream>(input_file);
 }
 
 File::File(IInputOutputStreamPtr stream, const std::string& path) : _full_path(path), _input(stream) {

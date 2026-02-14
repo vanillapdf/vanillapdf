@@ -57,6 +57,9 @@ class MemoryBufferOutputStream; using MemoryBufferOutputStreamPtr = Deferred<Mem
 class IInputOutputStream; using IInputOutputStreamPtr = Deferred<IInputOutputStream>;
 class InputOutputStream; using InputOutputStreamPtr = Deferred<InputOutputStream>;
 
+class MemoryBufferInputStream; using MemoryBufferInputStreamPtr = Deferred<MemoryBufferInputStream>;
+class MemoryBufferInputOutputStream; using MemoryBufferInputOutputStreamPtr = Deferred<MemoryBufferInputOutputStream>;
+
 // STD wrappers
 template <typename T, typename size_type_template>
 class CustomSizeAllocator;

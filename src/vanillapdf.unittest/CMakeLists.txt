@@ -42,6 +42,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     signature_verifier_test.cpp
     thread_safety_test.cpp
     name_dictionary_test.cpp
+    io_strategy_test.cpp
     license_info_test.cpp
 )
 
@@ -49,6 +50,7 @@ set(VANILLAPDF_UNITTEST_HEADERS
     unittest.h
     test_data.h
     handle_guard.h
+    temp_file.h
 )
 
 # Resource files
