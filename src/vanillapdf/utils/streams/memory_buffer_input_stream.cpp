@@ -64,7 +64,14 @@ types::stream_size MemoryBufferInputStream::Read(Buffer& result, types::stream_s
 }
 
 types::stream_size MemoryBufferInputStream::GetInputPosition() {
-    if (m_position >= static_cast<types::stream_size>(m_buffer->size())) {
+    // Return BAD_OFFSET only when the position is strictly past the buffer end
+    // (an invalid state from a corrupt seek). When m_position == size, return
+    // the actual position — fstream's tellg() does the same because eof() is
+    // only set after a failed read, not when merely positioned at the end.
+    // The old >= check returned BAD_OFFSET at m_position == size, which
+    // corrupted the tokenizer's offset cache (all end-of-buffer tokens
+    // collapsed to the same BAD_OFFSET key).
+    if (m_position > static_cast<types::stream_size>(m_buffer->size())) {
         return constant::BAD_OFFSET;
     }
 
