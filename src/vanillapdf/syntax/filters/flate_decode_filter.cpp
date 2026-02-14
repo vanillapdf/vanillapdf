@@ -101,8 +101,11 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
     std::vector<uint8_t> current(bytes_per_row);
     std::vector<uint8_t> prior(bytes_per_row);
 
-    while (src->Peek() != std::char_traits<char>::eof()) {
+    for (;;) {
         auto filter = src->Get();
+        if (filter == std::char_traits<char>::eof()) {
+            break;
+        }
         auto read = src->Read(reinterpret_cast<char*>(current.data()), bytes_per_row);
 
         assert(read == bytes_per_row);

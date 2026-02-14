@@ -212,16 +212,10 @@ BufferPtr LiteralStringObject::GetRawValueDecoded() const {
     for (;;) {
         assert(nested_count >= 0);
 
-        if (raw_value_stream->Eof()) {
-            break;
-        }
-
-        auto eof_test = raw_value_stream->Peek();
-        if (eof_test == std::char_traits<char>::eof()) {
-            break;
-        }
-
         int current_meta = raw_value_stream->Get();
+        if (current_meta == std::char_traits<char>::eof()) {
+            break;
+        }
         auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
 
         if (current == Delimiter::LEFT_PARENTHESIS) {

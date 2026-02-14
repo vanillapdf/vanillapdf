@@ -261,7 +261,8 @@ void InputReverseStream::ExclusiveInputUnlock() {
 }
 
 bool InputReverseStream::Eof(void) const {
-    assert(!m_stream->fail());
+    // fail() can be set alongside eof() after get() returns EOF
+    assert(!m_stream->fail() || m_stream->eof());
     return m_stream->eof();
 }
 
@@ -288,7 +289,8 @@ bool InputReverseStream::IsFail(void) const {
 }
 
 InputReverseStream::operator bool(void) const {
-    assert(!m_stream->fail());
+    // fail() can be set alongside eof() after get() returns EOF
+    assert(!m_stream->fail() || m_stream->eof());
     return m_stream->operator bool();
 }
 

@@ -19,7 +19,6 @@ BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size le
     // Iterate over all elements
     for (decltype(length) i = 0; i < length; ++i) {
         auto meta = src->Get();
-        auto next = src->Peek();
 
         if (meta == std::char_traits<char>::eof()) {
             throw ParseException("Unexpected end of file inside stream");
@@ -28,7 +27,7 @@ BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size le
         auto ch = ValueConvertUtils::SafeConvert<unsigned char>(meta);
 
         // End of sequence
-        if (ch == '~' && next == '>') {
+        if (ch == '~' && src->Peek() == '>') {
             break;
         }
 
