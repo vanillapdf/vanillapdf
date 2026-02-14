@@ -14,6 +14,7 @@ set(VANILLAPDF_BENCHMARK_SOURCES
     character_map.cpp
     filters.cpp
     objects.cpp
+    xref.cpp
     main.cpp
 )
 

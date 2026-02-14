@@ -2,6 +2,7 @@
 
 #include "syntax/files/xref.h"
 #include "syntax/utils/name_constants.h"
+#include "syntax/utils/output_pointer.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/math_utils.h"
@@ -224,41 +225,20 @@ void XrefTable::Add(XrefEntryBasePtr entry) {
 
 void XrefBase::Add(XrefEntryBasePtr entry) {
 
-    // Try to insert new entry into the list
-    auto result = _entries.insert(entry);
-
-    // The pair::second element in the pair is set to true if a new element was inserted
-    // or false if an equivalent key already existed.
-    if (!result.second) {
-
-        // TODO: Add overwrite flag, currently it is always overwriting
-
-        // Remove the item as there was a conflict
-        bool removed = Remove(entry);
-        if (!removed) {
-            throw ObjectMissingException("Failed to remove xref entry from the list");
-        }
-
-        // Retry the insertion
-        auto retry_result = _entries.insert(entry);
-        if (!retry_result.second) {
-            throw ObjectMissingException("Failed to insert xref entry into the list");
-        }
-    }
+    // insert_or_assign overwrites on conflict, matching previous behavior
+    _entries.insert_or_assign(entry->GetObjectNumber(), entry);
 
     IncrementVersion();
 }
 
-bool XrefBase::Remove(XrefEntryBasePtr entry) {
-    auto found = _entries.find(entry);
-    if (found == _entries.end()) {
-        return false;
+bool XrefBase::Remove(types::big_uint obj_number) {
+    bool removed = _entries.erase(obj_number) > 0;
+
+    if (removed) {
+        IncrementVersion();
     }
 
-    _entries.erase(found);
-
-    IncrementVersion();
-    return true;
+    return removed;
 }
 
 types::size_type XrefBase::GetSize(void) const noexcept {
@@ -266,30 +246,37 @@ types::size_type XrefBase::GetSize(void) const noexcept {
 }
 
 XrefEntryBasePtr XrefBase::Find(types::big_uint obj_number) const {
-    XrefFreeEntryPtr temp = make_deferred<XrefFreeEntry>(obj_number, static_cast<types::ushort>(0));
-
-    auto found = _entries.find(temp);
+    auto found = _entries.find(obj_number);
     if (found == _entries.end()) {
         spdlog::error("Xref entry {} was not found in the list", obj_number);
         throw ObjectMissingException(obj_number);
     }
 
-    return *found;
+    return found->second;
+}
+
+bool XrefBase::TryFind(types::big_uint obj_number, OutputXrefEntryBasePtr& result) const {
+    auto found = _entries.find(obj_number);
+    if (found == _entries.end()) {
+        return false;
+    }
+
+    result = found->second;
+    return true;
 }
 
 bool XrefBase::Contains(types::big_uint obj_number) const {
-    XrefFreeEntryPtr temp = make_deferred<XrefFreeEntry>(obj_number, static_cast<types::ushort>(0));
-
-    auto found = _entries.find(temp);
-    return (found != _entries.end());
+    return _entries.find(obj_number) != _entries.end();
 }
 
 std::vector<XrefEntryBasePtr> XrefBase::Entries(void) const {
     std::vector<XrefEntryBasePtr> result;
     result.reserve(_entries.size());
-    std::for_each(_entries.begin(), _entries.end(), [&result](const XrefEntryBasePtr& item) { result.push_back(item); });
+    for (auto& [obj_num, entry] : _entries) {
+        result.push_back(entry);
+    }
 
-    // Since we moved to unordered map, sort is required
+    // Since we use unordered map, sort is required
     std::sort(
         result.begin(),
         result.end(),
@@ -325,12 +312,29 @@ XrefBase::iterator XrefBase::erase(const_iterator pos) {
 }
 
 XrefEntryBasePtr XrefTable::Find(types::big_uint obj_number) const {
-    bool contains = XrefBase::Contains(obj_number);
-    if (!contains && HasHybridStream()) {
+    OutputXrefEntryBasePtr found;
+    if (!XrefBase::TryFind(obj_number, found) && HasHybridStream()) {
         return m_xref_stm->Find(obj_number);
     }
 
-    return XrefBase::Find(obj_number);
+    if (found.empty()) {
+        spdlog::error("Xref entry {} was not found in the list", obj_number);
+        throw ObjectMissingException(obj_number);
+    }
+
+    return *found;
+}
+
+bool XrefTable::TryFind(types::big_uint obj_number, OutputXrefEntryBasePtr& result) const {
+    if (XrefBase::TryFind(obj_number, result)) {
+        return true;
+    }
+
+    if (HasHybridStream()) {
+        return m_xref_stm->TryFind(obj_number, result);
+    }
+
+    return false;
 }
 
 bool XrefTable::Contains(types::big_uint obj_number) const {

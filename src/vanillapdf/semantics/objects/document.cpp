@@ -985,7 +985,7 @@ void Document::ForceObjectInitialization() {
 
     // Initialize all entries, to decrypt them forcefully
     for (auto& xref : xref_chain) {
-        for (auto& xref_entry : xref) {
+        for (auto& [obj_num, xref_entry] : xref) {
 
             // Accept only used entries
             if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(xref_entry)) {
