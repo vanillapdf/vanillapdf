@@ -57,15 +57,19 @@ XrefUsedEntryBase::~XrefUsedEntryBase() {
 }
 
 bool XrefEntryBase::operator==(const XrefEntryBase& other) const {
-    return (_obj_number == other._obj_number);
+    return (_obj_number == other._obj_number) && (_gen_number == other._gen_number);
 }
 
 bool XrefEntryBase::operator!=(const XrefEntryBase& other) const {
-    return (_obj_number != other._obj_number);
+    return (_obj_number != other._obj_number) || (_gen_number != other._gen_number);
 }
 
 bool XrefEntryBase::operator<(const XrefEntryBase& other) const {
-    return (_obj_number < other._obj_number);
+    if (_obj_number != other._obj_number) {
+        return _obj_number < other._obj_number;
+    }
+
+    return _gen_number < other._gen_number;
 }
 
 void XrefUsedEntryBase::SetReference(ObjectPtr ref) {
@@ -302,9 +306,12 @@ namespace std {
 
 size_t hash<vanillapdf::syntax::XrefEntryBasePtr>::operator()(const vanillapdf::syntax::XrefEntryBasePtr& entry) const {
     auto object_number = entry->GetObjectNumber();
+    auto generation_number = entry->GetGenerationNumber();
 
     size_t hash = vanillapdf::constant::FNV1A_OFFSET_BASIS;
     hash ^= static_cast<size_t>(object_number);
+    hash *= vanillapdf::constant::FNV1A_PRIME;
+    hash ^= static_cast<size_t>(generation_number);
     hash *= vanillapdf::constant::FNV1A_PRIME;
     return hash;
 }
