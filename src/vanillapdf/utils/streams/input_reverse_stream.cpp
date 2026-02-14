@@ -272,13 +272,15 @@ bool InputReverseStream::Ignore(void) {
 }
 
 int InputReverseStream::Get(void) {
-    assert(!m_stream->fail());
-    return m_stream->get();
+    int result = m_stream->get();
+    assert(result != std::char_traits<char>::eof() || m_stream->eof());
+    return result;
 }
 
 int InputReverseStream::Peek(void) {
-    assert(!m_stream->fail());
-    return m_stream->peek();
+    int result = m_stream->peek();
+    assert(result != std::char_traits<char>::eof() || m_stream->eof());
+    return result;
 }
 
 bool InputReverseStream::IsFail(void) const {

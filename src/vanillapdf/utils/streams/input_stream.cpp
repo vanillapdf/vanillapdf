@@ -49,7 +49,8 @@ types::stream_size InputStream::Read(Buffer& result, types::stream_size len) {
 }
 
 types::stream_size InputStream::GetInputPosition() {
-    assert(!m_stream->fail());
+    // fail() can be set alongside eof() after get() returns EOF
+    assert(!m_stream->fail() || m_stream->eof());
 
     if (m_stream->eof()) {
         return constant::BAD_OFFSET;
@@ -115,15 +116,13 @@ BufferPtr InputStream::Readline(void) {
     }
 
     for (;;) {
-        auto eof_test = m_stream->peek();
-        if (eof_test == std::char_traits<char>::eof()) {
+        auto new_line = m_stream->get();
+        if (new_line == std::char_traits<char>::eof()) {
             break;
         }
 
-        auto new_line = m_stream->get();
         if (new_line == '\r') {
-            int line_feed = m_stream->peek();
-            if (line_feed == '\n') {
+            if (m_stream->peek() == '\n') {
                 m_stream->ignore();
             }
 
@@ -150,7 +149,8 @@ void InputStream::ExclusiveInputUnlock() {
 }
 
 bool InputStream::Eof(void) const {
-    assert(!m_stream->fail());
+    // fail() can be set alongside eof() after get() returns EOF
+    assert(!m_stream->fail() || m_stream->eof());
     return m_stream->eof();
 }
 
@@ -162,16 +162,14 @@ bool InputStream::Ignore(void) {
 }
 
 int InputStream::Get(void) {
-    assert(!m_stream->eof());
     int result = m_stream->get();
-    assert(!m_stream->fail());
+    assert(result != std::char_traits<char>::eof() || m_stream->eof());
     return result;
 }
 
 int InputStream::Peek(void) {
-    assert(!m_stream->eof());
     int result = m_stream->peek();
-    assert(!m_stream->fail());
+    assert(result != std::char_traits<char>::eof() || m_stream->eof());
     return result;
 }
 
@@ -180,7 +178,8 @@ bool InputStream::IsFail(void) const {
 }
 
 InputStream::operator bool(void) const {
-    assert(!m_stream->fail());
+    // fail() can be set alongside eof() after get() returns EOF
+    assert(!m_stream->fail() || m_stream->eof());
     return m_stream->operator bool();
 }
 

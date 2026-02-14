@@ -4,8 +4,45 @@
 // full tokenizer pipeline: ReadToken, ReadUnknown (numbers, names, keywords),
 // ReadHexadecimalString, ReadLiteralString, ReadComment, and Readline.
 //
-// Baseline (before optimization):
-// <to be filled after first run>
+// Environment:
+//   Compiler: MSVC 18 (Visual Studio 2026), Release (/O2)
+//   CPU: 16x 3792 MHz (8C/16T), L1d 32 KiB x8, L2 256 KiB x8, L3 16 MiB
+//   Repetitions: 10 per benchmark
+//
+// Before (redundant Eof+Peek, Peek+Get loops):
+//   Benchmark                                   Time             CPU   Iterations
+//   BM_TokenizerParse100Objects_mean       303520 ns       302825 ns           10
+//   BM_TokenizerParse100Objects_median     299657 ns       294874 ns           10
+//   BM_TokenizerParse100Objects_stddev      27525 ns        29144 ns           10
+//   BM_TokenizerParse100Objects_cv           9.07 %          9.62 %            10
+//   BM_TokenizerParse500Objects_mean      1367969 ns      1344672 ns           10
+//   BM_TokenizerParse500Objects_median    1346753 ns      1340483 ns           10
+//   BM_TokenizerParse500Objects_stddev     181397 ns       192927 ns           10
+//   BM_TokenizerParse500Objects_cv          13.26 %         14.35 %            10
+//   BM_FileSaveParse_mean                   56855 ns        56641 ns           10
+//   BM_FileSaveParse_median                 56459 ns        56501 ns           10
+//   BM_FileSaveParse_stddev                  1005 ns         1348 ns           10
+//   BM_FileSaveParse_cv                      1.77 %          2.38 %            10
+//
+// After (Get-only loops, single EOF check, Peek+Ignore instead of Peek+Get):
+//   Benchmark                                   Time             CPU   Iterations
+//   BM_TokenizerParse100Objects_mean       254122 ns       252988 ns           10
+//   BM_TokenizerParse100Objects_median     250435 ns       251105 ns           10
+//   BM_TokenizerParse100Objects_stddev       9342 ns        11480 ns           10
+//   BM_TokenizerParse100Objects_cv           3.68 %          4.54 %            10
+//   BM_TokenizerParse500Objects_mean      1066293 ns      1057129 ns           10
+//   BM_TokenizerParse500Objects_median    1063288 ns      1062012 ns           10
+//   BM_TokenizerParse500Objects_stddev      33731 ns        28308 ns           10
+//   BM_TokenizerParse500Objects_cv           3.16 %          2.68 %            10
+//   BM_FileSaveParse_mean                   53546 ns        53571 ns           10
+//   BM_FileSaveParse_median                 53235 ns        53013 ns           10
+//   BM_FileSaveParse_stddev                  1035 ns          975 ns           10
+//   BM_FileSaveParse_cv                      1.93 %          1.82 %            10
+//
+// Summary (median wall time):
+//   BM_TokenizerParse100Objects:  299657 -> 250435 ns  (-16.4%)
+//   BM_TokenizerParse500Objects: 1346753 -> 1063288 ns (-21.0%)
+//   BM_FileSaveParse:              56459 ->   53235 ns  (-5.7%)
 
 #include "benchmark.h"
 #include "handle_guard.h"
