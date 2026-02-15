@@ -6,7 +6,7 @@
 #include "vanillapdf/utils/c_encryption.h"
 #include "implementation/c_helper.h"
 
-#include <sstream>
+#include <fmt/core.h>
 
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
@@ -50,15 +50,13 @@ public:
 
         error_type rv = m_decrypt(input_ptr, &output_ptr);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
-            std::stringstream ss;
-            ss << "Custom key decrypt operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("Custom key decrypt operation returned: {}", rv));
         }
 
         if (output_ptr == nullptr) {
-            std::stringstream ss;
-            ss << "Custom key decrypt operation succeeded, but did not fill the decrypted data pointer";
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                "Custom key decrypt operation succeeded, but did not fill the decrypted data pointer");
         }
 
         return reinterpret_cast<Buffer*>(output_ptr);
@@ -72,9 +70,8 @@ public:
 
         error_type rv = m_contains(input_issuer, input_serial, &result);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
-            std::stringstream ss;
-            ss << "Custom key equals operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("Custom key equals operation returned: {}", rv));
         }
 
         return (result == VANILLAPDF_RV_TRUE);

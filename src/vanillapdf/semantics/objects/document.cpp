@@ -19,7 +19,7 @@
 #include "semantics/utils/document_signer.h"
 #include "semantics/utils/document_encryption_settings.h"
 
-#include <sstream>
+#include <fmt/core.h>
 
 namespace vanillapdf {
 namespace semantics {
@@ -98,16 +98,11 @@ DocumentPtr Document::CreateFile(syntax::FilePtr holder) {
 
     DocumentInfoPtr document_info = document->CreateDocumentInfo();
 
-    std::stringstream producer_string;
-    producer_string << LibraryInfo::Author();
-    producer_string << ' ';
-    producer_string << LibraryInfo::MajorVersion();
-    producer_string << '.';
-    producer_string << LibraryInfo::MinorVersion();
-    producer_string << '.';
-    producer_string << LibraryInfo::PatchVersion();
+    auto producer_string = fmt::format("{} {}.{}.{}",
+        LibraryInfo::Author(), LibraryInfo::MajorVersion(),
+        LibraryInfo::MinorVersion(), LibraryInfo::PatchVersion());
 
-    LiteralStringObjectPtr producer = LiteralStringObject::CreateFromDecoded(producer_string.str());
+    LiteralStringObjectPtr producer = LiteralStringObject::CreateFromDecoded(producer_string);
     document_info->SetProducer(producer);
 
     DatePtr creation_date = Date::GetCurrentDate();

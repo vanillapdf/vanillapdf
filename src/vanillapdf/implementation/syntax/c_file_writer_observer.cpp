@@ -6,7 +6,7 @@
 #include "vanillapdf/syntax/c_file_writer_observer.h"
 #include "implementation/c_helper.h"
 
-#include <sstream>
+#include <fmt/core.h>
 
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
@@ -47,9 +47,8 @@ public:
 
         error_type rv = m_on_initializing(m_user_data, output_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            std::stringstream ss;
-            ss << "OnInitializing operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("OnInitializing operation returned: {}", rv));
         }
     }
 
@@ -62,9 +61,8 @@ public:
 
         error_type rv = m_on_finalizing(m_user_data, output_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            std::stringstream ss;
-            ss << "OnFinalizing operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("OnFinalizing operation returned: {}", rv));
         }
     }
 
@@ -77,9 +75,8 @@ public:
 
         error_type rv = m_on_before_object_write(m_user_data, object_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            std::stringstream ss;
-            ss << "OnBeforeObjectWrite operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("OnBeforeObjectWrite operation returned: {}", rv));
         }
     }
 
@@ -92,9 +89,8 @@ public:
 
         error_type rv = m_on_after_object_write(m_user_data, object_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            std::stringstream ss;
-            ss << "OnAfterObjectWrite operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("OnAfterObjectWrite operation returned: {}", rv));
         }
     }
 
@@ -107,9 +103,8 @@ public:
 
         error_type rv = m_on_before_object_offset_recalculation(m_user_data, object_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            std::stringstream ss;
-            ss << "OnBeforeObjectOffsetRecalculation operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("OnBeforeObjectOffsetRecalculation operation returned: {}", rv));
         }
     }
 
@@ -122,9 +117,8 @@ public:
 
         error_type rv = m_on_after_object_offset_recalculation(m_user_data, object_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            std::stringstream ss;
-            ss << "OnAfterObjectOffsetRecalculation operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("OnAfterObjectOffsetRecalculation operation returned: {}", rv));
         }
     }
 
@@ -137,9 +131,8 @@ public:
 
         error_type rv = m_on_before_entry_offset_recalculation(m_user_data, entry_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            std::stringstream ss;
-            ss << "OnBeforeEntryOffsetRecalculation operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("OnBeforeEntryOffsetRecalculation operation returned: {}", rv));
         }
     }
 
@@ -152,9 +145,8 @@ public:
 
         error_type rv = m_on_after_entry_offset_recalculation(m_user_data, entry_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            std::stringstream ss;
-            ss << "OnAfterEntryOffsetRecalculation operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("OnAfterEntryOffsetRecalculation operation returned: {}", rv));
         }
     }
 
@@ -167,9 +159,8 @@ public:
 
         error_type rv = m_on_before_output_flush(m_user_data, output_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            std::stringstream ss;
-            ss << "OnBeforeOutputFlush operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("OnBeforeOutputFlush operation returned: {}", rv));
         }
     }
 
@@ -182,9 +173,8 @@ public:
 
         error_type rv = m_on_after_output_flush(m_user_data, output_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            std::stringstream ss;
-            ss << "OnAfterOutputFlush operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("OnAfterOutputFlush operation returned: {}", rv));
         }
     }
 
