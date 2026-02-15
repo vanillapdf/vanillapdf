@@ -20,6 +20,8 @@
 #include "contents/content_stream_operations.h"
 #include "contents/content_stream_objects.h"
 
+#include "utils/streams/stream_utils.h"
+
 #include <fstream>
 #include <unordered_set>
 
@@ -166,11 +168,8 @@ bool FileWriter::ValidateConfiguration(FilePtr source, std::string& reason) cons
         for (auto& xref : source_xref_chain) {
             if (ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(xref)) {
 
-                std::stringstream ss;
-                ss << "Flag squash table space is disabled, while the source file contains cross-reference streams." << std::endl;
-                ss << "Either also disable remove freed objects flag, or enable squashing table space.";
-
-                reason = ss.str();
+                reason = "Flag squash table space is disabled, while the source file contains cross-reference streams.\n"
+                         "Either also disable remove freed objects flag, or enable squashing table space.";
                 return false;
             }
         }
@@ -272,8 +271,8 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
         }
 
         // Initialize output streams
-        std::stringstream header_stream;
-        std::stringstream data_stream;
+        auto header_stream = StreamUtils::InputOutputStreamFromMemory();
+        auto data_stream = StreamUtils::InputOutputStreamFromMemory();
 
         // Reset counting indexes
         types::stream_offset current_offset = 0;
@@ -289,19 +288,19 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 
             // Write index with offset into header stream
             if (!first) {
-                header_stream << ' ';
+                header_stream->Write(WhiteSpace::SPACE);
             }
 
-            header_stream << entry_object->GetObjectNumber();
-            header_stream << ' ';
-            header_stream << current_offset;
+            header_stream->Write(std::to_string(entry_object->GetObjectNumber()));
+            header_stream->Write(WhiteSpace::SPACE);
+            header_stream->Write(std::to_string(current_offset));
 
             // Write whole object into data stream
             if (!first) {
-                data_stream << ' ';
+                data_stream->Write(WhiteSpace::SPACE);
             }
 
-            data_stream << entry_object_string;
+            data_stream->Write(entry_object_string);
 
             // Advance counters
             current_offset += entry_object_string.size() + 1;
@@ -309,8 +308,8 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
             first = false;
         }
 
-        auto header_string = header_stream.str();
-        auto data_string = data_stream.str();
+        auto header_string = header_stream->ToString();
+        auto data_string = data_stream->ToString();
 
         // Merge header with data
         BufferPtr new_body;
@@ -1672,10 +1671,11 @@ void FileWriter::ApplyWatermarkPrependSave(StreamObjectPtr obj) {
 
     auto save_operation = make_deferred<contents::OperationSaveGraphicsState>();
 
-    std::stringstream ss;
-    ss << save_operation->ToPdf() << std::endl;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
+    stream->Write(save_operation->ToPdf());
+    stream->Write(WhiteSpace::LINE_FEED);
 
-    auto save_operation_text = ss.str();
+    auto save_operation_text = stream->ToString();
 
     auto body = obj->GetBody();
     body->insert(body.begin(), save_operation_text.begin(), save_operation_text.end());
@@ -1709,10 +1709,7 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr
     text_position_operation->SetX(make_deferred<IntegerObject>(20));
     text_position_operation->SetY(make_deferred<IntegerObject>(20));
 
-    std::stringstream watermark_text_stream;
-    watermark_text_stream << WATERMARK_TEXT << " " << COPYRIGHT_TEXT << " " << LibraryInfo::BuildYear() << " " << COMPANY_TEXT;
-
-    auto watermark_text = watermark_text_stream.str();
+    auto watermark_text = fmt::format("{} {} {} {}", WATERMARK_TEXT, COPYRIGHT_TEXT, LibraryInfo::BuildYear(), COMPANY_TEXT);
 
     auto text_show_operation = make_deferred<contents::OperationTextShow>();
     text_show_operation->SetValue(LiteralStringObject::CreateFromDecoded(watermark_text));
@@ -1772,17 +1769,18 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr
         instructions->push_back(inline_image_object);
     }
 
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     // Separate from content
-    ss << std::endl;
+    stream->Write(WhiteSpace::LINE_FEED);
 
     // Serialize instructions
     for (auto instruction : instructions) {
-        ss << instruction->ToPdf() << std::endl;
+        stream->Write(instruction->ToPdf());
+        stream->Write(WhiteSpace::LINE_FEED);
     }
 
-    auto watermark_body = ss.str();
+    auto watermark_body = stream->ToString();
 
     auto body = obj->GetBody();
     body->insert(body.end(), watermark_body.begin(), watermark_body.end());
