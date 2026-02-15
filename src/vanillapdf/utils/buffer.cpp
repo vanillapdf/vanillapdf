@@ -1,11 +1,11 @@
 #include "precompiled.h"
 
 #include "utils/buffer.h"
-#include "utils/streams/input_stream.h"
+#include "utils/streams/memory_buffer_input_stream.h"
 
-#include <iomanip>
 #include <cstring>
-#include <sstream>
+
+#include <fmt/core.h>
 
 namespace vanillapdf {
 
@@ -33,19 +33,34 @@ size_t Buffer::Hash() const {
 }
 
 std::string Buffer::ToHexString(void) const {
-    std::stringstream result;
-
+    fmt::memory_buffer buf;
     for (const auto& v : m_data) {
-        result << std::setfill('0') << std::setw(sizeof(v) * 2) << std::hex << (int) v;
+        fmt::format_to(std::back_inserter(buf), "{:02x}", static_cast<unsigned char>(v));
     }
-
-    return result.str();
+    return fmt::to_string(buf);
 }
 
+// Measured via BM_StringGetValue_Literal (LiteralStringObject_GetValue → GetRawValueDecoded → ToInputStream)
+//
+// stringstream (InputStream)
+// ------------------------------------------------------------------------------------------
+// Benchmark                                                Time             CPU   Iterations
+// ------------------------------------------------------------------------------------------
+// BM_StringGetValue_Literal / string_empty              1120 ns         1123 ns       448000
+// BM_StringGetValue_Literal / string_basic              2544 ns         2539 ns       298667
+// BM_StringGetValue_Literal / string_octal              2843 ns         2813 ns       248889
+//
+// MemoryBufferInputStream
+// ------------------------------------------------------------------------------------------
+// Benchmark                                                Time             CPU   Iterations
+// ------------------------------------------------------------------------------------------
+// BM_StringGetValue_Literal / string_empty               651 ns          639 ns       448000
+// BM_StringGetValue_Literal / string_basic              1455 ns         1454 ns       298667
+// BM_StringGetValue_Literal / string_octal              1813 ns         1814 ns       248889
 IInputStreamPtr Buffer::ToInputStream(void) const {
-    auto result = std::make_shared<std::stringstream>();
-    result->write(m_data.data(), m_data.size());
-    return make_deferred<InputStream>(result);
+    auto buffer = std::make_shared<fmt::memory_buffer>();
+    buffer->append(std::string_view(m_data.data(), m_data.size()));
+    return make_deferred<MemoryBufferInputStream>(buffer);
 }
 
 bool Buffer::Equals(const Buffer& other) const {
