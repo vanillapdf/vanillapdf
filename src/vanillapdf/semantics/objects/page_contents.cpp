@@ -10,11 +10,10 @@
 #include "contents/content_stream_operations.h"
 #include "contents/content_stream_objects.h"
 
-#include "utils/streams/input_stream.h"
+#include "utils/streams/stream_utils.h"
 
 #include <list>
 #include <numeric>
-#include <sstream>
 
 namespace vanillapdf {
 namespace semantics {
@@ -49,9 +48,10 @@ bool PageContents::RecalculateStreamData() {
 
     spdlog::info("Page {} {} contents are dirty, recalculating", obj_number, gen_number);
 
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
     for (auto instruction : m_instructions) {
-        ss << instruction->ToPdf() << std::endl;
+        stream->Write(instruction->ToPdf());
+        stream->Write(WhiteSpace::LINE_FEED);
     }
 
     auto object = GetObject();
@@ -81,7 +81,7 @@ bool PageContents::RecalculateStreamData() {
         stream_object = stream_array->GetValue(0);
     }
 
-    std::string string_body = ss.str();
+    auto string_body = stream->ToString();
     BufferPtr new_body = make_deferred_container<Buffer>(string_body.begin(), string_body.end());
     stream_object->SetBody(new_body);
 
@@ -111,14 +111,15 @@ BaseInstructionCollectionPtr PageContents::Instructions(void) const {
 
     // We are not using contents.Instructions, because objects can be separated
     // into multiple content streams
-    auto ss = std::make_shared<std::stringstream>();
+    auto combined_stream = StreamUtils::InputOutputStreamFromMemory();
     for (auto item : contents) {
         auto stream_object = item->GetObject();
-        *ss << stream_object->GetBody();
+        auto body = stream_object->GetBody();
+        combined_stream->Write(*body);
     }
 
-    InputStreamPtr input_stream = make_deferred<InputStream>(ss);
-    contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
+    combined_stream->SetInputPosition(0);
+    contents::ContentStreamParser parser(_obj->GetFile(), combined_stream);
 
     m_instructions = parser.ReadInstructions();
     m_instructions->SetInitialized();
