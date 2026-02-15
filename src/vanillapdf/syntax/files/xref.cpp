@@ -6,6 +6,7 @@
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/math_utils.h"
+#include "utils/streams/stream_utils.h"
 
 #include <bitset>
 #include <climits>
@@ -103,7 +104,7 @@ void XrefStream::RecalculateContent() {
     types::big_uint section_size = 0;
     types::big_uint prev_number = 0;
 
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
     for (auto entry : sorted_entries) {
         types::big_uint current_number = entry->GetObjectNumber();
 
@@ -127,27 +128,27 @@ void XrefStream::RecalculateContent() {
         if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
             auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
 
-            WriteValue(ss, 0, *field1_size);
-            WriteValue(ss, free_entry->GetNextFreeObjectNumber(), *field2_size);
-            WriteValue(ss, free_entry->GetGenerationNumber(), *field3_size);
+            WriteValue(*stream, 0, *field1_size);
+            WriteValue(*stream, free_entry->GetNextFreeObjectNumber(), *field2_size);
+            WriteValue(*stream, free_entry->GetGenerationNumber(), *field3_size);
             continue;
         }
 
         if (entry->GetUsage() == XrefEntryBase::Usage::Used) {
             auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
 
-            WriteValue(ss, 1, *field1_size);
-            WriteValue(ss, used_entry->GetOffset(), *field2_size);
-            WriteValue(ss, used_entry->GetGenerationNumber(), *field3_size);
+            WriteValue(*stream, 1, *field1_size);
+            WriteValue(*stream, used_entry->GetOffset(), *field2_size);
+            WriteValue(*stream, used_entry->GetGenerationNumber(), *field3_size);
             continue;
         }
 
         if (entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
             auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
 
-            WriteValue(ss, 2, *field1_size);
-            WriteValue(ss, compressed_entry->GetObjectStreamNumber(), *field2_size);
-            WriteValue(ss, compressed_entry->GetIndex(), *field3_size);
+            WriteValue(*stream, 2, *field1_size);
+            WriteValue(*stream, compressed_entry->GetObjectStreamNumber(), *field2_size);
+            WriteValue(*stream, compressed_entry->GetIndex(), *field3_size);
             continue;
         }
 
@@ -176,12 +177,12 @@ void XrefStream::RecalculateContent() {
         assert(removed && "Could not remove item from dictionary"); UNUSED(removed);
     }
 
-    auto new_data_string = ss.str();
+    auto new_data_string = stream->ToString();
     BufferPtr new_data = make_deferred_container<Buffer>(new_data_string.begin(), new_data_string.end());
     _stream->SetBody(new_data);
 }
 
-void XrefStream::WriteValue(std::ostream& dest, types::big_uint value, int64_t width) {
+void XrefStream::WriteValue(IOutputStream& dest, types::big_uint value, int64_t width) {
 
     // Check if the value fits inside width
     //auto shifted_value = value >> (width * 8);
@@ -205,7 +206,7 @@ void XrefStream::WriteValue(std::ostream& dest, types::big_uint value, int64_t w
     // starting with most significant byte
     for (decltype(width) i = width - 1; i >= 0; --i) {
         unsigned char raw_byte = (value >> (i * 8)) & 0xFF;
-        dest << raw_byte;
+        dest.Write(raw_byte);
     }
 }
 

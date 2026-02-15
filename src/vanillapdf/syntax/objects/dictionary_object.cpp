@@ -7,7 +7,7 @@
 
 #include "utils/streams/output_stream_interface.h"
 
-#include <sstream>
+#include "utils/streams/stream_utils.h"
 
 namespace vanillapdf {
 namespace syntax {
@@ -66,14 +66,18 @@ bool DictionaryObject::IsDirty() const {
 std::string DictionaryObject::ToString(void) const {
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    std::stringstream ss;
-    ss << "<<" << std::endl;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
+    stream->Write("<<");
+    stream->Write(WhiteSpace::LINE_FEED);
     for (auto item : _list) {
-        ss << item.first->ToString() << " " << item.second->ToString() << std::endl;
+        stream->Write(item.first->ToString());
+        stream->Write(WhiteSpace::SPACE);
+        stream->Write(item.second->ToString());
+        stream->Write(WhiteSpace::LINE_FEED);
     }
 
-    ss << ">>";
-    return ss.str();
+    stream->Write(">>");
+    return stream->ToString();
 }
 
 void DictionaryObject::ToPdfStreamInternal(IOutputStreamPtr output) const {

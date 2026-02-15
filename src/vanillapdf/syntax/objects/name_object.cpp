@@ -8,7 +8,7 @@
 
 #include <fmt/core.h>
 
-#include <sstream>
+#include "utils/streams/stream_utils.h"
 
 namespace vanillapdf {
 namespace syntax {
@@ -162,18 +162,18 @@ std::string NameObject::GetHexadecimalNotation(char ch) const {
 }
 
 std::string NameObject::ToString(void) const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
     auto size = _value->size();
     for (decltype(size) i = 0; i < size; ++i) {
         auto current = _value[i];
 
         if ('#' == current) {
-            ss << GetHexadecimalNotation(current);
+            stream->Write(GetHexadecimalNotation(current));
             continue;
         }
 
         if (!IsRegular(current)) {
-            ss << GetHexadecimalNotation(current);
+            stream->Write(GetHexadecimalNotation(current));
             continue;
         }
 
@@ -182,14 +182,14 @@ std::string NameObject::ToString(void) const {
             EXCLAMATION MARK(21h) (!) to TILDE (7Eh) (~)
             should be written using the hexadecimal notation */
 
-            ss << GetHexadecimalNotation(current);
+            stream->Write(GetHexadecimalNotation(current));
             continue;
         }
 
-        ss << current;
+        stream->Write(static_cast<char>(current));
     }
 
-    return ss.str();
+    return stream->ToString();
 }
 
 } // syntax

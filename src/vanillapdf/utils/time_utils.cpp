@@ -6,6 +6,7 @@
 #include <ctime>
 #include <mutex>
 #include <iomanip>
+#include <sstream>
 
 namespace vanillapdf {
 
