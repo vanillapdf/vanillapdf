@@ -16,6 +16,7 @@ set(VANILLAPDF_TOOLS_SOURCES
     filter.c
     merge.c
     read.c
+    resave.c
     sign.c
     sign_custom.c
     verify.c
