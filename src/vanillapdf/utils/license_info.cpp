@@ -130,18 +130,16 @@ void LicenseInfo::SetLicense([[maybe_unused]] const Buffer& data) {
         auto serial_string = serial_node.get<std::string>();
         bool blacklisted = CheckBlacklist(serial_string);
         if (blacklisted) {
-            std::stringstream msg;
-            msg << "Your license with serial " << serial_string << " is blacklisted";
-            throw InvalidLicenseException(msg.str());
+            throw InvalidLicenseException(
+                fmt::format("Your license with serial {} is blacklisted", serial_string));
         }
 
         // Check updates expiration
         auto updates_expiration_string = updates_expiration_node.get<std::string>();
         bool updates_expired = CheckUpdateExpiration(updates_expiration_string);
         if (updates_expired) {
-            std::stringstream msg;
-            msg << "Your license updates expired on " << updates_expiration_string;
-            throw InvalidLicenseException(msg.str());
+            throw InvalidLicenseException(
+                fmt::format("Your license updates expired on {}", updates_expiration_string));
         }
 
         // Check signature

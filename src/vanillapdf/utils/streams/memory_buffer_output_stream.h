@@ -15,7 +15,6 @@ public:
     virtual void Write(const Buffer& data) override;
     virtual void Write(const Buffer& data, types::stream_size size) override;
     virtual void Write(std::string_view data) override;
-    virtual void Write(const char* str) override;
     virtual void Write(char value) override;
     virtual void Write(unsigned char value) override;
     virtual void Write(WhiteSpace value) override;
@@ -42,6 +41,10 @@ protected:
 
     std::shared_ptr<fmt::memory_buffer> m_buffer;
     types::stream_size m_position = 0;
+
+private:
+    void WriteData(const char* data, size_t len);
+    void WriteByte(char value);
 };
 
 } // vanillapdf

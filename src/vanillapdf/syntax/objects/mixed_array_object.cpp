@@ -3,7 +3,7 @@
 #include "syntax/objects/mixed_array_object.h"
 #include "utils/streams/output_stream_interface.h"
 
-#include <sstream>
+#include "utils/streams/stream_utils.h"
 
 namespace vanillapdf {
 namespace syntax {
@@ -171,16 +171,19 @@ void MixedArrayObject::push_back(ContainableObjectPtr value) {
 std::string MixedArrayObject::ToString(void) const {
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    std::stringstream ss;
-    ss << "[";
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
+    stream->Write("[");
     bool first = true;
     for (auto item : _list) {
-        ss << (first ? "" : " ") << item->ToString();
+        if (!first) {
+            stream->Write(WhiteSpace::SPACE);
+        }
+        stream->Write(item->ToString());
         first = false;
     }
 
-    ss << "]";
-    return ss.str();
+    stream->Write("]");
+    return stream->ToString();
 }
 
 void MixedArrayObject::ToPdfStreamInternal(IOutputStreamPtr output) const {

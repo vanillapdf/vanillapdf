@@ -3,6 +3,7 @@
 
 #include "syntax/utils/syntax_fwd.h"
 #include "syntax/files/xref_entry.h"
+#include "utils/streams/output_stream_interface.h"
 
 #include <unordered_map>
 
@@ -130,7 +131,7 @@ public:
 private:
     StreamObjectPtr _stream;
 
-    void WriteValue(std::ostream& dest, types::big_uint value, int64_t width);
+    void WriteValue(IOutputStream& dest, types::big_uint value, int64_t width);
 };
 
 class XrefTable : public XrefBase {

@@ -14,7 +14,6 @@ public:
     virtual void Write(const Buffer& data) = 0;
     virtual void Write(const Buffer& data, types::stream_size size) = 0;
     virtual void Write(std::string_view data) = 0;
-    virtual void Write(const char* str) = 0;
     virtual void Write(char value) = 0;
     virtual void Write(unsigned char value) = 0;
     virtual void Write(WhiteSpace value) = 0;
@@ -24,6 +23,9 @@ public:
     virtual void Write(int64_t value) = 0;
     virtual void Write(uint64_t value) = 0;
     virtual void Flush(void) = 0;
+
+    void WriteLine() { Write(WhiteSpace::LINE_FEED); }
+    void WriteLine(std::string_view data) { Write(data); Write(WhiteSpace::LINE_FEED); }
 
     virtual types::stream_size GetOutputPosition(void) = 0;
     virtual void SetOutputPosition(types::stream_size pos) = 0;
@@ -41,11 +43,6 @@ inline IOutputStream& operator<<(IOutputStream& os, std::string_view value) {
 }
 
 inline IOutputStream& operator<<(IOutputStream& os, const Buffer& value) {
-    os.Write(value);
-    return os;
-}
-
-inline IOutputStream& operator<<(IOutputStream& os, const char* value) {
     os.Write(value);
     return os;
 }

@@ -12,6 +12,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 set(VANILLAPDF_BENCHMARK_SOURCES
     buffer_hash.cpp
     character_map.cpp
+    content_stream.cpp
     filters.cpp
     io_strategy.cpp
     objects.cpp

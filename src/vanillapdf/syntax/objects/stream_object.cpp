@@ -7,7 +7,7 @@
 
 #include "syntax/exceptions/syntax_exceptions.h"
 
-#include <sstream>
+#include "utils/streams/stream_utils.h"
 
 namespace vanillapdf {
 namespace syntax {
@@ -558,24 +558,22 @@ BufferPtr StreamObject::DecryptData(BufferPtr data, types::big_uint obj_number, 
 std::string StreamObject::ToString(void) const {
     ACCESS_LOCK_GUARD(_access_lock);
 
-    std::stringstream ss;
-    ss << _header->ToString() << "stream: " << GetBodyEncoded()->size() << std::endl;
-    return ss.str();
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
+    stream->Write(_header->ToString());
+    stream->Write("stream: ");
+    stream->WriteLine(std::to_string(GetBodyEncoded()->size()));
+    return stream->ToString();
 }
 
 void StreamObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
     ACCESS_LOCK_GUARD(_access_lock);
 
-    auto obj_header = _header->ToPdf();
-    auto obj_body = GetBodyEncoded()->ToString();
-
-    std::stringstream ss;
-    ss << obj_header << std::endl;
-    ss << "stream" << std::endl;
-    ss << obj_body;
-    ss << "endstream";
-
-    output << ss.str();
+    _header->ToPdfStream(output);
+    output << WhiteSpace::LINE_FEED;
+    output << "stream";
+    output << WhiteSpace::LINE_FEED;
+    output << *GetBodyEncoded();
+    output << "endstream";
 }
 
 size_t StreamObject::Hash() const {

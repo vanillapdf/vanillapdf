@@ -17,9 +17,8 @@ Result SafeAddition(ValueFirst number, ValueSecond addend) {
     if (number < 0) {
         if (addend < 0) {
             if (result > number) {
-                std::stringstream ss;
-                ss << "Could not compute sum of " << number << " and " << addend;
-                throw std::out_of_range(ss.str());
+                throw std::out_of_range(
+                    fmt::format("Could not compute sum of {} and {}", number, addend));
             }
         }
 
@@ -27,9 +26,8 @@ Result SafeAddition(ValueFirst number, ValueSecond addend) {
     }
 
     if (result < number) {
-        std::stringstream ss;
-        ss << "Could not compute sum of " << number << " and " << addend;
-        throw std::out_of_range(ss.str());
+        throw std::out_of_range(
+            fmt::format("Could not compute sum of {} and {}", number, addend));
     }
 
     return result;

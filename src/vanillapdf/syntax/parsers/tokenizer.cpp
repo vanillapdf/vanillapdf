@@ -9,7 +9,6 @@
 
 #include <cassert>
 #include <iomanip>
-#include <sstream>
 #include <algorithm>
 
 namespace vanillapdf {
