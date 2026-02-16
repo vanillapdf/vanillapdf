@@ -142,24 +142,29 @@ std::string MemoryBufferOutputStream::ToString() const {
 
 void MemoryBufferOutputStream::WriteData(const char* data, size_t len) {
     auto pos = static_cast<size_t>(m_position);
-    auto end_pos = pos + len;
 
-    if (end_pos > m_buffer->size()) {
-        m_buffer->resize(end_pos);
+    if (pos == m_buffer->size()) {
+        // Common case: sequential append
+        m_buffer->append(data, data + len);
+    } else {
+        // Random-access overwrite (e.g. DocumentSigner patching ByteRange)
+        std::memcpy(m_buffer->data() + pos, data, len);
     }
 
-    std::memcpy(m_buffer->data() + pos, data, len);
     m_position += len;
 }
 
 void MemoryBufferOutputStream::WriteByte(char value) {
     auto pos = static_cast<size_t>(m_position);
 
-    if (pos >= m_buffer->size()) {
-        m_buffer->resize(pos + 1);
+    if (pos == m_buffer->size()) {
+        // Common case: sequential append
+        m_buffer->push_back(value);
+    } else {
+        // Random-access overwrite
+        m_buffer->data()[pos] = value;
     }
 
-    m_buffer->data()[pos] = value;
     m_position += 1;
 }
 
