@@ -183,3 +183,97 @@ static void BM_DCTDecode_Large(benchmark::State& state) {
 }
 
 BENCHMARK(BM_DCTDecode_Large);
+
+// ----- DCTDecodeFilter_Encode benchmarks -----
+
+struct EncodeFixture {
+    HandleGuard<BufferHandle, Buffer_Release> raw_buffer;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> params;
+
+    EncodeFixture(int width, int height) {
+        size_t raw_size = static_cast<size_t>(width) * height * 3;
+        std::vector<unsigned char> raw_pixels(raw_size);
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                size_t offset = (static_cast<size_t>(y) * width + x) * 3;
+                raw_pixels[offset + 0] = static_cast<unsigned char>(x % 256);
+                raw_pixels[offset + 1] = static_cast<unsigned char>(y % 256);
+                raw_pixels[offset + 2] = static_cast<unsigned char>((x + y) % 256);
+            }
+        }
+
+        Buffer_CreateFromData(reinterpret_cast<string_type>(raw_pixels.data()), raw_size, raw_buffer.out());
+
+        DictionaryObject_Create(params.out());
+
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> width_obj;
+        HandleGuard<ObjectHandle, Object_Release> width_base;
+        IntegerObject_CreateFromIntegerValue(width, width_obj.out());
+        IntegerObject_ToObject(width_obj, width_base.out());
+
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> height_obj;
+        HandleGuard<ObjectHandle, Object_Release> height_base;
+        IntegerObject_CreateFromIntegerValue(height, height_obj.out());
+        IntegerObject_ToObject(height_obj, height_base.out());
+
+        HandleGuard<NameObjectHandle, NameObject_Release> width_key;
+        NameObject_CreateFromDecodedString("Width", width_key.out());
+
+        HandleGuard<NameObjectHandle, NameObject_Release> height_key;
+        NameObject_CreateFromDecodedString("Height", height_key.out());
+
+        HandleGuard<NameObjectHandle, NameObject_Release> colorspace_key;
+        NameObject_CreateFromDecodedString("ColorSpace", colorspace_key.out());
+
+        HandleGuard<NameObjectHandle, NameObject_Release> colorspace_value;
+        HandleGuard<ObjectHandle, Object_Release> colorspace_base;
+        NameObject_CreateFromDecodedString("DeviceRGB", colorspace_value.out());
+        NameObject_ToObject(colorspace_value, colorspace_base.out());
+
+        DictionaryObject_Insert(params, width_key, width_base, VANILLAPDF_RV_FALSE);
+        DictionaryObject_Insert(params, height_key, height_base, VANILLAPDF_RV_FALSE);
+        DictionaryObject_Insert(params, colorspace_key, colorspace_base, VANILLAPDF_RV_FALSE);
+    }
+};
+
+static void BM_DCTEncode_Small(benchmark::State& state) {
+    EncodeFixture fixture(92, 144);
+
+    HandleGuard<DCTDecodeFilterHandle, DCTDecodeFilter_Release> filter;
+    DCTDecodeFilter_Create(filter.out());
+
+    for (auto _ : state) {
+        HandleGuard<BufferHandle, Buffer_Release> encoded;
+        DCTDecodeFilter_EncodeParams(filter, fixture.raw_buffer, fixture.params, encoded.out());
+    }
+}
+
+BENCHMARK(BM_DCTEncode_Small);
+
+static void BM_DCTEncode_Medium(benchmark::State& state) {
+    EncodeFixture fixture(640, 480);
+
+    HandleGuard<DCTDecodeFilterHandle, DCTDecodeFilter_Release> filter;
+    DCTDecodeFilter_Create(filter.out());
+
+    for (auto _ : state) {
+        HandleGuard<BufferHandle, Buffer_Release> encoded;
+        DCTDecodeFilter_EncodeParams(filter, fixture.raw_buffer, fixture.params, encoded.out());
+    }
+}
+
+BENCHMARK(BM_DCTEncode_Medium);
+
+static void BM_DCTEncode_Large(benchmark::State& state) {
+    EncodeFixture fixture(1920, 1080);
+
+    HandleGuard<DCTDecodeFilterHandle, DCTDecodeFilter_Release> filter;
+    DCTDecodeFilter_Create(filter.out());
+
+    for (auto _ : state) {
+        HandleGuard<BufferHandle, Buffer_Release> encoded;
+        DCTDecodeFilter_EncodeParams(filter, fixture.raw_buffer, fixture.params, encoded.out());
+    }
+}
+
+BENCHMARK(BM_DCTEncode_Large);
