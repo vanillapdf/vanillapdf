@@ -105,6 +105,11 @@ set(VANILLAPDF_UNITTEST_LIBS
     GTest::gtest
 )
 
+# GCC < 9 requires explicit -lstdc++fs for std::filesystem (e.g. Rocky 8)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
+    list(APPEND VANILLAPDF_UNITTEST_LIBS stdc++fs)
+endif()
+
 target_link_libraries(vanillapdf.unittest PRIVATE ${VANILLAPDF_UNITTEST_LIBS})
 
 # In case we have the dynamic link configuration add specific definitions
