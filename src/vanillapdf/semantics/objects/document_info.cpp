@@ -1,7 +1,7 @@
 #include "precompiled.h"
 
 #include "utils/misc_utils.h"
-#include "utils/pdf_text_string.h"
+#include "semantics/utils/pdf_text_string.h"
 #include "syntax/files/file.h"
 
 #include "semantics/objects/document_info.h"
@@ -145,46 +145,40 @@ bool DocumentInfo::Trapped(DocumentTrapped& result) const {
     return false;
 }
 
-bool DocumentInfo::TitleTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr DocumentInfo::TitleTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!Title(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!Title(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
-bool DocumentInfo::AuthorTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr DocumentInfo::AuthorTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!Author(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!Author(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
-bool DocumentInfo::SubjectTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr DocumentInfo::SubjectTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!Subject(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!Subject(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
-bool DocumentInfo::KeywordsTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr DocumentInfo::KeywordsTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!Keywords(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!Keywords(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
-bool DocumentInfo::CreatorTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr DocumentInfo::CreatorTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!Creator(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!Creator(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
-bool DocumentInfo::ProducerTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr DocumentInfo::ProducerTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!Producer(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!Producer(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
 void DocumentInfo::SetTitle(syntax::StringObjectPtr value) {

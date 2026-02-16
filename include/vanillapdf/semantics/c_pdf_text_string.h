@@ -19,7 +19,7 @@ extern "C"
     /**
     * \class PdfTextStringHandle
     * \extends IUnknownHandle
-    * \ingroup group_utils
+    * \ingroup group_semantics
     * \brief Wraps a PDF text string with detected encoding and conversion methods.
     *
     * PDF text strings (used for document info, form fields, annotations, etc.)

@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-#include "utils/pdf_text_string.h"
+#include "semantics/utils/pdf_text_string.h"
 #include "semantics/objects/digital_signature.h"
 #include "semantics/utils/byte_range.h"
 
@@ -152,9 +152,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfoText
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        PdfTextStringPtr text_string;
-        auto contains = obj->ContactInfoTextString(text_string);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto text_string = obj->ContactInfoTextString();
+        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -167,9 +166,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReasonTextStrin
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        PdfTextStringPtr text_string;
-        auto contains = obj->ReasonTextString(text_string);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto text_string = obj->ReasonTextString();
+        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -182,9 +180,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocationTextStr
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        PdfTextStringPtr text_string;
-        auto contains = obj->LocationTextString(text_string);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto text_string = obj->LocationTextString();
+        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -197,9 +194,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetNameTextString(
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        PdfTextStringPtr text_string;
-        auto contains = obj->NameTextString(text_string);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto text_string = obj->NameTextString();
+        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

@@ -1,15 +1,16 @@
 #include "precompiled.h"
 
 #include "utils/buffer.h"
-#include "utils/pdf_text_string.h"
+#include "semantics/utils/pdf_text_string.h"
 
 #include "syntax/objects/string_object.h"
 
-#include "vanillapdf/utils/c_pdf_text_string.h"
+#include "vanillapdf/semantics/c_pdf_text_string.h"
 #include "implementation/c_helper.h"
 
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
+using namespace vanillapdf::semantics;
 
 VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromStringObject(StringObjectHandle* handle, PdfTextStringHandle** result)
 {

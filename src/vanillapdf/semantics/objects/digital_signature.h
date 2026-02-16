@@ -6,8 +6,6 @@
 #include "semantics/objects/high_level_object.h"
 #include "semantics/objects/date.h"
 
-#include "utils/utils_fwd.h"
-
 namespace vanillapdf {
 namespace semantics {
 
@@ -26,10 +24,10 @@ public:
     bool Name(syntax::OutputStringObjectPtr& result);
 
     // text string overloads (encoding-aware)
-    bool ReasonTextString(OutputPdfTextStringPtr result);
-    bool LocationTextString(OutputPdfTextStringPtr result);
-    bool ContactInfoTextString(OutputPdfTextStringPtr result);
-    bool NameTextString(OutputPdfTextStringPtr result);
+    PdfTextStringPtr ReasonTextString();
+    PdfTextStringPtr LocationTextString();
+    PdfTextStringPtr ContactInfoTextString();
+    PdfTextStringPtr NameTextString();
     bool Revision(syntax::OutputIntegerObjectPtr& result);
     bool SubFilter(syntax::OutputNameObjectPtr& result);
     bool Certificate(syntax::OutputStringObjectPtr& result);

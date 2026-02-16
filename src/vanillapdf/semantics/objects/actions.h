@@ -6,8 +6,6 @@
 #include "semantics/objects/high_level_object.h"
 #include "semantics/objects/destinations.h"
 
-#include "utils/utils_fwd.h"
-
 namespace vanillapdf {
 namespace semantics {
 

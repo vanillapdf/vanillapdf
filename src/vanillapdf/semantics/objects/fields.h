@@ -5,8 +5,6 @@
 #include "semantics/objects/high_level_object.h"
 #include "semantics/objects/digital_signature.h"
 
-#include "utils/utils_fwd.h"
-
 namespace vanillapdf {
 namespace semantics {
 
@@ -40,8 +38,8 @@ public:
     void SetFieldFlags(types::big_int value);
 
     // text string overloads (encoding-aware)
-    bool GetNameTextString(OutputPdfTextStringPtr result) const;
-    bool GetAlternateNameTextString(OutputPdfTextStringPtr result) const;
+    PdfTextStringPtr GetNameTextString() const;
+    PdfTextStringPtr GetAlternateNameTextString() const;
 };
 
 class NonTerminalField : public Field {
@@ -70,8 +68,8 @@ public:
     bool GetMaxLength(syntax::OutputIntegerObjectPtr& result) const;
 
     // text string overloads (encoding-aware)
-    bool GetValueTextString(OutputPdfTextStringPtr result) const;
-    bool GetDefaultValueTextString(OutputPdfTextStringPtr result) const;
+    PdfTextStringPtr GetValueTextString() const;
+    PdfTextStringPtr GetDefaultValueTextString() const;
 };
 
 class ChoiceField : public Field {
@@ -85,7 +83,7 @@ public:
     bool GetOptionAt(types::size_type index, syntax::OutputContainableObjectPtr& result) const;
 
     // text string overloads (encoding-aware)
-    bool GetValueTextString(OutputPdfTextStringPtr result) const;
+    PdfTextStringPtr GetValueTextString() const;
 };
 
 class SignatureField : public Field {

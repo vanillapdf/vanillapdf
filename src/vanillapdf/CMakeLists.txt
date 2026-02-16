@@ -33,7 +33,6 @@ set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_signature_verification_settings.cpp
     implementation/utils/c_signing_key.cpp
     implementation/utils/c_text_string_encoding.cpp
-    implementation/utils/c_pdf_text_string.cpp
     implementation/utils/c_unknown_interface.cpp
 )
 
@@ -81,6 +80,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_interactive_forms.cpp
     implementation/semantics/c_name_dictionary.cpp
     implementation/semantics/c_outline.cpp
+    implementation/semantics/c_pdf_text_string.cpp
     implementation/semantics/c_page_contents.cpp
     implementation/semantics/c_page_labels.cpp
     implementation/semantics/c_page_object.cpp
@@ -145,6 +145,7 @@ set(VANILLAPDF_SEMANTICS_SOURCES
 
     semantics/utils/document_signer.cpp
     semantics/utils/document_signature_settings.cpp
+    semantics/utils/pdf_text_string.cpp
     semantics/utils/semantic_utils.cpp
 )
 
@@ -211,7 +212,6 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/time_utils.cpp
     utils/trusted_certificate_store.cpp
     utils/text_string_encoding.cpp
-    utils/pdf_text_string.cpp
     utils/unknown_interface.cpp
     utils/versionable.cpp
     utils/windows_utils.cpp
@@ -279,6 +279,7 @@ set(VANILLAPDF_SEMANTICS_HEADERS
 
     semantics/utils/document_signer.h
     semantics/utils/document_signature_settings.h
+    semantics/utils/pdf_text_string.h
     semantics/utils/semantic_exceptions.h
     semantics/utils/semantic_utils.h
     semantics/utils/semantics_fwd.h
@@ -375,7 +376,6 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/stack_allocator.h
     utils/template_utils.h
     utils/text_string_encoding.h
-    utils/pdf_text_string.h
     utils/time_utils.h
     utils/trusted_certificate_store.h
     utils/unknown_interface.h

@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "utils/pdf_text_string.h"
+#include "semantics/utils/pdf_text_string.h"
 
 #include "semantics/objects/fields.h"
 #include "syntax/objects/dictionary_object.h"
@@ -83,9 +83,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetNameTextString(FieldHandle
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        PdfTextStringPtr text_string;
-        auto contains = obj->GetNameTextString(text_string);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto text_string = obj->GetNameTextString();
+        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -98,9 +97,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateNameTextString(Fi
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        PdfTextStringPtr text_string;
-        auto contains = obj->GetAlternateNameTextString(text_string);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto text_string = obj->GetAlternateNameTextString();
+        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -206,9 +204,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetValueTextString(TextFi
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        PdfTextStringPtr text_string;
-        auto contains = obj->GetValueTextString(text_string);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto text_string = obj->GetValueTextString();
+        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -221,9 +218,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetDefaultValueTextString
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        PdfTextStringPtr text_string;
-        auto contains = obj->GetDefaultValueTextString(text_string);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto text_string = obj->GetDefaultValueTextString();
+        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -278,9 +274,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetValueTextString(Choi
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        PdfTextStringPtr text_string;
-        auto contains = obj->GetValueTextString(text_string);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto text_string = obj->GetValueTextString();
+        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

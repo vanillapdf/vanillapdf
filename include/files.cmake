@@ -33,7 +33,6 @@ set(VANILLAPDF_INCLUDE_UTILS_HEADERS
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_unknown_interface.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_name_constants.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_text_string_encoding.h"
-    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_pdf_text_string.h"
 )
 
 set(VANILLAPDF_INCLUDE_SYNTAX_HEADERS
@@ -80,6 +79,7 @@ set(VANILLAPDF_INCLUDE_SEMANTICS_HEADERS
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_interactive_forms.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_name_dictionary.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_outline.h"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_pdf_text_string.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_page_contents.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_page_labels.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_page_object.h"

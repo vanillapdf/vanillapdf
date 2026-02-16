@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-#include "utils/pdf_text_string.h"
+#include "semantics/utils/pdf_text_string.h"
 #include "semantics/objects/annotations.h"
 #include "semantics/objects/actions.h"
 #include "semantics/objects/color.h"
@@ -261,68 +261,60 @@ void AnnotationBase::SetContents(syntax::LiteralStringObjectPtr contents) {
     _obj->Insert(constant::Name::Contents, contents);
 }
 
-bool AnnotationBase::GetContentsTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr AnnotationBase::GetContentsTextString() const {
     syntax::OutputLiteralStringObjectPtr str;
-    if (!GetContents(str)) return false;
+    if (!GetContents(str)) return PdfTextStringPtr();
     auto value = str->GetValue();
-    result = PdfTextString::CreateFromRawBytes(std::move(value));
-    return true;
+    return PdfTextString::CreateFromRawBytes(std::move(value));
 }
 
 // TextAnnotation TextString overload
-bool TextAnnotation::GetAuthorTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr TextAnnotation::GetAuthorTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!GetAuthor(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
 // FreeTextAnnotation TextString overload
-bool FreeTextAnnotation::GetAuthorTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr FreeTextAnnotation::GetAuthorTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!GetAuthor(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
 // HighlightAnnotation TextString overload
-bool HighlightAnnotation::GetAuthorTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr HighlightAnnotation::GetAuthorTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!GetAuthor(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
 // UnderlineAnnotation TextString overload
-bool UnderlineAnnotation::GetAuthorTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr UnderlineAnnotation::GetAuthorTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!GetAuthor(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
 // SquigglyAnnotation TextString overload
-bool SquigglyAnnotation::GetAuthorTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr SquigglyAnnotation::GetAuthorTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!GetAuthor(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
 // StrikeOutAnnotation TextString overload
-bool StrikeOutAnnotation::GetAuthorTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr StrikeOutAnnotation::GetAuthorTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!GetAuthor(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
 // InkAnnotation TextString overload
-bool InkAnnotation::GetAuthorTextString(OutputPdfTextStringPtr result) const {
+PdfTextStringPtr InkAnnotation::GetAuthorTextString() const {
     syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!GetAuthor(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
 bool AnnotationBase::GetColor(OutputColorPtr& result) const {

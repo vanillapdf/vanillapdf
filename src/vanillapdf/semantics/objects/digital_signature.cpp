@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-#include "utils/pdf_text_string.h"
+#include "semantics/utils/pdf_text_string.h"
 #include "semantics/objects/digital_signature.h"
 #include "semantics/utils/byte_range.h"
 #include "semantics/utils/semantic_exceptions.h"
@@ -78,32 +78,28 @@ bool DigitalSignature::Name(syntax::OutputStringObjectPtr& result) {
     return true;
 }
 
-bool DigitalSignature::ReasonTextString(OutputPdfTextStringPtr result) {
+PdfTextStringPtr DigitalSignature::ReasonTextString() {
     syntax::OutputStringObjectPtr str;
-    if (!Reason(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!Reason(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
-bool DigitalSignature::LocationTextString(OutputPdfTextStringPtr result) {
+PdfTextStringPtr DigitalSignature::LocationTextString() {
     syntax::OutputStringObjectPtr str;
-    if (!Location(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!Location(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
-bool DigitalSignature::ContactInfoTextString(OutputPdfTextStringPtr result) {
+PdfTextStringPtr DigitalSignature::ContactInfoTextString() {
     syntax::OutputStringObjectPtr str;
-    if (!ContactInfo(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!ContactInfo(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
-bool DigitalSignature::NameTextString(OutputPdfTextStringPtr result) {
+PdfTextStringPtr DigitalSignature::NameTextString() {
     syntax::OutputStringObjectPtr str;
-    if (!Name(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
+    if (!Name(str)) return PdfTextStringPtr();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
 bool DigitalSignature::Revision(syntax::OutputIntegerObjectPtr& result) {

@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "utils/pdf_text_string.h"
+#include "semantics/utils/pdf_text_string.h"
 #include "semantics/objects/actions.h"
 
 #include "vanillapdf/semantics/c_actions.h"

@@ -5,8 +5,6 @@
 #include "semantics/objects/high_level_object.h"
 #include "semantics/objects/actions.h"
 
-#include "utils/utils_fwd.h"
-
 #include "syntax/objects/name_object.h"
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/objects/array_object.h"

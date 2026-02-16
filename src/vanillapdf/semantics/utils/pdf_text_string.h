@@ -8,10 +8,10 @@
 #include "syntax/utils/syntax_fwd.h"
 
 namespace vanillapdf {
+namespace semantics {
 
 class PdfTextString;
 using PdfTextStringPtr = Deferred<PdfTextString>;
-using OutputPdfTextStringPtr = PdfTextStringPtr&;
 
 /**
  * @brief Wraps a PDF text string with detected encoding and conversion methods.
@@ -72,6 +72,7 @@ private:
     TextStringEncoding m_encoding = TextStringEncoding::Undefined;
 };
 
+} // semantics
 } // vanillapdf
 
 #endif /* _PDF_TEXT_STRING_H */

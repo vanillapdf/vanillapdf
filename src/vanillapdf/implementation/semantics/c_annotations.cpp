@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#include "utils/pdf_text_string.h"
+#include "semantics/utils/pdf_text_string.h"
 #include "semantics/objects/annotations.h"
 #include "semantics/objects/actions.h"
 #include "semantics/objects/color.h"
@@ -288,9 +288,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetContentsTextString(An
 
     try
     {
-        PdfTextStringPtr text_string;
-        bool contains = obj->GetContentsTextString(text_string);
-        if (!contains) {
+        auto text_string = obj->GetContentsTextString();
+        if (text_string == nullptr) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
@@ -439,9 +438,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthorTextString(
 
     try
     {
-        PdfTextStringPtr text_string;
-        bool contains = obj->GetAuthorTextString(text_string);
-        if (!contains) {
+        auto text_string = obj->GetAuthorTextString();
+        if (text_string == nullptr) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
@@ -637,9 +635,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthorTextSt
 
     try
     {
-        PdfTextStringPtr text_string;
-        bool contains = obj->GetAuthorTextString(text_string);
-        if (!contains) {
+        auto text_string = obj->GetAuthorTextString();
+        if (text_string == nullptr) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
@@ -826,9 +823,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthorTextStr
 
     try
     {
-        PdfTextStringPtr text_string;
-        bool contains = obj->GetAuthorTextString(text_string);
-        if (!contains) {
+        auto text_string = obj->GetAuthorTextString();
+        if (text_string == nullptr) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
@@ -1024,9 +1020,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthorTextSt
 
     try
     {
-        PdfTextStringPtr text_string;
-        bool contains = obj->GetAuthorTextString(text_string);
-        if (!contains) {
+        auto text_string = obj->GetAuthorTextString();
+        if (text_string == nullptr) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
@@ -1222,9 +1217,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthorTextSt
 
     try
     {
-        PdfTextStringPtr text_string;
-        bool contains = obj->GetAuthorTextString(text_string);
-        if (!contains) {
+        auto text_string = obj->GetAuthorTextString();
+        if (text_string == nullptr) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
@@ -1420,9 +1414,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthorTextStr
 
     try
     {
-        PdfTextStringPtr text_string;
-        bool contains = obj->GetAuthorTextString(text_string);
-        if (!contains) {
+        auto text_string = obj->GetAuthorTextString();
+        if (text_string == nullptr) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
@@ -1618,9 +1611,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthorTextString(I
 
     try
     {
-        PdfTextStringPtr text_string;
-        bool contains = obj->GetAuthorTextString(text_string);
-        if (!contains) {
+        auto text_string = obj->GetAuthorTextString();
+        if (text_string == nullptr) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 

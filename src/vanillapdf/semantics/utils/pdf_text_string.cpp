@@ -1,12 +1,13 @@
 #include "precompiled.h"
 
-#include "utils/pdf_text_string.h"
+#include "semantics/utils/pdf_text_string.h"
 #include "utils/buffer.h"
 #include "utils/text_string_encoding.h"
 
 #include "syntax/objects/string_object.h"
 
 namespace vanillapdf {
+namespace semantics {
 
 PdfTextString::PdfTextString(BufferPtr raw_data)
     : m_raw_data(std::move(raw_data))
@@ -44,4 +45,5 @@ BufferPtr PdfTextString::GetStringUtf16() const {
     return TextStringToUtf16BE(*m_raw_data);
 }
 
+} // semantics
 } // vanillapdf
