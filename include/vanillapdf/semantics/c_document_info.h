@@ -108,6 +108,36 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInfoHandle* handle, DocumentTrappedType* result);
 
     /**
+    * \brief Get the document title as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitleTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Get the document author as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthorTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Get the document subject as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubjectTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Get the document keywords as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywordsTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Get the document creator as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreatorTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Get the document producer as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducerTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref IUnknownHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_ToUnknown(DocumentInfoHandle* handle, IUnknownHandle** result);

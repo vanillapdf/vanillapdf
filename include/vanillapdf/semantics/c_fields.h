@@ -226,6 +226,16 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Field_SetFieldFlags(FieldHandle* handle, FieldFlags value);
 
     /**
+    * \brief Get the partial field name as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetNameTextString(FieldHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Get the alternate field name as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateNameTextString(FieldHandle* handle, PdfTextStringHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref ButtonFieldHandle.
     * \deprecated Use ButtonField_FromField instead
     */
@@ -321,6 +331,16 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetDefaultValue(TextFieldHandle* handle, StringObjectHandle** result);
 
     /**
+    * \brief Get the text field value as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetValueTextString(TextFieldHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Get the default value as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetDefaultValueTextString(TextFieldHandle* handle, PdfTextStringHandle** result);
+
+    /**
     * \brief Get the maximum length of the text field (/MaxLen entry).
     * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
     */
@@ -357,6 +377,11 @@ extern "C"
     * \brief Set the selected value (/V entry).
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_SetValue(ChoiceFieldHandle* handle, StringObjectHandle* value);
+
+    /**
+    * \brief Get the selected value as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetValueTextString(ChoiceFieldHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Get the number of available options (/Opt entry).

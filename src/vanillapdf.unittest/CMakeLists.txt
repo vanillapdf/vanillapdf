@@ -44,6 +44,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     name_dictionary_test.cpp
     io_strategy_test.cpp
     license_info_test.cpp
+    text_string_encoding_test.cpp
 )
 
 set(VANILLAPDF_UNITTEST_HEADERS

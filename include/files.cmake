@@ -32,6 +32,8 @@ set(VANILLAPDF_INCLUDE_UTILS_HEADERS
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_signing_key.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_unknown_interface.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_name_constants.h"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_text_string_encoding.h"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_pdf_text_string.h"
 )
 
 set(VANILLAPDF_INCLUDE_SYNTAX_HEADERS

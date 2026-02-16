@@ -23,6 +23,9 @@ class ExceptionBase;
 class GeneralException;
 class ConversionException;
 
+class PdfTextString; using PdfTextStringPtr = Deferred<PdfTextString>;
+using OutputPdfTextStringPtr = PdfTextStringPtr&;
+
 class IUnknown;
 class WeakReferenceCounter;
 

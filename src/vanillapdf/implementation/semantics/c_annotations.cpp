@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "utils/pdf_text_string.h"
 #include "semantics/objects/annotations.h"
 #include "semantics/objects/actions.h"
 #include "semantics/objects/color.h"
@@ -279,6 +280,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetContents(AnnotationHa
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetContentsTextString(AnnotationHandle* handle, PdfTextStringHandle** result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        bool contains = obj->GetContentsTextString(text_string);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetColor(AnnotationHandle* handle, ColorHandle** result)
 {
     AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
@@ -406,6 +427,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetAuthor(TextAnnota
     try
     {
         obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthorTextString(TextAnnotationHandle* handle, PdfTextStringHandle** result)
+{
+    TextAnnotation* obj = reinterpret_cast<TextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        bool contains = obj->GetAuthorTextString(text_string);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -588,6 +629,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetAuthor(Highl
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthorTextString(HighlightAnnotationHandle* handle, PdfTextStringHandle** result)
+{
+    HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        bool contains = obj->GetAuthorTextString(text_string);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetModificationDate(HighlightAnnotationHandle* handle, DateHandle** result)
 {
     HighlightAnnotation* obj = reinterpret_cast<HighlightAnnotation*>(handle);
@@ -753,6 +814,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetAuthor(FreeTe
     try
     {
         obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthorTextString(FreeTextAnnotationHandle* handle, PdfTextStringHandle** result)
+{
+    FreeTextAnnotation* obj = reinterpret_cast<FreeTextAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        bool contains = obj->GetAuthorTextString(text_string);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -935,6 +1016,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetAuthor(Under
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthorTextString(UnderlineAnnotationHandle* handle, PdfTextStringHandle** result)
+{
+    UnderlineAnnotation* obj = reinterpret_cast<UnderlineAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        bool contains = obj->GetAuthorTextString(text_string);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetModificationDate(UnderlineAnnotationHandle* handle, DateHandle** result)
 {
     UnderlineAnnotation* obj = reinterpret_cast<UnderlineAnnotation*>(handle);
@@ -1109,6 +1210,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetAuthor(Strik
     try
     {
         obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthorTextString(StrikeOutAnnotationHandle* handle, PdfTextStringHandle** result)
+{
+    StrikeOutAnnotation* obj = reinterpret_cast<StrikeOutAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        bool contains = obj->GetAuthorTextString(text_string);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -1291,6 +1412,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetAuthor(Squigg
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthorTextString(SquigglyAnnotationHandle* handle, PdfTextStringHandle** result)
+{
+    SquigglyAnnotation* obj = reinterpret_cast<SquigglyAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        bool contains = obj->GetAuthorTextString(text_string);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetModificationDate(SquigglyAnnotationHandle* handle, DateHandle** result)
 {
     SquigglyAnnotation* obj = reinterpret_cast<SquigglyAnnotation*>(handle);
@@ -1465,6 +1606,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetAuthor(InkAnnotati
     try
     {
         obj->SetAuthor(author);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthorTextString(InkAnnotationHandle* handle, PdfTextStringHandle** result)
+{
+    InkAnnotation* obj = reinterpret_cast<InkAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        bool contains = obj->GetAuthorTextString(text_string);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

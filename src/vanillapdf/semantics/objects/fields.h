@@ -5,6 +5,8 @@
 #include "semantics/objects/high_level_object.h"
 #include "semantics/objects/digital_signature.h"
 
+#include "utils/utils_fwd.h"
+
 namespace vanillapdf {
 namespace semantics {
 
@@ -36,6 +38,10 @@ public:
     bool GetAlternateName(syntax::OutputStringObjectPtr& result) const;
     bool GetFieldFlags(types::big_int& result) const;
     void SetFieldFlags(types::big_int value);
+
+    // text string overloads (encoding-aware)
+    bool GetNameTextString(OutputPdfTextStringPtr result) const;
+    bool GetAlternateNameTextString(OutputPdfTextStringPtr result) const;
 };
 
 class NonTerminalField : public Field {
@@ -62,6 +68,10 @@ public:
     void SetValue(syntax::StringObjectPtr value);
     bool GetDefaultValue(syntax::OutputStringObjectPtr& result) const;
     bool GetMaxLength(syntax::OutputIntegerObjectPtr& result) const;
+
+    // text string overloads (encoding-aware)
+    bool GetValueTextString(OutputPdfTextStringPtr result) const;
+    bool GetDefaultValueTextString(OutputPdfTextStringPtr result) const;
 };
 
 class ChoiceField : public Field {
@@ -73,6 +83,9 @@ public:
     void SetValue(syntax::StringObjectPtr value);
     bool GetOptionCount(types::size_type& result) const;
     bool GetOptionAt(types::size_type index, syntax::OutputContainableObjectPtr& result) const;
+
+    // text string overloads (encoding-aware)
+    bool GetValueTextString(OutputPdfTextStringPtr result) const;
 };
 
 class SignatureField : public Field {

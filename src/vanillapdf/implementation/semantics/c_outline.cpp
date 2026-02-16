@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "utils/pdf_text_string.h"
 
 #include "semantics/objects/outline.h"
 #include "semantics/objects/actions.h"
@@ -114,6 +115,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHan
         auto value = obj->Title();
         auto ptr = value.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitleTextString(OutlineItemHandle* handle, PdfTextStringHandle** result)
+{
+    OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto text_string = obj->TitleTextString();
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

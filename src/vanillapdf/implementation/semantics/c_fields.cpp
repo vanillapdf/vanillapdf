@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "utils/pdf_text_string.h"
 
 #include "semantics/objects/fields.h"
 #include "syntax/objects/dictionary_object.h"
@@ -72,6 +73,36 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateName(FieldHandle*
         if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetNameTextString(FieldHandle* handle, PdfTextStringHandle** result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        PdfTextStringPtr text_string;
+        auto contains = obj->GetNameTextString(text_string);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateNameTextString(FieldHandle* handle, PdfTextStringHandle** result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        PdfTextStringPtr text_string;
+        auto contains = obj->GetAlternateNameTextString(text_string);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -169,6 +200,36 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetDefaultValue(TextField
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetValueTextString(TextFieldHandle* handle, PdfTextStringHandle** result) {
+    TextField* obj = reinterpret_cast<TextField*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        PdfTextStringPtr text_string;
+        auto contains = obj->GetValueTextString(text_string);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetDefaultValueTextString(TextFieldHandle* handle, PdfTextStringHandle** result) {
+    TextField* obj = reinterpret_cast<TextField*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        PdfTextStringPtr text_string;
+        auto contains = obj->GetDefaultValueTextString(text_string);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetMaxLength(TextFieldHandle* handle, IntegerObjectHandle** result) {
     TextField* obj = reinterpret_cast<TextField*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -207,6 +268,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_SetValue(ChoiceFieldHan
 
     try {
         obj->SetValue(str);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetValueTextString(ChoiceFieldHandle* handle, PdfTextStringHandle** result) {
+    ChoiceField* obj = reinterpret_cast<ChoiceField*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        PdfTextStringPtr text_string;
+        auto contains = obj->GetValueTextString(text_string);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

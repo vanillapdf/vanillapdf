@@ -5,6 +5,8 @@
 #include "semantics/objects/high_level_object.h"
 #include "semantics/objects/actions.h"
 
+#include "utils/utils_fwd.h"
+
 #include "syntax/objects/name_object.h"
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/objects/array_object.h"
@@ -48,6 +50,7 @@ public:
     virtual Type GetOutlineType(void) const noexcept override;
 
     syntax::StringObjectPtr Title(void) const;
+    PdfTextStringPtr TitleTextString(void) const;
     OutlineBasePtr Parent(void) const;
     bool Prev(OutputOutlineItemPtr& result) const;
     bool Next(OutputOutlineItemPtr& result) const;

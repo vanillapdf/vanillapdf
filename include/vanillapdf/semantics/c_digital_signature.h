@@ -108,6 +108,26 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle* handle, ByteRangeCollectionHandle** result);
 
     /**
+    * \brief Get the contact info as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfoTextString(DigitalSignatureHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Get the reason as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReasonTextString(DigitalSignatureHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Get the location as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocationTextString(DigitalSignatureHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Get the signer name as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetNameTextString(DigitalSignatureHandle* handle, PdfTextStringHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref IUnknownHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_ToUnknown(DigitalSignatureHandle* handle, IUnknownHandle** result);

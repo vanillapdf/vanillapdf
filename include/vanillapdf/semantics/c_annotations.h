@@ -360,6 +360,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetContents(AnnotationHandle* handle, LiteralStringObjectHandle* value);
 
     /**
+    * \brief Get the annotation contents as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetContentsTextString(AnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
     * \brief Get the annotation color
     * \param handle a handle to the annotation class
     * \param result a pointer to variable that will contain the color upon success
@@ -446,6 +451,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetCreationDate(TextAnnotationHandle* handle, DateHandle* value);
 
     /**
+    * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthorTextString(TextAnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref AnnotationHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_ToBaseAnnotation(TextAnnotationHandle* handle, AnnotationHandle** result);
@@ -525,6 +535,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetCreationDate(HighlightAnnotationHandle* handle, DateHandle* value);
 
     /**
+    * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthorTextString(HighlightAnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref AnnotationHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_ToBaseAnnotation(HighlightAnnotationHandle* handle, AnnotationHandle** result);
@@ -598,6 +613,11 @@ extern "C"
     * \brief Set the annotation creation date (CreationDate entry, markup annotations)
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetCreationDate(FreeTextAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthorTextString(FreeTextAnnotationHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
@@ -688,6 +708,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetCreationDate(UnderlineAnnotationHandle* handle, DateHandle* value);
 
     /**
+    * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthorTextString(UnderlineAnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref AnnotationHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_ToBaseAnnotation(UnderlineAnnotationHandle* handle, AnnotationHandle** result);
@@ -774,6 +799,11 @@ extern "C"
     * \brief Set the annotation creation date (CreationDate entry, markup annotations)
     */
     VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetCreationDate(StrikeOutAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthorTextString(StrikeOutAnnotationHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
@@ -864,6 +894,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetCreationDate(SquigglyAnnotationHandle* handle, DateHandle* value);
 
     /**
+    * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthorTextString(SquigglyAnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref AnnotationHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_ToBaseAnnotation(SquigglyAnnotationHandle* handle, AnnotationHandle** result);
@@ -951,6 +986,11 @@ extern "C"
     * \brief Set the annotation creation date (CreationDate entry, markup annotations)
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetCreationDate(InkAnnotationHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthorTextString(InkAnnotationHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle

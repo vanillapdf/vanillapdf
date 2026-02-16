@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "utils/pdf_text_string.h"
 #include "semantics/objects/outline.h"
 #include "semantics/objects/actions.h"
 #include "semantics/objects/destinations.h"
@@ -25,6 +26,11 @@ OutlineItemColor::OutlineItemColor(syntax::ArrayObjectPtr<syntax::RealObjectPtr>
 
 syntax::StringObjectPtr OutlineItem::Title(void) const {
     return _obj->FindAs<syntax::StringObjectPtr>(constant::Name::Title);
+}
+
+PdfTextStringPtr OutlineItem::TitleTextString(void) const {
+    auto str = Title();
+    return PdfTextString::CreateFromStringObject(str);
 }
 
 OutlineBasePtr OutlineItem::Parent(void) const {

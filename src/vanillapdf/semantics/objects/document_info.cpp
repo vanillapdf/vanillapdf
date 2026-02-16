@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "utils/misc_utils.h"
+#include "utils/pdf_text_string.h"
 #include "syntax/files/file.h"
 
 #include "semantics/objects/document_info.h"
@@ -142,6 +143,48 @@ bool DocumentInfo::Trapped(DocumentTrapped& result) const {
 
     assert(false && "Document trapped is neither of name or string");
     return false;
+}
+
+bool DocumentInfo::TitleTextString(OutputPdfTextStringPtr result) const {
+    syntax::OutputStringObjectPtr str;
+    if (!Title(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
+}
+
+bool DocumentInfo::AuthorTextString(OutputPdfTextStringPtr result) const {
+    syntax::OutputStringObjectPtr str;
+    if (!Author(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
+}
+
+bool DocumentInfo::SubjectTextString(OutputPdfTextStringPtr result) const {
+    syntax::OutputStringObjectPtr str;
+    if (!Subject(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
+}
+
+bool DocumentInfo::KeywordsTextString(OutputPdfTextStringPtr result) const {
+    syntax::OutputStringObjectPtr str;
+    if (!Keywords(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
+}
+
+bool DocumentInfo::CreatorTextString(OutputPdfTextStringPtr result) const {
+    syntax::OutputStringObjectPtr str;
+    if (!Creator(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
+}
+
+bool DocumentInfo::ProducerTextString(OutputPdfTextStringPtr result) const {
+    syntax::OutputStringObjectPtr str;
+    if (!Producer(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
 void DocumentInfo::SetTitle(syntax::StringObjectPtr value) {

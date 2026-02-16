@@ -6,6 +6,8 @@
 #include "semantics/objects/high_level_object.h"
 #include "semantics/objects/date.h"
 
+#include "utils/utils_fwd.h"
+
 namespace vanillapdf {
 namespace semantics {
 
@@ -27,6 +29,14 @@ public:
     bool Keywords(syntax::OutputStringObjectPtr& result) const;
     bool Creator(syntax::OutputStringObjectPtr& result) const;
     bool Producer(syntax::OutputStringObjectPtr& result) const;
+
+    // text string overloads (encoding-aware)
+    bool TitleTextString(OutputPdfTextStringPtr result) const;
+    bool AuthorTextString(OutputPdfTextStringPtr result) const;
+    bool SubjectTextString(OutputPdfTextStringPtr result) const;
+    bool KeywordsTextString(OutputPdfTextStringPtr result) const;
+    bool CreatorTextString(OutputPdfTextStringPtr result) const;
+    bool ProducerTextString(OutputPdfTextStringPtr result) const;
     bool CreationDate(OutputDatePtr& result) const;
     bool ModificationDate(OutputDatePtr& result) const;
     bool Trapped(DocumentTrapped& result) const;

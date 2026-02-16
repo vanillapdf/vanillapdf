@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "utils/pdf_text_string.h"
 #include "semantics/objects/actions.h"
 
 #include "vanillapdf/semantics/c_actions.h"
@@ -104,6 +105,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION URIAction_GetURI(URIActionHandle* h
         auto value = obj->GetURI();
         auto ptr = value.AddRefGet();
         *result = reinterpret_cast<LiteralStringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION URIAction_GetURITextString(URIActionHandle* handle, PdfTextStringHandle** result)
+{
+    URIAction* obj = reinterpret_cast<URIAction*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto text_string = obj->GetURITextString();
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

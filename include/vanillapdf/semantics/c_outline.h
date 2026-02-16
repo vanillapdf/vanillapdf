@@ -164,6 +164,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHandle* handle, StringObjectHandle** result);
 
     /**
+    * \brief Get the outline title as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitleTextString(OutlineItemHandle* handle, PdfTextStringHandle** result);
+
+    /**
     * \brief
     * The parent of this item in the outline hierarchy.
     */

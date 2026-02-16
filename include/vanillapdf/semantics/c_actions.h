@@ -175,6 +175,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION URIAction_GetURI(URIActionHandle* handle, LiteralStringObjectHandle** result);
 
     /**
+    * \brief Get the URI as a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION URIAction_GetURITextString(URIActionHandle* handle, PdfTextStringHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref ActionHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION URIAction_ToAction(URIActionHandle* handle, ActionHandle** result);

@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "utils/pdf_text_string.h"
 #include "semantics/objects/document_info.h"
 #include "semantics/objects/date.h"
 
@@ -169,6 +170,110 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInf
             return VANILLAPDF_ERROR_GENERAL;
         }
 
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+// TextString overloads
+
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitleTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result)
+{
+    DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        auto contains = obj->TitleTextString(text_string);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthorTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result)
+{
+    DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        auto contains = obj->AuthorTextString(text_string);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubjectTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result)
+{
+    DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        auto contains = obj->SubjectTextString(text_string);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywordsTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result)
+{
+    DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        auto contains = obj->KeywordsTextString(text_string);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreatorTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result)
+{
+    DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        auto contains = obj->CreatorTextString(text_string);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducerTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result)
+{
+    DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        PdfTextStringPtr text_string;
+        auto contains = obj->ProducerTextString(text_string);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
