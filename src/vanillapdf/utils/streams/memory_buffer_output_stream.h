@@ -42,6 +42,10 @@ protected:
 
     std::shared_ptr<fmt::memory_buffer> m_buffer;
     types::stream_size m_position = 0;
+
+private:
+    void WriteData(const char* data, size_t len);
+    void WriteByte(char value);
 };
 
 } // vanillapdf

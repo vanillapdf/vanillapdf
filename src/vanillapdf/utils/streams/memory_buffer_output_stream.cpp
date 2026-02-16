@@ -3,6 +3,8 @@
 #include "utils/math_utils.h"
 #include "utils/streams/memory_buffer_output_stream.h"
 
+#include <cstring>
+
 namespace vanillapdf {
 
 MemoryBufferOutputStream::MemoryBufferOutputStream()
@@ -22,8 +24,7 @@ std::shared_ptr<fmt::memory_buffer> MemoryBufferOutputStream::CreateBuffer() {
 
 void MemoryBufferOutputStream::Write(const Buffer& data) {
     auto str = data.ToStringView();
-    m_buffer->append(str);
-    m_position += data.size();
+    WriteData(str.data(), str.size());
 }
 
 void MemoryBufferOutputStream::Write(const Buffer& data, types::stream_size size) {
@@ -32,76 +33,60 @@ void MemoryBufferOutputStream::Write(const Buffer& data, types::stream_size size
     auto str = data.ToStringView();
     auto substring = str.substr(0, size_converted);
 
-    m_buffer->append(substring);
-    m_position += substring.size();
+    WriteData(substring.data(), substring.size());
 }
 
 void MemoryBufferOutputStream::Write(std::string_view data) {
-    m_buffer->append(data);
-    m_position += data.size();
+    WriteData(data.data(), data.size());
 }
 
 void MemoryBufferOutputStream::Write(const char* str) {
     auto str_view = std::string_view(str);
-
-    m_buffer->append(str_view);
-    m_position += str_view.size();
+    WriteData(str_view.data(), str_view.size());
 }
 
 void MemoryBufferOutputStream::Write(char value) {
-    m_buffer->push_back(value);
-    m_position++;
+    WriteByte(value);
 }
 
 void MemoryBufferOutputStream::Write(unsigned char value) {
-    m_buffer->push_back(value);
-    m_position++;
+    WriteByte(static_cast<char>(value));
 }
 
 void MemoryBufferOutputStream::Write(WhiteSpace value) {
-    auto converted = static_cast<char>(value);
-
-    m_buffer->push_back(converted);
-    m_position++;
+    WriteByte(static_cast<char>(value));
 }
 
 void MemoryBufferOutputStream::Write(Delimiter value) {
-    auto converted = static_cast<char>(value);
-
-    m_buffer->push_back(converted);
-    m_position++;
+    WriteByte(static_cast<char>(value));
 }
 
 void MemoryBufferOutputStream::Write(int32_t value) {
     fmt::memory_buffer temp;
     fmt::format_to(std::back_inserter(temp), "{}", value);
 
-    m_buffer->append(temp.begin(), temp.end());
-    m_position += temp.size();
+    WriteData(temp.data(), temp.size());
 }
 
 void MemoryBufferOutputStream::Write(uint32_t value) {
     fmt::memory_buffer temp;
     fmt::format_to(std::back_inserter(temp), "{}", value);
 
-    m_buffer->append(temp.begin(), temp.end());
-    m_position += temp.size();
+    WriteData(temp.data(), temp.size());
 }
 
 void MemoryBufferOutputStream::Write(int64_t value) {
     fmt::memory_buffer temp;
     fmt::format_to(std::back_inserter(temp), "{}", value);
 
-    m_buffer->append(temp.begin(), temp.end());
-    m_position += temp.size();
+    WriteData(temp.data(), temp.size());
 }
 
 void MemoryBufferOutputStream::Write(uint64_t value) {
     fmt::memory_buffer temp;
     fmt::format_to(std::back_inserter(temp), "{}", value);
 
-    m_buffer->append(temp.begin(), temp.end());
-    m_position += temp.size();
+    WriteData(temp.data(), temp.size());
 }
 
 void MemoryBufferOutputStream::Flush(void) {
@@ -158,6 +143,29 @@ void MemoryBufferOutputStream::ExclusiveOutputUnlock() {
 
 std::string MemoryBufferOutputStream::ToString() const {
     return fmt::to_string(*m_buffer);
+}
+
+void MemoryBufferOutputStream::WriteData(const char* data, size_t len) {
+    auto pos = static_cast<size_t>(m_position);
+    auto end_pos = pos + len;
+
+    if (end_pos > m_buffer->size()) {
+        m_buffer->resize(end_pos);
+    }
+
+    std::memcpy(m_buffer->data() + pos, data, len);
+    m_position += len;
+}
+
+void MemoryBufferOutputStream::WriteByte(char value) {
+    auto pos = static_cast<size_t>(m_position);
+
+    if (pos >= m_buffer->size()) {
+        m_buffer->resize(pos + 1);
+    }
+
+    m_buffer->data()[pos] = value;
+    m_position += 1;
 }
 
 } // vanillapdf
