@@ -1,0 +1,175 @@
+name: Conformance check (qpdf)
+
+on:
+  workflow_dispatch:
+
+  pull_request:
+    branches: [ "main", "release/*" ]
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'scripts/conformance_check.py'
+      - 'scripts/conformance_check.cfg'
+      - '.github/workflows/conformance-check.yml'
+
+  schedule:
+    - cron: '0 4 * * 1'  # Every Monday at 4 AM UTC
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: read
+
+env:
+  VCPKG_ROOT: external/vcpkg
+  VCPKG_DISABLE_METRICS: 1
+
+jobs:
+
+  linux:
+    name: ubuntu.24.04-x64
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
+      options: --platform=linux/amd64
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      # Share vcpkg cache with sanity-check and nightly-check (same config)
+      - name: Cache vcpkg
+        uses: actions/cache@v5
+        with:
+          path: |
+            build/linux-x64-gcc/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/buildtrees
+            external/vcpkg/packages
+          key: vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-
+
+      - name: Install qpdf
+        run: apt-get update && apt-get install -y qpdf
+
+      - name: Bootstrap vcpkg
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+
+      - name: Configure
+        run: cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+
+      - name: Build vanillapdf.tools
+        run: cmake --build --preset linux-x64-gcc --target vanillapdf.tools
+
+      - name: Install vanillapdf.tools
+        run: cmake --install build/linux-x64-gcc --prefix install
+
+      - name: Run conformance check
+        run: |
+          python3 scripts/conformance_check.py \
+            --tools-binary install/bin/vanillapdf.tools \
+            --source-dir . \
+            --config scripts/conformance_check.cfg \
+            --verbose
+
+
+  windows:
+    name: win.2025-x64
+    runs-on: windows-2025
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      # Share vcpkg cache with sanity-check and nightly-check (same config)
+      - name: Cache vcpkg
+        uses: actions/cache@v5
+        with:
+          path: |
+            build/windows-x64-msvc-17/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/buildtrees
+            external/vcpkg/packages
+          key: vcpkg-${{ runner.os }}-win.2025-x64-windows-x64-msvc-17-${{ hashFiles('vcpkg.json.in') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-win.2025-x64-windows-x64-msvc-17-
+
+      - name: Install qpdf
+        run: choco install qpdf -y
+
+      - name: Bootstrap vcpkg
+        run: ${{ github.workspace }}\external\vcpkg\bootstrap-vcpkg.bat
+
+      - name: Configure
+        run: cmake --preset windows-x64-msvc-17 -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+
+      - name: Build vanillapdf.tools
+        run: cmake --build --preset windows-x64-msvc-17 --config Release --target vanillapdf.tools
+
+      - name: Install vanillapdf.tools
+        run: cmake --install build/windows-x64-msvc-17 --prefix install --config Release
+
+      - name: Run conformance check
+        run: |
+          $env:PATH = "build\windows-x64-msvc-17\vcpkg_installed\x64-windows\bin;$env:PATH"
+          python scripts/conformance_check.py --tools-binary install/bin/vanillapdf.tools.exe --source-dir . --config scripts/conformance_check.cfg --verbose
+
+
+  macos:
+    name: osx.15-arm64
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      # Share vcpkg cache with sanity-check and nightly-check (same config)
+      - name: Cache vcpkg
+        uses: actions/cache@v5
+        with:
+          path: |
+            build/macos-arm64/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/buildtrees
+            external/vcpkg/packages
+          key: vcpkg-${{ runner.os }}-osx.15-arm64-macos-arm64-${{ hashFiles('vcpkg.json.in') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-osx.15-arm64-macos-arm64-
+
+      - name: Install build tools and qpdf
+        run: brew install --quiet autoconf automake autoconf-archive qpdf
+
+      # TODO: Remove this workaround - see GitHub issue #125
+      - name: Fix JPEG library conflicts (macOS) - TEMPORARY WORKAROUND
+        run: |
+          echo "=== Unlinking conflicting JPEG packages ==="
+          brew unlink jpeg 2>/dev/null || echo "jpeg not linked or not found"
+          brew unlink jpeg-turbo 2>/dev/null || echo "jpeg-turbo not linked or not found"
+          brew unlink libjpeg 2>/dev/null || echo "libjpeg not linked or not found"
+
+      - name: Bootstrap vcpkg
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+
+      - name: Configure
+        run: cmake --preset macos-arm64 -DCMAKE_BUILD_TYPE=Release -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+
+      - name: Build vanillapdf.tools
+        run: cmake --build --preset macos-arm64 --target vanillapdf.tools
+
+      - name: Install vanillapdf.tools
+        run: cmake --install build/macos-arm64 --prefix install
+
+      - name: Run conformance check
+        run: |
+          python3 scripts/conformance_check.py \
+            --tools-binary install/bin/vanillapdf.tools \
+            --source-dir . \
+            --config scripts/conformance_check.cfg \
+            --verbose

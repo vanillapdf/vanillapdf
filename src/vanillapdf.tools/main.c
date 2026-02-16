@@ -25,6 +25,7 @@ void print_help() {
     printf("  encrypt         Encrypt a PDF document\n");
     printf("  decrypt         Decrypt a PDF document\n");
     printf("  read            Read a PDF using memory IO strategy\n");
+    printf("  resave          Re-save a PDF document\n");
     printf("  write_custom    Write PDF with custom handler\n");
     printf("\nOptions:\n");
     printf("  --help, -h      Show this help message\n");
@@ -91,6 +92,10 @@ int main(int argc, char *argv[]) {
 
     if (0 == strcmp(argv[1], "read")) {
         return process_read(argc - 2, &argv[2]);
+    }
+
+    if (0 == strcmp(argv[1], "resave")) {
+        return process_resave(argc - 2, &argv[2]);
     }
 
     if (0 == strcmp(argv[1], "write_custom")) {
