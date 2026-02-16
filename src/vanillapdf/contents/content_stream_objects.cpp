@@ -16,12 +16,10 @@ std::string TextObject::ToPdf() const {
     auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     BeginTextOperatorPtr bt;
-    stream->Write(bt->Value()->ToStringView());
-    stream->Write(WhiteSpace::LINE_FEED);
+    stream->WriteLine(bt->Value()->ToStringView());
 
     for (auto op : _operations) {
-        stream->Write(op->ToPdf());
-        stream->Write(WhiteSpace::LINE_FEED);
+        stream->WriteLine(op->ToPdf());
     }
 
     EndTextOperatorPtr et;
@@ -34,22 +32,18 @@ std::string InlineImageObject::ToPdf() const {
     auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     BeginInlineImageObjectOperatorPtr bi;
-    stream->Write(bi->Value()->ToStringView());
-    stream->Write(WhiteSpace::LINE_FEED);
+    stream->WriteLine(bi->Value()->ToStringView());
 
     // Image dictionary
     for (auto item : m_dictionary) {
         stream->Write(item.first->ToPdf());
         stream->Write(WhiteSpace::SPACE);
-        stream->Write(item.second->ToPdf());
-        stream->Write(WhiteSpace::LINE_FEED);
+        stream->WriteLine(item.second->ToPdf());
     }
 
     BeginInlineImageDataOperatorPtr id;
-    stream->Write(id->Value()->ToStringView());
-    stream->Write(WhiteSpace::LINE_FEED);
-    stream->Write(m_data->ToStringView());
-    stream->Write(WhiteSpace::LINE_FEED);
+    stream->WriteLine(id->Value()->ToStringView());
+    stream->WriteLine(m_data->ToStringView());
 
     EndInlineImageObjectOperatorPtr ei;
     stream->Write(ei->Value()->ToStringView());

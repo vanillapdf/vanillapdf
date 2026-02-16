@@ -561,8 +561,7 @@ std::string StreamObject::ToString(void) const {
     auto stream = StreamUtils::InputOutputStreamFromMemory();
     stream->Write(_header->ToString());
     stream->Write("stream: ");
-    stream->Write(std::to_string(GetBodyEncoded()->size()));
-    stream->Write(WhiteSpace::LINE_FEED);
+    stream->WriteLine(std::to_string(GetBodyEncoded()->size()));
     return stream->ToString();
 }
 

@@ -67,13 +67,11 @@ std::string DictionaryObject::ToString(void) const {
     ACCESS_LOCK_GUARD(m_access_lock);
 
     auto stream = StreamUtils::InputOutputStreamFromMemory();
-    stream->Write("<<");
-    stream->Write(WhiteSpace::LINE_FEED);
+    stream->WriteLine("<<");
     for (auto item : _list) {
         stream->Write(item.first->ToString());
         stream->Write(WhiteSpace::SPACE);
-        stream->Write(item.second->ToString());
-        stream->Write(WhiteSpace::LINE_FEED);
+        stream->WriteLine(item.second->ToString());
     }
 
     stream->Write(">>");

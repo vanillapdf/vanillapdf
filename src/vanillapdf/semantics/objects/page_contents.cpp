@@ -50,8 +50,7 @@ bool PageContents::RecalculateStreamData() {
 
     auto stream = StreamUtils::InputOutputStreamFromMemory();
     for (auto instruction : m_instructions) {
-        stream->Write(instruction->ToPdf());
-        stream->Write(WhiteSpace::LINE_FEED);
+        stream->WriteLine(instruction->ToPdf());
     }
 
     auto object = GetObject();

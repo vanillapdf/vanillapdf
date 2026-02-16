@@ -119,7 +119,7 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
     // TODO check the there is newline at the end
 
     // Make an extra newline before starting new xref section
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine();
 
     // Get all changed entries
     auto incremental_xref = CreateIncrementalXref(source, destination);
@@ -1244,17 +1244,15 @@ void FileWriter::WriteObject(IOutputStreamPtr output, ObjectPtr obj) {
     output->Write(WhiteSpace::SPACE);
     output->Write(obj->GetGenerationNumber());
     output->Write(WhiteSpace::SPACE);
-    output->Write("obj");
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine("obj");
 
     bool is_indirect = obj->IsIndirect();
     assert(is_indirect && "Written object is not indirect"); UNUSED(is_indirect);
 
     obj->ToPdfStreamUpdateOffset(output);
 
-    output->Write(WhiteSpace::LINE_FEED);
-    output->Write("endobj");
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine();
+    output->WriteLine("endobj");
 
     AfterObjectWrite(obj);
 }
@@ -1263,12 +1261,10 @@ void FileWriter::WriteXrefOffset(IOutputStreamPtr output, types::stream_offset o
 
     assert(offset >= 0 && "Attempting to write negative offset");
 
-    output->Write("startxref");
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine("startxref");
     output->Write(offset);
-    output->Write(WhiteSpace::LINE_FEED);
-    output->Write("%%EOF");
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine();
+    output->WriteLine("%%EOF");
 }
 
 void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
@@ -1300,7 +1296,7 @@ void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
         throw InvalidParameterException("Unknown PDF version: " + std::to_string(static_cast<int32_t>(version)));
     }
 
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine();
 
     // Quote from 7.5.2 File Header
     //
@@ -1324,7 +1320,7 @@ void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
     output->Write((unsigned char)0xAD);
     output->Write((unsigned char)0xC0);
     output->Write((unsigned char)0xDE);
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine();
 }
 
 void FileWriter::WriteXrefChain(IOutputStreamPtr output, XrefChainPtr chain) {
@@ -1439,8 +1435,7 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
     auto table_size = xref_table->GetSize();
     auto table_items = xref_table->Entries();
 
-    output->Write("xref");
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine("xref");
 
     for (decltype(table_size) i = 0; i < table_size;) {
         auto first = table_items[i];
@@ -1457,7 +1452,7 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
         output->Write(subsection_idx);
         output->Write(WhiteSpace::SPACE);
         output->Write(subsection_size);
-        output->Write(WhiteSpace::LINE_FEED);
+        output->WriteLine();
 
         for (decltype(subsection_size) j = 0; j < subsection_size; ++j) {
             auto entry = table_items[i + j];
@@ -1474,7 +1469,7 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
                 output->Write(WhiteSpace::SPACE);
                 output->Write('f');
                 output->Write(WhiteSpace::SPACE);
-                output->Write(WhiteSpace::LINE_FEED);
+                output->WriteLine();
                 continue;
             }
 
@@ -1495,7 +1490,7 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
                 output->Write(WhiteSpace::SPACE);
                 output->Write('n');
                 output->Write(WhiteSpace::SPACE);
-                output->Write(WhiteSpace::LINE_FEED);
+                output->WriteLine();
                 continue;
             }
         }
@@ -1506,10 +1501,8 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
     auto trailer = xref_table->GetTrailerDictionary();
     auto trailer_pdf = trailer->ToPdf();
 
-    output->Write("trailer");
-    output->Write(WhiteSpace::LINE_FEED);
-    output->Write(trailer_pdf);
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine("trailer");
+    output->WriteLine(trailer_pdf);
 }
 
 std::string FileWriter::GetFormattedOffset(types::stream_offset offset) {
@@ -1672,8 +1665,7 @@ void FileWriter::ApplyWatermarkPrependSave(StreamObjectPtr obj) {
     auto save_operation = make_deferred<contents::OperationSaveGraphicsState>();
 
     auto stream = StreamUtils::InputOutputStreamFromMemory();
-    stream->Write(save_operation->ToPdf());
-    stream->Write(WhiteSpace::LINE_FEED);
+    stream->WriteLine(save_operation->ToPdf());
 
     auto save_operation_text = stream->ToString();
 
@@ -1772,12 +1764,11 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr
     auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     // Separate from content
-    stream->Write(WhiteSpace::LINE_FEED);
+    stream->WriteLine();
 
     // Serialize instructions
     for (auto instruction : instructions) {
-        stream->Write(instruction->ToPdf());
-        stream->Write(WhiteSpace::LINE_FEED);
+        stream->WriteLine(instruction->ToPdf());
     }
 
     auto watermark_body = stream->ToString();
