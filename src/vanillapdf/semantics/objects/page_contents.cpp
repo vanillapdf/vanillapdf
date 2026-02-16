@@ -118,7 +118,6 @@ BaseInstructionCollectionPtr PageContents::Instructions(void) const {
         combined_stream->Write(*body);
     }
 
-    combined_stream->SetInputPosition(0);
     contents::ContentStreamParser parser(_obj->GetFile(), combined_stream);
 
     m_instructions = parser.ReadInstructions();
