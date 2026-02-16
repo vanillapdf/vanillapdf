@@ -40,11 +40,6 @@ void MemoryBufferOutputStream::Write(std::string_view data) {
     WriteData(data.data(), data.size());
 }
 
-void MemoryBufferOutputStream::Write(const char* str) {
-    auto str_view = std::string_view(str);
-    WriteData(str_view.data(), str_view.size());
-}
-
 void MemoryBufferOutputStream::Write(char value) {
     WriteByte(value);
 }
