@@ -10,10 +10,10 @@ git submodule update --init --recursive
 
 ## macOS JPEG Conflicts
 
-The project includes a workaround for JPEG library conflicts on macOS (see GitHub issue #125):
-```bash
-brew unlink jpeg jpeg-turbo libjpeg 2>/dev/null || true
-```
+macOS JPEG conflicts (GitHub issue #125) are addressed via build configuration.
+If you see `Wrong JPEG library version: library is 62, caller expects 80`, ensure you are
+using the repository presets (they set `VCPKG_PREFER_SYSTEM_LIBS=OFF`) and configure from
+a clean build directory.
 
 ## Windows Debug Build Issues
 

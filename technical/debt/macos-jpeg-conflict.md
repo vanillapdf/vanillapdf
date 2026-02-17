@@ -2,7 +2,7 @@
 
 **Priority:** Medium
 **Component:** CI/Build System
-**Status:** Workaround Active
+**Status:** Fixed in build configuration
 **GitHub Issue:** [#125](https://github.com/vanillapdf/vanillapdf/issues/125)
 
 ## Problem Summary
@@ -30,29 +30,10 @@ macOS CI runners fail with error: `"Wrong JPEG library version: library is 62, c
 
 ## Current Workaround
 
-### Implementation
-**Files Modified:**
-- `.github/workflows/sanity-check.yml`
-- `.github/workflows/build-nuget.yml`
-- `.github/workflows/nightly-check.yml`
-
-**Solution:**
-```bash
-brew unlink jpeg 2>/dev/null || echo "jpeg not linked or not found"
-brew unlink jpeg-turbo 2>/dev/null || echo "jpeg-turbo not linked or not found"
-brew unlink libjpeg 2>/dev/null || echo "libjpeg not linked or not found"
-```
-
-### Why This Works
-- Removes system JPEG library symlinks from search paths
-- Forces CMake to find only vcpkg JPEG libraries
-- Ensures compile-time and runtime use same library version
-
-### Limitations
-- **Environment manipulation**: Modifies system state rather than fixing build config
-- **Fragile**: Depends on specific Homebrew behavior
-- **Temporary**: Masks the real issue instead of solving it
-- **Maintenance burden**: Must be replicated across all macOS workflows
+### Status
+The Homebrew `brew unlink ...` workaround has been removed from CI workflows.
+The build is now fixed via vcpkg/CMake configuration (see below) so compile-time and runtime
+consistently use vcpkg-provided JPEG.
 
 ## Proper Solutions
 
@@ -99,9 +80,9 @@ endif()
 - ✅ Document the technical debt
 
 ### Phase 2: Proper Fix (TODO)
-1. **Test Option 1** on clean feature branch
-   - Add `VCPKG_PREFER_SYSTEM_LIBS=OFF` to cmake presets
-   - Test on both macOS-13 and macOS-15 runners
+1. **Test Option 1** on CI
+   - Ensure `VCPKG_PREFER_SYSTEM_LIBS=OFF` is present in `cmake/presets/shared.json`
+   - Verify on both Intel and Apple Silicon runners
    - Verify no regressions with other dependencies
 
 2. **Fallback to Option 2** if Option 1 has issues
@@ -109,7 +90,7 @@ endif()
    - Test thoroughly on all platforms
 
 3. **Validation**
-   - Remove workaround from all workflows
+   - Confirm no `brew unlink` workaround exists in workflows
    - Verify clean builds on all macOS runners
    - Test both Debug and Release configurations
 
