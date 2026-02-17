@@ -41,9 +41,6 @@ permissions:
 
 env:
   VCPKG_DISABLE_METRICS: 1
-  # Used by ports/vanillapdf/portfile.cmake to authenticate GitHub API
-  # calls in `vcpkg install --head` mode (prevents anonymous rate-limit 403s).
-  GITHUB_TOKEN: ${{ github.token }}
 
 jobs:
   setup:
@@ -222,11 +219,40 @@ jobs:
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
-      - name: Update portfile to use current branch
-        run: ./scripts/update_portfile_branch.sh "${{ github.head_ref || github.ref_name }}"
+      - name: Create authenticated overlay port (branch head)
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+          OVERLAY_PORTS="$RUNNER_TEMP/vcpkg-overlay-ports"
+          echo "Preparing overlay port for branch: $BRANCH"
+          mkdir -p "$OVERLAY_PORTS"
+          rm -rf "$OVERLAY_PORTS/vanillapdf"
+          cp -R "./ports/vanillapdf" "$OVERLAY_PORTS/vanillapdf"
+          PYTHON_BIN="python"
+          command -v "$PYTHON_BIN" >/dev/null 2>&1 || PYTHON_BIN="python3"
+          "$PYTHON_BIN" - "$OVERLAY_PORTS/vanillapdf/portfile.cmake" "$BRANCH" <<'PY'
+          import sys, pathlib
+          portfile = pathlib.Path(sys.argv[1])
+          branch = sys.argv[2]
+          txt = portfile.read_text(encoding="utf-8")
+          txt = txt.replace("HEAD_REF main", f"HEAD_REF {branch}")
+          if "AUTHORIZATION_TOKEN" not in txt:
+              txt = txt.replace(
+                  f"HEAD_REF {branch}\n",
+                  f"HEAD_REF {branch}\n    AUTHORIZATION_TOKEN \"$ENV{{GITHUB_TOKEN}}\"\n",
+              )
+          portfile.write_text(txt, encoding="utf-8")
+          print(f"Patched {portfile} for HEAD_REF={branch}")
+          PY
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
-        run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=x64-linux
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports="$RUNNER_TEMP/vcpkg-overlay-ports" --triplet=x64-linux
 
       - name: Configure CMake
         working-directory: examples/vcpkg-port-integration
@@ -266,12 +292,37 @@ jobs:
       - name: Bootstrap vcpkg
         run: .\external\vcpkg\bootstrap-vcpkg.bat
 
-      - name: Update portfile to use current branch
+      - name: Create authenticated overlay port (branch head)
         shell: bash
-        run: ./scripts/update_portfile_branch.sh "${{ github.head_ref || github.ref_name }}"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+          OVERLAY_PORTS="$RUNNER_TEMP/vcpkg-overlay-ports"
+          echo "Preparing overlay port for branch: $BRANCH"
+          mkdir -p "$OVERLAY_PORTS"
+          rm -rf "$OVERLAY_PORTS/vanillapdf"
+          cp -R "./ports/vanillapdf" "$OVERLAY_PORTS/vanillapdf"
+          PYTHON_BIN="python"
+          command -v "$PYTHON_BIN" >/dev/null 2>&1 || PYTHON_BIN="python3"
+          "$PYTHON_BIN" - "$OVERLAY_PORTS/vanillapdf/portfile.cmake" "$BRANCH" <<'PY'
+          import sys, pathlib
+          portfile = pathlib.Path(sys.argv[1])
+          branch = sys.argv[2]
+          txt = portfile.read_text(encoding="utf-8")
+          txt = txt.replace("HEAD_REF main", f"HEAD_REF {branch}")
+          if "AUTHORIZATION_TOKEN" not in txt:
+              txt = txt.replace(f"HEAD_REF {branch}\n", f"HEAD_REF {branch}\n    AUTHORIZATION_TOKEN \"$ENV{{GITHUB_TOKEN}}\"\n")
+          portfile.write_text(txt, encoding="utf-8")
+          print(f"Patched {portfile} for HEAD_REF={branch}")
+          PY
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
-        run: .\external\vcpkg\vcpkg.exe install vanillapdf --head --overlay-ports=./ports --triplet=x64-windows
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ./external/vcpkg/vcpkg.exe install vanillapdf --head --overlay-ports="$RUNNER_TEMP/vcpkg-overlay-ports" --triplet=x64-windows
 
       - name: Configure CMake
         working-directory: examples/vcpkg-port-integration
@@ -306,11 +357,37 @@ jobs:
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
-      - name: Update portfile to use current branch
-        run: ./scripts/update_portfile_branch.sh "${{ github.head_ref || github.ref_name }}"
+      - name: Create authenticated overlay port (branch head)
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+          OVERLAY_PORTS="$RUNNER_TEMP/vcpkg-overlay-ports"
+          echo "Preparing overlay port for branch: $BRANCH"
+          mkdir -p "$OVERLAY_PORTS"
+          rm -rf "$OVERLAY_PORTS/vanillapdf"
+          cp -R "./ports/vanillapdf" "$OVERLAY_PORTS/vanillapdf"
+          PYTHON_BIN="python"
+          command -v "$PYTHON_BIN" >/dev/null 2>&1 || PYTHON_BIN="python3"
+          "$PYTHON_BIN" - "$OVERLAY_PORTS/vanillapdf/portfile.cmake" "$BRANCH" <<'PY'
+          import sys, pathlib
+          portfile = pathlib.Path(sys.argv[1])
+          branch = sys.argv[2]
+          txt = portfile.read_text(encoding="utf-8")
+          txt = txt.replace("HEAD_REF main", f"HEAD_REF {branch}")
+          if "AUTHORIZATION_TOKEN" not in txt:
+              txt = txt.replace(f"HEAD_REF {branch}\n", f"HEAD_REF {branch}\n    AUTHORIZATION_TOKEN \"$ENV{{GITHUB_TOKEN}}\"\n")
+          portfile.write_text(txt, encoding="utf-8")
+          print(f"Patched {portfile} for HEAD_REF={branch}")
+          PY
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
-        run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=arm64-osx
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports="$RUNNER_TEMP/vcpkg-overlay-ports" --triplet=arm64-osx
 
       - name: Configure CMake
         working-directory: examples/vcpkg-port-integration
