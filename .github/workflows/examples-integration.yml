@@ -41,6 +41,9 @@ permissions:
 
 env:
   VCPKG_DISABLE_METRICS: 1
+  # Used by ports/vanillapdf/portfile.cmake to authenticate GitHub API
+  # calls in `vcpkg install --head` mode (prevents anonymous rate-limit 403s).
+  GITHUB_TOKEN: ${{ github.token }}
 
 jobs:
   setup:
