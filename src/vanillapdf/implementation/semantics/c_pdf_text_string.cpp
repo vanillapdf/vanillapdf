@@ -37,8 +37,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromRaw(BufferH
 
     try
     {
-        auto cloned = obj->Clone();
-        auto text_string = PdfTextString::CreateFromRaw(std::move(cloned));
+        auto text_string = PdfTextString::CreateFromRaw(obj);
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -53,8 +52,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf8(Buffer
 
     try
     {
-        auto cloned = obj->Clone();
-        auto text_string = PdfTextString::CreateFromUtf8(std::move(cloned));
+        auto text_string = PdfTextString::CreateFromUtf8(obj);
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -69,8 +67,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf16(Buffe
 
     try
     {
-        auto cloned = obj->Clone();
-        auto text_string = PdfTextString::CreateFromUtf16(std::move(cloned));
+        auto text_string = PdfTextString::CreateFromUtf16(obj);
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
