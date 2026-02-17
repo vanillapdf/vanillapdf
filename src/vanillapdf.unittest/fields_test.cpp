@@ -166,7 +166,7 @@ TEST(TextField, GetAndSetValue) {
     HandleGuard<BufferHandle, Buffer_Release> set_buf;
     ASSERT_EQ(Buffer_CreateFromData("John Doe", 8, set_buf.out()), VANILLAPDF_ERROR_SUCCESS);
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> new_value;
-    ASSERT_EQ(PdfTextString_CreateFromBuffer(set_buf, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(set_buf, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextField_SetValueText(text_field, new_value), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back
@@ -239,7 +239,7 @@ TEST(TextField, SetValueOverwrite) {
     HandleGuard<BufferHandle, Buffer_Release> set_buf;
     ASSERT_EQ(Buffer_CreateFromData("new value", 9, set_buf.out()), VANILLAPDF_ERROR_SUCCESS);
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> new_value;
-    ASSERT_EQ(PdfTextString_CreateFromBuffer(set_buf, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(set_buf, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextField_SetValueText(text_field, new_value), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back
@@ -322,7 +322,7 @@ TEST(ChoiceField, GetAndSetValue) {
     HandleGuard<BufferHandle, Buffer_Release> set_buf;
     ASSERT_EQ(Buffer_CreateFromData("Option B", 8, set_buf.out()), VANILLAPDF_ERROR_SUCCESS);
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> new_value;
-    ASSERT_EQ(PdfTextString_CreateFromBuffer(set_buf, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(set_buf, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(ChoiceField_SetValueText(choice_field, new_value), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back

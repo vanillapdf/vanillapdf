@@ -21,14 +21,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromStringObjec
     try
     {
         auto value = obj->GetValue();
-        auto text_string = PdfTextString::CreateFromRawBytes(std::move(value));
+        auto encoding = DetectTextStringEncoding(*value);
+        auto text_string = make_deferred<PdfTextString>(std::move(value), encoding);
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromBuffer(BufferHandle* handle, PdfTextStringHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromRaw(BufferHandle* handle, PdfTextStringHandle** result)
 {
     Buffer* obj = reinterpret_cast<Buffer*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -37,7 +38,39 @@ VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromBuffer(Buff
     try
     {
         auto cloned = obj->Clone();
-        auto text_string = PdfTextString::CreateFromRawBytes(std::move(cloned));
+        auto text_string = PdfTextString::CreateFromRaw(std::move(cloned));
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf8(BufferHandle* handle, PdfTextStringHandle** result)
+{
+    Buffer* obj = reinterpret_cast<Buffer*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto cloned = obj->Clone();
+        auto text_string = PdfTextString::CreateFromUtf8(std::move(cloned));
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf16(BufferHandle* handle, PdfTextStringHandle** result)
+{
+    Buffer* obj = reinterpret_cast<Buffer*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto cloned = obj->Clone();
+        auto text_string = PdfTextString::CreateFromUtf16(std::move(cloned));
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

@@ -607,7 +607,7 @@ TEST(Annotation, SetContents) {
 
     // Set contents
     ASSERT_EQ(Buffer_CreateFromData("New contents", 12, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromBuffer(buf, &contents), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &contents), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Annotation_SetContentsText(base_annot, contents), VANILLAPDF_ERROR_SUCCESS);
 
@@ -678,7 +678,7 @@ TEST(TextAnnotation, GetAndSetAuthor) {
 
     // Set author
     ASSERT_EQ(Buffer_CreateFromData("Test Author", 11, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromBuffer(buf, &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
@@ -1433,7 +1433,7 @@ TEST(HighlightAnnotation, GetAndSetAuthor) {
 
     // Set author
     ASSERT_EQ(Buffer_CreateFromData("Highlight Author", 16, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromBuffer(buf, &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(HighlightAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
@@ -1578,7 +1578,7 @@ TEST(FreeTextAnnotation, GetAndSetAuthor) {
 
     // Set author
     ASSERT_EQ(Buffer_CreateFromData("FreeText Author", 15, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromBuffer(buf, &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(FreeTextAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
@@ -1717,7 +1717,7 @@ TEST(UnderlineAnnotation, GetAndSetAuthor) {
 
     // Set author
     ASSERT_EQ(Buffer_CreateFromData("Underline Author", 16, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromBuffer(buf, &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(UnderlineAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
@@ -1915,7 +1915,7 @@ TEST(StrikeOutAnnotation, GetAndSetAuthor) {
 
     // Set author
     ASSERT_EQ(Buffer_CreateFromData("StrikeOut Author", 16, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromBuffer(buf, &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(StrikeOutAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
@@ -2177,7 +2177,7 @@ TEST(SquigglyAnnotation, GetAndSetAuthor) {
 
     // Set author
     ASSERT_EQ(Buffer_CreateFromData("Squiggly Author", 15, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromBuffer(buf, &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(SquigglyAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
@@ -2445,7 +2445,7 @@ TEST(InkAnnotation, GetAndSetAuthor) {
 
     // Set author
     ASSERT_EQ(Buffer_CreateFromData("Ink Author", 10, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromBuffer(buf, &author), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(InkAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 

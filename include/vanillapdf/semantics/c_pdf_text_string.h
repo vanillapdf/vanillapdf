@@ -34,13 +34,33 @@ extern "C"
 
     /**
     * \brief Create from a StringObject (literal or hexadecimal).
+    *
+    * Auto-detects encoding via BOM. Use this when reading strings from a PDF file.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromStringObject(StringObjectHandle* handle, PdfTextStringHandle** result);
 
     /**
-    * \brief Create from raw bytes in a buffer.
+    * \brief Create from raw PDF text string bytes.
+    *
+    * Auto-detects encoding via BOM (UTF-16BE or UTF-8) and falls back
+    * to PDFDocEncoding if no BOM is present. Mirrors \ref PdfTextString_GetStringRaw.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromBuffer(BufferHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromRaw(BufferHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Create from UTF-8 bytes.
+    *
+    * Converts to the optimal PDF storage encoding: PDFDocEncoding if all
+    * characters fit, otherwise UTF-16BE with BOM.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf8(BufferHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Create from UTF-16BE bytes (without BOM).
+    *
+    * Prepends the UTF-16BE BOM and stores the result.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf16(BufferHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Get the detected encoding of the original raw bytes.

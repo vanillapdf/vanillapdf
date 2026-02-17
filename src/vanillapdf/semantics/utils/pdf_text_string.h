@@ -27,22 +27,33 @@ public:
     /**
      * @brief Create from a StringObject (literal or hexadecimal).
      *
-     * Extracts the decoded value from the string object and detects its encoding.
+     * Extracts the decoded value from the string object and auto-detects
+     * its encoding via BOM. Use this when reading strings from a PDF file.
      */
     static PdfTextStringPtr CreateFromStringObject(syntax::StringObjectPtr obj);
 
     /**
-     * @brief Create from raw bytes with auto-detected encoding.
+     * @brief Create from raw PDF text string bytes.
+     *
+     * Auto-detects encoding via BOM (UTF-16BE or UTF-8) and falls back
+     * to PDFDocEncoding if no BOM is present. Mirrors \ref GetStringRaw.
      */
-    static PdfTextStringPtr CreateFromRawBytes(BufferPtr raw_data);
+    static PdfTextStringPtr CreateFromRaw(BufferPtr bytes);
 
     /**
-     * @brief Create from a UTF-8 std::string.
+     * @brief Create from UTF-8 bytes.
      *
-     * The raw bytes are set to the optimal PDF text string encoding
-     * (PDFDocEncoding if possible, otherwise UTF-16BE with BOM).
+     * Converts the input to the optimal PDF storage encoding:
+     * PDFDocEncoding if all characters fit, otherwise UTF-16BE with BOM.
      */
-    static PdfTextStringPtr CreateFromUtf8(const std::string& utf8_text);
+    static PdfTextStringPtr CreateFromUtf8(BufferPtr utf8_bytes);
+
+    /**
+     * @brief Create from UTF-16BE bytes (without BOM).
+     *
+     * Prepends the UTF-16BE BOM (0xFE 0xFF) and stores the result.
+     */
+    static PdfTextStringPtr CreateFromUtf16(BufferPtr utf16be_bytes);
 
     /**
      * @brief Get the detected encoding of the original raw bytes.
@@ -66,6 +77,7 @@ public:
 
     PdfTextString() = default;
     explicit PdfTextString(BufferPtr raw_data);
+    PdfTextString(BufferPtr raw_data, TextStringEncoding encoding);
 
 private:
     BufferPtr m_raw_data;

@@ -14,19 +14,36 @@ PdfTextString::PdfTextString(BufferPtr raw_data)
     , m_encoding(DetectTextStringEncoding(*m_raw_data)) {
 }
 
+PdfTextString::PdfTextString(BufferPtr raw_data, TextStringEncoding encoding)
+    : m_raw_data(std::move(raw_data))
+    , m_encoding(encoding) {
+}
+
 PdfTextStringPtr PdfTextString::CreateFromStringObject(syntax::StringObjectPtr obj) {
     auto value = obj->GetValue();
-    return make_deferred<PdfTextString>(std::move(value));
+    auto encoding = DetectTextStringEncoding(*value);
+    return make_deferred<PdfTextString>(std::move(value), encoding);
 }
 
-PdfTextStringPtr PdfTextString::CreateFromRawBytes(BufferPtr raw_data) {
-    return make_deferred<PdfTextString>(std::move(raw_data));
+PdfTextStringPtr PdfTextString::CreateFromRaw(BufferPtr bytes) {
+    return make_deferred<PdfTextString>(std::move(bytes));
 }
 
-PdfTextStringPtr PdfTextString::CreateFromUtf8(const std::string& utf8_text) {
-    auto utf8_buffer = make_deferred_container<Buffer>(utf8_text.begin(), utf8_text.end());
-    auto raw = Utf8ToTextString(*utf8_buffer);
-    return make_deferred<PdfTextString>(std::move(raw));
+PdfTextStringPtr PdfTextString::CreateFromUtf8(BufferPtr utf8_bytes) {
+    auto raw = Utf8ToTextString(*utf8_bytes);
+    auto encoding = DetectTextStringEncoding(*raw);
+    return make_deferred<PdfTextString>(std::move(raw), encoding);
+}
+
+PdfTextStringPtr PdfTextString::CreateFromUtf16(BufferPtr utf16be_bytes) {
+    // Prepend UTF-16BE BOM (0xFE 0xFF) so raw bytes are a valid PDF text string
+    std::string result;
+    result.reserve(2 + utf16be_bytes->size());
+    result.push_back(static_cast<char>(0xFE));
+    result.push_back(static_cast<char>(0xFF));
+    result.append(utf16be_bytes->data(), utf16be_bytes->size());
+    auto with_bom = make_deferred_container<Buffer>(result.begin(), result.end());
+    return make_deferred<PdfTextString>(std::move(with_bom), TextStringEncoding::UTF16BE);
 }
 
 TextStringEncoding PdfTextString::GetEncoding() const {
