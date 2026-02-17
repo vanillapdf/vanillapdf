@@ -2,7 +2,7 @@
 
 **Priority:** Medium
 **Component:** CI/Build System
-**Status:** Workaround Active
+**Status:** Resolved
 **GitHub Issue:** [#125](https://github.com/vanillapdf/vanillapdf/issues/125)
 
 ## Problem Summary
@@ -28,13 +28,14 @@ macOS CI runners fail with error: `"Wrong JPEG library version: library is 62, c
 - **macOS-15 (Apple Silicon ARM64)**: Libraries in `/opt/homebrew/lib/`
 - **Both architectures**: Same 28 symlinks removed by `brew unlink`
 
-## Current Workaround
+## Previous Workaround (REMOVED)
 
 ### Implementation
 **Files Modified:**
 - `.github/workflows/sanity-check.yml`
 - `.github/workflows/build-nuget.yml`
 - `.github/workflows/nightly-check.yml`
+- `.github/workflows/conformance-check.yml`
 
 **Solution:**
 ```bash
@@ -43,20 +44,21 @@ brew unlink jpeg-turbo 2>/dev/null || echo "jpeg-turbo not linked or not found"
 brew unlink libjpeg 2>/dev/null || echo "libjpeg not linked or not found"
 ```
 
-### Why This Works
+### Why This Worked
 - Removes system JPEG library symlinks from search paths
 - Forces CMake to find only vcpkg JPEG libraries
 - Ensures compile-time and runtime use same library version
 
-### Limitations
+### Limitations (why it was technical debt)
 - **Environment manipulation**: Modifies system state rather than fixing build config
 - **Fragile**: Depends on specific Homebrew behavior
 - **Temporary**: Masks the real issue instead of solving it
 - **Maintenance burden**: Must be replicated across all macOS workflows
 
-## Proper Solutions
+## Implemented Solution
 
-### Option 1: vcpkg Toolchain Configuration (RECOMMENDED)
+The project now disables system library preference in the vcpkg toolchain configuration so CMake/vcpkg consistently prefer the vcpkg-provided headers and libraries over system/Homebrew installs.
+
 ```json
 // cmake/presets/shared.json
 "cacheVariables": {
@@ -64,8 +66,9 @@ brew unlink libjpeg 2>/dev/null || echo "libjpeg not linked or not found"
 }
 ```
 
-**Pros:** Uses vcpkg's intended mechanism, clean, affects all dependencies
-**Cons:** May need testing with other dependencies
+This allows removing the CI workaround and avoids the header/runtime mismatch on macOS runners.
+
+## Alternative Solutions (not used)
 
 ### Option 2: Explicit vcpkg Paths
 ```cmake
@@ -98,24 +101,14 @@ endif()
 - ✅ Add TODO comments with clear references
 - ✅ Document the technical debt
 
-### Phase 2: Proper Fix (TODO)
-1. **Test Option 1** on clean feature branch
-   - Add `VCPKG_PREFER_SYSTEM_LIBS=OFF` to cmake presets
-   - Test on both macOS-13 and macOS-15 runners
-   - Verify no regressions with other dependencies
-
-2. **Fallback to Option 2** if Option 1 has issues
-   - Implement explicit vcpkg paths for JPEG
-   - Test thoroughly on all platforms
-
-3. **Validation**
-   - Remove workaround from all workflows
-   - Verify clean builds on all macOS runners
-   - Test both Debug and Release configurations
+### Phase 2: Proper Fix (DONE)
+1. Add `VCPKG_PREFER_SYSTEM_LIBS=OFF` to cmake presets (`cmake/presets/shared.json`)
+2. Remove workaround from all workflows
+3. Verify clean builds on macOS runners (x64 + ARM64), Debug + Release
 
 ### Phase 3: Cleanup
-- Remove all `TEMPORARY WORKAROUND` sections
-- Update this documentation as resolved
+- ✅ Remove all `TEMPORARY WORKAROUND` sections
+- ✅ Update this documentation as resolved
 - Close GitHub issue
 
 ## Timeline

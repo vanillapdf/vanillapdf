@@ -146,14 +146,6 @@ jobs:
       - name: Install build tools and qpdf
         run: brew install --quiet autoconf automake autoconf-archive qpdf
 
-      # TODO: Remove this workaround - see GitHub issue #125
-      - name: Fix JPEG library conflicts (macOS) - TEMPORARY WORKAROUND
-        run: |
-          echo "=== Unlinking conflicting JPEG packages ==="
-          brew unlink jpeg 2>/dev/null || echo "jpeg not linked or not found"
-          brew unlink jpeg-turbo 2>/dev/null || echo "jpeg-turbo not linked or not found"
-          brew unlink libjpeg 2>/dev/null || echo "libjpeg not linked or not found"
-
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
