@@ -135,6 +135,25 @@ jobs:
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
           cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
+      - name: Verify vcpkg does not prefer system libs (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          CACHE_FILE="build/${{ matrix.config.preset }}/CMakeCache.txt"
+          python3 - <<'PY'
+          import os, sys
+          cache_file = os.environ.get("CACHE_FILE")
+          if not cache_file:
+              print("CACHE_FILE env var not set", file=sys.stderr)
+              sys.exit(2)
+          with open(cache_file, "r", encoding="utf-8") as f:
+              cache = f.read()
+          needle = "VCPKG_PREFER_SYSTEM_LIBS:BOOL=OFF"
+          if needle not in cache:
+              print(f"Expected '{needle}' in {cache_file} but it was not found.", file=sys.stderr)
+              sys.exit(1)
+          print(f"OK: {needle}")
+          PY
+
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
 

@@ -10,6 +10,7 @@
             "generator": "Ninja",
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "x64-osx",
+                "VCPKG_PREFER_SYSTEM_LIBS": "OFF",
                 "CMAKE_OSX_ARCHITECTURES": "x86_64",
                 "PLATFORM_IDENTIFIER": "osx-x64"
             }
@@ -20,6 +21,7 @@
             "generator": "Ninja",
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "arm64-osx",
+                "VCPKG_PREFER_SYSTEM_LIBS": "OFF",
                 "CMAKE_OSX_ARCHITECTURES": "arm64",
                 "PLATFORM_IDENTIFIER": "osx-arm64"
             }

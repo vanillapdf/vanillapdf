@@ -152,6 +152,25 @@ jobs:
       - name: Configure
         run: cmake --preset macos-arm64 -DCMAKE_BUILD_TYPE=Release -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
 
+      - name: Verify vcpkg does not prefer system libs (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          CACHE_FILE="build/macos-arm64/CMakeCache.txt"
+          python3 - <<'PY'
+          import os, sys
+          cache_file = os.environ.get("CACHE_FILE")
+          if not cache_file:
+              print("CACHE_FILE env var not set", file=sys.stderr)
+              sys.exit(2)
+          with open(cache_file, "r", encoding="utf-8") as f:
+              cache = f.read()
+          needle = "VCPKG_PREFER_SYSTEM_LIBS:BOOL=OFF"
+          if needle not in cache:
+              print(f"Expected '{needle}' in {cache_file} but it was not found.", file=sys.stderr)
+              sys.exit(1)
+          print(f"OK: {needle}")
+          PY
+
       - name: Build vanillapdf.tools
         run: cmake --build --preset macos-arm64 --target vanillapdf.tools
 

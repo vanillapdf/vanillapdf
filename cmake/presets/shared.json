@@ -6,8 +6,7 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "VCPKG_PREFER_SYSTEM_LIBS": "OFF"
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             }
         }
     ],

@@ -57,10 +57,10 @@ brew unlink libjpeg 2>/dev/null || echo "libjpeg not linked or not found"
 
 ## Implemented Solution
 
-The project now disables system library preference in the vcpkg toolchain configuration so CMake/vcpkg consistently prefer the vcpkg-provided headers and libraries over system/Homebrew installs.
+The project now disables system library preference **on macOS presets** so CMake/vcpkg consistently prefer the vcpkg-provided headers and libraries over system/Homebrew installs (while leaving other platforms/presets free to opt into system-linking scenarios).
 
 ```json
-// cmake/presets/shared.json
+// cmake/presets/macos.json
 "cacheVariables": {
   "VCPKG_PREFER_SYSTEM_LIBS": "OFF"
 }
