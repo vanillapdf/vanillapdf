@@ -350,19 +350,24 @@ extern "C"
     * \param handle a handle to the annotation class
     * \param result a pointer to variable that will contain the contents string upon success
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetContents(AnnotationHandle* handle, LiteralStringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetContents(AnnotationHandle* handle, LiteralStringObjectHandle** result);
 
     /**
     * \brief Set the annotation contents (text)
     * \param handle a handle to the annotation class
     * \param value the contents string to set
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetContents(AnnotationHandle* handle, LiteralStringObjectHandle* value);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetContents(AnnotationHandle* handle, LiteralStringObjectHandle* value);
 
     /**
     * \brief Get the annotation contents as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetContentsTextString(AnnotationHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetContentsText(AnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Set the annotation contents from a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetContentsText(AnnotationHandle* handle, PdfTextStringHandle* value);
 
     /**
     * \brief Get the annotation color
@@ -423,12 +428,12 @@ extern "C"
     /**
     * \brief Get the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthor(TextAnnotationHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthor(TextAnnotationHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Set the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetAuthor(TextAnnotationHandle* handle, StringObjectHandle* value);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetAuthor(TextAnnotationHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Get the annotation modification date (M entry, markup annotations)
@@ -453,7 +458,12 @@ extern "C"
     /**
     * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthorTextString(TextAnnotationHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthorText(TextAnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Set the annotation author from a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_SetAuthorText(TextAnnotationHandle* handle, PdfTextStringHandle* value);
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
@@ -507,12 +517,12 @@ extern "C"
     /**
     * \brief Get the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthor(HighlightAnnotationHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthor(HighlightAnnotationHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Set the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetAuthor(HighlightAnnotationHandle* handle, StringObjectHandle* value);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetAuthor(HighlightAnnotationHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Get the annotation modification date (M entry, markup annotations)
@@ -537,7 +547,12 @@ extern "C"
     /**
     * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthorTextString(HighlightAnnotationHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthorText(HighlightAnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Set the annotation author from a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_SetAuthorText(HighlightAnnotationHandle* handle, PdfTextStringHandle* value);
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
@@ -587,12 +602,12 @@ extern "C"
     /**
     * \brief Get the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthor(FreeTextAnnotationHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthor(FreeTextAnnotationHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Set the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetAuthor(FreeTextAnnotationHandle* handle, StringObjectHandle* value);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetAuthor(FreeTextAnnotationHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Get the annotation modification date (M entry, markup annotations)
@@ -617,7 +632,12 @@ extern "C"
     /**
     * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthorTextString(FreeTextAnnotationHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthorText(FreeTextAnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Set the annotation author from a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_SetAuthorText(FreeTextAnnotationHandle* handle, PdfTextStringHandle* value);
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
@@ -680,12 +700,12 @@ extern "C"
     /**
     * \brief Get the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthor(UnderlineAnnotationHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthor(UnderlineAnnotationHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Set the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetAuthor(UnderlineAnnotationHandle* handle, StringObjectHandle* value);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetAuthor(UnderlineAnnotationHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Get the annotation modification date (M entry, markup annotations)
@@ -710,7 +730,12 @@ extern "C"
     /**
     * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthorTextString(UnderlineAnnotationHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthorText(UnderlineAnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Set the annotation author from a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_SetAuthorText(UnderlineAnnotationHandle* handle, PdfTextStringHandle* value);
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
@@ -773,12 +798,12 @@ extern "C"
     /**
     * \brief Get the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthor(StrikeOutAnnotationHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthor(StrikeOutAnnotationHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Set the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetAuthor(StrikeOutAnnotationHandle* handle, StringObjectHandle* value);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetAuthor(StrikeOutAnnotationHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Get the annotation modification date (M entry, markup annotations)
@@ -803,7 +828,12 @@ extern "C"
     /**
     * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthorTextString(StrikeOutAnnotationHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthorText(StrikeOutAnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Set the annotation author from a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_SetAuthorText(StrikeOutAnnotationHandle* handle, PdfTextStringHandle* value);
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
@@ -866,12 +896,12 @@ extern "C"
     /**
     * \brief Get the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthor(SquigglyAnnotationHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthor(SquigglyAnnotationHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Set the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetAuthor(SquigglyAnnotationHandle* handle, StringObjectHandle* value);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetAuthor(SquigglyAnnotationHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Get the annotation modification date (M entry, markup annotations)
@@ -896,7 +926,12 @@ extern "C"
     /**
     * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthorTextString(SquigglyAnnotationHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthorText(SquigglyAnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Set the annotation author from a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_SetAuthorText(SquigglyAnnotationHandle* handle, PdfTextStringHandle* value);
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
@@ -960,12 +995,12 @@ extern "C"
     /**
     * \brief Get the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthor(InkAnnotationHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthor(InkAnnotationHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Set the annotation author (T entry, markup annotations)
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetAuthor(InkAnnotationHandle* handle, StringObjectHandle* value);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetAuthor(InkAnnotationHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Get the annotation modification date (M entry, markup annotations)
@@ -990,7 +1025,12 @@ extern "C"
     /**
     * \brief Get the annotation author as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthorTextString(InkAnnotationHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthorText(InkAnnotationHandle* handle, PdfTextStringHandle** result);
+
+    /**
+    * \brief Set the annotation author from a \ref PdfTextStringHandle (encoding-aware).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_SetAuthorText(InkAnnotationHandle* handle, PdfTextStringHandle* value);
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle

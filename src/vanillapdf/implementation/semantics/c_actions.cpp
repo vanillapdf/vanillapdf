@@ -109,7 +109,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION URIAction_GetURI(URIActionHandle* h
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION URIAction_GetURITextString(URIActionHandle* handle, PdfTextStringHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION URIAction_GetURIText(URIActionHandle* handle, PdfTextStringHandle** result)
 {
     URIAction* obj = reinterpret_cast<URIAction*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -117,7 +117,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION URIAction_GetURITextString(URIActio
 
     try
     {
-        auto text_string = obj->GetURITextString();
+        PdfTextStringPtr text_string;
+        if (!obj->GetURIText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

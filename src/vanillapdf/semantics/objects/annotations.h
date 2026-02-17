@@ -66,7 +66,8 @@ public:
     void SetRect(RectanglePtr rect);
     bool GetContents(syntax::OutputLiteralStringObjectPtr& result) const;
     void SetContents(syntax::LiteralStringObjectPtr contents);
-    PdfTextStringPtr GetContentsTextString() const;
+    bool GetContentsText(PdfTextStringPtr& result) const;
+    void SetContentsText(PdfTextStringPtr text);
     bool GetColor(OutputColorPtr& result) const;
     void SetColor(ColorPtr color);
     Flags GetFlags() const;
@@ -92,7 +93,8 @@ public:
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
     void SetCreationDate(DatePtr date);
-    PdfTextStringPtr GetAuthorTextString() const;
+    bool GetAuthorText(PdfTextStringPtr& result) const;
+    void SetAuthorText(PdfTextStringPtr text);
 };
 
 class LinkAnnotation : public AnnotationBase {
@@ -123,7 +125,8 @@ public:
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
     void SetCreationDate(DatePtr date);
-    PdfTextStringPtr GetAuthorTextString() const;
+    bool GetAuthorText(PdfTextStringPtr& result) const;
+    void SetAuthorText(PdfTextStringPtr text);
 };
 
 class LineAnnotation : public AnnotationBase {
@@ -174,7 +177,8 @@ public:
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
     void SetCreationDate(DatePtr date);
-    PdfTextStringPtr GetAuthorTextString() const;
+    bool GetAuthorText(PdfTextStringPtr& result) const;
+    void SetAuthorText(PdfTextStringPtr text);
 };
 
 class UnderlineAnnotation : public AnnotationBase {
@@ -195,7 +199,8 @@ public:
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
     void SetCreationDate(DatePtr date);
-    PdfTextStringPtr GetAuthorTextString() const;
+    bool GetAuthorText(PdfTextStringPtr& result) const;
+    void SetAuthorText(PdfTextStringPtr text);
 };
 
 class SquigglyAnnotation : public AnnotationBase {
@@ -216,7 +221,8 @@ public:
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
     void SetCreationDate(DatePtr date);
-    PdfTextStringPtr GetAuthorTextString() const;
+    bool GetAuthorText(PdfTextStringPtr& result) const;
+    void SetAuthorText(PdfTextStringPtr text);
 };
 
 class StrikeOutAnnotation : public AnnotationBase {
@@ -237,7 +243,8 @@ public:
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
     void SetCreationDate(DatePtr date);
-    PdfTextStringPtr GetAuthorTextString() const;
+    bool GetAuthorText(PdfTextStringPtr& result) const;
+    void SetAuthorText(PdfTextStringPtr text);
 };
 
 class RubberStampAnnotation : public AnnotationBase {
@@ -270,7 +277,8 @@ public:
     void SetModificationDate(DatePtr date);
     bool GetCreationDate(OutputDatePtr& result) const;
     void SetCreationDate(DatePtr date);
-    PdfTextStringPtr GetAuthorTextString() const;
+    bool GetAuthorText(PdfTextStringPtr& result) const;
+    void SetAuthorText(PdfTextStringPtr text);
 };
 
 class PopupAnnotation : public AnnotationBase {

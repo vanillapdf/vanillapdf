@@ -78,28 +78,32 @@ bool DigitalSignature::Name(syntax::OutputStringObjectPtr& result) {
     return true;
 }
 
-PdfTextStringPtr DigitalSignature::ReasonTextString() {
+bool DigitalSignature::ReasonText(PdfTextStringPtr& result) {
     syntax::OutputStringObjectPtr str;
-    if (!Reason(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!Reason(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
-PdfTextStringPtr DigitalSignature::LocationTextString() {
+bool DigitalSignature::LocationText(PdfTextStringPtr& result) {
     syntax::OutputStringObjectPtr str;
-    if (!Location(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!Location(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
-PdfTextStringPtr DigitalSignature::ContactInfoTextString() {
+bool DigitalSignature::ContactInfoText(PdfTextStringPtr& result) {
     syntax::OutputStringObjectPtr str;
-    if (!ContactInfo(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!ContactInfo(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
-PdfTextStringPtr DigitalSignature::NameTextString() {
+bool DigitalSignature::NameText(PdfTextStringPtr& result) {
     syntax::OutputStringObjectPtr str;
-    if (!Name(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!Name(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
 bool DigitalSignature::Revision(syntax::OutputIntegerObjectPtr& result) {

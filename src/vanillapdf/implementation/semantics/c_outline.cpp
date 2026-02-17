@@ -119,7 +119,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHan
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitleTextString(OutlineItemHandle* handle, PdfTextStringHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitleText(OutlineItemHandle* handle, PdfTextStringHandle** result)
 {
     OutlineItem* obj = reinterpret_cast<OutlineItem*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -127,7 +127,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitleTextString(Outl
 
     try
     {
-        auto text_string = obj->TitleTextString();
+        PdfTextStringPtr text_string;
+        if (!obj->TitleText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

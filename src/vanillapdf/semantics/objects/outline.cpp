@@ -28,9 +28,10 @@ syntax::StringObjectPtr OutlineItem::Title(void) const {
     return _obj->FindAs<syntax::StringObjectPtr>(constant::Name::Title);
 }
 
-PdfTextStringPtr OutlineItem::TitleTextString(void) const {
+bool OutlineItem::TitleText(PdfTextStringPtr& result) const {
     auto str = Title();
-    return PdfTextString::CreateFromStringObject(str);
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
 OutlineBasePtr OutlineItem::Parent(void) const {

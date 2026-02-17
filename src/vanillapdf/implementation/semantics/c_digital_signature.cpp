@@ -146,56 +146,56 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(Digit
 
 // TextString overloads
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfoTextString(DigitalSignatureHandle* handle, PdfTextStringHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfoText(DigitalSignatureHandle* handle, PdfTextStringHandle** result) {
     DigitalSignature* obj = reinterpret_cast<DigitalSignature*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        auto text_string = obj->ContactInfoTextString();
-        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        PdfTextStringPtr text_string;
+        if (!obj->ContactInfoText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReasonTextString(DigitalSignatureHandle* handle, PdfTextStringHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReasonText(DigitalSignatureHandle* handle, PdfTextStringHandle** result) {
     DigitalSignature* obj = reinterpret_cast<DigitalSignature*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        auto text_string = obj->ReasonTextString();
-        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        PdfTextStringPtr text_string;
+        if (!obj->ReasonText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocationTextString(DigitalSignatureHandle* handle, PdfTextStringHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocationText(DigitalSignatureHandle* handle, PdfTextStringHandle** result) {
     DigitalSignature* obj = reinterpret_cast<DigitalSignature*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        auto text_string = obj->LocationTextString();
-        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        PdfTextStringPtr text_string;
+        if (!obj->LocationText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetNameTextString(DigitalSignatureHandle* handle, PdfTextStringHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetNameText(DigitalSignatureHandle* handle, PdfTextStringHandle** result) {
     DigitalSignature* obj = reinterpret_cast<DigitalSignature*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        auto text_string = obj->NameTextString();
-        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        PdfTextStringPtr text_string;
+        if (!obj->NameText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

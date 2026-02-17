@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "semantics/objects/page_labels.h"
+#include "semantics/utils/pdf_text_string.h"
 
 #include "vanillapdf/semantics/c_page_labels.h"
 #include "implementation/c_helper.h"
@@ -102,6 +103,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle* ha
             return VANILLAPDF_ERROR_GENERAL;
         }
 
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_PrefixText(PageLabelHandle* handle, PdfTextStringHandle** result) {
+    PageLabel* obj = reinterpret_cast<PageLabel*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        PdfTextStringPtr text_string;
+        if (!obj->PrefixText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = text_string.AddRefGet();
+        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

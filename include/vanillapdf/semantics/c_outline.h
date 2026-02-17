@@ -161,12 +161,12 @@ extern "C"
     * \brief
     * The text that shall be displayed on the screen for this item.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitle(OutlineItemHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Get the outline title as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitleTextString(OutlineItemHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetTitleText(OutlineItemHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief

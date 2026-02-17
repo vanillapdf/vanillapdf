@@ -24,10 +24,10 @@ public:
     bool Name(syntax::OutputStringObjectPtr& result);
 
     // text string overloads (encoding-aware)
-    PdfTextStringPtr ReasonTextString();
-    PdfTextStringPtr LocationTextString();
-    PdfTextStringPtr ContactInfoTextString();
-    PdfTextStringPtr NameTextString();
+    bool ReasonText(PdfTextStringPtr& result);
+    bool LocationText(PdfTextStringPtr& result);
+    bool ContactInfoText(PdfTextStringPtr& result);
+    bool NameText(PdfTextStringPtr& result);
     bool Revision(syntax::OutputIntegerObjectPtr& result);
     bool SubFilter(syntax::OutputNameObjectPtr& result);
     bool Certificate(syntax::OutputStringObjectPtr& result);

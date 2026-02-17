@@ -176,7 +176,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInf
 
 // TextString overloads
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitleTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitleText(DocumentInfoHandle* handle, PdfTextStringHandle** result)
 {
     DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -184,15 +184,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitleTextString(Doc
 
     try
     {
-        auto text_string = obj->TitleTextString();
-        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        PdfTextStringPtr text_string;
+        if (!obj->TitleText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthorTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthorText(DocumentInfoHandle* handle, PdfTextStringHandle** result)
 {
     DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -200,15 +200,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthorTextString(Do
 
     try
     {
-        auto text_string = obj->AuthorTextString();
-        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        PdfTextStringPtr text_string;
+        if (!obj->AuthorText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubjectTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubjectText(DocumentInfoHandle* handle, PdfTextStringHandle** result)
 {
     DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -216,15 +216,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubjectTextString(D
 
     try
     {
-        auto text_string = obj->SubjectTextString();
-        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        PdfTextStringPtr text_string;
+        if (!obj->SubjectText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywordsTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywordsText(DocumentInfoHandle* handle, PdfTextStringHandle** result)
 {
     DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -232,15 +232,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywordsTextString(
 
     try
     {
-        auto text_string = obj->KeywordsTextString();
-        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        PdfTextStringPtr text_string;
+        if (!obj->KeywordsText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreatorTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreatorText(DocumentInfoHandle* handle, PdfTextStringHandle** result)
 {
     DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -248,15 +248,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreatorTextString(D
 
     try
     {
-        auto text_string = obj->CreatorTextString();
-        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        PdfTextStringPtr text_string;
+        if (!obj->CreatorText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducerTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducerText(DocumentInfoHandle* handle, PdfTextStringHandle** result)
 {
     DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -264,8 +264,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducerTextString(
 
     try
     {
-        auto text_string = obj->ProducerTextString();
-        if (text_string == nullptr) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        PdfTextStringPtr text_string;
+        if (!obj->ProducerText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

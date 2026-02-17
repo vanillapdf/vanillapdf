@@ -145,40 +145,46 @@ bool DocumentInfo::Trapped(DocumentTrapped& result) const {
     return false;
 }
 
-PdfTextStringPtr DocumentInfo::TitleTextString() const {
+bool DocumentInfo::TitleText(PdfTextStringPtr& result) const {
     syntax::OutputStringObjectPtr str;
-    if (!Title(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!Title(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
-PdfTextStringPtr DocumentInfo::AuthorTextString() const {
+bool DocumentInfo::AuthorText(PdfTextStringPtr& result) const {
     syntax::OutputStringObjectPtr str;
-    if (!Author(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!Author(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
-PdfTextStringPtr DocumentInfo::SubjectTextString() const {
+bool DocumentInfo::SubjectText(PdfTextStringPtr& result) const {
     syntax::OutputStringObjectPtr str;
-    if (!Subject(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!Subject(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
-PdfTextStringPtr DocumentInfo::KeywordsTextString() const {
+bool DocumentInfo::KeywordsText(PdfTextStringPtr& result) const {
     syntax::OutputStringObjectPtr str;
-    if (!Keywords(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!Keywords(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
-PdfTextStringPtr DocumentInfo::CreatorTextString() const {
+bool DocumentInfo::CreatorText(PdfTextStringPtr& result) const {
     syntax::OutputStringObjectPtr str;
-    if (!Creator(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!Creator(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
-PdfTextStringPtr DocumentInfo::ProducerTextString() const {
+bool DocumentInfo::ProducerText(PdfTextStringPtr& result) const {
     syntax::OutputStringObjectPtr str;
-    if (!Producer(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!Producer(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
 void DocumentInfo::SetTitle(syntax::StringObjectPtr value) {

@@ -79,10 +79,10 @@ syntax::LiteralStringObjectPtr URIAction::GetURI() const {
     return _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::URI);
 }
 
-PdfTextStringPtr URIAction::GetURITextString() const {
+bool URIAction::GetURIText(PdfTextStringPtr& result) const {
     auto str = GetURI();
-    auto value = str->GetValue();
-    return PdfTextString::CreateFromRawBytes(std::move(value));
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
 bool GoToRemoteAction::Destination(OutputDestinationPtr& result) const {

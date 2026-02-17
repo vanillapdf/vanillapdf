@@ -60,22 +60,22 @@ extern "C"
     /**
     * \brief The document's title.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief The name of the person who created the document.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentInfoHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentInfoHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief The subject of the document.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentInfoHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentInfoHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Keywords associated with the document.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(DocumentInfoHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(DocumentInfoHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief
@@ -83,14 +83,14 @@ extern "C"
     * the name of the conforming product that created the original
     * document from which it was converted.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentInfoHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentInfoHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief
     * If the document was converted to PDF from another format,
     * the name of the conforming product that converted it to PDF.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(DocumentInfoHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(DocumentInfoHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief The date and time the document was created.
@@ -110,32 +110,32 @@ extern "C"
     /**
     * \brief Get the document title as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitleTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitleText(DocumentInfoHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Get the document author as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthorTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthorText(DocumentInfoHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Get the document subject as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubjectTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubjectText(DocumentInfoHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Get the document keywords as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywordsTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywordsText(DocumentInfoHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Get the document creator as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreatorTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreatorText(DocumentInfoHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Get the document producer as a \ref PdfTextStringHandle (encoding-aware).
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducerTextString(DocumentInfoHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducerText(DocumentInfoHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle

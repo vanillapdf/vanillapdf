@@ -48,7 +48,7 @@ public:
     virtual Type GetOutlineType(void) const noexcept override;
 
     syntax::StringObjectPtr Title(void) const;
-    PdfTextStringPtr TitleTextString(void) const;
+    bool TitleText(PdfTextStringPtr& result) const;
     OutlineBasePtr Parent(void) const;
     bool Prev(OutputOutlineItemPtr& result) const;
     bool Next(OutputOutlineItemPtr& result) const;

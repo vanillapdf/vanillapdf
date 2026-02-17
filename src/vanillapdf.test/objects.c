@@ -394,3 +394,25 @@ error_type process_attribute_list(ObjectAttributeListHandle* attributes, int nes
 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
+
+error_type process_pdf_text_string(PdfTextStringHandle* text_string, int nested) {
+    BufferHandle* utf8_buffer = NULL;
+    TextStringEncodingType encoding = TextStringEncodingType_Undefined;
+
+    print_spaces(nested);
+    print_text("PDF text string begin\n");
+
+    RETURN_ERROR_IF_NOT_SUCCESS(PdfTextString_GetEncoding(text_string, &encoding));
+
+    print_spaces(nested + 1);
+    print_text("Encoding: %d\n", encoding);
+
+    RETURN_ERROR_IF_NOT_SUCCESS(PdfTextString_GetStringUtf8(text_string, &utf8_buffer));
+    RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(utf8_buffer, nested + 1));
+    RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(utf8_buffer));
+
+    print_spaces(nested);
+    print_text("PDF text string end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}

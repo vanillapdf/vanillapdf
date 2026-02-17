@@ -64,11 +64,11 @@ TEST(Field, GetName) {
     HandleGuard<FieldHandle, Field_Release> field;
     ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    HandleGuard<StringObjectHandle, StringObject_Release> name;
-    ASSERT_EQ(Field_GetName(field, name.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> name;
+    ASSERT_EQ(Field_GetNameText(field, name.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(StringObject_GetValue(name, buf.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_GetStringUtf8(name, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     string_type data = nullptr;
     size_type len = 0;
@@ -83,8 +83,8 @@ TEST(Field, GetNameMissing) {
     HandleGuard<FieldHandle, Field_Release> field;
     ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    HandleGuard<StringObjectHandle, StringObject_Release> name;
-    ASSERT_EQ(Field_GetName(field, name.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> name;
+    ASSERT_EQ(Field_GetNameText(field, name.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 }
 
 TEST(Field, GetAlternateName) {
@@ -95,11 +95,11 @@ TEST(Field, GetAlternateName) {
     HandleGuard<FieldHandle, Field_Release> field;
     ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    HandleGuard<StringObjectHandle, StringObject_Release> alt_name;
-    ASSERT_EQ(Field_GetAlternateName(field, alt_name.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> alt_name;
+    ASSERT_EQ(Field_GetAlternateNameText(field, alt_name.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(StringObject_GetValue(alt_name, buf.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_GetStringUtf8(alt_name, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     string_type data = nullptr;
     size_type len = 0;
@@ -159,22 +159,22 @@ TEST(TextField, GetAndSetValue) {
     ASSERT_EQ(TextField_FromField(field, text_field.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Initially missing
-    HandleGuard<StringObjectHandle, StringObject_Release> value;
-    ASSERT_EQ(TextField_GetValue(text_field, value.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> value;
+    ASSERT_EQ(TextField_GetValueText(text_field, value.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 
     // Set value
-    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> new_literal;
-    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("John Doe", new_literal.out()), VANILLAPDF_ERROR_SUCCESS);
-    HandleGuard<StringObjectHandle, StringObject_Release> new_value;
-    ASSERT_EQ(LiteralStringObject_ToStringObject(new_literal, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(TextField_SetValue(text_field, new_value), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<BufferHandle, Buffer_Release> set_buf;
+    ASSERT_EQ(Buffer_CreateFromData("John Doe", 8, set_buf.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> new_value;
+    ASSERT_EQ(PdfTextString_CreateFromBuffer(set_buf, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextField_SetValueText(text_field, new_value), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back
-    HandleGuard<StringObjectHandle, StringObject_Release> read_value;
-    ASSERT_EQ(TextField_GetValue(text_field, read_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> read_value;
+    ASSERT_EQ(TextField_GetValueText(text_field, read_value.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(StringObject_GetValue(read_value, buf.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_GetStringUtf8(read_value, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     string_type data = nullptr;
     size_type len = 0;
@@ -193,11 +193,11 @@ TEST(TextField, GetDefaultValue) {
     HandleGuard<TextFieldHandle, TextField_Release> text_field;
     ASSERT_EQ(TextField_FromField(field, text_field.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    HandleGuard<StringObjectHandle, StringObject_Release> dv;
-    ASSERT_EQ(TextField_GetDefaultValue(text_field, dv.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> dv;
+    ASSERT_EQ(TextField_GetDefaultValueText(text_field, dv.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(StringObject_GetValue(dv, buf.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_GetStringUtf8(dv, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     string_type data = nullptr;
     size_type len = 0;
@@ -236,18 +236,18 @@ TEST(TextField, SetValueOverwrite) {
     ASSERT_EQ(TextField_FromField(field, text_field.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Overwrite existing value
-    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> new_literal;
-    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("new value", new_literal.out()), VANILLAPDF_ERROR_SUCCESS);
-    HandleGuard<StringObjectHandle, StringObject_Release> new_value;
-    ASSERT_EQ(LiteralStringObject_ToStringObject(new_literal, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(TextField_SetValue(text_field, new_value), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<BufferHandle, Buffer_Release> set_buf;
+    ASSERT_EQ(Buffer_CreateFromData("new value", 9, set_buf.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> new_value;
+    ASSERT_EQ(PdfTextString_CreateFromBuffer(set_buf, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextField_SetValueText(text_field, new_value), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back
-    HandleGuard<StringObjectHandle, StringObject_Release> read_value;
-    ASSERT_EQ(TextField_GetValue(text_field, read_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> read_value;
+    ASSERT_EQ(TextField_GetValueText(text_field, read_value.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(StringObject_GetValue(read_value, buf.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_GetStringUtf8(read_value, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     string_type data = nullptr;
     size_type len = 0;
@@ -315,22 +315,22 @@ TEST(ChoiceField, GetAndSetValue) {
     ASSERT_EQ(ChoiceField_FromField(field, choice_field.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Initially missing
-    HandleGuard<StringObjectHandle, StringObject_Release> value;
-    ASSERT_EQ(ChoiceField_GetValue(choice_field, value.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> value;
+    ASSERT_EQ(ChoiceField_GetValueText(choice_field, value.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 
     // Set value
-    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> new_literal;
-    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Option B", new_literal.out()), VANILLAPDF_ERROR_SUCCESS);
-    HandleGuard<StringObjectHandle, StringObject_Release> new_value;
-    ASSERT_EQ(LiteralStringObject_ToStringObject(new_literal, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(ChoiceField_SetValue(choice_field, new_value), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<BufferHandle, Buffer_Release> set_buf;
+    ASSERT_EQ(Buffer_CreateFromData("Option B", 8, set_buf.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> new_value;
+    ASSERT_EQ(PdfTextString_CreateFromBuffer(set_buf, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ChoiceField_SetValueText(choice_field, new_value), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back
-    HandleGuard<StringObjectHandle, StringObject_Release> read_value;
-    ASSERT_EQ(ChoiceField_GetValue(choice_field, read_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> read_value;
+    ASSERT_EQ(ChoiceField_GetValueText(choice_field, read_value.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(StringObject_GetValue(read_value, buf.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_GetStringUtf8(read_value, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     string_type data = nullptr;
     size_type len = 0;

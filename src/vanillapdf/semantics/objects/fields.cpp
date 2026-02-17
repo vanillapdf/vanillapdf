@@ -4,6 +4,7 @@
 #include "semantics/objects/fields.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
+#include "syntax/objects/string_object.h"
 #include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
@@ -79,16 +80,18 @@ void Field::SetFieldFlags(types::big_int value) {
     _obj->Insert(constant::Name::Ff, flags);
 }
 
-PdfTextStringPtr Field::GetNameTextString() const {
+bool Field::GetNameText(PdfTextStringPtr& result) const {
     syntax::OutputStringObjectPtr str;
-    if (!GetName(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!GetName(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
-PdfTextStringPtr Field::GetAlternateNameTextString() const {
+bool Field::GetAlternateNameText(PdfTextStringPtr& result) const {
     syntax::OutputStringObjectPtr str;
-    if (!GetAlternateName(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!GetAlternateName(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
 // ButtonField properties
@@ -147,16 +150,24 @@ bool TextField::GetMaxLength(syntax::OutputIntegerObjectPtr& result) const {
     return true;
 }
 
-PdfTextStringPtr TextField::GetValueTextString() const {
+bool TextField::GetValueText(PdfTextStringPtr& result) const {
     syntax::OutputStringObjectPtr str;
-    if (!GetValue(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!GetValue(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
-PdfTextStringPtr TextField::GetDefaultValueTextString() const {
+void TextField::SetValueText(PdfTextStringPtr text) {
+    auto raw = text->GetStringRaw();
+    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
+    SetValue(str_obj);
+}
+
+bool TextField::GetDefaultValueText(PdfTextStringPtr& result) const {
     syntax::OutputStringObjectPtr str;
-    if (!GetDefaultValue(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!GetDefaultValue(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
 }
 
 // ChoiceField properties
@@ -198,10 +209,17 @@ bool ChoiceField::GetOptionAt(types::size_type index, syntax::OutputContainableO
     return true;
 }
 
-PdfTextStringPtr ChoiceField::GetValueTextString() const {
+bool ChoiceField::GetValueText(PdfTextStringPtr& result) const {
     syntax::OutputStringObjectPtr str;
-    if (!GetValue(str)) return PdfTextStringPtr();
-    return PdfTextString::CreateFromStringObject(str);
+    if (!GetValue(str)) return false;
+    result = PdfTextString::CreateFromStringObject(str);
+    return true;
+}
+
+void ChoiceField::SetValueText(PdfTextStringPtr text) {
+    auto raw = text->GetStringRaw();
+    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
+    SetValue(str_obj);
 }
 
 // SignatureField properties

@@ -128,7 +128,15 @@ extern "C"
     * Ensure the iterator is valid.
     * \see \ref DestinationNameTreeIterator_IsValid
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_GetKey(DestinationNameTreeIteratorHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_GetKey(DestinationNameTreeIteratorHandle* handle, StringObjectHandle** result);
+
+    /**
+    * \brief Get the key (name) at the current iterator position as a \ref PdfTextStringHandle.
+    *
+    * Ensure the iterator is valid.
+    * \see \ref DestinationNameTreeIterator_IsValid
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_GetKeyText(DestinationNameTreeIteratorHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Get the value (destination) at the current iterator position.

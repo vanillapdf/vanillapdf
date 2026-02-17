@@ -38,8 +38,8 @@ public:
     void SetFieldFlags(types::big_int value);
 
     // text string overloads (encoding-aware)
-    PdfTextStringPtr GetNameTextString() const;
-    PdfTextStringPtr GetAlternateNameTextString() const;
+    bool GetNameText(PdfTextStringPtr& result) const;
+    bool GetAlternateNameText(PdfTextStringPtr& result) const;
 };
 
 class NonTerminalField : public Field {
@@ -68,8 +68,9 @@ public:
     bool GetMaxLength(syntax::OutputIntegerObjectPtr& result) const;
 
     // text string overloads (encoding-aware)
-    PdfTextStringPtr GetValueTextString() const;
-    PdfTextStringPtr GetDefaultValueTextString() const;
+    bool GetValueText(PdfTextStringPtr& result) const;
+    void SetValueText(PdfTextStringPtr text);
+    bool GetDefaultValueText(PdfTextStringPtr& result) const;
 };
 
 class ChoiceField : public Field {
@@ -83,7 +84,8 @@ public:
     bool GetOptionAt(types::size_type index, syntax::OutputContainableObjectPtr& result) const;
 
     // text string overloads (encoding-aware)
-    PdfTextStringPtr GetValueTextString() const;
+    bool GetValueText(PdfTextStringPtr& result) const;
+    void SetValueText(PdfTextStringPtr text);
 };
 
 class SignatureField : public Field {
