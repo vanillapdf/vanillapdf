@@ -460,33 +460,33 @@ jobs:
       - name: Resolve Android NDK path
         run: |
           NDK_PATH="$(python3 - <<'PY'
-import glob
-import os
-import re
-import sys
+          import glob
+          import os
+          import re
+          import sys
 
-for env_key in ("ANDROID_NDK_ROOT", "ANDROID_NDK_HOME", "ANDROID_NDK_LATEST_HOME"):
-    candidate = os.environ.get(env_key)
-    if candidate and os.path.isdir(candidate):
-        print(candidate)
-        sys.exit(0)
+          for env_key in ("ANDROID_NDK_ROOT", "ANDROID_NDK_HOME", "ANDROID_NDK_LATEST_HOME"):
+              candidate = os.environ.get(env_key)
+              if candidate and os.path.isdir(candidate):
+                  print(candidate)
+                  sys.exit(0)
 
-bundle = "/usr/local/lib/android/sdk/ndk-bundle"
-if os.path.isdir(bundle):
-    print(bundle)
-    sys.exit(0)
+          bundle = "/usr/local/lib/android/sdk/ndk-bundle"
+          if os.path.isdir(bundle):
+              print(bundle)
+              sys.exit(0)
 
-ndk_candidates = [p for p in glob.glob("/usr/local/lib/android/sdk/ndk/*") if os.path.isdir(p)]
-if not ndk_candidates:
-    sys.exit(1)
+          ndk_candidates = [p for p in glob.glob("/usr/local/lib/android/sdk/ndk/*") if os.path.isdir(p)]
+          if not ndk_candidates:
+              sys.exit(1)
 
-def sort_key(path):
-    name = os.path.basename(path)
-    return [int(part) if part.isdigit() else part for part in re.split(r"[.-]", name)]
+          def sort_key(path):
+              name = os.path.basename(path)
+              return [int(part) if part.isdigit() else part for part in re.split(r"[.-]", name)]
 
-ndk_candidates.sort(key=sort_key)
-print(ndk_candidates[-1])
-PY
+          ndk_candidates.sort(key=sort_key)
+          print(ndk_candidates[-1])
+          PY
           )"
 
           if [ -z "${NDK_PATH}" ] || [ ! -d "${NDK_PATH}" ]; then
