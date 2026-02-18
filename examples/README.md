@@ -5,7 +5,6 @@ This directory contains practical examples demonstrating VanillaPDF integration 
 ## Available Examples
 
 - **[`fetchcontent-integration/`](fetchcontent-integration/)** - Complete CMake FetchContent integration example with cross-platform testing
-- **[`android-ndk-integration/`](android-ndk-integration/)** - Android NDK cross-compilation example for arm64/arm/x64 ABIs
 
 ## Documentation
 

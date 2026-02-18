@@ -5,7 +5,6 @@
 
 <ul>
 <li>\ref example_fetchcontent_integration - FetchContent integration with cross-platform testing
-<li>\ref example_android_ndk_integration - Android NDK integration with ABI cross-compilation
 </ul>
 
 \section examples_api API Usage Examples
@@ -139,18 +138,6 @@ Additional resources:
 * and demonstrates proper resource management with VanillaPDF C API.
 */
 
-/**
-* \example examples/android-ndk-integration/CMakeLists.txt
-* Android NDK integration example demonstrating vcpkg chainloading with the
-* Android toolchain for RID-compatible ABI builds.
-*/
-
-/**
-* \example examples/android-ndk-integration/main.cpp
-* Build-only Android smoke target used to validate cross-compilation and
-* linking against vanillapdf on Android ABIs.
-*/
-
 /*!
 \page example_fetchcontent_integration FetchContent Integration Example
 
@@ -189,31 +176,5 @@ across all supported platforms.
 
 \note When using FetchContent, you are responsible for managing VanillaPDF's dependencies
 through system package managers or other packaging systems.
-*/
-
-/*!
-\page example_android_ndk_integration Android NDK Integration Example
-
-The Android NDK integration example demonstrates how to cross-compile
-vanillapdf for Android using CMake presets and vcpkg chainloading.
-
-\section android_ndk_features Features Demonstrated
-
-- **Android toolchain integration**: Uses Android NDK with CMake and Ninja
-- **RID-compatible ABI mapping**: Presets map to `android-arm64`, `android-arm`, `android-x64`
-- **vcpkg chainload flow**: Android NDK toolchain chained from vcpkg for dependency resolution
-- **CI validation**: Build-only matrix validation for multiple Android ABIs
-
-\section android_ndk_usage Quick Usage
-
-\code{.bash}
-export ANDROID_NDK_ROOT=/path/to/android/ndk
-cd examples/android-ndk-integration
-cmake --preset android-arm64-release
-cmake --build --preset android-arm64-release
-\endcode
-
-\note This integration scenario validates cross-compilation and linking. The
-produced binaries are not executed on the host CI machine.
 */
 

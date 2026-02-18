@@ -5,7 +5,6 @@ Integration Examples
 --------------------
 
 - :doc:`FetchContent Integration <fetchcontent_integration>` — FetchContent integration with cross-platform testing
-- :doc:`Android NDK Integration <android_ndk_integration>` — Android cross-compilation with NDK toolchain presets
 
 API Usage Examples
 ------------------

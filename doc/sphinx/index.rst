@@ -21,7 +21,6 @@ Cross-platform toolkit for creating and modifying PDF documents.
    signature_verification
    examples
    fetchcontent_integration
-   android_ndk_integration
    packaging
 
 .. toctree::

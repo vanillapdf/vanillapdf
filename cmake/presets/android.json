@@ -5,93 +5,51 @@
     ],
     "configurePresets": [
         {
-            "name": "android-common",
-            "hidden": true,
+            "name": "android-arm64",
             "inherits": "default",
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_SYSTEM_NAME": "Android",
                 "CMAKE_SYSTEM_VERSION": "21",
-                "ANDROID_PLATFORM": "21",
-                "CMAKE_ANDROID_NDK": "$env{ANDROID_NDK_ROOT}",
-                "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
-                "CMAKE_ANDROID_STL_TYPE": "c++_static"
-            }
-        },
-        {
-            "name": "android-arm64",
-            "inherits": "android-common",
-            "cacheVariables": {
-                "ANDROID_ABI": "arm64-v8a",
                 "CMAKE_ANDROID_ARCH_ABI": "arm64-v8a",
-                "VCPKG_TARGET_TRIPLET": "arm64-android",
+                "CMAKE_ANDROID_STL_TYPE": "c++_static",
                 "PLATFORM_IDENTIFIER": "android-arm64"
             }
         },
         {
-            "name": "android-arm",
-            "inherits": "android-common",
+            "name": "android-armv7",
+            "inherits": "default",
+            "generator": "Ninja",
             "cacheVariables": {
-                "ANDROID_ABI": "armeabi-v7a",
+                "CMAKE_SYSTEM_NAME": "Android",
+                "CMAKE_SYSTEM_VERSION": "21",
                 "CMAKE_ANDROID_ARCH_ABI": "armeabi-v7a",
-                "VCPKG_TARGET_TRIPLET": "arm-neon-android",
-                "PLATFORM_IDENTIFIER": "android-arm"
-            }
-        },
-        {
-            "name": "android-x64",
-            "inherits": "android-common",
-            "cacheVariables": {
-                "ANDROID_ABI": "x86_64",
-                "CMAKE_ANDROID_ARCH_ABI": "x86_64",
-                "VCPKG_TARGET_TRIPLET": "x64-android",
-                "PLATFORM_IDENTIFIER": "android-x64"
+                "CMAKE_ANDROID_STL_TYPE": "c++_static",
+                "PLATFORM_IDENTIFIER": "android-armv7"
             }
         },
         {
             "name": "android-x86",
-            "inherits": "android-common",
+            "inherits": "default",
+            "generator": "Ninja",
             "cacheVariables": {
-                "ANDROID_ABI": "x86",
+                "CMAKE_SYSTEM_NAME": "Android",
+                "CMAKE_SYSTEM_VERSION": "21",
                 "CMAKE_ANDROID_ARCH_ABI": "x86",
-                "VCPKG_TARGET_TRIPLET": "x86-android",
+                "CMAKE_ANDROID_STL_TYPE": "c++_static",
                 "PLATFORM_IDENTIFIER": "android-x86"
             }
         },
         {
-            "name": "android-armv7",
-            "inherits": "android-arm"
-        },
-        {
             "name": "android-x86_64",
-            "inherits": "android-x64"
-        },
-        {
-            "name": "linux-bionic-arm64",
-            "inherits": "android-arm64",
+            "inherits": "default",
+            "generator": "Ninja",
             "cacheVariables": {
-                "PLATFORM_IDENTIFIER": "linux-bionic-arm64"
-            }
-        },
-        {
-            "name": "linux-bionic-arm",
-            "inherits": "android-arm",
-            "cacheVariables": {
-                "PLATFORM_IDENTIFIER": "linux-bionic-arm"
-            }
-        },
-        {
-            "name": "linux-bionic-x64",
-            "inherits": "android-x64",
-            "cacheVariables": {
-                "PLATFORM_IDENTIFIER": "linux-bionic-x64"
-            }
-        },
-        {
-            "name": "linux-bionic-x86",
-            "inherits": "android-x86",
-            "cacheVariables": {
-                "PLATFORM_IDENTIFIER": "linux-bionic-x86"
+                "CMAKE_SYSTEM_NAME": "Android",
+                "CMAKE_SYSTEM_VERSION": "21",
+                "CMAKE_ANDROID_ARCH_ABI": "x86_64",
+                "CMAKE_ANDROID_STL_TYPE": "c++_static",
+                "PLATFORM_IDENTIFIER": "android-x86_64"
             }
         }
     ],
@@ -101,14 +59,6 @@
             "configurePreset": "android-arm64"
         },
         {
-            "name": "android-arm",
-            "configurePreset": "android-arm"
-        },
-        {
-            "name": "android-x64",
-            "configurePreset": "android-x64"
-        },
-        {
             "name": "android-armv7",
             "configurePreset": "android-armv7"
         },
@@ -119,22 +69,6 @@
         {
             "name": "android-x86_64",
             "configurePreset": "android-x86_64"
-        },
-        {
-            "name": "linux-bionic-arm64",
-            "configurePreset": "linux-bionic-arm64"
-        },
-        {
-            "name": "linux-bionic-arm",
-            "configurePreset": "linux-bionic-arm"
-        },
-        {
-            "name": "linux-bionic-x64",
-            "configurePreset": "linux-bionic-x64"
-        },
-        {
-            "name": "linux-bionic-x86",
-            "configurePreset": "linux-bionic-x86"
         }
     ],
     "testPresets": [
@@ -143,14 +77,6 @@
             "configurePreset": "android-arm64"
         },
         {
-            "name": "android-arm",
-            "configurePreset": "android-arm"
-        },
-        {
-            "name": "android-x64",
-            "configurePreset": "android-x64"
-        },
-        {
             "name": "android-armv7",
             "configurePreset": "android-armv7"
         },
@@ -161,22 +87,6 @@
         {
             "name": "android-x86_64",
             "configurePreset": "android-x86_64"
-        },
-        {
-            "name": "linux-bionic-arm64",
-            "configurePreset": "linux-bionic-arm64"
-        },
-        {
-            "name": "linux-bionic-arm",
-            "configurePreset": "linux-bionic-arm"
-        },
-        {
-            "name": "linux-bionic-x64",
-            "configurePreset": "linux-bionic-x64"
-        },
-        {
-            "name": "linux-bionic-x86",
-            "configurePreset": "linux-bionic-x86"
         }
     ]
 }
