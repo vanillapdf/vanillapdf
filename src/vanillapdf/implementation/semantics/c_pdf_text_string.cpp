@@ -20,54 +20,50 @@ VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromStringObjec
 
     try
     {
-        auto value = obj->GetValue();
-        auto encoding = DetectTextStringEncoding(*value);
-        auto text_string = make_deferred<PdfTextString>(std::move(value), encoding);
+        StringObjectPtr str_obj(obj);
+        auto text_string = PdfTextString::CreateFromStringObject(str_obj);
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromRaw(BufferHandle* handle, PdfTextStringHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromRaw(string_type data, size_type size, PdfTextStringHandle** result)
 {
-    Buffer* obj = reinterpret_cast<Buffer*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try
     {
-        auto text_string = PdfTextString::CreateFromRaw(obj);
+        auto text_string = PdfTextString::CreateFromRaw(std::string_view(data, size));
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf8(BufferHandle* handle, PdfTextStringHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf8(string_type data, size_type size, PdfTextStringHandle** result)
 {
-    Buffer* obj = reinterpret_cast<Buffer*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try
     {
-        auto text_string = PdfTextString::CreateFromUtf8(obj);
+        auto text_string = PdfTextString::CreateFromUtf8(std::string_view(data, size));
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf16(BufferHandle* handle, PdfTextStringHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf16(string_type data, size_type size, PdfTextStringHandle** result)
 {
-    Buffer* obj = reinterpret_cast<Buffer*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try
     {
-        auto text_string = PdfTextString::CreateFromUtf16(obj);
+        auto text_string = PdfTextString::CreateFromUtf16(std::string_view(data, size));
         auto ptr = text_string.AddRefGet();
         *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -140,6 +136,75 @@ VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_GetStringUtf16(PdfTex
         auto utf16 = obj->GetStringUtf16();
         auto ptr = utf16.AddRefGet();
         *result = reinterpret_cast<BufferHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_SetStringRaw(PdfTextStringHandle* handle, string_type data, size_type size)
+{
+    PdfTextString* obj = reinterpret_cast<PdfTextString*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+
+    try
+    {
+        obj->SetStringRaw(std::string_view(data, size));
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_SetStringUtf8(PdfTextStringHandle* handle, string_type data, size_type size)
+{
+    PdfTextString* obj = reinterpret_cast<PdfTextString*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+
+    try
+    {
+        obj->SetStringUtf8(std::string_view(data, size));
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_SetStringUtf16(PdfTextStringHandle* handle, string_type data, size_type size)
+{
+    PdfTextString* obj = reinterpret_cast<PdfTextString*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+
+    try
+    {
+        obj->SetStringUtf16(std::string_view(data, size));
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_GetStringObject(PdfTextStringHandle* handle, StringObjectHandle** result)
+{
+    PdfTextString* obj = reinterpret_cast<PdfTextString*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto str_obj = obj->GetStringObject();
+        auto ptr = str_obj.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_SetStringObject(PdfTextStringHandle* handle, StringObjectHandle* value)
+{
+    PdfTextString* obj = reinterpret_cast<PdfTextString*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(value);
+
+    try
+    {
+        StringObjectBase* str_base = reinterpret_cast<StringObjectBase*>(value);
+        StringObjectPtr str_obj(str_base);
+        obj->SetStringObject(str_obj);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

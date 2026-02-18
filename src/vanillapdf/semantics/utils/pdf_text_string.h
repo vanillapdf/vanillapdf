@@ -7,6 +7,8 @@
 
 #include "syntax/utils/syntax_fwd.h"
 
+#include <string_view>
+
 namespace vanillapdf {
 namespace semantics {
 
@@ -20,6 +22,9 @@ using PdfTextStringPtr = Deferred<PdfTextString>;
  * can be encoded as PDFDocEncoding, UTF-16BE, or UTF-8. This class detects
  * the encoding from BOM markers and provides conversion to common formats.
  *
+ * Backed by a StringObjectPtr so mutations propagate to the underlying
+ * PDF string object.
+ *
  * Conversions are computed fresh on each call (no caching).
  */
 class PdfTextString : public IUnknown {
@@ -27,18 +32,21 @@ public:
     /**
      * @brief Create from a StringObject (literal or hexadecimal).
      *
-     * Extracts the decoded value from the string object and auto-detects
-     * its encoding via BOM. Use this when reading strings from a PDF file.
+     * Wraps the given string object directly. Use this when reading
+     * strings from a PDF file — mutations via Set methods will
+     * propagate back to the original object.
      */
     static PdfTextStringPtr CreateFromStringObject(syntax::StringObjectPtr obj);
 
     /**
      * @brief Create from raw PDF text string bytes.
      *
-     * Auto-detects encoding via BOM (UTF-16BE or UTF-8) and falls back
-     * to PDFDocEncoding if no BOM is present. Mirrors \ref GetStringRaw.
+     * Creates a new LiteralStringObject from the given data and
+     * auto-detects encoding via BOM (UTF-16BE or UTF-8), falling
+     * back to PDFDocEncoding if no BOM is present.
+     * Mirrors \ref GetStringRaw.
      */
-    static PdfTextStringPtr CreateFromRaw(BufferPtr bytes);
+    static PdfTextStringPtr CreateFromRaw(std::string_view data);
 
     /**
      * @brief Create from UTF-8 bytes.
@@ -46,22 +54,22 @@ public:
      * Converts the input to the optimal PDF storage encoding:
      * PDFDocEncoding if all characters fit, otherwise UTF-16BE with BOM.
      */
-    static PdfTextStringPtr CreateFromUtf8(BufferPtr utf8_bytes);
+    static PdfTextStringPtr CreateFromUtf8(std::string_view data);
 
     /**
      * @brief Create from UTF-16BE bytes (without BOM).
      *
      * Prepends the UTF-16BE BOM (0xFE 0xFF) and stores the result.
      */
-    static PdfTextStringPtr CreateFromUtf16(BufferPtr utf16be_bytes);
+    static PdfTextStringPtr CreateFromUtf16(std::string_view data);
 
     /**
-     * @brief Get the detected encoding of the original raw bytes.
+     * @brief Get the detected encoding of the raw bytes.
      */
     TextStringEncoding GetEncoding() const;
 
     /**
-     * @brief Get the original raw bytes (no conversion).
+     * @brief Get the raw bytes (no conversion).
      */
     BufferPtr GetStringRaw() const;
 
@@ -75,13 +83,43 @@ public:
      */
     BufferPtr GetStringUtf16() const;
 
+    /**
+     * @brief Set from raw PDF text string bytes.
+     *
+     * Replaces the backing StringObject value and re-detects encoding.
+     */
+    void SetStringRaw(std::string_view data);
+
+    /**
+     * @brief Set from UTF-8 bytes.
+     *
+     * Converts to optimal PDF storage encoding and updates the backing
+     * StringObject.
+     */
+    void SetStringUtf8(std::string_view data);
+
+    /**
+     * @brief Set from UTF-16BE bytes (without BOM).
+     *
+     * Prepends BOM and updates the backing StringObject.
+     */
+    void SetStringUtf16(std::string_view data);
+
+    /**
+     * @brief Get the backing StringObject.
+     */
+    syntax::StringObjectPtr GetStringObject() const;
+
+    /**
+     * @brief Replace the backing StringObject.
+     */
+    void SetStringObject(syntax::StringObjectPtr obj);
+
     PdfTextString() = default;
-    explicit PdfTextString(BufferPtr raw_data);
-    PdfTextString(BufferPtr raw_data, TextStringEncoding encoding);
+    explicit PdfTextString(syntax::StringObjectPtr obj);
 
 private:
-    BufferPtr m_raw_data;
-    TextStringEncoding m_encoding = TextStringEncoding::Undefined;
+    syntax::StringObjectPtr m_obj;
 };
 
 } // semantics

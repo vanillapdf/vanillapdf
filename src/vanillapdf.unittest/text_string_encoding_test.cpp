@@ -214,11 +214,9 @@ TEST(TextStringEncoding, RoundtripNonAscii) {
 
 TEST(PdfTextString, CreateFromRawAndGetEncoding) {
     const char data[] = "Hello";
-    HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(CreateBufferFromBytes(data, 5, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts;
-    ASSERT_EQ(PdfTextString_CreateFromRaw(buf, ts.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromRaw(data, 5, ts.out()), VANILLAPDF_ERROR_SUCCESS);
 
     TextStringEncodingType encoding = TextStringEncodingType_Undefined;
     ASSERT_EQ(PdfTextString_GetEncoding(ts, &encoding), VANILLAPDF_ERROR_SUCCESS);
@@ -227,11 +225,9 @@ TEST(PdfTextString, CreateFromRawAndGetEncoding) {
 
 TEST(PdfTextString, GetStringRaw) {
     const char data[] = "Test";
-    HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(CreateBufferFromBytes(data, 4, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts;
-    ASSERT_EQ(PdfTextString_CreateFromRaw(buf, ts.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromRaw(data, 4, ts.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<BufferHandle, Buffer_Release> raw;
     ASSERT_EQ(PdfTextString_GetStringRaw(ts, raw.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -241,11 +237,9 @@ TEST(PdfTextString, GetStringRaw) {
 
 TEST(PdfTextString, GetStringUtf8) {
     const char data[] = "Test";
-    HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(CreateBufferFromBytes(data, 4, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts;
-    ASSERT_EQ(PdfTextString_CreateFromRaw(buf, ts.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromRaw(data, 4, ts.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<BufferHandle, Buffer_Release> utf8;
     ASSERT_EQ(PdfTextString_GetStringUtf8(ts, utf8.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -255,11 +249,9 @@ TEST(PdfTextString, GetStringUtf8) {
 
 TEST(PdfTextString, GetStringUtf16) {
     const char data[] = "A";
-    HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(CreateBufferFromBytes(data, 1, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts;
-    ASSERT_EQ(PdfTextString_CreateFromRaw(buf, ts.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromRaw(data, 1, ts.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<BufferHandle, Buffer_Release> utf16;
     ASSERT_EQ(PdfTextString_GetStringUtf16(ts, utf16.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -274,11 +266,9 @@ TEST(PdfTextString, GetStringUtf16) {
 TEST(PdfTextString, CreateFromUtf8ASCIIUsesPdfDocEncoding) {
     // ASCII input should be stored as PDFDocEncoding (no BOM needed)
     const char data[] = "Hello";
-    HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(CreateBufferFromBytes(data, 5, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts;
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, ts.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(data, 5, ts.out()), VANILLAPDF_ERROR_SUCCESS);
 
     TextStringEncodingType encoding = TextStringEncodingType_Undefined;
     ASSERT_EQ(PdfTextString_GetEncoding(ts, &encoding), VANILLAPDF_ERROR_SUCCESS);
@@ -292,11 +282,9 @@ TEST(PdfTextString, CreateFromUtf8ASCIIUsesPdfDocEncoding) {
 TEST(PdfTextString, CreateFromUtf8NonASCIIUsesUtf16BE) {
     // CJK character U+4E16 (世) — not in PDFDocEncoding → UTF-16BE with BOM
     const char data[] = { '\xE4', '\xB8', '\x96' };
-    HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(CreateBufferFromBytes(data, 3, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts;
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, ts.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8(data, 3, ts.out()), VANILLAPDF_ERROR_SUCCESS);
 
     TextStringEncodingType encoding = TextStringEncodingType_Undefined;
     ASSERT_EQ(PdfTextString_GetEncoding(ts, &encoding), VANILLAPDF_ERROR_SUCCESS);
@@ -311,11 +299,9 @@ TEST(PdfTextString, CreateFromUtf8NonASCIIUsesUtf16BE) {
 TEST(PdfTextString, CreateFromUtf16StoresWithBOM) {
     // UTF-16BE "Hi" = 0x00 0x48 0x00 0x69 (without BOM)
     const char data[] = { '\x00', '\x48', '\x00', '\x69' };
-    HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(CreateBufferFromBytes(data, 4, buf.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts;
-    ASSERT_EQ(PdfTextString_CreateFromUtf16(buf, ts.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf16(data, 4, ts.out()), VANILLAPDF_ERROR_SUCCESS);
 
     TextStringEncodingType encoding = TextStringEncodingType_Undefined;
     ASSERT_EQ(PdfTextString_GetEncoding(ts, &encoding), VANILLAPDF_ERROR_SUCCESS);
@@ -334,17 +320,74 @@ TEST(PdfTextString, CreateFromUtf16StoresWithBOM) {
 
 TEST(PdfTextString, Conversion) {
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts;
-
-    const char data[] = "Test";
-    HandleGuard<BufferHandle, Buffer_Release> buf;
-    ASSERT_EQ(CreateBufferFromBytes(data, 4, buf.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromRaw(buf, ts.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromRaw("Test", 4, ts.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<IUnknownHandle, IUnknown_Release> unknown;
     ASSERT_EQ(PdfTextString_ToUnknown(ts, unknown.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts2;
     ASSERT_EQ(PdfTextString_FromUnknown(unknown, ts2.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
+// ===== Set methods =====
+
+TEST(PdfTextString, SetStringRaw) {
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts;
+    ASSERT_EQ(PdfTextString_CreateFromRaw("Initial", 7, ts.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(PdfTextString_SetStringRaw(ts, "Updated", 7), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> raw;
+    ASSERT_EQ(PdfTextString_GetStringRaw(ts, raw.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(raw), "Updated");
+}
+
+TEST(PdfTextString, SetStringUtf8) {
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts;
+    ASSERT_EQ(PdfTextString_CreateFromRaw("Initial", 7, ts.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(PdfTextString_SetStringUtf8(ts, "New text", 8), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> utf8;
+    ASSERT_EQ(PdfTextString_GetStringUtf8(ts, utf8.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(utf8), "New text");
+}
+
+TEST(PdfTextString, SetStringUtf16) {
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts;
+    ASSERT_EQ(PdfTextString_CreateFromRaw("Initial", 7, ts.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    // UTF-16BE "AB" = 0x00 0x41 0x00 0x42
+    const char utf16_data[] = { '\x00', '\x41', '\x00', '\x42' };
+    ASSERT_EQ(PdfTextString_SetStringUtf16(ts, utf16_data, 4), VANILLAPDF_ERROR_SUCCESS);
+
+    TextStringEncodingType encoding = TextStringEncodingType_Undefined;
+    ASSERT_EQ(PdfTextString_GetEncoding(ts, &encoding), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(encoding, TextStringEncodingType_UTF16BE);
+
+    HandleGuard<BufferHandle, Buffer_Release> utf8;
+    ASSERT_EQ(PdfTextString_GetStringUtf8(ts, utf8.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(utf8), "AB");
+}
+
+TEST(PdfTextString, GetAndSetStringObject) {
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts;
+    ASSERT_EQ(PdfTextString_CreateFromRaw("Original", 8, ts.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    // Get the backing StringObject
+    HandleGuard<StringObjectHandle, StringObject_Release> str_obj;
+    ASSERT_EQ(PdfTextString_GetStringObject(ts, str_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(static_cast<StringObjectHandle*>(str_obj), nullptr);
+
+    // Create a second PdfTextString and set its backing to the same StringObject
+    HandleGuard<PdfTextStringHandle, PdfTextString_Release> ts2;
+    ASSERT_EQ(PdfTextString_CreateFromRaw("Other", 5, ts2.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_SetStringObject(ts2, str_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Both should now read the same value
+    HandleGuard<BufferHandle, Buffer_Release> utf8;
+    ASSERT_EQ(PdfTextString_GetStringUtf8(ts2, utf8.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(utf8), "Original");
 }
 
 // ===== Null parameter checks =====
@@ -358,13 +401,18 @@ TEST(TextStringEncoding, NullChecks) {
 
 TEST(PdfTextString, NullChecks) {
     EXPECT_EQ(PdfTextString_CreateFromStringObject(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
-    EXPECT_EQ(PdfTextString_CreateFromRaw(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
-    EXPECT_EQ(PdfTextString_CreateFromUtf8(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
-    EXPECT_EQ(PdfTextString_CreateFromUtf16(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(PdfTextString_CreateFromRaw(nullptr, 0, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(PdfTextString_CreateFromUtf8(nullptr, 0, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(PdfTextString_CreateFromUtf16(nullptr, 0, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
     EXPECT_EQ(PdfTextString_GetEncoding(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
     EXPECT_EQ(PdfTextString_GetStringRaw(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
     EXPECT_EQ(PdfTextString_GetStringUtf8(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
     EXPECT_EQ(PdfTextString_GetStringUtf16(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(PdfTextString_SetStringRaw(nullptr, nullptr, 0), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(PdfTextString_SetStringUtf8(nullptr, nullptr, 0), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(PdfTextString_SetStringUtf16(nullptr, nullptr, 0), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(PdfTextString_GetStringObject(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(PdfTextString_SetStringObject(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
     EXPECT_EQ(PdfTextString_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 

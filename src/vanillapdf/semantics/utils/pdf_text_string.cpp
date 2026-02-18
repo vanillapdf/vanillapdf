@@ -9,57 +9,87 @@
 namespace vanillapdf {
 namespace semantics {
 
-PdfTextString::PdfTextString(BufferPtr raw_data)
-    : m_raw_data(std::move(raw_data))
-    , m_encoding(DetectTextStringEncoding(*m_raw_data)) {
-}
-
-PdfTextString::PdfTextString(BufferPtr raw_data, TextStringEncoding encoding)
-    : m_raw_data(std::move(raw_data))
-    , m_encoding(encoding) {
+PdfTextString::PdfTextString(syntax::StringObjectPtr obj)
+    : m_obj(obj) {
 }
 
 PdfTextStringPtr PdfTextString::CreateFromStringObject(syntax::StringObjectPtr obj) {
-    auto value = obj->GetValue();
-    auto encoding = DetectTextStringEncoding(*value);
-    return make_deferred<PdfTextString>(std::move(value), encoding);
+    return make_deferred<PdfTextString>(obj);
 }
 
-PdfTextStringPtr PdfTextString::CreateFromRaw(BufferPtr bytes) {
-    return make_deferred<PdfTextString>(std::move(bytes));
+PdfTextStringPtr PdfTextString::CreateFromRaw(std::string_view data) {
+    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(data);
+    syntax::StringObjectPtr base = str_obj;
+    return make_deferred<PdfTextString>(base);
 }
 
-PdfTextStringPtr PdfTextString::CreateFromUtf8(BufferPtr utf8_bytes) {
-    auto raw = Utf8ToTextString(*utf8_bytes);
-    auto encoding = DetectTextStringEncoding(*raw);
-    return make_deferred<PdfTextString>(std::move(raw), encoding);
+PdfTextStringPtr PdfTextString::CreateFromUtf8(std::string_view data) {
+    auto input = make_deferred_container<Buffer>(data.begin(), data.end());
+    auto raw = Utf8ToTextString(*input);
+    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
+    syntax::StringObjectPtr base = str_obj;
+    return make_deferred<PdfTextString>(base);
 }
 
-PdfTextStringPtr PdfTextString::CreateFromUtf16(BufferPtr utf16be_bytes) {
-    // Prepend UTF-16BE BOM (0xFE 0xFF) so raw bytes are a valid PDF text string
-    std::string result;
-    result.reserve(2 + utf16be_bytes->size());
-    result.push_back(static_cast<char>(0xFE));
-    result.push_back(static_cast<char>(0xFF));
-    result.append(utf16be_bytes->data(), utf16be_bytes->size());
-    auto with_bom = make_deferred_container<Buffer>(result.begin(), result.end());
-    return make_deferred<PdfTextString>(std::move(with_bom), TextStringEncoding::UTF16BE);
+PdfTextStringPtr PdfTextString::CreateFromUtf16(std::string_view data) {
+    // Prepend UTF-16BE BOM (0xFE 0xFF)
+    std::string with_bom;
+    with_bom.reserve(2 + data.size());
+    with_bom.push_back(static_cast<char>(0xFE));
+    with_bom.push_back(static_cast<char>(0xFF));
+    with_bom.append(data.data(), data.size());
+
+    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(std::string_view(with_bom));
+    syntax::StringObjectPtr base = str_obj;
+    return make_deferred<PdfTextString>(base);
 }
 
 TextStringEncoding PdfTextString::GetEncoding() const {
-    return m_encoding;
+    auto value = m_obj->GetValue();
+    return DetectTextStringEncoding(*value);
 }
 
 BufferPtr PdfTextString::GetStringRaw() const {
-    return m_raw_data;
+    return m_obj->GetValue();
 }
 
 BufferPtr PdfTextString::GetStringUtf8() const {
-    return TextStringToUtf8(*m_raw_data);
+    auto value = m_obj->GetValue();
+    return TextStringToUtf8(*value);
 }
 
 BufferPtr PdfTextString::GetStringUtf16() const {
-    return TextStringToUtf16BE(*m_raw_data);
+    auto value = m_obj->GetValue();
+    return TextStringToUtf16BE(*value);
+}
+
+void PdfTextString::SetStringRaw(std::string_view data) {
+    m_obj->SetValue(data);
+}
+
+void PdfTextString::SetStringUtf8(std::string_view data) {
+    auto input = make_deferred_container<Buffer>(data.begin(), data.end());
+    auto raw = Utf8ToTextString(*input);
+    m_obj->SetValue(raw);
+}
+
+void PdfTextString::SetStringUtf16(std::string_view data) {
+    // Prepend UTF-16BE BOM (0xFE 0xFF)
+    std::string with_bom;
+    with_bom.reserve(2 + data.size());
+    with_bom.push_back(static_cast<char>(0xFE));
+    with_bom.push_back(static_cast<char>(0xFF));
+    with_bom.append(data.data(), data.size());
+
+    m_obj->SetValue(std::string_view(with_bom));
+}
+
+syntax::StringObjectPtr PdfTextString::GetStringObject() const {
+    return m_obj;
+}
+
+void PdfTextString::SetStringObject(syntax::StringObjectPtr obj) {
+    m_obj = obj;
 }
 
 } // semantics

@@ -158,9 +158,7 @@ bool TextField::GetValueText(PdfTextStringPtr& result) const {
 }
 
 void TextField::SetValueText(PdfTextStringPtr text) {
-    auto raw = text->GetStringRaw();
-    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
-    SetValue(str_obj);
+    SetValue(text->GetStringObject());
 }
 
 bool TextField::GetDefaultValueText(PdfTextStringPtr& result) const {
@@ -217,9 +215,7 @@ bool ChoiceField::GetValueText(PdfTextStringPtr& result) const {
 }
 
 void ChoiceField::SetValueText(PdfTextStringPtr text) {
-    auto raw = text->GetStringRaw();
-    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
-    SetValue(str_obj);
+    SetValue(text->GetStringObject());
 }
 
 // SignatureField properties

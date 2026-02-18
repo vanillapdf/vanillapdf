@@ -163,10 +163,8 @@ TEST(TextField, GetAndSetValue) {
     ASSERT_EQ(TextField_GetValueText(text_field, value.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 
     // Set value
-    HandleGuard<BufferHandle, Buffer_Release> set_buf;
-    ASSERT_EQ(Buffer_CreateFromData("John Doe", 8, set_buf.out()), VANILLAPDF_ERROR_SUCCESS);
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> new_value;
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(set_buf, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8("John Doe", 8, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextField_SetValueText(text_field, new_value), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back
@@ -236,10 +234,8 @@ TEST(TextField, SetValueOverwrite) {
     ASSERT_EQ(TextField_FromField(field, text_field.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Overwrite existing value
-    HandleGuard<BufferHandle, Buffer_Release> set_buf;
-    ASSERT_EQ(Buffer_CreateFromData("new value", 9, set_buf.out()), VANILLAPDF_ERROR_SUCCESS);
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> new_value;
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(set_buf, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8("new value", 9, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextField_SetValueText(text_field, new_value), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back
@@ -319,10 +315,8 @@ TEST(ChoiceField, GetAndSetValue) {
     ASSERT_EQ(ChoiceField_GetValueText(choice_field, value.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 
     // Set value
-    HandleGuard<BufferHandle, Buffer_Release> set_buf;
-    ASSERT_EQ(Buffer_CreateFromData("Option B", 8, set_buf.out()), VANILLAPDF_ERROR_SUCCESS);
     HandleGuard<PdfTextStringHandle, PdfTextString_Release> new_value;
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(set_buf, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8("Option B", 8, new_value.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(ChoiceField_SetValueText(choice_field, new_value), VANILLAPDF_ERROR_SUCCESS);
 
     // Read back

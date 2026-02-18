@@ -285,9 +285,7 @@ bool TextAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
 }
 
 void TextAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    auto raw = text->GetStringRaw();
-    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
-    SetAuthor(str_obj);
+    SetAuthor(text->GetStringObject());
 }
 
 // FreeTextAnnotation TextString overloads
@@ -299,9 +297,7 @@ bool FreeTextAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
 }
 
 void FreeTextAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    auto raw = text->GetStringRaw();
-    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
-    SetAuthor(str_obj);
+    SetAuthor(text->GetStringObject());
 }
 
 // HighlightAnnotation TextString overloads
@@ -313,9 +309,7 @@ bool HighlightAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
 }
 
 void HighlightAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    auto raw = text->GetStringRaw();
-    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
-    SetAuthor(str_obj);
+    SetAuthor(text->GetStringObject());
 }
 
 // UnderlineAnnotation TextString overloads
@@ -327,9 +321,7 @@ bool UnderlineAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
 }
 
 void UnderlineAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    auto raw = text->GetStringRaw();
-    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
-    SetAuthor(str_obj);
+    SetAuthor(text->GetStringObject());
 }
 
 // SquigglyAnnotation TextString overloads
@@ -341,9 +333,7 @@ bool SquigglyAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
 }
 
 void SquigglyAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    auto raw = text->GetStringRaw();
-    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
-    SetAuthor(str_obj);
+    SetAuthor(text->GetStringObject());
 }
 
 // StrikeOutAnnotation TextString overloads
@@ -355,9 +345,7 @@ bool StrikeOutAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
 }
 
 void StrikeOutAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    auto raw = text->GetStringRaw();
-    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
-    SetAuthor(str_obj);
+    SetAuthor(text->GetStringObject());
 }
 
 // InkAnnotation TextString overloads
@@ -369,9 +357,7 @@ bool InkAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
 }
 
 void InkAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    auto raw = text->GetStringRaw();
-    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
-    SetAuthor(str_obj);
+    SetAuthor(text->GetStringObject());
 }
 
 bool AnnotationBase::GetColor(OutputColorPtr& result) const {

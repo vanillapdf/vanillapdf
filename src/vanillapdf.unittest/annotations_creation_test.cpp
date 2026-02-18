@@ -591,7 +591,6 @@ TEST(Annotation, SetContents) {
     RectangleHandle* rect = nullptr;
     TextAnnotationHandle* annot = nullptr;
     AnnotationHandle* base_annot = nullptr;
-    BufferHandle* buf = nullptr;
     PdfTextStringHandle* contents = nullptr;
     PdfTextStringHandle* retrieved_contents = nullptr;
 
@@ -606,9 +605,7 @@ TEST(Annotation, SetContents) {
     ASSERT_EQ(TextAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set contents
-    ASSERT_EQ(Buffer_CreateFromData("New contents", 12, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &contents), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8("New contents", 12, &contents), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Annotation_SetContentsText(base_annot, contents), VANILLAPDF_ERROR_SUCCESS);
 
     // Get contents
@@ -663,7 +660,6 @@ TEST(Annotation, GetAndSetColor) {
 TEST(TextAnnotation, GetAndSetAuthor) {
     RectangleHandle* rect = nullptr;
     TextAnnotationHandle* annot = nullptr;
-    BufferHandle* buf = nullptr;
     PdfTextStringHandle* author = nullptr;
     PdfTextStringHandle* retrieved_author = nullptr;
 
@@ -677,9 +673,7 @@ TEST(TextAnnotation, GetAndSetAuthor) {
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
-    ASSERT_EQ(Buffer_CreateFromData("Test Author", 11, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8("Test Author", 11, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
     // Get author
@@ -1403,7 +1397,6 @@ TEST(HighlightAnnotation, GetAndSetAuthor) {
     RectangleHandle* rect = nullptr;
     ArrayObjectHandle* quad_points = nullptr;
     HighlightAnnotationHandle* annot = nullptr;
-    BufferHandle* buf = nullptr;
     PdfTextStringHandle* author = nullptr;
     PdfTextStringHandle* retrieved_author = nullptr;
 
@@ -1432,9 +1425,7 @@ TEST(HighlightAnnotation, GetAndSetAuthor) {
     ASSERT_EQ(HighlightAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
-    ASSERT_EQ(Buffer_CreateFromData("Highlight Author", 16, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8("Highlight Author", 16, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(HighlightAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
     // Get author
@@ -1558,7 +1549,6 @@ TEST(FreeTextAnnotation, GetAndSetAuthor) {
     LiteralStringObjectHandle* contents = nullptr;
     LiteralStringObjectHandle* default_appearance = nullptr;
     FreeTextAnnotationHandle* annot = nullptr;
-    BufferHandle* buf = nullptr;
     PdfTextStringHandle* author = nullptr;
     PdfTextStringHandle* retrieved_author = nullptr;
 
@@ -1577,9 +1567,7 @@ TEST(FreeTextAnnotation, GetAndSetAuthor) {
     ASSERT_EQ(FreeTextAnnotation_Create(rect, contents, default_appearance, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
-    ASSERT_EQ(Buffer_CreateFromData("FreeText Author", 15, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8("FreeText Author", 15, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(FreeTextAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
     // Get author
@@ -1687,7 +1675,6 @@ TEST(UnderlineAnnotation, GetAndSetAuthor) {
     RectangleHandle* rect = nullptr;
     ArrayObjectHandle* quad_points = nullptr;
     UnderlineAnnotationHandle* annot = nullptr;
-    BufferHandle* buf = nullptr;
     PdfTextStringHandle* author = nullptr;
     PdfTextStringHandle* retrieved_author = nullptr;
 
@@ -1716,9 +1703,7 @@ TEST(UnderlineAnnotation, GetAndSetAuthor) {
     ASSERT_EQ(UnderlineAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
-    ASSERT_EQ(Buffer_CreateFromData("Underline Author", 16, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8("Underline Author", 16, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(UnderlineAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
     // Get author
@@ -1885,7 +1870,6 @@ TEST(StrikeOutAnnotation, GetAndSetAuthor) {
     RectangleHandle* rect = nullptr;
     ArrayObjectHandle* quad_points = nullptr;
     StrikeOutAnnotationHandle* annot = nullptr;
-    BufferHandle* buf = nullptr;
     PdfTextStringHandle* author = nullptr;
     PdfTextStringHandle* retrieved_author = nullptr;
 
@@ -1914,9 +1898,7 @@ TEST(StrikeOutAnnotation, GetAndSetAuthor) {
     ASSERT_EQ(StrikeOutAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
-    ASSERT_EQ(Buffer_CreateFromData("StrikeOut Author", 16, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8("StrikeOut Author", 16, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(StrikeOutAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
     // Get author
@@ -2147,7 +2129,6 @@ TEST(SquigglyAnnotation, GetAndSetAuthor) {
     RectangleHandle* rect = nullptr;
     ArrayObjectHandle* quad_points = nullptr;
     SquigglyAnnotationHandle* annot = nullptr;
-    BufferHandle* buf = nullptr;
     PdfTextStringHandle* author = nullptr;
     PdfTextStringHandle* retrieved_author = nullptr;
 
@@ -2176,9 +2157,7 @@ TEST(SquigglyAnnotation, GetAndSetAuthor) {
     ASSERT_EQ(SquigglyAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
-    ASSERT_EQ(Buffer_CreateFromData("Squiggly Author", 15, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8("Squiggly Author", 15, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(SquigglyAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
     // Get author
@@ -2410,7 +2389,6 @@ TEST(InkAnnotation, GetAndSetAuthor) {
     ArrayObjectHandle* ink_list = nullptr;
     ArrayObjectHandle* stroke = nullptr;
     InkAnnotationHandle* annot = nullptr;
-    BufferHandle* buf = nullptr;
     PdfTextStringHandle* author = nullptr;
     PdfTextStringHandle* retrieved_author = nullptr;
 
@@ -2444,9 +2422,7 @@ TEST(InkAnnotation, GetAndSetAuthor) {
     ASSERT_EQ(InkAnnotation_CreateFromRect(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
     // Set author
-    ASSERT_EQ(Buffer_CreateFromData("Ink Author", 10, &buf), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PdfTextString_CreateFromUtf8(buf, &author), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Buffer_Release(buf), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PdfTextString_CreateFromUtf8("Ink Author", 10, &author), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(InkAnnotation_SetAuthorText(annot, author), VANILLAPDF_ERROR_SUCCESS);
 
     // Get author

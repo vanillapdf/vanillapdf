@@ -25,6 +25,9 @@ extern "C"
     * PDF text strings (used for document info, form fields, annotations, etc.)
     * can be encoded as PDFDocEncoding, UTF-16BE, or UTF-8. This class detects
     * the encoding from BOM markers and provides conversion to common formats.
+    *
+    * Backed by a StringObject, so mutations via Set methods propagate to
+    * the underlying PDF string object.
     */
 
     /**
@@ -35,17 +38,19 @@ extern "C"
     /**
     * \brief Create from a StringObject (literal or hexadecimal).
     *
-    * Auto-detects encoding via BOM. Use this when reading strings from a PDF file.
+    * Wraps the given string object directly. Mutations via Set methods
+    * will propagate back to the original object.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromStringObject(StringObjectHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Create from raw PDF text string bytes.
     *
-    * Auto-detects encoding via BOM (UTF-16BE or UTF-8) and falls back
-    * to PDFDocEncoding if no BOM is present. Mirrors \ref PdfTextString_GetStringRaw.
+    * Creates a new LiteralStringObject from the data and auto-detects
+    * encoding via BOM (UTF-16BE or UTF-8), falling back to PDFDocEncoding
+    * if no BOM is present. Mirrors \ref PdfTextString_GetStringRaw.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromRaw(BufferHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromRaw(string_type data, size_type size, PdfTextStringHandle** result);
 
     /**
     * \brief Create from UTF-8 bytes.
@@ -53,22 +58,22 @@ extern "C"
     * Converts to the optimal PDF storage encoding: PDFDocEncoding if all
     * characters fit, otherwise UTF-16BE with BOM.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf8(BufferHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf8(string_type data, size_type size, PdfTextStringHandle** result);
 
     /**
     * \brief Create from UTF-16BE bytes (without BOM).
     *
-    * Prepends the UTF-16BE BOM and stores the result.
+    * Prepends the UTF-16BE BOM (0xFE 0xFF) and stores the result.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf16(BufferHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_CreateFromUtf16(string_type data, size_type size, PdfTextStringHandle** result);
 
     /**
-    * \brief Get the detected encoding of the original raw bytes.
+    * \brief Get the detected encoding of the raw bytes.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_GetEncoding(PdfTextStringHandle* handle, TextStringEncodingType* result);
 
     /**
-    * \brief Get the original raw bytes (no conversion).
+    * \brief Get the raw bytes (no conversion).
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_GetStringRaw(PdfTextStringHandle* handle, BufferHandle** result);
 
@@ -81,6 +86,38 @@ extern "C"
     * \brief Convert to UTF-16BE without BOM (fresh conversion each call).
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_GetStringUtf16(PdfTextStringHandle* handle, BufferHandle** result);
+
+    /**
+    * \brief Set from raw PDF text string bytes.
+    *
+    * Replaces the backing StringObject value. Encoding is re-detected.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_SetStringRaw(PdfTextStringHandle* handle, string_type data, size_type size);
+
+    /**
+    * \brief Set from UTF-8 bytes.
+    *
+    * Converts to optimal PDF storage encoding and updates the backing
+    * StringObject.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_SetStringUtf8(PdfTextStringHandle* handle, string_type data, size_type size);
+
+    /**
+    * \brief Set from UTF-16BE bytes (without BOM).
+    *
+    * Prepends BOM and updates the backing StringObject.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_SetStringUtf16(PdfTextStringHandle* handle, string_type data, size_type size);
+
+    /**
+    * \brief Get the backing StringObject.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_GetStringObject(PdfTextStringHandle* handle, StringObjectHandle** result);
+
+    /**
+    * \brief Replace the backing StringObject.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PdfTextString_SetStringObject(PdfTextStringHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
