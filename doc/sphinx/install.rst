@@ -119,15 +119,17 @@ List the available build presets:
      "linux-arm64-gcc"
      "linux-x64-clang"
      "linux-arm64-clang"
-     "linux-x64-musl"
-     "linux-arm64-musl"
-     "linux-arm-musl"
+     "linux-musl-x64"
+     "linux-musl-arm64"
+     "linux-musl-arm"
      "macos-x64"
      "macos-arm64"
      "android-arm64"
-     "android-armv7"
-     "android-x86"
-     "android-x86_64"
+     "android-arm"
+     "android-x64"
+     "linux-bionic-arm64"
+     "linux-bionic-arm"
+     "linux-bionic-x64"
 
 Common presets include:
 
@@ -139,7 +141,10 @@ Common presets include:
 - ``windows-x64-msvc-18-static-md`` / ``windows-x86-msvc-18-static-md`` - Windows with Visual Studio 2026 (static libs, dynamic CRT)
 - ``linux-x64-gcc`` / ``linux-arm64-gcc`` - Linux with GCC
 - ``linux-x64-clang`` / ``linux-arm64-clang`` - Linux with Clang
+- ``linux-musl-x64`` / ``linux-musl-arm64`` - Linux musl builds aligned to .NET RID naming
 - ``macos-x64`` / ``macos-arm64`` - macOS builds
+- ``android-arm64`` / ``android-arm`` / ``android-x64`` - Android ABI builds with RID-compatible naming
+- ``linux-bionic-arm64`` / ``linux-bionic-arm`` / ``linux-bionic-x64`` - Android-compatible bionic RID variants
 
 Platform-Specific Builds
 ^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,0 +1,27 @@
+{
+    "name": "android-ndk-integration-test",
+    "version": "1.0.0",
+    "description": "Android NDK integration example dependencies for vanillapdf",
+    "dependencies": [
+        "spdlog",
+        "fmt"
+    ],
+    "features": {
+        "encryption": {
+            "description": "Enable OpenSSL for PDF encryption support",
+            "dependencies": [ "openssl" ]
+        },
+        "jpeg": {
+            "description": "Enable JPEG support",
+            "dependencies": [ "libjpeg-turbo" ]
+        },
+        "jpeg2000": {
+            "description": "Enable JPEG2000 support",
+            "dependencies": [ "openjpeg" ]
+        },
+        "zlib": {
+            "description": "Enable zlib compression support",
+            "dependencies": [ "zlib" ]
+        }
+    }
+}

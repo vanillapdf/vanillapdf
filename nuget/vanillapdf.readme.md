@@ -15,7 +15,11 @@
 - **Windows:** Visual Studio 2019 (MSVC 16.11) or 2022 (MSVC 17.x)
 - **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
 - **macOS:** AppleClang 15+ (Xcode 15)
-- **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
+- **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86_64)
+
+NuGet runtime packages are published using .NET RID-compatible names, including:
+`win-arm64`, `linux-musl-x64`, `linux-musl-arm64`, `android-arm64`,
+`android-arm`, `android-x64`, and `linux-bionic-*` compatibility variants.
 
 ## Getting Started
 

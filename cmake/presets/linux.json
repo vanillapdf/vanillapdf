@@ -49,37 +49,49 @@
             }
         },
         {
-            "name": "linux-x64-musl",
+            "name": "linux-musl-x64",
             "inherits": "default",
             "generator": "Ninja",
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "x64-linux-musl",
                 "CMAKE_C_COMPILER": "musl-gcc",
-                "CMAKE_CXX_COMPILER": "musl-g++",
-                "PLATFORM_IDENTIFIER": "linux-x64-musl"
+                "CMAKE_CXX_COMPILER": "musl-gcc",
+                "PLATFORM_IDENTIFIER": "linux-musl-x64"
             }
         },
         {
-            "name": "linux-arm64-musl",
+            "name": "linux-musl-arm64",
             "inherits": "default",
             "generator": "Ninja",
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "arm64-linux-musl",
-                "CMAKE_C_COMPILER": "aarch64-linux-musl-gcc",
-                "CMAKE_CXX_COMPILER": "aarch64-linux-musl-g++",
-                "PLATFORM_IDENTIFIER": "linux-arm64-musl"
+                "CMAKE_C_COMPILER": "musl-gcc",
+                "CMAKE_CXX_COMPILER": "musl-gcc",
+                "PLATFORM_IDENTIFIER": "linux-musl-arm64"
             }
         },
         {
-            "name": "linux-arm-musl",
+            "name": "linux-musl-arm",
             "inherits": "default",
             "generator": "Ninja",
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "arm-linux-musleabihf",
                 "CMAKE_C_COMPILER": "arm-linux-musleabihf-gcc",
                 "CMAKE_CXX_COMPILER": "arm-linux-musleabihf-g++",
-                "PLATFORM_IDENTIFIER": "linux-arm-musl"
+                "PLATFORM_IDENTIFIER": "linux-musl-arm"
             }
+        },
+        {
+            "name": "linux-x64-musl",
+            "inherits": "linux-musl-x64"
+        },
+        {
+            "name": "linux-arm64-musl",
+            "inherits": "linux-musl-arm64"
+        },
+        {
+            "name": "linux-arm-musl",
+            "inherits": "linux-musl-arm"
         }
     ],
     "buildPresets": [
@@ -98,6 +110,18 @@
         {
             "name": "linux-arm64-clang",
             "configurePreset": "linux-arm64-clang"
+        },
+        {
+            "name": "linux-musl-x64",
+            "configurePreset": "linux-musl-x64"
+        },
+        {
+            "name": "linux-musl-arm64",
+            "configurePreset": "linux-musl-arm64"
+        },
+        {
+            "name": "linux-musl-arm",
+            "configurePreset": "linux-musl-arm"
         },
         {
             "name": "linux-x64-musl",
@@ -128,6 +152,18 @@
         {
             "name": "linux-arm64-clang",
             "configurePreset": "linux-arm64-clang"
+        },
+        {
+            "name": "linux-musl-x64",
+            "configurePreset": "linux-musl-x64"
+        },
+        {
+            "name": "linux-musl-arm64",
+            "configurePreset": "linux-musl-arm64"
+        },
+        {
+            "name": "linux-musl-arm",
+            "configurePreset": "linux-musl-arm"
         },
         {
             "name": "linux-x64-musl",

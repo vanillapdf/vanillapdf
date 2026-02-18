@@ -65,21 +65,21 @@ env:
 jobs:
 
   build-linux:
-    name: ${{ matrix.config.name }}
+    name: ${{ matrix.config.rid }}
     runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - name: linux-x64
+          - rid: linux-x64
             os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
-          - name: linux-arm64
+          - rid: linux-arm64
             os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
@@ -111,17 +111,17 @@ jobs:
             external/vcpkg/buildtrees
             external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-
 
       # Bootstrap vcpkg on Linux
       - name: Bootstrap vcpkg (Linux)
         run: ./external/vcpkg/bootstrap-vcpkg.sh
         shell: bash
 
-      - name: Configure ${{ matrix.config.name }}
+      - name: Configure ${{ matrix.config.rid }}
         run: |
           CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}"
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}"
@@ -135,13 +135,13 @@ jobs:
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
           cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
-      - name: Build ${{ matrix.config.name }}
+      - name: Build ${{ matrix.config.rid }}
         run: cmake --build --preset ${{ matrix.config.preset }}
 
-      - name: Test ${{ matrix.config.name }}
+      - name: Test ${{ matrix.config.rid }}
         run: ctest --preset ${{ matrix.config.preset }}
 
-      - name: Build package ${{ matrix.config.name }}
+      - name: Build package ${{ matrix.config.rid }}
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
       - name: Restore NuGet packages
@@ -153,24 +153,113 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
+          name: vanillapdf.runtime.${{ matrix.config.rid }}${{ inputs.build_suffix }}
           path: '*.nupkg'
 
 
-  build-windows:
-    name: ${{ matrix.config.name }}
-    runs-on: windows-latest
+  build-linux-musl:
+    name: ${{ matrix.config.rid }}
+    runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - name: win-x86
+          - rid: linux-musl-x64
+            os: ubuntu-24.04
+            preset: linux-musl-x64
+            build_type: Release
+
+          - rid: linux-musl-arm64
+            os: ubuntu-24.04-arm
+            preset: linux-musl-arm64
+            build_type: Release
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install musl toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+
+      - name: Cache vcpkg
+        uses: actions/cache@v5
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/buildtrees
+            external/vcpkg/packages
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-
+
+      - name: Bootstrap vcpkg (Linux)
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
+      - name: Configure ${{ matrix.config.rid }}
+        run: |
+          CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}"
+          if [ -n "${{ inputs.patch_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_PATCH_OVERRIDE=${{ inputs.patch_override }}"
+          fi
+          if [ -n "${{ inputs.build_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_OVERRIDE=${{ inputs.build_override }}"
+          fi
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=OFF"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
+          cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
+
+      - name: Build ${{ matrix.config.rid }}
+        run: cmake --build --preset ${{ matrix.config.preset }}
+
+      - name: Build package ${{ matrix.config.rid }}
+        run: cmake --build build/${{ matrix.config.preset }} --target package
+
+      - name: Restore NuGet packages
+        run: dotnet restore nuget/vanillapdf.runtime.csproj
+
+      - name: Execute nuget packaging
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: vanillapdf.runtime.${{ matrix.config.rid }}${{ inputs.build_suffix }}
+          path: '*.nupkg'
+
+
+  build-windows:
+    name: ${{ matrix.config.rid }}
+    runs-on: ${{ matrix.config.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - rid: win-x86
+            os: windows-latest
             preset: windows-x86-msvc-17-static
             build_type: Release
 
-          - name: win-x64
+          - rid: win-x64
+            os: windows-latest
             preset: windows-x64-msvc-17-static
+            build_type: Release
+
+          - rid: win-arm64
+            os: windows-11-arm
+            preset: windows-arm64-msvc-17-static
             build_type: Release
 
     steps:
@@ -190,16 +279,16 @@ jobs:
             external/vcpkg/buildtrees
             external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-
 
       # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
-      - name: Configure ${{ matrix.config.name }}
+      - name: Configure ${{ matrix.config.rid }}
         shell: bash
         run: |
           CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}"
@@ -214,13 +303,13 @@ jobs:
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
           cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
-      - name: Build ${{ matrix.config.name }}
+      - name: Build ${{ matrix.config.rid }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type }}
 
-      - name: Test ${{ matrix.config.name }}
+      - name: Test ${{ matrix.config.rid }}
         run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.config.build_type }} --output-on-failure
 
-      - name: Build package ${{ matrix.config.name }}
+      - name: Build package ${{ matrix.config.rid }}
         run: cmake --build build/${{ matrix.config.preset }} --config ${{ matrix.config.build_type }} --target package
 
       - name: Restore NuGet packages
@@ -232,25 +321,25 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
+          name: vanillapdf.runtime.${{ matrix.config.rid }}${{ inputs.build_suffix }}
           path: '*.nupkg'
 
 
   build-macos:
-    name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.runner }}
+    name: ${{ matrix.config.rid }}
+    runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - name: osx.15-x64
-            runner: macos-15-intel
+          - rid: osx-x64
+            os: macos-15-intel
             preset: macos-x64
             build_type: Release
 
-          - name: osx-arm64
-            runner: macos-15
+          - rid: osx-arm64
+            os: macos-15
             preset: macos-arm64
             build_type: Release
 
@@ -271,10 +360,10 @@ jobs:
             external/vcpkg/buildtrees
             external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-
 
       # dotnet is available on macOS runners by default
 
@@ -292,7 +381,7 @@ jobs:
         run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
         shell: bash
 
-      - name: Configure ${{ matrix.config.name }}
+      - name: Configure ${{ matrix.config.rid }}
         run: |
           CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}"
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}"
@@ -306,13 +395,13 @@ jobs:
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
           cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
-      - name: Build ${{ matrix.config.name }}
+      - name: Build ${{ matrix.config.rid }}
         run: cmake --build --preset ${{ matrix.config.preset }}
 
-      - name: Test ${{ matrix.config.name }}
+      - name: Test ${{ matrix.config.rid }}
         run: ctest --preset ${{ matrix.config.preset }}
 
-      - name: Build package ${{ matrix.config.name }}
+      - name: Build package ${{ matrix.config.rid }}
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
       - name: Restore NuGet packages
@@ -324,7 +413,138 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
+          name: vanillapdf.runtime.${{ matrix.config.rid }}${{ inputs.build_suffix }}
+          path: '*.nupkg'
+
+
+  build-android:
+    name: ${{ matrix.config.rid }}
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - rid: android-arm64
+            preset: android-arm64
+            build_type: Release
+
+          - rid: android-arm
+            preset: android-arm
+            build_type: Release
+
+          - rid: android-x64
+            preset: android-x64
+            build_type: Release
+
+          - rid: linux-bionic-arm64
+            preset: linux-bionic-arm64
+            build_type: Release
+
+          - rid: linux-bionic-arm
+            preset: linux-bionic-arm
+            build_type: Release
+
+          - rid: linux-bionic-x64
+            preset: linux-bionic-x64
+            build_type: Release
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Resolve Android NDK path
+        run: |
+          NDK_PATH="$(python3 - <<'PY'
+import glob
+import os
+import re
+import sys
+
+for env_key in ("ANDROID_NDK_ROOT", "ANDROID_NDK_HOME", "ANDROID_NDK_LATEST_HOME"):
+    candidate = os.environ.get(env_key)
+    if candidate and os.path.isdir(candidate):
+        print(candidate)
+        sys.exit(0)
+
+bundle = "/usr/local/lib/android/sdk/ndk-bundle"
+if os.path.isdir(bundle):
+    print(bundle)
+    sys.exit(0)
+
+ndk_candidates = [p for p in glob.glob("/usr/local/lib/android/sdk/ndk/*") if os.path.isdir(p)]
+if not ndk_candidates:
+    sys.exit(1)
+
+def sort_key(path):
+    name = os.path.basename(path)
+    return [int(part) if part.isdigit() else part for part in re.split(r"[.-]", name)]
+
+ndk_candidates.sort(key=sort_key)
+print(ndk_candidates[-1])
+PY
+          )"
+
+          if [ -z "${NDK_PATH}" ] || [ ! -d "${NDK_PATH}" ]; then
+            echo "Android NDK path could not be resolved."
+            exit 1
+          fi
+
+          echo "ANDROID_NDK_ROOT=${NDK_PATH}" >> "${GITHUB_ENV}"
+          echo "Using ANDROID_NDK_ROOT=${NDK_PATH}"
+
+      - name: Cache vcpkg
+        uses: actions/cache@v5
+        with:
+          path: |
+            build/${{ matrix.config.preset }}/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/buildtrees
+            external/vcpkg/packages
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-${{ matrix.config.preset }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.rid }}-
+
+      - name: Bootstrap vcpkg (Linux)
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
+      - name: Configure ${{ matrix.config.rid }}
+        run: |
+          CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}"
+          if [ -n "${{ inputs.patch_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_PATCH_OVERRIDE=${{ inputs.patch_override }}"
+          fi
+          if [ -n "${{ inputs.build_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_OVERRIDE=${{ inputs.build_override }}"
+          fi
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=OFF"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
+          cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
+
+      - name: Build ${{ matrix.config.rid }}
+        run: cmake --build --preset ${{ matrix.config.preset }}
+
+      - name: Build package ${{ matrix.config.rid }}
+        run: cmake --build build/${{ matrix.config.preset }} --target package
+
+      - name: Restore NuGet packages
+        run: dotnet restore nuget/vanillapdf.runtime.csproj
+
+      - name: Execute nuget packaging
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: vanillapdf.runtime.${{ matrix.config.rid }}${{ inputs.build_suffix }}
           path: '*.nupkg'
 
 
@@ -334,8 +554,10 @@ jobs:
 
     needs:
       - build-linux
+      - build-linux-musl
       - build-windows
       - build-macos
+      - build-android
 
     strategy:
       fail-fast: false
