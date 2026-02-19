@@ -163,8 +163,8 @@ jobs:
       - name: "[pyhanko→vanillapdf] Verify Ed25519"
         run: install/bin/vanillapdf.tools verify -f /tmp/ph_ed25519.pdf --skip-certificate-validation
 
-      - name: "[pyhanko→vanillapdf] Sign Ed448"
-        run: pyhanko sign addsig --field "1/0,0,200,200/Signature1" pkcs12 --passfile /tmp/pass.txt test/example.pdf /tmp/ph_ed448.pdf test/certificates/Test_ED448.pfx
-
-      - name: "[pyhanko→vanillapdf] Verify Ed448"
-        run: install/bin/vanillapdf.tools verify -f /tmp/ph_ed448.pdf --skip-certificate-validation
+      # Ed448 reverse verification is skipped: pyhanko generates CMS Ed448 signatures
+      # with a spurious ShakeOutputLen=512 INTEGER parameter in the SHAKE256
+      # digestAlgorithm AlgorithmIdentifier, producing signatures that OpenSSL and
+      # Foxit both reject as invalid.
+      # https://github.com/MatthiasValvekens/pyHanko/issues/626

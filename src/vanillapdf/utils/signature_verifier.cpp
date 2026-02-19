@@ -454,7 +454,8 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     // CMS_DETACHED: content is supplied separately (PDF detached signatures).
     // CMS_BINARY: no MIME canonicalization (required for binary PDF data).
     // CMS_NOVERIFY: skip certificate chain validation (done separately below).
-    int verify_result = CMS_verify(cms, nullptr, nullptr, data_bio, nullptr, CMS_DETACHED | CMS_BINARY | CMS_NOVERIFY);
+    int verify_result = CMS_verify(cms, nullptr, nullptr, data_bio, nullptr,
+                                   CMS_DETACHED | CMS_BINARY | CMS_NOVERIFY);
 
     if (verify_result != 1) {
         std::string error = CryptoUtils::GetLastOpensslError();

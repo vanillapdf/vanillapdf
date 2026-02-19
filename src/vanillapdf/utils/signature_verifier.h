@@ -83,6 +83,7 @@ private:
     static bool VerifyCertificateChain(CMS_ContentInfo* cms, X509_STORE* store,
                                        SignatureVerificationResultPtr& result,
                                        SignatureVerificationSettingsPtr settings);
+
 #endif
 };
 
