@@ -29,7 +29,7 @@ including modern EdDSA curves rarely supported by other PDF libraries:
      - Digest
      - Notes
    * - RSA (up to 4096-bit)
-     - SHA-256, SHA-384, SHA-512, SHA3-256, SHA3-384, SHA3-512
+     - SHA-256, SHA-384, SHA-512
      - Widely supported; 4096-bit recommended
    * - ECDSA (P-256, P-384, P-521)
      - SHA-256, SHA-384, SHA-512
