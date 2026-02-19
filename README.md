@@ -13,7 +13,7 @@
 
 | Category | Description |
 |----------|-------------|
-| **Digital Signatures** | Add and verify CMS (PKCS#7) digital signatures |
+| **Digital Signatures** | Sign and verify PDFs with RSA, ECDSA (P-256/P-384/P-521), Ed25519, and Ed448 via OpenSSL CMS |
 | **PDF Generation** | Create documents with text, images, paths, and pages |
 | **Advanced Editing** | Modify content streams, metadata, and page structure |
 | **PDF Parsing** | Inspect low-level internals like XRef tables and objects |

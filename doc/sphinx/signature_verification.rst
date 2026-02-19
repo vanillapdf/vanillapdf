@@ -8,12 +8,44 @@ For a complete working example, see ``verify.c``.
 Overview
 --------
 
-PDF digital signatures use PKCS#7 (CMS) format to store cryptographic signatures. Verification involves:
+PDF digital signatures use CMS (Cryptographic Message Syntax) format to store cryptographic signatures. Verification involves:
 
 1. **Cryptographic verification** - Verify the signature matches the document content
 2. **Certificate chain validation** - Validate the signer's certificate against trusted roots
 3. **Algorithm strength check** - Detect weak algorithms (MD5, SHA-1, small keys)
 4. **Time validation** - Optionally validate certificate at signing time
+
+Supported Signing Algorithms
+----------------------------
+
+Vanilla.PDF supports signing and verification with a wide range of key types,
+including modern EdDSA curves rarely supported by other PDF libraries:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 25 50
+
+   * - Key Type
+     - Digest
+     - Notes
+   * - RSA (up to 4096-bit)
+     - SHA-256, SHA-384, SHA-512, SHA3-256, SHA3-384, SHA3-512
+     - Widely supported; 4096-bit recommended
+   * - ECDSA (P-256, P-384, P-521)
+     - SHA-256, SHA-384, SHA-512
+     - Smaller keys, equivalent security to RSA
+   * - Ed25519 (EdDSA)
+     - SHA-512 (per RFC 8419)
+     - Fast, small signatures; modern standard
+   * - Ed448 (EdDSA)
+     - SHAKE256 (per RFC 8419)
+     - Higher security margin than Ed25519
+   * - DSA (2048-bit)
+     - SHA-256
+     - Legacy; prefer ECDSA or EdDSA for new deployments
+
+All algorithms are validated end-to-end via the CI interoperability check
+against `pdfsig (poppler-utils) <https://manpages.debian.org/testing/poppler-utils/pdfsig.1.en.html>`_.
 
 Verification Status Codes
 --------------------------
