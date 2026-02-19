@@ -5,7 +5,6 @@
 
 #include "semantics/objects/high_level_object.h"
 #include "semantics/objects/tree.h"
-#include "semantics/utils/pdf_text_string.h"
 
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/objects/integer_object.h"
@@ -31,8 +30,6 @@ public:
     bool Prefix(syntax::StringObjectPtr& result) const;
     bool Start(syntax::IntegerObjectPtr& result) const;
     bool Style(NumberingStyle& result) const;
-
-    bool PrefixText(PdfTextStringPtr& result) const;
 };
 
 class PageLabels : public HighLevelObject<syntax::DictionaryObjectPtr> {

@@ -1,7 +1,8 @@
 #ifndef _TEXT_STRING_ENCODING_H
 #define _TEXT_STRING_ENCODING_H
 
-#include "utils/utils_fwd.h"
+#include <cstddef>
+#include <cstdint>
 
 namespace vanillapdf {
 
@@ -26,31 +27,14 @@ enum class TextStringEncoding {
  * Checks for UTF-16BE BOM (0xFEFF) and UTF-8 BOM (0xEFBBBF).
  * Returns PDFDocEncoding if no BOM is found.
  */
-TextStringEncoding DetectTextStringEncoding(const Buffer& value);
+TextStringEncoding DetectTextStringEncoding(const char* data, size_t size);
 
 /**
- * @brief Convert a PDF text string (any encoding) to UTF-8.
+ * @brief Map a single PDFDocEncoding byte to its Unicode code point.
  *
- * Detects encoding via BOM, strips BOM, and converts to UTF-8.
- * If already UTF-8, strips BOM and returns content.
+ * Undefined bytes (e.g. 0x00–0x07) map to U+FFFD (replacement character).
  */
-BufferPtr TextStringToUtf8(const Buffer& value);
-
-/**
- * @brief Convert a PDF text string (any encoding) to UTF-16BE.
- *
- * Detects encoding via BOM, strips BOM, and converts to UTF-16BE.
- * The result does NOT include a BOM prefix.
- */
-BufferPtr TextStringToUtf16BE(const Buffer& value);
-
-/**
- * @brief Convert a UTF-8 string to a PDF text string.
- *
- * If all characters fit in PDFDocEncoding, returns PDFDocEncoding bytes (no BOM).
- * Otherwise returns UTF-16BE with BOM prefix.
- */
-BufferPtr Utf8ToTextString(const Buffer& utf8_value);
+char32_t PDFDocEncodingToUnicode(uint8_t byte);
 
 } // vanillapdf
 

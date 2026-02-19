@@ -1,7 +1,6 @@
 #include "precompiled.h"
 
 #include "semantics/objects/page_labels.h"
-#include "semantics/utils/pdf_text_string.h"
 #include "semantics/utils/semantic_exceptions.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
@@ -59,13 +58,6 @@ bool PageLabel::Style(NumberingStyle& result) const {
     }
 
     result = static_cast<NumberingStyle>(buf[0]);
-    return true;
-}
-
-bool PageLabel::PrefixText(PdfTextStringPtr& result) const {
-    syntax::StringObjectPtr str;
-    if (!Prefix(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
     return true;
 }
 

@@ -34,19 +34,19 @@ extern "C"
     * Information provided by the signer to enable a recipient
     * to contact the signer to verify the signature.
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfo(DigitalSignatureHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfo(DigitalSignatureHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief
     * The reason for the signing, such as (I agree...).
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReason(DigitalSignatureHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReason(DigitalSignatureHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief
     * The CPU host name or physical location of the signing.
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocation(DigitalSignatureHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocation(DigitalSignatureHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief
@@ -65,7 +65,7 @@ extern "C"
     *
     * This value should be used only when it is not possible to extract the name from the signature.
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetName(DigitalSignatureHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetName(DigitalSignatureHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief
@@ -106,26 +106,6 @@ extern "C"
     * a digest that does not include the signature value (\ref DigitalSignature_GetContents) itself.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle* handle, ByteRangeCollectionHandle** result);
-
-    /**
-    * \brief Get the contact info as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfoText(DigitalSignatureHandle* handle, PdfTextStringHandle** result);
-
-    /**
-    * \brief Get the reason as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReasonText(DigitalSignatureHandle* handle, PdfTextStringHandle** result);
-
-    /**
-    * \brief Get the location as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocationText(DigitalSignatureHandle* handle, PdfTextStringHandle** result);
-
-    /**
-    * \brief Get the signer name as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetNameText(DigitalSignatureHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle

@@ -27,14 +27,6 @@ public:
     bool Keywords(syntax::OutputStringObjectPtr& result) const;
     bool Creator(syntax::OutputStringObjectPtr& result) const;
     bool Producer(syntax::OutputStringObjectPtr& result) const;
-
-    // text string overloads (encoding-aware)
-    bool TitleText(PdfTextStringPtr& result) const;
-    bool AuthorText(PdfTextStringPtr& result) const;
-    bool SubjectText(PdfTextStringPtr& result) const;
-    bool KeywordsText(PdfTextStringPtr& result) const;
-    bool CreatorText(PdfTextStringPtr& result) const;
-    bool ProducerText(PdfTextStringPtr& result) const;
     bool CreationDate(OutputDatePtr& result) const;
     bool ModificationDate(OutputDatePtr& result) const;
     bool Trapped(DocumentTrapped& result) const;

@@ -107,7 +107,7 @@ extern "C"
     /**
     * \brief The label prefix for page labels in this range.
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief
@@ -121,11 +121,6 @@ extern "C"
     * the numeric portion of each page label.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle* handle, NumberingStyle* result);
-
-    /**
-    * \brief The label prefix for page labels in this range as a \ref PdfTextStringHandle.
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_PrefixText(PageLabelHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \copydoc IUnknown_Release

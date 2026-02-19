@@ -1,6 +1,5 @@
 #include "precompiled.h"
 
-#include "semantics/utils/pdf_text_string.h"
 #include "semantics/objects/annotations.h"
 #include "semantics/objects/actions.h"
 #include "semantics/objects/color.h"
@@ -13,7 +12,6 @@
 #include "semantics/utils/semantic_utils.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
-#include "syntax/objects/string_object.h"
 #include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
@@ -260,104 +258,6 @@ void AnnotationBase::SetContents(syntax::LiteralStringObjectPtr contents) {
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
     }
     _obj->Insert(constant::Name::Contents, contents);
-}
-
-bool AnnotationBase::GetContentsText(PdfTextStringPtr& result) const {
-    syntax::OutputLiteralStringObjectPtr str;
-    if (!GetContents(str)) return false;
-    syntax::LiteralStringObjectPtr literal = str;
-    result = PdfTextString::CreateFromStringObject(literal);
-    return true;
-}
-
-void AnnotationBase::SetContentsText(PdfTextStringPtr text) {
-    auto raw = text->GetStringRaw();
-    auto str_obj = syntax::LiteralStringObject::CreateFromDecoded(raw);
-    SetContents(str_obj);
-}
-
-// TextAnnotation TextString overloads
-bool TextAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
-    syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-void TextAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    SetAuthor(text->GetStringObject());
-}
-
-// FreeTextAnnotation TextString overloads
-bool FreeTextAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
-    syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-void FreeTextAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    SetAuthor(text->GetStringObject());
-}
-
-// HighlightAnnotation TextString overloads
-bool HighlightAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
-    syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-void HighlightAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    SetAuthor(text->GetStringObject());
-}
-
-// UnderlineAnnotation TextString overloads
-bool UnderlineAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
-    syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-void UnderlineAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    SetAuthor(text->GetStringObject());
-}
-
-// SquigglyAnnotation TextString overloads
-bool SquigglyAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
-    syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-void SquigglyAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    SetAuthor(text->GetStringObject());
-}
-
-// StrikeOutAnnotation TextString overloads
-bool StrikeOutAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
-    syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-void StrikeOutAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    SetAuthor(text->GetStringObject());
-}
-
-// InkAnnotation TextString overloads
-bool InkAnnotation::GetAuthorText(PdfTextStringPtr& result) const {
-    syntax::OutputStringObjectPtr str;
-    if (!GetAuthor(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-void InkAnnotation::SetAuthorText(PdfTextStringPtr text) {
-    SetAuthor(text->GetStringObject());
 }
 
 bool AnnotationBase::GetColor(OutputColorPtr& result) const {

@@ -131,7 +131,6 @@ class InteractiveForm; using InteractiveFormPtr = Deferred<InteractiveForm>; usi
 class DocumentEncryptionSettings; using DocumentEncryptionSettingsPtr = Deferred<DocumentEncryptionSettings>;
 
 // Utils
-class PdfTextString; using PdfTextStringPtr = Deferred<PdfTextString>; using OutputPdfTextStringPtr = OutputPointer<PdfTextStringPtr>;
 class DocumentSigner; using DocumentSignerPtr = Deferred<DocumentSigner>;
 class DocumentSignatureSettings; using DocumentSignatureSettingsPtr = Deferred<DocumentSignatureSettings>;
 

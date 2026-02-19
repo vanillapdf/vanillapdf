@@ -1,11 +1,6 @@
 #include "precompiled.h"
 
 #include "utils/text_string_encoding.h"
-#include "utils/buffer.h"
-
-#include <array>
-#include <unordered_map>
-#include <string>
 
 namespace vanillapdf {
 
@@ -57,292 +52,27 @@ static constexpr char32_t kPDFDocToUnicode[256] = {
     0x00F8,  0x00F9,  0x00FA,  0x00FB,  0x00FC,  0x00FD,  0x00FE,  0x00FF,  // 0xF8-0xFF
 };
 
-// Build reverse lookup: Unicode code point -> PDFDocEncoding byte.
-// Only includes mappings that differ from identity (i.e., not 0x20-0x7E ASCII).
-static std::unordered_map<char32_t, uint8_t> BuildUnicodeToPDFDoc() {
-    std::unordered_map<char32_t, uint8_t> map;
-    for (int i = 0; i < 256; i += 1) {
-        char32_t cp = kPDFDocToUnicode[i];
-        if (cp != 0xFFFD) {
-            // First mapping wins (lower byte value preferred)
-            if (map.find(cp) == map.end()) {
-                map[cp] = static_cast<uint8_t>(i);
-            }
-        }
-    }
-    return map;
-}
-
-static const std::unordered_map<char32_t, uint8_t>& GetUnicodeToPDFDocMap() {
-    static const auto map = BuildUnicodeToPDFDoc();
-    return map;
-}
-
-// Encode a single Unicode code point as UTF-8 bytes, appending to output.
-static void EncodeUtf8(char32_t cp, std::string& out) {
-    if (cp <= 0x7F) {
-        out.push_back(static_cast<char>(cp));
-    } else if (cp <= 0x7FF) {
-        out.push_back(static_cast<char>(0xC0 | (cp >> 6)));
-        out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-    } else if (cp <= 0xFFFF) {
-        out.push_back(static_cast<char>(0xE0 | (cp >> 12)));
-        out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-        out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-    } else if (cp <= 0x10FFFF) {
-        out.push_back(static_cast<char>(0xF0 | (cp >> 18)));
-        out.push_back(static_cast<char>(0x80 | ((cp >> 12) & 0x3F)));
-        out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-        out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-    }
-}
-
-// Decode a single UTF-8 sequence from data[pos], advancing pos.
-// Returns the decoded code point, or U+FFFD on error.
-static char32_t DecodeUtf8(const char* data, size_t size, size_t& pos) {
-    auto byte0 = static_cast<uint8_t>(data[pos]);
-
-    if (byte0 <= 0x7F) {
-        pos += 1;
-        return byte0;
-    }
-
-    int expected_bytes = 0;
-    char32_t cp = 0;
-
-    if ((byte0 & 0xE0) == 0xC0) {
-        expected_bytes = 2;
-        cp = byte0 & 0x1F;
-    } else if ((byte0 & 0xF0) == 0xE0) {
-        expected_bytes = 3;
-        cp = byte0 & 0x0F;
-    } else if ((byte0 & 0xF8) == 0xF0) {
-        expected_bytes = 4;
-        cp = byte0 & 0x07;
-    } else {
-        pos += 1;
-        return 0xFFFD;
-    }
-
-    if (pos + expected_bytes > size) {
-        pos += 1;
-        return 0xFFFD;
-    }
-
-    for (int i = 1; i < expected_bytes; i += 1) {
-        auto cont = static_cast<uint8_t>(data[pos + i]);
-        if ((cont & 0xC0) != 0x80) {
-            pos += 1;
-            return 0xFFFD;
-        }
-        cp = (cp << 6) | (cont & 0x3F);
-    }
-
-    pos += expected_bytes;
-    return cp;
-}
-
-// Encode a single Unicode code point as UTF-16BE bytes, appending to output.
-static void EncodeUtf16BE(char32_t cp, std::string& out) {
-    if (cp <= 0xFFFF) {
-        out.push_back(static_cast<char>((cp >> 8) & 0xFF));
-        out.push_back(static_cast<char>(cp & 0xFF));
-    } else if (cp <= 0x10FFFF) {
-        // Surrogate pair
-        cp -= 0x10000;
-        uint16_t high = static_cast<uint16_t>(0xD800 | (cp >> 10));
-        uint16_t low = static_cast<uint16_t>(0xDC00 | (cp & 0x3FF));
-        out.push_back(static_cast<char>((high >> 8) & 0xFF));
-        out.push_back(static_cast<char>(high & 0xFF));
-        out.push_back(static_cast<char>((low >> 8) & 0xFF));
-        out.push_back(static_cast<char>(low & 0xFF));
-    }
-}
-
-TextStringEncoding DetectTextStringEncoding(const Buffer& value) {
-    auto sz = value.size();
-    auto d = value.data();
-
+TextStringEncoding DetectTextStringEncoding(const char* data, size_t size) {
     // Check UTF-16BE BOM: 0xFE 0xFF
-    if (sz >= 2 &&
-        static_cast<uint8_t>(d[0]) == 0xFE &&
-        static_cast<uint8_t>(d[1]) == 0xFF) {
+    if (size >= 2 &&
+        static_cast<uint8_t>(data[0]) == 0xFE &&
+        static_cast<uint8_t>(data[1]) == 0xFF) {
         return TextStringEncoding::UTF16BE;
     }
 
     // Check UTF-8 BOM: 0xEF 0xBB 0xBF
-    if (sz >= 3 &&
-        static_cast<uint8_t>(d[0]) == 0xEF &&
-        static_cast<uint8_t>(d[1]) == 0xBB &&
-        static_cast<uint8_t>(d[2]) == 0xBF) {
+    if (size >= 3 &&
+        static_cast<uint8_t>(data[0]) == 0xEF &&
+        static_cast<uint8_t>(data[1]) == 0xBB &&
+        static_cast<uint8_t>(data[2]) == 0xBF) {
         return TextStringEncoding::UTF8;
     }
 
     return TextStringEncoding::PDFDocEncoding;
 }
 
-// Convert PDFDocEncoding bytes to UTF-8.
-static BufferPtr PDFDocEncodingToUtf8(const char* data, size_t size) {
-    std::string utf8;
-    utf8.reserve(size);
-
-    for (size_t i = 0; i < size; i += 1) {
-        auto byte = static_cast<uint8_t>(data[i]);
-        char32_t cp = kPDFDocToUnicode[byte];
-        EncodeUtf8(cp, utf8);
-    }
-
-    return make_deferred_container<Buffer>(utf8.begin(), utf8.end());
-}
-
-// Convert UTF-16BE bytes (without BOM) to UTF-8.
-static BufferPtr Utf16BEToUtf8(const char* data, size_t size) {
-    std::string utf8;
-    utf8.reserve(size); // rough estimate
-
-    size_t i = 0;
-    while (i + 1 < size) {
-        uint16_t unit = (static_cast<uint8_t>(data[i]) << 8) | static_cast<uint8_t>(data[i + 1]);
-        i += 2;
-
-        char32_t cp = 0;
-        if (unit >= 0xD800 && unit <= 0xDBFF) {
-            // High surrogate - expect low surrogate
-            if (i + 1 < size) {
-                uint16_t low = (static_cast<uint8_t>(data[i]) << 8) | static_cast<uint8_t>(data[i + 1]);
-                if (low >= 0xDC00 && low <= 0xDFFF) {
-                    cp = 0x10000 + ((static_cast<char32_t>(unit - 0xD800) << 10) | (low - 0xDC00));
-                    i += 2;
-                } else {
-                    cp = 0xFFFD; // Unpaired high surrogate
-                }
-            } else {
-                cp = 0xFFFD; // Truncated surrogate
-            }
-        } else if (unit >= 0xDC00 && unit <= 0xDFFF) {
-            cp = 0xFFFD; // Unpaired low surrogate
-        } else {
-            cp = unit;
-        }
-
-        EncodeUtf8(cp, utf8);
-    }
-
-    return make_deferred_container<Buffer>(utf8.begin(), utf8.end());
-}
-
-// Convert PDFDocEncoding bytes to UTF-16BE.
-static BufferPtr PDFDocEncodingToUtf16BE(const char* data, size_t size) {
-    std::string utf16;
-    utf16.reserve(size * 2);
-
-    for (size_t i = 0; i < size; i += 1) {
-        auto byte = static_cast<uint8_t>(data[i]);
-        char32_t cp = kPDFDocToUnicode[byte];
-        EncodeUtf16BE(cp, utf16);
-    }
-
-    return make_deferred_container<Buffer>(utf16.begin(), utf16.end());
-}
-
-// Convert UTF-8 bytes (without BOM) to UTF-16BE.
-static BufferPtr Utf8ToUtf16BE(const char* data, size_t size) {
-    std::string utf16;
-    utf16.reserve(size * 2);
-
-    size_t pos = 0;
-    while (pos < size) {
-        char32_t cp = DecodeUtf8(data, size, pos);
-        EncodeUtf16BE(cp, utf16);
-    }
-
-    return make_deferred_container<Buffer>(utf16.begin(), utf16.end());
-}
-
-BufferPtr TextStringToUtf8(const Buffer& value) {
-    auto encoding = DetectTextStringEncoding(value);
-
-    switch (encoding) {
-        case TextStringEncoding::PDFDocEncoding:
-            return PDFDocEncodingToUtf8(value.data(), value.size());
-
-        case TextStringEncoding::UTF16BE:
-            // Skip 2-byte BOM
-            return Utf16BEToUtf8(value.data() + 2, value.size() - 2);
-
-        case TextStringEncoding::UTF8:
-            // Strip 3-byte BOM, return remaining UTF-8 content
-            return make_deferred_container<Buffer>(value.data() + 3, value.size() - 3);
-
-        default:
-            return PDFDocEncodingToUtf8(value.data(), value.size());
-    }
-}
-
-BufferPtr TextStringToUtf16BE(const Buffer& value) {
-    auto encoding = DetectTextStringEncoding(value);
-
-    switch (encoding) {
-        case TextStringEncoding::PDFDocEncoding:
-            return PDFDocEncodingToUtf16BE(value.data(), value.size());
-
-        case TextStringEncoding::UTF16BE:
-            // Skip 2-byte BOM, return raw UTF-16BE content
-            return make_deferred_container<Buffer>(value.data() + 2, value.size() - 2);
-
-        case TextStringEncoding::UTF8:
-            // Strip 3-byte BOM, convert UTF-8 to UTF-16BE
-            return Utf8ToUtf16BE(value.data() + 3, value.size() - 3);
-
-        default:
-            return PDFDocEncodingToUtf16BE(value.data(), value.size());
-    }
-}
-
-BufferPtr Utf8ToTextString(const Buffer& utf8_value) {
-    const auto& reverse_map = GetUnicodeToPDFDocMap();
-
-    // First pass: check if all characters can be represented in PDFDocEncoding
-    bool fits_pdfdoc = true;
-    size_t pos = 0;
-    while (pos < utf8_value.size()) {
-        char32_t cp = DecodeUtf8(utf8_value.data(), utf8_value.size(), pos);
-        if (reverse_map.find(cp) == reverse_map.end()) {
-            fits_pdfdoc = false;
-            break;
-        }
-    }
-
-    if (fits_pdfdoc) {
-        // Encode as PDFDocEncoding (no BOM)
-        std::string pdfdoc;
-        pdfdoc.reserve(utf8_value.size());
-
-        pos = 0;
-        while (pos < utf8_value.size()) {
-            char32_t cp = DecodeUtf8(utf8_value.data(), utf8_value.size(), pos);
-            auto it = reverse_map.find(cp);
-            pdfdoc.push_back(static_cast<char>(it->second));
-        }
-
-        return make_deferred_container<Buffer>(pdfdoc.begin(), pdfdoc.end());
-    }
-
-    // Encode as UTF-16BE with BOM
-    std::string result;
-    result.reserve(2 + utf8_value.size() * 2);
-
-    // BOM
-    result.push_back(static_cast<char>(0xFE));
-    result.push_back(static_cast<char>(0xFF));
-
-    pos = 0;
-    while (pos < utf8_value.size()) {
-        char32_t cp = DecodeUtf8(utf8_value.data(), utf8_value.size(), pos);
-        EncodeUtf16BE(cp, result);
-    }
-
-    return make_deferred_container<Buffer>(result.begin(), result.end());
+char32_t PDFDocEncodingToUnicode(uint8_t byte) {
+    return kPDFDocToUnicode[byte];
 }
 
 } // vanillapdf

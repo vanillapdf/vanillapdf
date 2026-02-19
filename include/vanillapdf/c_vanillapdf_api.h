@@ -96,8 +96,6 @@
 #include "vanillapdf/utils/c_output_stream.h"
 #include "vanillapdf/utils/c_memory_buffer_output_stream.h"
 #include "vanillapdf/utils/c_input_output_stream.h"
-
 #include "vanillapdf/utils/c_text_string_encoding.h"
-#include "vanillapdf/semantics/c_pdf_text_string.h"
 
 #endif /* _C_VANILLAPDF_API_H */

@@ -1,7 +1,6 @@
 #include "precompiled.h"
 
 #include "semantics/utils/document_signature_settings.h"
-#include "semantics/utils/pdf_text_string.h"
 
 namespace vanillapdf {
 namespace semantics {
@@ -34,7 +33,7 @@ bool DocumentSignatureSettings::GetCertificate(OutputPointer<HexadecimalStringOb
     return true;
 }
 
-bool DocumentSignatureSettings::GetName(OutputPointer<syntax::LiteralStringObjectPtr>& result) const {
+bool DocumentSignatureSettings::GetName(OutputPointer<LiteralStringObjectPtr>& result) const {
     if (m_name.empty()) {
         return false;
     }
@@ -43,7 +42,7 @@ bool DocumentSignatureSettings::GetName(OutputPointer<syntax::LiteralStringObjec
     return true;
 }
 
-bool DocumentSignatureSettings::GetLocation(OutputPointer<syntax::LiteralStringObjectPtr>& result) const {
+bool DocumentSignatureSettings::GetLocation(OutputPointer<LiteralStringObjectPtr>& result) const {
     if (m_location.empty()) {
         return false;
     }
@@ -52,7 +51,7 @@ bool DocumentSignatureSettings::GetLocation(OutputPointer<syntax::LiteralStringO
     return true;
 }
 
-bool DocumentSignatureSettings::GetReason(OutputPointer<syntax::LiteralStringObjectPtr>& result) const {
+bool DocumentSignatureSettings::GetReason(OutputPointer<LiteralStringObjectPtr>& result) const {
     if (m_reason.empty()) {
         return false;
     }
@@ -92,51 +91,6 @@ void DocumentSignatureSettings::SetReason(LiteralStringObjectPtr value) {
 
 void DocumentSignatureSettings::SetSigningTime(DatePtr value) {
     m_time = value;
-}
-
-bool DocumentSignatureSettings::GetNameText(PdfTextStringPtr& result) const {
-    if (m_name.empty()) {
-        return false;
-    }
-    LiteralStringObjectPtr str = m_name;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-bool DocumentSignatureSettings::GetLocationText(PdfTextStringPtr& result) const {
-    if (m_location.empty()) {
-        return false;
-    }
-    LiteralStringObjectPtr str = m_location;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-bool DocumentSignatureSettings::GetReasonText(PdfTextStringPtr& result) const {
-    if (m_reason.empty()) {
-        return false;
-    }
-    LiteralStringObjectPtr str = m_reason;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-void DocumentSignatureSettings::SetNameText(PdfTextStringPtr value) {
-    auto raw = value->GetStringRaw();
-    auto str_obj = LiteralStringObject::CreateFromDecoded(raw);
-    SetName(str_obj);
-}
-
-void DocumentSignatureSettings::SetLocationText(PdfTextStringPtr value) {
-    auto raw = value->GetStringRaw();
-    auto str_obj = LiteralStringObject::CreateFromDecoded(raw);
-    SetLocation(str_obj);
-}
-
-void DocumentSignatureSettings::SetReasonText(PdfTextStringPtr value) {
-    auto raw = value->GetStringRaw();
-    auto str_obj = LiteralStringObject::CreateFromDecoded(raw);
-    SetReason(str_obj);
 }
 
 } // semantics

@@ -53,7 +53,6 @@ error_type process_stream(StreamObjectHandle* stream, int nested);
 
 error_type process_lit_string(LiteralStringObjectHandle* string, int nested);
 error_type process_hex_string(HexadecimalStringObjectHandle* string, int nested);
-error_type process_pdf_text_string(PdfTextStringHandle* text_string, int nested);
 
 error_type process_attribute(BaseObjectAttributeHandle* attribute, int nested);
 error_type process_attribute_list(ObjectAttributeListHandle* attributes, int nested);

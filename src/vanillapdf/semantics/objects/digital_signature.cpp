@@ -1,6 +1,5 @@
 #include "precompiled.h"
 
-#include "semantics/utils/pdf_text_string.h"
 #include "semantics/objects/digital_signature.h"
 #include "semantics/utils/byte_range.h"
 #include "semantics/utils/semantic_exceptions.h"
@@ -75,34 +74,6 @@ bool DigitalSignature::Name(syntax::OutputStringObjectPtr& result) {
     }
 
     result = _obj->FindAs<syntax::StringObjectPtr>(constant::Name::Name);
-    return true;
-}
-
-bool DigitalSignature::ReasonText(PdfTextStringPtr& result) {
-    syntax::OutputStringObjectPtr str;
-    if (!Reason(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-bool DigitalSignature::LocationText(PdfTextStringPtr& result) {
-    syntax::OutputStringObjectPtr str;
-    if (!Location(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-bool DigitalSignature::ContactInfoText(PdfTextStringPtr& result) {
-    syntax::OutputStringObjectPtr str;
-    if (!ContactInfo(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-bool DigitalSignature::NameText(PdfTextStringPtr& result) {
-    syntax::OutputStringObjectPtr str;
-    if (!Name(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
     return true;
 }
 

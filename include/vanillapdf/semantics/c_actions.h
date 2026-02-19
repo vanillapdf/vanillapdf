@@ -172,12 +172,7 @@ extern "C"
     /**
     * \brief The uniform resource identifier to resolve
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION URIAction_GetURI(URIActionHandle* handle, LiteralStringObjectHandle** result);
-
-    /**
-    * \brief Get the URI as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION URIAction_GetURIText(URIActionHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION URIAction_GetURI(URIActionHandle* handle, LiteralStringObjectHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ActionHandle

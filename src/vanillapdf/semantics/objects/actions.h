@@ -42,7 +42,6 @@ public:
     virtual ActionBase::Type GetActionType() const noexcept override;
 
     syntax::LiteralStringObjectPtr GetURI() const;
-    bool GetURIText(PdfTextStringPtr& result) const;
 };
 
 class GoToRemoteAction : public ActionBase {

@@ -22,12 +22,6 @@ public:
     bool ContactInfo(syntax::OutputStringObjectPtr& result);
     bool SigningTime(OutputDatePtr& result);
     bool Name(syntax::OutputStringObjectPtr& result);
-
-    // text string overloads (encoding-aware)
-    bool ReasonText(PdfTextStringPtr& result);
-    bool LocationText(PdfTextStringPtr& result);
-    bool ContactInfoText(PdfTextStringPtr& result);
-    bool NameText(PdfTextStringPtr& result);
     bool Revision(syntax::OutputIntegerObjectPtr& result);
     bool SubFilter(syntax::OutputNameObjectPtr& result);
     bool Certificate(syntax::OutputStringObjectPtr& result);

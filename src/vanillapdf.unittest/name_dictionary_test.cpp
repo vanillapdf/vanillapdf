@@ -375,8 +375,8 @@ TEST_F(DestinationNameTreeWithDocument, Iterator_WithItems) {
     ASSERT_EQ(DestinationNameTreeIterator_IsValid(iter, &valid), VANILLAPDF_ERROR_SUCCESS);
     while (valid == VANILLAPDF_RV_TRUE) {
         // Get key
-        HandleGuard<PdfTextStringHandle, PdfTextString_Release> key;
-        ASSERT_EQ(DestinationNameTreeIterator_GetKeyText(iter, key.out()), VANILLAPDF_ERROR_SUCCESS);
+        HandleGuard<StringObjectHandle, StringObject_Release> key;
+        ASSERT_EQ(DestinationNameTreeIterator_GetKey(iter, key.out()), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_NE(key.get(), nullptr);
 
         // Get value

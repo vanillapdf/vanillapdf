@@ -1,10 +1,8 @@
 #include "precompiled.h"
 
-#include "semantics/utils/pdf_text_string.h"
 #include "semantics/objects/fields.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
-#include "syntax/objects/string_object.h"
 #include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
@@ -80,20 +78,6 @@ void Field::SetFieldFlags(types::big_int value) {
     _obj->Insert(constant::Name::Ff, flags);
 }
 
-bool Field::GetNameText(PdfTextStringPtr& result) const {
-    syntax::OutputStringObjectPtr str;
-    if (!GetName(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-bool Field::GetAlternateNameText(PdfTextStringPtr& result) const {
-    syntax::OutputStringObjectPtr str;
-    if (!GetAlternateName(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
 // ButtonField properties
 
 bool ButtonField::GetValue(syntax::OutputNameObjectPtr& result) const {
@@ -150,24 +134,6 @@ bool TextField::GetMaxLength(syntax::OutputIntegerObjectPtr& result) const {
     return true;
 }
 
-bool TextField::GetValueText(PdfTextStringPtr& result) const {
-    syntax::OutputStringObjectPtr str;
-    if (!GetValue(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-void TextField::SetValueText(PdfTextStringPtr text) {
-    SetValue(text->GetStringObject());
-}
-
-bool TextField::GetDefaultValueText(PdfTextStringPtr& result) const {
-    syntax::OutputStringObjectPtr str;
-    if (!GetDefaultValue(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
 // ChoiceField properties
 
 bool ChoiceField::GetValue(syntax::OutputStringObjectPtr& result) const {
@@ -205,17 +171,6 @@ bool ChoiceField::GetOptionAt(types::size_type index, syntax::OutputContainableO
     auto opts = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Opt);
     result = opts->GetValue(index);
     return true;
-}
-
-bool ChoiceField::GetValueText(PdfTextStringPtr& result) const {
-    syntax::OutputStringObjectPtr str;
-    if (!GetValue(str)) return false;
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
-}
-
-void ChoiceField::SetValueText(PdfTextStringPtr text) {
-    SetValue(text->GetStringObject());
 }
 
 // SignatureField properties

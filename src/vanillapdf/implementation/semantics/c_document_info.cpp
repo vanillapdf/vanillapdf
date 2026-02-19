@@ -1,5 +1,4 @@
 #include "precompiled.h"
-#include "semantics/utils/pdf_text_string.h"
 #include "semantics/objects/document_info.h"
 #include "semantics/objects/date.h"
 
@@ -170,104 +169,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInf
             return VANILLAPDF_ERROR_GENERAL;
         }
 
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-// TextString overloads
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitleText(DocumentInfoHandle* handle, PdfTextStringHandle** result)
-{
-    DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try
-    {
-        PdfTextStringPtr text_string;
-        if (!obj->TitleText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
-        auto ptr = text_string.AddRefGet();
-        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthorText(DocumentInfoHandle* handle, PdfTextStringHandle** result)
-{
-    DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try
-    {
-        PdfTextStringPtr text_string;
-        if (!obj->AuthorText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
-        auto ptr = text_string.AddRefGet();
-        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubjectText(DocumentInfoHandle* handle, PdfTextStringHandle** result)
-{
-    DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try
-    {
-        PdfTextStringPtr text_string;
-        if (!obj->SubjectText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
-        auto ptr = text_string.AddRefGet();
-        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywordsText(DocumentInfoHandle* handle, PdfTextStringHandle** result)
-{
-    DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try
-    {
-        PdfTextStringPtr text_string;
-        if (!obj->KeywordsText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
-        auto ptr = text_string.AddRefGet();
-        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreatorText(DocumentInfoHandle* handle, PdfTextStringHandle** result)
-{
-    DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try
-    {
-        PdfTextStringPtr text_string;
-        if (!obj->CreatorText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
-        auto ptr = text_string.AddRefGet();
-        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducerText(DocumentInfoHandle* handle, PdfTextStringHandle** result)
-{
-    DocumentInfo* obj = reinterpret_cast<DocumentInfo*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try
-    {
-        PdfTextStringPtr text_string;
-        if (!obj->ProducerText(text_string)) return VANILLAPDF_ERROR_OBJECT_MISSING;
-        auto ptr = text_string.AddRefGet();
-        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

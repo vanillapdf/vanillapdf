@@ -33,6 +33,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     destinations_test.cpp
     fields_test.cpp
     filter_test.cpp
+    text_string_encoding_test.cpp
     test_environment.cpp
     attributes_test.cpp
     objects_test.cpp
@@ -44,7 +45,6 @@ set(VANILLAPDF_UNITTEST_SOURCES
     name_dictionary_test.cpp
     io_strategy_test.cpp
     license_info_test.cpp
-    text_string_encoding_test.cpp
 )
 
 set(VANILLAPDF_UNITTEST_HEADERS
@@ -105,6 +105,11 @@ set(VANILLAPDF_UNITTEST_LIBS
     vanillapdf
     GTest::gtest
 )
+
+# GCC < 9 requires explicit -lstdc++fs for std::filesystem (e.g. Rocky 8)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
+    list(APPEND VANILLAPDF_UNITTEST_LIBS stdc++fs)
+endif()
 
 target_link_libraries(vanillapdf.unittest PRIVATE ${VANILLAPDF_UNITTEST_LIBS})
 

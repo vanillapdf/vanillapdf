@@ -1,10 +1,8 @@
 #include "precompiled.h"
 
 #include "semantics/utils/document_signature_settings.h"
-#include "semantics/utils/pdf_text_string.h"
 
 #include "vanillapdf/semantics/c_document_signature_settings.h"
-#include "vanillapdf/semantics/c_pdf_text_string.h"
 #include "implementation/c_helper.h"
 
 using namespace vanillapdf;
@@ -142,7 +140,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetName(D
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        OutputPointer<syntax::LiteralStringObjectPtr> name;
+        OutputPointer<LiteralStringObjectPtr> name;
         bool has_name = obj->GetName(name);
         if (!has_name) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
@@ -172,7 +170,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetLocati
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        OutputPointer<syntax::LiteralStringObjectPtr> location;
+        OutputPointer<LiteralStringObjectPtr> location;
         bool has_name = obj->GetLocation(location);
         if (!has_name) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
@@ -202,7 +200,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReason
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try {
-        OutputPointer<syntax::LiteralStringObjectPtr> reason;
+        OutputPointer<LiteralStringObjectPtr> reason;
         bool has_name = obj->GetReason(reason);
         if (!has_name) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
@@ -292,87 +290,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_ToUnknown
 
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_FromUnknown(IUnknownHandle* handle, DocumentSignatureSettingsHandle** result) {
     return SafeObjectConvert<IUnknown, DocumentSignatureSettings, IUnknownHandle, DocumentSignatureSettingsHandle>(handle, result);
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetNameText(DocumentSignatureSettingsHandle* handle, PdfTextStringHandle** result) {
-    DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        PdfTextStringPtr text_string;
-        bool has_name = obj->GetNameText(text_string);
-        if (!has_name) return VANILLAPDF_ERROR_OBJECT_MISSING;
-        auto ptr = text_string.AddRefGet();
-        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetNameText(DocumentSignatureSettingsHandle* handle, PdfTextStringHandle* value) {
-    DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
-    PdfTextString* text = reinterpret_cast<PdfTextString*>(value);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(text);
-
-    try {
-        obj->SetNameText(text);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetLocationText(DocumentSignatureSettingsHandle* handle, PdfTextStringHandle** result) {
-    DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        PdfTextStringPtr text_string;
-        bool has_location = obj->GetLocationText(text_string);
-        if (!has_location) return VANILLAPDF_ERROR_OBJECT_MISSING;
-        auto ptr = text_string.AddRefGet();
-        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetLocationText(DocumentSignatureSettingsHandle* handle, PdfTextStringHandle* value) {
-    DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
-    PdfTextString* text = reinterpret_cast<PdfTextString*>(value);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(text);
-
-    try {
-        obj->SetLocationText(text);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReasonText(DocumentSignatureSettingsHandle* handle, PdfTextStringHandle** result) {
-    DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        PdfTextStringPtr text_string;
-        bool has_reason = obj->GetReasonText(text_string);
-        if (!has_reason) return VANILLAPDF_ERROR_OBJECT_MISSING;
-        auto ptr = text_string.AddRefGet();
-        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReasonText(DocumentSignatureSettingsHandle* handle, PdfTextStringHandle* value) {
-    DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
-    PdfTextString* text = reinterpret_cast<PdfTextString*>(value);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(text);
-
-    try {
-        obj->SetReasonText(text);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_Release(DocumentSignatureSettingsHandle* handle) {

@@ -1,6 +1,5 @@
 #include "precompiled.h"
 
-#include "semantics/utils/pdf_text_string.h"
 #include "semantics/objects/actions.h"
 #include "semantics/objects/destinations.h"
 
@@ -77,12 +76,6 @@ bool GoToAction::Destination(OutputDestinationPtr& result) const {
 
 syntax::LiteralStringObjectPtr URIAction::GetURI() const {
     return _obj->FindAs<syntax::LiteralStringObjectPtr>(constant::Name::URI);
-}
-
-bool URIAction::GetURIText(PdfTextStringPtr& result) const {
-    auto str = GetURI();
-    result = PdfTextString::CreateFromStringObject(str);
-    return true;
 }
 
 bool GoToRemoteAction::Destination(OutputDestinationPtr& result) const {

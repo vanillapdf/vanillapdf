@@ -61,32 +61,32 @@ extern "C"
     /**
     * \brief Set the name of the person or authority signing the document.
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetName(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetName(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle** result);
 
     /**
     * \brief \copybrief DocumentSignatureSettings_GetName
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetName(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle* value);
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetName(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle* value);
 
     /**
     * \brief Get the CPU host name or physical location of the signing.
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetLocation(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetLocation(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle** result);
 
     /**
     * \brief \copybrief DocumentSignatureSettings_GetLocation
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetLocation(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle* value);
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetLocation(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle* value);
 
     /**
     * \brief Set the reason for the signing, such as (I agree...).
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReason(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReason(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle** result);
 
     /**
     * \brief \copybrief DocumentSignatureSettings_GetReason
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReason(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle* value);
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReason(DocumentSignatureSettingsHandle* handle, LiteralStringObjectHandle* value);
 
     /**
     * \brief The time of signing.
@@ -113,36 +113,6 @@ extern "C"
     * \brief \copybrief DocumentSignatureSettings_GetCertificate
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCertificate(DocumentSignatureSettingsHandle* handle, HexadecimalStringObjectHandle* value);
-
-    /**
-    * \brief Get the name as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetNameText(DocumentSignatureSettingsHandle* handle, PdfTextStringHandle** result);
-
-    /**
-    * \brief Set the name as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetNameText(DocumentSignatureSettingsHandle* handle, PdfTextStringHandle* value);
-
-    /**
-    * \brief Get the location as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetLocationText(DocumentSignatureSettingsHandle* handle, PdfTextStringHandle** result);
-
-    /**
-    * \brief Set the location as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetLocationText(DocumentSignatureSettingsHandle* handle, PdfTextStringHandle* value);
-
-    /**
-    * \brief Get the reason as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReasonText(DocumentSignatureSettingsHandle* handle, PdfTextStringHandle** result);
-
-    /**
-    * \brief Set the reason as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReasonText(DocumentSignatureSettingsHandle* handle, PdfTextStringHandle* value);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle

@@ -1,6 +1,5 @@
 #include "precompiled.h"
 
-#include "semantics/utils/pdf_text_string.h"
 #include "semantics/objects/name_dictionary.h"
 #include "semantics/objects/tree.h"
 #include "semantics/objects/destinations.h"
@@ -164,20 +163,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_GetKey(
         auto key = obj->First();
         auto ptr = key.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_GetKeyText(DestinationNameTreeIteratorHandle* handle, PdfTextStringHandle** result) {
-    DestinationNameTreeIterator* obj = reinterpret_cast<DestinationNameTreeIterator*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        auto key = obj->First();
-        auto text_string = PdfTextString::CreateFromStringObject(key);
-        auto ptr = text_string.AddRefGet();
-        *result = reinterpret_cast<PdfTextStringHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

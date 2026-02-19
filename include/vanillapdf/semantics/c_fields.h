@@ -204,13 +204,13 @@ extern "C"
     * \brief Get the partial field name (/T entry).
     * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Field_GetName(FieldHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetName(FieldHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Get the alternate field name (/TU entry), used as tooltip text.
     * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateName(FieldHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateName(FieldHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Get the field flags (/Ff entry).
@@ -224,16 +224,6 @@ extern "C"
     * \see FieldFlags
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_SetFieldFlags(FieldHandle* handle, FieldFlags value);
-
-    /**
-    * \brief Get the partial field name as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetNameText(FieldHandle* handle, PdfTextStringHandle** result);
-
-    /**
-    * \brief Get the alternate field name as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateNameText(FieldHandle* handle, PdfTextStringHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ButtonFieldHandle.
@@ -318,32 +308,17 @@ extern "C"
     /**
     * \brief Get the text field value (/V entry).
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetValue(TextFieldHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetValue(TextFieldHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Set the text field value (/V entry).
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION TextField_SetValue(TextFieldHandle* handle, StringObjectHandle* value);
-
-    /**
-    * \brief Set the text field value from a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION TextField_SetValueText(TextFieldHandle* handle, PdfTextStringHandle* value);
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_SetValue(TextFieldHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Get the default value (/DV entry).
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetDefaultValue(TextFieldHandle* handle, StringObjectHandle** result);
-
-    /**
-    * \brief Get the text field value as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetValueText(TextFieldHandle* handle, PdfTextStringHandle** result);
-
-    /**
-    * \brief Get the default value as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetDefaultValueText(TextFieldHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetDefaultValue(TextFieldHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Get the maximum length of the text field (/MaxLen entry).
@@ -376,22 +351,12 @@ extern "C"
     /**
     * \brief Get the selected value (/V entry).
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetValue(ChoiceFieldHandle* handle, StringObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetValue(ChoiceFieldHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Set the selected value (/V entry).
     */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_SetValue(ChoiceFieldHandle* handle, StringObjectHandle* value);
-
-    /**
-    * \brief Set the selected value from a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_SetValueText(ChoiceFieldHandle* handle, PdfTextStringHandle* value);
-
-    /**
-    * \brief Get the selected value as a \ref PdfTextStringHandle (encoding-aware).
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetValueText(ChoiceFieldHandle* handle, PdfTextStringHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_SetValue(ChoiceFieldHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Get the number of available options (/Opt entry).

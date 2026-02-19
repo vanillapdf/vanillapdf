@@ -36,10 +36,6 @@ public:
     bool GetAlternateName(syntax::OutputStringObjectPtr& result) const;
     bool GetFieldFlags(types::big_int& result) const;
     void SetFieldFlags(types::big_int value);
-
-    // text string overloads (encoding-aware)
-    bool GetNameText(PdfTextStringPtr& result) const;
-    bool GetAlternateNameText(PdfTextStringPtr& result) const;
 };
 
 class NonTerminalField : public Field {
@@ -66,11 +62,6 @@ public:
     void SetValue(syntax::StringObjectPtr value);
     bool GetDefaultValue(syntax::OutputStringObjectPtr& result) const;
     bool GetMaxLength(syntax::OutputIntegerObjectPtr& result) const;
-
-    // text string overloads (encoding-aware)
-    bool GetValueText(PdfTextStringPtr& result) const;
-    void SetValueText(PdfTextStringPtr text);
-    bool GetDefaultValueText(PdfTextStringPtr& result) const;
 };
 
 class ChoiceField : public Field {
@@ -82,10 +73,6 @@ public:
     void SetValue(syntax::StringObjectPtr value);
     bool GetOptionCount(types::size_type& result) const;
     bool GetOptionAt(types::size_type index, syntax::OutputContainableObjectPtr& result) const;
-
-    // text string overloads (encoding-aware)
-    bool GetValueText(PdfTextStringPtr& result) const;
-    void SetValueText(PdfTextStringPtr text);
 };
 
 class SignatureField : public Field {

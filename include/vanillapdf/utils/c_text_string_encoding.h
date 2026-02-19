@@ -12,7 +12,7 @@ extern "C"
 
     /**
     * \file c_text_string_encoding.h
-    * \brief This file contains definitions for PDF text string encoding detection and conversion.
+    * \brief Utilities for PDF text string encoding detection and PDFDocEncoding lookup.
     */
 
     /**
@@ -45,39 +45,21 @@ extern "C"
 
     /**
     * \brief Detect the encoding of a PDF text string from its raw bytes.
-    * \param[in] handle Buffer containing raw PDF text string bytes.
+    * \param[in] data  Pointer to the raw PDF text string bytes.
+    * \param[in] size  Number of bytes in \p data.
     * \param[out] result The detected encoding type.
     * \ingroup group_utils
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_Detect(BufferHandle* handle, TextStringEncodingType* result);
+    VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_Detect(string_type data, size_type size, TextStringEncodingType* result);
 
     /**
-    * \brief Convert a PDF text string (any encoding) to UTF-8.
-    * \param[in] handle Buffer containing raw PDF text string bytes.
-    * \param[out] result New buffer with UTF-8 encoded content (BOM stripped).
+    * \brief Map a single PDFDocEncoding byte to its Unicode code point.
+    * \param[in]  byte      The PDFDocEncoding byte value (0x00–0xFF).
+    * \param[out] codepoint The corresponding Unicode code point.
+    *             Undefined bytes (e.g. 0x00–0x07) map to U+FFFD (replacement character).
     * \ingroup group_utils
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_ToUtf8(BufferHandle* handle, BufferHandle** result);
-
-    /**
-    * \brief Convert a PDF text string (any encoding) to UTF-16BE.
-    * \param[in] handle Buffer containing raw PDF text string bytes.
-    * \param[out] result New buffer with UTF-16BE encoded content (no BOM).
-    * \ingroup group_utils
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_ToUtf16(BufferHandle* handle, BufferHandle** result);
-
-    /**
-    * \brief Convert UTF-8 bytes to a PDF text string.
-    *
-    * If all characters fit in PDFDocEncoding, returns PDFDocEncoding bytes.
-    * Otherwise returns UTF-16BE with BOM prefix.
-    *
-    * \param[in] handle Buffer containing UTF-8 encoded content.
-    * \param[out] result New buffer with PDF text string bytes.
-    * \ingroup group_utils
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_FromUtf8(BufferHandle* handle, BufferHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION PDFDocEncoding_ToUnicode(uint8_t byte, uint32_t* codepoint);
 
 #ifdef __cplusplus
 };
