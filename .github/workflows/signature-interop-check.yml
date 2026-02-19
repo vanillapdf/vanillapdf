@@ -1,0 +1,86 @@
+name: Signature interoperability check (pdfsig)
+
+on:
+  workflow_dispatch:
+
+  pull_request:
+    branches: [ "main", "release/*" ]
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'test/certificates/**'
+      - '.github/workflows/signature-interop-check.yml'
+
+  schedule:
+    - cron: '0 5 * * 1'  # Every Monday at 5 AM UTC
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: read
+
+env:
+  VCPKG_ROOT: external/vcpkg
+  VCPKG_DISABLE_METRICS: 1
+
+jobs:
+
+  pdfsig:
+    name: ubuntu.24.04-x64
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
+      options: --platform=linux/amd64
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@v5
+        with:
+          path: |
+            build/linux-x64-gcc/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/buildtrees
+            external/vcpkg/packages
+          key: vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-
+
+      - name: Install pdfsig
+        run: apt-get update && apt-get install -y poppler-utils
+
+      - name: Bootstrap vcpkg
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+
+      - name: Configure
+        run: cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+
+      - name: Build vanillapdf.tools
+        run: cmake --build --preset linux-x64-gcc --target vanillapdf.tools
+
+      - name: Install vanillapdf.tools
+        run: cmake --install build/linux-x64-gcc --prefix install
+
+      - name: Sign with RSA-4k-SHA3-512
+        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/signed_rsa.pdf -k test/certificates/Test_4kRSA_SHA3_512.pfx -p test
+
+      - name: Verify RSA-4k-SHA3-512 with pdfsig
+        run: pdfsig -nocert /tmp/signed_rsa.pdf
+
+      - name: Sign with EC-384-SHA512
+        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/signed_ec.pdf -k test/certificates/Test_EC384_SHA512.pfx -p test
+
+      - name: Verify EC-384-SHA512 with pdfsig
+        run: pdfsig -nocert /tmp/signed_ec.pdf
+
+      - name: Sign with Ed25519
+        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/signed_ed25519.pdf -k test/certificates/Test_ED25519.pfx -p test
+
+      - name: Verify Ed25519 with pdfsig
+        run: pdfsig -nocert /tmp/signed_ed25519.pdf
