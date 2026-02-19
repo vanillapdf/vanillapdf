@@ -55,7 +55,7 @@ jobs:
 
       - name: Install pdfsig and pyhanko
         run: |
-          apt-get update && apt-get install -y poppler-utils
+          apt-get update && apt-get install -y poppler-utils python3-pip
           pip3 install pyHanko --break-system-packages
 
       - name: Bootstrap vcpkg
