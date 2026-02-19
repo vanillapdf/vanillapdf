@@ -883,12 +883,12 @@ error_type process_trapped(DocumentTrappedType trapped, int nested) {
 }
 
 error_type process_document_info(DocumentInfoHandle* obj, int nested) {
-    PdfTextStringHandle* title = NULL;
-    PdfTextStringHandle* author = NULL;
-    PdfTextStringHandle* subject = NULL;
-    PdfTextStringHandle* keywords = NULL;
-    PdfTextStringHandle* creator = NULL;
-    PdfTextStringHandle* producer = NULL;
+    StringObjectHandle* title = NULL;
+    StringObjectHandle* author = NULL;
+    StringObjectHandle* subject = NULL;
+    StringObjectHandle* keywords = NULL;
+    StringObjectHandle* creator = NULL;
+    StringObjectHandle* producer = NULL;
     DateHandle* creation_date = NULL;
     DateHandle* modification_date = NULL;
     DocumentTrappedType trapped;
@@ -896,29 +896,29 @@ error_type process_document_info(DocumentInfoHandle* obj, int nested) {
     print_spaces(nested);
     print_text("Document info begin\n");
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetTitleText(obj, &title),
-        process_pdf_text_string(title, nested + 1),
-        PdfTextString_Release(title));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetTitle(obj, &title),
+        process_string(title, nested + 1),
+        StringObject_Release(title));
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetAuthorText(obj, &author),
-        process_pdf_text_string(author, nested + 1),
-        PdfTextString_Release(author));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetAuthor(obj, &author),
+        process_string(author, nested + 1),
+        StringObject_Release(author));
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetSubjectText(obj, &subject),
-        process_pdf_text_string(subject, nested + 1),
-        PdfTextString_Release(subject));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetSubject(obj, &subject),
+        process_string(subject, nested + 1),
+        StringObject_Release(subject));
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetKeywordsText(obj, &keywords),
-        process_pdf_text_string(keywords, nested + 1),
-        PdfTextString_Release(keywords));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetKeywords(obj, &keywords),
+        process_string(keywords, nested + 1),
+        StringObject_Release(keywords));
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetCreatorText(obj, &creator),
-        process_pdf_text_string(creator, nested + 1),
-        PdfTextString_Release(creator));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetCreator(obj, &creator),
+        process_string(creator, nested + 1),
+        StringObject_Release(creator));
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetProducerText(obj, &producer),
-        process_pdf_text_string(producer, nested + 1),
-        PdfTextString_Release(producer));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetProducer(obj, &producer),
+        process_string(producer, nested + 1),
+        StringObject_Release(producer));
 
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DocumentInfo_GetCreationDate(obj, &creation_date),
         process_date(creation_date, nested + 1),
@@ -1024,7 +1024,7 @@ error_type process_outline_item(OutlineItemHandle* outline, int nested) {
     OutlineItemHandle* next = NULL;
     OutlineItemHandle* prev = NULL;
     IntegerObjectHandle* count = NULL;
-    PdfTextStringHandle* title = NULL;
+    StringObjectHandle* title = NULL;
     OutlineItemColorHandle* color = NULL;
     OutlineItemFlagsHandle* flags = NULL;
     DestinationHandle* destination = NULL;
@@ -1032,9 +1032,9 @@ error_type process_outline_item(OutlineItemHandle* outline, int nested) {
     print_spaces(nested);
     print_text("Document outline begin\n");
 
-    RETURN_ERROR_IF_NOT_SUCCESS(OutlineItem_GetTitleText(outline, &title));
-    RETURN_ERROR_IF_NOT_SUCCESS(process_pdf_text_string(title, nested + 1));
-    RETURN_ERROR_IF_NOT_SUCCESS(PdfTextString_Release(title));
+    RETURN_ERROR_IF_NOT_SUCCESS(OutlineItem_GetTitle(outline, &title));
+    RETURN_ERROR_IF_NOT_SUCCESS(process_string(title, nested + 1));
+    RETURN_ERROR_IF_NOT_SUCCESS(StringObject_Release(title));
 
     RETURN_ERROR_IF_NOT_SUCCESS(OutlineItem_GetParent(outline, &parent));
     RETURN_ERROR_IF_NOT_SUCCESS(process_outline_base(parent, nested + 1));
@@ -1172,14 +1172,14 @@ error_type process_page_labels(PageLabelsHandle* labels, size_type size, int nes
 }
 
 error_type process_page_label(PageLabelHandle* label, int nested) {
-    PdfTextStringHandle* p = NULL;
+    StringObjectHandle* p = NULL;
     IntegerObjectHandle* st = NULL;
     NumberingStyle s;
 
     print_spaces(nested);
     print_text("Page label begin\n");
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageLabel_PrefixText(label, &p), process_pdf_text_string(p, nested + 1), PdfTextString_Release(p));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageLabel_Prefix(label, &p), process_string(p, nested + 1), StringObject_Release(p));
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageLabel_Start(label, &st), process_integer(st, nested + 1), IntegerObject_Release(st));
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(PageLabel_Style(label, &s), proces_numbering_style(s, nested + 1));
 
@@ -1842,21 +1842,21 @@ error_type process_field(FieldHandle* obj, int nested) {
     ButtonFieldHandle* button_field = NULL;
     TextFieldHandle* text_field = NULL;
     ChoiceFieldHandle* choice_field = NULL;
-    PdfTextStringHandle* field_name = NULL;
-    PdfTextStringHandle* alt_name = NULL;
+    StringObjectHandle* field_name = NULL;
+    StringObjectHandle* alt_name = NULL;
     FieldFlags flags = FieldFlags_None;
 
     print_spaces(nested);
     print_text("Field begin\n");
 
     // Common field properties
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Field_GetNameText(obj, &field_name),
-        process_pdf_text_string(field_name, nested + 1),
-        PdfTextString_Release(field_name));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Field_GetName(obj, &field_name),
+        process_string(field_name, nested + 1),
+        StringObject_Release(field_name));
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Field_GetAlternateNameText(obj, &alt_name),
-        process_pdf_text_string(alt_name, nested + 1),
-        PdfTextString_Release(alt_name));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Field_GetAlternateName(obj, &alt_name),
+        process_string(alt_name, nested + 1),
+        StringObject_Release(alt_name));
 
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Field_GetFieldFlags(obj, &flags),
         VANILLAPDF_TEST_ERROR_SUCCESS);
@@ -1922,17 +1922,17 @@ error_type process_button_field(ButtonFieldHandle* obj, int nested) {
 }
 
 error_type process_text_field(TextFieldHandle* obj, int nested) {
-    PdfTextStringHandle* value = NULL;
-    PdfTextStringHandle* default_value = NULL;
+    StringObjectHandle* value = NULL;
+    StringObjectHandle* default_value = NULL;
     IntegerObjectHandle* max_length = NULL;
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(TextField_GetValueText(obj, &value),
-        process_pdf_text_string(value, nested + 1),
-        PdfTextString_Release(value));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(TextField_GetValue(obj, &value),
+        process_string(value, nested + 1),
+        StringObject_Release(value));
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(TextField_GetDefaultValueText(obj, &default_value),
-        process_pdf_text_string(default_value, nested + 1),
-        PdfTextString_Release(default_value));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(TextField_GetDefaultValue(obj, &default_value),
+        process_string(default_value, nested + 1),
+        StringObject_Release(default_value));
 
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(TextField_GetMaxLength(obj, &max_length),
         VANILLAPDF_TEST_ERROR_SUCCESS,
@@ -1942,13 +1942,13 @@ error_type process_text_field(TextFieldHandle* obj, int nested) {
 }
 
 error_type process_choice_field(ChoiceFieldHandle* obj, int nested) {
-    PdfTextStringHandle* value = NULL;
+    StringObjectHandle* value = NULL;
     size_type option_count = 0;
     size_type i = 0;
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ChoiceField_GetValueText(obj, &value),
-        process_pdf_text_string(value, nested + 1),
-        PdfTextString_Release(value));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(ChoiceField_GetValue(obj, &value),
+        process_string(value, nested + 1),
+        StringObject_Release(value));
 
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(ChoiceField_GetOptionCount(obj, &option_count),
         VANILLAPDF_TEST_ERROR_SUCCESS);
@@ -1975,31 +1975,31 @@ error_type process_signature_field(SignatureFieldHandle* obj, int nested) {
 }
 
 error_type process_digital_signature(DigitalSignatureHandle* obj, int nested) {
-    PdfTextStringHandle* contact_info = NULL;
-    PdfTextStringHandle* name = NULL;
-    PdfTextStringHandle* reason = NULL;
-    PdfTextStringHandle* location = NULL;
+    StringObjectHandle* contact_info = NULL;
+    StringObjectHandle* name = NULL;
+    StringObjectHandle* reason = NULL;
+    StringObjectHandle* location = NULL;
     IntegerObjectHandle* revision = NULL;
     StringObjectHandle* certificate = NULL;
     ByteRangeCollectionHandle* byte_range = NULL;
     HexadecimalStringObjectHandle* contents = NULL;
     DateHandle* signing_time = NULL;
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetContactInfoText(obj, &contact_info),
-    process_pdf_text_string(contact_info, nested + 1),
-    PdfTextString_Release(contact_info));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetContactInfo(obj, &contact_info),
+    process_string(contact_info, nested + 1),
+    StringObject_Release(contact_info));
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetNameText(obj, &name),
-    process_pdf_text_string(name, nested + 1),
-    PdfTextString_Release(name));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetName(obj, &name),
+    process_string(name, nested + 1),
+    StringObject_Release(name));
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetLocationText(obj, &location),
-    process_pdf_text_string(location, nested + 1),
-    PdfTextString_Release(location));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetLocation(obj, &location),
+    process_string(location, nested + 1),
+    StringObject_Release(location));
 
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetReasonText(obj, &reason),
-    process_pdf_text_string(reason, nested + 1),
-    PdfTextString_Release(reason));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetReason(obj, &reason),
+    process_string(reason, nested + 1),
+    StringObject_Release(reason));
 
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetRevision(obj, &revision),
     process_integer(revision, nested + 1),

@@ -11,14 +11,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_Detect(string_ty
 {
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-    auto encoding = DetectTextStringEncoding(data, static_cast<size_t>(size));
+    std::string_view view(data ? data : "", size);
+    auto encoding = TextStringEncoding::Detect(view);
 
     switch (encoding) {
-        case TextStringEncoding::PDFDocEncoding:
+        case TextStringEncoding::Type::PDFDocEncoding:
             *result = TextStringEncodingType_PDFDocEncoding; break;
-        case TextStringEncoding::UTF16BE:
+        case TextStringEncoding::Type::UTF16BE:
             *result = TextStringEncodingType_UTF16BE; break;
-        case TextStringEncoding::UTF8:
+        case TextStringEncoding::Type::UTF8:
             *result = TextStringEncodingType_UTF8; break;
         default:
             *result = TextStringEncodingType_Undefined; break;
@@ -31,6 +32,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION PDFDocEncoding_ToUnicode(uint8_t by
 {
     RETURN_ERROR_PARAM_VALUE_IF_NULL(codepoint);
 
-    *codepoint = static_cast<uint32_t>(PDFDocEncodingToUnicode(byte));
+    *codepoint = static_cast<uint32_t>(TextStringEncoding::PDFDocToUnicode(byte));
     return VANILLAPDF_ERROR_SUCCESS;
 }
