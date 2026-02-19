@@ -83,16 +83,17 @@ jobs:
           done
 
       # ================================================================
-      # Forward: vanillapdf.tools signs → pdfsig verifies (RSA, ECDSA)
-      # Note: pdfsig uses Mozilla NSS which does not support EdDSA.
+      # Forward: vanillapdf.tools signs → pdfsig verifies (DSA, ECDSA)
+      # NSS 3.98 (Ubuntu 24.04) supports SHA-2 but not SHA-3 or EdDSA.
+      # RSA-SHA3, Ed25519, Ed448 are covered by pyhanko below.
       # ================================================================
 
-      - name: "[vanillapdf→pdfsig] Sign RSA-4k-SHA3-512"
-        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/vp_rsa.pdf -k test/certificates/Test_4kRSA_SHA3_512.pfx -p test
+      - name: "[vanillapdf→pdfsig] Sign 2k-DSA-SHA256"
+        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/vp_dsa.pdf -k test/certificates/Test_2kDSA_SHA256.pfx -p test
 
-      - name: "[vanillapdf→pdfsig] Verify RSA-4k-SHA3-512"
+      - name: "[vanillapdf→pdfsig] Verify 2k-DSA-SHA256"
         run: |
-          pdfsig -nssdir sql:/tmp/nssdb -nocert /tmp/vp_rsa.pdf | grep "Signature Validation: Valid"
+          pdfsig -nssdir sql:/tmp/nssdb -nocert /tmp/vp_dsa.pdf | grep "Signature Validation: Valid"
 
       - name: "[vanillapdf→pdfsig] Sign EC-384-SHA512"
         run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/vp_ec.pdf -k test/certificates/Test_EC384_SHA512.pfx -p test
@@ -103,8 +104,12 @@ jobs:
 
       # ================================================================
       # Forward: vanillapdf.tools signs → pyhanko verifies (all 4)
-      # Reuses RSA and ECDSA files signed above.
+      # pyhanko uses OpenSSL and supports SHA-3 and EdDSA.
+      # EC file is reused from the pdfsig step above.
       # ================================================================
+
+      - name: "[vanillapdf→pyhanko] Sign RSA-4k-SHA3-512"
+        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/vp_rsa.pdf -k test/certificates/Test_4kRSA_SHA3_512.pfx -p test
 
       - name: "[vanillapdf→pyhanko] Verify RSA-4k-SHA3-512"
         run: pyhanko sign validate --trust /tmp/trust/Test_4kRSA_SHA3_512.pem --trust-replace --no-revocation-check --pretty-print /tmp/vp_rsa.pdf
