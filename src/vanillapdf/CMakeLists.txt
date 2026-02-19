@@ -346,6 +346,7 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/buffer_array.h
     utils/byte_order.h
     utils/character.h
+    utils/compiler_utils.h
     utils/constants.h
     utils/conversion_utils.h
     utils/crypto_utils.h
