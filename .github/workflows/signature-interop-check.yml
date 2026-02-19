@@ -141,29 +141,30 @@ jobs:
 
       # ================================================================
       # Reverse: pyhanko signs → vanillapdf.tools verifies (all 4)
-      # Trust anchors loaded from /tmp/trust/ via -c flag.
+      # --skip-certificate-validation used because test certificates are
+      # self-signed without CA:TRUE; cryptographic validity is what matters.
       # ================================================================
 
       - name: "[pyhanko→vanillapdf] Sign RSA-4k-SHA3-512"
         run: pyhanko sign addsig --field "1/0,0,200,200/Signature1" pkcs12 --passfile /tmp/pass.txt test/example.pdf /tmp/ph_rsa.pdf test/certificates/Test_4kRSA_SHA3_512.pfx
 
       - name: "[pyhanko→vanillapdf] Verify RSA-4k-SHA3-512"
-        run: install/bin/vanillapdf.tools verify -f /tmp/ph_rsa.pdf -c /tmp/trust
+        run: install/bin/vanillapdf.tools verify -f /tmp/ph_rsa.pdf --skip-certificate-validation
 
       - name: "[pyhanko→vanillapdf] Sign EC-384-SHA512"
         run: pyhanko sign addsig --field "1/0,0,200,200/Signature1" pkcs12 --passfile /tmp/pass.txt test/example.pdf /tmp/ph_ec.pdf test/certificates/Test_EC384_SHA512.pfx
 
       - name: "[pyhanko→vanillapdf] Verify EC-384-SHA512"
-        run: install/bin/vanillapdf.tools verify -f /tmp/ph_ec.pdf -c /tmp/trust
+        run: install/bin/vanillapdf.tools verify -f /tmp/ph_ec.pdf --skip-certificate-validation
 
       - name: "[pyhanko→vanillapdf] Sign Ed25519"
         run: pyhanko sign addsig --field "1/0,0,200,200/Signature1" pkcs12 --passfile /tmp/pass.txt test/example.pdf /tmp/ph_ed25519.pdf test/certificates/Test_ED25519.pfx
 
       - name: "[pyhanko→vanillapdf] Verify Ed25519"
-        run: install/bin/vanillapdf.tools verify -f /tmp/ph_ed25519.pdf -c /tmp/trust
+        run: install/bin/vanillapdf.tools verify -f /tmp/ph_ed25519.pdf --skip-certificate-validation
 
       - name: "[pyhanko→vanillapdf] Sign Ed448"
         run: pyhanko sign addsig --field "1/0,0,200,200/Signature1" pkcs12 --passfile /tmp/pass.txt test/example.pdf /tmp/ph_ed448.pdf test/certificates/Test_ED448.pfx
 
       - name: "[pyhanko→vanillapdf] Verify Ed448"
-        run: install/bin/vanillapdf.tools verify -f /tmp/ph_ed448.pdf -c /tmp/trust
+        run: install/bin/vanillapdf.tools verify -f /tmp/ph_ed448.pdf --skip-certificate-validation
