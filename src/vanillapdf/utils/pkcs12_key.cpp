@@ -216,9 +216,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
     if (!encryption_context) {
         auto evp_pkey_context = EVP_PKEY_CTX_new_from_pkey(nullptr, key.get(), nullptr);
         if (evp_pkey_context == nullptr) {
-            auto openssl_error = CryptoUtils::GetLastOpensslError();
-            spdlog::error("Could not create PKEY context: {}", openssl_error);
-            throw CryptoErrorException("Could not create PKEY context" + openssl_error);
+            LOG_ERROR_AND_THROW(CryptoErrorException, "Could not create PKEY context: {}", CryptoUtils::GetLastOpensslError());
         }
 
         encryption_context = std::unique_ptr<EVP_PKEY_CTX, EVPPKEYCTXDeleter>(evp_pkey_context);
@@ -226,25 +224,19 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 
     int init_result = EVP_PKEY_decrypt_init(encryption_context.get());
     if (init_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        spdlog::error("Could not initialize encryption engine: {}", openssl_error);
-        throw CryptoErrorException("Could not initialize encryption engine: " + std::to_string(init_result));
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize encryption engine: {}", CryptoUtils::GetLastOpensslError());
     }
 
     size_t outlen = 0;
     int length_result = EVP_PKEY_decrypt(encryption_context.get(), nullptr, &outlen, (unsigned char *) data.data(), data.std_size());
     if (length_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        spdlog::error("Could not get decrypt message length: {}", openssl_error);
-        throw CryptoErrorException("Could not get decrypt message length: " + std::to_string(length_result));
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not get decrypt message length: {}", CryptoUtils::GetLastOpensslError());
     }
 
     BufferPtr output = make_deferred_container<Buffer>(outlen);
     int decrypt_result = EVP_PKEY_decrypt(encryption_context.get(), (unsigned char *) output->data(), &outlen, (unsigned char *) data.data(), data.std_size());
     if (decrypt_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        spdlog::error("Could not get decrypt message: {}", openssl_error);
-        throw CryptoErrorException("Could not get decrypt message: " + std::to_string(decrypt_result));
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not get decrypt message: {}", CryptoUtils::GetLastOpensslError());
     }
 
     return output;
