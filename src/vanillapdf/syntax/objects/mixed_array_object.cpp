@@ -100,7 +100,6 @@ void MixedArrayObject::Append(ContainableObjectPtr value) {
     _list.push_back(value);
     value->SetOwner(Object::GetWeakReference());
     IncrementVersion();
-    m_hash_cache = 0;
 }
 
 void MixedArrayObject::Insert(size_type at, ContainableObjectPtr value) {
@@ -113,7 +112,6 @@ void MixedArrayObject::Insert(size_type at, ContainableObjectPtr value) {
     _list.insert(_list.begin() + at, value);
     value->SetOwner(Object::GetWeakReference());
     IncrementVersion();
-    m_hash_cache = 0;
 }
 
 bool MixedArrayObject::Remove(size_type at) {
@@ -128,7 +126,6 @@ bool MixedArrayObject::Remove(size_type at) {
     (*item)->ClearOwner();
     _list.erase(item);
     IncrementVersion();
-    m_hash_cache = 0;
 
     return true;
 }
@@ -142,7 +139,6 @@ void MixedArrayObject::Clear() {
 
     _list.clear();
     IncrementVersion();
-    m_hash_cache = 0;
 }
 
 void MixedArrayObject::SetValue(size_type at, ContainableObjectPtr value) {
@@ -156,7 +152,6 @@ void MixedArrayObject::SetValue(size_type at, ContainableObjectPtr value) {
 
     value->SetOwner(Object::GetWeakReference());
     IncrementVersion();
-    m_hash_cache = 0;
 }
 
 // stl compatibility
@@ -165,7 +160,6 @@ void MixedArrayObject::push_back(ContainableObjectPtr value) {
 
     _list.push_back(value);
     IncrementVersion();
-    m_hash_cache = 0;
 }
 
 std::string MixedArrayObject::ToString(void) const {
@@ -226,10 +220,6 @@ void MixedArrayObject::ToPdfStreamUpdateOffset(IOutputStreamPtr output) {
 size_t MixedArrayObject::Hash() const {
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    if (m_hash_cache != 0) {
-        return m_hash_cache;
-    }
-
     // FNV-1a combine: element order matters for arrays (e.g. [842 595] vs [595 842])
     size_t result = constant::FNV1A_OFFSET_BASIS;
     for (auto item : _list) {
@@ -237,8 +227,7 @@ size_t MixedArrayObject::Hash() const {
         result *= constant::FNV1A_PRIME;
     }
 
-    m_hash_cache = result;
-    return m_hash_cache;
+    return result;
 }
 
 bool MixedArrayObject::Equals(ObjectPtr other) const {

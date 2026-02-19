@@ -120,6 +120,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Object_GetAttributeList(ObjectHandle* handle, ObjectAttributeListHandle** result);
 
     /**
+    * \brief Compute hash value for this object
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Object_Hash(const ObjectHandle* handle, size_type* result);
+
+    /**
     * \brief Convert to human readable text format
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle* handle, BufferHandle** result);

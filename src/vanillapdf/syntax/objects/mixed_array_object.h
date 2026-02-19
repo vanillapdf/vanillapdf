@@ -73,8 +73,6 @@ public:
 protected:
     list_type _list;
     std::unique_ptr<std::recursive_mutex> m_access_lock;
-
-    mutable std::size_t m_hash_cache = 0;
 };
 
 } // syntax
