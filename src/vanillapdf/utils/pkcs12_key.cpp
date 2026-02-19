@@ -411,24 +411,11 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    // For a writable memory BIO, BIO_reset() clears the buffer rather than seeking to the
-    // beginning. To give CMS_final() a readable view of the accumulated data, we use
-    // BIO_get_mem_ptr() to obtain the underlying BUF_MEM and wrap it in a read-only BIO.
-    BUF_MEM* mem_buf = nullptr;
-    BIO_get_mem_ptr(m_data_bio.get(), &mem_buf);
-    if (!mem_buf) {
-        throw CryptoErrorException("Could not get memory buffer from data BIO");
-    }
-
-    BIO* read_bio = BIO_new_mem_buf(mem_buf->data, static_cast<int>(mem_buf->length));
-    if (!read_bio) {
-        throw CryptoErrorException("Could not create read BIO, " + CryptoUtils::GetLastOpensslError());
-    }
-    SCOPE_GUARD([read_bio]() { BIO_free(read_bio); });
-
     // Finalize: adds content-type and message-digest signed attributes,
-    // then performs the actual signing operation
-    int finalized = CMS_final(m_cms.get(), read_bio, nullptr, CMS_DETACHED | CMS_BINARY);
+    // then performs the actual signing operation.
+    // m_data_bio is a writable BIO_s_mem(); CMS_final() reads from position 0
+    // of the accumulated data without needing a reset or a separate read BIO.
+    int finalized = CMS_final(m_cms.get(), m_data_bio.get(), nullptr, CMS_DETACHED | CMS_BINARY);
     if (finalized != 1) {
         throw CryptoErrorException("Could not finalize CMS, " + CryptoUtils::GetLastOpensslError());
     }
