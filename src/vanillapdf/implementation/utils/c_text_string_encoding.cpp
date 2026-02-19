@@ -10,8 +10,9 @@ using namespace vanillapdf;
 VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_Detect(string_type data, size_type size, TextStringEncodingType* result)
 {
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
 
-    std::string_view view(data ? data : "", size);
+    std::string_view view(data, size);
     auto encoding = TextStringEncoding::Detect(view);
 
     switch (encoding) {

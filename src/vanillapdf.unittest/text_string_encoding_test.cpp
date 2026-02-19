@@ -32,8 +32,13 @@ TEST(TextStringEncoding, DetectUTF8) {
 
 TEST(TextStringEncoding, DetectEmptyIsPDFDoc) {
     TextStringEncodingType encoding = TextStringEncodingType_Undefined;
-    ASSERT_EQ(TextStringEncoding_Detect(nullptr, 0, &encoding), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextStringEncoding_Detect("", 0, &encoding), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(encoding, TextStringEncodingType_PDFDocEncoding);
+}
+
+TEST(TextStringEncoding, NullDataParam) {
+    TextStringEncodingType encoding = TextStringEncodingType_Undefined;
+    EXPECT_EQ(TextStringEncoding_Detect(nullptr, 0, &encoding), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 TEST(TextStringEncoding, NullResultParam) {
