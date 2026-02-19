@@ -84,3 +84,9 @@ jobs:
 
       - name: Verify Ed25519 with pdfsig
         run: pdfsig -nocert /tmp/signed_ed25519.pdf
+
+      - name: Sign with Ed448
+        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/signed_ed448.pdf -k test/certificates/Test_ED448.pfx -p test
+
+      - name: Verify Ed448 with pdfsig
+        run: pdfsig -nocert /tmp/signed_ed448.pdf
