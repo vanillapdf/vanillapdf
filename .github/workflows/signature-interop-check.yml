@@ -1,4 +1,4 @@
-name: Signature interoperability check (pdfsig)
+name: Signature interoperability check (pdfsig + pyhanko)
 
 on:
   workflow_dispatch:
@@ -9,6 +9,7 @@ on:
       - 'src/**'
       - 'include/**'
       - 'test/certificates/**'
+      - 'test/example.pdf'
       - '.github/workflows/signature-interop-check.yml'
 
   schedule:
@@ -28,7 +29,7 @@ env:
 
 jobs:
 
-  pdfsig:
+  interop:
     name: ubuntu.24.04-x64
     runs-on: ubuntu-24.04
     container:
@@ -52,8 +53,10 @@ jobs:
           restore-keys: |
             vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-
 
-      - name: Install pdfsig
-        run: apt-get update && apt-get install -y poppler-utils
+      - name: Install pdfsig and pyhanko
+        run: |
+          apt-get update && apt-get install -y poppler-utils
+          pip3 install pyHanko --break-system-packages
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -67,26 +70,80 @@ jobs:
       - name: Install vanillapdf.tools
         run: cmake --install build/linux-x64-gcc --prefix install
 
-      - name: Sign with RSA-4k-SHA3-512
-        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/signed_rsa.pdf -k test/certificates/Test_4kRSA_SHA3_512.pfx -p test
+      - name: Export trust anchors from test certificates
+        run: |
+          mkdir -p /tmp/trust
+          echo -n "test" > /tmp/pass.txt
+          for cert in Test_4kRSA_SHA3_512 Test_EC384_SHA512 Test_ED25519 Test_ED448; do
+            openssl pkcs12 -in test/certificates/${cert}.pfx -nokeys -passin pass:test 2>/dev/null \
+              | openssl x509 > /tmp/trust/${cert}.pem
+          done
 
-      - name: Verify RSA-4k-SHA3-512 with pdfsig
-        run: pdfsig -nocert /tmp/signed_rsa.pdf
+      # ================================================================
+      # Forward: vanillapdf.tools signs → pdfsig verifies (RSA, ECDSA)
+      # Note: pdfsig uses Mozilla NSS which does not support EdDSA.
+      # ================================================================
 
-      - name: Sign with EC-384-SHA512
-        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/signed_ec.pdf -k test/certificates/Test_EC384_SHA512.pfx -p test
+      - name: [vanillapdf→pdfsig] Sign RSA-4k-SHA3-512
+        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/vp_rsa.pdf -k test/certificates/Test_4kRSA_SHA3_512.pfx -p test
 
-      - name: Verify EC-384-SHA512 with pdfsig
-        run: pdfsig -nocert /tmp/signed_ec.pdf
+      - name: [vanillapdf→pdfsig] Verify RSA-4k-SHA3-512
+        run: pdfsig -nocert /tmp/vp_rsa.pdf | grep "Signature Validation: Valid"
 
-      - name: Sign with Ed25519
-        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/signed_ed25519.pdf -k test/certificates/Test_ED25519.pfx -p test
+      - name: [vanillapdf→pdfsig] Sign EC-384-SHA512
+        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/vp_ec.pdf -k test/certificates/Test_EC384_SHA512.pfx -p test
 
-      - name: Verify Ed25519 with pdfsig
-        run: pdfsig -nocert /tmp/signed_ed25519.pdf
+      - name: [vanillapdf→pdfsig] Verify EC-384-SHA512
+        run: pdfsig -nocert /tmp/vp_ec.pdf | grep "Signature Validation: Valid"
 
-      - name: Sign with Ed448
-        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/signed_ed448.pdf -k test/certificates/Test_ED448.pfx -p test
+      # ================================================================
+      # Forward: vanillapdf.tools signs → pyhanko verifies (all 4)
+      # Reuses RSA and ECDSA files signed above.
+      # ================================================================
 
-      - name: Verify Ed448 with pdfsig
-        run: pdfsig -nocert /tmp/signed_ed448.pdf
+      - name: [vanillapdf→pyhanko] Verify RSA-4k-SHA3-512
+        run: pyhanko sign validate --trust /tmp/trust/Test_4kRSA_SHA3_512.pem --trust-replace --no-revocation-check --pretty-print /tmp/vp_rsa.pdf
+
+      - name: [vanillapdf→pyhanko] Verify EC-384-SHA512
+        run: pyhanko sign validate --trust /tmp/trust/Test_EC384_SHA512.pem --trust-replace --no-revocation-check --pretty-print /tmp/vp_ec.pdf
+
+      - name: [vanillapdf→pyhanko] Sign Ed25519
+        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/vp_ed25519.pdf -k test/certificates/Test_ED25519.pfx -p test
+
+      - name: [vanillapdf→pyhanko] Verify Ed25519
+        run: pyhanko sign validate --trust /tmp/trust/Test_ED25519.pem --trust-replace --no-revocation-check --pretty-print /tmp/vp_ed25519.pdf
+
+      - name: [vanillapdf→pyhanko] Sign Ed448
+        run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/vp_ed448.pdf -k test/certificates/Test_ED448.pfx -p test
+
+      - name: [vanillapdf→pyhanko] Verify Ed448
+        run: pyhanko sign validate --trust /tmp/trust/Test_ED448.pem --trust-replace --no-revocation-check --pretty-print /tmp/vp_ed448.pdf
+
+      # ================================================================
+      # Reverse: pyhanko signs → vanillapdf.tools verifies (all 4)
+      # Trust anchors loaded from /tmp/trust/ via -c flag.
+      # ================================================================
+
+      - name: [pyhanko→vanillapdf] Sign RSA-4k-SHA3-512
+        run: pyhanko sign addsig --field "1/0,0,200,200/Signature1" pkcs12 --passfile /tmp/pass.txt test/example.pdf /tmp/ph_rsa.pdf test/certificates/Test_4kRSA_SHA3_512.pfx
+
+      - name: [pyhanko→vanillapdf] Verify RSA-4k-SHA3-512
+        run: install/bin/vanillapdf.tools verify -f /tmp/ph_rsa.pdf -c /tmp/trust
+
+      - name: [pyhanko→vanillapdf] Sign EC-384-SHA512
+        run: pyhanko sign addsig --field "1/0,0,200,200/Signature1" pkcs12 --passfile /tmp/pass.txt test/example.pdf /tmp/ph_ec.pdf test/certificates/Test_EC384_SHA512.pfx
+
+      - name: [pyhanko→vanillapdf] Verify EC-384-SHA512
+        run: install/bin/vanillapdf.tools verify -f /tmp/ph_ec.pdf -c /tmp/trust
+
+      - name: [pyhanko→vanillapdf] Sign Ed25519
+        run: pyhanko sign addsig --field "1/0,0,200,200/Signature1" pkcs12 --passfile /tmp/pass.txt test/example.pdf /tmp/ph_ed25519.pdf test/certificates/Test_ED25519.pfx
+
+      - name: [pyhanko→vanillapdf] Verify Ed25519
+        run: install/bin/vanillapdf.tools verify -f /tmp/ph_ed25519.pdf -c /tmp/trust
+
+      - name: [pyhanko→vanillapdf] Sign Ed448
+        run: pyhanko sign addsig --field "1/0,0,200,200/Signature1" pkcs12 --passfile /tmp/pass.txt test/example.pdf /tmp/ph_ed448.pdf test/certificates/Test_ED448.pfx
+
+      - name: [pyhanko→vanillapdf] Verify Ed448
+        run: install/bin/vanillapdf.tools verify -f /tmp/ph_ed448.pdf -c /tmp/trust
