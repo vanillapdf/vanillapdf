@@ -93,14 +93,18 @@ jobs:
 
       - name: "[vanillapdf→pdfsig] Verify 2k-DSA-SHA256"
         run: |
-          pdfsig -nssdir sql:/tmp/nssdb -nocert /tmp/vp_dsa.pdf | grep "Signature Validation: Valid"
+          output=$(pdfsig -nssdir sql:/tmp/nssdb -nocert /tmp/vp_dsa.pdf)
+          echo "$output"
+          echo "$output" | grep "Signature Validation: Valid"
 
       - name: "[vanillapdf→pdfsig] Sign EC-384-SHA512"
         run: install/bin/vanillapdf.tools sign -s test/example.pdf -d /tmp/vp_ec.pdf -k test/certificates/Test_EC384_SHA512.pfx -p test
 
       - name: "[vanillapdf→pdfsig] Verify EC-384-SHA512"
         run: |
-          pdfsig -nssdir sql:/tmp/nssdb -nocert /tmp/vp_ec.pdf | grep "Signature Validation: Valid"
+          output=$(pdfsig -nssdir sql:/tmp/nssdb -nocert /tmp/vp_ec.pdf)
+          echo "$output"
+          echo "$output" | grep "Signature Validation: Valid"
 
       # ================================================================
       # Forward: vanillapdf.tools signs → pyhanko verifies (all 4)
