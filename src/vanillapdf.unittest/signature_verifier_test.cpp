@@ -21,9 +21,8 @@ static const CertificateTestInfo TEST_CERTIFICATES[] = {
     {TEST_2KDSA_SHA256_CERTIFICATE, TEST_2KDSA_SHA256_CERTIFICATE_SIZE, "2kDSA_SHA256", "test", "Test_2kDSA_SHA256"},
     {TEST_4KRSA_SHA3_512_CERTIFICATE, TEST_4KRSA_SHA3_512_CERTIFICATE_SIZE, "4kRSA_SHA3_512", "test", "Test_4kRSA_SHA3_512"},
     {TEST_EC384_SHA512_CERTIFICATE, TEST_EC384_SHA512_CERTIFICATE_SIZE, "EC384_SHA512", "test", "Test_EC384_SHA512"},
-    // TODO: Add ED25519 test when signing support is implemented
-    // See: https://github.com/vanillapdf/vanillapdf/issues/158
-    // Certificate exists: TEST_ED25519_CERTIFICATE (test/certificates/Test_ED25519.pfx)
+    {TEST_ED25519_CERTIFICATE, TEST_ED25519_CERTIFICATE_SIZE, "ED25519", "test", "Test_ED25519"},
+    {TEST_ED448_CERTIFICATE, TEST_ED448_CERTIFICATE_SIZE, "ED448", "test", "Test_ED448"},
 };
 
 // TrustedCertificateStore Tests

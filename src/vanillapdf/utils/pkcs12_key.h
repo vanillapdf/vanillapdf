@@ -3,6 +3,7 @@
 
 #include "utils/utils_fwd.h"
 #include "utils/buffer_array.h"
+#include "utils/crypto_utils.h"
 #include "utils/encryption_key_interface.h"
 #include "utils/signing_key_interface.h"
 

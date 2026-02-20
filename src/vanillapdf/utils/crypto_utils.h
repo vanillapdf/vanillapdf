@@ -26,6 +26,7 @@ struct bio_st;
 struct pkcs7_st;
 struct asn1_string_st;
 struct stack_st_X509;
+struct CMS_ContentInfo_st;
 
 typedef struct x509_st X509;
 typedef struct X509_name_st X509_NAME;
@@ -40,6 +41,7 @@ typedef struct bio_st BIO;
 typedef struct pkcs7_st PKCS7;
 typedef struct asn1_string_st ASN1_TIME;
 typedef struct stack_st_X509 STACK_OF_X509;
+typedef struct CMS_ContentInfo_st CMS_ContentInfo;
 
 #endif // VANILLAPDF_HAVE_OPENSSL
 
