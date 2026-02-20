@@ -16,6 +16,7 @@ set(VANILLAPDF_BENCHMARK_SOURCES
     filters.cpp
     io_strategy.cpp
     objects.cpp
+    page_tree.cpp
     tokenizer_stream.cpp
     xref.cpp
     main.cpp
