@@ -22,6 +22,7 @@ void print_help() {
     printf("  sign            Sign a PDF document\n");
     printf("  sign_custom     Sign a PDF with custom handler\n");
     printf("  verify          Verify PDF signatures\n");
+    printf("  validate        Validate PDF file structure\n");
     printf("  encrypt         Encrypt a PDF document\n");
     printf("  decrypt         Decrypt a PDF document\n");
     printf("  read            Read a PDF using memory IO strategy\n");
@@ -80,6 +81,10 @@ int main(int argc, char *argv[]) {
 
     if (0 == strcmp(argv[1], "verify")) {
         return process_verify(argc - 2, &argv[2]);
+    }
+
+    if (0 == strcmp(argv[1], "validate")) {
+        return process_validate(argc - 2, &argv[2]);
     }
 
     if (0 == strcmp(argv[1], "encrypt")) {

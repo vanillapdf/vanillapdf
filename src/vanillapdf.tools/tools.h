@@ -29,6 +29,7 @@ int process_write_custom(int argc, char *argv[]);
 int process_read(int argc, char *argv[]);
 int process_resave(int argc, char *argv[]);
 int process_verify(int argc, char *argv[]);
+int process_validate(int argc, char *argv[]);
 
 // Some parameters to functions are unused
 #define UNUSED(x) (void)(x)

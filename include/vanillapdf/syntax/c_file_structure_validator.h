@@ -75,6 +75,17 @@ extern "C"
     * \class FileStructureValidator
     * \ingroup group_files
     * \brief Static utility class for validating PDF file structure.
+    *
+    * \note This validator operates on the in-memory structures produced by
+    * \ref File_Initialize. It requires the file to be successfully initialized
+    * before validation can run.
+    *
+    * In practice, initialization is resilient: when the primary xref parsing
+    * fails, the parser falls back to a full-file object scan (\c FindAllObjects),
+    * which recovers most malformed files. Only files that fail even the fallback
+    * (e.g. those using unsupported features such as unknown encryption) cannot
+    * be initialized and therefore cannot be validated. For those cases the
+    * initialization error itself is the diagnostic signal.
     */
 
     /**
