@@ -518,4 +518,89 @@ TEST(NameObject, Equals) {
     EXPECT_EQ(are_equal, VANILLAPDF_RV_FALSE);
 }
 
+// ---- Issue #301: Hash stale after child mutation ----
+
+TEST(DictionaryObject, HashUpdatesAfterChildMutation) {
+
+    // Regression test for issue #301:
+    // After a child integer value is mutated in-place the dictionary hash must change.
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> int_obj;
+    HandleGuard<ObjectHandle, Object_Release> int_base_obj;
+    HandleGuard<ObjectHandle, Object_Release> dict_base_obj;
+
+    ASSERT_EQ(DictionaryObject_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(IntegerObject_CreateFromIntegerValue(42, int_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(IntegerObject_ToObject(int_obj, int_base_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_InsertConst(dict, NameConstant_Type, int_base_obj, VANILLAPDF_RV_FALSE), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(DictionaryObject_ToObject(dict, dict_base_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    size_type hash_before = 0;
+    ASSERT_EQ(Object_Hash(dict_base_obj, &hash_before), VANILLAPDF_ERROR_SUCCESS);
+
+    // Mutate the child value without touching the dictionary structure
+    ASSERT_EQ(IntegerObject_SetIntegerValue(int_obj, 99), VANILLAPDF_ERROR_SUCCESS);
+
+    size_type hash_after = 0;
+    ASSERT_EQ(Object_Hash(dict_base_obj, &hash_after), VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_NE(hash_before, hash_after);
+}
+
+TEST(ArrayObject, HashUpdatesAfterChildMutation) {
+
+    // Regression test for issue #301:
+    // After a child integer value is mutated in-place the array hash must change.
+
+    HandleGuard<ArrayObjectHandle, ArrayObject_Release> arr;
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> int_obj;
+    HandleGuard<ObjectHandle, Object_Release> int_base_obj;
+    HandleGuard<ObjectHandle, Object_Release> arr_base_obj;
+
+    ASSERT_EQ(ArrayObject_Create(arr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(IntegerObject_CreateFromIntegerValue(42, int_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(IntegerObject_ToObject(int_obj, int_base_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Append(arr, int_base_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(ArrayObject_ToObject(arr, arr_base_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    size_type hash_before = 0;
+    ASSERT_EQ(Object_Hash(arr_base_obj, &hash_before), VANILLAPDF_ERROR_SUCCESS);
+
+    // Mutate the child value without touching the array structure
+    ASSERT_EQ(IntegerObject_SetIntegerValue(int_obj, 99), VANILLAPDF_ERROR_SUCCESS);
+
+    size_type hash_after = 0;
+    ASSERT_EQ(Object_Hash(arr_base_obj, &hash_after), VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_NE(hash_before, hash_after);
+}
+
+TEST(IndirectReferenceObject, HashUpdatesAfterNumberChange) {
+
+    // Regression test for issue #301:
+    // After the referenced object number changes the hash must change.
+
+    HandleGuard<IndirectReferenceObjectHandle, IndirectReferenceObject_Release> ref_obj;
+    HandleGuard<ObjectHandle, Object_Release> ref_base_obj;
+
+    ASSERT_EQ(IndirectReferenceObject_Create(ref_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(IndirectReferenceObject_SetObjectNumber(ref_obj, 10), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(IndirectReferenceObject_SetGenerationNumber(ref_obj, 0), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(IndirectReferenceObject_ToObject(ref_obj, ref_base_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    size_type hash_before = 0;
+    ASSERT_EQ(Object_Hash(ref_base_obj, &hash_before), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(IndirectReferenceObject_SetObjectNumber(ref_obj, 20), VANILLAPDF_ERROR_SUCCESS);
+
+    size_type hash_after = 0;
+    ASSERT_EQ(Object_Hash(ref_base_obj, &hash_after), VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_NE(hash_before, hash_after);
+}
+
 } /* objects */

@@ -68,8 +68,6 @@ private:
     mutable types::ushort m_reference_generation_number = 0;
     mutable WeakReference<Object> m_reference;
 
-    mutable size_t m_hash_cache = 0;
-
     // The library interface wants to be thread-safe as much as possible
     // Even though the are currently no cases for multi-thread access
     // to the dictonary, let's try to be visionary and prepare for this

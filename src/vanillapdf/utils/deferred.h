@@ -515,6 +515,31 @@ void swap(Deferred<T>& lhs, Deferred<T>& rhs) {
     lhs.swap(rhs);
 }
 
+// Identity-based hash and equality for Deferred<T>.
+//
+// The default std::hash<Deferred<T>> (where one exists) uses content-based
+// hashing via Object::Hash(). Use DeferredIdentityHash / DeferredIdentityEqual
+// when you need to key a container by object *instance* rather than by value:
+//
+//   std::unordered_map<FooPtr, Bar,
+//       DeferredIdentityHash<Foo>, DeferredIdentityEqual<Foo>> m;
+//
+// This mirrors the free-function Identity() above.
+
+template <typename T>
+struct DeferredIdentityHash {
+    size_t operator()(const Deferred<T>& p) const noexcept {
+        return std::hash<const T*>{}(p.get());
+    }
+};
+
+template <typename T>
+struct DeferredIdentityEqual {
+    bool operator()(const Deferred<T>& a, const Deferred<T>& b) const noexcept {
+        return a.get() == b.get();
+    }
+};
+
 // TODO rework make_deferred to single function and user deferred_ptr_type as value
 
 template<typename T, typename... Parameters>

@@ -206,8 +206,16 @@ private:
 
     XrefBasePtr FindPreviousXref(XrefChainPtr chain, XrefBasePtr source);
 
+    // The duplicate-redirect map is keyed by object *instance* (pointer identity),
+    // not by content. Phase 2 (RedirectReferences) only ever looks up the exact
+    // ObjectPtr instances inserted in Phase 1, so identity semantics are both
+    // correct and avoid repeated O(k) content-hash recomputation per find().
+    using DuplicateMap = std::unordered_map<
+        ObjectPtr, ObjectPtr,
+        DeferredIdentityHash<Object>, DeferredIdentityEqual<Object>>;
+
     void InitializeReferences(ObjectPtr source);
-    void RedirectReferences(ObjectPtr source, const std::unordered_map<ObjectPtr, ObjectPtr>& duplicit_items);
+    void RedirectReferences(ObjectPtr source, const DuplicateMap& duplicit_items);
     void FindIndirectReferences(ObjectPtr source, std::unordered_map<XrefEntryBasePtr, bool>& used_entries);
 
     // flags

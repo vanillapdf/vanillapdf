@@ -79,6 +79,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION Object_GetAttributeList(ObjectHandl
     CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Object_Hash(const ObjectHandle* handle, size_type* result) {
+    const Object* obj = reinterpret_cast<const Object*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        *result = obj->Hash();
+        return VANILLAPDF_ERROR_SUCCESS;
+    }
+    CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Object_ToString(ObjectHandle* handle, BufferHandle** result) {
     Object* obj = reinterpret_cast<Object*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

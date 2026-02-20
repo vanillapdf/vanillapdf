@@ -2189,7 +2189,7 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
     }
 
     std::unordered_set<ObjectPtr> unique_set;
-    std::unordered_map<ObjectPtr, ObjectPtr> duplicit_list;
+    DuplicateMap duplicit_list;
 
     // Find all duplicit indirect objects
     for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
@@ -2523,7 +2523,7 @@ void FileWriter::InitializeReferences(ObjectPtr source) {
     }
 }
 
-void FileWriter::RedirectReferences(ObjectPtr source, const std::unordered_map<ObjectPtr, ObjectPtr>& duplicit_items) {
+void FileWriter::RedirectReferences(ObjectPtr source, const DuplicateMap& duplicit_items) {
     if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(source)) {
         auto source_ref = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(source);
         auto referenced_object = source_ref->GetReferencedObject();
