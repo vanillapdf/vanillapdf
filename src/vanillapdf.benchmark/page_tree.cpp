@@ -26,7 +26,18 @@
 // 500→1450 pages (2.9×): sequential time grows ~6.2× (also O(N²)).
 //
 // After (page cache, this branch):
-// [results to be filled after implementation]
+//
+// | Benchmark                           | Time      | CPU       |
+// |-------------------------------------|-----------|-----------|
+// | SequentialAccess/50_mean            | 0.002 ms  | 0.002 ms  |
+// | SequentialAccess/500_mean           | 0.019 ms  | 0.019 ms  |
+// | SequentialAccess/1450_mean          | 0.058 ms  | 0.058 ms  |
+// | SingleAccess/50_mean                |    36.8 ns|    35.8 ns|
+// | SingleAccess/500_mean               |    38.0 ns|    38.1 ns|
+// | SingleAccess/1450_mean              |    42.0 ns|    41.7 ns|
+//
+// Improvement (sequential, 1450 pages): 3806 ms → 0.058 ms (~65,000x).
+// Benchmarks use pre-warmed cache; the one-time O(N) build cost is separate.
 
 #include "benchmark.h"
 #include "handle_guard.h"
@@ -79,6 +90,13 @@ static void BM_PageTreeSequentialAccess(benchmark::State& state) {
         page_limit = fixture.page_count;
     }
 
+    // Pre-warm the cache so benchmark iterations measure steady-state access,
+    // not the one-time O(N) tree walk that builds the flat page vector.
+    {
+        HandleGuard<PageObjectHandle, PageObject_Release> page;
+        PageTree_GetPage(fixture.pages, 1, page.out());
+    }
+
     for (auto _ : state) {
         for (size_type i = 1; i <= page_limit; i += 1) {
             HandleGuard<PageObjectHandle, PageObject_Release> page;
@@ -116,16 +134,19 @@ static void BM_PageTreeSingleAccess(benchmark::State& state) {
         page_limit = fixture.page_count;
     }
 
-    size_type current = 1;
+    // Pre-warm the cache so benchmark iterations measure steady-state access,
+    // not the one-time O(N) tree walk that builds the flat page vector.
+    {
+        HandleGuard<PageObjectHandle, PageObject_Release> page;
+        PageTree_GetPage(fixture.pages, 1, page.out());
+    }
+
+    int64_t i = 0;
     for (auto _ : state) {
         HandleGuard<PageObjectHandle, PageObject_Release> page;
-        PageTree_GetPage(fixture.pages, current, page.out());
+        PageTree_GetPage(fixture.pages, i % page_limit + 1, page.out());
         benchmark::DoNotOptimize(page.get());
-
-        current += 1;
-        if (current > page_limit) {
-            current = 1;
-        }
+        i += 1;
     }
 }
 
