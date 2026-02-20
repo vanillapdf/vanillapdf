@@ -15,14 +15,14 @@
 //
 // | Benchmark                           | Time      | CPU       |
 // |-------------------------------------|-----------|-----------|
-// | SequentialAccess/50_mean            |   3.35 ms |   3.36 ms |
-// | SequentialAccess/500_mean           |    617 ms |    609 ms |
-// | SequentialAccess/1450_mean          |   3806 ms |   3797 ms |
-// | SingleAccess/50_mean                |  74365 ns |  73823 ns |
-// | SingleAccess/500_mean               | 1031786 ns| 1023065 ns|
-// | SingleAccess/1450_mean              | 2206142 ns| 2199591 ns|
+// | SequentialAccess/50_mean            |   2.89 ms |   2.91 ms |
+// | SequentialAccess/500_mean           |    548 ms |    547 ms |
+// | SequentialAccess/1450_mean          |   3392 ms |   3391 ms |
+// | SingleAccess/50_mean                |  58076 ns |  58710 ns |
+// | SingleAccess/500_mean               | 745630 ns | 744048 ns |
+// | SingleAccess/1450_mean              |1830885 ns |1827567 ns |
 //
-// 50→500 pages (10×): sequential time grows ~184× (O(N²) confirmed).
+// 50→500 pages (10×): sequential time grows ~190× (O(N²) confirmed).
 // 500→1450 pages (2.9×): sequential time grows ~6.2× (also O(N²)).
 //
 // After (page cache, this branch):
@@ -36,7 +36,7 @@
 // | SingleAccess/500_mean               |    38.0 ns|    38.1 ns|
 // | SingleAccess/1450_mean              |    42.0 ns|    41.7 ns|
 //
-// Improvement (sequential, 1450 pages): 3806 ms → 0.058 ms (~65,000x).
+// Improvement (sequential, 1450 pages): 3392 ms → 0.058 ms (~58,000x).
 // Benchmarks use pre-warmed cache; the one-time O(N) build cost is separate.
 
 #include "benchmark.h"
