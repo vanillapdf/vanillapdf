@@ -755,16 +755,22 @@ else()
     message(STATUS "JPEG2000 support disabled. JPEG2000 images will not be supported")
 endif ()
 
-# fmtlib is used directly in ~12 source files for string formatting.
-# It is also a transitive dependency of spdlog (SPDLOG_FMT_EXTERNAL),
-# but we declare it explicitly to keep the dependency graph correct.
+# fmtlib is used directly in source files for string formatting.
+# Do NOT link fmt::fmt explicitly here. spdlog built with SPDLOG_FMT_EXTERNAL
+# declares fmt::fmt as a PUBLIC interface dependency (by design — spdlog headers
+# include fmt headers, so consumers need fmt in scope). Linking fmt explicitly
+# alongside spdlog::spdlog duplicates it on the linker command line, which
+# Apple ld >= 15 warns about and -Wl,-fatal_warnings turns into an error.
+#
+# TODO: if spdlog is ever made optional or removed, add an explicit
+# target_link_libraries(vanillapdf PRIVATE fmt::fmt) here so that the direct
+# fmt usage in vanillapdf source files remains covered.
 if (VANILLAPDF_EXTERNAL_FMT)
     find_package(fmt CONFIG REQUIRED)
 else ()
     find_package(fmt CONFIG REQUIRED)
 endif()
 
-target_link_libraries(vanillapdf PRIVATE fmt::fmt)
 target_link_libraries(vanillapdf PRIVATE spdlog::spdlog)
 
 if (VANILLAPDF_ENABLE_LICENSING)

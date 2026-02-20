@@ -3,11 +3,7 @@
 # Update 29.04.2025
 # Minimum version 3.21 is due vcpkg manifest mode.
 # Minimum version 3.28 is due CMakePresets.json file version 8.
-# Minimum version 3.29 enables CMP0156 (de-duplicate link libraries), which
-# silences Apple ld >= 15: "ignoring duplicate libraries: 'libfmtd.a'".
-# spdlog (SPDLOG_FMT_EXTERNAL) re-declares fmt::fmt as a PUBLIC dep, so fmt
-# lands on the link line twice when we also link fmt::fmt explicitly.
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.28)
 
 # Vanilla.PDF is a c++ library built using c++17 standard
 # In order to make it portable across all platforms we strictly adhere to the standard by enforcing it and disabling the extensions
