@@ -22,6 +22,7 @@ enum class FileStructureIssueCode {
     HeaderVersionUndefined = 101,
 
     // Trailer checks (200s)
+    TrailerMissing = 203,
     TrailerMissingSize = 200,
     TrailerMissingRoot = 201,
     TrailerSizeMismatch = 202,

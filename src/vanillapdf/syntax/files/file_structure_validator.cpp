@@ -79,9 +79,7 @@ void FileStructureValidator::ValidateTrailerDictionaries(FilePtr file, FileStruc
     auto xref = xref_iterator->Value();
     auto trailer = xref->GetTrailerDictionary();
     if (trailer.empty()) {
-        AddIssue(result, FileStructureIssueSeverity::Error, FileStructureIssueCode::TrailerMissingSize,
-            "First trailer dictionary is missing");
-        AddIssue(result, FileStructureIssueSeverity::Error, FileStructureIssueCode::TrailerMissingRoot,
+        AddIssue(result, FileStructureIssueSeverity::Error, FileStructureIssueCode::TrailerMissing,
             "First trailer dictionary is missing");
         return;
     }

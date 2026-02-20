@@ -52,6 +52,7 @@ extern "C"
         FileStructureIssueCode_HeaderVersionUndefined = 101,              /**< Header version is undefined */
 
         /* Trailer checks (200s) */
+        FileStructureIssueCode_TrailerMissing = 203,                      /**< Trailer dictionary is missing entirely */
         FileStructureIssueCode_TrailerMissingSize = 200,                  /**< Trailer missing /Size entry */
         FileStructureIssueCode_TrailerMissingRoot = 201,                  /**< Trailer missing /Root entry */
         FileStructureIssueCode_TrailerSizeMismatch = 202,                 /**< Trailer /Size does not match xref */
