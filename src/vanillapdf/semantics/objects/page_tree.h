@@ -9,8 +9,6 @@
 
 #include <vector>
 
-#include <vector>
-
 namespace vanillapdf {
 namespace semantics {
 
@@ -42,10 +40,7 @@ private:
     void BuildPageCacheInternal(PageTreeNodePtr node) const;
     void InvalidatePageCache() noexcept;
 
-    PageObjectPtr PageInternal(PageTreeNodePtr node, types::size_type page_number, types::size_type& processed) const;
     bool FindPageIndexInternal(PageTreeNodePtr node, syntax::DictionaryObjectPtr page_dict, types::size_type& current_index) const;
-    bool HasTreeChilds(PageTreeNodePtr node) const;
-    types::size_type PageCount(PageNodeBasePtr node);
     void UpdateKidsCount();
     syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> GetKidsInternal();
 
