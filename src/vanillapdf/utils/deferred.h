@@ -1,6 +1,7 @@
 #ifndef _DEFERRED_H
 #define _DEFERRED_H
 
+#include "utils/compiler_utils.h"
 #include "utils/utils_fwd.h"
 #include "utils/template_utils.h"
 #include "utils/unknown_interface.h"
@@ -288,7 +289,10 @@ protected:
     virtual T* GetInternal(void) const override {
         assert(DeferredWrapperBase<T>::m_ptr);
         if (!DeferredWrapperBase<T>::m_ptr) {
-            return nullptr;
+            // Null dereference is a programming error; the assert above fires in
+            // debug builds. In release builds, inform the optimizer this path is
+            // unreachable so it does not propagate null through inlined calls.
+            VANILLAPDF_UNREACHABLE();
         }
 
         return DeferredWrapperBase<T>::m_ptr;
@@ -442,22 +446,22 @@ inline bool operator!=(U* left, const Deferred<U>& right) {
 
 template <typename T>
 inline bool operator==(const Deferred<T>& left, std::nullptr_t) {
-    return (nullptr == left.get());
+    return left.empty();
 }
 
 template <typename T>
 inline bool operator==(std::nullptr_t, const Deferred<T>& right) {
-    return (nullptr == right.get());
+    return right.empty();
 }
 
 template <typename T>
 inline bool operator!=(const Deferred<T>& left, std::nullptr_t) {
-    return (nullptr != left.get());
+    return !left.empty();
 }
 
 template <typename T>
 inline bool operator!=(std::nullptr_t, const Deferred<T>& right) {
-    return (nullptr != right.get());
+    return !right.empty();
 }
 
 // identity operators
