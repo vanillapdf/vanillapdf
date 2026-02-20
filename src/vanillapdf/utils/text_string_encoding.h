@@ -57,6 +57,16 @@ public:
      * Internal use only — not exposed via C API.
      */
     static std::string ToUtf8(std::string_view data);
+
+    /**
+     * @brief Decode a PDF text string to UTF-8 using a pre-detected encoding.
+     *
+     * Same as ToUtf8(data) but skips BOM detection, using the supplied
+     * encoding instead. Throws InvalidParameterException for Type::Undefined.
+     *
+     * Internal use only — not exposed via C API.
+     */
+    static std::string ToUtf8(std::string_view data, Type encoding);
 };
 
 } // vanillapdf

@@ -125,7 +125,10 @@ char32_t TextStringEncoding::PDFDocToUnicode(uint8_t byte) {
 }
 
 std::string TextStringEncoding::ToUtf8(std::string_view data) {
-    auto encoding = Detect(data);
+    return ToUtf8(data, Detect(data));
+}
+
+std::string TextStringEncoding::ToUtf8(std::string_view data, Type encoding) {
     std::string out;
 
     switch (encoding) {
@@ -137,22 +140,21 @@ std::string TextStringEncoding::ToUtf8(std::string_view data) {
             break;
         }
         case Type::UTF16BE: {
-            // Skip 2-byte BOM, decode UTF-16BE code units to UTF-8.
-            std::string_view payload = data.substr(2);
-            out.reserve(payload.size()); // rough estimate
-            size_t i = 0;
-            while (i + 1 < payload.size()) {
-                EncodeUtf8(ReadUtf16BECodePoint(payload, i), out);
+            // Decode UTF-16BE code units to UTF-8, skipping the 2-byte BOM.
+            out.reserve(data.size() - 2);
+            size_t i = 2;
+            while (i + 1 < data.size()) {
+                EncodeUtf8(ReadUtf16BECodePoint(data, i), out);
             }
             break;
         }
         case Type::UTF8: {
             // Strip 3-byte BOM, return remaining bytes as-is.
-            out = std::string(data.substr(3));
+            out = data.substr(3);
             break;
         }
         default:
-            break;
+            LOG_ERROR_AND_THROW(InvalidParameterException, "TextStringEncoding::ToUtf8: unknown encoding type {}", static_cast<int>(encoding));
     }
 
     return out;
