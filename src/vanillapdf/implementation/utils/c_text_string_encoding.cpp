@@ -29,7 +29,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_Detect(string_ty
     return VANILLAPDF_ERROR_SUCCESS;
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION PDFDocEncoding_ToUnicode(uint8_t byte, uint32_t* codepoint)
+VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_PDFDocToUnicode(uint8_t byte, uint32_t* codepoint)
 {
     RETURN_ERROR_PARAM_VALUE_IF_NULL(codepoint);
 

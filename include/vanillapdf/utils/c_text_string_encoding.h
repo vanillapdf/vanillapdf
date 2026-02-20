@@ -59,7 +59,7 @@ extern "C"
     *             Undefined bytes (e.g. 0x00–0x07) map to U+FFFD (replacement character).
     * \ingroup group_utils
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION PDFDocEncoding_ToUnicode(uint8_t byte, uint32_t* codepoint);
+    VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_PDFDocToUnicode(uint8_t byte, uint32_t* codepoint);
 
 #ifdef __cplusplus
 };
