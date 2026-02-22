@@ -8,6 +8,13 @@ Detailed coding style preferences for C++ code in this project. This file is con
   - Good: `std::atomic<int64_t> counter = 0;` / `int m_count = 0;`
   - Avoid: `std::atomic<int64_t> counter{0};` / `int m_count{0};`
 
+## Move Semantics
+
+- Do not use `std::move` unless it is mandatory (e.g., moving a non-copyable type like `unique_ptr`). The codebase uses copy semantics for smart pointers (Deferred<T>) and will adopt `std::move` incrementally. Sprinkling `std::move` ahead of that effort breaks style consistency.
+- Prefer proper named constructors over aggregate brace-initialization for structs: write `Frame(node)` with an explicit constructor, not `{node, 0}`.
+  - Good: `stack.push_back(Frame(root));`
+  - Avoid: `stack.push_back({root, 0});`
+
 ## Increment and Decrement
 
 - Avoid standalone `var--`, `var++`, `++var`, `--var` as a full statement on its own line; use compound assignment `var -= 1` or `var += 1` instead

@@ -13,6 +13,7 @@ namespace semantics {
 using namespace syntax;
 
 PageTree::PageTree(DictionaryObjectPtr root) : HighLevelObject(root) {
+    m_cache_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 types::size_type PageTree::PageCount(void) const {
@@ -21,13 +22,55 @@ types::size_type PageTree::PageCount(void) const {
 }
 
 
+PageTree::PageTreeWalker::PageTreeWalker(PageTreeNodePtr root) {
+    stack.push_back(Frame(root));
+}
+
+bool PageTree::PageTreeWalker::TryNext(OutputPageObjectPtr& result) {
+    while (!stack.empty()) {
+        auto kids = stack.back().node->Kids();
+        auto count = kids->GetSize();
+
+        if (stack.back().index >= count) {
+            stack.pop_back();
+            continue;
+        }
+
+        auto kid_index = stack.back().index;
+        stack.back().index += 1;
+
+        auto kid = kids->GetValue(kid_index);
+
+        if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
+            auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(kid);
+            stack.push_back(Frame(tree_node));
+            continue;
+        }
+
+        result = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(kid);
+        return true;
+    }
+
+    return false;
+}
+
 PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
     if (page_number < 1) {
         throw InvalidParameterException(fmt::format("Invalid page number: {}", page_number));
     }
 
-    if (m_page_cache.empty()) {
-        BuildPageCache();
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    while (m_page_cache.size() < page_number) {
+        if (!m_walker) {
+            m_page_cache.reserve(PageCount());
+            m_walker.emplace(make_deferred<PageTreeNode>(_obj));
+        }
+
+        OutputPageObjectPtr page_output;
+        if (!m_walker->TryNext(page_output)) break;
+
+        m_page_cache.push_back(*page_output);
     }
 
     if (page_number > m_page_cache.size()) {
@@ -39,31 +82,25 @@ PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
     return m_page_cache[page_number - 1];
 }
 
-void PageTree::BuildPageCache() const {
-    m_page_cache.clear();
-    m_page_cache.reserve(PageCount());
-    auto root = make_deferred<PageTreeNode>(_obj);
-    BuildPageCacheInternal(root);
-}
+void PageTree::WarmPageCache() const {
+    ACCESS_LOCK_GUARD(m_cache_lock);
 
-void PageTree::BuildPageCacheInternal(PageTreeNodePtr node) const {
-    auto kids = node->Kids();
-    auto count = kids->GetSize();
-    for (decltype(count) i = 0; i < count; ++i) {
-        auto kid = kids->GetValue(i);
+    if (!m_walker) {
+        m_page_cache.reserve(PageCount());
+        m_walker.emplace(make_deferred<PageTreeNode>(_obj));
+    }
 
-        if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
-            auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(kid);
-            BuildPageCacheInternal(tree_node);
-        } else {
-            auto page_object = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(kid);
-            m_page_cache.push_back(page_object);
-        }
+    OutputPageObjectPtr page_output;
+    while (m_walker->TryNext(page_output)) {
+        m_page_cache.push_back(*page_output);
     }
 }
 
-void PageTree::InvalidatePageCache() noexcept {
+void PageTree::InvalidatePageCache() {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
     m_page_cache.clear();
+    m_walker.reset();
 }
 
 

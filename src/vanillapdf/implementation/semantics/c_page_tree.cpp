@@ -37,6 +37,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle* ha
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION PageTree_WarmPageCache(PageTreeHandle* handle)
+{
+    PageTree* obj = reinterpret_cast<PageTree*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try
+    {
+        obj->WarmPageCache();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION PageTree_InsertPage(PageTreeHandle* handle, size_type at, PageObjectHandle* page_handle)
 {
     PageTree* obj = reinterpret_cast<PageTree*>(handle);

@@ -25,7 +25,8 @@
 // 50→500 pages (10×): sequential time grows ~190× (O(N²) confirmed).
 // 500→1450 pages (2.9×): sequential time grows ~6.2× (also O(N²)).
 //
-// After (page cache, this branch):
+// After eager cache (previous iteration of this branch — BuildPageCache on first
+// access; warmup called GetPage(1) which triggered the full eager build):
 //
 // | Benchmark                           | Time      | CPU       |
 // |-------------------------------------|-----------|-----------|
@@ -35,9 +36,29 @@
 // | SingleAccess/50_mean                |    36.8 ns|    35.8 ns|
 // | SingleAccess/500_mean               |    38.0 ns|    38.1 ns|
 // | SingleAccess/1450_mean              |    42.0 ns|    41.7 ns|
+// | ColdFirstAccess_mean (1450 pages)   |    1616 ms|           |
 //
-// Improvement (sequential, 1450 pages): 3392 ms → 0.058 ms (~58,000x).
-// Benchmarks use pre-warmed cache; the one-time O(N) build cost is separate.
+// Improvement (sequential, 1450 pages): 3392 ms → 0.058 ms (~58,000×).
+// Cold-start regression: 15.9 ms → 1616 ms (~100×) because BuildPageCache()
+// resolved all 1450 indirect page references up-front on the very first call.
+//
+// After lazy cache (this branch — PageTreeWalker; warmup still calls GetPage(1)
+// which now only warms page 1; first benchmark iteration pays the lazy-fill cost):
+//
+// | Benchmark                           | Time      | CPU       |
+// |-------------------------------------|-----------|-----------|
+// | SequentialAccess/50_mean            | 0.003 ms  | 0.003 ms  |
+// | SequentialAccess/500_mean           | 0.056 ms  | 0.056 ms  |
+// | SequentialAccess/1450_mean          |   1006 ms |    959 ms |
+// | SingleAccess/50_mean                |    60.7 ns|    60.3 ns|
+// | SingleAccess/500_mean               |    97.8 ns|    98.3 ns|
+// | SingleAccess/1450_mean              | 517062 ns |518750 ns  |
+// | ColdFirstAccess_mean (1450 pages)   |    15.6 ms|           |
+//
+// Cold-start regression eliminated: 1616 ms → 15.6 ms (≈ baseline 15.9 ms).
+// SequentialAccess/1450 reflects the lazy-fill cost paid in the first iteration.
+// Calling WarmPageCache() before use restores eager-cache steady-state numbers
+// (0.058 ms sequential, 42 ns single access).
 
 #include "benchmark.h"
 #include "handle_guard.h"
@@ -154,3 +175,42 @@ BENCHMARK(BM_PageTreeSingleAccess)
     ->Arg(50)
     ->Arg(500)
     ->Arg(1450);
+
+// ---------------------------------------------------------------------------
+// BM_PageTreeColdFirstAccess
+//
+// Measures the cost of the very first PageTree_GetPage call on a freshly-
+// opened document. With the page cache this triggers BuildPageCache() — an
+// O(N) walk that resolves all N indirect page references and stores them in
+// the flat vector. Without the cache the first call was a plain O(1) tree
+// walk straight to page 1.
+//
+// The document is re-opened each iteration so the cache is always cold.
+// File open and xref parsing are excluded from timing via
+// PauseTiming / ResumeTiming; fixture teardown happens while the timer is
+// paused at the end of each iteration.
+// ---------------------------------------------------------------------------
+
+static void BM_PageTreeColdFirstAccess(benchmark::State& state) {
+    for (auto _ : state) {
+        state.PauseTiming();
+        PageTreeFixture fixture;
+        if (!fixture.Open("MPK_SLOVLEX.pdf")) {
+            state.SkipWithError("Could not open MPK_SLOVLEX.pdf");
+            return;
+        }
+
+        state.ResumeTiming();
+        {
+            HandleGuard<PageObjectHandle, PageObject_Release> page;
+            PageTree_GetPage(fixture.pages, 1, page.out());
+            benchmark::DoNotOptimize(page.get());
+        }
+
+        state.PauseTiming();
+        // fixture destructor runs here with timer paused
+    }
+}
+
+BENCHMARK(BM_PageTreeColdFirstAccess)
+    ->Unit(benchmark::kMillisecond);
