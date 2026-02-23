@@ -3,6 +3,10 @@
 #include "test_certificates.h"
 #include "handle_guard.h"
 
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+#include <openssl/opensslv.h>
+#endif
+
 namespace signature_verification {
 
 // Test certificate info for parameterized tests
@@ -21,8 +25,13 @@ static const CertificateTestInfo TEST_CERTIFICATES[] = {
     {TEST_2KDSA_SHA256_CERTIFICATE, TEST_2KDSA_SHA256_CERTIFICATE_SIZE, "2kDSA_SHA256", "test", "Test_2kDSA_SHA256"},
     {TEST_4KRSA_SHA3_512_CERTIFICATE, TEST_4KRSA_SHA3_512_CERTIFICATE_SIZE, "4kRSA_SHA3_512", "test", "Test_4kRSA_SHA3_512"},
     {TEST_EC384_SHA512_CERTIFICATE, TEST_EC384_SHA512_CERTIFICATE_SIZE, "EC384_SHA512", "test", "Test_EC384_SHA512"},
+
+    // EdDSA CMS signing requires OpenSSL >= 3.2 (eddsa_digest_signverify_init
+    // rejects any non-NULL digest; nullptr support in CMS was added in 3.2).
+#if defined(VANILLAPDF_HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER >= 0x30200000L
     {TEST_ED25519_CERTIFICATE, TEST_ED25519_CERTIFICATE_SIZE, "ED25519", "test", "Test_ED25519"},
     {TEST_ED448_CERTIFICATE, TEST_ED448_CERTIFICATE_SIZE, "ED448", "test", "Test_ED448"},
+#endif
 };
 
 // TrustedCertificateStore Tests
