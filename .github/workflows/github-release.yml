@@ -20,7 +20,9 @@ on:
         type: boolean
 
 permissions:
-  contents: write  # Required to create a release
+  contents: write       # Required to create a release and upload assets
+  id-token: write       # Required for Sigstore keyless signing
+  attestations: write   # Required for GitHub artifact attestations
 
 jobs:
   github-release:
@@ -57,3 +59,17 @@ jobs:
               --generate-notes \
               --draft
           fi
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: spdx-json
+          output-file: vanillapdf-${{ inputs.tag }}-sbom.spdx.json
+          upload-release-assets: true
+
+      - name: Attest SBOM
+        uses: actions/attest-sbom@v2
+        with:
+          subject-path: vanillapdf-${{ inputs.tag }}-sbom.spdx.json
+          sbom-path: vanillapdf-${{ inputs.tag }}-sbom.spdx.json

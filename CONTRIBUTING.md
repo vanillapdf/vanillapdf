@@ -73,6 +73,38 @@ For more information, visit [developercertificate.org](https://developercertific
 
 ---
 
+## 🔐 Release Tag Signing
+
+All release tags must be GPG-signed by a maintainer. This allows users to cryptographically verify that a release was created by a trusted maintainer and has not been tampered with.
+
+**Creating a signed tag:**
+
+```bash
+git tag -s v2.3.0 -m "Release v2.3.0"
+git push origin v2.3.0
+```
+
+**Verifying a signed tag:**
+
+```bash
+git tag -v v2.3.0
+```
+
+This will show the GPG signature details and the signer's key. Maintainer public keys are available in the [GitHub profile](https://github.com/vanillapdf) and via public keyservers.
+
+**Release artifact verification:**
+
+Each release also includes a Sigstore/cosign bundle (`.bundle` file) for every artifact, enabling keyless verification without GPG:
+
+```bash
+# Install cosign: https://docs.sigstore.dev/cosign/system_config/installation/
+cosign verify-blob \
+  --bundle vanillapdf-v2.3.0.tar.gz.bundle \
+  vanillapdf-v2.3.0.tar.gz
+```
+
+---
+
 ## 🙏 Thank You!
 
 Every bug report, idea, and pull request makes Vanilla.PDF better. We appreciate your time and contributions!
