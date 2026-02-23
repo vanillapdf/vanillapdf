@@ -107,8 +107,11 @@ StreamObject* StreamObject::Clone(void) const {
 }
 
 void StreamObject::SetFile(WeakReference<File> file) {
-    ACCESS_LOCK_GUARD(_access_lock);
-
+    // No lock: SetFile is always called during initialization before the object
+    // is published to other threads. Locking here would create an ABBA deadlock
+    // with the InputStream lock (ExclusiveInputLock acquires _access_lock first
+    // in GetBodyRaw, while parsing acquires the InputStream lock first then calls
+    // SetFile on freshly-created objects).
     Object::SetFile(file);
     _header->SetFile(file);
 }
