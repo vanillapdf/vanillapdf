@@ -117,8 +117,8 @@ void StreamObject::SetFile(WeakReference<File> file) {
 }
 
 void StreamObject::SetInitialized(bool initialized) {
-    // No lock: same rationale as SetFile — called only during initialization
-    // before the object is published to other threads.
+    ACCESS_LOCK_GUARD(_access_lock);
+
     Versionable::SetInitialized(initialized);
     _header->SetInitialized(initialized);
 
