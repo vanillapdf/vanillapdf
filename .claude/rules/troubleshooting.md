@@ -44,4 +44,4 @@ If tests fail unexpectedly:
 1. Ensure all dependencies are properly installed
 2. Check that the correct preset is being used for your platform
 3. Run tests with verbose output: `ctest --preset your-preset --verbose`
-4. Check for memory issues with sanitizers: `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
+4. Check for memory issues with sanitizers: `-DVANILLAPDF_ENABLE_ASAN=ON`

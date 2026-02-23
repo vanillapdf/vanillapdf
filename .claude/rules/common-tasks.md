@@ -44,7 +44,7 @@ ctest --preset windows-x64-msvc-17 --build-config Debug \
 
 ## Debugging and Development
 
-- Use sanitizers in Debug builds: `-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`
+- Use sanitizers in Debug builds: `-DVANILLAPDF_ENABLE_ASAN=ON`, `-DVANILLAPDF_ENABLE_UBSAN=ON`, or `-DVANILLAPDF_ENABLE_TSAN=ON` (ASan and TSan are mutually exclusive)
 - Visual Studio .natvis files available for debugging C++ objects (`public.natvis`, `vanillapdf.natvis`)
 - Precompiled headers are used (`precompiled.h`) for faster builds
 - C API headers use handle-based system (opaque pointers) for ABI stability
