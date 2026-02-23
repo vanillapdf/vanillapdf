@@ -4,6 +4,13 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 3 * * 1'
+  push:
+    branches: [ "main", "release/*" ]
+    paths:
+      - '.github/workflows/sanitizers.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/sanitizers.yml'
 
 permissions:
   contents: read
