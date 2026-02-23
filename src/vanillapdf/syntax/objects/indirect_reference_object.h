@@ -4,6 +4,8 @@
 #include "syntax/utils/syntax_fwd.h"
 #include "syntax/objects/containable.h"
 
+#include <optional>
+
 namespace vanillapdf {
 namespace syntax {
 
@@ -72,6 +74,11 @@ private:
     // Even though the are currently no cases for multi-thread access
     // to the dictonary, let's try to be visionary and prepare for this
     std::unique_ptr<std::recursive_mutex> m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+
+    // Helpers for GetReferencedObject() that separate lock-holding from file I/O.
+    // See GetReferencedObject() for the lock-ordering rationale.
+    std::optional<IndirectReferenceId> CaptureReferenceId() const;
+    ObjectPtr LoadReference(IndirectReferenceId id) const;
 
     //bool IsCyclicReference(ObjectPtr object, std::map<ObjectPtr, bool>& visited) const;
 

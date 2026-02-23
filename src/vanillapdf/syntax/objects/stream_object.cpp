@@ -87,16 +87,20 @@ StreamObject* StreamObject::Clone(void) const {
     result->_header = _header->Clone();
     result->_header->SetInitialized();
 
-    result->_body_raw = GetBodyRaw()->Clone();
-    result->_body_raw->SetInitialized();
+    result->_raw_data_offset = _raw_data_offset;
+
+    if (_body_raw->IsInitialized()) {
+        result->_body_raw = _body_raw->Clone();
+        result->_body_raw->SetInitialized();
+    }
 
     if (_body_decrypted->IsInitialized()) {
-        result->_body_decrypted = GetBodyDecrypted()->Clone();
+        result->_body_decrypted = _body_decrypted->Clone();
         result->_body_decrypted->SetInitialized();
     }
 
     if (_body_decoded->IsInitialized()) {
-        result->_body_decoded = GetBody()->Clone();
+        result->_body_decoded = _body_decoded->Clone();
         result->_body_decoded->SetInitialized();
     }
 
@@ -126,16 +130,11 @@ void StreamObject::SetInitialized(bool initialized) {
     }
 }
 
-BufferPtr StreamObject::GetBodyRaw() const {
-
-    if (_body_raw->IsInitialized()) {
-        return _body_raw;
-    }
-
+std::optional<types::stream_offset> StreamObject::CaptureBodyOffset() const {
     ACCESS_LOCK_GUARD(_access_lock);
 
     if (_body_raw->IsInitialized()) {
-        return _body_raw;
+        return std::nullopt;
     }
 
     if (!m_file.IsActive()) {
@@ -146,11 +145,23 @@ BufferPtr StreamObject::GetBodyRaw() const {
         throw ParseException("Stream object data offset is not initialized");
     }
 
+    return _raw_data_offset;
+}
+
+void StreamObject::LoadBody(types::stream_offset offset) const {
+    // _access_lock (M_stream) is intentionally NOT held here.
+    // GetInputStream() acquires the InputStream lock (M0) internally,
+    // and holding M_stream across that call creates a lock-order inversion with parsing
+    // (which holds M0 while calling SetFile() -> acquiring M_stream on new objects).
+    if (!m_file.IsActive()) {
+        throw FileDisposedException();
+    }
+
     auto locked_file = m_file.GetReference();
     auto input = locked_file->GetInputStream();
 
     input->ExclusiveInputLock();
-    input->SetInputPosition(_raw_data_offset);
+    input->SetInputPosition(offset);
 
     auto pos = input->GetInputPosition();
 
@@ -164,8 +175,33 @@ BufferPtr StreamObject::GetBodyRaw() const {
     auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
     auto body = input->Read(size->SafeConvert<types::size_type>());
 
-    _body_raw->assign(body.begin(), body.end());
-    _body_raw->SetInitialized();
+    // Re-acquire M_stream to cache; skip if another thread already loaded it.
+    ACCESS_LOCK_GUARD(_access_lock);
+    if (!_body_raw->IsInitialized()) {
+        _body_raw->assign(body.begin(), body.end());
+        _body_raw->SetInitialized();
+    }
+}
+
+BufferPtr StreamObject::GetBodyRaw() const {
+
+    if (_body_raw->IsInitialized()) {
+        return _body_raw;
+    }
+
+    // Two-phase approach to prevent the M_stream -> M0 lock-order inversion that TSan reports.
+    // Phase 1 — CaptureBodyOffset(): acquire M_stream, read the data offset, release M_stream.
+    // Phase 2 — LoadBody(): call GetInputStream() WITHOUT M_stream, so M0
+    //   (InputStream) can be acquired without creating the cycle:
+    //   M0 (parsing) -> M_stream (SetFile) -> M0 (GetInputStream).
+    auto offset = CaptureBodyOffset();
+    if (!offset) {
+        // Another thread loaded the body between the fast-path check
+        // and the lock acquisition inside CaptureBodyOffset().
+        return _body_raw;
+    }
+
+    LoadBody(*offset);
     return _body_raw;
 }
 
@@ -174,6 +210,10 @@ BufferPtr StreamObject::GetBody() const {
     if (_body_decoded->IsInitialized()) {
         return _body_decoded;
     }
+
+    // Pre-load raw body without _access_lock to avoid M_stream -> M0 inversion.
+    // See GetBodyRaw() for the lock-ordering rationale.
+    GetBodyRaw();
 
     ACCESS_LOCK_GUARD(_access_lock);
 
@@ -403,6 +443,10 @@ BufferPtr StreamObject::GetBodyDecrypted() const {
         return _body_decrypted;
     }
 
+    // Pre-load raw body without _access_lock to avoid M_stream -> M0 inversion.
+    // See GetBodyRaw() for the lock-ordering rationale.
+    auto body_raw = GetBodyRaw();
+
     ACCESS_LOCK_GUARD(_access_lock);
 
     if (_body_decrypted->IsInitialized()) {
@@ -410,7 +454,6 @@ BufferPtr StreamObject::GetBodyDecrypted() const {
     }
 
     auto locked_file = m_file.GetReference();
-    auto body_raw = GetBodyRaw();
 
     // During the initialization it is unknown whether a file is encrypted
     // This is important for object streams that are being parsed before encryption dictionary
@@ -556,23 +599,29 @@ BufferPtr StreamObject::DecryptData(BufferPtr data, types::big_uint obj_number, 
 }
 
 std::string StreamObject::ToString(void) const {
-    ACCESS_LOCK_GUARD(_access_lock);
+    // GetBodyEncoded() may load body from file (acquires M0 internally).
+    // Compute it before _access_lock to avoid M_stream -> M0 inversion.
+    auto encoded = GetBodyEncoded();
 
+    ACCESS_LOCK_GUARD(_access_lock);
     auto stream = StreamUtils::InputOutputStreamFromMemory();
     stream->Write(_header->ToString());
     stream->Write("stream: ");
-    stream->WriteLine(std::to_string(GetBodyEncoded()->size()));
+    stream->WriteLine(std::to_string(encoded->size()));
     return stream->ToString();
 }
 
 void StreamObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
-    ACCESS_LOCK_GUARD(_access_lock);
+    // GetBodyEncoded() may load body from file (acquires M0 internally).
+    // Compute it before _access_lock to avoid M_stream -> M0 inversion.
+    auto encoded = GetBodyEncoded();
 
+    ACCESS_LOCK_GUARD(_access_lock);
     _header->ToPdfStream(output);
     output << WhiteSpace::LINE_FEED;
     output << "stream";
     output << WhiteSpace::LINE_FEED;
-    output << *GetBodyEncoded();
+    output << *encoded;
     output << "endstream";
 }
 
@@ -582,13 +631,18 @@ size_t StreamObject::Hash() const {
 }
 
 bool StreamObject::Equals(ObjectPtr other) const {
-    ACCESS_LOCK_GUARD(_access_lock);
-
     if (!ObjectUtils::IsType<StreamObjectPtr>(other)) {
         return false;
     }
 
     auto other_obj = ObjectUtils::ConvertTo<StreamObjectPtr>(other);
+
+    // GetBodyEncoded() may load body from file (acquires M0 internally).
+    // Compute both bodies before _access_lock to avoid M_stream -> M0 inversion.
+    auto first_body = GetBodyEncoded();
+    auto second_body = other_obj->GetBodyEncoded();
+
+    ACCESS_LOCK_GUARD(_access_lock);
 
     auto first_header = GetHeader();
     auto second_header = other_obj->GetHeader();
@@ -596,8 +650,6 @@ bool StreamObject::Equals(ObjectPtr other) const {
         return false;
     }
 
-    auto first_body = GetBodyEncoded();
-    auto second_body = other_obj->GetBodyEncoded();
     if (first_body != second_body) {
         return false;
     }

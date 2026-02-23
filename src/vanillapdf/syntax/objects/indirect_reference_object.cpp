@@ -147,28 +147,59 @@ void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) {
     IncrementVersion();
 }
 
-ObjectPtr IndirectReferenceObject::GetReferencedObject() const {
-    if (IsReferenceInitialized()) {
-        return m_reference.GetReference();
-    }
-
+std::optional<IndirectReferenceId> IndirectReferenceObject::CaptureReferenceId() const {
     ACCESS_LOCK_GUARD(m_access_lock);
 
     if (IsReferenceInitialized()) {
-        return m_reference.GetReference();
+        return std::nullopt;
     }
 
     if (!m_file.IsActive()) {
         throw FileDisposedException();
     }
 
-    auto locked_file = m_file.GetReference();
-    auto new_reference = locked_file->GetIndirectObject(
-        m_reference_object_number,
-        m_reference_generation_number);
+    return IndirectReferenceId(m_reference_object_number, m_reference_generation_number);
+}
 
-    m_reference = new_reference;
+ObjectPtr IndirectReferenceObject::LoadReference(IndirectReferenceId id) const {
+    // m_access_lock (M2) is intentionally NOT held here.
+    // File::GetIndirectObject() may acquire the InputStream lock (M0) internally,
+    // and holding M2 across that call creates a lock-order inversion with parsing
+    // (which holds M0 while calling SetFile() -> acquiring M2 on new objects).
+    if (!m_file.IsActive()) {
+        throw FileDisposedException();
+    }
+
+    auto file = m_file.GetReference();
+    auto new_reference = file->GetIndirectObject(id.obj_number, id.gen_number);
+
+    // Re-acquire M2 to cache; skip if another thread already resolved it.
+    ACCESS_LOCK_GUARD(m_access_lock);
+    if (!IsReferenceInitialized()) {
+        m_reference = new_reference;
+    }
+
     return new_reference;
+}
+
+ObjectPtr IndirectReferenceObject::GetReferencedObject() const {
+    if (IsReferenceInitialized()) {
+        return m_reference.GetReference();
+    }
+
+    // Two-phase approach to prevent the M2 -> M0 lock-order inversion that TSan reports.
+    // Phase 1 — CaptureReferenceId(): acquire M2, read the reference ID, release M2.
+    // Phase 2 — LoadReference(): call File::GetIndirectObject() WITHOUT M2, so M0
+    //   (InputStream) can be acquired without creating the cycle:
+    //   M0 (parsing) -> M_dict (SetFile) -> M2 (ToPdfStream) -> M0 (GetIndirectObject).
+    auto ref_id = CaptureReferenceId();
+    if (!ref_id) {
+        // Another thread initialized the reference between our fast-path check
+        // and the lock acquisition inside CaptureReferenceId().
+        return m_reference.GetReference();
+    }
+
+    return LoadReference(*ref_id);
 }
 
 bool IndirectReferenceObject::Equals(const IndirectReferenceObject& other) const {

@@ -7,6 +7,8 @@
 
 #include "utils/buffer.h"
 
+#include <optional>
+
 namespace vanillapdf {
 namespace syntax {
 
@@ -56,6 +58,11 @@ private:
     // Even though the are currently no cases for multi-thread access
     // to the dictonary, let's try to be visionary and prepare for this
     std::unique_ptr<std::recursive_mutex> _access_lock;
+
+    // Helpers for GetBodyRaw() that separate lock-holding from file I/O.
+    // See GetBodyRaw() for the lock-ordering rationale.
+    std::optional<types::stream_offset> CaptureBodyOffset() const;
+    void LoadBody(types::stream_offset offset) const;
 
     BufferPtr EncryptStream(BufferPtr data, types::big_uint obj_number, types::ushort generation_number) const;
     BufferPtr EncryptData(BufferPtr data, types::big_uint obj_number, types::ushort generation_number, NameObjectPtr handler) const;
