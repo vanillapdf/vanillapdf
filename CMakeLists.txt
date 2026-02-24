@@ -108,6 +108,9 @@ include(cmake/coverage.cmake)
 # Optional sanitizer configuration
 include(cmake/sanitizers.cmake)
 
+# Optional fuzzer configuration
+include(cmake/fuzzer.cmake)
+
 # Turn on the ability to create folders to organize projects (.vcproj)
 # It creates "CMakePredefinedTargets" folder by default and adds CMake
 # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
@@ -146,4 +149,8 @@ endif()
 
 if(VANILLAPDF_ENABLE_BENCHMARK)
   add_subdirectory(src/vanillapdf.benchmark)
+endif()
+
+if(VANILLAPDF_ENABLE_FUZZING)
+  add_subdirectory(src/vanillapdf.fuzzer)
 endif()
