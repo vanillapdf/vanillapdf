@@ -20,6 +20,7 @@ set(VANILLAPDF_TOOLS_SOURCES
     sign.c
     sign_custom.c
     verify.c
+    validate.c
     encrypt.c
     decrypt.c
     write_custom.c
@@ -138,6 +139,57 @@ if(VANILLAPDF_ENABLE_TESTS)
         COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/custom/Granizo-signed.PDF"
     )
     set_tests_properties("Tools.verify.Granizo-signed.without-flag" PROPERTIES WILL_FAIL TRUE)
+
+    # Validate tests
+    set(VALIDATE_TEST_FILES
+        "test/example.pdf"
+        "test/19005-1_FAQ.PDF"
+        "test/custom/minimalist.pdf"
+        "test/pdf-association/pdf20examples/Simple-PDF-2.0-file.pdf"
+    )
+
+    foreach(TEST_FILE ${VALIDATE_TEST_FILES})
+        string(REPLACE "/" "." TEST_NAME "${TEST_FILE}")
+        string(REPLACE "\\" "." TEST_NAME "${TEST_NAME}")
+        string(REGEX REPLACE "\\.[pP][dD][fF]$" "" TEST_NAME "${TEST_NAME}")
+
+        add_test(
+            NAME "Tools.validate.${TEST_NAME}"
+            COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/${TEST_FILE}"
+        )
+        set_tests_properties("Tools.validate.${TEST_NAME}" PROPERTIES
+            PASS_REGULAR_EXPRESSION "Issues: 0 \\(0 error"
+        )
+    endforeach()
+
+    # Validate tests for files with known structural errors (expected to fail validation)
+
+    # issue5874.pdf: 1 xref bad-offset error (code=300), no warnings
+    add_test(
+        NAME "Tools.validate.test.pdfjs.issue5874"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/pdfjs/issue5874.pdf"
+    )
+    set_tests_properties("Tools.validate.test.pdfjs.issue5874" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Issues: 1 \\(1 error\\(s\\), 0 warning"
+    )
+
+    # request_for_taxpayer.pdf: 1 TrailerSizeMismatch warning (code=202) + 1 xref bad-offset error (code=300)
+    add_test(
+        NAME "Tools.validate.test.request_for_taxpayer"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/request_for_taxpayer.pdf"
+    )
+    set_tests_properties("Tools.validate.test.request_for_taxpayer" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Issues: 2 \\(1 error\\(s\\), 1 warning"
+    )
+
+    # bug1011159.pdf: 1 TrailerSizeMismatch warning (code=202) only - still reports VALID
+    add_test(
+        NAME "Tools.validate.test.pdfjs.bug1011159"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/pdfjs/bug1011159.pdf"
+    )
+    set_tests_properties("Tools.validate.test.pdfjs.bug1011159" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Issues: 1 \\(0 error\\(s\\), 1 warning"
+    )
 
     # Read tests using memory IO strategy
     set(MEMORY_STRATEGY_TEST_FILES

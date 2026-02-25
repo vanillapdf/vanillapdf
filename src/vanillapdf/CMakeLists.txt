@@ -52,6 +52,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES
     implementation/syntax/c_stream_object.cpp
     implementation/syntax/c_string_object.cpp
     implementation/syntax/c_xref.cpp
+    implementation/syntax/c_file_structure_validator.cpp
     implementation/syntax/c_object_attributes.cpp
     implementation/syntax/c_object_attribute_list.cpp
 )
@@ -151,6 +152,9 @@ set(VANILLAPDF_SYNTAX_SOURCES
 
     syntax/files/file.cpp
     syntax/files/file_writer.cpp
+    syntax/files/file_structure_issue.cpp
+    syntax/files/file_structure_validation_result.cpp
+    syntax/files/file_structure_validator.cpp
     syntax/files/xref.cpp
     syntax/files/xref_entry.cpp
     syntax/files/xref_chain.cpp
@@ -285,6 +289,9 @@ set(VANILLAPDF_SYNTAX_HEADERS
     
     syntax/files/file.h
     syntax/files/file_writer.h
+    syntax/files/file_structure_issue.h
+    syntax/files/file_structure_validation_result.h
+    syntax/files/file_structure_validator.h
     syntax/files/header.h
     syntax/files/xref.h
     syntax/files/xref_entry.h

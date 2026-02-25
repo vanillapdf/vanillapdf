@@ -68,6 +68,10 @@ using XrefFreeEntryPtr = Deferred<XrefFreeEntry>;
 using XrefUsedEntryPtr = Deferred<XrefUsedEntry>;
 using XrefCompressedEntryPtr = Deferred<XrefCompressedEntry>;
 
+// Validation
+class FileStructureIssue; using FileStructureIssuePtr = Deferred<FileStructureIssue>;
+class FileStructureValidationResult; using FileStructureValidationResultPtr = Deferred<FileStructureValidationResult>;
+
 class Token; using TokenPtr = Deferred<Token>;
 class TokenDictionaryBase;
 class ParserTokenDictionary;
