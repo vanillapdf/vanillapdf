@@ -46,31 +46,31 @@ TEST(TextStringEncoding, NullResultParam) {
     EXPECT_EQ(TextStringEncoding_Detect(data, 5, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
-// ===== PDFDocEncoding → Unicode (TextStringEncoding_PDFDocToUnicode) =====
+// ===== PDFDocEncoding → Unicode (TextStringEncoding_PDFDocEncodingByteToUnicode) =====
 
-TEST(TextStringEncoding, PDFDocASCIIPassthrough) {
+TEST(TextStringEncoding, PDFDocEncodingASCIIPassthrough) {
     // 0x41 = 'A' → U+0041
     uint32_t cp = 0;
-    ASSERT_EQ(TextStringEncoding_PDFDocToUnicode(0x41, &cp), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextStringEncoding_PDFDocEncodingByteToUnicode(0x41, &cp), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(cp, 0x0041u);
 }
 
-TEST(TextStringEncoding, PDFDocHighByteBullet) {
+TEST(TextStringEncoding, PDFDocEncodingHighByteBullet) {
     // 0x80 = U+2022 (bullet)
     uint32_t cp = 0;
-    ASSERT_EQ(TextStringEncoding_PDFDocToUnicode(0x80, &cp), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextStringEncoding_PDFDocEncodingByteToUnicode(0x80, &cp), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(cp, 0x2022u);
 }
 
-TEST(TextStringEncoding, PDFDocUndefinedByteIsReplacementChar) {
+TEST(TextStringEncoding, PDFDocEncodingUndefinedByteIsReplacementChar) {
     // 0x00 is undefined in PDFDocEncoding → U+FFFD
     uint32_t cp = 0;
-    ASSERT_EQ(TextStringEncoding_PDFDocToUnicode(0x00, &cp), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextStringEncoding_PDFDocEncodingByteToUnicode(0x00, &cp), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(cp, 0xFFFDu);
 }
 
-TEST(TextStringEncoding, PDFDocNullResultParam) {
-    EXPECT_EQ(TextStringEncoding_PDFDocToUnicode(0x41, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+TEST(TextStringEncoding, PDFDocEncodingNullResultParam) {
+    EXPECT_EQ(TextStringEncoding_PDFDocEncodingByteToUnicode(0x41, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 } // namespace text_string_encoding

@@ -2,6 +2,8 @@
 
 #include "utils/text_string_encoding.h"
 
+#include <cassert>
+
 namespace vanillapdf {
 
 // PDF spec Table D.2 — PDFDocEncoding to Unicode mapping.
@@ -13,7 +15,7 @@ namespace vanillapdf {
 // Code  0x7F is undefined (mapped to U+FFFD).
 // Codes 0x80-0xFF map to specific Unicode characters (Windows-1252/Latin supplement).
 // Code  0xAD is mapped to U+FFFD (undefined in PDFDocEncoding).
-static constexpr char32_t kPDFDocToUnicode[256] = {
+static constexpr char32_t PDF_DOC_ENCODING_TO_UNICODE[256] = {
     // 0x00-0x0F
     0xFFFD,  0xFFFD,  0xFFFD,  0xFFFD,  0xFFFD,  0xFFFD,  0xFFFD,  0xFFFD,  // 0x00-0x07
     0x02D8,  0x02C7,  0x02C6,  0x02D9,  0x02DD,  0x02DB,  0x02DA,  0x02DC,  // 0x08-0x0F
@@ -82,6 +84,7 @@ static char32_t ReadUtf16BECodePoint(std::string_view data, size_t& i) {
 
 // Encode a single Unicode code point as UTF-8 bytes, appending to out.
 static void EncodeUtf8(char32_t cp, std::string& out) {
+    assert(cp <= 0x10FFFF); // Unicode defines no code points above U+10FFFF
     if (cp <= 0x7F) {
         out.push_back(static_cast<char>(cp));
     } else if (cp <= 0x7FF) {
@@ -120,8 +123,8 @@ TextStringEncoding::Type TextStringEncoding::Detect(std::string_view data) {
     return Type::PDFDocEncoding;
 }
 
-char32_t TextStringEncoding::PDFDocToUnicode(uint8_t byte) {
-    return kPDFDocToUnicode[byte];
+char32_t TextStringEncoding::PDFDocEncodingByteToUnicode(uint8_t byte) {
+    return PDF_DOC_ENCODING_TO_UNICODE[byte];
 }
 
 std::string TextStringEncoding::ToUtf8(std::string_view data) {
@@ -135,7 +138,7 @@ std::string TextStringEncoding::ToUtf8(std::string_view data, Type encoding) {
         case Type::PDFDocEncoding: {
             out.reserve(data.size());
             for (size_t i = 0; i < data.size(); i += 1) {
-                EncodeUtf8(kPDFDocToUnicode[static_cast<uint8_t>(data[i])], out);
+                EncodeUtf8(PDF_DOC_ENCODING_TO_UNICODE[static_cast<uint8_t>(data[i])], out);
             }
             break;
         }

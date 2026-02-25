@@ -10,7 +10,7 @@ namespace vanillapdf {
 /**
  * @brief Utilities for PDF text string encoding detection and conversion.
  *
- * Detect and PDFDocToUnicode are exposed via the C API.
+ * Detect and PDFDocEncodingByteToUnicode are exposed via the C API.
  * ToUtf8 is internal-only, used where the library needs to interpret
  * text string content (e.g. date parsing).
  */
@@ -44,7 +44,7 @@ public:
      *
      * Undefined bytes (e.g. 0x00-0x07) map to U+FFFD (replacement character).
      */
-    static char32_t PDFDocToUnicode(uint8_t byte);
+    static char32_t PDFDocEncodingByteToUnicode(uint8_t byte);
 
     /**
      * @brief Decode a PDF text string to a UTF-8 std::string.
