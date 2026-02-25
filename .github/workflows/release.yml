@@ -210,17 +210,19 @@ jobs:
   production-gate:
     runs-on: ubuntu-latest
     permissions: {}
-    needs: nuget-staging
-    if: needs.prepare.outputs.dry_run == 'false'
+    needs: [nuget-staging, prepare]
     environment: production
+    outputs:
+      tag: ${{ needs.prepare.outputs.tag }}
+      latest_tag: ${{ needs.prepare.outputs.latest_tag }}
+      prerelease: ${{ needs.prepare.outputs.prerelease }}
     steps:
       - run: echo "Awaiting production approval"
 
   publish-nuget:
     runs-on: ubuntu-latest
     permissions: {}
-    needs: [production-gate, prepare]
-    if: needs.prepare.outputs.dry_run == 'false'
+    needs: production-gate
     environment: production
     steps:
       - name: Download NuGet packages
@@ -235,9 +237,9 @@ jobs:
             --skip-duplicate
 
   github-pages:
-    needs: [production-gate, prepare]
+    needs: production-gate
     # Only deploy documentation for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
+    if: needs.production-gate.outputs.prerelease == 'false'
     permissions:
       pages: write
       id-token: write
@@ -247,43 +249,42 @@ jobs:
     secrets: inherit
 
   github-release:
-    needs: [production-gate, prepare]
-    if: needs.prepare.outputs.dry_run == 'false'
+    needs: production-gate
     permissions:
       contents: write
       id-token: write
       attestations: write
     uses: ./.github/workflows/github-release.yml
     with:
-      tag: ${{ needs.prepare.outputs.tag }}
-      prerelease: ${{ fromJSON(needs.prepare.outputs.prerelease) }}
+      tag: ${{ needs.production-gate.outputs.tag }}
+      prerelease: ${{ fromJSON(needs.production-gate.outputs.prerelease) }}
     secrets: inherit
 
   vcpkg-pr:
-    needs: [production-gate, prepare]
+    needs: production-gate
     # Only create vcpkg PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
+    if: needs.production-gate.outputs.prerelease == 'false'
     uses: ./.github/workflows/create-vcpkg-pr.yml
     with:
-      tag: ${{ needs.prepare.outputs.tag }}
+      tag: ${{ needs.production-gate.outputs.tag }}
     secrets: inherit
 
   homebrew-pr:
-    needs: [production-gate, prepare]
+    needs: production-gate
     # Only create Homebrew PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
+    if: needs.production-gate.outputs.prerelease == 'false'
     uses: ./.github/workflows/update-homebrew.yml
     with:
-      tag: ${{ needs.prepare.outputs.tag }}
+      tag: ${{ needs.production-gate.outputs.tag }}
     secrets: inherit
 
   conan-pr:
-    needs: [production-gate, prepare]
+    needs: production-gate
     # Only create Conan Center PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
+    if: needs.production-gate.outputs.prerelease == 'false'
     uses: ./.github/workflows/create-conan-pr.yml
     with:
-      tag: ${{ needs.prepare.outputs.tag }}
+      tag: ${{ needs.production-gate.outputs.tag }}
     secrets: inherit
 
   attest:
@@ -292,8 +293,7 @@ jobs:
     permissions:
       id-token: write
       attestations: write
-    needs: [publish-nuget, github-release, prepare]
-    if: needs.prepare.outputs.dry_run == 'false'
+    needs: [publish-nuget, github-release]
     steps:
       - name: Download NuGet packages
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131  # v7.0.0
@@ -311,8 +311,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    needs: [attest, prepare]
-    if: needs.prepare.outputs.dry_run == 'false'
+    needs: attest
     steps:
       - name: Download NuGet packages
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131  # v7.0.0
@@ -334,9 +333,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    needs: [github-release, prepare]
+    needs: [github-release, production-gate]
     # Only update port for official releases, not pre-releases
-    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
+    if: needs.production-gate.outputs.prerelease == 'false'
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
@@ -361,7 +360,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          VERSION="${{ needs.prepare.outputs.tag }}"
+          VERSION="${{ needs.production-gate.outputs.tag }}"
           VERSION="${VERSION#v}"
           BRANCH="release/port-${VERSION}"
 
@@ -388,7 +387,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          VERSION="${{ needs.prepare.outputs.tag }}"
+          VERSION="${{ needs.production-gate.outputs.tag }}"
           VERSION="${VERSION#v}"
 
           # Get all release tags and find the latest version
