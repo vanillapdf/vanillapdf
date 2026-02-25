@@ -31,10 +31,7 @@ on:
       - 'CMakePresets.json'
       - 'test/**'
 
-permissions:
-  contents: read  # Download the repository source code
-  statuses: write  # Required for Codecov to post coverage status
-  pull-requests: write  # Required for PR comments
+permissions: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -43,6 +40,10 @@ concurrency:
 jobs:
   coverage:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read        # Download the repository source code
+      statuses: write       # Required for Codecov to post coverage status
+      pull-requests: write  # Required for PR comments
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
