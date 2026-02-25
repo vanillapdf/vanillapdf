@@ -122,3 +122,7 @@ foreach(TEST_FILE ${TEST_FILES})
         "${VANILLAPDF_SOLUTION_SOURCE_DIR}"							# path to root of the source directory
     )
 endforeach(TEST_FILE)
+
+# MPK_SLOVLEX.pdf: 9.5 MB, 1,450 pages — takes 600-1500s under sanitizers and
+# dominates CI time. Disabled until test files are moved to a dedicated repo.
+set_tests_properties(MPK_SLOVLEX.pdf PROPERTIES DISABLED TRUE)
