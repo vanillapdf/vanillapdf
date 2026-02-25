@@ -25,11 +25,12 @@ env:
   VCPKG_DISABLE_METRICS: 1
   VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
   BUILD_PRESET: linux-x64-gcc
+  RUNNER_IMAGE: ubuntu-24.04
 
 jobs:
   vcpkg-setup:
     name: Install vcpkg dependencies
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNNER_IMAGE }}
 
     steps:
       - uses: actions/checkout@v6
@@ -50,10 +51,10 @@ jobs:
             external/vcpkg/buildtrees
             external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizers-
-            vcpkg-${{ runner.os }}-ubuntu-latest-
+            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-
+            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -70,7 +71,7 @@ jobs:
   asan:
     name: ASan
     needs: vcpkg-setup
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNNER_IMAGE }}
 
     steps:
       - uses: actions/checkout@v6
@@ -91,10 +92,10 @@ jobs:
             external/vcpkg/buildtrees
             external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizers-
-            vcpkg-${{ runner.os }}-ubuntu-latest-
+            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-
+            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -118,7 +119,7 @@ jobs:
   ubsan:
     name: UBSan
     needs: vcpkg-setup
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNNER_IMAGE }}
 
     steps:
       - uses: actions/checkout@v6
@@ -139,10 +140,10 @@ jobs:
             external/vcpkg/buildtrees
             external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizers-
-            vcpkg-${{ runner.os }}-ubuntu-latest-
+            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-
+            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -166,7 +167,7 @@ jobs:
   tsan:
     name: TSan
     needs: vcpkg-setup
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNNER_IMAGE }}
 
     steps:
       - uses: actions/checkout@v6
@@ -187,10 +188,10 @@ jobs:
             external/vcpkg/buildtrees
             external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizers-
-            vcpkg-${{ runner.os }}-ubuntu-latest-
+            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-
+            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
