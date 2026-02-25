@@ -30,7 +30,7 @@ env:
 jobs:
   vcpkg-setup:
     name: Install vcpkg dependencies
-    runs-on: ${{ env.RUNNER_IMAGE }}
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v6
@@ -68,10 +68,22 @@ jobs:
             -DVANILLAPDF_EXTERNAL_ZLIB=ON \
             -DVANILLAPDF_ENABLE_TESTS=ON
 
-  asan:
-    name: ASan
+  sanitizer:
+    name: ${{ matrix.name }}
     needs: vcpkg-setup
-    runs-on: ${{ env.RUNNER_IMAGE }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04]
+        include:
+          - name: ASan
+            cmake_flag: VANILLAPDF_ENABLE_ASAN
+          - name: UBSan
+            cmake_flag: VANILLAPDF_ENABLE_UBSAN
+          - name: TSan
+            cmake_flag: VANILLAPDF_ENABLE_TSAN
 
     steps:
       - uses: actions/checkout@v6
@@ -104,103 +116,7 @@ jobs:
       - name: Configure
         run: |
           cmake --preset ${{ env.BUILD_PRESET }} -DCMAKE_BUILD_TYPE=Debug \
-            -DVANILLAPDF_ENABLE_ASAN=ON \
-            -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
-            -DVANILLAPDF_EXTERNAL_JPEG=ON \
-            -DVANILLAPDF_EXTERNAL_ZLIB=ON \
-            -DVANILLAPDF_ENABLE_TESTS=ON
-
-      - name: Build
-        run: cmake --build --preset ${{ env.BUILD_PRESET }}
-
-      - name: Test
-        run: ctest --preset ${{ env.BUILD_PRESET }} --output-on-failure
-
-  ubsan:
-    name: UBSan
-    needs: vcpkg-setup
-    runs-on: ${{ env.RUNNER_IMAGE }}
-
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          submodules: recursive
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
-
-      - name: Restore vcpkg cache
-        uses: actions/cache/restore@v5
-        with:
-          path: |
-            build/${{ env.BUILD_PRESET }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-            external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-
-            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-
-
-      - name: Bootstrap vcpkg
-        run: ./external/vcpkg/bootstrap-vcpkg.sh
-        shell: bash
-
-      - name: Configure
-        run: |
-          cmake --preset ${{ env.BUILD_PRESET }} -DCMAKE_BUILD_TYPE=Debug \
-            -DVANILLAPDF_ENABLE_UBSAN=ON \
-            -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
-            -DVANILLAPDF_EXTERNAL_JPEG=ON \
-            -DVANILLAPDF_EXTERNAL_ZLIB=ON \
-            -DVANILLAPDF_ENABLE_TESTS=ON
-
-      - name: Build
-        run: cmake --build --preset ${{ env.BUILD_PRESET }}
-
-      - name: Test
-        run: ctest --preset ${{ env.BUILD_PRESET }} --output-on-failure
-
-  tsan:
-    name: TSan
-    needs: vcpkg-setup
-    runs-on: ${{ env.RUNNER_IMAGE }}
-
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          submodules: recursive
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
-
-      - name: Restore vcpkg cache
-        uses: actions/cache/restore@v5
-        with:
-          path: |
-            build/${{ env.BUILD_PRESET }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-            external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-
-            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-
-
-      - name: Bootstrap vcpkg
-        run: ./external/vcpkg/bootstrap-vcpkg.sh
-        shell: bash
-
-      - name: Configure
-        run: |
-          cmake --preset ${{ env.BUILD_PRESET }} -DCMAKE_BUILD_TYPE=Debug \
-            -DVANILLAPDF_ENABLE_TSAN=ON \
+            -D${{ matrix.cmake_flag }}=ON \
             -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
             -DVANILLAPDF_EXTERNAL_JPEG=ON \
             -DVANILLAPDF_EXTERNAL_ZLIB=ON \
