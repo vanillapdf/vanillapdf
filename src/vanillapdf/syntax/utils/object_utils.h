@@ -14,6 +14,8 @@
 #include "syntax/objects/array_object.h"
 
 #include <map>
+// TODO: <sstream> is only here for transitive include compatibility — remove once all
+// downstream files that depend on it transitively add their own explicit includes.
 #include <sstream>
 
 namespace vanillapdf {
@@ -149,9 +151,8 @@ public:
 
         auto found = visited.find(id);
         if (found != visited.end() && found->second) {
-            std::stringstream ss;
-            ss << "Cyclic reference was found for " << obj_number << " " << gen_number << " R";
-            throw ConversionException(ss.str());
+            throw ConversionException(
+                fmt::format("Cyclic reference was found for {} {} R", obj_number, gen_number));
         }
 
         visited[id] = true;

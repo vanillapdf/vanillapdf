@@ -327,6 +327,8 @@ VANILLAPDF_DEPRECATED   // __declspec(deprecated) or __attribute__((deprecated))
 - `VANILLAPDF_EXPORTS` - defined when building the library
 - `VANILLAPDF_CONFIGURATION_DLL` - defined for shared lib consumers
 
+**Deprecating a C API symbol**: when applying `VANILLAPDF_DEPRECATED` to a constant or function, update ALL internal references — `c_errors.cpp` error name lookup, `utils.c` integration test smoke tests, and any other usage. Clang `-Werror,-Wdeprecated-declarations` will fail the CI build if any reference is missed.
+
 ## Adding a New C API Function
 
 1. Declare in appropriate `include/vanillapdf/*/c_*.h` header

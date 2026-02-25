@@ -9,41 +9,47 @@
 #include <chrono>
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
-#include <openssl/pkcs7.h>
+#include <openssl/cms.h>
 #include <openssl/x509.h>
 #include <openssl/x509_vfy.h>
 #include <openssl/bio.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
+#include <openssl/obj_mac.h>
 #endif
 
 namespace vanillapdf {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-// Helper to check if signature uses weak cryptographic algorithms
-// Returns true if weak algorithm detected, false otherwise
-// Throws CryptoErrorException for logic errors (parsing failures, structure errors)
-bool SignatureVerifier::IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPtr& result) {
+// Helper to check if signature uses weak cryptographic algorithms.
+// Called after CMS_verify() so that signer certs are matched to signer infos.
+// Returns true if weak algorithm detected, false otherwise.
+// Throws CryptoErrorException for logic errors (parsing failures, structure errors).
+bool SignatureVerifier::IsWeakAlgorithm(CMS_ContentInfo* cms, SignatureVerificationResultPtr& result) {
     // Get signer info
-    STACK_OF(PKCS7_SIGNER_INFO)* signer_info_stack = PKCS7_get_signer_info(p7);
-    if (!signer_info_stack || sk_PKCS7_SIGNER_INFO_num(signer_info_stack) == 0) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"No signer info found in PKCS#7 signature");
+    STACK_OF(CMS_SignerInfo)* si_stack = CMS_get0_SignerInfos(cms);
+    if (!si_stack || sk_CMS_SignerInfo_num(si_stack) == 0) {
+        LOG_ERROR_AND_THROW(CryptoErrorException, "No signer info found in CMS signature");
     }
 
-    PKCS7_SIGNER_INFO* si = sk_PKCS7_SIGNER_INFO_value(signer_info_stack, 0);
+    CMS_SignerInfo* si = sk_CMS_SignerInfo_value(si_stack, 0);
     if (!si) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"Signer info is null (PKCS#7 structure error)");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Signer info is null (CMS structure error)");
     }
 
-    // Check digest algorithm
-    X509_ALGOR* digest_alg = si->digest_alg;
+    // Retrieve all fields from SignerInfo in one call (must be after CMS_verify() for signer_cert)
+    X509* signer_cert = nullptr;
+    X509_ALGOR* digest_alg = nullptr;
+    X509_ALGOR* sig_alg = nullptr;
+    CMS_SignerInfo_get0_algs(si, nullptr, &signer_cert, &digest_alg, &sig_alg);
+
+    // Check digest algorithm (hash only — this field does NOT contain signature algorithms)
+    // Signature algorithms like NID_sha1WithRSAEncryption belong in sig_alg
     if (digest_alg && digest_alg->algorithm) {
         int nid = OBJ_obj2nid(digest_alg->algorithm);
         const char* alg_name = OBJ_nid2sn(nid);
 
-        // Check for weak digest algorithms (hash only - this field does NOT contain signature algorithms)
-        // Signature algorithms like NID_sha1WithRSAEncryption belong in digest_enc_alg or cert->sig_alg
         if (nid == NID_md2 || nid == NID_md4 || nid == NID_md5 || nid == NID_sha1 || nid == NID_md5_sha1) {
             spdlog::info("Weak digest algorithm detected: {}", alg_name ? alg_name : "unknown");
             result->SetMessage(fmt::format("Weak digest algorithm: {}", alg_name ? alg_name : "unknown"));
@@ -51,17 +57,15 @@ bool SignatureVerifier::IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPt
         }
     }
 
-    // Check signature algorithm (digest_enc_alg in PKCS#7 SignerInfo)
-    X509_ALGOR* sig_alg = si->digest_enc_alg;
+    // Check signature algorithm
+    // - MD2/MD4/MD5 based: NID_md2WithRSAEncryption, NID_md4WithRSAEncryption, NID_md5WithRSAEncryption, NID_md5WithRSA
+    // - SHA-0 based: NID_shaWithRSAEncryption, NID_dsaWithSHA
+    // - SHA-1 based: NID_sha1WithRSAEncryption, NID_sha1WithRSA, NID_dsaWithSHA1, NID_dsaWithSHA1_2, NID_ecdsa_with_SHA1
+    // - Deprecated: NID_ripemd160WithRSA, NID_mdc2WithRSA
     if (sig_alg && sig_alg->algorithm) {
         int nid = OBJ_obj2nid(sig_alg->algorithm);
         const char* alg_name = OBJ_nid2sn(nid);
 
-        // Check for weak signature algorithms:
-        // - MD2/MD4/MD5 based: NID_md2WithRSAEncryption, NID_md4WithRSAEncryption, NID_md5WithRSAEncryption, NID_md5WithRSA
-        // - SHA-0 based: NID_shaWithRSAEncryption, NID_dsaWithSHA
-        // - SHA-1 based: NID_sha1WithRSAEncryption, NID_sha1WithRSA, NID_dsaWithSHA1, NID_dsaWithSHA1_2, NID_ecdsa_with_SHA1
-        // - Deprecated: NID_ripemd160WithRSA, NID_mdc2WithRSA
         if (nid == NID_md2WithRSAEncryption || nid == NID_md4WithRSAEncryption ||
             nid == NID_md5WithRSAEncryption || nid == NID_md5WithRSA ||
             nid == NID_shaWithRSAEncryption || nid == NID_dsaWithSHA ||
@@ -74,21 +78,14 @@ bool SignatureVerifier::IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPt
         }
     }
 
-    // Check public key size
-    STACK_OF(X509)* signers = PKCS7_get0_signers(p7, nullptr, 0);
-    if (!signers || sk_X509_num(signers) == 0) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to get signer certificates from PKCS#7");
-    }
-    SCOPE_GUARD([signers]() { sk_X509_free(signers); });
-
-    X509* signer_cert = sk_X509_value(signers, 0);
+    // Check public key size using the signer certificate matched by CMS_verify()
     if (!signer_cert) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"Signer certificate is null");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Signer certificate is null after CMS_verify");
     }
 
     EVP_PKEY* pkey = X509_get0_pubkey(signer_cert);
     if (!pkey) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to get public key from signer certificate");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to get public key from signer certificate");
     }
 
     int key_type = EVP_PKEY_base_id(pkey);
@@ -118,22 +115,74 @@ bool SignatureVerifier::IsWeakAlgorithm(PKCS7* p7, SignatureVerificationResultPt
     return false;  // No weak algorithms detected
 }
 
-// Helper to extract certificate chain from PKCS7
-void SignatureVerifier::ExtractCertificateChain(PKCS7* p7, SignatureVerificationResultPtr& result) {
-    STACK_OF(X509)* certs = PKCS7_get0_signers(p7, nullptr, 0);
-    if (!certs) {
-        spdlog::warn("No signers found in PKCS7 signature");
+// Helper to extract certificate chain from CMS signature.
+// Must be called after CMS_verify() so that signer certs are matched to signer infos.
+void SignatureVerifier::ExtractCertificateChain(CMS_ContentInfo* cms, SignatureVerificationResultPtr& result) {
+    // Get the first signer's certificate (matched by CMS_verify())
+    STACK_OF(CMS_SignerInfo)* si_stack = CMS_get0_SignerInfos(cms);
+    if (!si_stack || sk_CMS_SignerInfo_num(si_stack) == 0) {
+        spdlog::warn("No signers found in CMS signature");
         return;
     }
 
-    SCOPE_GUARD([certs]() { sk_X509_free(certs); });
+    CMS_SignerInfo* si = sk_CMS_SignerInfo_value(si_stack, 0);
+    X509* signer_cert = nullptr;
+    CMS_SignerInfo_get0_algs(si, nullptr, &signer_cert, nullptr, nullptr);
 
-    int cert_count = sk_X509_num(certs);
+    if (!signer_cert) {
+        spdlog::warn("Signer certificate not matched after CMS_verify");
+    } else {
+        // Convert signer certificate to DER and record it
+        int der_len = i2d_X509(signer_cert, nullptr);
+        if (der_len < 0) {
+            spdlog::warn("Failed to determine DER length for signer certificate");
+        } else {
+            BufferPtr cert_buf = make_deferred_container<Buffer>(der_len);
+            unsigned char* der_ptr = reinterpret_cast<unsigned char*>(cert_buf->data());
+            if (i2d_X509(signer_cert, &der_ptr) < 0) {
+                spdlog::warn("Failed to convert signer certificate to DER format");
+            } else {
+                result->SetSignerCertificate(cert_buf);
+                result->AddCertificateToChain(cert_buf);
+            }
+        }
 
+        // Extract common name from signing certificate
+        // Note: Validity dates (not_before, not_after) will be exposed in a future phase
+        X509_NAME* subject = X509_get_subject_name(signer_cert);
+        if (!subject) {
+            spdlog::warn("Common name not found in signing certificate");
+        } else {
+            // First get the required buffer size, then allocate (+1 for null terminator)
+            int cn_len = X509_NAME_get_text_by_NID(subject, NID_commonName, nullptr, 0);
+            if (cn_len < 0) {
+                spdlog::warn("Failed to get subject name from signing certificate");
+            } else {
+                auto cn_buffer = make_deferred_container<Buffer>(cn_len + 1);
+                X509_NAME_get_text_by_NID(subject, NID_commonName, cn_buffer->data(), cn_len + 1);
+                result->SetSignerCommonName(cn_buffer);
+            }
+        }
+    }
+
+    // Add all embedded certificates (intermediate CAs) to the chain.
+    // CMS_get1_certs() returns a new STACK with new references; caller must free with sk_X509_pop_free.
+    STACK_OF(X509)* embedded_certs = CMS_get1_certs(cms);
+    if (!embedded_certs) {
+        return;
+    }
+    SCOPE_GUARD([embedded_certs]() { sk_X509_pop_free(embedded_certs, X509_free); });
+
+    int cert_count = sk_X509_num(embedded_certs);
     for (int i = 0; i < cert_count; i++) {
-        X509* cert = sk_X509_value(certs, i);
+        X509* cert = sk_X509_value(embedded_certs, i);
         if (!cert) {
             spdlog::warn("Certificate at index {} is null, skipping", i);
+            continue;
+        }
+
+        // Skip the signer cert — already added above
+        if (signer_cert && X509_cmp(cert, signer_cert) == 0) {
             continue;
         }
 
@@ -154,83 +203,46 @@ void SignatureVerifier::ExtractCertificateChain(PKCS7* p7, SignatureVerification
             continue;
         }
 
-        if (i == 0) {
-
-            result->SetSignerCertificate(cert_buf);
-
-            // Extract common name from signing certificate
-            X509_NAME* subject = X509_get_subject_name(cert);
-            if (!subject) {
-                spdlog::warn("Common name not found in signing certificate");
-                continue;
-            }
-
-            // First get the required buffer size
-            int cn_len = X509_NAME_get_text_by_NID(subject, NID_commonName, nullptr, 0);
-            if (cn_len < 0) {
-                spdlog::warn("Failed to get subject name from signing certificate");
-                continue;
-            }
-
-            // Allocate buffer with exact size needed (+1 for null terminator)
-            auto cn_buffer = make_deferred_container<Buffer>(cn_len + 1);
-            X509_NAME_get_text_by_NID(subject, NID_commonName, cn_buffer->data(), cn_len + 1);
-
-            // Convert to BufferPtr (UTF-8 encoded)
-            result->SetSignerCommonName(cn_buffer);
-
-            // Note: Validity dates (not_before, not_after) will be exposed in a future phase
-            // For now, we only extract the common name and certificate data
-        }
-
         result->AddCertificateToChain(cert_buf);
     }
 }
 
-// Helper to extract signing time from PKCS7 authenticated attributes
-// Returns true if signing time was found and extracted, false if not present (valid per spec)
+// Helper to extract signing time from CMS authenticated attributes.
+// Returns true if signing time was found and extracted, false if not present (valid per spec).
 // Throws CryptoErrorException for logic errors (parsing failures, memory allocation, etc.)
-bool SignatureVerifier::ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
+bool SignatureVerifier::ExtractSigningTime(CMS_ContentInfo* cms, time_t* signing_time) {
     if (!signing_time) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"signing_time parameter is null");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "signing_time parameter is null");
     }
 
     // Get signer info
-    STACK_OF(PKCS7_SIGNER_INFO)* signer_info_stack = PKCS7_get_signer_info(p7);
-    if (!signer_info_stack || sk_PKCS7_SIGNER_INFO_num(signer_info_stack) == 0) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"No signer info found in PKCS#7 signature");
+    STACK_OF(CMS_SignerInfo)* si_stack = CMS_get0_SignerInfos(cms);
+    if (!si_stack || sk_CMS_SignerInfo_num(si_stack) == 0) {
+        LOG_ERROR_AND_THROW(CryptoErrorException, "No signer info found in CMS signature");
     }
 
-    PKCS7_SIGNER_INFO* si = sk_PKCS7_SIGNER_INFO_value(signer_info_stack, 0);
+    CMS_SignerInfo* si = sk_CMS_SignerInfo_value(si_stack, 0);
     if (!si) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"Signer info is null (PKCS#7 structure error)");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Signer info is null (CMS structure error)");
     }
 
-    // Get authenticated attributes
-    STACK_OF(X509_ATTRIBUTE)* auth_attrs = PKCS7_get_signed_attributes(si);
-    if (!auth_attrs) {
-        // No authenticated attributes - signing time is optional per spec
-        spdlog::debug("No authenticated attributes found, signing time not available");
-        return false;
-    }
-
-    // Look for signing time attribute (NID_pkcs9_signingTime)
-    int idx = X509at_get_attr_by_NID(auth_attrs, NID_pkcs9_signingTime, -1);
+    // Look for signing time attribute (NID_pkcs9_signingTime) in signed attributes
+    int idx = CMS_signed_get_attr_by_NID(si, NID_pkcs9_signingTime, -1);
     if (idx < 0) {
         // Signing time attribute not present - this is valid per spec
         spdlog::debug("Signing time attribute not found in authenticated attributes");
         return false;
     }
 
-    X509_ATTRIBUTE* attr = X509at_get_attr(auth_attrs, idx);
+    X509_ATTRIBUTE* attr = CMS_signed_get_attr(si, idx);
     if (!attr) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to get signing time attribute (X509at_get_attr returned null)");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to get signing time attribute (CMS_signed_get_attr returned null)");
     }
 
     // Get the ASN1_TYPE from the attribute
     ASN1_TYPE* asn1_time = X509_ATTRIBUTE_get0_type(attr, 0);
     if (!asn1_time) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to get ASN1_TYPE from signing time attribute");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to get ASN1_TYPE from signing time attribute");
     }
 
     // Get ASN1_TIME from ASN1_TYPE
@@ -240,27 +252,27 @@ bool SignatureVerifier::ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
     }
 
     if (!time_value) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"Signing time has unexpected ASN1 type: {}", asn1_time->type);
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Signing time has unexpected ASN1 type: {}", asn1_time->type);
     }
 
     // Use ASN1_TIME_diff to convert to time_t (avoids timezone/DST/leap second complexity)
     // Create epoch time (1970-01-01 00:00:00 UTC)
     ASN1_TIME* epoch = ASN1_TIME_new();
     if (!epoch) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to create ASN1_TIME for epoch: {}", CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to create ASN1_TIME for epoch: {}", CryptoUtils::GetLastOpensslError());
     }
     SCOPE_GUARD([epoch]() { ASN1_TIME_free(epoch); });
 
     // Set epoch using time_t(0) instead of string
     if (!ASN1_TIME_set(epoch, 0)) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to set epoch time: {}", CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to set epoch time: {}", CryptoUtils::GetLastOpensslError());
     }
 
     // Calculate difference between signing time and epoch
     int days = 0;
     int seconds = 0;
     if (!ASN1_TIME_diff(&days, &seconds, epoch, time_value)) {
-        LOG_ERROR_AND_THROW(CryptoErrorException,"Failed to calculate time difference: {}", CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to calculate time difference: {}", CryptoUtils::GetLastOpensslError());
     }
 
     // Convert to time_t using chrono for clean duration calculation
@@ -271,8 +283,11 @@ bool SignatureVerifier::ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
     return true;
 }
 
-// Helper to verify certificate chain
-bool SignatureVerifier::VerifyCertificateChain(PKCS7* p7, X509_STORE* store, SignatureVerificationResultPtr& result, SignatureVerificationSettingsPtr settings) {
+// Helper to verify certificate chain.
+// Must be called after CMS_verify() so that signer certs are matched to signer infos.
+bool SignatureVerifier::VerifyCertificateChain(CMS_ContentInfo* cms, X509_STORE* store,
+                                               SignatureVerificationResultPtr& result,
+                                               SignatureVerificationSettingsPtr settings) {
     X509_STORE_CTX* ctx = X509_STORE_CTX_new();
     if (!ctx) {
         spdlog::error("Failed to create X509_STORE_CTX: {}", CryptoUtils::GetLastOpensslError());
@@ -285,10 +300,10 @@ bool SignatureVerifier::VerifyCertificateChain(PKCS7* p7, X509_STORE* store, Sig
 
     SCOPE_GUARD([ctx]() { X509_STORE_CTX_free(ctx); });
 
-    // Get signer certificate
-    STACK_OF(X509)* signers = PKCS7_get0_signers(p7, nullptr, 0);
-    if (!signers) {
-        spdlog::error("Failed to get signers from PKCS7: {}", CryptoUtils::GetLastOpensslError());
+    // Get signer certificate (matched by CMS_verify())
+    STACK_OF(CMS_SignerInfo)* si_stack = CMS_get0_SignerInfos(cms);
+    if (!si_stack || sk_CMS_SignerInfo_num(si_stack) == 0) {
+        spdlog::error("No signer info found in CMS signature");
 
         result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
         result->SetMessage("Failed to extract signer certificates from signature");
@@ -296,20 +311,12 @@ bool SignatureVerifier::VerifyCertificateChain(PKCS7* p7, X509_STORE* store, Sig
         return false;
     }
 
-    SCOPE_GUARD([signers]() { sk_X509_free(signers); });
+    CMS_SignerInfo* si = sk_CMS_SignerInfo_value(si_stack, 0);
+    X509* signer_cert = nullptr;
+    CMS_SignerInfo_get0_algs(si, nullptr, &signer_cert, nullptr, nullptr);
 
-    if (sk_X509_num(signers) == 0) {
-        spdlog::error("No signer certificates found in PKCS7");
-
-        result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
-        result->SetMessage("No signer certificates found in signature");
-        result->SetCertificateTrusted(false);
-        return false;
-    }
-
-    X509* signer_cert = sk_X509_value(signers, 0);
     if (!signer_cert) {
-        spdlog::error("Signer certificate is null");
+        spdlog::error("Signer certificate is null after CMS_verify");
 
         result->SetStatus(SignatureVerificationStatus::CertificateUntrusted);
         result->SetMessage("Invalid signer certificate");
@@ -317,8 +324,10 @@ bool SignatureVerifier::VerifyCertificateChain(PKCS7* p7, X509_STORE* store, Sig
         return false;
     }
 
-    // Get certificate chain from PKCS7
-    STACK_OF(X509)* cert_chain = p7->d.sign->cert;
+    // Get certificate chain from CMS (untrusted certs for chain building).
+    // CMS_get1_certs() returns a new STACK with new references; caller must free with sk_X509_pop_free.
+    STACK_OF(X509)* cert_chain = CMS_get1_certs(cms);
+    SCOPE_GUARD([cert_chain]() { if (cert_chain) sk_X509_pop_free(cert_chain, X509_free); });
 
     // Initialize verification context
     if (!X509_STORE_CTX_init(ctx, store, signer_cert, cert_chain)) {
@@ -333,7 +342,7 @@ bool SignatureVerifier::VerifyCertificateChain(PKCS7* p7, X509_STORE* store, Sig
     // Check if signing time validation is requested
     if (!settings.empty() && settings->GetCheckSigningTimeFlag()) {
         time_t signing_time = 0;
-        if (!SignatureVerifier::ExtractSigningTime(p7, &signing_time)) {
+        if (!SignatureVerifier::ExtractSigningTime(cms, &signing_time)) {
             // CheckSigningTimeFlag is set but signing time is not present in signature
             spdlog::error("CheckSigningTimeFlag is enabled but signing time not found in signature");
             result->SetStatus(SignatureVerificationStatus::Invalid);
@@ -413,23 +422,20 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
 
     CryptoUtils::InitializeOpenSSL();
 
-    // Parse PKCS7 signature
+    // Parse CMS signature
     const unsigned char* sig_ptr = reinterpret_cast<const unsigned char*>(signature_contents.data());
-    PKCS7* p7 = d2i_PKCS7(nullptr, &sig_ptr, static_cast<long>(signature_contents.size()));
+    CMS_ContentInfo* cms = d2i_CMS_ContentInfo(nullptr, &sig_ptr, static_cast<long>(signature_contents.size()));
 
-    if (!p7) {
+    if (!cms) {
         std::string error = CryptoUtils::GetLastOpensslError();
-        spdlog::error("Failed to parse PKCS#7 signature: {}", error);
+        spdlog::error("Failed to parse CMS signature: {}", error);
 
         result->SetStatus(SignatureVerificationStatus::Invalid);
-        result->SetMessage(fmt::format("Failed to parse PKCS#7 signature: {}", error));
+        result->SetMessage(fmt::format("Failed to parse CMS signature: {}", error));
         return result;
     }
 
-    SCOPE_GUARD([p7]() { PKCS7_free(p7); });
-
-    // Extract certificate chain
-    SignatureVerifier::ExtractCertificateChain(p7, result);
+    SCOPE_GUARD([cms]() { CMS_ContentInfo_free(cms); });
 
     // Create BIO from signed data
     BIO* data_bio = BIO_new_mem_buf(signed_data.data(), static_cast<int>(signed_data.size()));
@@ -444,9 +450,12 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
 
     SCOPE_GUARD([data_bio]() { BIO_free(data_bio); });
 
-    // Verify the signature cryptographically
-    // For detached signatures, we need to verify against the data
-    int verify_result = PKCS7_verify(p7, nullptr, nullptr, data_bio, nullptr, PKCS7_DETACHED | PKCS7_NOVERIFY);
+    // Verify the signature cryptographically (certificate chain validated separately below).
+    // CMS_DETACHED: content is supplied separately (PDF detached signatures).
+    // CMS_BINARY: no MIME canonicalization (required for binary PDF data).
+    // CMS_NOVERIFY: skip certificate chain validation (done separately below).
+    int verify_result = CMS_verify(cms, nullptr, nullptr, data_bio, nullptr,
+                                   CMS_DETACHED | CMS_BINARY | CMS_NOVERIFY);
 
     if (verify_result != 1) {
         std::string error = CryptoUtils::GetLastOpensslError();
@@ -460,6 +469,9 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
 
     result->SetSignatureValid(true);
     result->SetDocumentIntact(true);
+
+    // Extract certificate chain (must be after CMS_verify() so signer cert is matched to signer info)
+    SignatureVerifier::ExtractCertificateChain(cms, result);
 
     // Verify certificate chain with provided trusted store
     if (trusted_store.empty()) {
@@ -479,14 +491,14 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
         return result;
     }
 
-    bool chain_valid = SignatureVerifier::VerifyCertificateChain(p7, store, result, settings);
+    bool chain_valid = SignatureVerifier::VerifyCertificateChain(cms, store, result, settings);
     if (!chain_valid) {
         // Status already set by VerifyCertificateChain
         return result;
     }
 
     // Check for weak cryptographic algorithms (MD5, SHA-1, weak key sizes)
-    bool has_weak_algorithm = SignatureVerifier::IsWeakAlgorithm(p7, result);
+    bool has_weak_algorithm = SignatureVerifier::IsWeakAlgorithm(cms, result);
     if (has_weak_algorithm) {
         // Check if weak algorithms are allowed by settings
         if (settings.empty() || !settings->GetAllowWeakAlgorithmsFlag()) {

@@ -6,7 +6,6 @@
 #include "syntax/utils/image_metadata_object_attribute.h"
 
 #include "utils/math_utils.h"
-#include "utils/streams/input_output_stream.h"
 #include "utils/streams/stream_utils.h"
 
 #include <cstring>
@@ -22,7 +21,7 @@ namespace syntax {
 
 struct CustomDestinationManager {
 public:
-    explicit CustomDestinationManager(InputOutputStreamPtr input_stream)
+    explicit CustomDestinationManager(IInputOutputStreamPtr input_stream)
         : stream(input_stream) {
 
     }
@@ -30,7 +29,7 @@ public:
     jpeg_destination_mgr jpeg_manager = { };
 
     BufferPtr buffer;
-    InputOutputStreamPtr stream;
+    IInputOutputStreamPtr stream;
 };
 
 void error_exit(j_common_ptr cinfo) {
@@ -237,7 +236,7 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
     SCOPE_GUARD([&jpeg]() { jpeg_destroy_compress(&jpeg); });
 
-    auto output_stream = make_deferred<InputOutputStream>(std::make_shared<std::stringstream>());
+    auto output_stream = StreamUtils::InputOutputStreamFromMemory();
     auto destination_manager = std::make_shared<CustomDestinationManager>(output_stream);
 
     destination_manager->jpeg_manager.init_destination = init_destination;

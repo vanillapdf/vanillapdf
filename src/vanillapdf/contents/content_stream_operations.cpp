@@ -8,7 +8,7 @@
 #include "utils/exceptions.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 
-#include <sstream>
+#include "utils/streams/stream_utils.h"
 
 namespace vanillapdf {
 namespace contents {
@@ -244,24 +244,24 @@ OperationTransformationMatrix::OperationTransformationMatrix(const std::vector<O
 
 std::string OperationTransformationMatrix::ToPdf() const {
 
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     TransformationMatrixOperatorPtr op;
-    ss << m_a->ToPdf();
-    ss << " ";
-    ss << m_b->ToPdf();
-    ss << " ";
-    ss << m_c->ToPdf();
-    ss << " ";
-    ss << m_d->ToPdf();
-    ss << " ";
-    ss << m_e->ToPdf();
-    ss << " ";
-    ss << m_f->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(m_a->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_b->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_c->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_d->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_e->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_f->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationBeginText::ToPdf() const {
@@ -289,81 +289,81 @@ std::string OperationRestoreGraphicsState::ToPdf() const {
 }
 
 std::string OperationSetStrokingColorSpaceRGB::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     SetStrokingColorSpaceRGBOperatorPtr op;
-    ss << m_red->ToPdf();
-    ss << " ";
-    ss << m_green->ToPdf();
-    ss << " ";
-    ss << m_blue->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(m_red->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_green->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_blue->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationSetNonstrokingColorSpaceRGB::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     SetNonstrokingColorSpaceRGBOperatorPtr op;
-    ss << m_red->ToPdf();
-    ss << " ";
-    ss << m_green->ToPdf();
-    ss << " ";
-    ss << m_blue->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(m_red->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_green->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_blue->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationTextTranslate::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     TextTranslateOperatorPtr op;
-    ss << m_x->ToPdf();
-    ss << " ";
-    ss << m_y->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(m_x->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_y->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationTextShow::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     TextShowOperatorPtr op;
-    ss << _str->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(_str->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationTextShowArray::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     TextShowArrayOperatorPtr op;
-    ss << m_items->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(m_items->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationTextFont::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     TextFontOperatorPtr op;
-    ss << m_font->ToPdf();
-    ss << " ";
-    ss << m_scale->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(m_font->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_scale->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationBeginInlineImageObject::ToPdf() const {

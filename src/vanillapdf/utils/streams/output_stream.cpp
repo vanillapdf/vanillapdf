@@ -27,10 +27,6 @@ void OutputStream::Write(std::string_view data) {
     *m_stream << data;
 }
 
-void OutputStream::Write(const char* str) {
-    *m_stream << str;
-}
-
 void OutputStream::Write(char value) {
     *m_stream << value;
 }

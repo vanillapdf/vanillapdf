@@ -46,6 +46,10 @@ Detailed coding style preferences for C++ code in this project. This file is con
   - `operator[]` → fast, no lock, returns `T&`
   - `GetValue()` → thread-safe, holds lock, returns `T` by value
 
+## Cross-Platform Compiler Behavior
+
+- Clang with `-Werror,-Wswitch` requires every enum value to be handled in `switch` statements (including `Undefined`); MSVC does not warn. Always add a `default:` case when switching on enums.
+
 ## Header Dependencies
 
 - NEVER include public C API headers (`include/vanillapdf/`) from internal C++ headers (`src/vanillapdf/`) — this is an inverted dependency

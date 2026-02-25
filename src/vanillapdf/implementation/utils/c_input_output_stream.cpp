@@ -2,6 +2,7 @@
 
 #include "utils/streams/stream_utils.h"
 #include "utils/streams/input_output_stream_interface.h"
+#include "utils/streams/memory_buffer_input_output_stream.h"
 
 #include "vanillapdf/utils/c_input_output_stream.h"
 #include "implementation/c_helper.h"

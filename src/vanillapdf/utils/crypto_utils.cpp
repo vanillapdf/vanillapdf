@@ -5,7 +5,7 @@
 
 #include <chrono>
 #include <mutex>
-#include <sstream>
+#include <fmt/core.h>
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 #include <openssl/x509.h>
@@ -114,20 +114,15 @@ std::string CryptoUtils::GetLastOpensslError() {
     auto err_code = ERR_get_error_line_data(&err_file, &err_line, &err_data, &err_flags);
 #endif
 
-    std::stringstream error_message;
-
-    error_message << "Error: " << '\'' << err_code << '\'' << std::endl;
-    error_message << "File: " << '\'' << err_file << '\'' << std::endl;
-    error_message << "Line: " << err_line << '\'' << std::endl;
-
 #if OPENSSL_VERSION_MAJOR >= 3
-    error_message << "Function: " << '\'' << err_func << '\'' << std::endl;
+    return fmt::format(
+        "Error: '{}'\nFile: '{}'\nLine: '{}'\nFunction: '{}'\nData: '{}'\nFlags: '{}'\n",
+        err_code, err_file, err_line, err_func, err_data, err_flags);
+#else
+    return fmt::format(
+        "Error: '{}'\nFile: '{}'\nLine: '{}'\nData: '{}'\nFlags: '{}'\n",
+        err_code, err_file, err_line, err_data, err_flags);
 #endif
-
-    error_message << "Data: " << '\'' << err_data << '\'' << std::endl;
-    error_message << "Flags: " << '\'' << err_flags << '\'' << std::endl;
-
-    return error_message.str();
 }
 
 void CryptoUtils::InitializeOpenSSL() {

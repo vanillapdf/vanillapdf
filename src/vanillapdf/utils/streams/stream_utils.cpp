@@ -45,9 +45,8 @@ IInputOutputStreamPtr StreamUtils::InputOutputStreamFromFile(const std::string& 
     return make_deferred<InputOutputStream>(fstream);
 }
 
-IInputOutputStreamPtr StreamUtils::InputOutputStreamFromMemory() {
-    auto ss = std::make_shared<std::stringstream>();
-    return make_deferred<InputOutputStream>(ss);
+MemoryBufferInputOutputStreamPtr StreamUtils::InputOutputStreamFromMemory() {
+    return make_deferred<MemoryBufferInputOutputStream>();
 }
 
 IInputStreamPtr StreamUtils::InputStreamFromBuffer(BufferPtr data) {

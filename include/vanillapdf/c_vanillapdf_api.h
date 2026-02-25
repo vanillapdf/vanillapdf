@@ -15,6 +15,7 @@
 #include "vanillapdf/syntax/c_file.h"
 #include "vanillapdf/syntax/c_file_writer.h"
 #include "vanillapdf/syntax/c_file_writer_observer.h"
+#include "vanillapdf/syntax/c_file_structure_validator.h"
 #include "vanillapdf/syntax/c_xref.h"
 #include "vanillapdf/syntax/c_filter.h"
 

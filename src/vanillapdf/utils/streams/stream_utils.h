@@ -5,6 +5,7 @@
 #include "utils/streams/input_stream_interface.h"
 #include "utils/streams/output_stream_interface.h"
 #include "utils/streams/input_output_stream_interface.h"
+#include "utils/streams/memory_buffer_input_output_stream.h"
 
 #include <ios>
 
@@ -16,7 +17,7 @@ public:
     static IInputStreamPtr InputStreamFromFile(const std::string& filename);
 
     static IInputOutputStreamPtr InputOutputStreamFromFile(const std::string& filename);
-    static IInputOutputStreamPtr InputOutputStreamFromMemory();
+    static MemoryBufferInputOutputStreamPtr InputOutputStreamFromMemory();
 
     static IInputStreamPtr InputStreamFromBuffer(BufferPtr data);
     static BufferPtr InputStreamToBuffer(IInputStreamPtr source);

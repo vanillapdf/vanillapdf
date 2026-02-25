@@ -7,7 +7,7 @@
 
 #include "utils/streams/output_stream_interface.h"
 
-#include <sstream>
+#include "utils/streams/stream_utils.h"
 
 namespace vanillapdf {
 namespace syntax {
@@ -66,14 +66,16 @@ bool DictionaryObject::IsDirty() const {
 std::string DictionaryObject::ToString(void) const {
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    std::stringstream ss;
-    ss << "<<" << std::endl;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
+    stream->WriteLine("<<");
     for (auto item : _list) {
-        ss << item.first->ToString() << " " << item.second->ToString() << std::endl;
+        stream->Write(item.first->ToString());
+        stream->Write(WhiteSpace::SPACE);
+        stream->WriteLine(item.second->ToString());
     }
 
-    ss << ">>";
-    return ss.str();
+    stream->Write(">>");
+    return stream->ToString();
 }
 
 void DictionaryObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
@@ -177,7 +179,6 @@ bool DictionaryObject::Remove(const NameObjectPtr name) {
     found_value->ClearOwner();
     _list.erase(found);
     IncrementVersion();
-    m_hash_cache = 0;
 
     return true;
 }
@@ -216,7 +217,6 @@ void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bo
     value->SetOwner(Object::GetWeakReference());
 
     IncrementVersion();
-    m_hash_cache = 0;
 }
 
 bool DictionaryObject::Contains(const NameObject& name) const {
@@ -237,10 +237,6 @@ DictionaryObject::~DictionaryObject() {
 size_t DictionaryObject::Hash() const {
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    if (m_hash_cache != 0) {
-        return m_hash_cache;
-    }
-
     // XOR is order-independent, which is correct for dictionaries since key
     // order is not significant in PDF. Each key-value pair is combined with
     // FNV-1a multiply before XOR to avoid cross-pair cancellation
@@ -253,8 +249,7 @@ size_t DictionaryObject::Hash() const {
         result ^= pair_hash;
     }
 
-    m_hash_cache = result;
-    return m_hash_cache;
+    return result;
 }
 
 bool DictionaryObject::Equals(ObjectPtr other) const {
@@ -307,7 +302,6 @@ void DictionaryObject::Merge(const DictionaryObject& other) {
     }
 
     IncrementVersion();
-    m_hash_cache = 0;
 }
 
 void DictionaryObject::Clear() {
@@ -329,7 +323,6 @@ void DictionaryObject::Clear() {
     _list.clear();
 
     IncrementVersion();
-    m_hash_cache = 0;
 }
 
 DictionaryObject::size_type DictionaryObject::GetSize() const noexcept {

@@ -48,7 +48,6 @@ void IndirectReferenceObject::SetReferencedObjectNumber(types::big_uint value) {
     m_reference.Reset();
 
     IncrementVersion();
-    m_hash_cache = 0;
 }
 
 void IndirectReferenceObject::SetReferencedGenerationNumber(types::ushort value) {
@@ -58,7 +57,6 @@ void IndirectReferenceObject::SetReferencedGenerationNumber(types::ushort value)
     m_reference.Reset();
 
     IncrementVersion();
-    m_hash_cache = 0;
 }
 
 bool IndirectReferenceObject::IsReferenceInitialized(void) const {
@@ -117,11 +115,6 @@ bool IndirectReferenceObject::IsReferenceInitialized(void) const {
 //}
 
 size_t IndirectReferenceObject::Hash() const {
-
-    if (m_hash_cache != 0) {
-        return m_hash_cache;
-    }
-
     ACCESS_LOCK_GUARD(m_access_lock);
 
     auto object_number = GetReferencedObjectNumber();
@@ -130,21 +123,7 @@ size_t IndirectReferenceObject::Hash() const {
     std::hash<decltype(object_number)> obj_hasher;
     std::hash<decltype(generation_number)> gen_hasher;
 
-    m_hash_cache = obj_hasher(object_number) ^ gen_hasher(generation_number);
-    return m_hash_cache;
-
-    //auto referenced_object = GetReferencedObject();
-
-    // Special case, when this is a reference to object
-    // which contains the reference itself
-    //std::map<ObjectPtr, bool> visited;
-    //if (IsCyclicReference(referenced_object, visited)) {
-
-    //	// Has with value 0 should be ignored
-    //	return 0;
-    //}
-
-    //return referenced_object->Hash();
+    return obj_hasher(object_number) ^ gen_hasher(generation_number);
 }
 
 void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) {
@@ -166,7 +145,6 @@ void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) {
 
     m_reference = obj;
     IncrementVersion();
-    m_hash_cache = 0;
 }
 
 ObjectPtr IndirectReferenceObject::GetReferencedObject() const {

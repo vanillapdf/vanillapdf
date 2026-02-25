@@ -6,8 +6,6 @@
 
 #include "utils/misc_utils.h"
 
-#include <sstream>
-
 namespace vanillapdf {
 namespace syntax {
 

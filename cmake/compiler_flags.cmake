@@ -55,6 +55,11 @@ function(vanillapdf_target_compile_defaults TARGET)
             $<$<CONFIG:Debug>:/WX>
             $<$<CONFIG:RelWithDebInfo>:/WX>
         )
+        # MSVC linker: treat linker warnings as errors
+        target_link_options(${TARGET} PRIVATE
+            $<$<CONFIG:Debug>:/WX>
+            $<$<CONFIG:RelWithDebInfo>:/WX>
+        )
     endif()
 
     # Warnings as errors for GCC, Clang, AppleClang (C and C++)
@@ -62,6 +67,21 @@ function(vanillapdf_target_compile_defaults TARGET)
         target_compile_options(${TARGET} PRIVATE
             $<$<CONFIG:Debug>:-Werror>
             $<$<CONFIG:RelWithDebInfo>:-Werror>
+        )
+    endif()
+
+    # Linker warnings as errors.
+    # Apple ld uses -fatal_warnings (single dash, underscore); GNU ld and lld
+    # use --fatal-warnings (double dash, hyphen).
+    if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang" OR CMAKE_C_COMPILER_ID MATCHES "AppleClang")
+        target_link_options(${TARGET} PRIVATE
+            $<$<CONFIG:Debug>:-Wl,-fatal_warnings>
+            $<$<CONFIG:RelWithDebInfo>:-Wl,-fatal_warnings>
+        )
+    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_link_options(${TARGET} PRIVATE
+            $<$<CONFIG:Debug>:-Wl,--fatal-warnings>
+            $<$<CONFIG:RelWithDebInfo>:-Wl,--fatal-warnings>
         )
     endif()
 

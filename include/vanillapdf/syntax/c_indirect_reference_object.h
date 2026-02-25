@@ -48,6 +48,16 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_GetReferencedObject(IndirectReferenceObjectHandle* handle, ObjectHandle** result);
 
     /**
+    * \brief Set the object number of the referenced object
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_SetObjectNumber(IndirectReferenceObjectHandle* handle, biguint_type value);
+
+    /**
+    * \brief Set the generation number of the referenced object
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_SetGenerationNumber(IndirectReferenceObjectHandle* handle, ushort_type value);
+
+    /**
     * \brief Sets a new referenced object
     */
     VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_SetReferencedObject(IndirectReferenceObjectHandle* handle, ObjectHandle* value);

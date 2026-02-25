@@ -7,6 +7,7 @@
 #include "utils/character.h"
 #include "utils/misc_utils.h"
 #include "utils/streams/stream_utils.h"
+#include "utils/streams/memory_buffer_output_stream.h"
 
 #include <fmt/core.h>
 #include <fmt/ranges.h>
@@ -505,20 +506,20 @@ void HexadecimalStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const
 void LiteralStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
 
     // stringstream
-    // ---------------------------------------------------------------------------------- -
-    // Benchmark                                         Time             CPU   Iterations
-    // ---------------------------------------------------------------------------------- -
-    // BM_LiteralStringObjectToPdf / string_empty       2076 ns         1256 ns       448000
-    // BM_LiteralStringObjectToPdf / string_basic       2904 ns         2250 ns       298667
-    // BM_LiteralStringObjectToPdf / string_octal       4855 ns         3578 ns       248889
+    // ------------------------------------------------------------------------------------------
+    // Benchmark                                                Time             CPU   Iterations
+    // ------------------------------------------------------------------------------------------
+    // BM_LiteralStringObjectToPdf / string_empty             1986 ns         1969 ns       448000
+    // BM_LiteralStringObjectToPdf / string_basic             4574 ns         4525 ns       298667
+    // BM_LiteralStringObjectToPdf / string_octal             5073 ns         5082 ns       248889
 
-    // fmtlib
-    // ---------------------------------------------------------------------------------- -
-    // Benchmark                                         Time             CPU   Iterations
-    // ---------------------------------------------------------------------------------- -
-    // BM_LiteralStringObjectToPdf / string_empty       2028 ns         1658 ns       735179
-    // BM_LiteralStringObjectToPdf / string_basic       2955 ns         2023 ns       448000
-    // BM_LiteralStringObjectToPdf / string_octal       3218 ns         2354 ns       497778
+    // MemoryBufferOutputStream
+    // ------------------------------------------------------------------------------------------
+    // Benchmark                                                Time             CPU   Iterations
+    // ------------------------------------------------------------------------------------------
+    // BM_LiteralStringObjectToPdf / string_empty             1449 ns         1423 ns       448000
+    // BM_LiteralStringObjectToPdf / string_basic             3332 ns         3269 ns       298667
+    // BM_LiteralStringObjectToPdf / string_octal             5240 ns         5156 ns       248889
 
     BufferPtr value = GetValue();
 
@@ -533,65 +534,64 @@ void LiteralStringObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
         }
     }
 
-    std::stringstream ss;
-    ss << '(';
+    auto stream = make_deferred<MemoryBufferOutputStream>();
+    stream->Write('(');
 
     auto size = value->size();
     for (decltype(size) i = 0; i < size; ++i) {
         unsigned char current = value[i];
 
         if (current == '\n') {
-            ss << "\\n";
+            stream->Write("\\n");
             continue;
         }
 
         if (current == '\r') {
-            ss << "\\r";
+            stream->Write("\\r");
             continue;
         }
 
         if (current == '\t') {
-            ss << "\\t";
+            stream->Write("\\t");
             continue;
         }
 
         if (current == '\b') {
-            ss << "\\b";
+            stream->Write("\\b");
             continue;
         }
 
         if (current == '\f') {
-            ss << "\\f";
+            stream->Write("\\f");
             continue;
         }
 
         if (current == '(') {
-            ss << "\\(";
+            stream->Write("\\(");
             continue;
         }
 
         if (current == ')') {
-            ss << "\\)";
+            stream->Write("\\)");
             continue;
         }
 
         if (current == '\\') {
-            ss << "\\\\";
+            stream->Write("\\\\");
             continue;
         }
 
         if (!std::isprint(current)) {
-            ss << fmt::format("\\{:03o}", current);
+            stream->Write(fmt::format("\\{:03o}", current));
             continue;
         }
 
-        ss << current;
+        stream->Write(static_cast<char>(current));
     }
 
-    ss << ')';
+    stream->Write(')');
 
-    auto result = ss.str();
-    output->Write(result);
+    output->Write(stream->ToString());
 }
 
 } // syntax

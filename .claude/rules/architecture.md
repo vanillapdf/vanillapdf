@@ -58,6 +58,13 @@ Key classes: `Document` (Open/Create/Save/Sign), `Catalog`, `PageObject`/`PageTr
 
 `ExceptionBase : std::exception` with `Type` enum mapping 1:1 to C API error codes via `CATCH_VANILLAPDF_EXCEPTIONS`. Key types: `InvalidParameter`, `NotSupported`, `ParseException`, `ObjectMissing`, `InvalidPassword`, `OptionalEntryMissing`, `General`
 
+**When to use each type:**
+- `NotSupportedException` — valid input, functionality not implemented (e.g., "compiled without OpenSSL", "TIFF predictor not supported"). Not for unknown/unexpected values.
+- `ParseException` — unknown or malformed values read from PDF files
+- `InvalidParameterException` — invalid user-supplied values or violated internal invariants
+- Base exception classes (`InvalidParameterException`, etc.) are available everywhere via `precompiled.h` — no extra include needed
+- In `semantics/`, `ParseException` lives in the `syntax::` namespace: add `#include "syntax/exceptions/syntax_exceptions.h"` and use `syntax::ParseException` (or `using namespace syntax;`)
+
 ## Dirty Tracking
 
 Poll-based `Versionable` with `std::atomic<uint32_t> m_version`. Leaf: dirty if version > 0. Containers: check own version + iterate children.
