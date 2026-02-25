@@ -94,13 +94,11 @@ This will show the GPG signature details and the signer's key. Maintainer public
 
 **Release artifact verification:**
 
-Each release also includes a Sigstore/cosign bundle (`.bundle` file) for every artifact, enabling keyless verification without GPG:
+Each release includes a GitHub build provenance attestation for every artifact, enabling keyless verification via the [GitHub CLI](https://cli.github.com/):
 
 ```bash
-# Install cosign: https://docs.sigstore.dev/cosign/system_config/installation/
-cosign verify-blob \
-  --bundle vanillapdf-v2.3.0.tar.gz.bundle \
-  vanillapdf-v2.3.0.tar.gz
+gh attestation verify vanillapdf.2.3.0.nupkg \
+  --repo vanillapdf/vanillapdf
 ```
 
 ---

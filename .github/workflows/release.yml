@@ -286,6 +286,49 @@ jobs:
       tag: ${{ needs.prepare.outputs.tag }}
     secrets: inherit
 
+  attest:
+    name: Attest Release Artifacts
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      attestations: write
+    needs: [publish-nuget, github-release, prepare]
+    if: needs.prepare.outputs.dry_run == 'false'
+    steps:
+      - name: Download NuGet packages
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131  # v7.0.0
+        with:
+          path: ./nupkgs
+          merge-multiple: true
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f  # v3.2.0
+        with:
+          subject-path: ./nupkgs/**/*.nupkg
+
+  verify-attest:
+    name: Verify Artifact Attestations
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    needs: [attest, prepare]
+    if: needs.prepare.outputs.dry_run == 'false'
+    steps:
+      - name: Download NuGet packages
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131  # v7.0.0
+        with:
+          path: ./nupkgs
+          merge-multiple: true
+
+      - name: Verify attestations
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          find ./nupkgs -name "*.nupkg" | while read -r pkg; do
+            echo "Verifying: $pkg"
+            gh attestation verify "$pkg" --repo "${{ github.repository }}"
+          done
+
   update-port:
     name: Update Local Port
     runs-on: ubuntu-latest
