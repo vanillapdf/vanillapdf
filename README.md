@@ -7,6 +7,7 @@
 [![Coverage](https://codecov.io/gh/vanillapdf/vanillapdf/branch/main/graph/badge.svg?token=1UO4W5XGTL)](https://codecov.io/gh/vanillapdf/vanillapdf)
 [![Fuzzing](https://github.com/vanillapdf/vanillapdf/actions/workflows/fuzzing.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/fuzzing.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/vanillapdf/vanillapdf/badge)](https://scorecard.dev/viewer/?uri=github.com/vanillapdf/vanillapdf)
+[![SLSA 2](https://slsa.dev/images/gh-badge-level2.svg)](https://slsa.dev)
 [![Docs](https://img.shields.io/badge/docs-available-brightgreen)](https://vanillapdf.github.io/vanillapdf)
 
 **Vanilla.PDF** is a modern, high-performance, open-source C++17 SDK for creating, editing, signing, and analyzing PDF documents. With no external runtime dependencies and full cross-platform support, it's ideal for embedding into desktop, server, or automation workflows.
