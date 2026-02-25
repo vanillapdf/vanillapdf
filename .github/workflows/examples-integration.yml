@@ -397,8 +397,15 @@ jobs:
 
   conan-linux:
     name: Conan - Linux ${{ matrix.build_type }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: setup
+    permissions:
+      contents: read
+      packages: read
+
+    container:
+      image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
+      options: --platform=linux/amd64
 
     strategy:
       fail-fast: false
@@ -412,19 +419,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-
-      - name: Install build tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ninja-build
-
-      - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
-        with:
-          python-version: '3.x'
-
-      - name: Install Conan
-        run: pip install "conan>=2,<3"
 
       - name: Detect Conan profile
         run: conan profile detect
@@ -472,13 +466,8 @@ jobs:
       - name: Set up Visual Studio
         uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce  # v2.0.0
 
-      - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
-        with:
-          python-version: '3.x'
-
       - name: Install Conan
-        run: pip install "conan>=2,<3"
+        run: choco install conan --yes
 
       - name: Detect Conan profile
         run: conan profile detect
@@ -524,15 +513,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Install build tools
-        run: brew install ninja
-
-      - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
-        with:
-          python-version: '3.x'
-
-      - name: Install Conan
-        run: pip install "conan>=2,<3"
+        run: brew install ninja conan
 
       - name: Detect Conan profile
         run: conan profile detect

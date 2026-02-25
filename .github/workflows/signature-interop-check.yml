@@ -53,10 +53,8 @@ jobs:
           restore-keys: |
             vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-
 
-      - name: Install pdfsig and pyhanko
-        run: |
-          apt-get update && apt-get install -y poppler-utils libnss3-tools python3-pip
-          pip3 install pyhanko-cli --break-system-packages
+      - name: Install pdfsig
+        run: apt-get update && apt-get install -y poppler-utils libnss3-tools
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
