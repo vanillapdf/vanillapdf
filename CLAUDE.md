@@ -58,6 +58,29 @@ Example:
 gh issue create --title "Fix iterator lifetime" --label "bug,technical-debt" --body "..."
 ```
 
+## GitHub Actions Security (CRITICAL)
+
+**Always pin GitHub Actions to full commit SHAs**, never to mutable tags like `@v4`. This prevents supply-chain attacks and satisfies OpenSSF Scorecard's Pinned-Dependencies check.
+
+```yaml
+# BAD — mutable tag, flagged by Scorecard
+uses: actions/checkout@v4
+
+# GOOD — immutable SHA with tag comment
+uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+```
+
+To resolve a tag to its commit SHA:
+```bash
+# Lightweight tags: SHA is the commit directly
+gh api repos/OWNER/REPO/git/refs/tags/TAG --jq '.object.sha'
+
+# Annotated tags: dereference the tag object to get the commit SHA
+gh api repos/OWNER/REPO/git/tags/$(gh api repos/OWNER/REPO/git/refs/tags/TAG --jq '.object.sha') --jq '.object.sha'
+```
+
+Always include the original tag name as a comment (`# v4.2.2`) so the pinned version remains human-readable.
+
 ## Automation Bot
 
 The repository uses `vanillapdf-bot` (info@vanillapdf.com) for automated operations:

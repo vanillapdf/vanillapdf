@@ -24,16 +24,13 @@ on:
         type: boolean
         default: true
 
-permissions:
-  contents: write
-  packages: write
-  pages: write
-  id-token: write
-  attestations: write
+permissions: {}
 
 jobs:
   prepare:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       tag: ${{ steps.parse.outputs.tag }}
       latest_tag: ${{ steps.parse.outputs.latest_tag }}
@@ -42,7 +39,7 @@ jobs:
       dry_run: ${{ steps.parse.outputs.dry_run }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
 
@@ -99,9 +96,11 @@ jobs:
 
   verify:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: prepare
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
       - name: Verify repository versions match tag
@@ -128,12 +127,14 @@ jobs:
 
   nuget-staging:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     environment: staging
     needs: [build-nuget, prepare]
     if: needs.prepare.outputs.dry_run == 'false'
     steps:
       - name: Download NuGet packages
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131  # v7.0.0
         with:
           path: ./nupkgs
       - name: Push to GitHub Packages
@@ -171,6 +172,7 @@ jobs:
 
   dry-run-report:
     runs-on: ubuntu-latest
+    permissions: {}
     needs: [build-nuget, dry-run-pages, dry-run-vcpkg, dry-run-conan, prepare]
     if: always() && needs.prepare.outputs.dry_run == 'true'
     steps:
@@ -207,6 +209,7 @@ jobs:
 
   production-gate:
     runs-on: ubuntu-latest
+    permissions: {}
     needs: nuget-staging
     if: needs.prepare.outputs.dry_run == 'false'
     environment: production
@@ -215,12 +218,13 @@ jobs:
 
   publish-nuget:
     runs-on: ubuntu-latest
+    permissions: {}
     needs: [production-gate, prepare]
     if: needs.prepare.outputs.dry_run == 'false'
     environment: production
     steps:
       - name: Download NuGet packages
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131  # v7.0.0
         with:
           path: ./nupkgs
       - name: Push to NuGet.org
@@ -234,6 +238,9 @@ jobs:
     needs: [production-gate, prepare]
     # Only deploy documentation for official releases, not pre-releases (alpha, beta, rc)
     if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
+    permissions:
+      pages: write
+      id-token: write
     uses: ./.github/workflows/github-pages.yml
     with:
       deploy: true
@@ -242,6 +249,10 @@ jobs:
   github-release:
     needs: [production-gate, prepare]
     if: needs.prepare.outputs.dry_run == 'false'
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     uses: ./.github/workflows/github-release.yml
     with:
       tag: ${{ needs.prepare.outputs.tag }}
@@ -278,12 +289,14 @@ jobs:
   update-port:
     name: Update Local Port
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: [github-release, prepare]
     # Only update port for official releases, not pre-releases
     if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
           token: ${{ secrets.BOT_TOKEN }}
@@ -294,7 +307,7 @@ jobs:
           git config --global user.email "info@vanillapdf.com"
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
         with:
           python-version: '3.x'
 
