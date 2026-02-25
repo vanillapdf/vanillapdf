@@ -4,6 +4,8 @@
 #include "syntax/utils/syntax_fwd.h"
 #include "utils/unknown_interface.h"
 
+#include <optional>
+
 namespace vanillapdf {
 namespace syntax {
 
@@ -43,6 +45,13 @@ enum class FileStructureIssueCode {
 
 class FileStructureIssue : public IUnknown {
 public:
+    // File-level issue — no object context
+    FileStructureIssue(
+        FileStructureIssueSeverity severity,
+        FileStructureIssueCode code,
+        BufferPtr message);
+
+    // Object-scoped issue — carries object number and generation number
     FileStructureIssue(
         FileStructureIssueSeverity severity,
         FileStructureIssueCode code,
@@ -53,15 +62,16 @@ public:
     FileStructureIssueSeverity GetSeverity() const noexcept { return m_severity; }
     FileStructureIssueCode GetCode() const noexcept { return m_code; }
     BufferPtr GetMessage() const noexcept { return m_message; }
-    types::big_uint GetObjectNumber() const noexcept { return m_object_number; }
-    types::ushort GetGenerationNumber() const noexcept { return m_generation_number; }
+    bool HasObjectContext() const noexcept { return m_object_number.has_value(); }
+    std::optional<types::big_uint> GetObjectNumber() const noexcept { return m_object_number; }
+    std::optional<types::ushort> GetGenerationNumber() const noexcept { return m_generation_number; }
 
 private:
     FileStructureIssueSeverity m_severity = FileStructureIssueSeverity::Undefined;
     FileStructureIssueCode m_code = FileStructureIssueCode::Undefined;
     BufferPtr m_message;
-    types::big_uint m_object_number = 0;
-    types::ushort m_generation_number = 0;
+    std::optional<types::big_uint> m_object_number;
+    std::optional<types::ushort> m_generation_number;
 };
 
 } // syntax

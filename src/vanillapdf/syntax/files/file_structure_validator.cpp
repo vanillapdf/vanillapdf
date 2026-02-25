@@ -248,6 +248,17 @@ void FileStructureValidator::AddIssue(
     FileStructureValidationResultPtr result,
     FileStructureIssueSeverity severity,
     FileStructureIssueCode code,
+    const std::string& message) {
+
+    auto buffer = Buffer::CreateFromString(message);
+    auto issue = make_deferred<FileStructureIssue>(severity, code, buffer);
+    result->AddIssue(issue);
+}
+
+void FileStructureValidator::AddIssue(
+    FileStructureValidationResultPtr result,
+    FileStructureIssueSeverity severity,
+    FileStructureIssueCode code,
     const std::string& message,
     types::big_uint object_number,
     types::ushort generation_number) {

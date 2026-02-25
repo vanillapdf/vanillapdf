@@ -22,9 +22,15 @@ private:
         FileStructureValidationResultPtr result,
         FileStructureIssueSeverity severity,
         FileStructureIssueCode code,
+        const std::string& message);
+
+    static void AddIssue(
+        FileStructureValidationResultPtr result,
+        FileStructureIssueSeverity severity,
+        FileStructureIssueCode code,
         const std::string& message,
-        types::big_uint object_number = 0,
-        types::ushort generation_number = 0);
+        types::big_uint object_number,
+        types::ushort generation_number);
 };
 
 } // syntax

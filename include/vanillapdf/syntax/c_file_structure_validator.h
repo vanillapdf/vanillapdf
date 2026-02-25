@@ -207,7 +207,19 @@ extern "C"
     );
 
     /**
-    * \brief Get the object number associated with this issue (0 if not applicable).
+    * \brief Check whether this issue carries an object context (object and generation number).
+    * \note Call this before \ref FileStructureIssue_GetObjectNumber or
+    *       \ref FileStructureIssue_GetGenerationNumber. File-level issues have no object context.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_HasObjectContext(
+        FileStructureIssueHandle* handle,
+        boolean_type* result
+    );
+
+    /**
+    * \brief Get the object number associated with this issue.
+    * \note Returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the issue has no object context.
+    *       Check \ref FileStructureIssue_HasObjectContext first.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetObjectNumber(
         FileStructureIssueHandle* handle,
@@ -215,7 +227,9 @@ extern "C"
     );
 
     /**
-    * \brief Get the generation number associated with this issue (0 if not applicable).
+    * \brief Get the generation number associated with this issue.
+    * \note Returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the issue has no object context.
+    *       Check \ref FileStructureIssue_HasObjectContext first.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetGenerationNumber(
         FileStructureIssueHandle* handle,

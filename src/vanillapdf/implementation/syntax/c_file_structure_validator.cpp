@@ -156,6 +156,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetMessage(
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_HasObjectContext(
+    FileStructureIssueHandle* handle,
+    boolean_type* result) {
+    FileStructureIssue* issue = reinterpret_cast<FileStructureIssue*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(issue);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    *result = issue->HasObjectContext() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
+    return VANILLAPDF_ERROR_SUCCESS;
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetObjectNumber(
     FileStructureIssueHandle* handle,
     biguint_type* result) {
@@ -163,7 +174,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetObjectNumber(
     RETURN_ERROR_PARAM_VALUE_IF_NULL(issue);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-    *result = issue->GetObjectNumber();
+    if (!issue->HasObjectContext()) {
+        return VANILLAPDF_ERROR_OBJECT_MISSING;
+    }
+
+    *result = issue->GetObjectNumber().value();
     return VANILLAPDF_ERROR_SUCCESS;
 }
 
@@ -174,7 +189,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetGenerationNum
     RETURN_ERROR_PARAM_VALUE_IF_NULL(issue);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-    *result = issue->GetGenerationNumber();
+    if (!issue->HasObjectContext()) {
+        return VANILLAPDF_ERROR_OBJECT_MISSING;
+    }
+
+    *result = issue->GetGenerationNumber().value();
     return VANILLAPDF_ERROR_SUCCESS;
 }
 

@@ -8,6 +8,15 @@ namespace syntax {
 FileStructureIssue::FileStructureIssue(
     FileStructureIssueSeverity severity,
     FileStructureIssueCode code,
+    BufferPtr message)
+    : m_severity(severity)
+    , m_code(code)
+    , m_message(message) {
+}
+
+FileStructureIssue::FileStructureIssue(
+    FileStructureIssueSeverity severity,
+    FileStructureIssueCode code,
     BufferPtr message,
     types::big_uint object_number,
     types::ushort generation_number)
