@@ -76,13 +76,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04]
         include:
           - name: ASan
+            os: ubuntu-24.04
             cmake_flag: VANILLAPDF_ENABLE_ASAN
           - name: UBSan
+            os: ubuntu-24.04
             cmake_flag: VANILLAPDF_ENABLE_UBSAN
           - name: TSan
+            os: ubuntu-24.04
             cmake_flag: VANILLAPDF_ENABLE_TSAN
 
     steps:
