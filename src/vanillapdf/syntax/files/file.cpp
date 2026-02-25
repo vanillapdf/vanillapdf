@@ -100,16 +100,13 @@ File::~File(void) {
     }
 }
 
-void File::Initialize() {
+void File::ReadStructure() {
 
-    if (_initialized) {
-        return;
-    }
-
-    auto filename = GetFilenameString();
-
-    spdlog::info("File initialization {}", filename);
-
+    // Holds the input lock only for raw stream I/O.
+    // Released when this function returns, before the Exempt* calls in Initialize().
+    // This avoids a lock-order-inversion (M0=input_lock, M1=m_object_stream_lock):
+    //   M0->M1: Initialize() held M0 across Exempt* -> InitializeObjectStream (acquires M1)
+    //   M1->M0: InitializeObjectStream (holds M1) -> XrefUsedEntry::Initialize (acquires M0)
     _input->ExclusiveInputLock();
 
     SCOPE_GUARD_CAPTURE_REFERENCES( _input->ExclusiveInputUnlock() );
@@ -135,10 +132,28 @@ void File::Initialize() {
         _xref = stream.FindAllObjects();
     }
 
-    // Mark file as initialized
+    // Mark file as initialized before releasing the input lock so that any
+    // concurrent GetIndirectObject call sees a consistent xref chain.
     _initialized = true;
+}
 
-    // Encryption dictionary should be parsed and exepted as first in the order
+void File::Initialize() {
+
+    if (_initialized) {
+        return;
+    }
+
+    auto filename = GetFilenameString();
+
+    spdlog::info("File initialization {}", filename);
+
+    // Phase 1: raw I/O — acquires and releases input lock internally.
+    ReadStructure();
+
+    // Phase 2: post-parse setup — input lock is NOT held.
+    // These methods traverse the already-parsed xref chain using per-entry locks.
+
+    // Encryption dictionary should be parsed and exempted as first in the order
     // The file "bps_park_rpk.pdf" is encrypted,
     // and the AcroForm dictionary is stored within object stream.
     // Accessing such object fails on decompression, as the stream was not decrypted.
