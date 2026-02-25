@@ -120,6 +120,9 @@ jobs:
 
   build-nuget:
     needs: [verify, prepare]
+    permissions:
+      contents: read
+      packages: read
     uses: ./.github/workflows/build-nuget.yml
     with:
       build_suffix: ${{ needs.prepare.outputs.build_suffix }}
