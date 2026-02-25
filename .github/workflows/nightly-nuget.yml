@@ -88,6 +88,9 @@ jobs:
   build-nuget:
     needs: [check-changes, prepare-suffix]
     if: needs.check-changes.outputs.has_changes == 'true'
+    permissions:
+      contents: read
+      packages: read
     uses: ./.github/workflows/build-nuget.yml
     with:
       build_suffix: ${{ needs.prepare-suffix.outputs.nightly_suffix }}
