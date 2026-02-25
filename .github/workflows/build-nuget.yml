@@ -144,11 +144,8 @@ jobs:
       - name: Build package ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
-      - name: Restore NuGet packages
-        run: dotnet restore nuget/vanillapdf.runtime.csproj
-
       - name: Execute nuget packaging
-        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --no-restore --output .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6
@@ -223,11 +220,8 @@ jobs:
       - name: Build package ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --config ${{ matrix.config.build_type }} --target package
 
-      - name: Restore NuGet packages
-        run: dotnet restore nuget/vanillapdf.runtime.csproj
-
       - name: Execute nuget packaging
-        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --no-restore --output .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6
@@ -315,11 +309,8 @@ jobs:
       - name: Build package ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
-      - name: Restore NuGet packages
-        run: dotnet restore nuget/vanillapdf.runtime.csproj
-
       - name: Execute nuget packaging
-        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --no-restore --output .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6
