@@ -130,29 +130,11 @@ void StreamObject::SetInitialized(bool initialized) {
     }
 }
 
-std::optional<types::stream_offset> StreamObject::CaptureBodyOffset() const {
-    ACCESS_LOCK_GUARD(_access_lock);
-
-    if (_body_raw->IsInitialized()) {
-        return std::nullopt;
-    }
-
-    if (!m_file.IsActive()) {
-        throw FileDisposedException();
-    }
-
-    if (_raw_data_offset == constant::BAD_OFFSET) {
-        throw ParseException("Stream object data offset is not initialized");
-    }
-
-    return _raw_data_offset;
-}
-
-void StreamObject::LoadBody(types::stream_offset offset) const {
-    // _access_lock (M_stream) is intentionally NOT held here.
+BufferPtr StreamObject::LoadBody(types::stream_offset offset) const {
+    // _access_lock is intentionally NOT held here.
     // GetInputStream() acquires the InputStream lock (M0) internally,
-    // and holding M_stream across that call creates a lock-order inversion with parsing
-    // (which holds M0 while calling SetFile() -> acquiring M_stream on new objects).
+    // and holding _access_lock across that call creates a lock-order inversion
+    // with parsing (which holds M0 while calling SetFile() on new objects).
     if (!m_file.IsActive()) {
         throw FileDisposedException();
     }
@@ -173,35 +155,37 @@ void StreamObject::LoadBody(types::stream_offset offset) const {
     SCOPE_GUARD(cleanup_lambda);
 
     auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-    auto body = input->Read(size->SafeConvert<types::size_type>());
-
-    // Re-acquire M_stream to cache; skip if another thread already loaded it.
-    ACCESS_LOCK_GUARD(_access_lock);
-    if (!_body_raw->IsInitialized()) {
-        _body_raw->assign(body.begin(), body.end());
-        _body_raw->SetInitialized();
-    }
+    return input->Read(size->SafeConvert<types::size_type>());
 }
 
 BufferPtr StreamObject::GetBodyRaw() const {
+    std::unique_lock<std::recursive_mutex> lock(*_access_lock);
 
     if (_body_raw->IsInitialized()) {
         return _body_raw;
     }
 
-    // Two-phase approach to prevent the M_stream -> M0 lock-order inversion that TSan reports.
-    // Phase 1 — CaptureBodyOffset(): acquire M_stream, read the data offset, release M_stream.
-    // Phase 2 — LoadBody(): call GetInputStream() WITHOUT M_stream, so M0
-    //   (InputStream) can be acquired without creating the cycle:
-    //   M0 (parsing) -> M_stream (SetFile) -> M0 (GetInputStream).
-    auto offset = CaptureBodyOffset();
-    if (!offset) {
-        // Another thread loaded the body between the fast-path check
-        // and the lock acquisition inside CaptureBodyOffset().
-        return _body_raw;
+    if (!m_file.IsActive()) {
+        throw FileDisposedException();
     }
 
-    LoadBody(*offset);
+    if (_raw_data_offset == constant::BAD_OFFSET) {
+        throw ParseException("Stream object data offset is not initialized");
+    }
+
+    auto offset = _raw_data_offset;
+
+    // Release _access_lock before file I/O to avoid the M_stream->M0 lock-order inversion:
+    // parsing holds M0 while calling SetFile() which acquires _access_lock on new objects.
+    lock.unlock();
+    auto body = LoadBody(offset);
+    lock.lock();
+
+    if (!_body_raw->IsInitialized()) {
+        _body_raw->assign(body.begin(), body.end());
+        _body_raw->SetInitialized();
+    }
+
     return _body_raw;
 }
 
