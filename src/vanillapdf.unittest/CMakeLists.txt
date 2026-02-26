@@ -33,6 +33,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     destinations_test.cpp
     fields_test.cpp
     filter_test.cpp
+    text_string_encoding_test.cpp
     file_structure_validator_test.cpp
     test_environment.cpp
     attributes_test.cpp

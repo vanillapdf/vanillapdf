@@ -32,6 +32,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_signature_verifier.cpp
     implementation/utils/c_signature_verification_settings.cpp
     implementation/utils/c_signing_key.cpp
+    implementation/utils/c_text_string_encoding.cpp
     implementation/utils/c_unknown_interface.cpp
 )
 
@@ -210,6 +211,7 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/resource.cpp
     utils/signature_verification_result.cpp
     utils/signature_verifier.cpp
+    utils/text_string_encoding.cpp
     utils/time_utils.cpp
     utils/trusted_certificate_store.cpp
     utils/unknown_interface.cpp
@@ -378,6 +380,7 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/signature_verifier_interface.h
     utils/stack_allocator.h
     utils/template_utils.h
+    utils/text_string_encoding.h
     utils/time_utils.h
     utils/trusted_certificate_store.h
     utils/unknown_interface.h

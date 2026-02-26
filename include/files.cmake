@@ -30,6 +30,7 @@ set(VANILLAPDF_INCLUDE_UTILS_HEADERS
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_signature_verification_settings.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_signature_verifier.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_signing_key.h"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_text_string_encoding.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_unknown_interface.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/utils/c_name_constants.h"
 )
