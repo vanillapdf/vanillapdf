@@ -14,7 +14,11 @@ TEST(DocumentEncryptionSettings, CreateRelease) {
 TEST(DocumentEncryptionSettings, PermissionsFlagMaxValue) {
     HandleGuard<DocumentEncryptionSettingsHandle, DocumentEncryptionSettings_Release> encryption_settings;
 
-    UserAccessPermissionFlags permissions_flags = static_cast<UserAccessPermissionFlags>(-1);
+    UserAccessPermissionFlags permissions_flags = static_cast<UserAccessPermissionFlags>(
+        UserAccessPermissionFlag_PrintDegraded | UserAccessPermissionFlag_ModifyContents |
+        UserAccessPermissionFlag_CopyAndExtract | UserAccessPermissionFlag_AddAnnotations |
+        UserAccessPermissionFlag_FillForms | UserAccessPermissionFlag_ExtractText |
+        UserAccessPermissionFlag_AssembleDocument | UserAccessPermissionFlag_PrintFaithful);
     UserAccessPermissionFlags permissions_flags_check = UserAccessPermissionFlag_None;
 
     ASSERT_EQ(DocumentEncryptionSettings_Create(encryption_settings.out()), VANILLAPDF_ERROR_SUCCESS);

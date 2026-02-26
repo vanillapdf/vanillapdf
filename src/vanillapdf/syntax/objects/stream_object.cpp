@@ -87,16 +87,20 @@ StreamObject* StreamObject::Clone(void) const {
     result->_header = _header->Clone();
     result->_header->SetInitialized();
 
-    result->_body_raw = GetBodyRaw()->Clone();
-    result->_body_raw->SetInitialized();
+    result->_raw_data_offset = _raw_data_offset;
+
+    if (_body_raw->IsInitialized()) {
+        result->_body_raw = _body_raw->Clone();
+        result->_body_raw->SetInitialized();
+    }
 
     if (_body_decrypted->IsInitialized()) {
-        result->_body_decrypted = GetBodyDecrypted()->Clone();
+        result->_body_decrypted = _body_decrypted->Clone();
         result->_body_decrypted->SetInitialized();
     }
 
     if (_body_decoded->IsInitialized()) {
-        result->_body_decoded = GetBody()->Clone();
+        result->_body_decoded = _body_decoded->Clone();
         result->_body_decoded->SetInitialized();
     }
 
@@ -126,13 +130,36 @@ void StreamObject::SetInitialized(bool initialized) {
     }
 }
 
-BufferPtr StreamObject::GetBodyRaw() const {
-
-    if (_body_raw->IsInitialized()) {
-        return _body_raw;
+BufferPtr StreamObject::LoadBody(types::stream_offset offset) const {
+    // _access_lock is intentionally NOT held here.
+    // GetInputStream() acquires the InputStream lock (M0) internally,
+    // and holding _access_lock across that call creates a lock-order inversion
+    // with parsing (which holds M0 while calling SetFile() on new objects).
+    if (!m_file.IsActive()) {
+        throw FileDisposedException();
     }
 
-    ACCESS_LOCK_GUARD(_access_lock);
+    auto locked_file = m_file.GetReference();
+    auto input = locked_file->GetInputStream();
+
+    input->ExclusiveInputLock();
+    input->SetInputPosition(offset);
+
+    auto pos = input->GetInputPosition();
+
+    auto cleanup_lambda = [&input, pos]() {
+        input->SetInputPosition(pos);
+        input->ExclusiveInputUnlock();
+    };
+
+    SCOPE_GUARD(cleanup_lambda);
+
+    auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
+    return input->Read(size->SafeConvert<types::size_type>());
+}
+
+BufferPtr StreamObject::GetBodyRaw() const {
+    std::unique_lock<std::recursive_mutex> lock(*_access_lock);
 
     if (_body_raw->IsInitialized()) {
         return _body_raw;
@@ -146,55 +173,45 @@ BufferPtr StreamObject::GetBodyRaw() const {
         throw ParseException("Stream object data offset is not initialized");
     }
 
-    auto locked_file = m_file.GetReference();
-    auto input = locked_file->GetInputStream();
+    auto offset = _raw_data_offset;
 
-    input->ExclusiveInputLock();
-    input->SetInputPosition(_raw_data_offset);
+    // Release _access_lock before file I/O to avoid the M_stream->M0 lock-order inversion:
+    // parsing holds M0 while calling SetFile() which acquires _access_lock on new objects.
+    lock.unlock();
+    auto body = LoadBody(offset);
+    lock.lock();
 
-    auto pos = input->GetInputPosition();
+    if (!_body_raw->IsInitialized()) {
+        _body_raw->assign(body.begin(), body.end());
+        _body_raw->SetInitialized();
+    }
 
-    auto cleanup_lambda = [&input, pos]() {
-        input->SetInputPosition(pos);
-        input->ExclusiveInputUnlock();
-    };
-
-    SCOPE_GUARD(cleanup_lambda);
-
-    auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-    auto body = input->Read(size->SafeConvert<types::size_type>());
-
-    _body_raw->assign(body.begin(), body.end());
-    _body_raw->SetInitialized();
     return _body_raw;
 }
 
 BufferPtr StreamObject::GetBody() const {
+    std::unique_lock<std::recursive_mutex> lock(*_access_lock);
 
     if (_body_decoded->IsInitialized()) {
         return _body_decoded;
     }
 
-    ACCESS_LOCK_GUARD(_access_lock);
+    // Release _access_lock before calling GetBodyDecrypted() which may
+    // trigger file I/O via GetBodyRaw(). See GetBodyRaw() for the
+    // lock-ordering rationale (avoids M_stream -> M0 inversion).
+    lock.unlock();
+    auto body_decrypted = GetBodyDecrypted();
+    lock.lock();
 
     if (_body_decoded->IsInitialized()) {
         return _body_decoded;
     }
 
     if (!_header->Contains(constant::Name::Filter)) {
-        auto body = GetBodyDecrypted();
-
-        _body_decoded->assign(body.begin(), body.end());
+        _body_decoded->assign(body_decrypted.begin(), body_decrypted.end());
         _body_decoded->SetInitialized();
-
         return _body_decoded;
     }
-
-    //auto stream = locked_file->GetInputStream();
-    //auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-    //auto pos = stream->tellg();
-    //stream->seekg(_raw_data_offset);
-    //SCOPE_GUARD_CAPTURE_VALUES(stream->seekg(pos));
 
     auto filter_obj = _header->Find(constant::Name::Filter);
     bool is_filter_null = ObjectUtils::IsType<NullObjectPtr>(filter_obj);
@@ -202,14 +219,15 @@ BufferPtr StreamObject::GetBody() const {
     bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
 
     if (is_filter_null) {
-        return GetBodyDecrypted();
+        _body_decoded->assign(body_decrypted.begin(), body_decrypted.end());
+        _body_decoded->SetInitialized();
+        return _body_decoded;
     }
 
     if (is_filter_name) {
         auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
         if (filter_name == constant::Name::Crypt) {
-            auto body = GetBodyDecrypted();
-            _body_decoded->assign(body.begin(), body.end());
+            _body_decoded->assign(body_decrypted.begin(), body_decrypted.end());
             _body_decoded->SetInitialized();
             return _body_decoded;
         }
@@ -217,14 +235,12 @@ BufferPtr StreamObject::GetBody() const {
         auto filter = FilterBase::GetFilterByName(filter_name);
         if (_header->Contains(constant::Name::DecodeParms)) {
             auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
-            auto body_decrypted = GetBodyDecrypted();
             auto body = filter->Decode(body_decrypted, params, m_attributes);
             _body_decoded->assign(body.begin(), body.end());
             _body_decoded->SetInitialized();
             return _body_decoded;
         }
 
-        auto body_decrypted = GetBodyDecrypted();
         auto body = filter->Decode(body_decrypted, DictionaryObjectPtr(), m_attributes);
         _body_decoded->assign(body.begin(), body.end());
         _body_decoded->SetInitialized();
@@ -241,7 +257,7 @@ BufferPtr StreamObject::GetBody() const {
             assert(filter_array->GetSize() == params->GetSize());
         }
 
-        BufferPtr result = GetBodyDecrypted();
+        BufferPtr result = body_decrypted;
         for (unsigned int i = 0; i < filter_array->GetSize(); ++i) {
             auto current_filter = (*filter_array)[i];
             if (current_filter == constant::Name::Crypt) {
@@ -398,19 +414,23 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 }
 
 BufferPtr StreamObject::GetBodyDecrypted() const {
+    std::unique_lock<std::recursive_mutex> lock(*_access_lock);
 
     if (_body_decrypted->IsInitialized()) {
         return _body_decrypted;
     }
 
-    ACCESS_LOCK_GUARD(_access_lock);
+    // Release _access_lock before GetBodyRaw() which may trigger file I/O.
+    // See GetBodyRaw() for the lock-ordering rationale (avoids M_stream -> M0 inversion).
+    lock.unlock();
+    auto body_raw = GetBodyRaw();
+    lock.lock();
 
     if (_body_decrypted->IsInitialized()) {
         return _body_decrypted;
     }
 
     auto locked_file = m_file.GetReference();
-    auto body_raw = GetBodyRaw();
 
     // During the initialization it is unknown whether a file is encrypted
     // This is important for object streams that are being parsed before encryption dictionary
@@ -556,23 +576,35 @@ BufferPtr StreamObject::DecryptData(BufferPtr data, types::big_uint obj_number, 
 }
 
 std::string StreamObject::ToString(void) const {
-    ACCESS_LOCK_GUARD(_access_lock);
+    std::unique_lock<std::recursive_mutex> lock(*_access_lock);
+
+    // Release _access_lock before GetBodyEncoded() which may trigger file I/O.
+    // See GetBodyRaw() for the lock-ordering rationale (avoids M_stream -> M0 inversion).
+    lock.unlock();
+    auto encoded = GetBodyEncoded();
+    lock.lock();
 
     auto stream = StreamUtils::InputOutputStreamFromMemory();
     stream->Write(_header->ToString());
     stream->Write("stream: ");
-    stream->WriteLine(std::to_string(GetBodyEncoded()->size()));
+    stream->WriteLine(std::to_string(encoded->size()));
     return stream->ToString();
 }
 
 void StreamObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
-    ACCESS_LOCK_GUARD(_access_lock);
+    std::unique_lock<std::recursive_mutex> lock(*_access_lock);
+
+    // Release _access_lock before GetBodyEncoded() which may trigger file I/O.
+    // See GetBodyRaw() for the lock-ordering rationale (avoids M_stream -> M0 inversion).
+    lock.unlock();
+    auto encoded = GetBodyEncoded();
+    lock.lock();
 
     _header->ToPdfStream(output);
     output << WhiteSpace::LINE_FEED;
     output << "stream";
     output << WhiteSpace::LINE_FEED;
-    output << *GetBodyEncoded();
+    output << *encoded;
     output << "endstream";
 }
 
@@ -582,13 +614,20 @@ size_t StreamObject::Hash() const {
 }
 
 bool StreamObject::Equals(ObjectPtr other) const {
-    ACCESS_LOCK_GUARD(_access_lock);
-
     if (!ObjectUtils::IsType<StreamObjectPtr>(other)) {
         return false;
     }
 
     auto other_obj = ObjectUtils::ConvertTo<StreamObjectPtr>(other);
+
+    std::unique_lock<std::recursive_mutex> lock(*_access_lock);
+
+    // Release _access_lock before GetBodyEncoded() which may trigger file I/O.
+    // See GetBodyRaw() for the lock-ordering rationale (avoids M_stream -> M0 inversion).
+    lock.unlock();
+    auto first_body = GetBodyEncoded();
+    auto second_body = other_obj->GetBodyEncoded();
+    lock.lock();
 
     auto first_header = GetHeader();
     auto second_header = other_obj->GetHeader();
@@ -596,8 +635,6 @@ bool StreamObject::Equals(ObjectPtr other) const {
         return false;
     }
 
-    auto first_body = GetBodyEncoded();
-    auto second_body = other_obj->GetBodyEncoded();
     if (first_body != second_body) {
         return false;
     }

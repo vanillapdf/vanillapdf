@@ -3,6 +3,10 @@
 #include "test_certificates.h"
 #include "handle_guard.h"
 
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+#include <openssl/opensslv.h>
+#endif
+
 namespace signature_verification {
 
 // Test certificate info for parameterized tests
@@ -21,10 +25,11 @@ static const CertificateTestInfo TEST_CERTIFICATES[] = {
     {TEST_2KDSA_SHA256_CERTIFICATE, TEST_2KDSA_SHA256_CERTIFICATE_SIZE, "2kDSA_SHA256", "test", "Test_2kDSA_SHA256"},
     {TEST_4KRSA_SHA3_512_CERTIFICATE, TEST_4KRSA_SHA3_512_CERTIFICATE_SIZE, "4kRSA_SHA3_512", "test", "Test_4kRSA_SHA3_512"},
     {TEST_EC384_SHA512_CERTIFICATE, TEST_EC384_SHA512_CERTIFICATE_SIZE, "EC384_SHA512", "test", "Test_EC384_SHA512"},
-// EdDSA (Ed25519/Ed448) CMS signing requires OpenSSL >= 3.2. Older versions
-// (e.g. Ubuntu system 3.0.x) fail in eddsa_digest_signverify_init when
-// SHA-512 is passed as the CMS digest algorithm. On OpenSSL >= 3.2 the
-// signature is produced correctly and is externally verifiable (e.g. pyhanko).
+
+    // EdDSA (Ed25519/Ed448) CMS signing requires OpenSSL >= 3.2. Older versions
+    // (e.g. Ubuntu system 3.0.x) fail in eddsa_digest_signverify_init when
+    // SHA-512 is passed as the CMS digest algorithm. On OpenSSL >= 3.2 the
+    // signature is produced correctly and is externally verifiable (e.g. pyhanko).
 #if defined(VANILLAPDF_HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER >= 0x30200000L
     {TEST_ED25519_CERTIFICATE, TEST_ED25519_CERTIFICATE_SIZE, "ED25519", "test", "Test_ED25519"},
     {TEST_ED448_CERTIFICATE, TEST_ED448_CERTIFICATE_SIZE, "ED448", "test", "Test_ED448"},

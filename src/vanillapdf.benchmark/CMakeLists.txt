@@ -54,8 +54,10 @@ if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
     vanillapdf_configure_msvc_runtime(vanillapdf.benchmark)
 endif()
 
-# Optional stack sanitizer
-enable_stack_sanitizer_for_target(vanillapdf.benchmark)
+# Optional sanitizers
+enable_asan_for_target(vanillapdf.benchmark)
+enable_ubsan_for_target(vanillapdf.benchmark)
+enable_tsan_for_target(vanillapdf.benchmark)
 
 if(WIN32)
     # Copy DLL dependencies on windows to our build directory

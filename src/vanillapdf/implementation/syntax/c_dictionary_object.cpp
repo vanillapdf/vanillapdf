@@ -25,8 +25,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_GetSize(Dictionary
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-    *result = obj->GetSize();
-    return VANILLAPDF_ERROR_SUCCESS;
+    try
+    {
+        *result = obj->GetSize();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Find(DictionaryObjectHandle* handle, const NameObjectHandle* key, ObjectHandle** result)

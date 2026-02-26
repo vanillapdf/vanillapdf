@@ -2,6 +2,7 @@
 
 #include "semantics/objects/date.h"
 
+#include "utils/text_string_encoding.h"
 #include "utils/time_utils.h"
 
 #include <regex>
@@ -10,17 +11,8 @@ namespace vanillapdf {
 namespace semantics {
 
 Date::Date(syntax::StringObjectPtr root) : HighLevelObject(root) {
-    auto str = root->GetValue()->ToString();
-
-    // Check for UTF-8 BOM
-    if (str.size() >= 3 &&
-        static_cast<unsigned char>(str[0]) == 0xEF &&
-        static_cast<unsigned char>(str[1]) == 0xBB &&
-        static_cast<unsigned char>(str[2]) == 0xBF) {
-
-        // Remove UTF-8 BOM as it is not relevant in the date strings
-        str = str.substr(3);
-    }
+    auto raw = root->GetValue();
+    auto str = TextStringEncoding::ToUtf8(raw->ToStringView());
 
     //(D:YYYYMMDDHHmmSSOHH'mm)
     std::regex header_regex(

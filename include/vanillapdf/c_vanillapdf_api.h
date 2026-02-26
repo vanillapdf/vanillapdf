@@ -15,6 +15,7 @@
 #include "vanillapdf/syntax/c_file.h"
 #include "vanillapdf/syntax/c_file_writer.h"
 #include "vanillapdf/syntax/c_file_writer_observer.h"
+#include "vanillapdf/syntax/c_file_structure_validator.h"
 #include "vanillapdf/syntax/c_xref.h"
 #include "vanillapdf/syntax/c_filter.h"
 
@@ -96,5 +97,6 @@
 #include "vanillapdf/utils/c_output_stream.h"
 #include "vanillapdf/utils/c_memory_buffer_output_stream.h"
 #include "vanillapdf/utils/c_input_output_stream.h"
+#include "vanillapdf/utils/c_text_string_encoding.h"
 
 #endif /* _C_VANILLAPDF_API_H */

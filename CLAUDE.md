@@ -41,6 +41,12 @@ git submodule sync --recursive && git submodule update --init --recursive
 - Create a new branch for every change: `feature/description` or `fix/description`
 - Base branches on `main` (or `release/*` for hotfixes)
 
+**`git push` must always be a separate, explicit command:**
+- NEVER chain `git push` with `&&` after a commit or other commands
+- Push triggers CI pipelines; it must be a deliberate, standalone action
+- Wrong: `git add ... && git commit -m "..." && git push`
+- Right: commit first, then push as a separate step after confirming
+
 ## GitHub Issues
 
 **Always add labels** when creating GitHub issues using `gh issue create`. Use appropriate labels from the repository to categorize issues for grouping and filtering. Common labels:

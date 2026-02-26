@@ -58,8 +58,11 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_GetSize(ArrayObjectHand
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-    *result = obj->GetSize();
-    return VANILLAPDF_ERROR_SUCCESS;
+    try
+    {
+        *result = obj->GetSize();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHandle* handle, ObjectHandle* value)

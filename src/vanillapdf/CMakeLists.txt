@@ -32,6 +32,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_signature_verifier.cpp
     implementation/utils/c_signature_verification_settings.cpp
     implementation/utils/c_signing_key.cpp
+    implementation/utils/c_text_string_encoding.cpp
     implementation/utils/c_unknown_interface.cpp
 )
 
@@ -52,6 +53,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES
     implementation/syntax/c_stream_object.cpp
     implementation/syntax/c_string_object.cpp
     implementation/syntax/c_xref.cpp
+    implementation/syntax/c_file_structure_validator.cpp
     implementation/syntax/c_object_attributes.cpp
     implementation/syntax/c_object_attribute_list.cpp
 )
@@ -151,6 +153,9 @@ set(VANILLAPDF_SYNTAX_SOURCES
 
     syntax/files/file.cpp
     syntax/files/file_writer.cpp
+    syntax/files/file_structure_issue.cpp
+    syntax/files/file_structure_validation_result.cpp
+    syntax/files/file_structure_validator.cpp
     syntax/files/xref.cpp
     syntax/files/xref_entry.cpp
     syntax/files/xref_chain.cpp
@@ -206,6 +211,7 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/resource.cpp
     utils/signature_verification_result.cpp
     utils/signature_verifier.cpp
+    utils/text_string_encoding.cpp
     utils/time_utils.cpp
     utils/trusted_certificate_store.cpp
     utils/unknown_interface.cpp
@@ -285,6 +291,9 @@ set(VANILLAPDF_SYNTAX_HEADERS
     
     syntax/files/file.h
     syntax/files/file_writer.h
+    syntax/files/file_structure_issue.h
+    syntax/files/file_structure_validation_result.h
+    syntax/files/file_structure_validator.h
     syntax/files/header.h
     syntax/files/xref.h
     syntax/files/xref_entry.h
@@ -371,6 +380,7 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/signature_verifier_interface.h
     utils/stack_allocator.h
     utils/template_utils.h
+    utils/text_string_encoding.h
     utils/time_utils.h
     utils/trusted_certificate_store.h
     utils/unknown_interface.h
@@ -649,8 +659,10 @@ if(VANILLAPDF_ENABLE_COVERAGE)
     enable_coverage_for_target(vanillapdf)
 endif()
 
-# Optional stack sanitizer
-enable_stack_sanitizer_for_target(vanillapdf)
+# Optional sanitizers
+enable_asan_for_target(vanillapdf)
+enable_ubsan_for_target(vanillapdf)
+enable_tsan_for_target(vanillapdf)
 
 # Optional fuzzer coverage instrumentation
 enable_fuzzer_coverage_for_target(vanillapdf)
@@ -758,16 +770,22 @@ else()
     message(STATUS "JPEG2000 support disabled. JPEG2000 images will not be supported")
 endif ()
 
-# fmtlib is used directly in ~12 source files for string formatting.
-# It is also a transitive dependency of spdlog (SPDLOG_FMT_EXTERNAL),
-# but we declare it explicitly to keep the dependency graph correct.
+# fmtlib is used directly in source files for string formatting.
+# Do NOT link fmt::fmt explicitly here. spdlog built with SPDLOG_FMT_EXTERNAL
+# declares fmt::fmt as a PUBLIC interface dependency (by design — spdlog headers
+# include fmt headers, so consumers need fmt in scope). Linking fmt explicitly
+# alongside spdlog::spdlog duplicates it on the linker command line, which
+# Apple ld >= 15 warns about and -Wl,-fatal_warnings turns into an error.
+#
+# TODO: if spdlog is ever made optional or removed, add an explicit
+# target_link_libraries(vanillapdf PRIVATE fmt::fmt) here so that the direct
+# fmt usage in vanillapdf source files remains covered.
 if (VANILLAPDF_EXTERNAL_FMT)
     find_package(fmt CONFIG REQUIRED)
 else ()
     find_package(fmt CONFIG REQUIRED)
 endif()
 
-target_link_libraries(vanillapdf PRIVATE fmt::fmt)
 target_link_libraries(vanillapdf PRIVATE spdlog::spdlog)
 
 if (VANILLAPDF_ENABLE_LICENSING)

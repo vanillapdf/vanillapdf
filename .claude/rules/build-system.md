@@ -38,7 +38,7 @@ Source files use **explicit lists** (NOT `file(GLOB)`):
 
 Features (all default ON): `VANILLAPDF_ENABLE_{ENCRYPTION,JPEG,JPEG2000,ZLIB}` → defines `VANILLAPDF_HAVE_*`
 
-Build options: `VANILLAPDF_INTERNAL_VCPKG` (ON), `VANILLAPDF_ENABLE_TESTS` (ON), `VANILLAPDF_ENABLE_BENCHMARK` (ON), `VANILLAPDF_USE_STATIC_CRT` (OFF), `BUILD_SHARED_LIBS` (ON), `VANILLAPDF_ENABLE_COVERAGE`, `VANILLAPDF_ENABLE_STACK_SANITIZER`
+Build options: `VANILLAPDF_INTERNAL_VCPKG` (ON), `VANILLAPDF_ENABLE_TESTS` (ON), `VANILLAPDF_ENABLE_BENCHMARK` (ON), `VANILLAPDF_USE_STATIC_CRT` (OFF), `BUILD_SHARED_LIBS` (ON), `VANILLAPDF_ENABLE_COVERAGE`, `VANILLAPDF_ENABLE_ASAN`, `VANILLAPDF_ENABLE_UBSAN`, `VANILLAPDF_ENABLE_TSAN`
 
 External deps (all OFF): `VANILLAPDF_EXTERNAL_{OPENSSL,JPEG,OPENJPEG,ZLIB,SPDLOG,NLOHMANN_JSON}` — use system instead of vcpkg.
 
@@ -53,7 +53,7 @@ vcpkg.json generated from `vcpkg.json.in` at configure time by `cmake/vcpkg_mani
 | `cmake/compiler_flags.cmake` | Warning levels and flags |
 | `cmake/compiler_checks.cmake` | C++17 feature detection |
 | `cmake/coverage.cmake` | Code coverage |
-| `cmake/sanitizers.cmake` | Address sanitizer |
+| `cmake/sanitizers.cmake` | ASan, UBSan, TSan sanitizers |
 | `cmake/vcpkg_manifest.cmake` | vcpkg.json generation |
 | `cmake/vcpkg_init.cmake` | vcpkg initialization |
 | `cmake/version.cmake` | Version numbers (CI overrides via `VANILLAPDF_VERSION_*_OVERRIDE`) |

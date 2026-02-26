@@ -325,13 +325,8 @@ void DictionaryObject::Clear() {
     IncrementVersion();
 }
 
-DictionaryObject::size_type DictionaryObject::GetSize() const noexcept {
-
-    // https://cplusplus.com/reference/map/map/size/
-    // The container is accessed.
-    // No elements are accessed : concurrently accessing or modifying them is safe.
-
-    // Based on the above I assume that we do not need to lock the list for this call.
+DictionaryObject::size_type DictionaryObject::GetSize() const {
+    ACCESS_LOCK_GUARD(m_access_lock);
 
     return _list.size();
 }
