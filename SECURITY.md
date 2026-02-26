@@ -10,24 +10,61 @@ The following Vanilla.PDF versions currently receive **security fixes and critic
 
 | Version | Supported |
 | ------- | --------- |
-| 2.x     | ✅        |
-| 1.7.x   | ❌        |
-| 1.6.x   | ❌        |
-| < 1.6   | ❌        |
+| 2.2.x   | ✅        |
+| 2.1.x   | ✅        |
+| < 2.1   | ❌        |
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Vanilla.PDF, please report it responsibly:
+If you discover a security vulnerability in Vanilla.PDF, please report it **privately and responsibly**:
 
-- **Contact:** Submit a private advisory via GitHub at [github.com/vanillapdf/vanillapdf/security/advisories](https://github.com/vanillapdf/vanillapdf/security/advisories)
-- **Response Time:** We aim to acknowledge reports within **72 hours**, and provide a resolution or mitigation within **7–14 days**, depending on severity.
- - **Disclosure:** Once a fix is available, we will publish a GitHub security advisory and notify affected users through a patch release and release notes.
-- 🔒 **Responsible Disclosure Only:** Please **do not publicly disclose** any vulnerabilities before we’ve had a chance to investigate and release a fix.
+- **GitHub (preferred):** Submit a draft security advisory at [github.com/vanillapdf/vanillapdf/security/advisories](https://github.com/vanillapdf/vanillapdf/security/advisories)
+- **Email (alternative):** Contact us directly at `security@vanillapdf.com`
 
-## Additional Contact (Optional)
+> ⚠️ **Do NOT open a public GitHub issue for security vulnerabilities.** Public issues are visible to everyone and may put users at risk before a fix is available.
 
-If you are unable to use GitHub advisories, you may contact the maintainers directly at `security@vanillapdf.org`.
+### What to Include in Your Report
+
+To help us triage and reproduce the issue quickly, please provide:
+
+- Affected version(s) of Vanilla.PDF
+- A clear description of the vulnerability and its potential impact
+- Steps to reproduce, including any relevant PDF files, code snippets, or proof-of-concept
+- The environment (OS, compiler, build configuration) where the issue was observed
+- Your assessment of severity, if possible
+
+## Severity Classification
+
+We use the following severity levels to prioritize responses:
+
+| Severity | Description |
+| -------- | ----------- |
+| **Critical** | Remote code execution, memory corruption exploitable without user interaction |
+| **High** | Significant data exposure, privilege escalation, or exploitable crash |
+| **Medium** | Limited impact vulnerabilities requiring specific conditions to trigger |
+| **Low** | Minor issues with negligible security impact |
+
+## Response Timeline
+
+- **Acknowledgement:** Within 72 hours of receiving the report
+- **Initial assessment:** Within 7 days
+- **Fix or mitigation:** Within 7–14 days for High/Critical; up to 30 days for Medium/Low, depending on complexity
+
+## CVE Assignment
+
+For confirmed vulnerabilities, we will request a CVE identifier through the appropriate authority. The CVE number will be included in the public advisory once the fix is released.
+
+## Disclosure Policy
+
+- We will notify you when the fix is ready and coordinate a disclosure date
+- We aim to publish a GitHub security advisory and patch release simultaneously
+- We ask that you refrain from public disclosure until the fix has been released
+- If we are unable to resolve the issue within a reasonable timeframe, we will work with you to agree on an appropriate disclosure date
+
+## Reporter Credit
+
+We are grateful to security researchers who help keep Vanilla.PDF safe. With your permission, we will acknowledge your contribution in the published security advisory.
 
 ---
 
-_Last updated: May 2025_
+_Last updated: February 2026_

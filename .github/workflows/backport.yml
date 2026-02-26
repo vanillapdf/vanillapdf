@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Get target branches from labels
         id: get-targets
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd  # v8
         with:
           script: |
             const labels = context.payload.pull_request.labels;
@@ -39,7 +39,7 @@ jobs:
 
       - name: Checkout
         if: steps.get-targets.outputs.has_targets == 'true'
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
           token: ${{ secrets.BOT_TOKEN }}
@@ -71,7 +71,7 @@ jobs:
     steps:
       - name: Extract original PR and target branch
         id: extract-info
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd  # v8
         with:
           script: |
             const title = context.payload.pull_request.title;

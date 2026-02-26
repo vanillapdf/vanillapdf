@@ -664,6 +664,9 @@ enable_asan_for_target(vanillapdf)
 enable_ubsan_for_target(vanillapdf)
 enable_tsan_for_target(vanillapdf)
 
+# Optional fuzzer coverage instrumentation
+enable_fuzzer_coverage_for_target(vanillapdf)
+
 # Update 30.04.2025
 # We have switched to vcpkg manifest mode, which makes sure all dependencies are automatically installed
 

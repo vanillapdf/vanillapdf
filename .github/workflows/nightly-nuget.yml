@@ -24,19 +24,19 @@ on:
   schedule:
     - cron: '0 3 * * *'  # Every day at 03:00 UTC
 
-permissions:
-  contents: write  # Needed for future GitHub release or content access
-  packages: write  # Needed for publishing NuGet packages within organization
+permissions: {}
 
 jobs:
 
   check-changes:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       has_changes: ${{ steps.check.outputs.has_changes }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
 
@@ -88,6 +88,9 @@ jobs:
   build-nuget:
     needs: [check-changes, prepare-suffix]
     if: needs.check-changes.outputs.has_changes == 'true'
+    permissions:
+      contents: read
+      packages: read
     uses: ./.github/workflows/build-nuget.yml
     with:
       build_suffix: ${{ needs.prepare-suffix.outputs.nightly_suffix }}
@@ -97,6 +100,8 @@ jobs:
   push-nuget-staging:
     name: Push NuGet Packages
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     environment:
       name: staging
 
@@ -104,7 +109,7 @@ jobs:
     if: needs.check-changes.outputs.has_changes == 'true'
     steps:
       - name: Download all NuGet artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131  # v7.0.0
         with:
           path: ./nupkgs
 

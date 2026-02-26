@@ -19,17 +19,20 @@ on:
         required: true
         type: boolean
 
-permissions:
-  contents: write  # Required to create a release
+permissions: {}
 
 jobs:
   github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write       # Required to create a release and upload assets
+      id-token: write       # Required for Sigstore keyless signing
+      attestations: write   # Required for GitHub artifact attestations
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
 
@@ -57,3 +60,22 @@ jobs:
               --generate-notes \
               --draft
           fi
+
+      - name: Generate SBOM
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api repos/${{ github.repository }}/dependency-graph/sbom \
+            | jq '.sbom' > vanillapdf-${{ inputs.tag }}-sbom.spdx.json
+
+      - name: Upload SBOM to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ inputs.tag }} vanillapdf-${{ inputs.tag }}-sbom.spdx.json
+
+      - name: Attest SBOM
+        uses: actions/attest-sbom@bd218ad0dbcb3e146bd073d1d9c6d78e08aa8a0b  # v2.4.0
+        with:
+          subject-path: vanillapdf-${{ inputs.tag }}-sbom.spdx.json
+          sbom-path: vanillapdf-${{ inputs.tag }}-sbom.spdx.json
