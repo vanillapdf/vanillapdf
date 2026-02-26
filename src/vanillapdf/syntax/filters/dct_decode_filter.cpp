@@ -55,10 +55,9 @@ void init_source(j_decompress_ptr cinfo) {
 boolean fill_input_buffer(j_decompress_ptr cinfo) {
     UNUSED(cinfo);
 
-    assert(!"This method is not handled");
-    spdlog::error("JPEG decompression failure. Please report this issue");
-
-    return TRUE;
+    // No more data available. Returning FALSE signals libjpeg to raise an
+    // error, which our error_exit handler converts to ImageCodecErrorException.
+    return FALSE;
 }
 
 void skip_input_data(j_decompress_ptr cinfo, long num_bytes) {

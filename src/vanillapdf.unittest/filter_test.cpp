@@ -150,6 +150,18 @@ TEST(DCTDecodeFilter, Decode) {
     ASSERT_NE(decoded_data_buffer.get(), nullptr);
 }
 
+TEST(DCTDecodeFilter, EmptyInput) {
+    HandleGuard<BufferHandle, Buffer_Release> input_data_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> decoded_data_buffer;
+    HandleGuard<DCTDecodeFilterHandle, DCTDecodeFilter_Release> filter_handle;
+
+    ASSERT_EQ(DCTDecodeFilter_Create(filter_handle.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData("", 0, input_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_NE(DCTDecodeFilter_Decode(filter_handle, input_data_buffer, decoded_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(decoded_data_buffer.get(), nullptr);
+}
+
 TEST(JPXDecodeFilter, Decode) {
 
     const unsigned char INPUT_DATA[] = {
