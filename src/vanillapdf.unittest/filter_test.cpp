@@ -1,6 +1,8 @@
 #include "unittest.h"
 
 #include <cstring>
+#include <string_view>
+#include <vector>
 
 namespace filters {
 
@@ -168,6 +170,50 @@ TEST(DCTDecodeFilter, Decode) {
 
     ASSERT_EQ(DCTDecodeFilter_Release(filter_handle), VANILLAPDF_ERROR_SUCCESS);
 }
+
+struct DCTMalformedCase {
+    std::string_view name;
+    std::vector<uint8_t> data;
+};
+
+class DCTDecodeMalformedTest : public ::testing::TestWithParam<DCTMalformedCase> {};
+
+TEST_P(DCTDecodeMalformedTest, RejectsInvalidInput) {
+    const auto& param = GetParam();
+
+    BufferHandle* input_data_buffer = nullptr;
+    BufferHandle* decoded_data_buffer = nullptr;
+    DCTDecodeFilterHandle* filter_handle = nullptr;
+
+    ASSERT_EQ(DCTDecodeFilter_Create(&filter_handle), VANILLAPDF_ERROR_SUCCESS);
+    auto data_ptr = param.data.empty() ? "" : reinterpret_cast<string_type>(param.data.data());
+    ASSERT_EQ(Buffer_CreateFromData(data_ptr,
+        static_cast<size_type>(param.data.size()), &input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_NE(DCTDecodeFilter_Decode(filter_handle, input_data_buffer, &decoded_data_buffer), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(decoded_data_buffer, nullptr);
+
+    // Cleanup
+    ASSERT_EQ(Buffer_Release(input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DCTDecodeFilter_Release(filter_handle), VANILLAPDF_ERROR_SUCCESS);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DCTDecodeFilter,
+    DCTDecodeMalformedTest,
+    ::testing::Values(
+        DCTMalformedCase{ "Empty", {} },
+        DCTMalformedCase{ "SingleByte", { 0xFF } },
+        DCTMalformedCase{ "SOIOnly", { 0xFF, 0xD8 } },
+        DCTMalformedCase{ "TruncatedHeader", { 0xFF, 0xD8, 0xFF, 0xE0, 0x00 } },
+        DCTMalformedCase{ "NotJPEG", { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 } },
+        DCTMalformedCase{ "OversizedMarkerLength", { 0xFF, 0xD8, 0xFF, 0xDC, 0xDC, 0xDC, 0xDC, 0xDC, 0xDC, 0xDC, 0xDC, 0xDC, 0xDC, 0xD9 } },
+        DCTMalformedCase{ "SkipPastBuffer", { 0xFF, 0xD8, 0xFF, 0xFF, 0xDC, 0xFF, 0xD8, 0xFF, 0xC9 } }
+    ),
+    [](const ::testing::TestParamInfo<DCTMalformedCase>& info) {
+        return std::string(info.param.name);
+    }
+);
 
 TEST(JPXDecodeFilter, Decode) {
 
