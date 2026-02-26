@@ -23,22 +23,35 @@ types::size_type PageTree::PageCount(void) const {
 
 
 void PageTree::BuildPageCache() const {
-    m_page_cache.reserve(PageCount());
-    CollectPageDicts(make_deferred<PageTreeNode>(_obj));
-}
+    auto root = make_deferred<PageTreeNode>(_obj);
+    auto root_kids = root->Kids();
+    auto root_count = root_kids->GetSize();
 
-void PageTree::CollectPageDicts(PageTreeNodePtr node) const {
-    auto kids = node->Kids();
-    auto count = kids->GetSize();
-    for (decltype(count) i = 0; i < count; i += 1) {
-        auto kid = kids->GetValue(i);
-        if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
-            CollectPageDicts(ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(kid));
-        } else {
-            auto page = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(kid);
-            m_page_cache.push_back(page->GetObject());
-        }
+    // Seed the stack with root's children in reverse so the first child is on top.
+    std::vector<PageNodeBasePtr> stack;
+    for (auto i = root_count; i > 0; i -= 1) {
+        stack.push_back(root_kids->GetValue(i - 1));
     }
+
+    while (!stack.empty()) {
+        auto node = stack.back();
+        stack.pop_back();
+
+        if (node->GetNodeType() == PageNodeBase::NodeType::Tree) {
+            auto tree = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(node);
+            auto kids = tree->Kids();
+            auto count = kids->GetSize();
+            for (auto i = count; i > 0; i -= 1) {
+                stack.push_back(kids->GetValue(i - 1));
+            }
+            continue;
+        }
+
+        auto page = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(node);
+        m_page_cache.push_back(page->GetObject());
+    }
+
+    m_cache_built = true;
 }
 
 PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
@@ -48,7 +61,7 @@ PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
 
     ACCESS_LOCK_GUARD(m_cache_lock);
 
-    if (m_page_cache.empty()) {
+    if (!m_cache_built) {
         BuildPageCache();
     }
 
@@ -64,7 +77,7 @@ PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
 void PageTree::WarmPageCache() const {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
-    if (m_page_cache.empty()) {
+    if (!m_cache_built) {
         BuildPageCache();
     }
 }
@@ -73,6 +86,7 @@ void PageTree::InvalidatePageCache() {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
     m_page_cache.clear();
+    m_cache_built = false;
 }
 
 

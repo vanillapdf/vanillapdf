@@ -40,11 +40,11 @@ private:
     // from the cached dictionary pointer.
     mutable std::unique_ptr<std::recursive_mutex> m_cache_lock;
     mutable std::vector<syntax::DictionaryObjectPtr> m_page_cache;
+    mutable bool m_cache_built = false;
 
     PageObjectPtr GetCachedPage(types::size_type page_number) const;
     void InvalidatePageCache();
     void BuildPageCache() const;
-    void CollectPageDicts(PageTreeNodePtr node) const;
 
     bool FindPageIndexInternal(PageTreeNodePtr node, syntax::DictionaryObjectPtr page_dict, types::size_type& current_index) const;
     void UpdateKidsCount();
