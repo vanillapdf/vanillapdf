@@ -45,10 +45,9 @@ jobs:
           - name: asciihex
             target: vanillapdf.fuzz.asciihex_decode
             corpus: asciihex_decode
-          # TODO: temporarily disabled - currently failing, pending investigation
-          # - name: dct
-          #   target: vanillapdf.fuzz.dct_decode
-          #   corpus: dct_decode
+          - name: dct
+            target: vanillapdf.fuzz.dct_decode
+            corpus: dct_decode
           # TODO: temporarily disabled - currently failing, pending investigation
           # - name: jpx
           #   target: vanillapdf.fuzz.jpx_decode
