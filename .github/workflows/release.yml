@@ -150,6 +150,10 @@ jobs:
   dry-run-pages:
     needs: [build-nuget, prepare]
     if: needs.prepare.outputs.dry_run == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     uses: ./.github/workflows/github-pages.yml
     with:
       deploy: false
