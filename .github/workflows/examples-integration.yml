@@ -471,8 +471,10 @@ jobs:
         run: |
           choco install conan --yes
           call refreshenv
-          echo C:\Program Files\Conan>> %GITHUB_PATH%
           conan profile detect
+
+      - name: Add Conan to PATH
+        run: Add-Content -Path $env:GITHUB_PATH -Value "C:\Program Files\Conan"
 
       - name: Create vanillapdf Conan package
         run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing -s compiler.cppstd=17
