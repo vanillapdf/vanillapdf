@@ -252,6 +252,7 @@ jobs:
     # Only deploy documentation for official releases, not pre-releases (alpha, beta, rc)
     if: needs.production-gate.outputs.prerelease == 'false'
     permissions:
+      contents: read
       pages: write
       id-token: write
     uses: ./.github/workflows/github-pages.yml
