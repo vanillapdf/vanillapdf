@@ -474,7 +474,7 @@ jobs:
           conan profile detect
 
       - name: Add Conan to PATH
-        run: Add-Content -Path $env:GITHUB_PATH -Value "C:\Program Files\Conan"
+        run: Add-Content -Path $env:GITHUB_PATH -Value "C:\Program Files\Conan\conan"
 
       - name: Create vanillapdf Conan package
         run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing -s compiler.cppstd=17
