@@ -5,6 +5,7 @@ on:
   schedule:
     - cron: '0 4 * * 1'
   push:
+    branches: [main]
     paths:
       - 'src/vanillapdf.fuzzer/**'
       - '.github/workflows/fuzzing.yml'
