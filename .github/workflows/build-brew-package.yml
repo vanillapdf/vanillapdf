@@ -64,7 +64,7 @@ jobs:
         run: cmake --build --preset macos-arm64 --target package
 
       - name: Upload DMG
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: vanillapdf-dmg
           path: build/macos-arm64/*.dmg

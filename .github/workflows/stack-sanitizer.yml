@@ -35,7 +35,7 @@ jobs:
           sudo apt-get install -y libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ env.BUILD_PRESET }}/vcpkg_installed
@@ -43,7 +43,7 @@ jobs:
             external/vcpkg/buildtrees
             external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizer-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizer-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-sanitizer-
             vcpkg-${{ runner.os }}-ubuntu-latest-
