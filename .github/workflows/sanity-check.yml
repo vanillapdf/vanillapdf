@@ -90,18 +90,18 @@ jobs:
       options: --platform=${{ matrix.config.platform }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
       - name: Cache vcpkg installed
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
@@ -112,7 +112,7 @@ jobs:
         shell: bash
 
       - name: Generate build files
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        run: cmake --preset ${{ matrix.config.preset }} -DVANILLAPDF_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -142,18 +142,18 @@ jobs:
             preset: windows-x64-msvc-17
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
       - name: Cache vcpkg installed
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
@@ -163,7 +163,7 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Generate build files ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        run: cmake --preset ${{ matrix.config.preset }} -DVANILLAPDF_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build ${{ matrix.config.preset }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.build_type }}
@@ -192,18 +192,18 @@ jobs:
             preset: macos-arm64
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
       - name: Cache vcpkg installed
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
@@ -217,7 +217,7 @@ jobs:
         shell: bash
 
       - name: Generate build files
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        run: cmake --preset ${{ matrix.config.preset }} -DVANILLAPDF_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.config.preset }}

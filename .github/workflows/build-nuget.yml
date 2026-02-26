@@ -69,10 +69,10 @@ jobs:
       options: --platform=${{ matrix.config.platform }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
 
@@ -81,13 +81,13 @@ jobs:
         run: dnf -y install libicu
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
@@ -98,7 +98,7 @@ jobs:
         shell: bash
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DVANILLAPDF_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -116,7 +116,7 @@ jobs:
         run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
           path: '*.nupkg'
@@ -139,21 +139,21 @@ jobs:
             build_type: Release
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
@@ -163,7 +163,7 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DVANILLAPDF_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type }}
@@ -181,7 +181,7 @@ jobs:
         run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
           path: '*.nupkg'
@@ -206,21 +206,21 @@ jobs:
             build_type: Release
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
@@ -233,7 +233,7 @@ jobs:
         shell: bash
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DVANILLAPDF_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -251,7 +251,7 @@ jobs:
         run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
           path: '*.nupkg'
@@ -274,22 +274,22 @@ jobs:
           - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17", build_type: Release }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
@@ -299,10 +299,10 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: cmake --preset ${{ matrix.config.preset }} -DVANILLAPDF_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
 
       - name: Download runtime packages
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: vanillapdf.runtime.*
           path: nuget/local-packages
@@ -315,7 +315,7 @@ jobs:
         run: dotnet pack nuget/vanillapdf.csproj --no-build --output .
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: vanillapdf${{ inputs.build_suffix }}
           path: '*.nupkg'

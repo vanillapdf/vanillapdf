@@ -59,7 +59,7 @@ jobs:
     needs: build-nuget
     steps:
       - name: Download all NuGet artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: ./nupkgs
 
