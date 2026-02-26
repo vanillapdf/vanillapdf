@@ -162,6 +162,8 @@ jobs:
   dry-run-vcpkg:
     needs: [build-nuget, prepare]
     if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'true'
+    permissions:
+      contents: read
     uses: ./.github/workflows/create-vcpkg-pr.yml
     with:
       tag: ${{ needs.prepare.outputs.latest_tag }}
@@ -171,6 +173,8 @@ jobs:
   dry-run-conan:
     needs: [build-nuget, prepare]
     if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'true'
+    permissions:
+      contents: read
     uses: ./.github/workflows/create-conan-pr.yml
     with:
       tag: ${{ needs.prepare.outputs.latest_tag }}
@@ -271,6 +275,8 @@ jobs:
     needs: production-gate
     # Only create vcpkg PR for official releases, not pre-releases (alpha, beta, rc)
     if: needs.production-gate.outputs.prerelease == 'false'
+    permissions:
+      contents: read
     uses: ./.github/workflows/create-vcpkg-pr.yml
     with:
       tag: ${{ needs.production-gate.outputs.tag }}
@@ -280,6 +286,8 @@ jobs:
     needs: production-gate
     # Only create Homebrew PR for official releases, not pre-releases (alpha, beta, rc)
     if: needs.production-gate.outputs.prerelease == 'false'
+    permissions:
+      contents: read
     uses: ./.github/workflows/update-homebrew.yml
     with:
       tag: ${{ needs.production-gate.outputs.tag }}
@@ -289,6 +297,8 @@ jobs:
     needs: production-gate
     # Only create Conan Center PR for official releases, not pre-releases (alpha, beta, rc)
     if: needs.production-gate.outputs.prerelease == 'false'
+    permissions:
+      contents: read
     uses: ./.github/workflows/create-conan-pr.yml
     with:
       tag: ${{ needs.production-gate.outputs.tag }}
