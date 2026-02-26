@@ -33,6 +33,10 @@ on:
 
 permissions: {}
 
+env:
+  VCPKG_DISABLE_METRICS: 1
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -59,8 +63,7 @@ jobs:
           path: |
             build/linux-x64-gcc/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
+            external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-coverage-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-coverage-

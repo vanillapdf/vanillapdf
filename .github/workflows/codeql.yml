@@ -86,8 +86,6 @@ jobs:
         path: |
           build/**/vcpkg_installed
           external/vcpkg/downloads
-          external/vcpkg/buildtrees
-          external/vcpkg/packages
           external/vcpkg/bincache
         key: codeql-vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json.in') }}
         restore-keys: |

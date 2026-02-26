@@ -26,6 +26,7 @@ permissions:
 env:
   VCPKG_ROOT: external/vcpkg
   VCPKG_DISABLE_METRICS: 1
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 jobs:
 
@@ -48,8 +49,7 @@ jobs:
           path: |
             build/linux-x64-gcc/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
+            external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-
@@ -94,8 +94,7 @@ jobs:
           path: |
             build/windows-x64-msvc-17/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
+            external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-win.2025-x64-windows-x64-msvc-17-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-win.2025-x64-windows-x64-msvc-17-
@@ -137,8 +136,7 @@ jobs:
           path: |
             build/macos-arm64/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
+            external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-osx.15-arm64-macos-arm64-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-osx.15-arm64-macos-arm64-

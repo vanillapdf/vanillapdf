@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
@@ -43,13 +43,11 @@ jobs:
           sudo apt-get install -y libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
 
       - name: Cache vcpkg
-        uses: actions/cache@v5
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
             build/${{ env.BUILD_PRESET }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
@@ -88,7 +86,7 @@ jobs:
             cmake_flag: VANILLAPDF_ENABLE_TSAN
 
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
@@ -98,13 +96,11 @@ jobs:
           sudo apt-get install -y libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
 
       - name: Restore vcpkg cache
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
             build/${{ env.BUILD_PRESET }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
