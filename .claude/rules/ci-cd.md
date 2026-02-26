@@ -4,7 +4,7 @@
 
 - `nightly-check.yml` - Full platform matrix testing (Linux, Windows, macOS, Android)
 - `coverage.yml` - Code coverage with Codecov
-- `stack-sanitizer.yml` - Address sanitizer testing
+- `sanitizers.yml` - ASan, UBSan, and TSan checks (one workflow, 3 parallel jobs after shared vcpkg-setup)
 - `codeql.yml` - Security analysis
 - `build-nuget.yml` / `build-deb-package.yml` / `build-brew-package.yml` - Package building
 - `github-pages.yml` - Documentation deployment

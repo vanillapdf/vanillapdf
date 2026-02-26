@@ -54,10 +54,14 @@ Coverage reports are automatically generated in CI and uploaded to Codecov.
 
 ## Sanitizers
 
-Use address sanitizer for memory safety testing:
+Available sanitizers (Linux/macOS GCC/Clang only, Debug builds):
 ```bash
-cmake --preset linux-x64-gcc -DVANILLAPDF_ENABLE_STACK_SANITIZER=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --preset linux-x64-gcc -DVANILLAPDF_ENABLE_ASAN=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --preset linux-x64-gcc -DVANILLAPDF_ENABLE_UBSAN=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --preset linux-x64-gcc -DVANILLAPDF_ENABLE_TSAN=ON -DCMAKE_BUILD_TYPE=Debug
 ```
+
+Note: ASan and TSan are mutually exclusive and cannot be enabled simultaneously.
 
 ## Performance Improvement Workflow
 

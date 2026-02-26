@@ -288,11 +288,17 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
     m_cms.reset();
     m_data_bio.reset();
 
-    // For EdDSA keys (Ed25519/Ed448), RFC 8419 requires a specific CMS digestAlgorithm:
-    // Ed25519 → SHA-512, Ed448 → SHAKE256. OpenSSL cannot auto-detect the digest from
-    // the key alone (EVP_PKEY_get_default_digest_name returns error), so we specify it
-    // explicitly. At the raw EVP level Ed25519 still uses a pure (no prehash) scheme;
-    // OpenSSL's CMS layer handles the two-step separation correctly.
+    // For EdDSA keys (Ed25519/Ed448), RFC 8419 requires specific CMS digestAlgorithm
+    // identifiers: Ed25519 → SHA-512, Ed448 → SHAKE256. These are passed to
+    // CMS_add1_signer to set the correct DigestAlgorithmIdentifier in the structure.
+    //
+    // NOTE: CMS_final subsequently calls EVP_DigestSignInit with this digest, which
+    // OpenSSL's eddsa_digest_signverify_init rejects (EdDSA hashes internally and
+    // does not accept an external pre-hash digest). EdDSA signing via the standard
+    // CMS_add1_signer + CMS_final path is therefore not supported by OpenSSL's CMS API.
+    // A proper implementation requires bypassing CMS_SignerInfo_sign and instead calling
+    // EVP_DigestSign(NULL, ...) directly on the DER-encoded signed attributes.
+    // See: https://github.com/vanillapdf/vanillapdf/issues/320
     int key_type = EVP_PKEY_base_id(key.get());
     const EVP_MD* message_digest;
     if (key_type == EVP_PKEY_ED25519) {

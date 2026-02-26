@@ -148,11 +148,7 @@ void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) {
 }
 
 ObjectPtr IndirectReferenceObject::GetReferencedObject() const {
-    if (IsReferenceInitialized()) {
-        return m_reference.GetReference();
-    }
-
-    ACCESS_LOCK_GUARD(m_access_lock);
+    std::unique_lock<std::recursive_mutex> lock(*m_access_lock);
 
     if (IsReferenceInitialized()) {
         return m_reference.GetReference();
@@ -163,11 +159,19 @@ ObjectPtr IndirectReferenceObject::GetReferencedObject() const {
     }
 
     auto locked_file = m_file.GetReference();
-    auto new_reference = locked_file->GetIndirectObject(
-        m_reference_object_number,
-        m_reference_generation_number);
+    auto obj_number = m_reference_object_number;
+    auto gen_number = m_reference_generation_number;
 
-    m_reference = new_reference;
+    // Release M2 before file I/O to avoid the M2->M0 lock-order inversion:
+    // parsing holds M0 while calling SetFile() which acquires M2 on new objects.
+    lock.unlock();
+    auto new_reference = locked_file->GetIndirectObject(obj_number, gen_number);
+    lock.lock();
+
+    if (!IsReferenceInitialized()) {
+        m_reference = new_reference;
+    }
+
     return new_reference;
 }
 

@@ -344,4 +344,108 @@ TEST(ArrayObjectThreadSafety, ConcurrentRemove) {
     EXPECT_EQ(static_cast<int>(final_size) + success_count.load(), INITIAL_SIZE);
 }
 
+// Test concurrent reads while another thread inserts entries
+TEST(DictionaryObjectThreadSafety, ConcurrentReadWrite) {
+    constexpr int NUM_READERS = 4;
+    constexpr int NUM_INSERTS = 1000;
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    ASSERT_EQ(DictionaryObject_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    // Pre-populate with one entry so readers always have something to find
+    {
+        HandleGuard<NameObjectHandle, NameObject_Release> seed_key;
+        ASSERT_EQ(NameObject_CreateFromDecodedString("seed", seed_key.out()), VANILLAPDF_ERROR_SUCCESS);
+
+        HandleGuard<IntegerObjectHandle, IntegerObject_Release> seed_val;
+        ASSERT_EQ(IntegerObject_Create(seed_val.out()), VANILLAPDF_ERROR_SUCCESS);
+
+        HandleGuard<ObjectHandle, Object_Release> seed_obj;
+        ASSERT_EQ(IntegerObject_ToObject(seed_val, seed_obj.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(DictionaryObject_Insert(dict, seed_key, seed_obj, VANILLAPDF_RV_FALSE), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    std::atomic<bool> done{false};
+    std::atomic<int> read_errors{0};
+    std::atomic<int> write_errors{0};
+
+    // Writer thread: continuously inserts entries with unique keys
+    std::thread writer([&]() {
+        for (int i = 0; i < NUM_INSERTS; ++i) {
+            auto key_str = "key_" + std::to_string(i);
+
+            NameObjectHandle* key = nullptr;
+            if (NameObject_CreateFromDecodedString(key_str.c_str(), &key) != VANILLAPDF_ERROR_SUCCESS) {
+                write_errors++;
+                continue;
+            }
+
+            IntegerObjectHandle* int_obj = nullptr;
+            if (IntegerObject_Create(&int_obj) != VANILLAPDF_ERROR_SUCCESS) {
+                NameObject_Release(key);
+                write_errors++;
+                continue;
+            }
+
+            ObjectHandle* obj = nullptr;
+            if (IntegerObject_ToObject(int_obj, &obj) != VANILLAPDF_ERROR_SUCCESS) {
+                IntegerObject_Release(int_obj);
+                NameObject_Release(key);
+                write_errors++;
+                continue;
+            }
+
+            if (DictionaryObject_Insert(dict, key, obj, VANILLAPDF_RV_FALSE) != VANILLAPDF_ERROR_SUCCESS) {
+                write_errors++;
+            }
+
+            Object_Release(obj);
+            IntegerObject_Release(int_obj);
+            NameObject_Release(key);
+        }
+        done = true;
+    });
+
+    // Reader threads: continuously read size and check for the seed entry
+    std::vector<std::thread> readers;
+    for (int t = 0; t < NUM_READERS; ++t) {
+        readers.emplace_back([&]() {
+            while (!done.load()) {
+                size_type size = 0;
+                if (DictionaryObject_GetSize(dict, &size) != VANILLAPDF_ERROR_SUCCESS) {
+                    read_errors++;
+                    continue;
+                }
+
+                if (size > 0) {
+                    NameObjectHandle* key = nullptr;
+                    if (NameObject_CreateFromDecodedString("seed", &key) != VANILLAPDF_ERROR_SUCCESS) {
+                        read_errors++;
+                        continue;
+                    }
+
+                    boolean_type contains = VANILLAPDF_RV_FALSE;
+                    if (DictionaryObject_Contains(dict, key, &contains) != VANILLAPDF_ERROR_SUCCESS) {
+                        read_errors++;
+                    }
+
+                    NameObject_Release(key);
+                }
+            }
+        });
+    }
+
+    writer.join();
+    for (auto& reader : readers) {
+        reader.join();
+    }
+
+    EXPECT_EQ(read_errors.load(), 0);
+    EXPECT_EQ(write_errors.load(), 0);
+
+    size_type final_size = 0;
+    ASSERT_EQ(DictionaryObject_GetSize(dict, &final_size), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(final_size, static_cast<size_type>(NUM_INSERTS + 1));
+}
+
 } /* thread_safety */

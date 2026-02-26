@@ -21,6 +21,10 @@ MemoryBufferInputStream::MemoryBufferInputStream(std::shared_ptr<fmt::memory_buf
 BufferPtr MemoryBufferInputStream::Read(types::stream_size len) {
     BufferPtr result = make_deferred_container<Buffer>(len);
 
+    if (len <= 0) {
+        return result;
+    }
+
     auto available = static_cast<types::stream_size>(m_buffer->size()) - m_position;
     if (available <= 0) {
         result->resize(0);

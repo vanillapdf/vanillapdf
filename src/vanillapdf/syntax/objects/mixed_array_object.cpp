@@ -34,6 +34,12 @@ MixedArrayObject::MixedArrayObject(const ContainableObject& other, list_type& li
     }
 }
 
+MixedArrayObject::size_type MixedArrayObject::GetSize(void) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
+    return _list.size();
+}
+
 ContainableObjectPtr MixedArrayObject::GetValue(size_type at) const {
     ACCESS_LOCK_GUARD(m_access_lock);
 

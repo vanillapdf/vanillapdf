@@ -62,8 +62,10 @@ if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
     vanillapdf_configure_msvc_runtime(vanillapdf.tools)
 endif()
 
-# Optional stack sanitizer
-enable_stack_sanitizer_for_target(vanillapdf.tools)
+# Optional sanitizers
+enable_asan_for_target(vanillapdf.tools)
+enable_ubsan_for_target(vanillapdf.tools)
+enable_tsan_for_target(vanillapdf.tools)
 
 if(WIN32)
 

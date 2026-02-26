@@ -60,6 +60,11 @@ error_type process_buffer(BufferHandle* buffer, int nested) {
         return VANILLAPDF_TEST_ERROR_FAILURE;
     }
 
+    if (size > 0 && data == NULL) {
+        print_text("Buffer has non-zero size but null data pointer\n");
+        return VANILLAPDF_TEST_ERROR_FAILURE;
+    }
+
     print_size = size > 20 ? 10 : size;
     size_converted = size;
 
@@ -70,7 +75,9 @@ error_type process_buffer(BufferHandle* buffer, int nested) {
         return VANILLAPDF_TEST_ERROR_FAILURE;
     }
 
-    memcpy(local_string, data, print_size);
+    if (print_size > 0) {
+        memcpy(local_string, data, print_size);
+    }
 
     print_spaces(nested + 1);
     print_text("Size: %llu\n", size_converted);
