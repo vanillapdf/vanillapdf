@@ -53,11 +53,15 @@ void init_source(j_decompress_ptr cinfo) {
 }
 
 boolean fill_input_buffer(j_decompress_ptr cinfo) {
-    UNUSED(cinfo);
+    // Insert a fake EOI (End of Image) marker when the input is exhausted.
+    // This is the standard libjpeg approach for truncated data (see jdatasrc.c).
+    // Returning FALSE is undefined in non-suspension mode and causes SEGV.
+    static const JOCTET EOI_BUFFER[2] = { 0xFF, JPEG_EOI };
 
-    // No more data available. Returning FALSE signals libjpeg to raise an
-    // error, which our error_exit handler converts to ImageCodecErrorException.
-    return FALSE;
+    cinfo->src->next_input_byte = EOI_BUFFER;
+    cinfo->src->bytes_in_buffer = 2;
+
+    return TRUE;
 }
 
 void skip_input_data(j_decompress_ptr cinfo, long num_bytes) {
