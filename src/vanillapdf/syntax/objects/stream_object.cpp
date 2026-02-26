@@ -190,35 +190,28 @@ BufferPtr StreamObject::GetBodyRaw() const {
 }
 
 BufferPtr StreamObject::GetBody() const {
+    std::unique_lock<std::recursive_mutex> lock(*_access_lock);
 
     if (_body_decoded->IsInitialized()) {
         return _body_decoded;
     }
 
-    // Pre-load raw body without _access_lock to avoid M_stream -> M0 inversion.
-    // See GetBodyRaw() for the lock-ordering rationale.
-    GetBodyRaw();
-
-    ACCESS_LOCK_GUARD(_access_lock);
+    // Release _access_lock before calling GetBodyDecrypted() which may
+    // trigger file I/O via GetBodyRaw(). See GetBodyRaw() for the
+    // lock-ordering rationale (avoids M_stream -> M0 inversion).
+    lock.unlock();
+    auto body_decrypted = GetBodyDecrypted();
+    lock.lock();
 
     if (_body_decoded->IsInitialized()) {
         return _body_decoded;
     }
 
     if (!_header->Contains(constant::Name::Filter)) {
-        auto body = GetBodyDecrypted();
-
-        _body_decoded->assign(body.begin(), body.end());
+        _body_decoded->assign(body_decrypted.begin(), body_decrypted.end());
         _body_decoded->SetInitialized();
-
         return _body_decoded;
     }
-
-    //auto stream = locked_file->GetInputStream();
-    //auto size = _header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-    //auto pos = stream->tellg();
-    //stream->seekg(_raw_data_offset);
-    //SCOPE_GUARD_CAPTURE_VALUES(stream->seekg(pos));
 
     auto filter_obj = _header->Find(constant::Name::Filter);
     bool is_filter_null = ObjectUtils::IsType<NullObjectPtr>(filter_obj);
@@ -226,14 +219,15 @@ BufferPtr StreamObject::GetBody() const {
     bool is_filter_array = ObjectUtils::IsType<ArrayObjectPtr<NameObjectPtr>>(filter_obj);
 
     if (is_filter_null) {
-        return GetBodyDecrypted();
+        _body_decoded->assign(body_decrypted.begin(), body_decrypted.end());
+        _body_decoded->SetInitialized();
+        return _body_decoded;
     }
 
     if (is_filter_name) {
         auto filter_name = _header->FindAs<NameObjectPtr>(constant::Name::Filter);
         if (filter_name == constant::Name::Crypt) {
-            auto body = GetBodyDecrypted();
-            _body_decoded->assign(body.begin(), body.end());
+            _body_decoded->assign(body_decrypted.begin(), body_decrypted.end());
             _body_decoded->SetInitialized();
             return _body_decoded;
         }
@@ -241,14 +235,12 @@ BufferPtr StreamObject::GetBody() const {
         auto filter = FilterBase::GetFilterByName(filter_name);
         if (_header->Contains(constant::Name::DecodeParms)) {
             auto params = _header->FindAs<DictionaryObjectPtr>(constant::Name::DecodeParms);
-            auto body_decrypted = GetBodyDecrypted();
             auto body = filter->Decode(body_decrypted, params, m_attributes);
             _body_decoded->assign(body.begin(), body.end());
             _body_decoded->SetInitialized();
             return _body_decoded;
         }
 
-        auto body_decrypted = GetBodyDecrypted();
         auto body = filter->Decode(body_decrypted, DictionaryObjectPtr(), m_attributes);
         _body_decoded->assign(body.begin(), body.end());
         _body_decoded->SetInitialized();
@@ -265,7 +257,7 @@ BufferPtr StreamObject::GetBody() const {
             assert(filter_array->GetSize() == params->GetSize());
         }
 
-        BufferPtr result = GetBodyDecrypted();
+        BufferPtr result = body_decrypted;
         for (unsigned int i = 0; i < filter_array->GetSize(); ++i) {
             auto current_filter = (*filter_array)[i];
             if (current_filter == constant::Name::Crypt) {
@@ -422,16 +414,17 @@ BufferPtr StreamObject::GetBodyEncoded() const {
 }
 
 BufferPtr StreamObject::GetBodyDecrypted() const {
+    std::unique_lock<std::recursive_mutex> lock(*_access_lock);
 
     if (_body_decrypted->IsInitialized()) {
         return _body_decrypted;
     }
 
-    // Pre-load raw body without _access_lock to avoid M_stream -> M0 inversion.
-    // See GetBodyRaw() for the lock-ordering rationale.
+    // Release _access_lock before GetBodyRaw() which may trigger file I/O.
+    // See GetBodyRaw() for the lock-ordering rationale (avoids M_stream -> M0 inversion).
+    lock.unlock();
     auto body_raw = GetBodyRaw();
-
-    ACCESS_LOCK_GUARD(_access_lock);
+    lock.lock();
 
     if (_body_decrypted->IsInitialized()) {
         return _body_decrypted;
@@ -583,11 +576,14 @@ BufferPtr StreamObject::DecryptData(BufferPtr data, types::big_uint obj_number, 
 }
 
 std::string StreamObject::ToString(void) const {
-    // GetBodyEncoded() may load body from file (acquires M0 internally).
-    // Compute it before _access_lock to avoid M_stream -> M0 inversion.
-    auto encoded = GetBodyEncoded();
+    std::unique_lock<std::recursive_mutex> lock(*_access_lock);
 
-    ACCESS_LOCK_GUARD(_access_lock);
+    // Release _access_lock before GetBodyEncoded() which may trigger file I/O.
+    // See GetBodyRaw() for the lock-ordering rationale (avoids M_stream -> M0 inversion).
+    lock.unlock();
+    auto encoded = GetBodyEncoded();
+    lock.lock();
+
     auto stream = StreamUtils::InputOutputStreamFromMemory();
     stream->Write(_header->ToString());
     stream->Write("stream: ");
@@ -596,11 +592,14 @@ std::string StreamObject::ToString(void) const {
 }
 
 void StreamObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
-    // GetBodyEncoded() may load body from file (acquires M0 internally).
-    // Compute it before _access_lock to avoid M_stream -> M0 inversion.
-    auto encoded = GetBodyEncoded();
+    std::unique_lock<std::recursive_mutex> lock(*_access_lock);
 
-    ACCESS_LOCK_GUARD(_access_lock);
+    // Release _access_lock before GetBodyEncoded() which may trigger file I/O.
+    // See GetBodyRaw() for the lock-ordering rationale (avoids M_stream -> M0 inversion).
+    lock.unlock();
+    auto encoded = GetBodyEncoded();
+    lock.lock();
+
     _header->ToPdfStream(output);
     output << WhiteSpace::LINE_FEED;
     output << "stream";
@@ -621,12 +620,14 @@ bool StreamObject::Equals(ObjectPtr other) const {
 
     auto other_obj = ObjectUtils::ConvertTo<StreamObjectPtr>(other);
 
-    // GetBodyEncoded() may load body from file (acquires M0 internally).
-    // Compute both bodies before _access_lock to avoid M_stream -> M0 inversion.
+    std::unique_lock<std::recursive_mutex> lock(*_access_lock);
+
+    // Release _access_lock before GetBodyEncoded() which may trigger file I/O.
+    // See GetBodyRaw() for the lock-ordering rationale (avoids M_stream -> M0 inversion).
+    lock.unlock();
     auto first_body = GetBodyEncoded();
     auto second_body = other_obj->GetBodyEncoded();
-
-    ACCESS_LOCK_GUARD(_access_lock);
+    lock.lock();
 
     auto first_header = GetHeader();
     auto second_header = other_obj->GetHeader();
