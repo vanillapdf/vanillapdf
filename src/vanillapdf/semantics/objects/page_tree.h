@@ -8,7 +8,6 @@
 #include "semantics/objects/page_object.h"
 
 #include <mutex>
-#include <optional>
 #include <vector>
 
 namespace vanillapdf {
@@ -34,37 +33,18 @@ public:
     void WarmPageCache() const;
 
 private:
-    // Resumable page-tree walker used to build m_page_cache lazily.
-    // Holds a stack of {node, next-kid-index} frames. Calling Next() advances
-    // through the tree in document order and returns the next leaf PageObjectPtr,
-    // or a null pointer once the tree is exhausted.
-    struct PageTreeWalker {
-        struct Frame {
-            PageTreeNodePtr node;
-            size_t index = 0;
-
-            explicit Frame(PageTreeNodePtr n) : node(n) {}
-        };
-        std::vector<Frame> stack;
-
-        explicit PageTreeWalker(PageTreeNodePtr root);
-        bool TryNext(OutputPageObjectPtr& result);
-    };
-
-    // Flat page cache. Extended lazily by GetCachedPage: m_walker is advanced
-    // until m_page_cache.size() >= the requested page_number. Fully drained by
-    // WarmPageCache(). Cleared (together with m_walker) by Insert/Remove/Append
-    // so that structural changes are always reflected on the next access.
-    // GetCachedPage returns PageObjectPtr by value (copy of the intrusive
-    // pointer, ref count bumped), so callers are independent of the vector.
-    // reserve(PageCount()) is called when m_walker is first created to prevent
-    // reallocation during the lazy fill.
+    // Flat cache of page dictionary pointers in document order.
+    // Built in full on first access (by GetCachedPage or WarmPageCache).
+    // Cleared by Insert/Remove/Append so structural changes are reflected
+    // on the next access. GetCachedPage constructs a PageObject on demand
+    // from the cached dictionary pointer.
     mutable std::unique_ptr<std::recursive_mutex> m_cache_lock;
-    mutable std::vector<PageObjectPtr> m_page_cache;
-    mutable std::optional<PageTreeWalker> m_walker;
+    mutable std::vector<syntax::DictionaryObjectPtr> m_page_cache;
 
     PageObjectPtr GetCachedPage(types::size_type page_number) const;
     void InvalidatePageCache();
+    void BuildPageCache() const;
+    void CollectPageDicts(PageTreeNodePtr node) const;
 
     bool FindPageIndexInternal(PageTreeNodePtr node, syntax::DictionaryObjectPtr page_dict, types::size_type& current_index) const;
     void UpdateKidsCount();

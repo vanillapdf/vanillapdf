@@ -22,36 +22,23 @@ types::size_type PageTree::PageCount(void) const {
 }
 
 
-PageTree::PageTreeWalker::PageTreeWalker(PageTreeNodePtr root) {
-    stack.push_back(Frame(root));
+void PageTree::BuildPageCache() const {
+    m_page_cache.reserve(PageCount());
+    CollectPageDicts(make_deferred<PageTreeNode>(_obj));
 }
 
-bool PageTree::PageTreeWalker::TryNext(OutputPageObjectPtr& result) {
-    while (!stack.empty()) {
-        auto kids = stack.back().node->Kids();
-        auto count = kids->GetSize();
-
-        if (stack.back().index >= count) {
-            stack.pop_back();
-            continue;
-        }
-
-        auto kid_index = stack.back().index;
-        stack.back().index += 1;
-
-        auto kid = kids->GetValue(kid_index);
-
+void PageTree::CollectPageDicts(PageTreeNodePtr node) const {
+    auto kids = node->Kids();
+    auto count = kids->GetSize();
+    for (decltype(count) i = 0; i < count; i += 1) {
+        auto kid = kids->GetValue(i);
         if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
-            auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(kid);
-            stack.push_back(Frame(tree_node));
-            continue;
+            CollectPageDicts(ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(kid));
+        } else {
+            auto page = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(kid);
+            m_page_cache.push_back(page->GetObject());
         }
-
-        result = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageObjectPtr>(kid);
-        return true;
     }
-
-    return false;
 }
 
 PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
@@ -61,16 +48,8 @@ PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
 
     ACCESS_LOCK_GUARD(m_cache_lock);
 
-    while (m_page_cache.size() < page_number) {
-        if (!m_walker) {
-            m_page_cache.reserve(PageCount());
-            m_walker.emplace(make_deferred<PageTreeNode>(_obj));
-        }
-
-        OutputPageObjectPtr page_output;
-        if (!m_walker->TryNext(page_output)) break;
-
-        m_page_cache.push_back(*page_output);
+    if (m_page_cache.empty()) {
+        BuildPageCache();
     }
 
     if (page_number > m_page_cache.size()) {
@@ -79,20 +58,14 @@ PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
 
     spdlog::debug("Searching for page {}", page_number);
 
-    return m_page_cache[page_number - 1];
+    return make_deferred<PageObject>(m_page_cache[page_number - 1]);
 }
 
 void PageTree::WarmPageCache() const {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
-    if (!m_walker) {
-        m_page_cache.reserve(PageCount());
-        m_walker.emplace(make_deferred<PageTreeNode>(_obj));
-    }
-
-    OutputPageObjectPtr page_output;
-    while (m_walker->TryNext(page_output)) {
-        m_page_cache.push_back(*page_output);
+    if (m_page_cache.empty()) {
+        BuildPageCache();
     }
 }
 
@@ -100,7 +73,6 @@ void PageTree::InvalidatePageCache() {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
     m_page_cache.clear();
-    m_walker.reset();
 }
 
 
