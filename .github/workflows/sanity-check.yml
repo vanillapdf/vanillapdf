@@ -98,13 +98,11 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # Bootstrap vcpkg on Linux
       - name: Bootstrap vcpkg (Linux)
@@ -135,11 +133,11 @@ jobs:
         build_type: [Release]
 
         config:
-          - name: win.2025-x86
-            preset: windows-x86-msvc-17
+          - name: win.2025-x86-static
+            preset: windows-x86-msvc-17-static
 
-          - name: win.2025-x64
-            preset: windows-x64-msvc-17
+          - name: win.2025-x64-static
+            preset: windows-x64-msvc-17-static
 
     steps:
       - uses: actions/checkout@v6
@@ -150,13 +148,11 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)
@@ -200,13 +196,11 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       - name: Fix JPEG library conflicts (macOS) - TEMPORARY WORKAROUND
         run: |
