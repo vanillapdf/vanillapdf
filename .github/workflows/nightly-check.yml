@@ -212,6 +212,13 @@ jobs:
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
+      - name: Fix JPEG library conflicts (macOS) - TEMPORARY WORKAROUND
+        run: |
+          echo "=== Unlinking conflicting JPEG packages ==="
+          brew unlink jpeg 2>/dev/null || echo "jpeg not linked or not found"
+          brew unlink jpeg-turbo 2>/dev/null || echo "jpeg-turbo not linked or not found"
+          brew unlink libjpeg 2>/dev/null || echo "libjpeg not linked or not found"
+
       - name: Install build tools (macOS)
         run: brew install --quiet autoconf automake autoconf-archive
 
