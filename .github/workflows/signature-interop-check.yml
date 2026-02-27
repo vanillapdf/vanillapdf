@@ -46,7 +46,6 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
-            build/linux-x64-gcc/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-${{ hashFiles('vcpkg.json.in') }}

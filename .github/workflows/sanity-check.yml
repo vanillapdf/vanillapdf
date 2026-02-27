@@ -100,7 +100,6 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
@@ -152,7 +151,6 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
@@ -202,7 +200,6 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}

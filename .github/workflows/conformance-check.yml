@@ -47,7 +47,6 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
-            build/linux-x64-gcc/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
@@ -92,7 +91,6 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
-            build/windows-x64-msvc-17/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-win.2025-x64-windows-x64-msvc-17-${{ hashFiles('vcpkg.json.in') }}
@@ -134,7 +132,6 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
-            build/macos-arm64/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
           key: vcpkg-${{ runner.os }}-osx.15-arm64-macos-arm64-${{ hashFiles('vcpkg.json.in') }}
