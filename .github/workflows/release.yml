@@ -4,6 +4,24 @@ on:
   push:
     tags:
       - 'v*.*.*'
+  pull_request:
+    paths:
+      - '.github/workflows/release.yml'
+      - '.github/workflows/build-nuget.yml'
+      - '.github/workflows/github-release.yml'
+      - '.github/workflows/github-pages.yml'
+      - '.github/workflows/create-vcpkg-pr.yml'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag name to simulate (e.g. v2.2.0)"
+        required: true
+        type: string
+      dry_run:
+        description: "Dry run - validate workflow without publishing"
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -16,14 +34,34 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.parse.outputs.tag }}
+      latest_tag: ${{ steps.parse.outputs.latest_tag }}
       build_suffix: ${{ steps.parse.outputs.build_suffix }}
       prerelease: ${{ steps.parse.outputs.prerelease }}
+      dry_run: ${{ steps.parse.outputs.dry_run }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
       - name: Extract tag name and suffix
         id: parse
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
+          # Determine tag based on event type
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # Derive synthetic tag from cmake/version.cmake
+            MAJOR=$(grep 'VANILLAPDF_VERSION_MAJOR' cmake/version.cmake | grep -o '[0-9]\+')
+            MINOR=$(grep 'VANILLAPDF_VERSION_MINOR' cmake/version.cmake | grep -o '[0-9]\+')
+            PATCH=$(grep 'VANILLAPDF_VERSION_PATCH' cmake/version.cmake | grep -o '[0-9]\+')
+            TAG="v${MAJOR}.${MINOR}.${PATCH}"
+          elif [ -n "${{ inputs.tag }}" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+          fi
+
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
           VERSION="${TAG#v}"
           EXTRA=""
           if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(.*)$ ]]; then
@@ -35,6 +73,26 @@ jobs:
           else
             echo "build_suffix=" >> "$GITHUB_OUTPUT"
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # pull_request and workflow_dispatch are always dry_run; tag push is never dry_run
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "dry_run=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "dry_run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Find the latest real tag for dry-run validation workflows
+          # (synthetic tags from version.cmake don't exist as git refs)
+          LATEST_TAG=$(git tag -l 'v*.*.*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          if [ -n "$LATEST_TAG" ]; then
+            echo "latest_tag=$LATEST_TAG" >> "$GITHUB_OUTPUT"
+            echo "Latest real tag: $LATEST_TAG"
+          else
+            echo "latest_tag=$TAG" >> "$GITHUB_OUTPUT"
+            echo "No real tags found, using synthetic tag: $TAG"
           fi
 
   verify:
@@ -60,7 +118,7 @@ jobs:
 
 
   build-nuget:
-    needs: verify
+    needs: [verify, prepare]
     uses: ./.github/workflows/build-nuget.yml
     with:
       build_suffix: ${{ needs.prepare.outputs.build_suffix }}
@@ -69,10 +127,11 @@ jobs:
   nuget-staging:
     runs-on: ubuntu-latest
     environment: staging
-    needs: build-nuget
+    needs: [build-nuget, prepare]
+    if: needs.prepare.outputs.dry_run == 'false'
     steps:
       - name: Download NuGet packages
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ./nupkgs
       - name: Push to GitHub Packages
@@ -82,20 +141,72 @@ jobs:
             --api-key "${{ secrets.GITHUB_TOKEN }}" \
             --skip-duplicate
 
+  dry-run-pages:
+    needs: [build-nuget, prepare]
+    if: needs.prepare.outputs.dry_run == 'true'
+    uses: ./.github/workflows/github-pages.yml
+    with:
+      deploy: false
+    secrets: inherit
+
+  dry-run-vcpkg:
+    needs: [build-nuget, prepare]
+    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'true'
+    uses: ./.github/workflows/create-vcpkg-pr.yml
+    with:
+      tag: ${{ needs.prepare.outputs.latest_tag }}
+      dry_run: true
+    secrets: inherit
+
+  dry-run-report:
+    runs-on: ubuntu-latest
+    needs: [build-nuget, dry-run-pages, dry-run-vcpkg, prepare]
+    if: always() && needs.prepare.outputs.dry_run == 'true'
+    steps:
+      - name: Dry run summary
+        run: |
+          echo "=== Dry Run Summary ==="
+          echo "Tag: ${{ needs.prepare.outputs.tag }}"
+          echo "Validation tag: ${{ needs.prepare.outputs.latest_tag }}"
+          echo "Build suffix: ${{ needs.prepare.outputs.build_suffix }}"
+          echo "Prerelease: ${{ needs.prepare.outputs.prerelease }}"
+          echo ""
+          echo "NuGet build: ${{ needs.build-nuget.result }}"
+          echo "GitHub Pages build: ${{ needs.dry-run-pages.result }}"
+          if [ "${{ needs.prepare.outputs.prerelease }}" = "false" ]; then
+            echo "vcpkg PR (dry run): ${{ needs.dry-run-vcpkg.result }}"
+          else
+            echo "vcpkg PR: skipped (prerelease)"
+          fi
+          echo ""
+          FAILED=false
+          if [ "${{ needs.build-nuget.result }}" != "success" ]; then FAILED=true; fi
+          if [ "${{ needs.dry-run-pages.result }}" != "success" ]; then FAILED=true; fi
+          if [ "${{ needs.prepare.outputs.prerelease }}" = "false" ]; then
+            if [ "${{ needs.dry-run-vcpkg.result }}" != "success" ]; then FAILED=true; fi
+          fi
+          if [ "$FAILED" = "true" ]; then
+            echo "::error::One or more dry-run validations failed"
+            exit 1
+          fi
+          echo "=== All dry-run validations passed ==="
+
   production-gate:
     runs-on: ubuntu-latest
     needs: nuget-staging
+    if: needs.prepare.outputs.dry_run == 'false'
     environment: production
     steps:
       - run: echo "Awaiting production approval"
 
   publish-nuget:
     runs-on: ubuntu-latest
-    needs: production-gate
+    needs: [production-gate, prepare]
+    if: needs.prepare.outputs.dry_run == 'false'
     environment: production
     steps:
       - name: Download NuGet packages
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ./nupkgs
       - name: Push to NuGet.org
@@ -106,23 +217,27 @@ jobs:
             --skip-duplicate
 
   github-pages:
-    needs: production-gate
+    needs: [production-gate, prepare]
+    # Only deploy documentation for official releases that are the latest version
+    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false' && needs.prepare.outputs.tag == needs.prepare.outputs.latest_tag
     uses: ./.github/workflows/github-pages.yml
     with:
       deploy: true
     secrets: inherit
+
   github-release:
     needs: [production-gate, prepare]
+    if: needs.prepare.outputs.dry_run == 'false'
     uses: ./.github/workflows/github-release.yml
     with:
       tag: ${{ needs.prepare.outputs.tag }}
-      prerelease: ${{ needs.prepare.outputs.prerelease }}
+      prerelease: ${{ fromJSON(needs.prepare.outputs.prerelease) }}
     secrets: inherit
 
   vcpkg-pr:
     needs: [production-gate, prepare]
-    # Only create vcpkg PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.prepare.outputs.prerelease == 'false'
+    # Only create vcpkg PR for official releases that are the latest version
+    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false' && needs.prepare.outputs.tag == needs.prepare.outputs.latest_tag
     uses: ./.github/workflows/create-vcpkg-pr.yml
     with:
       tag: ${{ needs.prepare.outputs.tag }}

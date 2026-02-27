@@ -53,14 +53,14 @@ jobs:
         run: sudo apt-get install -y lcov gcovr
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/linux-x64-gcc/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/buildtrees
             external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-coverage-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-coverage-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-coverage-
             vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-
