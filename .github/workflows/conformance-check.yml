@@ -78,7 +78,7 @@ jobs:
 
 
   windows:
-    name: win.2025-x64
+    name: win.2025-x64-static
     runs-on: windows-2025
 
     steps:
@@ -86,16 +86,16 @@ jobs:
         with:
           submodules: recursive
 
-      # Share vcpkg cache with sanity-check and nightly-check (same config)
+      # Share vcpkg cache with sanity-check and build-nuget (same config)
       - name: Cache vcpkg
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-win.2025-x64-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-win.2025-x64-static-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-win.2025-x64-
+            vcpkg-${{ runner.os }}-win.2025-x64-static-
 
       - name: Install qpdf
         run: choco install qpdf -y
@@ -104,18 +104,16 @@ jobs:
         run: ${{ github.workspace }}\external\vcpkg\bootstrap-vcpkg.bat
 
       - name: Configure
-        run: cmake --preset windows-x64-msvc-17 -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+        run: cmake --preset windows-x64-msvc-17-static -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
 
       - name: Build vanillapdf.tools
-        run: cmake --build --preset windows-x64-msvc-17 --config Release --target vanillapdf.tools
+        run: cmake --build --preset windows-x64-msvc-17-static --config Release --target vanillapdf.tools
 
       - name: Install vanillapdf.tools
-        run: cmake --install build/windows-x64-msvc-17 --prefix install --config Release
+        run: cmake --install build/windows-x64-msvc-17-static --prefix install --config Release
 
       - name: Run conformance check
-        run: |
-          $env:PATH = "build\windows-x64-msvc-17\vcpkg_installed\x64-windows\bin;$env:PATH"
-          python scripts/conformance_check.py --tools-binary install/bin/vanillapdf.tools.exe --source-dir . --config scripts/conformance_check.cfg --verbose
+        run: python scripts/conformance_check.py --tools-binary install/bin/vanillapdf.tools.exe --source-dir . --config scripts/conformance_check.cfg --verbose
 
 
   macos:

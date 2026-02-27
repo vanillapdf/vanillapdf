@@ -152,17 +152,17 @@ jobs:
 
   build-windows:
     name: ${{ matrix.config.name }}
-    runs-on: windows-latest
+    runs-on: windows-2025
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - name: win-x86
+          - name: win.2025-x86-static
             preset: windows-x86-msvc-17-static
             build_type: Release
 
-          - name: win-x64
+          - name: win.2025-x64-static
             preset: windows-x64-msvc-17-static
             build_type: Release
 
