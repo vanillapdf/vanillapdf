@@ -1,0 +1,202 @@
+name: Create vcpkg PR
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+      dry_run:
+        required: false
+        type: boolean
+        default: false
+
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag name (e.g. v2.1.0)"
+        required: true
+        type: string
+      dry_run:
+        description: "Dry run - prepare changes but don't commit or create PR"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  prepare-vcpkg-changes:
+    name: Prepare vcpkg update changes
+    runs-on: ubuntu-latest
+    outputs:
+      branch-name: update-vanillapdf-${{ inputs.tag }}
+      pr-url: ${{ steps.pr-info.outputs.pr-url }}
+    steps:
+      - name: Checkout vanillapdf repo
+        uses: actions/checkout@v6
+        with:
+          path: vanillapdf
+          # Dry-run: use current commit (has latest port files); real run: use the tag
+          ref: ${{ inputs.dry_run && github.sha || inputs.tag }}
+
+      - name: Setup Git & GitHub CLI
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Clone vcpkg fork
+        run: |
+          git clone https://github.com/vanillapdf/vcpkg.git
+          cd vcpkg
+          git remote add upstream https://github.com/microsoft/vcpkg.git
+          git fetch upstream
+          git checkout -b update-vanillapdf-${{ inputs.tag }} upstream/master
+
+      - name: Calculate SHA512 for source archive
+        id: sha512
+        run: |
+          VERSION="${{ inputs.tag }}"
+          ARCHIVE_URL="https://github.com/vanillapdf/vanillapdf/archive/refs/tags/${VERSION}.tar.gz"
+
+          echo "Downloading archive from: ${ARCHIVE_URL}"
+          curl -sL "${ARCHIVE_URL}" -o source.tar.gz
+
+          SHA512=$(sha512sum source.tar.gz | cut -d' ' -f1)
+          echo "SHA512: ${SHA512}"
+          echo "sha512=${SHA512}" >> "$GITHUB_OUTPUT"
+
+          rm source.tar.gz
+
+      - name: Sync port files and update version
+        run: |
+          VERSION="${{ inputs.tag }}"
+          VERSION_NO_V="${VERSION#v}"
+          SHA512="${{ steps.sha512.outputs.sha512 }}"
+
+          # Copy our port files to vcpkg fork (syncs portfile.cmake, usage, vcpkg.json)
+          cp -r vanillapdf/ports/vanillapdf/* vcpkg/ports/vanillapdf/
+
+          # Update the version in vcpkg.json
+          cd vcpkg
+          sed -i "s/\"version\": \".*\"/\"version\": \"${VERSION_NO_V}\"/" ports/vanillapdf/vcpkg.json
+
+          # Remove port-version field if present (required for new versions)
+          sed -i '/"port-version":/d' ports/vanillapdf/vcpkg.json
+
+          # Update SHA512 in portfile.cmake
+          sed -i "s/SHA512 [a-f0-9]\{128\}/SHA512 ${SHA512}/" ports/vanillapdf/portfile.cmake
+
+          # Bootstrap vcpkg if needed
+          if [[ ! -f "./vcpkg" ]]; then
+            ./bootstrap-vcpkg.sh
+          fi
+
+          # Format the manifest to comply with vcpkg standards
+          ./vcpkg format-manifest ports/vanillapdf/vcpkg.json
+
+          # Add the new version to the database
+          ./vcpkg x-add-version vanillapdf --overwrite-version
+
+      - name: Show prepared changes (dry run)
+        if: ${{ inputs.dry_run }}
+        run: |
+          cd vcpkg
+          echo "=== Dry run mode - showing prepared changes ==="
+          echo ""
+          echo "=== Port files (ports/vanillapdf/) ==="
+          cat ports/vanillapdf/vcpkg.json
+          echo ""
+          echo "=== Git status ==="
+          git status
+          echo ""
+          echo "=== Git diff ==="
+          git diff
+          echo ""
+          echo "=== Staged changes ==="
+          git add ports/vanillapdf/ versions/v-/vanillapdf.json versions/baseline.json
+          git diff --cached --stat
+          echo ""
+          echo "=== Would create branch: update-vanillapdf-${{ inputs.tag }} ==="
+          echo "=== Would push to: vanillapdf/vcpkg ==="
+          echo "=== Dry run complete - no changes committed ==="
+
+      - name: Set authenticated origin for push
+        if: ${{ !inputs.dry_run }}
+        run: |
+          cd vcpkg
+          git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/vanillapdf/vcpkg.git"
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+
+      - name: Commit and push changes to fork
+        if: ${{ !inputs.dry_run }}
+        run: |
+          cd vcpkg
+          git add ports/vanillapdf/ versions/v-/vanillapdf.json versions/baseline.json
+          git commit -m "[vanillapdf] update to ${{ inputs.tag }}"
+          git push origin update-vanillapdf-${{ inputs.tag }}
+
+      - name: Generate PR info
+        id: pr-info
+        run: |
+          echo "pr-url=https://github.com/vanillapdf/vcpkg/compare/master...update-vanillapdf-${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          echo "Changes prepared and pushed to vanillapdf/vcpkg"
+          echo "Review the changes at: https://github.com/vanillapdf/vcpkg/compare/master...update-vanillapdf-${{ inputs.tag }}"
+
+  create-official-pr:
+    name: Create PR to official vcpkg repo
+    runs-on: ubuntu-latest
+    needs: prepare-vcpkg-changes
+    if: ${{ !inputs.dry_run }}
+    environment: production
+    steps:
+      - name: Setup Git & GitHub CLI
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Clone vcpkg fork
+        run: |
+          gh repo clone vanillapdf/vcpkg
+          cd vcpkg
+          git fetch origin
+          git checkout ${{ needs.prepare-vcpkg-changes.outputs.branch-name }}
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+
+      - name: Create draft pull request to official repo
+        run: |
+          cd vcpkg
+          VERSION="${{ inputs.tag }}"
+          VERSION_NO_V="${VERSION#v}"
+
+          # Use vcpkg's PR template checklist
+          BODY="- [x] Changes comply with the [maintainer guide](https://learn.microsoft.com/vcpkg/contributing/maintainer-guide).
+          - [x] SHA512s are updated for each updated download.
+          - [x] The versioning scheme in vcpkg.json matches what upstream says.
+          - [x] The license declaration in vcpkg.json matches what upstream says.
+          - [x] The \"copyright\" file matches what upstream says.
+          - [x] The source code comes from an authoritative source.
+          - [x] The generated \"usage text\" is accurate.
+          - [x] The version database is fixed by rerunning \`./vcpkg x-add-version --all\` and committing the result.
+          - [x] Only one version is added to each modified port's versions file.
+
+          ---
+
+          **Notes:**
+          Update vanillapdf port to version ${VERSION_NO_V}.
+
+          Changes prepared by vanillapdf release automation.
+          Review branch: ${{ needs.prepare-vcpkg-changes.outputs.pr-url }}"
+
+          gh pr create \
+            --repo microsoft/vcpkg \
+            --title "[vanillapdf] update to ${{ inputs.tag }}" \
+            --body "$BODY" \
+            --base master \
+            --head vanillapdf:${{ needs.prepare-vcpkg-changes.outputs.branch-name }} \
+            --draft
+        env:
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}

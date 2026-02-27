@@ -7,37 +7,59 @@ on:
         required: false
         type: string
         default: ""
+      patch_override:
+        required: false
+        type: string
+        default: ""
+      build_override:
+        required: false
+        type: string
+        default: ""
 
   # Allow triggering manually from the Actions tab
   workflow_dispatch:
     inputs:
       build_suffix:
-        description: "Optional build suffix for version"
+        description: "Optional build suffix for version (e.g., -nightly.main)"
+        required: false
+        default: ""
+      patch_override:
+        description: "Optional patch version override (e.g., 999 for nightly builds)"
+        required: false
+        default: ""
+      build_override:
+        description: "Optional build version override (e.g., 20251228 for nightly builds)"
         required: false
         default: ""
 
   # Run package build on code changes
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     paths:
       - '.github/workflows/build-nuget.yml'
       - 'nuget/**'
       - 'cmake/**'
+      - 'vcpkg.json.in'
 
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     paths:
       - '.github/workflows/build-nuget.yml'
       - 'nuget/**'
       - 'cmake/**'
+      - 'vcpkg.json.in'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
-  contents: read  # Needed for future GitHub release or content access
-  packages: read  # Needed for publishing NuGet packages within organization
+  contents: read
+  packages: read
 
 env:
   VCPKG_DISABLE_METRICS: 1
-  VCPKG_ROOT: external/vcpkg # vcpkg is by default sending build metrics, we do not need it here
+  VCPKG_ROOT: external/vcpkg
   VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 jobs:
@@ -69,10 +91,10 @@ jobs:
       options: --platform=${{ matrix.config.platform }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
 
@@ -81,24 +103,34 @@ jobs:
         run: dnf -y install libicu
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
-      # Bootstrap vcpkg on Linux
       - name: Bootstrap vcpkg (Linux)
         run: ./external/vcpkg/bootstrap-vcpkg.sh
         shell: bash
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: |
+          CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}"
+          if [ -n "${{ inputs.patch_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_PATCH_OVERRIDE=${{ inputs.patch_override }}"
+          fi
+          if [ -n "${{ inputs.build_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_OVERRIDE=${{ inputs.build_override }}"
+          fi
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
+          cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -116,7 +148,7 @@ jobs:
         run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
           path: '*.nupkg'
@@ -139,31 +171,42 @@ jobs:
             build_type: Release
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
-      # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        shell: bash
+        run: |
+          CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}"
+          if [ -n "${{ inputs.patch_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_PATCH_OVERRIDE=${{ inputs.patch_override }}"
+          fi
+          if [ -n "${{ inputs.build_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_OVERRIDE=${{ inputs.build_override }}"
+          fi
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
+          cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type }}
@@ -181,7 +224,7 @@ jobs:
         run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
           path: '*.nupkg'
@@ -196,7 +239,7 @@ jobs:
       matrix:
         config:
           - name: osx-x64
-            runner: macos-13
+            runner: macos-15-intel
             preset: macos-x64
             build_type: Release
 
@@ -206,34 +249,49 @@ jobs:
             build_type: Release
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
-      # dotnet is available on macOS runners by default
+      - name: Fix JPEG library conflicts (macOS) - TEMPORARY WORKAROUND
+        run: |
+          echo "=== Unlinking conflicting JPEG packages ==="
+          brew unlink jpeg 2>/dev/null || echo "jpeg not linked or not found"
+          brew unlink jpeg-turbo 2>/dev/null || echo "jpeg-turbo not linked or not found"
+          brew unlink libjpeg 2>/dev/null || echo "libjpeg not linked or not found"
 
-      # Bootstrap vcpkg on macOS
       - name: Bootstrap vcpkg (macOS)
         run: ${{ github.workspace }}/external/vcpkg/bootstrap-vcpkg.sh
         shell: bash
 
       - name: Configure ${{ matrix.config.name }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        run: |
+          CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}"
+          if [ -n "${{ inputs.patch_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_PATCH_OVERRIDE=${{ inputs.patch_override }}"
+          fi
+          if [ -n "${{ inputs.build_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_OVERRIDE=${{ inputs.build_override }}"
+          fi
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
+          cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset ${{ matrix.config.preset }}
@@ -251,14 +309,14 @@ jobs:
         run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
           path: '*.nupkg'
 
 
   build-vanillapdf-core:
-    name: vanillapdf core - ${{ matrix.config.name }}
+    name: vanillapdf core
     runs-on: ${{ matrix.config.os }}
 
     needs:
@@ -274,35 +332,46 @@ jobs:
           - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17", build_type: Release }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
 
       - name: Cache vcpkg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json', 'cmake/overlays/*.cmake') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-
 
-      # Bootstrap vcpkg on Windows
       - name: Bootstrap vcpkg (Windows)
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Configure
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DVANILLAPDF_VERSION_BUILD_SUFFIX="${{ inputs.build_suffix }}"
+        shell: bash
+        run: |
+          CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}"
+          if [ -n "${{ inputs.patch_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_PATCH_OVERRIDE=${{ inputs.patch_override }}"
+          fi
+          if [ -n "${{ inputs.build_override }}" ]; then
+            CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_VERSION_BUILD_OVERRIDE=${{ inputs.build_override }}"
+          fi
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
+          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
+          cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
       - name: Download runtime packages
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: vanillapdf.runtime.*
           path: nuget/local-packages
@@ -315,7 +384,7 @@ jobs:
         run: dotnet pack nuget/vanillapdf.csproj --no-build --output .
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: vanillapdf${{ inputs.build_suffix }}
           path: '*.nupkg'

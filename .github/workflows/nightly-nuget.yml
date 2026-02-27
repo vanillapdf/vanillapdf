@@ -8,30 +8,67 @@ on:
   # Run workflow on any push into main branch
   # only there was a change in the workflow file
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     paths:
       - '.github/workflows/nightly-nuget.yml'
+      - 'vcpkg.json.in'
 
   # Run workflow when there is a pull request towards main branch
   # only there was a change in the workflow file
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     paths:
       - '.github/workflows/nightly-nuget.yml'
+      - 'vcpkg.json.in'
 
   schedule:
     - cron: '0 3 * * *'  # Every day at 03:00 UTC
 
 permissions:
-  contents: write  # Needed for future GitHub release or content access
-  packages: write  # Needed for publishing NuGet packages within organization
+  contents: write
+  packages: write
 
 jobs:
 
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check.outputs.has_changes }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check for commits in the last 24 hours
+        id: check
+        run: |
+          # For non-scheduled runs, always build
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "Non-scheduled run, proceeding with build"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Check for commits in the last 24 hours
+          COMMIT_COUNT=$(git rev-list --count --since="24 hours ago" HEAD)
+          echo "Commits in the last 24 hours: ${COMMIT_COUNT}"
+
+          if [ "$COMMIT_COUNT" -eq 0 ]; then
+            echo "No commits in the last 24 hours, skipping build"
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Found ${COMMIT_COUNT} commits, proceeding with build"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
   prepare-suffix:
+    needs: check-changes
+    if: needs.check-changes.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
     outputs:
       nightly_suffix: ${{ steps.set-suffix.outputs.nightly_suffix }}
+      build_date: ${{ steps.set-suffix.outputs.build_date }}
 
     steps:
       - name: Set nightly version suffix
@@ -39,16 +76,23 @@ jobs:
         run: |
           # Prefer GITHUB_HEAD_REF (for PRs or workflow_dispatch), fallback to ref name
           BRANCH_NAME="${GITHUB_HEAD_REF:-${GITHUB_REF##*/}}"
-          # Clean it up for suffix use (remove slashes, lowercase)
-          CLEAN_NAME=$(echo "$BRANCH_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+          # Lowercase, replace any non [0-9a-z] with nothing, to create clean identifier
+          CLEAN_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^0-9a-z]+//g')
+          # Fallback in the unlikely case the cleaned name is empty
+          if [ -z "$CLEAN_NAME" ]; then CLEAN_NAME="branch"; fi
           DATE=$(date +'%Y%m%d')
-          echo "nightly_suffix=-nightly-${CLEAN_NAME}-${DATE}" >> "$GITHUB_OUTPUT"
+          # Format: -nightly.branch (e.g., -nightly.main), date goes to build version
+          echo "nightly_suffix=-nightly.${CLEAN_NAME}" >> "$GITHUB_OUTPUT"
+          echo "build_date=${DATE}" >> "$GITHUB_OUTPUT"
 
   build-nuget:
-    needs: prepare-suffix
+    needs: [check-changes, prepare-suffix]
+    if: needs.check-changes.outputs.has_changes == 'true'
     uses: ./.github/workflows/build-nuget.yml
     with:
       build_suffix: ${{ needs.prepare-suffix.outputs.nightly_suffix }}
+      patch_override: "999"
+      build_override: ${{ needs.prepare-suffix.outputs.build_date }}
 
   push-nuget-staging:
     name: Push NuGet Packages
@@ -56,10 +100,11 @@ jobs:
     environment:
       name: staging
 
-    needs: build-nuget
+    needs: [check-changes, build-nuget]
+    if: needs.check-changes.outputs.has_changes == 'true'
     steps:
       - name: Download all NuGet artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: ./nupkgs
 
