@@ -239,7 +239,7 @@ jobs:
       matrix:
         config:
           - name: osx-x64
-            runner: macos-13
+            runner: macos-15-intel
             preset: macos-x64
             build_type: Release
 
