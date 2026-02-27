@@ -48,9 +48,9 @@ jobs:
           path: |
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-ubuntu.24.04-x64-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-
+            vcpkg-${{ runner.os }}-ubuntu.24.04-x64-
 
       - name: Install pdfsig
         run: apt-get update && apt-get install -y poppler-utils libnss3-tools
