@@ -40,15 +40,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
       - name: Install tools
         run: sudo apt-get install -y lcov gcovr
 
+      - name: Cache vcpkg
+        uses: actions/cache@v5
+        with:
+          path: |
+            build/linux-x64-gcc/vcpkg_installed
+            external/vcpkg/downloads
+            external/vcpkg/buildtrees
+            external/vcpkg/packages
+          key: vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-coverage-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-coverage-
+            vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-
+            vcpkg-${{ runner.os }}-ubuntu-latest-
+
+      - name: Bootstrap vcpkg
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
       - name: Configure CMake with coverage
-        run: cmake --preset linux-x64-gcc -DVANILLAPDF_ENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug
+        run: cmake --preset linux-x64-gcc -DVANILLAPDF_ENABLE_COVERAGE=ON -DVANILLAPDF_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
 
       - name: Build ${{ matrix.config.name }}
         run: cmake --build --preset linux-x64-gcc
