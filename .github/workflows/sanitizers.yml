@@ -46,15 +46,11 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
-            build/${{ env.BUILD_PRESET }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-
-            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-
+            vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -101,15 +97,11 @@ jobs:
         uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
-            build/${{ env.BUILD_PRESET }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-${{ env.BUILD_PRESET }}-sanitizers-
-            vcpkg-${{ runner.os }}-${{ env.RUNNER_IMAGE }}-
+            vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh

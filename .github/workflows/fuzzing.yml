@@ -31,7 +31,7 @@ env:
 
 jobs:
   fuzz:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: fuzz (${{ matrix.name }})
     strategy:
       fail-fast: false
@@ -75,15 +75,11 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
-            build/${{ env.BUILD_PRESET }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-fuzzing-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-ubuntu-24.04-x64-clang-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-ubuntu-latest-${{ env.BUILD_PRESET }}-fuzzing-
-            vcpkg-${{ runner.os }}-ubuntu-latest-
+            vcpkg-${{ runner.os }}-ubuntu-24.04-x64-clang-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh

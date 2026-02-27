@@ -44,7 +44,7 @@ jobs:
     #   - https://gh.io/supported-runners-and-hardware-resources
     #   - https://gh.io/using-larger-runners (GitHub.com only)
     # Consider using larger runners or machines with greater resources for possible analysis time improvements.
-    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-24.04' }}
     permissions:
       # required for all workflows
       security-events: write
@@ -84,14 +84,11 @@ jobs:
       uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
       with:
         path: |
-          build/**/vcpkg_installed
           external/vcpkg/downloads
-          external/vcpkg/buildtrees
-          external/vcpkg/packages
           external/vcpkg/bincache
-        key: codeql-vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json.in') }}
+        key: vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
         restore-keys: |
-          codeql-vcpkg-${{ runner.os }}-
+          vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-
 
     - name: Bootstrap vcpkg
       run: ./external/vcpkg/bootstrap-vcpkg.sh

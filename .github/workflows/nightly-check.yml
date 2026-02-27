@@ -161,19 +161,9 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Cache vcpkg
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
-        with:
-          path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-            external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
+      # Note: vcpkg caching disabled for Linux weekly scan to reduce cache storage usage.
+      # Different distros use different GCC versions, producing distinct ABI hashes that
+      # cannot share a cache entry. Caching all distros separately would exceed budget.
 
       - name: Bootstrap vcpkg (Linux)
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -263,19 +253,8 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Cache vcpkg
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
-        with:
-          path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-            external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
+      # Note: vcpkg caching disabled for macOS weekly scan to reduce cache storage usage.
+      # macOS 14 and 15 have different compiler versions, so caches cannot be shared.
 
       - name: Install build tools (macOS)
         run: brew install --quiet autoconf automake autoconf-archive

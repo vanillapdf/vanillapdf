@@ -33,13 +33,17 @@ on:
 
 permissions: {}
 
+env:
+  VCPKG_DISABLE_METRICS: 1
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   coverage:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read        # Download the repository source code
       statuses: write       # Required for Codecov to post coverage status
@@ -57,15 +61,11 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
-            build/linux-x64-gcc/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-coverage-${{ hashFiles('vcpkg.json.in') }}
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-coverage-
-            vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-
-            vcpkg-${{ runner.os }}-ubuntu-latest-
+            vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh

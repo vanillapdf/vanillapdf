@@ -26,6 +26,7 @@ permissions:
 env:
   VCPKG_ROOT: external/vcpkg
   VCPKG_DISABLE_METRICS: 1
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 jobs:
 
@@ -45,13 +46,11 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
         with:
           path: |
-            build/linux-x64-gcc/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-ubuntu.24.04-x64-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-ubuntu.24.04-x64-linux-x64-gcc-
+            vcpkg-${{ runner.os }}-ubuntu.24.04-x64-
 
       - name: Install pdfsig
         run: apt-get update && apt-get install -y poppler-utils libnss3-tools
