@@ -49,10 +49,10 @@ jobs:
         run: |
           # Determine tag based on event type
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            # Derive synthetic tag from cmake/version.cmake
-            MAJOR=$(grep 'VANILLAPDF_VERSION_MAJOR' cmake/version.cmake | grep -o '[0-9]\+')
-            MINOR=$(grep 'VANILLAPDF_VERSION_MINOR' cmake/version.cmake | grep -o '[0-9]\+')
-            PATCH=$(grep 'VANILLAPDF_VERSION_PATCH' cmake/version.cmake | grep -o '[0-9]\+')
+            # Derive synthetic tag from CMakeLists.txt (version source of truth on 2.1)
+            MAJOR=$(grep 'VANILLAPDF_VERSION_MAJOR' CMakeLists.txt | grep -o '[0-9]\+')
+            MINOR=$(grep 'VANILLAPDF_VERSION_MINOR' CMakeLists.txt | grep -o '[0-9]\+')
+            PATCH=$(grep 'VANILLAPDF_VERSION_PATCH' CMakeLists.txt | grep -o '[0-9]\+')
             TAG="v${MAJOR}.${MINOR}.${PATCH}"
           elif [ -n "${{ inputs.tag }}" ]; then
             TAG="${{ inputs.tag }}"
@@ -109,10 +109,10 @@ jobs:
           MAJOR=$(echo "$VERSION" | cut -d. -f1)
           MINOR=$(echo "$VERSION" | cut -d. -f2)
           PATCH=$(echo "$VERSION" | cut -d. -f3 | cut -d- -f1)
-          # cmake/version.cmake is the source of truth - vcpkg.json is generated from it
-          grep -q "set(VANILLAPDF_VERSION_MAJOR ${MAJOR})" cmake/version.cmake || { echo "Version major mismatch"; exit 1; }
-          grep -q "set(VANILLAPDF_VERSION_MINOR ${MINOR})" cmake/version.cmake || { echo "Version minor mismatch"; exit 1; }
-          grep -q "set(VANILLAPDF_VERSION_PATCH ${PATCH})" cmake/version.cmake || { echo "Version patch mismatch"; exit 1; }
+          # CMakeLists.txt is the version source of truth on release/2.1
+          grep -q "set(VANILLAPDF_VERSION_MAJOR ${MAJOR})" CMakeLists.txt || { echo "Version major mismatch"; exit 1; }
+          grep -q "set(VANILLAPDF_VERSION_MINOR ${MINOR})" CMakeLists.txt || { echo "Version minor mismatch"; exit 1; }
+          grep -q "set(VANILLAPDF_VERSION_PATCH ${PATCH})" CMakeLists.txt || { echo "Version patch mismatch"; exit 1; }
           # Note: ports/vanillapdf/vcpkg.json is updated after the release via scripts/update_port.py
           # (requires SHA512 of the release tarball which is only available after tag push)
 
