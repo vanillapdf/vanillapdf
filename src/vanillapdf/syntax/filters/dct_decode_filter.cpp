@@ -48,42 +48,6 @@ void output_message(j_common_ptr cinfo) {
     spdlog::warn("JPEG decompression reported message: {}", buffer);
 }
 
-void init_source(j_decompress_ptr cinfo) {
-    UNUSED(cinfo);
-}
-
-boolean fill_input_buffer(j_decompress_ptr cinfo) {
-    UNUSED(cinfo);
-
-    assert(!"This method is not handled");
-    spdlog::error("JPEG decompression failure. Please report this issue");
-
-    return TRUE;
-}
-
-void skip_input_data(j_decompress_ptr cinfo, long num_bytes) {
-
-    if (cinfo == nullptr) {
-        throw ImageCodecErrorException("Invalid jpeg pointer");
-    }
-
-    if (cinfo->src == nullptr) {
-        throw ImageCodecErrorException("Missing jpeg source manager");
-    }
-
-    cinfo->src->next_input_byte += num_bytes;
-    cinfo->src->bytes_in_buffer -= num_bytes;
-}
-
-void term_source(j_decompress_ptr cinfo) {
-    UNUSED(cinfo);
-}
-
-boolean resync_to_restart(j_decompress_ptr cinfo, int desired) {
-    spdlog::info("JPEG decompression resync restart, desired: {}", desired);
-    return jpeg_resync_to_restart(cinfo, desired);
-}
-
 void init_destination(j_compress_ptr cinfo) {
 
     if (cinfo == nullptr) {
@@ -341,22 +305,12 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
     SCOPE_GUARD([&jpeg]() { jpeg_destroy_decompress(&jpeg); });
 
-    jpeg.src = static_cast<jpeg_source_mgr*>(
-        (jpeg.mem->alloc_small)
-        (reinterpret_cast<j_common_ptr>(&jpeg), JPOOL_PERMANENT, sizeof(jpeg_source_mgr))
-        );
-
-    jpeg.src->init_source = init_source;
-    jpeg.src->fill_input_buffer = fill_input_buffer;
-    jpeg.src->skip_input_data = skip_input_data;
-    jpeg.src->resync_to_restart = resync_to_restart;
-    jpeg.src->term_source = term_source;
-
     size_t length_converted = ValueConvertUtils::SafeConvert<size_t>(length);
     BufferPtr input = src->Read(length_converted);
 
-    jpeg.src->next_input_byte = reinterpret_cast<uint8_t *>(input->data());
-    jpeg.src->bytes_in_buffer = length_converted;
+    jpeg_mem_src(&jpeg,
+        reinterpret_cast<const unsigned char*>(input->data()),
+        static_cast<unsigned long>(length_converted));
 
     int header = jpeg_read_header(&jpeg, TRUE);
     if (header != JPEG_HEADER_OK) {
