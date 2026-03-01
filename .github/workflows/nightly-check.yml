@@ -7,17 +7,17 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-  # Run workflow on any push into main branch
+  # Run workflow on any push into main or release branches
   # only there was a change in the workflow file
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     paths:
       - '.github/workflows/nightly-check.yml'
 
-  # Run workflow when there is a pull request towards main branch
+  # Run workflow when there is a pull request towards main or release branches
   # only there was a change in the workflow file
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     paths:
       - '.github/workflows/nightly-check.yml'
 
