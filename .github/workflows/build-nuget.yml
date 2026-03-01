@@ -72,14 +72,14 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - name: linux-x64
+          - name: rocky.9-x64
             os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
-          - name: linux-arm64
+          - name: rocky.9-arm64
             os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
@@ -106,14 +106,10 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # Bootstrap vcpkg on Linux
@@ -159,17 +155,17 @@ jobs:
 
   build-windows:
     name: ${{ matrix.config.name }}
-    runs-on: windows-latest
+    runs-on: windows-2025
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - name: win-x86
+          - name: win.2025-x86-static
             preset: windows-x86-msvc-17-static
             build_type: Release
 
-          - name: win-x64
+          - name: win.2025-x64-static
             preset: windows-x64-msvc-17-static
             build_type: Release
 
@@ -185,14 +181,10 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # Bootstrap vcpkg on Windows
@@ -249,7 +241,7 @@ jobs:
             preset: macos-x64
             build_type: Release
 
-          - name: osx-arm64
+          - name: osx.15-arm64
             runner: macos-15
             preset: macos-arm64
             build_type: Release
@@ -266,14 +258,10 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # dotnet is available on macOS runners by default

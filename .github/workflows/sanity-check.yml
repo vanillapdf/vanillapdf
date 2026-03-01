@@ -46,6 +46,7 @@ concurrency:
 env:
   VCPKG_ROOT: external/vcpkg
   VCPKG_DISABLE_METRICS: 1 # vcpkg is by default sending build metrics, we do not need it here
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -99,13 +100,10 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # Bootstrap vcpkg on Linux
@@ -137,11 +135,11 @@ jobs:
         build_type: [Release]
 
         config:
-          - name: win.2025-x86
-            preset: windows-x86-msvc-17
+          - name: win.2025-x86-static
+            preset: windows-x86-msvc-17-static
 
-          - name: win.2025-x64
-            preset: windows-x64-msvc-17
+          - name: win.2025-x64-static
+            preset: windows-x64-msvc-17-static
 
     steps:
       - uses: actions/checkout@v6
@@ -152,13 +150,10 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # Bootstrap vcpkg on Windows
@@ -203,13 +198,10 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       - name: Install build tools (macOS)
