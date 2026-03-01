@@ -49,6 +49,28 @@
             }
         },
         {
+            "name": "windows-x86-msvc-17-static",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "Win32",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x86-windows-static",
+                "PLATFORM_IDENTIFIER": "win-x86",
+                "VANILLAPDF_USE_STATIC_CRT": "ON"
+            }
+        },
+        {
+            "name": "windows-x64-msvc-17-static",
+            "inherits": "default",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+                "PLATFORM_IDENTIFIER": "win-x64",
+                "VANILLAPDF_USE_STATIC_CRT": "ON"
+            }
+        },
+        {
             "name": "windows-x86-ninja",
             "inherits": "default",
             "generator": "Ninja",
@@ -89,6 +111,14 @@
             "configurePreset": "windows-x64-msvc-17"
         },
         {
+            "name": "windows-x86-msvc-17-static",
+            "configurePreset": "windows-x86-msvc-17-static"
+        },
+        {
+            "name": "windows-x64-msvc-17-static",
+            "configurePreset": "windows-x64-msvc-17-static"
+        },
+        {
             "name": "windows-x86-ninja",
             "configurePreset": "windows-x86-ninja"
         },
@@ -113,6 +143,14 @@
         {
             "name": "windows-x64-msvc-17",
             "configurePreset": "windows-x64-msvc-17"
+        },
+        {
+            "name": "windows-x86-msvc-17-static",
+            "configurePreset": "windows-x86-msvc-17-static"
+        },
+        {
+            "name": "windows-x64-msvc-17-static",
+            "configurePreset": "windows-x64-msvc-17-static"
         },
         {
             "name": "windows-x86-ninja",
