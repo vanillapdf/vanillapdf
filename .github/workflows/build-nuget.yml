@@ -72,14 +72,14 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - name: linux-x64
+          - name: rocky.9-x64
             os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
-          - name: linux-arm64
+          - name: rocky.9-arm64
             os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
@@ -106,13 +106,11 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       - name: Bootstrap vcpkg (Linux)
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -156,18 +154,18 @@ jobs:
 
   build-windows:
     name: ${{ matrix.config.name }}
-    runs-on: windows-latest
+    runs-on: windows-2025
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - name: win-x86
-            preset: windows-x86-msvc-17
+          - name: win.2025-x86-static
+            preset: windows-x86-msvc-17-static
             build_type: Release
 
-          - name: win-x64
-            preset: windows-x64-msvc-17
+          - name: win.2025-x64-static
+            preset: windows-x64-msvc-17-static
             build_type: Release
 
     steps:
@@ -182,13 +180,11 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       - name: Bootstrap vcpkg (Windows)
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
@@ -238,12 +234,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - name: osx-x64
+          - name: osx.15-x64
             runner: macos-15-intel
             preset: macos-x64
             build_type: Release
 
-          - name: osx-arm64
+          - name: osx.15-arm64
             runner: macos-15
             preset: macos-arm64
             build_type: Release
@@ -260,13 +256,11 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       - name: Fix JPEG library conflicts (macOS) - TEMPORARY WORKAROUND
         run: |
@@ -344,13 +338,11 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       - name: Bootstrap vcpkg (Windows)
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat

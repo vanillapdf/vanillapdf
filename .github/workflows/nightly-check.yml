@@ -7,17 +7,17 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-  # Run workflow on any push into main branch
+  # Run workflow on any push into main or release branches
   # only there was a change in the workflow file
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     paths:
       - '.github/workflows/nightly-check.yml'
 
-  # Run workflow when there is a pull request towards main branch
+  # Run workflow when there is a pull request towards main or release branches
   # only there was a change in the workflow file
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     paths:
       - '.github/workflows/nightly-check.yml'
 
@@ -107,17 +107,9 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Cache vcpkg
-        uses: actions/cache@v5
-        with:
-          path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+      # Note: vcpkg caching disabled for Linux weekly scan to reduce cache storage usage.
+      # Different distros use different GCC versions, producing distinct ABI hashes that
+      # cannot share a cache entry. Caching all distros separately would exceed budget.
 
       - name: Bootstrap vcpkg (Linux)
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -156,17 +148,8 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Cache vcpkg
-        uses: actions/cache@v5
-        with:
-          path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+      # Note: vcpkg caching disabled for Windows weekly scan to reduce cache storage usage.
+      # Windows has many configurations and each cache is large (~1 GB).
 
       - name: Bootstrap vcpkg (Windows)
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
@@ -200,17 +183,8 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Cache vcpkg
-        uses: actions/cache@v5
-        with:
-          path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-
+      # Note: vcpkg caching disabled for macOS weekly scan to reduce cache storage usage.
+      # macOS 14 and 15 have different compiler versions, so caches cannot be shared.
 
       - name: Fix JPEG library conflicts (macOS) - TEMPORARY WORKAROUND
         run: |
