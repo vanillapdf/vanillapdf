@@ -6,10 +6,13 @@ vcpkg_from_github(
     HEAD_REF main
 )
 
+string(COMPARE EQUAL "${VCPKG_CRT_LINKAGE}" "static" VANILLAPDF_USE_STATIC_CRT)
+
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
       -DVANILLAPDF_INTERNAL_VCPKG=OFF
+      -DVANILLAPDF_USE_STATIC_CRT=${VANILLAPDF_USE_STATIC_CRT}
 )
 
 vcpkg_cmake_install()
