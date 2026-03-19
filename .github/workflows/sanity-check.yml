@@ -181,12 +181,12 @@ jobs:
         build_type: [Debug, Release]
 
         config:
-          - name: osx.15-x64
-            runner: macos-15-intel
+          - name: osx.26-x64
+            runner: macos-26-intel
             preset: macos-x64
 
-          - name: osx.15-arm64
-            runner: macos-15
+          - name: osx.26-arm64
+            runner: macos-26
             preset: macos-arm64
 
     steps:
