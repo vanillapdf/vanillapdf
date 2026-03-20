@@ -39,19 +39,22 @@ jobs:
   build-package:
     name: Build package
     runs-on: ubuntu-latest
+    container: rockylinux:9
     steps:
+      - name: Install system dependencies
+        run: |
+          dnf install -y epel-release
+          dnf install -y \
+            git gcc gcc-c++ cmake ninja-build rpm-build \
+            openssl-devel libjpeg-turbo-devel openjpeg2-devel zlib-devel
+
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y rpm libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
-
       - name: Configure
         run: |
-          cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release \
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
             -DVANILLAPDF_ENABLE_PACKAGING=ON \
             -DVANILLAPDF_ENABLE_TESTS=ON \
             -DVANILLAPDF_ENABLE_ENCRYPTION=ON -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
@@ -64,19 +67,19 @@ jobs:
             ${{ inputs.build_suffix && format('-DVANILLAPDF_VERSION_BUILD_SUFFIX={0}', inputs.build_suffix) || '' }}
 
       - name: Build
-        run: cmake --build --preset linux-x64-gcc
+        run: cmake --build build
 
       - name: Test
-        run: ctest --preset linux-x64-gcc
+        run: ctest --test-dir build --output-on-failure
 
       - name: Package
-        run: cd build/linux-x64-gcc && cpack -G RPM
+        run: cd build && cpack -G RPM
 
       - name: Upload Artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7.0.0
         with:
           name: vanillapdf-rpm
-          path: build/linux-x64-gcc/*.rpm
+          path: build/*.rpm
 
   install-package:
     name: Install package
@@ -92,5 +95,6 @@ jobs:
 
       - name: Install .rpm
         run: |
-          rpm -ivh ./pkg/*.rpm
+          dnf install -y epel-release
+          dnf install -y ./pkg/*.rpm
           ldconfig
