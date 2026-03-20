@@ -29,7 +29,7 @@ permissions:
 jobs:
   prepare-homebrew-changes:
     name: Prepare Homebrew formula update
-    runs-on: macos-latest
+    runs-on: macos-26
     outputs:
       branch-name: vanillapdf-${{ steps.version.outputs.version }}
       pr-url: ${{ steps.pr-info.outputs.pr-url }}
@@ -178,7 +178,7 @@ jobs:
 
   create-official-pr:
     name: Create PR to official Homebrew repo
-    runs-on: macos-latest
+    runs-on: macos-26
     needs: prepare-homebrew-changes
     if: ${{ !inputs.dry_run && needs.prepare-homebrew-changes.outputs.is-latest == 'true' }}
     environment: production

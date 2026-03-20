@@ -247,6 +247,8 @@ jobs:
           - { name: "osx.14-arm64", runner: macos-14, preset: "macos-arm64" }
           - { name: "osx.15-x64", runner: macos-15-intel, preset: "macos-x64" }
           - { name: "osx.15-arm64", runner: macos-15, preset: "macos-arm64" }
+          - { name: "osx.26-x64", runner: macos-26-intel, preset: "macos-x64" }
+          - { name: "osx.26-arm64", runner: macos-26, preset: "macos-arm64" }
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
