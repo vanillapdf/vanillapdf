@@ -41,31 +41,31 @@ jobs:
     runs-on: ubuntu-latest
     container: rockylinux:9
     steps:
-      - name: Install system dependencies
+      - name: Install build tools and system dependencies
         run: |
           dnf install -y epel-release dnf-plugins-core
           dnf config-manager --set-enabled crb
           dnf install -y \
             git gcc gcc-c++ ninja-build rpm-build python3-pip \
-            openssl-devel libjpeg-turbo-devel openjpeg2-devel zlib-devel
+            openssl-devel libjpeg-turbo-devel openjpeg2-devel zlib-devel \
+            spdlog-devel nlohmann-json-devel gtest-devel
           pip3 install cmake
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-        with:
-          submodules: recursive
 
       - name: Configure
         run: |
           cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DVANILLAPDF_INTERNAL_VCPKG=OFF \
             -DVANILLAPDF_ENABLE_PACKAGING=ON \
             -DVANILLAPDF_ENABLE_TESTS=ON \
             -DVANILLAPDF_ENABLE_ENCRYPTION=ON -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
             -DVANILLAPDF_ENABLE_JPEG=ON -DVANILLAPDF_EXTERNAL_JPEG=ON \
             -DVANILLAPDF_ENABLE_JPEG2000=ON -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
             -DVANILLAPDF_ENABLE_ZLIB=ON -DVANILLAPDF_EXTERNAL_ZLIB=ON \
-            -DVANILLAPDF_EXTERNAL_SPDLOG=OFF \
-            -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
-            -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF \
+            -DVANILLAPDF_EXTERNAL_SPDLOG=ON \
+            -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON \
+            -DVANILLAPDF_EXTERNAL_GTEST=ON \
             ${{ inputs.build_suffix && format('-DVANILLAPDF_VERSION_BUILD_SUFFIX={0}', inputs.build_suffix) || '' }}
 
       - name: Build
