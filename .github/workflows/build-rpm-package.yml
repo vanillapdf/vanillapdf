@@ -29,7 +29,7 @@ on:
     - cron: '0 3 * * 1'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow_ref }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -46,16 +46,9 @@ jobs:
           dnf install -y epel-release dnf-plugins-core
           dnf config-manager --set-enabled crb
           dnf install -y \
-            git gcc gcc-c++ ninja-build rpm-build wget tar \
+            git gcc gcc-c++ cmake ninja-build rpm-build \
             openssl-devel libjpeg-turbo-devel openjpeg2-devel zlib-devel \
             spdlog-devel nlohmann-json-devel gtest-devel
-
-      - name: Install CMake 3.31.11
-        run: |
-          wget https://github.com/Kitware/CMake/releases/download/v3.31.11/cmake-3.31.11-linux-x86_64.tar.gz
-          tar -xzf cmake-3.31.11-linux-x86_64.tar.gz --strip-components=1 -C /usr/local
-          rm -f cmake-3.31.11-linux-x86_64.tar.gz
-          cmake --version
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
