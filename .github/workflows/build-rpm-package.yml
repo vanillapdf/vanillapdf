@@ -43,7 +43,8 @@ jobs:
     steps:
       - name: Install system dependencies
         run: |
-          dnf install -y epel-release
+          dnf install -y epel-release dnf-plugins-core
+          dnf config-manager --set-enabled crb
           dnf install -y \
             git gcc gcc-c++ cmake ninja-build rpm-build \
             openssl-devel libjpeg-turbo-devel openjpeg2-devel zlib-devel
