@@ -9,6 +9,10 @@ on:
       prerelease:
         required: true
         type: boolean
+      latest:
+        required: false
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       tag:
@@ -18,6 +22,11 @@ on:
         description: "Set to true for prerelease"
         required: true
         type: boolean
+      latest:
+        description: "Set as latest release"
+        required: false
+        type: boolean
+        default: true
 
 permissions: {}
 
@@ -48,17 +57,24 @@ jobs:
             echo "Release $TAG already exists. Skipping."
             exit 0
           fi
+          LATEST_FLAG=""
+          if [ "${{ inputs.latest }}" = "false" ]; then
+            LATEST_FLAG="--latest=false"
+          fi
+
           if [ "$PRERELEASE" = "true" ]; then
             gh release create "$TAG" \
               --title "vanillapdf $TAG" \
               --generate-notes \
               --draft \
-              --prerelease
+              --prerelease \
+              $LATEST_FLAG
           else
             gh release create "$TAG" \
               --title "vanillapdf $TAG" \
               --generate-notes \
-              --draft
+              --draft \
+              $LATEST_FLAG
           fi
 
       - name: Download DEB package

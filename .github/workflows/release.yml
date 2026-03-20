@@ -306,6 +306,7 @@ jobs:
     with:
       tag: ${{ needs.production-gate.outputs.tag }}
       prerelease: ${{ fromJSON(needs.production-gate.outputs.prerelease) }}
+      latest: ${{ needs.production-gate.outputs.tag == needs.production-gate.outputs.latest_tag }}
     secrets: inherit
 
   vcpkg-pr:
