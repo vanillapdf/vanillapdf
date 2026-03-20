@@ -8,6 +8,9 @@ on:
     paths:
       - '.github/workflows/release.yml'
       - '.github/workflows/build-nuget.yml'
+      - '.github/workflows/build-deb-package.yml'
+      - '.github/workflows/build-rpm-package.yml'
+      - '.github/workflows/build-brew-package.yml'
       - '.github/workflows/github-release.yml'
       - '.github/workflows/github-pages.yml'
       - '.github/workflows/create-vcpkg-pr.yml'

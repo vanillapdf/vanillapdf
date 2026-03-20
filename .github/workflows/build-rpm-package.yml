@@ -11,27 +11,6 @@ on:
 
   workflow_dispatch:
 
-  push:
-    branches:
-      - main
-      - 'release/*'
-    paths:
-      - .github/workflows/build-rpm-package.yml
-
-  pull_request:
-    branches:
-      - main
-      - 'release/*'
-    paths:
-      - .github/workflows/build-rpm-package.yml
-
-  schedule:
-    - cron: '0 3 * * 1'
-
-concurrency:
-  group: ${{ github.workflow_ref }}-${{ github.ref }}
-  cancel-in-progress: true
-
 permissions:
   contents: read
 
