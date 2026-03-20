@@ -1,28 +1,15 @@
 name: Build Homebrew package
 
 on:
+  workflow_call:
+    inputs:
+      build_suffix:
+        description: "Build suffix (e.g. -rc1)"
+        required: false
+        type: string
+        default: ''
+
   workflow_dispatch:
-
-  push:
-    branches:
-      - main
-      - 'release/*'
-    paths:
-      - .github/workflows/build-brew-package.yml
-
-  pull_request:
-    branches:
-      - main
-      - 'release/*'
-    paths:
-      - .github/workflows/build-brew-package.yml
-
-  schedule:
-    - cron: '0 3 * * 1'
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -51,7 +38,8 @@ jobs:
             -DVANILLAPDF_ENABLE_ZLIB=ON -DVANILLAPDF_EXTERNAL_ZLIB=ON \
             -DVANILLAPDF_EXTERNAL_SPDLOG=ON \
             -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON \
-            -DVANILLAPDF_EXTERNAL_GTEST=ON
+            -DVANILLAPDF_EXTERNAL_GTEST=ON \
+            -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}
 
       - name: Build
         run: cmake --build --preset macos-arm64

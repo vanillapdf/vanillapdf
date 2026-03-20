@@ -1,0 +1,85 @@
+name: Build RPM package
+
+on:
+  workflow_call:
+    inputs:
+      build_suffix:
+        description: "Build suffix (e.g. -rc1)"
+        required: false
+        type: string
+        default: ''
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-package:
+    name: Build package
+    runs-on: ubuntu-latest
+    container: rockylinux/rockylinux:10
+    steps:
+      - name: Install build tools and system dependencies
+        run: |
+          dnf install -y epel-release dnf-plugins-core
+          dnf config-manager --set-enabled crb
+          dnf install -y \
+            git gcc gcc-c++ cmake ninja-build rpm-build \
+            openssl-devel libjpeg-turbo-devel openjpeg2-devel zlib-devel \
+            spdlog-devel nlohmann-json-devel gtest-devel
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Configure
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DVANILLAPDF_INTERNAL_VCPKG=OFF \
+            -DVANILLAPDF_ENABLE_PACKAGING=ON \
+            -DVANILLAPDF_ENABLE_TESTS=ON \
+            -DVANILLAPDF_ENABLE_ENCRYPTION=ON -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+            -DVANILLAPDF_ENABLE_JPEG=ON -DVANILLAPDF_EXTERNAL_JPEG=ON \
+            -DVANILLAPDF_ENABLE_JPEG2000=ON -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
+            -DVANILLAPDF_ENABLE_ZLIB=ON -DVANILLAPDF_EXTERNAL_ZLIB=ON \
+            -DVANILLAPDF_EXTERNAL_SPDLOG=ON \
+            -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON \
+            -DVANILLAPDF_EXTERNAL_GTEST=ON \
+            -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}
+
+      - name: Build
+        run: cmake --build build
+
+      # Rocky 9 OpenSSL restricts weak algorithms (SHA1, MD5, RC4) by default.
+      # Many test PDFs use legacy encryption that requires these algorithms.
+      - name: Enable legacy crypto policies
+        run: update-crypto-policies --set LEGACY
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Package
+        run: cd build && cpack -G RPM
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7.0.0
+        with:
+          name: vanillapdf-rpm
+          path: build/*.rpm
+
+  install-package:
+    name: Install package
+    runs-on: ubuntu-latest
+    needs: build-package
+    container: rockylinux/rockylinux:10
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-rpm
+          path: ./pkg
+
+      - name: Install .rpm
+        run: |
+          dnf install -y epel-release
+          dnf install -y ./pkg/*.rpm
+          ldconfig

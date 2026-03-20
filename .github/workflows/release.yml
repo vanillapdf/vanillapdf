@@ -8,6 +8,9 @@ on:
     paths:
       - '.github/workflows/release.yml'
       - '.github/workflows/build-nuget.yml'
+      - '.github/workflows/build-deb-package.yml'
+      - '.github/workflows/build-rpm-package.yml'
+      - '.github/workflows/build-brew-package.yml'
       - '.github/workflows/github-release.yml'
       - '.github/workflows/github-pages.yml'
       - '.github/workflows/create-vcpkg-pr.yml'
@@ -128,6 +131,33 @@ jobs:
       build_suffix: ${{ needs.prepare.outputs.build_suffix }}
     secrets: inherit
 
+  build-deb:
+    needs: [verify, prepare]
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-deb-package.yml
+    with:
+      build_suffix: ${{ needs.prepare.outputs.build_suffix }}
+    secrets: inherit
+
+  build-rpm:
+    needs: [verify, prepare]
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-rpm-package.yml
+    with:
+      build_suffix: ${{ needs.prepare.outputs.build_suffix }}
+    secrets: inherit
+
+  build-dmg:
+    needs: [verify, prepare]
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-brew-package.yml
+    with:
+      build_suffix: ${{ needs.prepare.outputs.build_suffix }}
+    secrets: inherit
+
   nuget-staging:
     runs-on: ubuntu-latest
     permissions:
@@ -184,7 +214,7 @@ jobs:
   dry-run-report:
     runs-on: ubuntu-latest
     permissions: {}
-    needs: [build-nuget, dry-run-pages, dry-run-vcpkg, dry-run-conan, prepare]
+    needs: [build-nuget, build-deb, build-rpm, build-dmg, dry-run-pages, dry-run-vcpkg, dry-run-conan, prepare]
     if: always() && needs.prepare.outputs.dry_run == 'true'
     steps:
       - name: Dry run summary
@@ -196,6 +226,9 @@ jobs:
           echo "Prerelease: ${{ needs.prepare.outputs.prerelease }}"
           echo ""
           echo "NuGet build: ${{ needs.build-nuget.result }}"
+          echo "DEB build: ${{ needs.build-deb.result }}"
+          echo "RPM build: ${{ needs.build-rpm.result }}"
+          echo "DMG build: ${{ needs.build-dmg.result }}"
           echo "GitHub Pages build: ${{ needs.dry-run-pages.result }}"
           if [ "${{ needs.prepare.outputs.prerelease }}" = "false" ]; then
             echo "vcpkg PR (dry run): ${{ needs.dry-run-vcpkg.result }}"
@@ -207,6 +240,9 @@ jobs:
           echo ""
           FAILED=false
           if [ "${{ needs.build-nuget.result }}" != "success" ]; then FAILED=true; fi
+          if [ "${{ needs.build-deb.result }}" != "success" ]; then FAILED=true; fi
+          if [ "${{ needs.build-rpm.result }}" != "success" ]; then FAILED=true; fi
+          if [ "${{ needs.build-dmg.result }}" != "success" ]; then FAILED=true; fi
           if [ "${{ needs.dry-run-pages.result }}" != "success" ]; then FAILED=true; fi
           if [ "${{ needs.prepare.outputs.prerelease }}" = "false" ]; then
             if [ "${{ needs.dry-run-vcpkg.result }}" != "success" ]; then FAILED=true; fi
@@ -221,7 +257,7 @@ jobs:
   production-gate:
     runs-on: ubuntu-latest
     permissions: {}
-    needs: [nuget-staging, prepare]
+    needs: [nuget-staging, build-deb, build-rpm, build-dmg, prepare]
     environment: production
     outputs:
       tag: ${{ needs.prepare.outputs.tag }}
@@ -320,10 +356,32 @@ jobs:
           path: ./nupkgs
           merge-multiple: true
 
+      - name: Download DEB package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-deb
+          path: ./packages/deb
+
+      - name: Download RPM package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-rpm
+          path: ./packages/rpm
+
+      - name: Download DMG package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-dmg
+          path: ./packages/dmg
+
       - name: Attest build provenance
         uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32  # v4.1.0
         with:
-          subject-path: ./nupkgs/**/*.nupkg
+          subject-path: |
+            ./nupkgs/**/*.nupkg
+            ./packages/deb/*.deb
+            ./packages/rpm/*.rpm
+            ./packages/dmg/*.dmg
 
   verify-attest:
     name: Verify Artifact Attestations
@@ -338,11 +396,33 @@ jobs:
           path: ./nupkgs
           merge-multiple: true
 
+      - name: Download DEB package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-deb
+          path: ./packages/deb
+
+      - name: Download RPM package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-rpm
+          path: ./packages/rpm
+
+      - name: Download DMG package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-dmg
+          path: ./packages/dmg
+
       - name: Verify attestations
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           find ./nupkgs -name "*.nupkg" | while read -r pkg; do
+            echo "Verifying: $pkg"
+            gh attestation verify "$pkg" --repo "${{ github.repository }}"
+          done
+          find ./packages -name "*.deb" -o -name "*.rpm" -o -name "*.dmg" | while read -r pkg; do
             echo "Verifying: $pkg"
             gh attestation verify "$pkg" --repo "${{ github.repository }}"
           done

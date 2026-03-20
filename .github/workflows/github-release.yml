@@ -77,6 +77,43 @@ jobs:
               $LATEST_FLAG
           fi
 
+      - name: Download DEB package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-deb
+          path: ./packages/deb
+
+      - name: Download RPM package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-rpm
+          path: ./packages/rpm
+
+      - name: Download DMG package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-dmg
+          path: ./packages/dmg
+
+      - name: Upload packages to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for file in ./packages/deb/*.deb ./packages/rpm/*.rpm ./packages/dmg/*.dmg; do
+            if [ -f "$file" ]; then
+              echo "Uploading: $file"
+              gh release upload ${{ inputs.tag }} "$file"
+            fi
+          done
+
+      - name: Attest package provenance
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32  # v4.1.0
+        with:
+          subject-path: |
+            ./packages/deb/*.deb
+            ./packages/rpm/*.rpm
+            ./packages/dmg/*.dmg
+
       - name: Generate SBOM
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
