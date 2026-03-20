@@ -39,6 +39,7 @@ git submodule sync --recursive && git submodule update --init --recursive
 **ALL changes MUST go through a branch and pull request:**
 - NEVER commit directly to `main` or `release/*` branches (protected)
 - Create a new branch for every change: `feature/description` or `fix/description`
+- The `release/` prefix is **reserved for release branches only** (e.g. `release/2.1`, `release/2.2`). Never use it for feature, bump, or fix branches.
 - Base branches on `main` (or `release/*` for hotfixes)
 
 **`git push` must always be a separate, explicit command:**

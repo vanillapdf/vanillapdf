@@ -254,9 +254,7 @@ jobs:
           path: |
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in', 'cmake/overlays/*.cmake') }}
 
       # dotnet is available on macOS runners by default
 
@@ -286,6 +284,8 @@ jobs:
           fi
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
+          CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0"
+          CMAKE_ARGS="$CMAKE_ARGS -DVCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}/cmake/overlays"
           cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
       - name: Build ${{ matrix.config.name }}
