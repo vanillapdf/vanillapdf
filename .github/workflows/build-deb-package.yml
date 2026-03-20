@@ -41,7 +41,7 @@ jobs:
             -DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=OFF \
             -DDETECT_CUSTOM_LINUX_DISTRIBUTION=ON \
             -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_EXTERNAL_GTEST=OFF \
-            ${{ inputs.build_suffix && format('-DVANILLAPDF_VERSION_BUILD_SUFFIX={0}', inputs.build_suffix) || '' }}
+            -DVANILLAPDF_VERSION_BUILD_SUFFIX=${{ inputs.build_suffix }}
 
       - name: Build
         run: cmake --build --preset linux-x64-gcc
