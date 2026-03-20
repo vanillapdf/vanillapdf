@@ -805,9 +805,9 @@ target_include_directories(vanillapdf PUBLIC
 # Project install targets
 install(TARGETS vanillapdf
     EXPORT vanillapdfTargets
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin COMPONENT Runtime
+    LIBRARY DESTINATION lib COMPONENT Runtime
+    ARCHIVE DESTINATION lib COMPONENT Development
 )
 
 if (MSVC AND BUILD_SHARED_LIBS)
@@ -817,21 +817,23 @@ if (MSVC AND BUILD_SHARED_LIBS)
         "$<TARGET_PDB_FILE:vanillapdf>"
         DESTINATION debug/bin
         CONFIGURATIONS Debug
+        COMPONENT Development
     )
 
     install(FILES
         "$<TARGET_PDB_FILE:vanillapdf>"
         DESTINATION bin
         CONFIGURATIONS Release RelWithDebInfo MinSizeRel
+        COMPONENT Development
     )
 
 endif()
 
-install(FILES ${VANILLAPDF_INCLUDE_HEADERS} DESTINATION "include/vanillapdf")
-install(FILES ${VANILLAPDF_INCLUDE_UTILS_HEADERS} DESTINATION "include/vanillapdf/utils")
-install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillapdf/syntax")
-install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics")
-install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include/vanillapdf/contents")
+install(FILES ${VANILLAPDF_INCLUDE_HEADERS} DESTINATION "include/vanillapdf" COMPONENT Development)
+install(FILES ${VANILLAPDF_INCLUDE_UTILS_HEADERS} DESTINATION "include/vanillapdf/utils" COMPONENT Development)
+install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillapdf/syntax" COMPONENT Development)
+install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics" COMPONENT Development)
+install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include/vanillapdf/contents" COMPONENT Development)
 
 # Additional metadata for the project, that should be bundled together
 install(FILES
@@ -839,6 +841,7 @@ install(FILES
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/LICENSE.txt"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/NOTICE.md"
     DESTINATION "share/vanillapdf"
+    COMPONENT Runtime
 )
 
 # Define installation files and procedures

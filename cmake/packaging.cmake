@@ -57,17 +57,34 @@ set(CPACK_PACKAGE_ICON					${CMAKE_CURRENT_SOURCE_DIR}/cmake/vanilla_logo.ico)
 # Include checksum file
 set(CPACK_PACKAGE_CHECKSUM				SHA256)
 
+# Component-based packaging (used by DEB and RPM generators)
+set(CPACK_COMPONENTS_ALL Runtime Development)
+set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "Vanilla.PDF Runtime")
+set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "Shared library and command-line tools")
+set(CPACK_COMPONENT_RUNTIME_REQUIRED ON)
+set(CPACK_COMPONENT_DEVELOPMENT_DISPLAY_NAME "Vanilla.PDF Development")
+set(CPACK_COMPONENT_DEVELOPMENT_DESCRIPTION "Headers, static libraries, and CMake config files")
+set(CPACK_COMPONENT_DEVELOPMENT_DEPENDS Runtime)
+
 # Variables specific to CPack RPM generator
 set(CPACK_RPM_PACKAGE_LICENSE			"Proprietary")
 set(CPACK_RPM_PACKAGE_GROUP				"Development/Libraries/C and C++")
 set(CPACK_RPM_PACKAGE_URL				"https://vanillapdf.com/")
 set(CPACK_RPM_PACKAGE_AUTOREQ			1)
 set(CPACK_RPM_PACKAGE_AUTOPROV			1)
+set(CPACK_RPM_COMPONENT_INSTALL			ON)
+set(CPACK_RPM_RUNTIME_PACKAGE_NAME		"vanillapdf")
+set(CPACK_RPM_DEVELOPMENT_PACKAGE_NAME	"vanillapdf-devel")
+set(CPACK_RPM_DEVELOPMENT_PACKAGE_REQUIRES "vanillapdf = ${PACKAGE_VERSION_NAME}")
 
 # Variables specific to CPack DEB generator
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE		"https://vanillapdf.com/")
 set(CPACK_DEBIAN_PACKAGE_SECTION		"devel")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS		YES)
+set(CPACK_DEB_COMPONENT_INSTALL			ON)
+set(CPACK_DEBIAN_RUNTIME_PACKAGE_NAME	"vanillapdf")
+set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_NAME "vanillapdf-dev")
+set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_DEPENDS "vanillapdf (= ${PACKAGE_VERSION_NAME})")
 
 # Variables specific to CPack FreeBSD generator
 set(CPACK_FREEBSD_PACKAGE_MAINTAINER	"info@vanillapdf.com")
