@@ -323,12 +323,13 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
         LOG_ERROR_AND_THROW_GENERAL("Could not initialize AES digest: {}", openssl_error);
     }
 
-    // OpenSSL uses padding by default and sometimes it is not correct
-    // We do handle the padding after the decryption has been done
+    // Disable OpenSSL padding — PKCS#7 is handled manually via RemovePkcs7Padding.
+    // Some malformed PDFs have invalid padding (e.g. signature fields padded with
+    // zeroes), so manual removal with graceful fallback is preferred.
     auto padding_result = EVP_CIPHER_CTX_set_padding(evp_cipher_ctx, 0);
     if (padding_result != 1) {
         auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW_GENERAL("Could not set AES decryption padding: {}", openssl_error);
+        LOG_ERROR_AND_THROW_GENERAL("Could not disable AES decryption padding: {}", openssl_error);
     }
     
     int current_offset = 0;
@@ -395,7 +396,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
     }
 
     BufferPtr data_padded = AddPkcs7Padding(data, AES_CBC_BLOCK_SIZE);
-    BufferPtr result = make_deferred_container<Buffer>(data_padded->size() + AES_CBC_IV_LENGTH);
+    BufferPtr result = make_deferred_container<Buffer>(AES_CBC_IV_LENGTH + data_padded->size());
 
     const EVP_CIPHER* evp_cipher = nullptr;
 
@@ -429,14 +430,24 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
         LOG_ERROR_AND_THROW_GENERAL("Could not initialize AES cipher: {}", openssl_error);
     }
 
+    // Disable OpenSSL padding — PKCS#7 is handled manually via AddPkcs7Padding
+    auto padding_result = EVP_CIPHER_CTX_set_padding(evp_cipher_ctx, 0);
+    if (padding_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not disable AES encryption padding: {}", openssl_error);
+    }
+
+    // Write IV at the beginning of the result buffer
+    std::memcpy(result->data(), iv.data(), AES_CBC_IV_LENGTH);
+
     int current_offset = 0;
-    int total_result_length = 0;
+    int total_result_length = AES_CBC_IV_LENGTH;
 
     int data_size = ValueConvertUtils::SafeConvert<int>(data_padded->size());
 
     auto update_result = EVP_EncryptUpdate(
         evp_cipher_ctx,
-        reinterpret_cast<unsigned char*>(result->data()),
+        reinterpret_cast<unsigned char*>(result->data() + AES_CBC_IV_LENGTH),
         &current_offset,
         reinterpret_cast<const unsigned char*>(data_padded->data()),
         data_size);
@@ -450,7 +461,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
     auto final_result = EVP_EncryptFinal(
         evp_cipher_ctx,
-        reinterpret_cast<unsigned char*>(result->data() + current_offset),
+        reinterpret_cast<unsigned char*>(result->data() + total_result_length),
         &current_offset);
 
     if (final_result != 1) {
@@ -463,9 +474,6 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
     // Remove trailing zeroes
     result->resize(total_result_length);
 
-    // Insert the IV data in in the beginning
-    result->insert(result->begin(), iv.begin(), iv.end());
-
     return result;
 
 #else
@@ -476,10 +484,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 }
 
 BufferPtr EncryptionUtils::AddPkcs7Padding(const Buffer& data, types::size_type block_size) {
-    types::size_type remaining = data.size() % block_size;
-    if (0 == remaining) {
-        remaining = block_size;
-    }
+    types::size_type remaining = block_size - (data.size() % block_size);
 
     Buffer::value_type converted = ValueConvertUtils::SafeConvert<Buffer::value_type>(remaining);
 
