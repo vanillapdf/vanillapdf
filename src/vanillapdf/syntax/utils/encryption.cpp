@@ -323,34 +323,29 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
         LOG_ERROR_AND_THROW_GENERAL("Could not initialize AES digest: {}", openssl_error);
     }
 
-    // Disable OpenSSL padding — PKCS#7 is handled manually via RemovePkcs7Padding.
-    // Some malformed PDFs have invalid padding (e.g. signature fields padded with
-    // zeroes), so manual removal with graceful fallback is preferred.
-    auto padding_result = EVP_CIPHER_CTX_set_padding(evp_cipher_ctx, 0);
-    if (padding_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW_GENERAL("Could not disable AES decryption padding: {}", openssl_error);
-    }
-    
+    // OpenSSL PKCS#7 padding is enabled by default — let it handle
+    // padding validation and removal during EVP_DecryptFinal.
+
+
     int current_offset = 0;
     int total_result_length = 0;
 
     int data_size = ValueConvertUtils::SafeConvert<int>(data.size() - AES_CBC_IV_LENGTH);
-    
+
     auto update_result = EVP_DecryptUpdate(
         evp_cipher_ctx,
         reinterpret_cast<unsigned char*>(result->data()),
         &current_offset,
         reinterpret_cast<const unsigned char*>(data.data() + AES_CBC_IV_LENGTH),
         data_size);
-    
+
     if (update_result != 1) {
         auto openssl_error = CryptoUtils::GetLastOpensslError();
         LOG_ERROR_AND_THROW_GENERAL("Could not decrypt update AES cipher: {}", openssl_error);
     }
 
     total_result_length += current_offset;
-    
+
     auto final_result = EVP_DecryptFinal(
         evp_cipher_ctx,
         reinterpret_cast<unsigned char*>(result->data() + current_offset),
@@ -366,7 +361,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
     // Remove trailing zeroes
     result->resize(total_result_length);
 
-    return RemovePkcs7Padding(result, AES_CBC_BLOCK_SIZE);
+    return result;
 
 #else
     (void) key; (void) key_length; (void) data;
@@ -395,8 +390,8 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
         LOG_ERROR_AND_THROW_GENERAL("Could not generate initialization vector for AES: {}", openssl_error);
     }
 
-    BufferPtr data_padded = AddPkcs7Padding(data, AES_CBC_BLOCK_SIZE);
-    BufferPtr result = make_deferred_container<Buffer>(AES_CBC_IV_LENGTH + data_padded->size());
+    // Allocate IV + data + up to one block of PKCS#7 padding
+    BufferPtr result = make_deferred_container<Buffer>(AES_CBC_IV_LENGTH + data.size() + AES_CBC_BLOCK_SIZE);
 
     const EVP_CIPHER* evp_cipher = nullptr;
 
@@ -430,12 +425,8 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
         LOG_ERROR_AND_THROW_GENERAL("Could not initialize AES cipher: {}", openssl_error);
     }
 
-    // Disable OpenSSL padding — PKCS#7 is handled manually via AddPkcs7Padding
-    auto padding_result = EVP_CIPHER_CTX_set_padding(evp_cipher_ctx, 0);
-    if (padding_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not disable AES encryption padding: {}", openssl_error);
-    }
+    // OpenSSL PKCS#7 padding is enabled by default — let it handle
+    // padding during EVP_EncryptFinal.
 
     // Write IV at the beginning of the result buffer
     std::memcpy(result->data(), iv.data(), AES_CBC_IV_LENGTH);
@@ -443,13 +434,13 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
     int current_offset = 0;
     int total_result_length = AES_CBC_IV_LENGTH;
 
-    int data_size = ValueConvertUtils::SafeConvert<int>(data_padded->size());
+    int data_size = ValueConvertUtils::SafeConvert<int>(data.size());
 
     auto update_result = EVP_EncryptUpdate(
         evp_cipher_ctx,
         reinterpret_cast<unsigned char*>(result->data() + AES_CBC_IV_LENGTH),
         &current_offset,
-        reinterpret_cast<const unsigned char*>(data_padded->data()),
+        reinterpret_cast<const unsigned char*>(data.data()),
         data_size);
 
     if (update_result != 1) {
