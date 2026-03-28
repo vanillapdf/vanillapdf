@@ -55,6 +55,25 @@ For signature verification, the `SignatureVerificationSettings` API provides `Al
 SignatureVerificationSettings_SetAllowWeakAlgorithmsFlag(settings, VANILLAPDF_RV_TRUE);
 ```
 
+## OpenSSL Legacy Provider Not Found (Windows)
+
+On Windows shared (dynamic) builds, OpenSSL 3.x may fail to load the legacy provider:
+```
+Failed to initialize legacy OSSL provider
+filename(C:\Program Files (x86)\OpenSSL\bin\legacy.dll)
+```
+
+This happens because vcpkg builds OpenSSL without `--openssldir`, so the compiled-in module search path points to a system directory instead of the vcpkg installation.
+
+**For tests**: The build system automatically sets the `OPENSSL_MODULES` environment variable on CTest targets when using internal vcpkg with shared builds. The path can be overridden with `-DVANILLAPDF_OPENSSL_MODULES_DIR=<path>`.
+
+**For applications**: Call `MiscUtils_SetOpenSSLModulesPath()` with the directory containing `legacy.dll` before any OpenSSL initialization, or set the `OPENSSL_MODULES` environment variable:
+```bash
+set OPENSSL_MODULES=path/to/bin
+```
+
+This is not needed for static builds — providers are compiled directly into the library.
+
 ## Test Failures
 
 If tests fail unexpectedly:

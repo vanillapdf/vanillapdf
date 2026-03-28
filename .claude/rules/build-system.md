@@ -42,6 +42,8 @@ Build options: `VANILLAPDF_INTERNAL_VCPKG` (ON), `VANILLAPDF_ENABLE_TESTS` (ON),
 
 External deps (all OFF): `VANILLAPDF_EXTERNAL_{OPENSSL,JPEG,OPENJPEG,ZLIB,SPDLOG,NLOHMANN_JSON}` — use system instead of vcpkg.
 
+Runtime options: `VANILLAPDF_OPENSSL_MODULES_DIR` — path to OpenSSL provider modules (`legacy.dll`). Auto-set to vcpkg bin dir on Windows shared builds with internal vcpkg. Override with `-DVANILLAPDF_OPENSSL_MODULES_DIR=<path>`.
+
 ## vcpkg
 
 vcpkg.json generated from `vcpkg.json.in` at configure time by `cmake/vcpkg_manifest.cmake`. Always included: spdlog, nlohmann-json. Feature-based: encryption→openssl, jpeg→libjpeg-turbo, jpeg2000→openjpeg, zlib→zlib, tests→gtest, benchmarks→benchmark.

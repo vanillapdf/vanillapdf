@@ -336,6 +336,31 @@ Troubleshooting
 - **macOS**: Install via Homebrew: ``brew install openssl@3 jpeg-turbo zlib openjpeg``
 - **Windows**: Use vcpkg presets or ensure Visual Studio 2022 or 2026 is properly installed
 
+*OpenSSL legacy provider not found (Windows shared builds):*
+
+On Windows shared (dynamic) builds with OpenSSL 3.x, the legacy provider module
+(``legacy.dll``) may fail to load because the compiled-in module search path
+does not match the vcpkg installation directory. The error typically looks like:
+
+.. code-block:: text
+
+   Failed to initialize legacy OSSL provider
+   filename(C:\Program Files (x86)\OpenSSL\bin\legacy.dll)
+
+**For tests**: The build system automatically sets the ``OPENSSL_MODULES``
+environment variable on CTest targets when using internal vcpkg with shared builds.
+The path can be overridden with ``-DVANILLAPDF_OPENSSL_MODULES_DIR=<path>``.
+
+**For applications**: Set the ``OPENSSL_MODULES`` environment variable to the
+directory containing ``legacy.dll`` before running your application:
+
+.. code-block:: bash
+
+   set OPENSSL_MODULES=path/to/bin
+
+This issue does not affect static builds — providers are compiled directly into
+the library.
+
 Building packages
 -----------------
 

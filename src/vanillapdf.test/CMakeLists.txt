@@ -121,6 +121,13 @@ foreach(TEST_FILE ${TEST_FILES})
         "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/VanillaPDF.lic"	# path to license file for test purposes
         "${VANILLAPDF_SOLUTION_SOURCE_DIR}"							# path to root of the source directory
     )
+
+    # OpenSSL 3.x: set provider module search path (see vanillapdf/CMakeLists.txt)
+    if(WIN32 AND BUILD_SHARED_LIBS AND VANILLAPDF_INTERNAL_VCPKG AND NOT VANILLAPDF_EXTERNAL_OPENSSL)
+        set_tests_properties(${TEST_FILENAME} PROPERTIES
+            ENVIRONMENT "OPENSSL_MODULES=${VANILLAPDF_OPENSSL_MODULES_DIR}"
+        )
+    endif()
 endforeach(TEST_FILE)
 
 # MPK_SLOVLEX.pdf: 9.5 MB, 1,450 pages — takes 600-1500s under sanitizers and

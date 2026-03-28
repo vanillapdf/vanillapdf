@@ -848,67 +848,47 @@ install(FILES
 # Define installation files and procedures
 include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanillapdf_install.cmake")
 
-# Install dependent libraries on windows
-if(WIN32)
+# vcpkg's VCPKG_APPLOCAL_DEPS (ON by default) automatically copies linked
+# DLL dependencies to the build output directory. Enable its install
+# counterpart so that cmake --install also includes them.
+if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG)
+    set(X_VCPKG_APPLOCAL_DEPS_INSTALL ON CACHE BOOL
+        "Automatically copy vcpkg dependencies into install target directory" FORCE)
+endif()
 
-    # OpenSSL dependent libraries
-    if (OPENSSL_FOUND)
-    
-        # Find dll runtime binary file
-        find_file(LIBEAY_RUNTIME
-            NAMES libcrypto-3.dll libcrypto-3-x64.dll legacy.dll
-            PATHS ${VANILLPDF_BINARY_DIR}
-        )
+# OpenSSL 3.x legacy provider module — runtime-loaded via OSSL_PROVIDER_load,
+# not a linked dependency, so VCPKG_APPLOCAL_DEPS does not handle it.
+if(WIN32 AND BUILD_SHARED_LIBS AND VANILLAPDF_INTERNAL_VCPKG
+        AND OPENSSL_FOUND AND NOT VANILLAPDF_EXTERNAL_OPENSSL
+        AND OPENSSL_VERSION VERSION_GREATER_EQUAL "3.0.0")
 
-        if (NOT EXISTS ${LIBEAY_RUNTIME})
-            # message(FATAL_ERROR "OpenSSL support is enabled, but the LIBEAY_RUNTIME does not exist")
-        endif(NOT EXISTS ${LIBEAY_RUNTIME})
-        
-        # message(STATUS "LIBEAY runtime was found at ${LIBEAY_RUNTIME}")
-        
-        # Install dependency into output package
-        # install(FILES ${LIBEAY_RUNTIME} DESTINATION bin)
+    find_file(OPENSSL_LEGACY_PROVIDER
+        NAMES legacy.dll
+        PATHS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin"
+        NO_DEFAULT_PATH
+    )
 
-    endif (OPENSSL_FOUND)
+    if (NOT EXISTS "${OPENSSL_LEGACY_PROVIDER}")
+        message(FATAL_ERROR "OpenSSL 3.x support is enabled, but legacy provider was not found")
+    endif()
 
-    # libjpeg dependent libraries
-    if (JPEG_FOUND)
+    message(STATUS "OpenSSL legacy provider was found at ${OPENSSL_LEGACY_PROVIDER}")
 
-        # Find dll runtime binary file
-        find_file(LIBJPEG_RUNTIME
-            NAMES turbojpeg.dll
-            PATHS ${VANILLPDF_BINARY_DIR}
-        )
+    add_custom_command(
+        TARGET vanillapdf POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${OPENSSL_LEGACY_PROVIDER}"
+        "$<TARGET_FILE_DIR:vanillapdf>"
+        COMMENT "Copying OpenSSL legacy provider module"
+    )
+    install(FILES "${OPENSSL_LEGACY_PROVIDER}" DESTINATION bin)
 
-        if (NOT EXISTS ${LIBJPEG_RUNTIME})
-            # message(FATAL_ERROR "JPEG support is enabled, but the LIBJPEG_RUNTIME does not exist")
-        endif(NOT EXISTS ${LIBJPEG_RUNTIME})
-        
-        # message(STATUS "LIBJPEG runtime was found at ${LIBJPEG_RUNTIME}")
-        
-        # Install dependency into output package
-        # install(FILES ${LIBJPEG_RUNTIME} DESTINATION bin)
-    endif (JPEG_FOUND)
-
-    # zlib dependent libraries
-    if (VANILLAPDF_ENABLE_ZLIB AND ZLIB_FOUND)
-
-        # Find dll runtime binary file
-        find_file(ZLIB_RUNTIME
-            NAMES zlib1.dll
-            PATHS ${VANILLPDF_BINARY_DIR}
-        )
-
-        if (NOT EXISTS ${ZLIB_RUNTIME})
-            # message(FATAL_ERROR "zlib support is enabled, but the ZLIB_RUNTIME does not exist")
-        endif(NOT EXISTS ${ZLIB_RUNTIME})
-        
-        # message(STATUS "ZLIB runtime was found at ${ZLIB_RUNTIME}")
-        
-        # Install dependency into output package
-        # install(FILES ${ZLIB_RUNTIME} DESTINATION bin)
-    endif (VANILLAPDF_ENABLE_ZLIB AND ZLIB_FOUND)
-endif(WIN32)
+    # Set the modules directory so test targets can set OPENSSL_MODULES env var.
+    # OpenSSL checks this env var at runtime to locate provider modules.
+    # Users can override via -DVANILLAPDF_OPENSSL_MODULES_DIR=<path>.
+    set(VANILLAPDF_OPENSSL_MODULES_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin"
+        CACHE PATH "Directory containing OpenSSL provider modules (legacy.dll)")
+endif()
 
 # Add export verification test for shared library builds
 # Only add the test if testing is enabled and we're building shared libraries
