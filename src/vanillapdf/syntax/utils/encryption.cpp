@@ -357,7 +357,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 
     total_result_length += current_offset;
 
-    // Remove trailing zeroes
+    // Trim buffer to actual plaintext length (padding bytes removed by EVP_DecryptFinal)
     result->resize(total_result_length);
 
     return result;
@@ -461,7 +461,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
     total_result_length += current_offset;
 
-    // Remove trailing zeroes
+    // Trim buffer to actual ciphertext length (IV + encrypted blocks with padding)
     result->resize(total_result_length);
 
     return result;
@@ -471,58 +471,6 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
     throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
 
-}
-
-BufferPtr EncryptionUtils::AddPkcs7Padding(const Buffer& data, types::size_type block_size) {
-    types::size_type remaining = block_size - (data.size() % block_size);
-
-    Buffer::value_type converted = ValueConvertUtils::SafeConvert<Buffer::value_type>(remaining);
-
-    BufferPtr result;
-    result->reserve(data.size() + remaining);
-    result->insert(result.begin(), data.begin(), data.end());
-    result->insert(result.end(), remaining, converted);
-
-    return result;
-}
-
-BufferPtr EncryptionUtils::RemovePkcs7Padding(const Buffer& data, types::size_type block_size) {
-    do {
-        // Empty data are invalid
-        if (data.empty()) {
-            break;
-        }
-
-        char bytes = data.back();
-        unsigned char converted = reinterpret_cast<unsigned char&>(bytes);
-        if (data.size() < converted || converted > block_size) {
-            break;
-        }
-
-        // verify PKCS#7 padding
-        // The value of each added byte is the number of bytes that are added, i.e. N bytes, each of value N are added
-        bool padding_error = false;
-        for (auto it = data.end() - converted; it != data.end(); it++) {
-            if (*it != bytes) {
-                padding_error = true;
-                break;
-            }
-        }
-
-        if (padding_error) {
-            break;
-        }
-
-        return make_deferred_container<Buffer>(data.begin(), data.end() - converted);
-    } while (false);
-
-    // I would really like to be strict about padding,
-    // but in test document "example_128-aes.pdf" there is a signature field
-    // that allocated space with zeroes and did not care about setting proper
-    // pkcs padding. That means, that there is some trash after we decrypt the
-    // signature contents and padding could not be validated
-    spdlog::warn("Pkcs padding is incorrect");
-    return make_deferred_container<Buffer>(data);
 }
 
 BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(

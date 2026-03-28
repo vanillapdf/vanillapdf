@@ -38,6 +38,23 @@ rm -rf build/
 cmake --preset your-preset
 ```
 
+## OpenSSL Crypto Policy (RHEL/Rocky/Fedora)
+
+PDF encryption relies on algorithms that restrictive OpenSSL crypto policies may block (MD5 for key derivation, RC4 for legacy PDFs, SHA-1 for older signatures). On RHEL-based distributions (Rocky Linux, Fedora, AlmaLinux) the `DEFAULT` policy restricts these algorithms.
+
+To enable PDF encryption support on these systems:
+```bash
+# System-wide: switch to LEGACY crypto policy
+sudo update-crypto-policies --set LEGACY
+```
+
+The library loads the OpenSSL `legacy` provider at startup (`OSSL_PROVIDER_load`) to make MD5, RC4, and other legacy algorithms available. However, the system crypto policy can still block their use at a higher level.
+
+For signature verification, the `SignatureVerificationSettings` API provides `AllowWeakAlgorithmsFlag` to control whether weak algorithms (MD5, SHA-1, RSA < 2048 bits) are accepted:
+```c
+SignatureVerificationSettings_SetAllowWeakAlgorithmsFlag(settings, VANILLAPDF_RV_TRUE);
+```
+
 ## Test Failures
 
 If tests fail unexpectedly:
