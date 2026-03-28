@@ -17,7 +17,7 @@
 | **PDF Generation** | Create documents with text, images, paths, and pages |
 | **Advanced Editing** | Modify content streams, metadata, and page structure |
 | **PDF Parsing** | Inspect low-level internals like XRef tables and objects |
-| **Encryption** | Work with standard PDF security models |
+| **Encryption** | Work with standard PDF security models; compatible with FIPS-enabled OpenSSL configurations |
 | **CLI Tools** | Batch-process PDFs directly from the terminal |
 
 ## Supported Platforms
