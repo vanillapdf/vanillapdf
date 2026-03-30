@@ -29,6 +29,7 @@ static std::mutex g_openssl_lock;
 static bool g_openssl_initialized = false;
 static OSSL_PROVIDER* g_legacy_provider = nullptr;
 static OSSL_PROVIDER* g_default_provider = nullptr;
+
 #endif
 
 const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
@@ -125,6 +126,25 @@ std::string CryptoUtils::GetLastOpensslError() {
 #endif
 }
 
+void CryptoUtils::SetOpenSSLModulesPath(const std::string& path) {
+#if OPENSSL_VERSION_MAJOR >= 3
+    std::lock_guard<std::mutex> lock(g_openssl_lock);
+    if (g_openssl_initialized) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "OpenSSL modules path must be set before initialization");
+    }
+
+    // OSSL_PROVIDER_set_default_search_path copies the string internally
+    int result = OSSL_PROVIDER_set_default_search_path(nullptr, path.c_str());
+    if (result != 1) {
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to set OpenSSL modules path: {}", GetLastOpensslError());
+    }
+
+#else
+    // OpenSSL 1.x does not use provider modules
+    (void)path;
+#endif
+}
+
 void CryptoUtils::InitializeOpenSSL() {
 
 #if OPENSSL_VERSION_MAJOR >= 3
@@ -193,6 +213,10 @@ const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm) {
 }
 
 std::string CryptoUtils::GetLastOpensslError() {
+    throw NotSupportedException("This library was compiled without OpenSSL support");
+}
+
+void CryptoUtils::SetOpenSSLModulesPath(const std::string&) {
     throw NotSupportedException("This library was compiled without OpenSSL support");
 }
 

@@ -1,5 +1,48 @@
 #include "tools.h"
 
+/**
+ * Extract the directory component from a file path into the provided buffer.
+ * Returns the length of the directory string, or 0 if no separator was found.
+ */
+static size_t get_directory_from_path(const char* path, char* buffer, size_t buffer_size) {
+    const char* fwd = strrchr(path, '/');
+    const char* bck = strrchr(path, '\\');
+    const char* sep = (bck > fwd) ? bck : fwd;
+
+    if (sep == NULL) {
+        return 0;
+    }
+
+    size_t dir_len = (size_t)(sep - path);
+    if (dir_len >= buffer_size) {
+        return 0;
+    }
+
+    memcpy(buffer, path, dir_len);
+    buffer[dir_len] = '\0';
+    return dir_len;
+}
+
+/**
+ * Set OpenSSL provider modules path to the executable's directory.
+ *
+ * On shared builds with OpenSSL 3.x, the compiled-in MODULESDIR may not
+ * match the actual location of provider modules (e.g. legacy.dll/.so).
+ * Derives the directory from the executable path and configures the
+ * OpenSSL provider search path so modules are found alongside the binary.
+ */
+static void configure_openssl_modules_path(const char* executable_path) {
+    char dir[4096];
+    size_t len = get_directory_from_path(executable_path, dir, sizeof(dir));
+    const char* modules_path = (len > 0) ? dir : ".";
+
+    error_type result = MiscUtils_SetOpenSSLModulesPath(modules_path);
+    if (result != VANILLAPDF_ERROR_SUCCESS) {
+        printf("Warning: Failed to set OpenSSL modules path to '%s' (error %u)\n",
+            modules_path, result);
+    }
+}
+
 const int VANILLAPDF_TOOLS_ERROR_SUCCESS = 0;
 const int VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS = 1;
 const int VANILLAPDF_TOOLS_ERROR_FAILURE = 255;
@@ -39,6 +82,8 @@ int main(int argc, char *argv[]) {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     //_CrtSetBreakAlloc(803506);
 #endif /* DEBUG && COMPILER_MICROSOFT_VISUAL_STUDIO */
+
+    configure_openssl_modules_path(argv[0]);
 
     if (argc < 2) {
         print_help();

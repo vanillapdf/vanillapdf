@@ -69,6 +69,17 @@ public:
 #endif // VANILLAPDF_HAVE_OPENSSL
 
     /**
+     * \brief Set the directory where OpenSSL looks for provider modules.
+     *
+     * Must be called before InitializeOpenSSL(). On OpenSSL 3.x, overrides
+     * the compiled-in MODULESDIR used by OSSL_PROVIDER_load().
+     *
+     * \param path Directory containing OpenSSL provider modules.
+     * \throws NotSupportedException if compiled without OpenSSL
+     */
+    static void SetOpenSSLModulesPath(const std::string& path);
+
+    /**
      * \brief Initialize OpenSSL library
      *
      * Thread-safe one-time initialization of OpenSSL.
