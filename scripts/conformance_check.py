@@ -81,6 +81,16 @@ def run_qpdf_check(qpdf_binary, pdf_path, password=None, timeout=60):
     return result.returncode, _collect_output(result)
 
 
+def run_qpdf_decrypt(qpdf_binary, src, dst, password, timeout=60):
+    """Run ``qpdf --decrypt`` and return (returncode, combined output)."""
+    cmd = [qpdf_binary, "--decrypt", "--password=" + password, src, dst]
+    result = subprocess.run(
+        cmd, capture_output=True, encoding="utf-8", errors="replace",
+        timeout=timeout,
+    )
+    return result.returncode, _collect_output(result)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Validate vanillapdf round-trip output with qpdf"
@@ -216,6 +226,26 @@ def main():
                 continue
         else:
             passed += 1
+
+        # Step 3: for encrypted files, verify qpdf can decrypt them
+        if password is not None:
+            decrypted_path = out_path + ".decrypted.pdf"
+            rc, output = run_qpdf_decrypt(
+                args.qpdf, out_path, decrypted_path, password=password
+            )
+            # qpdf exit code 3 = warnings only (not errors)
+            # Known: stream /Length mismatch in encrypted files
+            # https://github.com/vanillapdf/vanillapdf/issues/364
+            if rc not in (0, 3):
+                # Undo the pass from step 2
+                passed -= 1
+                failed += 1
+                qpdf_failures.append((rel_path + " (decrypt)", output.strip()))
+                print(f"  FAIL  {rel_path} (qpdf --decrypt returned {rc})")
+                if args.verbose and output.strip():
+                    for line in output.strip().splitlines():
+                        print(f"        {line}")
+                continue
 
         if args.verbose:
             print(f"  PASS  {rel_path}")
