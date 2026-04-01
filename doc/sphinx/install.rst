@@ -336,30 +336,29 @@ Troubleshooting
 - **macOS**: Install via Homebrew: ``brew install openssl@3 jpeg-turbo zlib openjpeg``
 - **Windows**: Use vcpkg presets or ensure Visual Studio 2022 or 2026 is properly installed
 
-*OpenSSL legacy provider not found (Windows shared builds):*
+*OpenSSL legacy provider on Windows:*
 
-On Windows shared (dynamic) builds with OpenSSL 3.x, the legacy provider module
-(``legacy.dll``) may fail to load because the compiled-in module search path
-does not match the vcpkg installation directory. The error typically looks like:
+**Static linking is the recommended approach on Windows.** Providers are compiled
+directly into the library and no additional configuration is needed.
+
+When linking dynamically, OpenSSL 3.x loads provider modules (e.g. ``legacy.dll``)
+at runtime from a compiled-in directory. If that directory does not match the
+actual installation, provider loading will fail:
 
 .. code-block:: text
 
    Failed to initialize legacy OSSL provider
    filename(C:\Program Files (x86)\OpenSSL\bin\legacy.dll)
 
-**For tests**: The build system automatically sets the ``OPENSSL_MODULES``
-environment variable on CTest targets when using internal vcpkg with shared builds.
-The path can be overridden with ``-DVANILLAPDF_OPENSSL_MODULES_DIR=<path>``.
-
-**For applications**: Set the ``OPENSSL_MODULES`` environment variable to the
-directory containing ``legacy.dll`` before running your application:
+The caller is responsible for configuring the environment so that OpenSSL can
+find its provider modules. Set the ``OPENSSL_MODULES`` environment variable to
+the directory containing the provider DLLs before running the application:
 
 .. code-block:: bash
 
    set OPENSSL_MODULES=path/to/bin
 
-This issue does not affect static builds — providers are compiled directly into
-the library.
+The build system handles this automatically for CTest targets.
 
 Building packages
 -----------------

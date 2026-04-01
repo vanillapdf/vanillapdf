@@ -23,21 +23,6 @@ extern "C" {
     * \memberof MiscUtils
     * @{ */
 
-    /**
-    * \brief Set the directory where OpenSSL looks for provider modules.
-    *
-    * On OpenSSL 3.x, providers such as the legacy provider (legacy.dll)
-    * are loaded at runtime from a compiled-in directory. If that directory
-    * does not match the actual installation (e.g. when using vcpkg on Windows),
-    * provider loading will fail. Call this function before
-    * MiscUtils_InitializeOpenSSL() to override the search path.
-    *
-    * This is equivalent to setting the OPENSSL_MODULES environment variable.
-    *
-    * \param path Directory containing OpenSSL provider modules.
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION MiscUtils_SetOpenSSLModulesPath(string_type path);
-
     /** \brief Initialize OpenSSL providers and algorithms. */
     VANILLAPDF_API error_type CALLING_CONVENTION MiscUtils_InitializeOpenSSL();
 
