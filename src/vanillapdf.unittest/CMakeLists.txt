@@ -153,4 +153,13 @@ include(GoogleTest)
 # Without this flag, test names include raw memory addresses making output unreadable:
 #   Before: CertificateTypes/.../40-byte object <B0-4E 79-8B F7-7F 00-00...>
 #   After:  CertificateTypes/.../2kDSA_SHA256
-gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST NO_PRETTY_VALUES)
+# OpenSSL 3.x: set provider module search path (see vanillapdf/CMakeLists.txt)
+set(VANILLAPDF_UNITTEST_EXTRA_PROPERTIES "")
+if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG AND NOT VANILLAPDF_EXTERNAL_OPENSSL
+        AND VANILLAPDF_OPENSSL_MODULES_DIR)
+    set(VANILLAPDF_UNITTEST_EXTRA_PROPERTIES PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${VANILLAPDF_OPENSSL_MODULES_DIR}")
+endif()
+
+gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST NO_PRETTY_VALUES
+    ${VANILLAPDF_UNITTEST_EXTRA_PROPERTIES}
+)
