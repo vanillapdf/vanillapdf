@@ -107,6 +107,13 @@ target_compile_definitions(vanillapdf.tools PRIVATE -DVANILLAPDF_TOOLS_ICON="${V
 
 # Add tests for vanillapdf-tools CLI
 if(VANILLAPDF_ENABLE_TESTS)
+    # OpenSSL 3.x: set provider module search path (see vanillapdf/CMakeLists.txt)
+    set(VANILLAPDF_TOOLS_EXTRA_PROPERTIES "")
+    if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG AND NOT VANILLAPDF_EXTERNAL_OPENSSL
+            AND VANILLAPDF_OPENSSL_MODULES_DIR)
+        set(VANILLAPDF_TOOLS_EXTRA_PROPERTIES PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${VANILLAPDF_OPENSSL_MODULES_DIR}")
+    endif()
+
     # Verify test for Granizo-signed.PDF (self-signed certificate) - should succeed with flag
     # Uses --skip-certificate-validation to bypass untrusted root check
     add_test(
@@ -120,4 +127,81 @@ if(VANILLAPDF_ENABLE_TESTS)
         COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/custom/Granizo-signed.PDF"
     )
     set_tests_properties("Tools.verify.Granizo-signed.without-flag" PROPERTIES WILL_FAIL TRUE)
+
+    # OpenSSL 3.x: set provider module search path on verify tests (see vanillapdf/CMakeLists.txt)
+    if(VANILLAPDF_TOOLS_EXTRA_PROPERTIES)
+        set_tests_properties("Tools.verify.Granizo-signed.with-flag" ${VANILLAPDF_TOOLS_EXTRA_PROPERTIES})
+        set_tests_properties("Tools.verify.Granizo-signed.without-flag" ${VANILLAPDF_TOOLS_EXTRA_PROPERTIES})
+    endif()
+
+    # Validate tests
+    set(VALIDATE_TEST_FILES
+        "test/example.pdf"
+        "test/19005-1_FAQ.PDF"
+        "test/custom/minimalist.pdf"
+        "test/pdf-association/pdf20examples/Simple-PDF-2.0-file.pdf"
+    )
+
+    foreach(TEST_FILE ${VALIDATE_TEST_FILES})
+        string(REPLACE "/" "." TEST_NAME "${TEST_FILE}")
+        string(REPLACE "\\" "." TEST_NAME "${TEST_NAME}")
+        string(REGEX REPLACE "\\.[pP][dD][fF]$" "" TEST_NAME "${TEST_NAME}")
+
+        add_test(
+            NAME "Tools.validate.${TEST_NAME}"
+            COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/${TEST_FILE}"
+        )
+        set_tests_properties("Tools.validate.${TEST_NAME}" PROPERTIES
+            PASS_REGULAR_EXPRESSION "Issues: 0 \\(0 error"
+        )
+    endforeach()
+
+    # Validate tests for files with known structural errors (expected to fail validation)
+
+    # issue5874.pdf: 1 xref bad-offset error (code=300), no warnings
+    add_test(
+        NAME "Tools.validate.test.pdfjs.issue5874"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/pdfjs/issue5874.pdf"
+    )
+    set_tests_properties("Tools.validate.test.pdfjs.issue5874" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Issues: 1 \\(1 error\\(s\\), 0 warning"
+    )
+
+    # request_for_taxpayer.pdf: 1 TrailerSizeMismatch warning (code=202) + 1 xref bad-offset error (code=300)
+    add_test(
+        NAME "Tools.validate.test.request_for_taxpayer"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/request_for_taxpayer.pdf"
+    )
+    set_tests_properties("Tools.validate.test.request_for_taxpayer" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Issues: 2 \\(1 error\\(s\\), 1 warning"
+    )
+
+    # bug1011159.pdf: 1 TrailerSizeMismatch warning (code=202) only - still reports VALID
+    add_test(
+        NAME "Tools.validate.test.pdfjs.bug1011159"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/pdfjs/bug1011159.pdf"
+    )
+    set_tests_properties("Tools.validate.test.pdfjs.bug1011159" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Issues: 1 \\(0 error\\(s\\), 1 warning"
+    )
+
+    # Read tests using memory IO strategy
+    set(MEMORY_STRATEGY_TEST_FILES
+        "test/example.pdf"
+        "test/19005-1_FAQ.PDF"
+        "test/custom/minimalist.pdf"
+        "test/pdf-association/pdf20examples/Simple-PDF-2.0-file.pdf"
+    )
+
+    foreach(TEST_FILE ${MEMORY_STRATEGY_TEST_FILES})
+        # Derive test name from file path: replace / and \ with . and remove extension
+        string(REPLACE "/" "." TEST_NAME "${TEST_FILE}")
+        string(REPLACE "\\" "." TEST_NAME "${TEST_NAME}")
+        string(REGEX REPLACE "\\.[pP][dD][fF]$" "" TEST_NAME "${TEST_NAME}")
+
+        add_test(
+            NAME "Tools.read.${TEST_NAME}"
+            COMMAND $<TARGET_FILE:vanillapdf.tools> read -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/${TEST_FILE}"
+        )
+    endforeach()
 endif()
