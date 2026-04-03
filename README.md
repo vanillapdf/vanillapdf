@@ -25,7 +25,7 @@
 
 | Platform | Compilers | Architectures |
 |----------|-----------|---------------|
-| Windows | Visual Studio 2022 (MSVC 17.x) | x86, x64 |
+| Windows | Visual Studio 2022 (MSVC 17.x), 2026 (MSVC 18.x) | x86, x64, ARM64 |
 | Linux | GCC 8.1+, Clang 10+ | x64, ARM64, ARM |
 | macOS | AppleClang 15+ (Xcode 15) | x64, ARM64 |
 | Android | NDK toolchain | arm64-v8a, armeabi-v7a, x86, x86_64 |
