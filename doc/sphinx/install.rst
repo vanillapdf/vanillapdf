@@ -68,7 +68,7 @@ Download from https://cmake.org/download/
 
 **Supported Compilers:**
 
-- **Windows:** Visual Studio 2022 (MSVC 17.x) or Visual Studio 2026 (MSVC 18.x)
+- **Windows:** Visual Studio 2022 (MSVC 17.x) or Visual Studio 2026 (MSVC 18.x) — x86, x64, ARM64
 - **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
 - **macOS:** AppleClang 15+ (Xcode 15)
 - **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
@@ -106,14 +106,20 @@ List the available build presets:
      "windows-x64-msvc-17-static"
      "windows-x86-msvc-17"
      "windows-x64-msvc-17"
+     "windows-arm64-msvc-17"
+     "windows-arm64-msvc-17-static"
+     "windows-arm64-msvc-17-static-md"
      "windows-x86-msvc-17-static-md"
      "windows-x64-msvc-17-static-md"
      "windows-x86-msvc-18-static"
      "windows-x64-msvc-18-static"
+     "windows-arm64-msvc-18-static"
      "windows-x86-msvc-18"
      "windows-x64-msvc-18"
+     "windows-arm64-msvc-18"
      "windows-x86-msvc-18-static-md"
      "windows-x64-msvc-18-static-md"
+     "windows-arm64-msvc-18-static-md"
      "default"
      "linux-x64-gcc"
      "linux-arm64-gcc"
@@ -131,12 +137,12 @@ List the available build presets:
 
 Common presets include:
 
-- ``windows-x64-msvc-17`` / ``windows-x86-msvc-17`` - Windows with Visual Studio 2022 (dynamic CRT)
-- ``windows-x64-msvc-17-static`` / ``windows-x86-msvc-17-static`` - Windows with Visual Studio 2022 (static CRT)
-- ``windows-x64-msvc-17-static-md`` / ``windows-x86-msvc-17-static-md`` - Windows with Visual Studio 2022 (static libs, dynamic CRT)
-- ``windows-x64-msvc-18`` / ``windows-x86-msvc-18`` - Windows with Visual Studio 2026 (dynamic CRT)
-- ``windows-x64-msvc-18-static`` / ``windows-x86-msvc-18-static`` - Windows with Visual Studio 2026 (static CRT)
-- ``windows-x64-msvc-18-static-md`` / ``windows-x86-msvc-18-static-md`` - Windows with Visual Studio 2026 (static libs, dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-17`` - Windows with Visual Studio 2022 (dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-17-static`` - Windows with Visual Studio 2022 (static CRT)
+- ``windows-{x86,x64,arm64}-msvc-17-static-md`` - Windows with Visual Studio 2022 (static libs, dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-18`` - Windows with Visual Studio 2026 (dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-18-static`` - Windows with Visual Studio 2026 (static CRT)
+- ``windows-{x86,x64,arm64}-msvc-18-static-md`` - Windows with Visual Studio 2026 (static libs, dynamic CRT)
 - ``linux-x64-gcc`` / ``linux-arm64-gcc`` - Linux with GCC
 - ``linux-x64-clang`` / ``linux-arm64-clang`` - Linux with Clang
 - ``macos-x64`` / ``macos-arm64`` - macOS builds

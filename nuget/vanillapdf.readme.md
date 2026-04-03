@@ -12,7 +12,7 @@
 
 ## Supported Platforms & Compilers
 
-- **Windows:** Visual Studio 2019 (MSVC 16.11) or 2022 (MSVC 17.x)
+- **Windows:** Visual Studio 2022 (MSVC 17.x) or 2026 (MSVC 18.x) — x86, x64, ARM64
 - **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
 - **macOS:** AppleClang 15+ (Xcode 15)
 - **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)

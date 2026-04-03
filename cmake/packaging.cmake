@@ -90,11 +90,14 @@ set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_DEPENDS "vanillapdf (= ${PACKAGE_VERSION_NA
 set(CPACK_FREEBSD_PACKAGE_MAINTAINER	"info@vanillapdf.com")
 
 # Variables specific to CPack WiX generator
-set(CPACK_WIX_UPGRADE_GUID				"{88E3B5A2-C8B2-4F7C-A7E5-A2B764A9B0E6}")
-
-set(CPACK_WIX_PRODUCT_ICON				${CMAKE_CURRENT_SOURCE_DIR}/cmake/vanilla_logo.ico)
-set(CPACK_WIX_PROGRAM_MENU_FOLDER		"Vanilla.PDF")
-set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY	"Vanilla.PDF")
+# WiX MSI generation is currently disabled (ZIP-only). To re-enable,
+# add "WIX" back to CPACK_GENERATOR above and ensure WiX is installed.
+if(CPACK_GENERATOR MATCHES "WIX")
+    set(CPACK_WIX_UPGRADE_GUID				"{88E3B5A2-C8B2-4F7C-A7E5-A2B764A9B0E6}")
+    set(CPACK_WIX_PRODUCT_ICON				${CMAKE_CURRENT_SOURCE_DIR}/cmake/vanilla_logo.ico)
+    set(CPACK_WIX_PROGRAM_MENU_FOLDER		"Vanilla.PDF")
+    set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY	"Vanilla.PDF")
+endif()
 
 # Variables specific to CPack NuGet generator
 #set(CPACK_NUGET_PACKAGE_NAME							"vanillapdf.runtime.${PLATFORM_IDENTIFIER}")
@@ -124,7 +127,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/nuget.cmake)
 #set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/packaging_runtime.cmake)
 
 if(WIN32)
-    set(CPACK_GENERATOR		"WIX;ZIP")
+    set(CPACK_GENERATOR		"ZIP")
 
 elseif(APPLE)
     set(CPACK_GENERATOR		"DragNDrop;TGZ")
