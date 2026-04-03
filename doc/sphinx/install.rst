@@ -336,6 +336,30 @@ Troubleshooting
 - **macOS**: Install via Homebrew: ``brew install openssl@3 jpeg-turbo zlib openjpeg``
 - **Windows**: Use vcpkg presets or ensure Visual Studio 2022 or 2026 is properly installed
 
+*OpenSSL legacy provider on Windows:*
+
+**Static linking is the recommended approach on Windows.** Providers are compiled
+directly into the library and no additional configuration is needed.
+
+When linking dynamically, OpenSSL 3.x loads provider modules (e.g. ``legacy.dll``)
+at runtime from a compiled-in directory. If that directory does not match the
+actual installation, provider loading will fail:
+
+.. code-block:: text
+
+   Failed to initialize legacy OSSL provider
+   filename(C:\Program Files (x86)\OpenSSL\bin\legacy.dll)
+
+The caller is responsible for configuring the environment so that OpenSSL can
+find its provider modules. Set the ``OPENSSL_MODULES`` environment variable to
+the directory containing the provider DLLs before running the application:
+
+.. code-block:: bash
+
+   set OPENSSL_MODULES=path/to/bin
+
+The build system handles this automatically for CTest targets.
+
 Building packages
 -----------------
 
