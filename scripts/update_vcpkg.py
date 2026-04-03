@@ -162,6 +162,17 @@ class VcpkgUpdater:
     def push_branch(self, branch_name: str) -> None:
         """Push the update branch to remote (force-push to update existing automated branches)."""
         print(f"Pushing branch {branch_name} to remote...")
+
+        # Fetch the remote-tracking ref so --force-with-lease has a baseline to
+        # compare against. In shallow CI clones only the default branch is fetched,
+        # so without this step git refuses the push when the remote branch already
+        # exists (no local remote-tracking ref to verify).
+        self.run_command(
+            ['git', 'fetch', 'origin',
+             f'refs/heads/{branch_name}:refs/remotes/origin/{branch_name}'],
+            check=False,  # OK to fail when the remote branch doesn't exist yet
+        )
+
         self.run_command(['git', 'push', '--force-with-lease', 'origin', branch_name])
 
     def create_pull_request(self, current_version: str, new_version: str, commit_hash: str, branch_name: str) -> Optional[str]:
