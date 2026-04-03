@@ -29,6 +29,7 @@ static std::mutex g_openssl_lock;
 static bool g_openssl_initialized = false;
 static OSSL_PROVIDER* g_legacy_provider = nullptr;
 static OSSL_PROVIDER* g_default_provider = nullptr;
+
 #endif
 
 const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
@@ -200,6 +201,7 @@ const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm) {
 std::string CryptoUtils::GetLastOpensslError() {
     throw NotSupportedException("This library was compiled without OpenSSL support");
 }
+
 
 void CryptoUtils::InitializeOpenSSL() {
     throw NotSupportedException("This library was compiled without OpenSSL support");
