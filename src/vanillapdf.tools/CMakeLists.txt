@@ -128,12 +128,20 @@ target_compile_definitions(vanillapdf.tools PRIVATE -DVANILLAPDF_TOOLS_ICON="${V
 
 # Add tests for vanillapdf-tools CLI
 if(VANILLAPDF_ENABLE_TESTS)
+    # OpenSSL 3.x: set provider module search path (see vanillapdf/CMakeLists.txt)
+    set(VANILLAPDF_TOOLS_EXTRA_PROPERTIES "")
+    if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG AND NOT VANILLAPDF_EXTERNAL_OPENSSL
+            AND VANILLAPDF_OPENSSL_MODULES_DIR)
+        set(VANILLAPDF_TOOLS_EXTRA_PROPERTIES PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${VANILLAPDF_OPENSSL_MODULES_DIR}")
+    endif()
+
     # Verify test for Granizo-signed.PDF (self-signed certificate) - should succeed with flag
     # Uses --skip-certificate-validation to bypass untrusted root check
     add_test(
         NAME "Tools.verify.Granizo-signed.with-flag"
         COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/custom/Granizo-signed.PDF" --skip-certificate-validation
     )
+    set_tests_properties("Tools.verify.Granizo-signed.with-flag" ${VANILLAPDF_TOOLS_EXTRA_PROPERTIES})
 
     # Verify test for Granizo-signed.PDF without flag - should fail (untrusted root)
     add_test(
@@ -141,6 +149,7 @@ if(VANILLAPDF_ENABLE_TESTS)
         COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/custom/Granizo-signed.PDF"
     )
     set_tests_properties("Tools.verify.Granizo-signed.without-flag" PROPERTIES WILL_FAIL TRUE)
+    set_tests_properties("Tools.verify.Granizo-signed.without-flag" ${VANILLAPDF_TOOLS_EXTRA_PROPERTIES})
 
     # Validate tests
     set(VALIDATE_TEST_FILES
