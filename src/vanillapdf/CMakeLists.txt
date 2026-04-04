@@ -818,7 +818,7 @@ endif()
 # and imported targets are created as UNKNOWN). The most reliable check is to
 # look for the provider file directly. On static vcpkg triplets, providers are
 # compiled into the library and no separate DLL exists, so find_file fails
-# silently. OPENSSL_MODULES_DIR is set by OpenSSL's own OpenSSLConfig.cmake.
+# silently.
 if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG
         AND OPENSSL_FOUND AND NOT VANILLAPDF_EXTERNAL_OPENSSL
         AND OPENSSL_VERSION VERSION_GREATER_EQUAL "3.0.0")
@@ -845,7 +845,7 @@ if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG
         # Set the modules directory so test targets can set OPENSSL_MODULES env var.
         # OpenSSL checks this env var at runtime to locate provider modules.
         # Users can override via -DVANILLAPDF_OPENSSL_MODULES_DIR=<path>.
-        set(VANILLAPDF_OPENSSL_MODULES_DIR "${OPENSSL_MODULES_DIR}"
+        set(VANILLAPDF_OPENSSL_MODULES_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin"
             CACHE PATH "Directory containing OpenSSL provider modules")
     else()
         message(STATUS "OpenSSL legacy provider not found — assuming static linkage (providers compiled in)")
