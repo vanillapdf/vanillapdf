@@ -401,6 +401,36 @@ bool File::SetEncryptionPassword(const Buffer& password) {
     auto revision_value = ValueConvertUtils::SafeConvert<int32_t>(revision->GetIntegerValue());
     auto key_length_value = ValueConvertUtils::SafeConvert<int32_t>(length_bits->GetIntegerValue());
 
+    // R=6 uses SHA-256 based key derivation (ISO 32000-2)
+    if (revision_value == 6) {
+        // Truncate password to 127 bytes
+        BufferPtr truncated_password;
+        if (password.size() > 127) {
+            truncated_password = make_deferred_container<Buffer>(password.begin(), password.begin() + 127);
+        } else {
+            truncated_password = make_deferred_container<Buffer>(password);
+        }
+
+        auto ue_value = dict->FindAs<StringObjectPtr>(constant::Name::UE);
+        auto oe_value = dict->FindAs<StringObjectPtr>(constant::Name::OE);
+        auto perms_entry = dict->FindAs<StringObjectPtr>(constant::Name::Perms);
+
+        BufferPtr temp_key;
+        if (EncryptionUtils::CheckKeyR6(
+                truncated_password,
+                user_value->GetValue(),
+                ue_value->GetValue(),
+                owner_value->GetValue(),
+                oe_value->GetValue(),
+                perms_entry->GetValue(),
+                temp_key)) {
+            _decryption_key = temp_key;
+            return true;
+        }
+
+        return false;
+    }
+
     // Pad password with predefined scheme
     BufferPtr padPassword = EncryptionUtils::PadTruncatePassword(password);
     BufferPtr encrypted_owner_data = EncryptionUtils::ComputeAuthenticationOwnerData(padPassword, dict);

@@ -14,6 +14,7 @@
 #include <openssl/aes.h>
 #include <openssl/x509.h>
 #include <openssl/md5.h>
+#include <openssl/sha.h>
 #include <openssl/pkcs7.h>
 #include <openssl/objects.h>
 #include <openssl/evp.h>
@@ -269,6 +270,137 @@ BufferPtr EncryptionUtils::ComputeMD5(const Buffer& data) {
 
 }
 
+BufferPtr EncryptionUtils::ComputeSHA256(const Buffer& data) {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+    auto evp_md = EVP_sha256();
+    auto evp_md_ctx = EVP_MD_CTX_new();
+    if (evp_md_ctx == nullptr) {
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_MD_CTX");
+    }
+
+    SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
+
+    BufferPtr digest = make_deferred_container<Buffer>(SHA256_DIGEST_LENGTH);
+
+    auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
+    if (init_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize SHA-256 digest: {}", openssl_error);
+    }
+
+    auto update_result = EVP_DigestUpdate(evp_md_ctx, data.data(), data.std_size());
+    if (update_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update SHA-256 digest: {}", openssl_error);
+    }
+
+    unsigned int final_size = 0;
+    auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)digest->data(), &final_size);
+    if (final_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not finalize SHA-256 digest: {}", openssl_error);
+    }
+
+    assert(final_size == SHA256_DIGEST_LENGTH);
+
+    return digest;
+
+#else
+    throw NotSupportedException("This library was compiled without OpenSSL support");
+#endif
+
+}
+
+BufferPtr EncryptionUtils::ComputeSHA384(const Buffer& data) {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+    constexpr unsigned int SHA384_LEN = 48;
+
+    auto evp_md = EVP_sha384();
+    auto evp_md_ctx = EVP_MD_CTX_new();
+    if (evp_md_ctx == nullptr) {
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_MD_CTX");
+    }
+
+    SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
+
+    BufferPtr digest = make_deferred_container<Buffer>(SHA384_LEN);
+
+    auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
+    if (init_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize SHA-384 digest: {}", openssl_error);
+    }
+
+    auto update_result = EVP_DigestUpdate(evp_md_ctx, data.data(), data.std_size());
+    if (update_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update SHA-384 digest: {}", openssl_error);
+    }
+
+    unsigned int final_size = 0;
+    auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)digest->data(), &final_size);
+    if (final_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not finalize SHA-384 digest: {}", openssl_error);
+    }
+
+    assert(final_size == SHA384_LEN);
+
+    return digest;
+
+#else
+    throw NotSupportedException("This library was compiled without OpenSSL support");
+#endif
+
+}
+
+BufferPtr EncryptionUtils::ComputeSHA512(const Buffer& data) {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+    auto evp_md = EVP_sha512();
+    auto evp_md_ctx = EVP_MD_CTX_new();
+    if (evp_md_ctx == nullptr) {
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_MD_CTX");
+    }
+
+    SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
+
+    BufferPtr digest = make_deferred_container<Buffer>(SHA512_DIGEST_LENGTH);
+
+    auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
+    if (init_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize SHA-512 digest: {}", openssl_error);
+    }
+
+    auto update_result = EVP_DigestUpdate(evp_md_ctx, data.data(), data.std_size());
+    if (update_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update SHA-512 digest: {}", openssl_error);
+    }
+
+    unsigned int final_size = 0;
+    auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)digest->data(), &final_size);
+    if (final_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not finalize SHA-512 digest: {}", openssl_error);
+    }
+
+    assert(final_size == SHA512_DIGEST_LENGTH);
+
+    return digest;
+
+#else
+    throw NotSupportedException("This library was compiled without OpenSSL support");
+#endif
+
+}
+
 BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, const Buffer& data) {
     return AESDecrypt(key, key.size(), data);
 }
@@ -470,6 +602,218 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
 #else
     (void) key; (void) key_length; (void) data;
+    throw NotSupportedException("This library was compiled without OpenSSL support");
+#endif
+
+}
+
+BufferPtr EncryptionUtils::AESEncryptCBC_ZeroIV(const Buffer& key, const Buffer& data) {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+    CryptoUtils::InitializeOpenSSL();
+
+    auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
+    if (evp_cipher_ctx == nullptr) {
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_CIPHER_CTX");
+    }
+
+    SCOPE_GUARD([evp_cipher_ctx]() { EVP_CIPHER_CTX_free(evp_cipher_ctx); });
+
+    unsigned char zero_iv[AES_CBC_IV_LENGTH] = {0};
+
+    auto init_result = EVP_EncryptInit(evp_cipher_ctx, EVP_aes_256_cbc(), reinterpret_cast<const unsigned char*>(key.data()), zero_iv);
+    if (init_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize AES-256-CBC cipher: {}", openssl_error);
+    }
+
+    EVP_CIPHER_CTX_set_padding(evp_cipher_ctx, 0);
+
+    int data_size = ValueConvertUtils::SafeConvert<int>(data.size());
+    BufferPtr result = make_deferred_container<Buffer>(data_size + AES_CBC_BLOCK_SIZE);
+
+    int current_offset = 0;
+    auto update_result = EVP_EncryptUpdate(evp_cipher_ctx, reinterpret_cast<unsigned char*>(result->data()), &current_offset,
+        reinterpret_cast<const unsigned char*>(data.data()), data_size);
+    if (update_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not encrypt update AES-256-CBC cipher: {}", openssl_error);
+    }
+
+    int total_result_length = current_offset;
+
+    auto final_result = EVP_EncryptFinal(evp_cipher_ctx, reinterpret_cast<unsigned char*>(result->data() + current_offset), &current_offset);
+    if (final_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not encrypt finalize AES-256-CBC cipher: {}", openssl_error);
+    }
+
+    total_result_length += current_offset;
+    result->resize(total_result_length);
+
+    return result;
+
+#else
+    (void) key; (void) data;
+    throw NotSupportedException("This library was compiled without OpenSSL support");
+#endif
+
+}
+
+BufferPtr EncryptionUtils::AESDecryptCBC_ZeroIV(const Buffer& key, const Buffer& data) {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+    CryptoUtils::InitializeOpenSSL();
+
+    auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
+    if (evp_cipher_ctx == nullptr) {
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_CIPHER_CTX");
+    }
+
+    SCOPE_GUARD([evp_cipher_ctx]() { EVP_CIPHER_CTX_free(evp_cipher_ctx); });
+
+    unsigned char zero_iv[AES_CBC_IV_LENGTH] = {0};
+
+    auto init_result = EVP_DecryptInit(evp_cipher_ctx, EVP_aes_256_cbc(), reinterpret_cast<const unsigned char*>(key.data()), zero_iv);
+    if (init_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize AES-256-CBC decrypt cipher: {}", openssl_error);
+    }
+
+    EVP_CIPHER_CTX_set_padding(evp_cipher_ctx, 0);
+
+    int data_size = ValueConvertUtils::SafeConvert<int>(data.size());
+    BufferPtr result = make_deferred_container<Buffer>(data_size + AES_CBC_BLOCK_SIZE);
+
+    int current_offset = 0;
+    auto update_result = EVP_DecryptUpdate(evp_cipher_ctx, reinterpret_cast<unsigned char*>(result->data()), &current_offset,
+        reinterpret_cast<const unsigned char*>(data.data()), data_size);
+    if (update_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not decrypt update AES-256-CBC cipher: {}", openssl_error);
+    }
+
+    int total_result_length = current_offset;
+
+    auto final_result = EVP_DecryptFinal(evp_cipher_ctx, reinterpret_cast<unsigned char*>(result->data() + current_offset), &current_offset);
+    if (final_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not decrypt finalize AES-256-CBC cipher: {}", openssl_error);
+    }
+
+    total_result_length += current_offset;
+    result->resize(total_result_length);
+
+    return result;
+
+#else
+    (void) key; (void) data;
+    throw NotSupportedException("This library was compiled without OpenSSL support");
+#endif
+
+}
+
+BufferPtr EncryptionUtils::AESEncryptECB(const Buffer& key, const Buffer& data) {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+    CryptoUtils::InitializeOpenSSL();
+
+    auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
+    if (evp_cipher_ctx == nullptr) {
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_CIPHER_CTX");
+    }
+
+    SCOPE_GUARD([evp_cipher_ctx]() { EVP_CIPHER_CTX_free(evp_cipher_ctx); });
+
+    auto init_result = EVP_EncryptInit(evp_cipher_ctx, EVP_aes_256_ecb(), reinterpret_cast<const unsigned char*>(key.data()), nullptr);
+    if (init_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize AES-256-ECB cipher: {}", openssl_error);
+    }
+
+    EVP_CIPHER_CTX_set_padding(evp_cipher_ctx, 0);
+
+    int data_size = ValueConvertUtils::SafeConvert<int>(data.size());
+    BufferPtr result = make_deferred_container<Buffer>(data_size + AES_CBC_BLOCK_SIZE);
+
+    int current_offset = 0;
+    auto update_result = EVP_EncryptUpdate(evp_cipher_ctx, reinterpret_cast<unsigned char*>(result->data()), &current_offset,
+        reinterpret_cast<const unsigned char*>(data.data()), data_size);
+    if (update_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not encrypt update AES-256-ECB cipher: {}", openssl_error);
+    }
+
+    int total_result_length = current_offset;
+
+    auto final_result = EVP_EncryptFinal(evp_cipher_ctx, reinterpret_cast<unsigned char*>(result->data() + current_offset), &current_offset);
+    if (final_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not encrypt finalize AES-256-ECB cipher: {}", openssl_error);
+    }
+
+    total_result_length += current_offset;
+    result->resize(total_result_length);
+
+    return result;
+
+#else
+    (void) key; (void) data;
+    throw NotSupportedException("This library was compiled without OpenSSL support");
+#endif
+
+}
+
+BufferPtr EncryptionUtils::AESDecryptECB(const Buffer& key, const Buffer& data) {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+    CryptoUtils::InitializeOpenSSL();
+
+    auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
+    if (evp_cipher_ctx == nullptr) {
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_CIPHER_CTX");
+    }
+
+    SCOPE_GUARD([evp_cipher_ctx]() { EVP_CIPHER_CTX_free(evp_cipher_ctx); });
+
+    auto init_result = EVP_DecryptInit(evp_cipher_ctx, EVP_aes_256_ecb(), reinterpret_cast<const unsigned char*>(key.data()), nullptr);
+    if (init_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize AES-256-ECB decrypt cipher: {}", openssl_error);
+    }
+
+    EVP_CIPHER_CTX_set_padding(evp_cipher_ctx, 0);
+
+    int data_size = ValueConvertUtils::SafeConvert<int>(data.size());
+    BufferPtr result = make_deferred_container<Buffer>(data_size + AES_CBC_BLOCK_SIZE);
+
+    int current_offset = 0;
+    auto update_result = EVP_DecryptUpdate(evp_cipher_ctx, reinterpret_cast<unsigned char*>(result->data()), &current_offset,
+        reinterpret_cast<const unsigned char*>(data.data()), data_size);
+    if (update_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not decrypt update AES-256-ECB cipher: {}", openssl_error);
+    }
+
+    int total_result_length = current_offset;
+
+    auto final_result = EVP_DecryptFinal(evp_cipher_ctx, reinterpret_cast<unsigned char*>(result->data() + current_offset), &current_offset);
+    if (final_result != 1) {
+        auto openssl_error = CryptoUtils::GetLastOpensslError();
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not decrypt finalize AES-256-ECB cipher: {}", openssl_error);
+    }
+
+    total_result_length += current_offset;
+    result->resize(total_result_length);
+
+    return result;
+
+#else
+    (void) key; (void) data;
     throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
 
@@ -1178,6 +1522,269 @@ BufferPtr EncryptionUtils::GenerateRandomData(int length) {
 
 #else
     (void)length;
+    throw NotSupportedException("This library was compiled without OpenSSL support");
+#endif
+
+}
+
+// ISO 32000-2:2020 Algorithm 2.B - Computing a hash (R=6)
+BufferPtr EncryptionUtils::ComputeHashR6(
+    const Buffer& password,
+    const Buffer& salt,
+    const Buffer& u_value) {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+    CryptoUtils::InitializeOpenSSL();
+
+    // Step 1: K = SHA-256(password + salt + u_value)
+    Buffer initial_input;
+    initial_input.insert(initial_input.end(), password.begin(), password.end());
+    initial_input.insert(initial_input.end(), salt.begin(), salt.end());
+    initial_input.insert(initial_input.end(), u_value.begin(), u_value.end());
+
+    BufferPtr k = ComputeSHA256(initial_input);
+
+    // Step 2: Iterative round loop
+    for (int round = 0; ; round += 1) {
+
+        // Build K1 = (password + K + u_value) repeated 64 times
+        Buffer single_sequence;
+        single_sequence.insert(single_sequence.end(), password.begin(), password.end());
+        single_sequence.insert(single_sequence.end(), k.begin(), k.begin() + std::min(k->size(), static_cast<types::size_type>(32)));
+        single_sequence.insert(single_sequence.end(), u_value.begin(), u_value.end());
+
+        Buffer k1;
+        k1.reserve(single_sequence.size() * 64);
+        for (int i = 0; i < 64; i += 1) {
+            k1.insert(k1.end(), single_sequence.begin(), single_sequence.end());
+        }
+
+        // E = AES-128-CBC(key=K[0..15], iv=K[16..31], data=K1), no padding
+        auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
+        if (evp_cipher_ctx == nullptr) {
+            LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_CIPHER_CTX");
+        }
+
+        SCOPE_GUARD([evp_cipher_ctx]() { EVP_CIPHER_CTX_free(evp_cipher_ctx); });
+
+        auto init_result = EVP_EncryptInit(evp_cipher_ctx, EVP_aes_128_cbc(),
+            reinterpret_cast<const unsigned char*>(k->data()),
+            reinterpret_cast<const unsigned char*>(k->data() + 16));
+        if (init_result != 1) {
+            auto openssl_error = CryptoUtils::GetLastOpensslError();
+            LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize AES-128-CBC cipher for R6 hash: {}", openssl_error);
+        }
+
+        EVP_CIPHER_CTX_set_padding(evp_cipher_ctx, 0);
+
+        int k1_size = ValueConvertUtils::SafeConvert<int>(k1.size());
+        BufferPtr e = make_deferred_container<Buffer>(k1_size + AES_CBC_BLOCK_SIZE);
+
+        int current_offset = 0;
+        auto update_result = EVP_EncryptUpdate(evp_cipher_ctx,
+            reinterpret_cast<unsigned char*>(e->data()), &current_offset,
+            reinterpret_cast<const unsigned char*>(k1.data()), k1_size);
+        if (update_result != 1) {
+            auto openssl_error = CryptoUtils::GetLastOpensslError();
+            LOG_ERROR_AND_THROW(CryptoErrorException, "Could not encrypt update AES-128-CBC for R6 hash: {}", openssl_error);
+        }
+
+        int total_length = current_offset;
+
+        int final_offset = 0;
+        auto final_result = EVP_EncryptFinal(evp_cipher_ctx,
+            reinterpret_cast<unsigned char*>(e->data() + current_offset), &final_offset);
+        if (final_result != 1) {
+            auto openssl_error = CryptoUtils::GetLastOpensslError();
+            LOG_ERROR_AND_THROW(CryptoErrorException, "Could not encrypt finalize AES-128-CBC for R6 hash: {}", openssl_error);
+        }
+
+        total_length += final_offset;
+        e->resize(total_length);
+
+        // Select hash based on last byte of E mod 3
+        uint8_t last_byte = static_cast<uint8_t>((*e)[e->size() - 1]);
+        int hash_select = last_byte % 3;
+
+        if (hash_select == 0) {
+            k = ComputeSHA256(e);
+        } else if (hash_select == 1) {
+            k = ComputeSHA384(e);
+        } else {
+            k = ComputeSHA512(e);
+        }
+
+        // Termination: at least 64 rounds, then stop when last_byte <= (round - 32)
+        if (round >= 63 && last_byte <= static_cast<uint8_t>(round - 32)) {
+            break;
+        }
+    }
+
+    // Return first 32 bytes
+    BufferPtr result = make_deferred_container<Buffer>(k.begin(), k.begin() + 32);
+    return result;
+
+#else
+    (void) password; (void) salt; (void) u_value;
+    throw NotSupportedException("This library was compiled without OpenSSL support");
+#endif
+
+}
+
+// ISO 32000-2:2020 Algorithm 2.A - Generating encryption data for R=6
+EncryptionUtils::EncryptionDataR6 EncryptionUtils::GenerateEncryptionDataR6(
+    const Buffer& user_password,
+    const Buffer& owner_password,
+    int32_t permissions) {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+    CryptoUtils::InitializeOpenSSL();
+
+    // Truncate passwords to 127 bytes max (UTF-8, SASLprep skipped for now)
+    // TODO: Add SASLprep (RFC 4013) normalization for full Unicode support
+    Buffer user_pw(user_password.begin(), user_password.begin() + std::min(user_password.size(), static_cast<types::size_type>(127)));
+    Buffer owner_pw(owner_password.begin(), owner_password.begin() + std::min(owner_password.size(), static_cast<types::size_type>(127)));
+
+    EncryptionDataR6 result;
+
+    // Generate 32-byte file encryption key
+    result.file_encryption_key = GenerateRandomData(32);
+
+    // Generate user validation salt (8 bytes) and user key salt (8 bytes)
+    BufferPtr user_validation_salt = GenerateRandomData(8);
+    BufferPtr user_key_salt = GenerateRandomData(8);
+
+    // Compute U (48 bytes): hash + validation salt + key salt
+    Buffer empty_u;
+    BufferPtr u_hash = ComputeHashR6(user_pw, user_validation_salt, empty_u);
+
+    result.u_value = make_deferred_container<Buffer>(48);
+    std::copy_n(u_hash.begin(), 32, result.u_value.begin());
+    std::copy_n(user_validation_salt.begin(), 8, result.u_value.begin() + 32);
+    std::copy_n(user_key_salt.begin(), 8, result.u_value.begin() + 40);
+
+    // Compute UE (32 bytes): AES-256-CBC encrypt FEK with key derived from user key salt
+    BufferPtr ue_key = ComputeHashR6(user_pw, user_key_salt, empty_u);
+    result.ue_value = AESEncryptCBC_ZeroIV(ue_key, result.file_encryption_key);
+
+    // Generate owner validation salt (8 bytes) and owner key salt (8 bytes)
+    BufferPtr owner_validation_salt = GenerateRandomData(8);
+    BufferPtr owner_key_salt = GenerateRandomData(8);
+
+    // Compute O (48 bytes): hash + validation salt + key salt
+    BufferPtr o_hash = ComputeHashR6(owner_pw, owner_validation_salt, result.u_value);
+
+    result.o_value = make_deferred_container<Buffer>(48);
+    std::copy_n(o_hash.begin(), 32, result.o_value.begin());
+    std::copy_n(owner_validation_salt.begin(), 8, result.o_value.begin() + 32);
+    std::copy_n(owner_key_salt.begin(), 8, result.o_value.begin() + 40);
+
+    // Compute OE (32 bytes): AES-256-CBC encrypt FEK with key derived from owner key salt
+    BufferPtr oe_key = ComputeHashR6(owner_pw, owner_key_salt, result.u_value);
+    result.oe_value = AESEncryptCBC_ZeroIV(oe_key, result.file_encryption_key);
+
+    // Compute Perms (16 bytes)
+    Buffer perms_block(16);
+    auto p = static_cast<uint32_t>(permissions);
+    perms_block[0] = static_cast<uint8_t>(p & 0xFF);
+    perms_block[1] = static_cast<uint8_t>((p >> 8) & 0xFF);
+    perms_block[2] = static_cast<uint8_t>((p >> 16) & 0xFF);
+    perms_block[3] = static_cast<uint8_t>((p >> 24) & 0xFF);
+    perms_block[4] = static_cast<char>(0xFF);
+    perms_block[5] = static_cast<char>(0xFF);
+    perms_block[6] = static_cast<char>(0xFF);
+    perms_block[7] = static_cast<char>(0xFF);
+    perms_block[8] = 'T';  // EncryptMetadata = true
+    perms_block[9] = 'a';
+    perms_block[10] = 'd';
+    perms_block[11] = 'b';
+
+    auto random_tail = GenerateRandomData(4);
+    std::copy_n(random_tail.begin(), 4, perms_block.begin() + 12);
+
+    result.perms_value = AESEncryptECB(result.file_encryption_key, perms_block);
+
+    return result;
+
+#else
+    (void) user_password; (void) owner_password; (void) permissions;
+    throw NotSupportedException("This library was compiled without OpenSSL support");
+#endif
+
+}
+
+// ISO 32000-2:2020 - Password verification for R=6
+bool EncryptionUtils::CheckKeyR6(
+    const Buffer& password,
+    const Buffer& u_value,
+    const Buffer& ue_value,
+    const Buffer& o_value,
+    const Buffer& oe_value,
+    const Buffer& perms_value,
+    Buffer& decryption_key) {
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+    CryptoUtils::InitializeOpenSSL();
+
+    // Truncate password to 127 bytes
+    Buffer pw(password.begin(), password.begin() + std::min(password.size(), static_cast<types::size_type>(127)));
+    Buffer empty_u;
+
+    // Try user password
+    if (u_value.size() >= 48) {
+        Buffer user_validation_salt(u_value.begin() + 32, u_value.begin() + 40);
+        Buffer user_key_salt(u_value.begin() + 40, u_value.begin() + 48);
+
+        BufferPtr hash = ComputeHashR6(pw, user_validation_salt, empty_u);
+
+        if (std::equal(hash.begin(), hash.begin() + 32, u_value.begin())) {
+            BufferPtr key = ComputeHashR6(pw, user_key_salt, empty_u);
+            BufferPtr fek = AESDecryptCBC_ZeroIV(key, ue_value);
+
+            // Verify via Perms entry
+            BufferPtr perms_decrypted = AESDecryptECB(fek, perms_value);
+            if (perms_decrypted->size() >= 12 &&
+                (*perms_decrypted)[9] == 'a' &&
+                (*perms_decrypted)[10] == 'd' &&
+                (*perms_decrypted)[11] == 'b') {
+                decryption_key = make_deferred_container<Buffer>(fek.begin(), fek.end());
+                return true;
+            }
+        }
+    }
+
+    // Try owner password
+    if (o_value.size() >= 48) {
+        Buffer owner_validation_salt(o_value.begin() + 32, o_value.begin() + 40);
+        Buffer owner_key_salt(o_value.begin() + 40, o_value.begin() + 48);
+
+        BufferPtr hash = ComputeHashR6(pw, owner_validation_salt, u_value);
+
+        if (std::equal(hash.begin(), hash.begin() + 32, o_value.begin())) {
+            BufferPtr key = ComputeHashR6(pw, owner_key_salt, u_value);
+            BufferPtr fek = AESDecryptCBC_ZeroIV(key, oe_value);
+
+            // Verify via Perms entry
+            BufferPtr perms_decrypted = AESDecryptECB(fek, perms_value);
+            if (perms_decrypted->size() >= 12 &&
+                (*perms_decrypted)[9] == 'a' &&
+                (*perms_decrypted)[10] == 'd' &&
+                (*perms_decrypted)[11] == 'b') {
+                decryption_key = make_deferred_container<Buffer>(fek.begin(), fek.end());
+                return true;
+            }
+        }
+    }
+
+    return false;
+
+#else
+    (void) password; (void) u_value; (void) ue_value;
+    (void) o_value; (void) oe_value; (void) perms_value;
+    (void) decryption_key;
     throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
 
