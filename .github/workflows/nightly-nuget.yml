@@ -81,8 +81,8 @@ jobs:
           # Fallback in the unlikely case the cleaned name is empty
           if [ -z "$CLEAN_NAME" ]; then CLEAN_NAME="branch"; fi
           DATE=$(date +'%Y%m%d')
-          # Format: -nightly.branch (e.g., -nightly.main), date goes to build version
-          echo "nightly_suffix=-nightly.${CLEAN_NAME}" >> "$GITHUB_OUTPUT"
+          # Format: nightly.branch (e.g., nightly.main), date goes to build version
+          echo "nightly_suffix=nightly.${CLEAN_NAME}" >> "$GITHUB_OUTPUT"
           echo "build_date=${DATE}" >> "$GITHUB_OUTPUT"
 
   build-nuget:

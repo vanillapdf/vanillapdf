@@ -70,7 +70,7 @@ jobs:
             EXTRA="${BASH_REMATCH[1]}"
           fi
           if [[ -n "$EXTRA" ]]; then
-            echo "build_suffix=-${EXTRA#-}" >> "$GITHUB_OUTPUT"
+            echo "build_suffix=${EXTRA#-}" >> "$GITHUB_OUTPUT"
             echo "prerelease=true" >> "$GITHUB_OUTPUT"
           else
             echo "build_suffix=" >> "$GITHUB_OUTPUT"
