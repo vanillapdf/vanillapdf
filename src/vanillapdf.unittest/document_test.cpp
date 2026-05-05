@@ -137,6 +137,184 @@ TEST(Document, Encrypt_AES_128) {
 //	EncryptDocument("owner", "user", EncryptionAlgorithmType_AES, 256, UserAccessPermissionFlag_None);
 //}
 
+// Parameterized test for AES encryption roundtrip with various string sizes.
+// Verifies that encrypt→save→reopen→decrypt preserves the original data.
+// Uses sizes that are not multiples of the AES block size (16) to exercise
+// PKCS#7 padding correctness.
+struct AESRoundtripParam {
+    std::string name;
+    std::string test_data;
+};
+
+class AESEncryptionRoundtrip : public ::testing::TestWithParam<AESRoundtripParam> {
+};
+
+TEST_P(AESEncryptionRoundtrip, VerifyStringContent) {
+    auto param = GetParam();
+
+    // Create source document in memory
+    InputOutputStreamHandle* src_io = nullptr;
+    FileHandle* src_file = nullptr;
+    DocumentHandle* src_doc = nullptr;
+    DocumentEncryptionSettingsHandle* enc_settings = nullptr;
+
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(&src_io), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(src_io, "src", &src_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_CreateFile(src_file, &src_doc), VANILLAPDF_ERROR_SUCCESS);
+
+    // Configure AES-128 encryption
+    BufferHandle* owner_pw = nullptr;
+    BufferHandle* user_pw = nullptr;
+    std::string owner_password = "owner";
+    std::string user_password = "user";
+
+    ASSERT_EQ(DocumentEncryptionSettings_Create(&enc_settings), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentEncryptionSettings_SetAlgorithm(enc_settings, EncryptionAlgorithmType_AES), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentEncryptionSettings_SetKeyLength(enc_settings, 128), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentEncryptionSettings_SetUserAccessPermissions(enc_settings, UserAccessPermissionFlag_None), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData(owner_password.data(), owner_password.length(), &owner_pw), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData(user_password.data(), user_password.length(), &user_pw), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentEncryptionSettings_SetOwnerPassword(enc_settings, owner_pw), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentEncryptionSettings_SetUserPassword(enc_settings, user_pw), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_AddEncryption(src_doc, enc_settings), VANILLAPDF_ERROR_SUCCESS);
+
+    // Insert a test string into the page dictionary under a custom key.
+    // Page dictionaries survive save/reopen and their string values are
+    // encrypted, so this exercises the full AES encrypt→decrypt roundtrip.
+    CatalogHandle* src_catalog = nullptr;
+    PageTreeHandle* src_pages = nullptr;
+    PageObjectHandle* src_page = nullptr;
+    DictionaryObjectHandle* src_page_dict = nullptr;
+
+    ASSERT_EQ(Document_GetCatalog(src_doc, &src_catalog), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_GetPages(src_catalog, &src_pages), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_CreateFromDocument(src_doc, &src_page), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageTree_AppendPage(src_pages, src_page), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_GetBaseObject(src_page, &src_page_dict), VANILLAPDF_ERROR_SUCCESS);
+
+    NameObjectHandle* key_name = nullptr;
+    BufferHandle* data_buf = nullptr;
+    LiteralStringObjectHandle* str_obj = nullptr;
+    StringObjectHandle* str_base = nullptr;
+    ObjectHandle* str_as_obj = nullptr;
+
+    ASSERT_EQ(NameObject_CreateFromEncodedString("TestData", &key_name), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData(param.test_data.data(), param.test_data.size(), &data_buf), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedBuffer(data_buf, &str_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_ToStringObject(str_obj, &str_base), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StringObject_ToObject(str_base, &str_as_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Insert(src_page_dict, key_name, str_as_obj, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+
+    // Save encrypted document to memory
+    InputOutputStreamHandle* dst_io = nullptr;
+    FileHandle* dst_save_file = nullptr;
+
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(&dst_io), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(dst_io, "dst", &dst_save_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SaveFile(src_doc, dst_save_file), VANILLAPDF_ERROR_SUCCESS);
+
+    // Reopen the encrypted document and navigate to the page
+    FileHandle* dst_load_file = nullptr;
+    DocumentHandle* dst_doc = nullptr;
+
+    ASSERT_EQ(File_OpenStream(dst_io, "dst", &dst_load_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_Initialize(dst_load_file), VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type is_encrypted = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(File_IsEncrypted(dst_load_file, &is_encrypted), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(is_encrypted, VANILLAPDF_RV_TRUE);
+    ASSERT_EQ(File_SetEncryptionPassword(dst_load_file, user_password.data()), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Document_OpenFile(dst_load_file, &dst_doc), VANILLAPDF_ERROR_SUCCESS);
+
+    CatalogHandle* dst_catalog = nullptr;
+    PageTreeHandle* dst_pages = nullptr;
+    PageObjectHandle* dst_page = nullptr;
+    DictionaryObjectHandle* dst_page_dict = nullptr;
+
+    ASSERT_EQ(Document_GetCatalog(dst_doc, &dst_catalog), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_GetPages(dst_catalog, &dst_pages), VANILLAPDF_ERROR_SUCCESS);
+
+    size_type page_count = 0;
+    ASSERT_EQ(PageTree_GetPageCount(dst_pages, &page_count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_GE(page_count, 1u);
+
+    ASSERT_EQ(PageTree_GetPage(dst_pages, page_count, &dst_page), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_GetBaseObject(dst_page, &dst_page_dict), VANILLAPDF_ERROR_SUCCESS);
+
+    // Read back the test string and verify content matches
+    NameObjectHandle* read_key = nullptr;
+    ObjectHandle* read_obj = nullptr;
+    ASSERT_EQ(NameObject_CreateFromEncodedString("TestData", &read_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Find(dst_page_dict, read_key, &read_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    ObjectType read_type = ObjectType_Undefined;
+    ASSERT_EQ(Object_GetObjectType(read_obj, &read_type), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(read_type, ObjectType_String);
+
+    StringObjectHandle* read_str = nullptr;
+    ASSERT_EQ(StringObject_FromObject(read_obj, &read_str), VANILLAPDF_ERROR_SUCCESS);
+
+    BufferHandle* read_buf = nullptr;
+    ASSERT_EQ(StringObject_GetValue(read_str, &read_buf), VANILLAPDF_ERROR_SUCCESS);
+
+    string_type read_data = nullptr;
+    size_type read_len = 0;
+    ASSERT_EQ(Buffer_GetData(read_buf, &read_data, &read_len), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(read_len, param.test_data.size());
+    for (size_type i = 0; i < read_len; ++i) {
+        EXPECT_EQ(read_data[i], param.test_data[i]);
+    }
+
+    // Cleanup
+    ASSERT_EQ(Buffer_Release(read_buf), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StringObject_Release(read_str), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(read_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(read_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Release(dst_page_dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_Release(dst_page), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageTree_Release(dst_pages), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_Release(dst_catalog), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_Release(dst_doc), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_Release(dst_load_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_Release(dst_save_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InputOutputStream_Release(dst_io), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(str_as_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(StringObject_Release(str_base), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_Release(str_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(data_buf), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(key_name), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Release(src_page_dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_Release(src_page), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageTree_Release(src_pages), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_Release(src_catalog), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(owner_pw), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_Release(user_pw), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentEncryptionSettings_Release(enc_settings), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_Release(src_doc), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_Release(src_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InputOutputStream_Release(src_io), VANILLAPDF_ERROR_SUCCESS);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    EncryptionPadding,
+    AESEncryptionRoundtrip,
+    ::testing::Values(
+        AESRoundtripParam{"1byte",  "X"},
+        AESRoundtripParam{"5bytes", "Hello"},
+        AESRoundtripParam{"15bytes", "FifteenBytesXX!"},
+        AESRoundtripParam{"16bytes", "SixteenBytes!!!!"},
+        AESRoundtripParam{"17bytes", "SeventeenBytesXX!"},
+        AESRoundtripParam{"31bytes", "ThirtyOneBytesOfTestDataHere!!!"},
+        AESRoundtripParam{"32bytes", "ThirtyTwoBytesOfTestDataGoHere!!"},
+        AESRoundtripParam{"33bytes", "ThirtyThreeBytesOfTestDataGoHere!"}
+    ),
+    [](const ::testing::TestParamInfo<AESRoundtripParam>& info) {
+        return info.param.name;
+    }
+);
+
 TEST(Document, Sign) {
 
     FileHandle* source_memory_file = nullptr;

@@ -323,33 +323,29 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
         LOG_ERROR_AND_THROW_GENERAL("Could not initialize AES digest: {}", openssl_error);
     }
 
-    // OpenSSL uses padding by default and sometimes it is not correct
-    // We do handle the padding after the decryption has been done
-    auto padding_result = EVP_CIPHER_CTX_set_padding(evp_cipher_ctx, 0);
-    if (padding_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW_GENERAL("Could not set AES decryption padding: {}", openssl_error);
-    }
-    
+    // OpenSSL PKCS#7 padding is enabled by default — let it handle
+    // padding validation and removal during EVP_DecryptFinal.
+
+
     int current_offset = 0;
     int total_result_length = 0;
 
     int data_size = ValueConvertUtils::SafeConvert<int>(data.size() - AES_CBC_IV_LENGTH);
-    
+
     auto update_result = EVP_DecryptUpdate(
         evp_cipher_ctx,
         reinterpret_cast<unsigned char*>(result->data()),
         &current_offset,
         reinterpret_cast<const unsigned char*>(data.data() + AES_CBC_IV_LENGTH),
         data_size);
-    
+
     if (update_result != 1) {
         auto openssl_error = CryptoUtils::GetLastOpensslError();
         LOG_ERROR_AND_THROW_GENERAL("Could not decrypt update AES cipher: {}", openssl_error);
     }
 
     total_result_length += current_offset;
-    
+
     auto final_result = EVP_DecryptFinal(
         evp_cipher_ctx,
         reinterpret_cast<unsigned char*>(result->data() + current_offset),
@@ -362,10 +358,10 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 
     total_result_length += current_offset;
 
-    // Remove trailing zeroes
+    // Trim buffer to actual plaintext length (padding bytes removed by EVP_DecryptFinal)
     result->resize(total_result_length);
 
-    return RemovePkcs7Padding(result, AES_CBC_BLOCK_SIZE);
+    return result;
 
 #else
     (void) key; (void) key_length; (void) data;
@@ -394,8 +390,8 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
         LOG_ERROR_AND_THROW_GENERAL("Could not generate initialization vector for AES: {}", openssl_error);
     }
 
-    BufferPtr data_padded = AddPkcs7Padding(data, AES_CBC_BLOCK_SIZE);
-    BufferPtr result = make_deferred_container<Buffer>(data_padded->size() + AES_CBC_IV_LENGTH);
+    // Allocate IV + data + up to one block of PKCS#7 padding
+    BufferPtr result = make_deferred_container<Buffer>(AES_CBC_IV_LENGTH + data.size() + AES_CBC_BLOCK_SIZE);
 
     const EVP_CIPHER* evp_cipher = nullptr;
 
@@ -429,16 +425,22 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
         LOG_ERROR_AND_THROW_GENERAL("Could not initialize AES cipher: {}", openssl_error);
     }
 
-    int current_offset = 0;
-    int total_result_length = 0;
+    // OpenSSL PKCS#7 padding is enabled by default — let it handle
+    // padding during EVP_EncryptFinal.
 
-    int data_size = ValueConvertUtils::SafeConvert<int>(data_padded->size());
+    // Write IV at the beginning of the result buffer
+    std::memcpy(result->data(), iv.data(), AES_CBC_IV_LENGTH);
+
+    int current_offset = 0;
+    int total_result_length = AES_CBC_IV_LENGTH;
+
+    int data_size = ValueConvertUtils::SafeConvert<int>(data.size());
 
     auto update_result = EVP_EncryptUpdate(
         evp_cipher_ctx,
-        reinterpret_cast<unsigned char*>(result->data()),
+        reinterpret_cast<unsigned char*>(result->data() + AES_CBC_IV_LENGTH),
         &current_offset,
-        reinterpret_cast<const unsigned char*>(data_padded->data()),
+        reinterpret_cast<const unsigned char*>(data.data()),
         data_size);
 
     if (update_result != 1) {
@@ -450,7 +452,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
     auto final_result = EVP_EncryptFinal(
         evp_cipher_ctx,
-        reinterpret_cast<unsigned char*>(result->data() + current_offset),
+        reinterpret_cast<unsigned char*>(result->data() + total_result_length),
         &current_offset);
 
     if (final_result != 1) {
@@ -460,11 +462,8 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
     total_result_length += current_offset;
 
-    // Remove trailing zeroes
+    // Trim buffer to actual ciphertext length (IV + encrypted blocks with padding)
     result->resize(total_result_length);
-
-    // Insert the IV data in in the beginning
-    result->insert(result->begin(), iv.begin(), iv.end());
 
     return result;
 
@@ -473,61 +472,6 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
     throw NotSupportedException("This library was compiled without OpenSSL support");
 #endif
 
-}
-
-BufferPtr EncryptionUtils::AddPkcs7Padding(const Buffer& data, types::size_type block_size) {
-    types::size_type remaining = data.size() % block_size;
-    if (0 == remaining) {
-        remaining = block_size;
-    }
-
-    Buffer::value_type converted = ValueConvertUtils::SafeConvert<Buffer::value_type>(remaining);
-
-    BufferPtr result;
-    result->reserve(data.size() + remaining);
-    result->insert(result.begin(), data.begin(), data.end());
-    result->insert(result.end(), remaining, converted);
-
-    return result;
-}
-
-BufferPtr EncryptionUtils::RemovePkcs7Padding(const Buffer& data, types::size_type block_size) {
-    do {
-        // Empty data are invalid
-        if (data.empty()) {
-            break;
-        }
-
-        char bytes = data.back();
-        unsigned char converted = reinterpret_cast<unsigned char&>(bytes);
-        if (data.size() < converted || converted > block_size) {
-            break;
-        }
-
-        // verify PKCS#7 padding
-        // The value of each added byte is the number of bytes that are added, i.e. N bytes, each of value N are added
-        bool padding_error = false;
-        for (auto it = data.end() - converted; it != data.end(); it++) {
-            if (*it != bytes) {
-                padding_error = true;
-                break;
-            }
-        }
-
-        if (padding_error) {
-            break;
-        }
-
-        return make_deferred_container<Buffer>(data.begin(), data.end() - converted);
-    } while (false);
-
-    // I would really like to be strict about padding,
-    // but in test document "example_128-aes.pdf" there is a signature field
-    // that allocated space with zeroes and did not care about setting proper
-    // pkcs padding. That means, that there is some trash after we decrypt the
-    // signature contents and padding could not be validated
-    spdlog::warn("Pkcs padding is incorrect");
-    return make_deferred_container<Buffer>(data);
 }
 
 BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
