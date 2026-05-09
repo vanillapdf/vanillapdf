@@ -160,17 +160,17 @@ jobs:
         config:
           - name: win.2025-x86-static
             os: windows-2025
-            preset: windows-x86-msvc-17-static
+            preset: windows-x86-msvc-18-static
             build_type: Release
 
           - name: win.2025-x64-static
             os: windows-2025
-            preset: windows-x64-msvc-17-static
+            preset: windows-x64-msvc-18-static
             build_type: Release
 
           - name: win.11-arm64-static
             os: windows-11-arm
-            preset: windows-arm64-msvc-17-static
+            preset: windows-arm64-msvc-18-static
             build_type: Release
 
     steps:

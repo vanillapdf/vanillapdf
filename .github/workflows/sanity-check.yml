@@ -136,10 +136,10 @@ jobs:
 
         config:
           - name: win.2025-x86-static
-            preset: windows-x86-msvc-17-static
+            preset: windows-x86-msvc-18-static
 
           - name: win.2025-x64-static
-            preset: windows-x64-msvc-17-static
+            preset: windows-x64-msvc-18-static
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
