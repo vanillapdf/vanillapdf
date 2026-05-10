@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>vanillapdf.runtime.@PLATFORM_IDENTIFIER@</PackageId>
-    <Version>@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_STRING@@VANILLAPDF_VERSION_BUILD_SUFFIX@</Version>
+    <Version>@VANILLAPDF_VERSION@</Version>
     <Title>vanillapdf</Title>
     <Authors>Vanilla.PDF Labs s.r.o.</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
