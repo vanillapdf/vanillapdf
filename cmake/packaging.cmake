@@ -16,12 +16,15 @@ set(CPACK_PACKAGE_INSTALL_DIRECTORY		"Vanilla.PDF Labs/Vanilla.PDF")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY	"Cross-platform toolkit for creating and modifying PDF documents")
 set(CPACK_PACKAGE_DESCRIPTION			"Cross-platform toolkit for creating and modifying PDF documents")
 
-# There is a little trick going on
-# By default, the CPACK_PACKAGE_FILE_NAME is set to
-# "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}."
-# However! Variable CPACK_PACKAGE_VERSION is only used internally a is not yet set!
-# Therefore we have to create a different variable for storing the version string
-set(PACKAGE_VERSION_NAME				"${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}${VANILLAPDF_VERSION_BUILD_SUFFIX}")
+# CPack computes CPACK_PACKAGE_VERSION internally as MAJOR.MINOR.PATCH,
+# which excludes the build suffix. Override it so pre-release package
+# versions match the dependency declarations.
+# Separator per format: '-' for semver (ZIP, WiX, DMG), '~' for DEB/RPM.
+set(PACKAGE_VERSION_NAME "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+if(VANILLAPDF_VERSION_BUILD_SUFFIX)
+    set(PACKAGE_VERSION_NAME "${PACKAGE_VERSION_NAME}-${VANILLAPDF_VERSION_BUILD_SUFFIX}")
+    set(CPACK_PACKAGE_VERSION "${PACKAGE_VERSION_NAME}")
+endif()
 set(PACKAGE_SYSTEM_NAME					"${CMAKE_SYSTEM_NAME}")
 
 if (PLATFORM_IDENTIFIER)
@@ -57,27 +60,55 @@ set(CPACK_PACKAGE_ICON					${CMAKE_CURRENT_SOURCE_DIR}/cmake/vanilla_logo.ico)
 # Include checksum file
 set(CPACK_PACKAGE_CHECKSUM				SHA256)
 
+# Component-based packaging (used by DEB and RPM generators)
+set(CPACK_COMPONENTS_ALL Runtime Development)
+set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "Vanilla.PDF Runtime")
+set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "Shared library and command-line tools")
+set(CPACK_COMPONENT_RUNTIME_REQUIRED ON)
+set(CPACK_COMPONENT_DEVELOPMENT_DISPLAY_NAME "Vanilla.PDF Development")
+set(CPACK_COMPONENT_DEVELOPMENT_DESCRIPTION "Headers, static libraries, and CMake config files")
+set(CPACK_COMPONENT_DEVELOPMENT_DEPENDS Runtime)
+
+# DEB and RPM use '~' for pre-release (sorts before release version)
+set(PACKAGE_VERSION_NAME_DEB_RPM "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+if(VANILLAPDF_VERSION_BUILD_SUFFIX)
+    set(PACKAGE_VERSION_NAME_DEB_RPM "${PACKAGE_VERSION_NAME_DEB_RPM}~${VANILLAPDF_VERSION_BUILD_SUFFIX}")
+endif()
+
 # Variables specific to CPack RPM generator
 set(CPACK_RPM_PACKAGE_LICENSE			"Proprietary")
 set(CPACK_RPM_PACKAGE_GROUP				"Development/Libraries/C and C++")
 set(CPACK_RPM_PACKAGE_URL				"https://vanillapdf.com/")
 set(CPACK_RPM_PACKAGE_AUTOREQ			1)
 set(CPACK_RPM_PACKAGE_AUTOPROV			1)
+set(CPACK_RPM_COMPONENT_INSTALL			ON)
+set(CPACK_RPM_PACKAGE_VERSION			"${PACKAGE_VERSION_NAME_DEB_RPM}")
+set(CPACK_RPM_RUNTIME_PACKAGE_NAME		"vanillapdf")
+set(CPACK_RPM_DEVELOPMENT_PACKAGE_NAME	"vanillapdf-devel")
+set(CPACK_RPM_DEVELOPMENT_PACKAGE_REQUIRES "vanillapdf = ${PACKAGE_VERSION_NAME_DEB_RPM}")
 
 # Variables specific to CPack DEB generator
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE		"https://vanillapdf.com/")
 set(CPACK_DEBIAN_PACKAGE_SECTION		"devel")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS		YES)
+set(CPACK_DEB_COMPONENT_INSTALL			ON)
+set(CPACK_DEBIAN_PACKAGE_VERSION		"${PACKAGE_VERSION_NAME_DEB_RPM}")
+set(CPACK_DEBIAN_RUNTIME_PACKAGE_NAME	"vanillapdf")
+set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_NAME "vanillapdf-dev")
+set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_DEPENDS "vanillapdf (= ${PACKAGE_VERSION_NAME_DEB_RPM})")
 
 # Variables specific to CPack FreeBSD generator
 set(CPACK_FREEBSD_PACKAGE_MAINTAINER	"info@vanillapdf.com")
 
 # Variables specific to CPack WiX generator
-set(CPACK_WIX_UPGRADE_GUID				"{88E3B5A2-C8B2-4F7C-A7E5-A2B764A9B0E6}")
-
-set(CPACK_WIX_PRODUCT_ICON				${CMAKE_CURRENT_SOURCE_DIR}/cmake/vanilla_logo.ico)
-set(CPACK_WIX_PROGRAM_MENU_FOLDER		"Vanilla.PDF")
-set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY	"Vanilla.PDF")
+# WiX MSI generation is currently disabled (ZIP-only). To re-enable,
+# add "WIX" back to CPACK_GENERATOR above and ensure WiX is installed.
+if(CPACK_GENERATOR MATCHES "WIX")
+    set(CPACK_WIX_UPGRADE_GUID				"{88E3B5A2-C8B2-4F7C-A7E5-A2B764A9B0E6}")
+    set(CPACK_WIX_PRODUCT_ICON				${CMAKE_CURRENT_SOURCE_DIR}/cmake/vanilla_logo.ico)
+    set(CPACK_WIX_PROGRAM_MENU_FOLDER		"Vanilla.PDF")
+    set(CPACK_WIX_CMAKE_PACKAGE_REGISTRY	"Vanilla.PDF")
+endif()
 
 # Variables specific to CPack NuGet generator
 #set(CPACK_NUGET_PACKAGE_NAME							"vanillapdf.runtime.${PLATFORM_IDENTIFIER}")
@@ -107,7 +138,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/nuget.cmake)
 #set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/packaging_runtime.cmake)
 
 if(WIN32)
-    set(CPACK_GENERATOR		"WIX;ZIP")
+    set(CPACK_GENERATOR		"ZIP")
 
 elseif(APPLE)
     set(CPACK_GENERATOR		"DragNDrop;TGZ")

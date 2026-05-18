@@ -13,6 +13,7 @@ install(EXPORT vanillapdfTargets
   FILE vanillapdfTargets.cmake
   NAMESPACE vanillapdf::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
+  COMPONENT Development
 )
 
 # Generate and install config file
@@ -33,9 +34,11 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/vanillapdfConfig.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/vanillapdfConfigVersion.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
+  COMPONENT Development
 )
 
 install(FILES
   ${CMAKE_CURRENT_LIST_DIR}/vanillapdfDependencies.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
+  COMPONENT Development
 )

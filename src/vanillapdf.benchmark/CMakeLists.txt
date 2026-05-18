@@ -10,7 +10,15 @@ include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(VANILLAPDF_BENCHMARK_SOURCES
+    buffer_hash.cpp
+    character_map.cpp
+    content_stream.cpp
+    filters.cpp
+    io_strategy.cpp
     objects.cpp
+    page_tree.cpp
+    tokenizer_stream.cpp
+    xref.cpp
     main.cpp
 )
 
@@ -47,8 +55,10 @@ if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
     vanillapdf_configure_msvc_runtime(vanillapdf.benchmark)
 endif()
 
-# Optional stack sanitizer
-enable_stack_sanitizer_for_target(vanillapdf.benchmark)
+# Optional sanitizers
+enable_asan_for_target(vanillapdf.benchmark)
+enable_ubsan_for_target(vanillapdf.benchmark)
+enable_tsan_for_target(vanillapdf.benchmark)
 
 if(WIN32)
     # Copy DLL dependencies on windows to our build directory
@@ -91,3 +101,4 @@ target_compile_definitions(vanillapdf.benchmark PRIVATE -DVANILLAPDF_BENCHMARK_V
 target_compile_definitions(vanillapdf.benchmark PRIVATE -DVANILLAPDF_BENCHMARK_VERSION_BUILD=${VANILLAPDF_VERSION_BUILD})
 
 target_compile_definitions(vanillapdf.benchmark PRIVATE -DVANILLAPDF_BENCHMARK_ICON="${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanilla_logo.ico")
+target_compile_definitions(vanillapdf.benchmark PRIVATE -DVANILLAPDF_TEST_DIR="${VANILLAPDF_SOLUTION_SOURCE_DIR}/test")

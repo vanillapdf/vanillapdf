@@ -66,6 +66,9 @@ extern "C"
     DECLARE_OBJECT_HANDLE(XrefChain);
     DECLARE_OBJECT_HANDLE(XrefChainIterator);
 
+    DECLARE_OBJECT_HANDLE(FileStructureIssue);
+    DECLARE_OBJECT_HANDLE(FileStructureValidationResult);
+
     DECLARE_OBJECT_HANDLE(FilterBase);
     DECLARE_OBJECT_HANDLE(FlateDecodeFilter);
     DECLARE_OBJECT_HANDLE(DCTDecodeFilter);

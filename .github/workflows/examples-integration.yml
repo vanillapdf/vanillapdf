@@ -52,17 +52,21 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Configure Git reference for testing
         id: git_ref
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
-          echo "Testing examples integration against: ${{ github.ref_name }}"
+          echo "Testing examples integration against: $REF_NAME"
           # For PR/push events, test against the branch instead of specific commit
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            BRANCH_TO_TEST="${{ github.head_ref }}"
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            BRANCH_TO_TEST="$HEAD_REF"
           else
-            BRANCH_TO_TEST="${{ github.ref_name }}"
+            BRANCH_TO_TEST="$REF_NAME"
           fi
           echo "Using branch: $BRANCH_TO_TEST"
           echo "git_tag=$BRANCH_TO_TEST" >> $GITHUB_OUTPUT
@@ -92,7 +96,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Install system dependencies
         run: |
@@ -135,10 +139,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Set up Visual Studio
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57  # v3.0.0
 
       - name: Configure CMake
         working-directory: examples/fetchcontent-integration
@@ -158,7 +162,7 @@ jobs:
 
   fetchcontent-macos:
     name: FetchContent - macOS ${{ matrix.preset }}
-    runs-on: macos-latest
+    runs-on: macos-26
     needs: setup
 
     strategy:
@@ -168,7 +172,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Install system dependencies
         run: brew install ninja openssl@3 jpeg-turbo zlib openjpeg
@@ -207,7 +211,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
@@ -220,7 +224,9 @@ jobs:
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
       - name: Update portfile to use current branch
-        run: ./scripts/update_portfile_branch.sh "${{ github.head_ref || github.ref_name }}"
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: ./scripts/update_portfile_branch.sh "$BRANCH"
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
         run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=x64-linux
@@ -253,19 +259,21 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
       - name: Set up Visual Studio
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57  # v3.0.0
 
       - name: Bootstrap vcpkg
         run: .\external\vcpkg\bootstrap-vcpkg.bat
 
       - name: Update portfile to use current branch
         shell: bash
-        run: ./scripts/update_portfile_branch.sh "${{ github.head_ref || github.ref_name }}"
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: ./scripts/update_portfile_branch.sh "$BRANCH"
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
         run: .\external\vcpkg\vcpkg.exe install vanillapdf --head --overlay-ports=./ports --triplet=x64-windows
@@ -284,7 +292,7 @@ jobs:
 
   vcpkg-port-macos:
     name: vcpkg Port - macOS ${{ matrix.preset }}
-    runs-on: macos-latest
+    runs-on: macos-26
 
     strategy:
       fail-fast: false
@@ -293,7 +301,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
@@ -304,7 +312,9 @@ jobs:
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
       - name: Update portfile to use current branch
-        run: ./scripts/update_portfile_branch.sh "${{ github.head_ref || github.ref_name }}"
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: ./scripts/update_portfile_branch.sh "$BRANCH"
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
         run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=arm64-osx
@@ -333,14 +343,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: macos-15
+          - runner: macos-26
             preset: macos-arm64-release
-          - runner: macos-15-intel
+          - runner: macos-26-intel
             preset: macos-x64-release
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: false  # No vcpkg needed for Homebrew test
 
@@ -350,7 +360,9 @@ jobs:
           brew install ninja openssl@3 jpeg-turbo zlib openjpeg
 
       - name: Generate formula for current branch
-        run: cmake -DVANILLAPDF_HEAD_BRANCH="${{ github.head_ref || github.ref_name }}" -P cmake/configure_homebrew_formula.cmake
+        env:
+          HEAD_BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: cmake -DVANILLAPDF_HEAD_BRANCH="$HEAD_BRANCH" -P cmake/configure_homebrew_formula.cmake
 
       - name: Install vanillapdf via Homebrew formula (--HEAD)
         run: |
@@ -385,8 +397,15 @@ jobs:
 
   conan-linux:
     name: Conan - Linux ${{ matrix.build_type }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: setup
+    permissions:
+      contents: read
+      packages: read
+
+    container:
+      image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
+      options: --platform=linux/amd64
 
     strategy:
       fail-fast: false
@@ -399,20 +418,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Install build tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ninja-build
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.x'
-
-      - name: Install Conan
-        run: pip install "conan>=2,<3"
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Detect Conan profile
         run: conan profile detect
@@ -455,21 +461,20 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Set up Visual Studio
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.x'
+        uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57  # v3.0.0
 
       - name: Install Conan
-        run: pip install "conan>=2,<3"
+        shell: cmd
+        run: |
+          choco install conan --yes
+          call refreshenv
+          conan profile detect
 
-      - name: Detect Conan profile
-        run: conan profile detect
+      - name: Add Conan to PATH
+        run: Add-Content -Path $env:GITHUB_PATH -Value "C:\Program Files\Conan\conan"
 
       - name: Create vanillapdf Conan package
         run: conan create conan/ --version=${{ needs.setup.outputs.version }} --build=missing -s compiler.cppstd=17
@@ -495,7 +500,7 @@ jobs:
 
   conan-macos:
     name: Conan - macOS ${{ matrix.build_type }}
-    runs-on: macos-latest
+    runs-on: macos-26
     needs: setup
 
     strategy:
@@ -509,18 +514,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Install build tools
-        run: brew install ninja
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.x'
-
-      - name: Install Conan
-        run: pip install "conan>=2,<3"
+        run: brew install ninja conan
 
       - name: Detect Conan profile
         run: conan profile detect

@@ -46,6 +46,7 @@ concurrency:
 env:
   VCPKG_ROOT: external/vcpkg
   VCPKG_DISABLE_METRICS: 1 # vcpkg is by default sending build metrics, we do not need it here
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -74,15 +75,15 @@ jobs:
             platform: linux/arm64
             preset: linux-arm64-gcc
 
-          - name: ubuntu.24.04-x64
+          - name: ubuntu.26.04-x64
             os: ubuntu-24.04
-            image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
+            image: ghcr.io/vanillapdf/vanillapdf-ubuntu:26.04
             platform: linux/amd64
             preset: linux-x64-gcc
 
-          - name: ubuntu.24.04-arm64
+          - name: ubuntu.26.04-arm64
             os: ubuntu-24.04-arm
-            image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04
+            image: ghcr.io/vanillapdf/vanillapdf-ubuntu:26.04
             platform: linux/arm64
             preset: linux-arm64-gcc
 
@@ -91,21 +92,18 @@ jobs:
       options: --platform=${{ matrix.config.platform }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
       - name: Cache vcpkg
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # Bootstrap vcpkg on Linux
@@ -137,28 +135,25 @@ jobs:
         build_type: [Release]
 
         config:
-          - name: win.2025-x86
-            preset: windows-x86-msvc-17
+          - name: win.2025-x86-static
+            preset: windows-x86-msvc-17-static
 
-          - name: win.2025-x64
-            preset: windows-x64-msvc-17
+          - name: win.2025-x64-static
+            preset: windows-x64-msvc-17-static
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
       - name: Cache vcpkg
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # Bootstrap vcpkg on Windows
@@ -186,30 +181,27 @@ jobs:
         build_type: [Debug, Release]
 
         config:
-          - name: osx.15-x64
-            runner: macos-15-intel
+          - name: osx.26-x64
+            runner: macos-26-intel
             preset: macos-x64
 
-          - name: osx.15-arm64
-            runner: macos-15
+          - name: osx.26-arm64
+            runner: macos-26
             preset: macos-arm64
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
       - name: Cache vcpkg
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       - name: Install build tools (macOS)

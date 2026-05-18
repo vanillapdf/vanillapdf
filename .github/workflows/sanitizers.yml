@@ -1,0 +1,123 @@
+name: Sanitizer checks
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 1'
+  push:
+    branches: [ "main", "release/*" ]
+    paths:
+      - '.github/workflows/sanitizers.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/sanitizers.yml'
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VCPKG_ROOT: external/vcpkg
+  VCPKG_DISABLE_METRICS: 1
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
+  BUILD_PRESET: linux-x64-gcc
+  RUNNER_IMAGE: ubuntu-24.04
+
+jobs:
+  vcpkg-setup:
+    name: Install vcpkg dependencies
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
+
+      - name: Cache vcpkg
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
+        with:
+          path: |
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-
+
+      - name: Bootstrap vcpkg
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
+      - name: Configure (installs vcpkg dependencies)
+        run: |
+          cmake --preset ${{ env.BUILD_PRESET }} \
+            -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+            -DVANILLAPDF_EXTERNAL_JPEG=ON \
+            -DVANILLAPDF_EXTERNAL_ZLIB=ON \
+            -DVANILLAPDF_ENABLE_TESTS=ON
+
+  sanitizer:
+    name: ${{ matrix.name }}
+    needs: vcpkg-setup
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ASan
+            os: ubuntu-24.04
+            cmake_flag: VANILLAPDF_ENABLE_ASAN
+          - name: UBSan
+            os: ubuntu-24.04
+            cmake_flag: VANILLAPDF_ENABLE_UBSAN
+          - name: TSan
+            os: ubuntu-24.04
+            cmake_flag: VANILLAPDF_ENABLE_TSAN
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev libopenjp2-tools
+
+      - name: Restore vcpkg cache
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
+        with:
+          path: |
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-
+
+      - name: Bootstrap vcpkg
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
+      - name: Configure
+        run: |
+          cmake --preset ${{ env.BUILD_PRESET }} -DCMAKE_BUILD_TYPE=Debug \
+            -D${{ matrix.cmake_flag }}=ON \
+            -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+            -DVANILLAPDF_EXTERNAL_JPEG=ON \
+            -DVANILLAPDF_EXTERNAL_ZLIB=ON \
+            -DVANILLAPDF_ENABLE_TESTS=ON
+
+      - name: Build
+        run: cmake --build --preset ${{ env.BUILD_PRESET }}
+
+      - name: Test
+        run: ctest --preset ${{ env.BUILD_PRESET }} --output-on-failure

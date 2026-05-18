@@ -73,8 +73,9 @@ extern "C"
     /**
     * \brief
     * Error in compressed data.
+    * \deprecated Use \ref VANILLAPDF_ERROR_DATA_CORRUPTION instead
     */
-    VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_ZLIB_DATA;
+    VANILLAPDF_DEPRECATED VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_ZLIB_DATA;
 
     /**
     * \brief
@@ -93,6 +94,30 @@ extern "C"
     * The space usually for buffer was not sufficient for requested operation.
     */
     VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_INSUFFICIENT_SPACE;
+
+    /**
+    * \brief
+    * Data corruption was detected during processing.
+    */
+    VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_DATA_CORRUPTION;
+
+    /**
+    * \brief
+    * An I/O error occurred during file or stream operations.
+    */
+    VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_IO;
+
+    /**
+    * \brief
+    * A cryptographic operation failed.
+    */
+    VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_CRYPTO;
+
+    /**
+    * \brief
+    * An image encoding or decoding operation failed.
+    */
+    VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_IMAGE_CODEC;
 
     /**
     * \brief

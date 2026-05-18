@@ -5,6 +5,7 @@
 
 #include "syntax/parsers/parser.h"
 #include "syntax/utils/name_constants.h"
+#include "syntax/utils/output_pointer.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 
 namespace vanillapdf {
@@ -16,7 +17,7 @@ XrefEntryBase::XrefEntryBase(types::big_uint obj_number, types::ushort gen_numbe
 
 XrefUsedEntryBase::XrefUsedEntryBase(types::big_uint obj_number, types::ushort gen_number)
     : XrefEntryBase(obj_number, gen_number) {
-    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 XrefFreeEntry::XrefFreeEntry(types::big_uint obj_number, types::ushort gen_number)
@@ -55,29 +56,20 @@ XrefUsedEntryBase::~XrefUsedEntryBase() {
     ReleaseReference(false);
 }
 
-void XrefUsedEntryBase::ObserveeChanged(const IModifyObservable*) {
-    // Notify observers
-    OnChanged();
-}
-
-void XrefUsedEntryBase::OnChanged() {
-    if (m_initialized) {
-        _dirty = true;
-    }
-
-    IModifyObservable::OnChanged();
-}
-
 bool XrefEntryBase::operator==(const XrefEntryBase& other) const {
-    return (_obj_number == other._obj_number);
+    return (_obj_number == other._obj_number) && (_gen_number == other._gen_number);
 }
 
 bool XrefEntryBase::operator!=(const XrefEntryBase& other) const {
-    return (_obj_number != other._obj_number);
+    return (_obj_number != other._obj_number) || (_gen_number != other._gen_number);
 }
 
 bool XrefEntryBase::operator<(const XrefEntryBase& other) const {
-    return (_obj_number < other._obj_number);
+    if (_obj_number != other._obj_number) {
+        return _obj_number < other._obj_number;
+    }
+
+    return _gen_number < other._gen_number;
 }
 
 void XrefUsedEntryBase::SetReference(ObjectPtr ref) {
@@ -107,7 +99,6 @@ void XrefUsedEntryBase::SetReference(ObjectPtr ref) {
     _reference = ref;
     m_used = true;
 
-    _reference->Subscribe(this);
     _reference->SetXrefEntry(this);
 
     if (IsInitialized()) {
@@ -140,9 +131,6 @@ void XrefUsedEntryBase::ReleaseReference(bool check_object_xref) {
     }
 
     ACCESS_LOCK_GUARD(m_access_lock);
-
-    bool unsubscribed = _reference->Unsubscribe(this);
-    assert(unsubscribed && "Could not unsubscribe"); UNUSED(unsubscribed);
 
     if (check_object_xref) {
         auto weak_ref_entry = _reference->GetXrefEntry();
@@ -180,7 +168,7 @@ void XrefUsedEntry::Initialize(void) {
     }
 
     if (_offset == constant::BAD_OFFSET) {
-        throw GeneralException("Xref entry data offset is not initialized");
+        throw ObjectMissingException("Xref entry data offset is not initialized");
     }
 
     ACCESS_LOCK_GUARD(m_access_lock);
@@ -212,11 +200,12 @@ void XrefUsedEntry::Initialize(void) {
     auto xref_chain = locked_file->GetXrefChain(false);
 
     for (auto xref : xref_chain) {
-        if (!xref->Contains(_obj_number)) {
+        OutputXrefEntryBasePtr xref_entry_result;
+        if (!xref->TryFind(_obj_number, xref_entry_result)) {
             continue;
         }
 
-        auto xref_entry = xref->Find(_obj_number);
+        auto xref_entry = *xref_entry_result;
         if (xref_entry->GetGenerationNumber() != _gen_number) {
             continue;
         }
@@ -317,9 +306,14 @@ namespace std {
 
 size_t hash<vanillapdf::syntax::XrefEntryBasePtr>::operator()(const vanillapdf::syntax::XrefEntryBasePtr& entry) const {
     auto object_number = entry->GetObjectNumber();
+    auto generation_number = entry->GetGenerationNumber();
 
-    std::hash<decltype(object_number)> hasher;
-    return hasher(object_number);
+    size_t hash = vanillapdf::constant::FNV1A_OFFSET_BASIS;
+    hash ^= static_cast<size_t>(object_number);
+    hash *= vanillapdf::constant::FNV1A_PRIME;
+    hash ^= static_cast<size_t>(generation_number);
+    hash *= vanillapdf::constant::FNV1A_PRIME;
+    return hash;
 }
 
 } // std

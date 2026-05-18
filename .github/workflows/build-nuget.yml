@@ -20,7 +20,7 @@ on:
   workflow_dispatch:
     inputs:
       build_suffix:
-        description: "Optional build suffix for version (e.g., -nightly.main)"
+        description: "Optional build suffix for version (e.g., nightly.main, alpha.2)"
         required: false
         default: ""
       patch_override:
@@ -72,14 +72,14 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - name: linux-x64
+          - name: rocky.9-x64
             os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
             build_type: Release
 
-          - name: linux-arm64
+          - name: rocky.9-arm64
             os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
@@ -91,10 +91,10 @@ jobs:
       options: --platform=${{ matrix.config.platform }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7  # v5
         with:
           dotnet-version: 10.0.x
 
@@ -103,17 +103,13 @@ jobs:
         run: dnf -y install libicu
 
       - name: Cache vcpkg
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # Bootstrap vcpkg on Linux
@@ -144,55 +140,55 @@ jobs:
       - name: Build package ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
-      - name: Restore NuGet packages
-        run: dotnet restore nuget/vanillapdf.runtime.csproj
-
       - name: Execute nuget packaging
-        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --output .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
-          name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
+          name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
           path: '*.nupkg'
 
 
   build-windows:
     name: ${{ matrix.config.name }}
-    runs-on: windows-latest
+    runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - name: win-x86
+          - name: win.2025-x86-static
+            os: windows-2025
             preset: windows-x86-msvc-17-static
             build_type: Release
 
-          - name: win-x64
+          - name: win.2025-x64-static
+            os: windows-2025
             preset: windows-x64-msvc-17-static
             build_type: Release
 
+          - name: win.11-arm64-static
+            os: windows-11-arm
+            preset: windows-arm64-msvc-17-static
+            build_type: Release
+
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7  # v5
         with:
           dotnet-version: 10.0.x
 
       - name: Cache vcpkg
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
             vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
 
       # Bootstrap vcpkg on Windows
@@ -223,16 +219,13 @@ jobs:
       - name: Build package ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --config ${{ matrix.config.build_type }} --target package
 
-      - name: Restore NuGet packages
-        run: dotnet restore nuget/vanillapdf.runtime.csproj
-
       - name: Execute nuget packaging
-        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --output .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
-          name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
+          name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
           path: '*.nupkg'
 
 
@@ -249,32 +242,26 @@ jobs:
             preset: macos-x64
             build_type: Release
 
-          - name: osx-arm64
+          - name: osx.15-arm64
             runner: macos-15
             preset: macos-arm64
             build_type: Release
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7  # v5
         with:
           dotnet-version: 10.0.x
 
       - name: Cache vcpkg
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
+          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ hashFiles('vcpkg.json.in', 'cmake/overlays/*.cmake') }}
 
       # dotnet is available on macOS runners by default
 
@@ -304,6 +291,8 @@ jobs:
           fi
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
+          CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0"
+          CMAKE_ARGS="$CMAKE_ARGS -DVCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}/cmake/overlays"
           cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
       - name: Build ${{ matrix.config.name }}
@@ -315,16 +304,13 @@ jobs:
       - name: Build package ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
-      - name: Restore NuGet packages
-        run: dotnet restore nuget/vanillapdf.runtime.csproj
-
       - name: Execute nuget packaging
-        run: dotnet pack nuget/vanillapdf.runtime.csproj --no-build --output .
+        run: dotnet pack nuget/vanillapdf.runtime.csproj --output .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
-          name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix }}
+          name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
           path: '*.nupkg'
 
 
@@ -341,11 +327,11 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7  # v5
         with:
           dotnet-version: 10.0.x
 
@@ -361,7 +347,7 @@ jobs:
           cmake $CMAKE_ARGS -P cmake/nuget.cmake
 
       - name: Download runtime packages
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
         with:
           pattern: vanillapdf.runtime.*
           path: nuget/local-packages
@@ -374,7 +360,7 @@ jobs:
         run: dotnet pack nuget/vanillapdf.csproj --no-build --output .
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
-          name: vanillapdf${{ inputs.build_suffix }}
+          name: vanillapdf${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
           path: '*.nupkg'

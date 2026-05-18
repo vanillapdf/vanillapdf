@@ -60,6 +60,11 @@ error_type process_buffer(BufferHandle* buffer, int nested) {
         return VANILLAPDF_TEST_ERROR_FAILURE;
     }
 
+    if (size > 0 && data == NULL) {
+        print_text("Buffer has non-zero size but null data pointer\n");
+        return VANILLAPDF_TEST_ERROR_FAILURE;
+    }
+
     print_size = size > 20 ? 10 : size;
     size_converted = size;
 
@@ -70,7 +75,9 @@ error_type process_buffer(BufferHandle* buffer, int nested) {
         return VANILLAPDF_TEST_ERROR_FAILURE;
     }
 
-    memcpy(local_string, data, print_size);
+    if (print_size > 0) {
+        memcpy(local_string, data, print_size);
+    }
 
     print_spaces(nested + 1);
     print_text("Size: %llu\n", size_converted);
@@ -146,8 +153,11 @@ error_type process_constants() {
     dummy_error = VANILLAPDF_ERROR_PARAMETER_VALUE;
     dummy_error = VANILLAPDF_ERROR_NOT_SUPPORTED;
     dummy_error = VANILLAPDF_ERROR_USER_CANCELLED;
-    dummy_error = VANILLAPDF_ERROR_ZLIB_DATA;
     dummy_error = VANILLAPDF_ERROR_INVALID_LICENSE;
+    dummy_error = VANILLAPDF_ERROR_DATA_CORRUPTION;
+    dummy_error = VANILLAPDF_ERROR_IO;
+    dummy_error = VANILLAPDF_ERROR_CRYPTO;
+    dummy_error = VANILLAPDF_ERROR_IMAGE_CODEC;
     dummy_error = VANILLAPDF_ERROR_GENERAL;
 
     // Syntax errors

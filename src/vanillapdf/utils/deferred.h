@@ -1,6 +1,7 @@
 #ifndef _DEFERRED_H
 #define _DEFERRED_H
 
+#include "utils/compiler_utils.h"
 #include "utils/utils_fwd.h"
 #include "utils/template_utils.h"
 #include "utils/unknown_interface.h"
@@ -288,7 +289,10 @@ protected:
     virtual T* GetInternal(void) const override {
         assert(DeferredWrapperBase<T>::m_ptr);
         if (!DeferredWrapperBase<T>::m_ptr) {
-            return nullptr;
+            // Null dereference is a programming error; the assert above fires in
+            // debug builds. In release builds, inform the optimizer this path is
+            // unreachable so it does not propagate null through inlined calls.
+            VANILLAPDF_UNREACHABLE();
         }
 
         return DeferredWrapperBase<T>::m_ptr;
@@ -442,22 +446,22 @@ inline bool operator!=(U* left, const Deferred<U>& right) {
 
 template <typename T>
 inline bool operator==(const Deferred<T>& left, std::nullptr_t) {
-    return (nullptr == left.get());
+    return left.empty();
 }
 
 template <typename T>
 inline bool operator==(std::nullptr_t, const Deferred<T>& right) {
-    return (nullptr == right.get());
+    return right.empty();
 }
 
 template <typename T>
 inline bool operator!=(const Deferred<T>& left, std::nullptr_t) {
-    return (nullptr != left.get());
+    return !left.empty();
 }
 
 template <typename T>
 inline bool operator!=(std::nullptr_t, const Deferred<T>& right) {
-    return (nullptr != right.get());
+    return !right.empty();
 }
 
 // identity operators
@@ -510,6 +514,31 @@ template <typename T>
 void swap(Deferred<T>& lhs, Deferred<T>& rhs) {
     lhs.swap(rhs);
 }
+
+// Identity-based hash and equality for Deferred<T>.
+//
+// The default std::hash<Deferred<T>> (where one exists) uses content-based
+// hashing via Object::Hash(). Use DeferredIdentityHash / DeferredIdentityEqual
+// when you need to key a container by object *instance* rather than by value:
+//
+//   std::unordered_map<FooPtr, Bar,
+//       DeferredIdentityHash<Foo>, DeferredIdentityEqual<Foo>> m;
+//
+// This mirrors the free-function Identity() above.
+
+template <typename T>
+struct DeferredIdentityHash {
+    size_t operator()(const Deferred<T>& p) const noexcept {
+        return std::hash<const T*>{}(p.get());
+    }
+};
+
+template <typename T>
+struct DeferredIdentityEqual {
+    bool operator()(const Deferred<T>& a, const Deferred<T>& b) const noexcept {
+        return a.get() == b.get();
+    }
+};
 
 // TODO rework make_deferred to single function and user deferred_ptr_type as value
 

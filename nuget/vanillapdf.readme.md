@@ -33,6 +33,7 @@ The package ships native binaries for the following runtime identifiers:
 |----------|-----|--------------|
 | Windows | `win-x64` | x64 |
 | Windows | `win-x86` | x86 |
+| Windows | `win-arm64` | ARM64 |
 | Linux | `linux-x64` | x64 |
 | Linux | `linux-arm64` | ARM64 |
 | macOS | `osx-x64` | x64 (Intel) |

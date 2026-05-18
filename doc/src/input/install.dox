@@ -289,6 +289,37 @@ cmake --preset <your-preset>
 - **macOS**: Install via Homebrew: `brew install openssl@3 jpeg-turbo zlib openjpeg`
 - **Windows**: Use vcpkg presets or ensure Visual Studio 2022 or 2026 is properly installed
 
+\section install_openssl OpenSSL and FIPS Configuration
+
+Vanilla.PDF is compatible with FIPS-enabled and policy-restricted OpenSSL
+configurations commonly found on RHEL-based distributions (Rocky Linux, Fedora,
+AlmaLinux, RHEL). The library uses OpenSSL's PKCS#7 padding for AES encryption
+and loads the OpenSSL \c legacy provider at startup to support the full range
+of PDF encryption standards.
+
+\subsection install_openssl_crypto_policy Crypto Policy Configuration
+
+The PDF specification requires algorithms that some OpenSSL crypto policies
+consider legacy: MD5 for encryption key derivation, RC4 for older encrypted
+documents, and SHA-1 for some digital signatures. On RHEL-based distributions,
+the \c DEFAULT crypto policy may restrict these algorithms.
+
+If encrypted PDF operations fail with crypto errors, enable the legacy
+algorithms via the system crypto policy:
+\code{.bash}
+sudo update-crypto-policies --set LEGACY
+\endcode
+
+\subsection install_openssl_weak_algorithms Weak Algorithm Control
+
+For digital signature verification, the
+\ref SignatureVerificationSettingsHandle API provides fine-grained control over
+whether weak algorithms (MD5, SHA-1, RSA < 2048 bits) are accepted, without
+requiring system-wide policy changes:
+\code{.c}
+SignatureVerificationSettings_SetAllowWeakAlgorithmsFlag(settings, VANILLAPDF_RV_TRUE);
+\endcode
+
 \section install_packages Building packages
 
 Instructions for creating Debian or Homebrew packages are provided in the

@@ -43,7 +43,8 @@ public:
 
 private:
     mutable contents::CharacterMapData m_data;
-    mutable bool m_initialized = false;
+    mutable std::atomic<bool> m_initialized = false;
+    mutable std::unique_ptr<std::recursive_mutex> m_access_lock;
 
     void Initialize() const;
 };

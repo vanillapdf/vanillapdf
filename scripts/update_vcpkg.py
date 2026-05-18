@@ -160,9 +160,20 @@ class VcpkgUpdater:
         return True
 
     def push_branch(self, branch_name: str) -> None:
-        """Push the update branch to remote."""
+        """Push the update branch to remote (force-push to update existing automated branches)."""
         print(f"Pushing branch {branch_name} to remote...")
-        self.run_command(['git', 'push', 'origin', branch_name])
+
+        # Fetch the remote-tracking ref so --force-with-lease has a baseline to
+        # compare against. In shallow CI clones only the default branch is fetched,
+        # so without this step git refuses the push when the remote branch already
+        # exists (no local remote-tracking ref to verify).
+        self.run_command(
+            ['git', 'fetch', 'origin',
+             f'refs/heads/{branch_name}:refs/remotes/origin/{branch_name}'],
+            check=False,  # OK to fail when the remote branch doesn't exist yet
+        )
+
+        self.run_command(['git', 'push', '--force-with-lease', 'origin', branch_name])
 
     def create_pull_request(self, current_version: str, new_version: str, commit_hash: str, branch_name: str) -> Optional[str]:
         """Create a pull request for the vcpkg update."""
@@ -195,6 +206,20 @@ This PR was created using the `scripts/update_vcpkg.py` script.
 🤖 Generated with update_vcpkg.py script"""
 
         try:
+            # Check if a PR already exists for this branch
+            existing = self.run_command([
+                'gh', 'pr', 'list',
+                '--head', branch_name,
+                '--state', 'open',
+                '--json', 'url',
+                '--jq', '.[0].url'
+            ], check=False)
+
+            if existing.returncode == 0 and existing.stdout.strip():
+                pr_url = existing.stdout.strip()
+                print(f"Pull request already exists: {pr_url} — branch has been updated")
+                return pr_url
+
             print("Creating pull request...")
             result = self.run_command([
                 'gh', 'pr', 'create',

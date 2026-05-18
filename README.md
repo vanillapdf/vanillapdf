@@ -2,6 +2,9 @@
 
 [![Build](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml)
 [![Coverage](https://codecov.io/gh/vanillapdf/vanillapdf/branch/main/graph/badge.svg?token=1UO4W5XGTL)](https://codecov.io/gh/vanillapdf/vanillapdf)
+[![Fuzzing](https://github.com/vanillapdf/vanillapdf/actions/workflows/fuzzing.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/fuzzing.yml)
+[![CodeQL](https://github.com/vanillapdf/vanillapdf/actions/workflows/codeql.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/vanillapdf/vanillapdf/badge)](https://scorecard.dev/viewer/?uri=github.com/vanillapdf/vanillapdf)
 [![Docs](https://readthedocs.org/projects/vanillapdf/badge/?version=latest)](https://vanillapdf.readthedocs.io/)
 [![NuGet](https://img.shields.io/nuget/v/vanillapdf?color=blue)](https://www.nuget.org/packages/vanillapdf)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE.txt)
@@ -122,7 +125,7 @@ vanillapdf-tools verify -f signed.pdf
 | Feature | C API | CLI | Description |
 |---------|:-----:|:---:|-------------|
 | **Create documents** | `Document_Create` | | Pages, text, images, vector paths |
-| **Digital signatures** | `Document_Sign` | `sign` | CMS (PKCS#7) with PKCS#12 keys or custom callbacks |
+| **Digital signatures** | `Document_Sign` | `sign` | OpenSSL CMS — RSA, ECDSA (P-256/P-384/P-521), Ed25519, Ed448 via PKCS#12 keys or custom callbacks |
 | **Signature verification** | `DigitalSignatureExtensions_Verify` | `verify` | Chain validation, weak-algorithm detection, signing-time checks |
 | **Merge documents** | | `merge` | Combine multiple PDFs into one |
 | **Encryption** | | `encrypt` / `decrypt` | AES and RC4, owner/user passwords, certificate-based decryption |
@@ -144,7 +147,7 @@ The C++ core is hidden behind an ABI-stable ANSI C interface using opaque handle
 
 | Platform | Compilers | Architectures |
 |----------|-----------|---------------|
-| Windows | Visual Studio 2022, 2026 | x86, x64 |
+| Windows | Visual Studio 2022, 2026 | x86, x64, ARM64 |
 | Linux | GCC 8.1+, Clang 10+ | x64, ARM64, ARM |
 | macOS | AppleClang 15+ (Xcode 15) | x64, ARM64 |
 | Android | NDK toolchain | arm64, armv7, x86, x86_64 |
@@ -165,7 +168,6 @@ Current known limitations:
 - No CRL/OCSP revocation checking ([#157](https://github.com/vanillapdf/vanillapdf/issues/157))
 - No PAdES compliance levels (BES, T, LTV)
 - No RFC 3161 timestamp validation
-- No ED25519 signature support ([#158](https://github.com/vanillapdf/vanillapdf/issues/158))
 
 ## Versioning
 

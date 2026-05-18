@@ -114,6 +114,50 @@ extern "C"
     } FieldType;
 
     /**
+    * \brief Bit flags common to all field types (PDF 32000-1:2008, Table 221)
+    * \ingroup group_fields
+    */
+    typedef enum {
+        FieldFlags_None = 0,
+
+        /** \brief The user may not change the value of the field */
+        FieldFlags_ReadOnly = (1 << 0),
+
+        /** \brief The field shall have a value before the form can be submitted */
+        FieldFlags_Required = (1 << 1),
+
+        /** \brief The field shall not be exported by a submit-form action */
+        FieldFlags_NoExport = (1 << 2),
+
+        // Button field flags (Table 226)
+
+        /** \brief The field is a set of radio buttons (otherwise checkbox if button type) */
+        FieldFlags_Radio = (1 << 15),
+
+        /** \brief The field is a push button that does not retain a permanent value */
+        FieldFlags_PushButton = (1 << 16),
+
+        // Text field flags (Table 228)
+
+        /** \brief The field may contain multiple lines of text */
+        FieldFlags_Multiline = (1 << 12),
+
+        /** \brief The field is intended for entering a secure password */
+        FieldFlags_Password = (1 << 13),
+
+        // Choice field flags (Table 230)
+
+        /** \brief The choice field is a combo box (otherwise list box) */
+        FieldFlags_Combo = (1 << 17),
+
+        /** \brief The combo box includes an editable text box */
+        FieldFlags_Edit = (1 << 18),
+
+        /** \brief The field options shall be sorted alphabetically */
+        FieldFlags_Sort = (1 << 19),
+    } FieldFlags;
+
+    /**
     * \memberof FieldCollectionHandle
     * @{
     */
@@ -155,6 +199,31 @@ extern "C"
     * Result can be used to convert to derived type.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle* handle, FieldType* result);
+
+    /**
+    * \brief Get the partial field name (/T entry).
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetName(FieldHandle* handle, StringObjectHandle** result);
+
+    /**
+    * \brief Get the alternate field name (/TU entry), used as tooltip text.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateName(FieldHandle* handle, StringObjectHandle** result);
+
+    /**
+    * \brief Get the field flags (/Ff entry).
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
+    * \see FieldFlags
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetFieldFlags(FieldHandle* handle, FieldFlags* result);
+
+    /**
+    * \brief Set the field flags (/Ff entry).
+    * \see FieldFlags
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_SetFieldFlags(FieldHandle* handle, FieldFlags value);
 
     /**
     * \brief Reinterpret current object as \ref ButtonFieldHandle.
@@ -204,6 +273,17 @@ extern "C"
     */
 
     /**
+    * \brief Get the button field value (/V entry) as a name object.
+    * For checkboxes, typically /Yes or /Off. For radio buttons, the selected option name.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_GetValue(ButtonFieldHandle* handle, NameObjectHandle** result);
+
+    /**
+    * \brief Set the button field value (/V entry).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_SetValue(ButtonFieldHandle* handle, NameObjectHandle* value);
+
+    /**
     * \brief Reinterpret current object as \ref FieldHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_ToField(ButtonFieldHandle* handle, FieldHandle** result);
@@ -226,6 +306,27 @@ extern "C"
     */
 
     /**
+    * \brief Get the text field value (/V entry).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetValue(TextFieldHandle* handle, StringObjectHandle** result);
+
+    /**
+    * \brief Set the text field value (/V entry).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_SetValue(TextFieldHandle* handle, StringObjectHandle* value);
+
+    /**
+    * \brief Get the default value (/DV entry).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetDefaultValue(TextFieldHandle* handle, StringObjectHandle** result);
+
+    /**
+    * \brief Get the maximum length of the text field (/MaxLen entry).
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetMaxLength(TextFieldHandle* handle, IntegerObjectHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref FieldHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TextField_ToField(TextFieldHandle* handle, FieldHandle** result);
@@ -246,6 +347,30 @@ extern "C"
     * \memberof ChoiceFieldHandle
     * @{
     */
+
+    /**
+    * \brief Get the selected value (/V entry).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetValue(ChoiceFieldHandle* handle, StringObjectHandle** result);
+
+    /**
+    * \brief Set the selected value (/V entry).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_SetValue(ChoiceFieldHandle* handle, StringObjectHandle* value);
+
+    /**
+    * \brief Get the number of available options (/Opt entry).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionCount(ChoiceFieldHandle* handle, size_type* result);
+
+    /**
+    * \brief Get the option at the given index.
+    *
+    * Each element is either a text string (serving as both export value and display text)
+    * or a two-element array where the first element is the export value
+    * and the second element is the display text (Table 231).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionAt(ChoiceFieldHandle* handle, size_type index, ObjectHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref FieldHandle

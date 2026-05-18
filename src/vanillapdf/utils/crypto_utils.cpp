@@ -5,7 +5,7 @@
 
 #include <chrono>
 #include <mutex>
-#include <sstream>
+#include <fmt/core.h>
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 #include <openssl/x509.h>
@@ -29,12 +29,13 @@ static std::mutex g_openssl_lock;
 static bool g_openssl_initialized = false;
 static OSSL_PROVIDER* g_legacy_provider = nullptr;
 static OSSL_PROVIDER* g_default_provider = nullptr;
+
 #endif
 
 const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
 
     if (algorithm == MessageDigestAlgorithm::Undefined) {
-        throw GeneralException("No message digest algorithm was selected");
+        throw CryptoErrorException("No message digest algorithm was selected");
     }
 
     if (algorithm == MessageDigestAlgorithm::MDNULL) {
@@ -93,7 +94,7 @@ const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
         return EVP_whirlpool();
     }
 
-    throw GeneralException("Unknown message digest algorithm");
+    throw CryptoErrorException("Unknown message digest algorithm");
 }
 
 std::string CryptoUtils::GetLastOpensslError() {
@@ -114,20 +115,15 @@ std::string CryptoUtils::GetLastOpensslError() {
     auto err_code = ERR_get_error_line_data(&err_file, &err_line, &err_data, &err_flags);
 #endif
 
-    std::stringstream error_message;
-
-    error_message << "Error: " << '\'' << err_code << '\'' << std::endl;
-    error_message << "File: " << '\'' << err_file << '\'' << std::endl;
-    error_message << "Line: " << err_line << '\'' << std::endl;
-
 #if OPENSSL_VERSION_MAJOR >= 3
-    error_message << "Function: " << '\'' << err_func << '\'' << std::endl;
+    return fmt::format(
+        "Error: '{}'\nFile: '{}'\nLine: '{}'\nFunction: '{}'\nData: '{}'\nFlags: '{}'\n",
+        err_code, err_file, err_line, err_func, err_data, err_flags);
+#else
+    return fmt::format(
+        "Error: '{}'\nFile: '{}'\nLine: '{}'\nData: '{}'\nFlags: '{}'\n",
+        err_code, err_file, err_line, err_data, err_flags);
 #endif
-
-    error_message << "Data: " << '\'' << err_data << '\'' << std::endl;
-    error_message << "Flags: " << '\'' << err_flags << '\'' << std::endl;
-
-    return error_message.str();
 }
 
 void CryptoUtils::InitializeOpenSSL() {
@@ -143,12 +139,12 @@ void CryptoUtils::InitializeOpenSSL() {
 
     g_legacy_provider = OSSL_PROVIDER_load(nullptr, "legacy");
     if (g_legacy_provider == nullptr) {
-        throw GeneralException("Failed to initialize legacy OSSL provider, " + GetLastOpensslError());
+        throw CryptoErrorException("Failed to initialize legacy OSSL provider, " + GetLastOpensslError());
     }
 
     g_default_provider = OSSL_PROVIDER_load(nullptr, "default");
     if (g_default_provider == nullptr) {
-        throw GeneralException("Failed to initialize default OSSL provider, " + GetLastOpensslError());
+        throw CryptoErrorException("Failed to initialize default OSSL provider, " + GetLastOpensslError());
     }
 
     OpenSSL_add_all_algorithms();
@@ -200,6 +196,7 @@ const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm) {
 std::string CryptoUtils::GetLastOpensslError() {
     throw NotSupportedException("This library was compiled without OpenSSL support");
 }
+
 
 void CryptoUtils::InitializeOpenSSL() {
     throw NotSupportedException("This library was compiled without OpenSSL support");

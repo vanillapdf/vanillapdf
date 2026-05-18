@@ -66,6 +66,26 @@ VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_GetReferenc
     return VANILLAPDF_ERROR_SUCCESS;
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_SetObjectNumber(IndirectReferenceObjectHandle* handle, biguint_type value) {
+    IndirectReferenceObject* obj = reinterpret_cast<IndirectReferenceObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try {
+        obj->SetReferencedObjectNumber(value);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_SetGenerationNumber(IndirectReferenceObjectHandle* handle, ushort_type value) {
+    IndirectReferenceObject* obj = reinterpret_cast<IndirectReferenceObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try {
+        obj->SetReferencedGenerationNumber(static_cast<types::ushort>(value));
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_ToObject(IndirectReferenceObjectHandle* handle, ObjectHandle** result) {
     return SafeObjectConvert<IndirectReferenceObject, Object, IndirectReferenceObjectHandle, ObjectHandle>(handle, result);
 }

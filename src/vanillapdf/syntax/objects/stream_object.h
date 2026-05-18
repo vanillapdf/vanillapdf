@@ -7,10 +7,11 @@
 
 #include "utils/buffer.h"
 
+
 namespace vanillapdf {
 namespace syntax {
 
-class StreamObject : public Object, public IModifyObserver {
+class StreamObject : public Object {
 public:
     StreamObject();
     StreamObject(const StreamObject&) = delete;
@@ -21,8 +22,7 @@ public:
     virtual std::string ToString(void) const override;
     virtual void ToPdfStreamInternal(IOutputStreamPtr output) const override;
 
-    virtual void ObserveeChanged(const IModifyObservable* observee) override;
-    virtual void OnChanged() override;
+    virtual bool IsDirty() const override;
 
     DictionaryObjectPtr GetHeader() const;
     void SetHeader(DictionaryObjectPtr header);
@@ -43,7 +43,7 @@ public:
     virtual void SetFile(WeakReference<File> file) override;
     virtual void SetInitialized(bool initialized = true) override;
 
-    virtual ~StreamObject();
+    virtual ~StreamObject() = default;
 
 private:
     DictionaryObjectPtr _header;
@@ -54,7 +54,9 @@ private:
     mutable BufferPtr _body_decoded;
 
     // Protects concurrent access to the stream data
-    std::shared_ptr<std::recursive_mutex> _access_lock;
+    std::unique_ptr<std::recursive_mutex> _access_lock;
+
+    BufferPtr LoadBody(types::stream_offset offset) const;
 
     BufferPtr EncryptStream(BufferPtr data, types::big_uint obj_number, types::ushort generation_number) const;
     BufferPtr EncryptData(BufferPtr data, types::big_uint obj_number, types::ushort generation_number, NameObjectPtr handler) const;

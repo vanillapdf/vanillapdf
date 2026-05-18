@@ -6,8 +6,9 @@
 #include "syntax/utils/object_utils.h"
 
 #include "utils/exceptions.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 
-#include <sstream>
+#include "utils/streams/stream_utils.h"
 
 namespace vanillapdf {
 namespace contents {
@@ -17,35 +18,35 @@ using namespace syntax;
 OperationBeginText::OperationBeginText(const std::vector<ObjectPtr>& operands) {
     assert(operands.size() == 0);
     if (operands.size() != 0) {
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 }
 
 OperationEndText::OperationEndText(const std::vector<ObjectPtr>& operands) {
     assert(operands.size() == 0);
     if (operands.size() != 0) {
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 }
 
 OperationSaveGraphicsState::OperationSaveGraphicsState(const std::vector<ObjectPtr>& operands) {
     assert(operands.size() == 0);
     if (operands.size() != 0) {
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 }
 
 OperationRestoreGraphicsState::OperationRestoreGraphicsState(const std::vector<ObjectPtr>& operands) {
     assert(operands.size() == 0);
     if (operands.size() != 0) {
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 }
 
 OperationSetStrokingColorSpaceRGB::OperationSetStrokingColorSpaceRGB(const std::vector<ObjectPtr>& operands) {
     assert(operands.size() == 3);
     if (operands.size() != 3) {
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 
     auto red = operands.at(0);
@@ -53,15 +54,15 @@ OperationSetStrokingColorSpaceRGB::OperationSetStrokingColorSpaceRGB(const std::
     auto blue = operands.at(2);
 
     if (!ObjectUtils::IsType<RealObjectPtr>(red)) {
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     if (!ObjectUtils::IsType<RealObjectPtr>(green)) {
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     if (!ObjectUtils::IsType<RealObjectPtr>(blue)) {
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     m_red = syntax::ObjectUtils::ConvertTo<RealObjectPtr>(red);
@@ -72,7 +73,7 @@ OperationSetStrokingColorSpaceRGB::OperationSetStrokingColorSpaceRGB(const std::
 OperationSetNonstrokingColorSpaceRGB::OperationSetNonstrokingColorSpaceRGB(const std::vector<ObjectPtr>& operands) {
     assert(operands.size() == 3);
     if (operands.size() != 3) {
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 
     auto red = operands.at(0);
@@ -80,15 +81,15 @@ OperationSetNonstrokingColorSpaceRGB::OperationSetNonstrokingColorSpaceRGB(const
     auto blue = operands.at(2);
 
     if (!ObjectUtils::IsType<RealObjectPtr>(red)) {
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     if (!ObjectUtils::IsType<RealObjectPtr>(green)) {
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     if (!ObjectUtils::IsType<RealObjectPtr>(blue)) {
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     m_red = syntax::ObjectUtils::ConvertTo<RealObjectPtr>(red);
@@ -99,19 +100,19 @@ OperationSetNonstrokingColorSpaceRGB::OperationSetNonstrokingColorSpaceRGB(const
 OperationTextFont::OperationTextFont(const std::vector<ObjectPtr>& operands) {
     assert(operands.size() == 2);
     if (operands.size() != 2) {
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 
     auto name = operands.at(0);
     auto scale = operands.at(1);
     if (!ObjectUtils::IsType<NameObjectPtr>(name)) {
         assert(!"Text font operation has invalid arguments");
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     if (!ObjectUtils::IsType<RealObjectPtr>(scale)) {
         assert(!"Text font operation has invalid arguments");
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     m_font = syntax::ObjectUtils::ConvertTo<NameObjectPtr>(name);
@@ -121,19 +122,19 @@ OperationTextFont::OperationTextFont(const std::vector<ObjectPtr>& operands) {
 OperationTextTranslate::OperationTextTranslate(const std::vector<ObjectPtr>& operands) {
     assert(operands.size() == 2);
     if (operands.size() != 2) {
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 
     auto x = operands.at(0);
     auto y = operands.at(1);
     if (!ObjectUtils::IsType<IntegerObjectPtr>(x)) {
         assert(!"Text font operation has invalid arguments");
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     if (!ObjectUtils::IsType<IntegerObjectPtr>(y)) {
         assert(!"Text font operation has invalid arguments");
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     m_x = syntax::ObjectUtils::ConvertTo<IntegerObjectPtr>(x);
@@ -143,34 +144,34 @@ OperationTextTranslate::OperationTextTranslate(const std::vector<ObjectPtr>& ope
 OperationBeginInlineImageObject::OperationBeginInlineImageObject(const std::vector<ObjectPtr>& operands) {
     assert(operands.size() == 0);
     if (operands.size() != 0) {
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 }
 
 OperationBeginInlineImageData::OperationBeginInlineImageData(const std::vector<ObjectPtr>& operands) {
     assert(operands.size() == 0);
     if (operands.size() != 0) {
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 }
 
 OperationEndInlineImageObject::OperationEndInlineImageObject(const std::vector<ObjectPtr>& operands) {
     assert(operands.size() == 0);
     if (operands.size() != 0) {
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 }
 
 OperationTextShow::OperationTextShow(const std::vector<ObjectPtr>& operands) {
     if (1 != operands.size()) {
         assert(!"Text show operation has invalid arguments");
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 
     auto item = operands.at(0);
     if (!ObjectUtils::IsType<StringObjectPtr>(item)) {
         assert(!"Text show operation has invalid arguments");
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     _str = ObjectUtils::ConvertTo<StringObjectPtr>(item);
@@ -179,13 +180,13 @@ OperationTextShow::OperationTextShow(const std::vector<ObjectPtr>& operands) {
 OperationTextShowArray::OperationTextShowArray(const std::vector<ObjectPtr>& operands) {
     if (1 != operands.size()) {
         assert(!"Text show array operation has invalid arguments");
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 
     auto item = operands.at(0);
     if (!ObjectUtils::IsType<MixedArrayObjectPtr>(item)) {
         assert(!"Text show array operation has invalid arguments");
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     m_items = ObjectUtils::ConvertTo<MixedArrayObjectPtr>(item);
@@ -194,43 +195,43 @@ OperationTextShowArray::OperationTextShowArray(const std::vector<ObjectPtr>& ope
 OperationTransformationMatrix::OperationTransformationMatrix(const std::vector<ObjectPtr>& operands) {
     if (6 != operands.size()) {
         assert(!"Transformation matrix operation has invalid arguments");
-        throw GeneralException("Unexpected number of arguments");
+        throw syntax::ParseException("Unexpected number of arguments");
     }
 
     auto a = operands.at(0);
     if (!ObjectUtils::IsType<IntegerObjectPtr>(a)) {
         assert(!"Transformation matrix operation has invalid arguments");
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     auto b = operands.at(1);
     if (!ObjectUtils::IsType<IntegerObjectPtr>(b)) {
         assert(!"Transformation matrix operation has invalid arguments");
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     auto c = operands.at(2);
     if (!ObjectUtils::IsType<IntegerObjectPtr>(c)) {
         assert(!"Transformation matrix operation has invalid arguments");
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     auto d = operands.at(3);
     if (!ObjectUtils::IsType<IntegerObjectPtr>(d)) {
         assert(!"Transformation matrix operation has invalid arguments");
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     auto e = operands.at(4);
     if (!ObjectUtils::IsType<IntegerObjectPtr>(e)) {
         assert(!"Transformation matrix operation has invalid arguments");
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     auto f = operands.at(5);
     if (!ObjectUtils::IsType<IntegerObjectPtr>(f)) {
         assert(!"Transformation matrix operation has invalid arguments");
-        throw GeneralException("Unexpected argument type");
+        throw syntax::ParseException("Unexpected argument type");
     }
 
     m_a = ObjectUtils::ConvertTo<IntegerObjectPtr>(a);
@@ -243,24 +244,24 @@ OperationTransformationMatrix::OperationTransformationMatrix(const std::vector<O
 
 std::string OperationTransformationMatrix::ToPdf() const {
 
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     TransformationMatrixOperatorPtr op;
-    ss << m_a->ToPdf();
-    ss << " ";
-    ss << m_b->ToPdf();
-    ss << " ";
-    ss << m_c->ToPdf();
-    ss << " ";
-    ss << m_d->ToPdf();
-    ss << " ";
-    ss << m_e->ToPdf();
-    ss << " ";
-    ss << m_f->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(m_a->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_b->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_c->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_d->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_e->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_f->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationBeginText::ToPdf() const {
@@ -288,81 +289,81 @@ std::string OperationRestoreGraphicsState::ToPdf() const {
 }
 
 std::string OperationSetStrokingColorSpaceRGB::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     SetStrokingColorSpaceRGBOperatorPtr op;
-    ss << m_red->ToPdf();
-    ss << " ";
-    ss << m_green->ToPdf();
-    ss << " ";
-    ss << m_blue->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(m_red->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_green->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_blue->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationSetNonstrokingColorSpaceRGB::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     SetNonstrokingColorSpaceRGBOperatorPtr op;
-    ss << m_red->ToPdf();
-    ss << " ";
-    ss << m_green->ToPdf();
-    ss << " ";
-    ss << m_blue->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(m_red->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_green->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_blue->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationTextTranslate::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     TextTranslateOperatorPtr op;
-    ss << m_x->ToPdf();
-    ss << " ";
-    ss << m_y->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(m_x->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_y->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationTextShow::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     TextShowOperatorPtr op;
-    ss << _str->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(_str->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationTextShowArray::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     TextShowArrayOperatorPtr op;
-    ss << m_items->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(m_items->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationTextFont::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     TextFontOperatorPtr op;
-    ss << m_font->ToPdf();
-    ss << " ";
-    ss << m_scale->ToPdf();
-    ss << " ";
-    ss << op->Value();
+    stream->Write(m_font->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(m_scale->ToPdf());
+    stream->Write(WhiteSpace::SPACE);
+    stream->Write(op->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string OperationBeginInlineImageObject::ToPdf() const {

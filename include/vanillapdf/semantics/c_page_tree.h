@@ -41,6 +41,18 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle* handle, size_type at, PageObjectHandle** result);
 
     /**
+    * \brief Pre-warm the page cache by walking the entire page tree once.
+    *
+    * Builds the internal flat page vector so that subsequent
+    * \ref PageTree_GetPage calls return in O(1). Call this on a background
+    * thread to eliminate the cold-start delay on the first page access.
+    * Idempotent: safe to call again after the cache is already warm.
+    *
+    * \note Do not call concurrently with other PageTree operations.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageTree_WarmPageCache(PageTreeHandle* handle);
+
+    /**
     * \brief Insert new page at index \p at.
     *
     * The page tree is extended by inserting new element before the

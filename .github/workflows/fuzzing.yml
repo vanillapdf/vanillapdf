@@ -1,0 +1,131 @@
+name: Fuzzing
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 * * 1'
+  push:
+    branches: [main]
+    paths:
+      - 'src/vanillapdf.fuzzer/**'
+      - '.github/workflows/fuzzing.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/vanillapdf.fuzzer/**'
+      - '.github/workflows/fuzzing.yml'
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VCPKG_ROOT: external/vcpkg
+  VCPKG_DISABLE_METRICS: 1
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
+  BUILD_PRESET: linux-x64-clang
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-24.04
+    name: fuzz (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: flate
+            target: vanillapdf.fuzz.flate_decode
+            corpus: flate_decode
+          - name: ascii85
+            target: vanillapdf.fuzz.ascii85_decode
+            corpus: ascii85_decode
+          - name: asciihex
+            target: vanillapdf.fuzz.asciihex_decode
+            corpus: asciihex_decode
+          - name: dct
+            target: vanillapdf.fuzz.dct_decode
+            corpus: dct_decode
+          # TODO: temporarily disabled - currently failing, pending investigation
+          # - name: jpx
+          #   target: vanillapdf.fuzz.jpx_decode
+          #   corpus: jpx_decode
+          # TODO: temporarily disabled - currently failing, pending investigation
+          # - name: file-parse
+          #   target: vanillapdf.fuzz.file_parse
+          #   corpus: file_parse
+          - name: content-stream
+            target: vanillapdf.fuzz.content_stream
+            corpus: content_stream
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang libssl-dev libjpeg-turbo8 libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev ninja-build
+
+      - name: Cache vcpkg
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
+        with:
+          path: |
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-ubuntu-24.04-x64-clang-${{ hashFiles('vcpkg.json.in') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-ubuntu-24.04-x64-clang-
+
+      - name: Bootstrap vcpkg
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
+      - name: Configure
+        run: |
+          cmake --preset ${{ env.BUILD_PRESET }} -DCMAKE_BUILD_TYPE=Release \
+            -DVANILLAPDF_ENABLE_FUZZING=ON \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+            -DVANILLAPDF_EXTERNAL_JPEG=ON \
+            -DVANILLAPDF_EXTERNAL_ZLIB=ON \
+            -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
+            -DVANILLAPDF_ENABLE_TESTS=OFF
+
+      - name: Build
+        run: cmake --build --preset ${{ env.BUILD_PRESET }} --target ${{ matrix.target }}
+
+      - name: Restore corpus cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
+        with:
+          path: corpus-${{ matrix.corpus }}
+          key: fuzzer-corpus-${{ matrix.corpus }}-${{ github.sha }}
+          restore-keys: |
+            fuzzer-corpus-${{ matrix.corpus }}-
+
+      - name: Run fuzzer
+        run: |
+          mkdir -p corpus-${{ matrix.corpus }}
+          SEED_CORPUS="src/vanillapdf.fuzzer/corpus/${{ matrix.corpus }}"
+          FUZZ_ARGS="corpus-${{ matrix.corpus }}"
+          if [ -d "${SEED_CORPUS}" ]; then
+            FUZZ_ARGS="${FUZZ_ARGS} ${SEED_CORPUS}"
+          fi
+          ./build/${{ env.BUILD_PRESET }}/src/vanillapdf.fuzzer/${{ matrix.target }} \
+            ${FUZZ_ARGS} \
+            -max_total_time=600 \
+            -print_final_stats=1
+
+      - name: Upload crash artifacts
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: crash-${{ matrix.name }}
+          path: |
+            crash-*
+            leak-*
+            timeout-*

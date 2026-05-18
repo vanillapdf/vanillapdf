@@ -61,12 +61,16 @@ using XrefVirtualTablePtr = DeferredContainer<XrefVirtualTable>;
 using XrefStreamPtr = DeferredContainer<XrefStream>;
 
 using XrefChainPtr = DeferredContainer<XrefChain>;
-using XrefEntryBasePtr = Deferred<XrefEntryBase>;
+using XrefEntryBasePtr = Deferred<XrefEntryBase>; using OutputXrefEntryBasePtr = OutputPointer<XrefEntryBasePtr>;
 using XrefUsedEntryBasePtr = Deferred<XrefUsedEntryBase>;
 using XrefNullEntryPtr = Deferred<XrefNullEntry>;
 using XrefFreeEntryPtr = Deferred<XrefFreeEntry>;
 using XrefUsedEntryPtr = Deferred<XrefUsedEntry>;
 using XrefCompressedEntryPtr = Deferred<XrefCompressedEntry>;
+
+// Validation
+class FileStructureIssue; using FileStructureIssuePtr = Deferred<FileStructureIssue>;
+class FileStructureValidationResult; using FileStructureValidationResultPtr = Deferred<FileStructureValidationResult>;
 
 class Token; using TokenPtr = Deferred<Token>;
 class TokenDictionaryBase;

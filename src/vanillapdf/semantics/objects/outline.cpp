@@ -151,9 +151,7 @@ bool OutlineItem::Action(OutputActionPtr& result) const {
     }
 
     auto action_dict = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::A);
-    auto action = ActionBase::Create(action_dict);
-    auto raw_ptr = action.release();
-    result = ActionPtr(raw_ptr);
+    result = ActionBase::Create(action_dict);
     return true;
 }
 

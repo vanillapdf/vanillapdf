@@ -67,10 +67,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Xref_Remove(XrefHandle* handle, big
 
     try
     {
-        // We do not have a better interface for the time being
-        XrefFreeEntryPtr temp = make_deferred<XrefFreeEntry>(object_number, static_cast<types::ushort>(0));
-
-        *result = xref->Remove(temp);
+        *result = xref->Remove(object_number);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

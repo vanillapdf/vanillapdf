@@ -23,7 +23,7 @@ std::wstring WindowsUtils::MultiByteToWideChar(const std::string& data, int code
 
     auto conversion_result = ::MultiByteToWideChar(code_page, 0, data.c_str(), -1, result_wide.data(), wide_string_size);
     if (conversion_result == 0) {
-        LOG_ERROR_AND_THROW_GENERAL("Could not convert to wide char: {}, errno: {}", data, GetLastError());
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not convert to wide char: {}, errno: {}", data, GetLastError());
     }
 
     return result_wide;

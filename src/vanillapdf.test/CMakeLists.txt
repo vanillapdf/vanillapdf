@@ -53,8 +53,10 @@ if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
     vanillapdf_configure_msvc_runtime(vanillapdf.test)
 endif()
 
-# Optional stack sanitizer
-enable_stack_sanitizer_for_target(vanillapdf.test)
+# Optional sanitizers
+enable_asan_for_target(vanillapdf.test)
+enable_ubsan_for_target(vanillapdf.test)
+enable_tsan_for_target(vanillapdf.test)
 
 if(WIN32)
     # Copy DLL dependencies on windows to our build directory
@@ -119,4 +121,16 @@ foreach(TEST_FILE ${TEST_FILES})
         "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/VanillaPDF.lic"	# path to license file for test purposes
         "${VANILLAPDF_SOLUTION_SOURCE_DIR}"							# path to root of the source directory
     )
+
+    # OpenSSL 3.x: set provider module search path (see vanillapdf/CMakeLists.txt)
+    if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG AND NOT VANILLAPDF_EXTERNAL_OPENSSL
+            AND VANILLAPDF_OPENSSL_MODULES_DIR)
+        set_tests_properties(${TEST_FILENAME} PROPERTIES
+            ENVIRONMENT "OPENSSL_MODULES=${VANILLAPDF_OPENSSL_MODULES_DIR}"
+        )
+    endif()
 endforeach(TEST_FILE)
+
+# MPK_SLOVLEX.pdf: 9.5 MB, 1,450 pages — takes 600-1500s under sanitizers and
+# dominates CI time. Disabled until test files are moved to a dedicated repo.
+set_tests_properties(MPK_SLOVLEX.pdf PROPERTIES DISABLED TRUE)

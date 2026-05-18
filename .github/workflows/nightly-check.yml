@@ -80,6 +80,18 @@ jobs:
             platform: linux/arm64
             preset: linux-arm64-gcc
 
+          - name: ubuntu.26.04-x64
+            os: ubuntu-24.04
+            image: ghcr.io/vanillapdf/vanillapdf-ubuntu:26.04
+            platform: linux/amd64
+            preset: linux-x64-gcc
+
+          - name: ubuntu.26.04-arm64
+            os: ubuntu-24.04-arm
+            image: ghcr.io/vanillapdf/vanillapdf-ubuntu:26.04
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+
           - name: rocky.8-x64
             os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:8
@@ -157,23 +169,13 @@ jobs:
       options: --platform=${{ matrix.config.platform }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
-      - name: Cache vcpkg
-        uses: actions/cache@v5
-        with:
-          path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-            external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
+      # Note: vcpkg caching disabled for Linux weekly scan to reduce cache storage usage.
+      # Different distros use different GCC versions, producing distinct ABI hashes that
+      # cannot share a cache entry. Caching all distros separately would exceed budget.
 
       - name: Bootstrap vcpkg (Linux)
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -224,7 +226,7 @@ jobs:
           - { name: "win.11-arm64", os: windows-11-arm, preset: "windows-arm64-msvc-17" }
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
@@ -257,25 +259,16 @@ jobs:
           - { name: "osx.14-arm64", runner: macos-14, preset: "macos-arm64" }
           - { name: "osx.15-x64", runner: macos-15-intel, preset: "macos-x64" }
           - { name: "osx.15-arm64", runner: macos-15, preset: "macos-arm64" }
+          - { name: "osx.26-x64", runner: macos-26-intel, preset: "macos-x64" }
+          - { name: "osx.26-arm64", runner: macos-26, preset: "macos-arm64" }
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
-      - name: Cache vcpkg
-        uses: actions/cache@v5
-        with:
-          path: |
-            build/${{ matrix.config.preset }}/vcpkg_installed
-            external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-            external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-${{ hashFiles('vcpkg.json.in') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-${{ matrix.config.preset }}-
-            vcpkg-${{ runner.os }}-${{ matrix.config.name }}-
+      # Note: vcpkg caching disabled for macOS weekly scan to reduce cache storage usage.
+      # macOS 14 and 15 have different compiler versions, so caches cannot be shared.
 
       - name: Install build tools (macOS)
         run: brew install --quiet autoconf automake autoconf-archive

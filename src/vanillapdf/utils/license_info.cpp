@@ -1,10 +1,13 @@
 #include "precompiled.h"
 
+#include "utils/license_info.h"
+
+#ifdef VANILLAPDF_ENABLE_LICENSING
+
 #include "utils/resource.h"
 #include "utils/crypto_utils.h"
 #include "utils/misc_utils.h"
 #include "utils/library_info.h"
-#include "utils/license_info.h"
 #include "utils/streams/input_stream.h"
 
 #include <nlohmann/json.hpp>
@@ -16,8 +19,6 @@
 
 #include <chrono>
 #include <fstream>
-
-namespace vanillapdf {
 
 using namespace nlohmann;
 
@@ -31,44 +32,57 @@ static const char TEMPORARY_EXPIRATION_NODE[] =	"temporary_expiration";
 static const char SIGNATURE_NODE[] =			"signature";
 static const char CERTIFICATES_NODE[] =			"certificates";
 
-// Initialize static members
-bool LicenseInfo::m_update_valid = false;
-std::string LicenseInfo::m_temporary_expiration;
-
 static X509* LoadCertificate(const std::string& certificate) {
     auto signing_certificate_bio = BIO_new(BIO_s_mem());
     if (signing_certificate_bio == nullptr) {
-        throw GeneralException("Could not create memory buffer");
+        throw IOErrorException("Could not create memory buffer");
     }
 
     SCOPE_GUARD([signing_certificate_bio]() { BIO_free(signing_certificate_bio); });
 
-    auto signing_certificate_size = ValueConvertUtils::SafeConvert<int>(certificate.size());
+    auto signing_certificate_size = vanillapdf::ValueConvertUtils::SafeConvert<int>(certificate.size());
     auto bytes_written = BIO_write(signing_certificate_bio, certificate.data(), signing_certificate_size);
     if (bytes_written <= 0) {
-        throw GeneralException("Could not write certificate data");
+        throw IOErrorException("Could not write certificate data");
     }
 
     auto certificate_x509 = PEM_read_bio_X509(signing_certificate_bio, nullptr, nullptr, nullptr);
     if (certificate_x509 == nullptr) {
-        throw GeneralException("Could not read PEM certificate");
+        throw IOErrorException("Could not read PEM certificate");
     }
 
     return certificate_x509;
 }
 
+#else /* !VANILLAPDF_ENABLE_LICENSING */
+
+#include <spdlog/spdlog.h>
+
+#endif /* VANILLAPDF_ENABLE_LICENSING */
+
+namespace vanillapdf {
+
+// Initialize static members
+bool LicenseInfo::m_update_valid = false;
+std::string LicenseInfo::m_temporary_expiration;
+
+#ifdef VANILLAPDF_ENABLE_LICENSING
+
 void LicenseInfo::SetLicense(IInputStreamPtr stream, types::stream_size length) {
     Buffer buffer(length);
     auto read = stream->Read(buffer, length);
     if (read != length) {
-        throw GeneralException("Could not read license file");
+        throw IOErrorException("Could not read license file");
     }
 
     // Forward content
     SetLicense(buffer);
 }
 
-void LicenseInfo::SetLicense(const Buffer& data) {
+#endif /* VANILLAPDF_ENABLE_LICENSING */
+
+void LicenseInfo::SetLicense([[maybe_unused]] const Buffer& data) {
+#ifdef VANILLAPDF_ENABLE_LICENSING
 
     // Parse JSON
     auto json_data = json::parse(data);
@@ -116,18 +130,16 @@ void LicenseInfo::SetLicense(const Buffer& data) {
         auto serial_string = serial_node.get<std::string>();
         bool blacklisted = CheckBlacklist(serial_string);
         if (blacklisted) {
-            std::stringstream msg;
-            msg << "Your license with serial " << serial_string << " is blacklisted";
-            throw InvalidLicenseException(msg.str());
+            throw InvalidLicenseException(
+                fmt::format("Your license with serial {} is blacklisted", serial_string));
         }
 
         // Check updates expiration
         auto updates_expiration_string = updates_expiration_node.get<std::string>();
         bool updates_expired = CheckUpdateExpiration(updates_expiration_string);
         if (updates_expired) {
-            std::stringstream msg;
-            msg << "Your license updates expired on " << updates_expiration_string;
-            throw InvalidLicenseException(msg.str());
+            throw InvalidLicenseException(
+                fmt::format("Your license updates expired on {}", updates_expiration_string));
         }
 
         // Check signature
@@ -179,15 +191,20 @@ void LicenseInfo::SetLicense(const Buffer& data) {
     }
 
     // None of the known license format matches
-    throw GeneralException("Unknown license version: " + version_string);
+    throw IOErrorException("Unknown license version: " + version_string);
+
+#else
+    spdlog::debug("SetLicense called but licensing support is not compiled in");
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
 
-void LicenseInfo::SetLicense(const char * filename) {
+void LicenseInfo::SetLicense([[maybe_unused]] const char * filename) {
+#ifdef VANILLAPDF_ENABLE_LICENSING
 
     // Determine file size
     auto file = std::make_shared<std::ifstream>(filename, std::ios::binary | std::ios::ate);
     if (!file || !file->good()) {
-        throw GeneralException("Could not open license file " + std::string(filename));
+        throw IOErrorException("Could not open license file " + std::string(filename));
     }
 
     auto length = file->tellg();
@@ -198,15 +215,15 @@ void LicenseInfo::SetLicense(const char * filename) {
     // Forward content
     auto stream = make_deferred<InputStream>(file);
     SetLicense(stream, length);
+
+#else
+    spdlog::debug("SetLicense called but licensing support is not compiled in");
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 }
 
 bool LicenseInfo::IsValid() {
 
-    // Since we are now open source, we will not enforce license checks.
-    // The API remains for the time being to keep backwards compatibility.
-
-#if ENFORCE_LICENSE_CHECKS
-
+#ifdef VANILLAPDF_ENABLE_LICENSING
     if (!m_update_valid) {
         return false;
     }
@@ -217,8 +234,7 @@ bool LicenseInfo::IsValid() {
             return false;
         }
     }
-
-#endif /* ENFORCE_LICENSE_CHECKS */
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 
     return true;
 }
@@ -226,6 +242,8 @@ bool LicenseInfo::IsValid() {
 bool LicenseInfo::IsTemporary() {
     return !m_temporary_expiration.empty();
 }
+
+#ifdef VANILLAPDF_ENABLE_LICENSING
 
 bool LicenseInfo::CheckBlacklist(const std::string& serial) {
 
@@ -305,7 +323,7 @@ bool LicenseInfo::CheckTemporaryExpiration(const std::string& expiration) {
 
     auto expiration_since_epoch = std::mktime(&expiration_tm);
     if (expiration_since_epoch == -1) {
-        throw GeneralException("Could not interpret expiration time as valid date time");
+        throw IOErrorException("Could not interpret expiration time as valid date time");
     }
 
     auto expiration_time = std::chrono::system_clock::from_time_t(expiration_since_epoch);
@@ -325,7 +343,7 @@ bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
 
     auto expiration_since_epoch = std::mktime(&expiration_tm);
     if (expiration_since_epoch == -1) {
-        throw GeneralException("Could not interpret expiration time as valid date time");
+        throw IOErrorException("Could not interpret expiration time as valid date time");
     }
 
     auto expiration_time = std::chrono::system_clock::from_time_t(expiration_since_epoch);
@@ -341,7 +359,7 @@ bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
 
     auto build_since_epoch = std::mktime(&build_tm);
     if (build_since_epoch == -1) {
-        throw GeneralException("Could not interpret build time as valid date time");
+        throw IOErrorException("Could not interpret build time as valid date time");
     }
 
     auto build_time = std::chrono::system_clock::from_time_t(build_since_epoch);
@@ -433,5 +451,7 @@ bool LicenseInfo::CheckCertificateChain(const std::vector<std::string>& certific
     // The signing certificate is valid and was issued with the master certificate
     return true;
 }
+
+#endif /* VANILLAPDF_ENABLE_LICENSING */
 
 } // vanillapdf

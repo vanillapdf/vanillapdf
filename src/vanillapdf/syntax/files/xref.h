@@ -3,21 +3,17 @@
 
 #include "syntax/utils/syntax_fwd.h"
 #include "syntax/files/xref_entry.h"
+#include "utils/streams/output_stream_interface.h"
 
-#include <set>
-#include <unordered_set>
+#include <unordered_map>
 
 namespace vanillapdf {
 namespace syntax {
 
-class XrefBase : public IModifyObserver, public IModifyObservable {
+class XrefBase : public Versionable {
 public:
 
-    // Changing to set from unordered_set is failing on linux GCC images.
-    // I have not found the reason, however it seems to be connected with the comparison operator.
-    // The same test case works on MSVC for both set and unordered_set and it is not trivial to resolve.
-    // Failing test case issue918.pdf from pdfjs.
-    using map_type = std::unordered_set<XrefEntryBasePtr>;
+    using map_type = std::unordered_map<types::big_uint, XrefEntryBasePtr>;
 
     typedef map_type::value_type value_type;
     typedef map_type::iterator iterator;
@@ -31,6 +27,9 @@ public:
     class Iterator : public BaseIterator<map_type::const_iterator> {
     public:
         using BaseIterator<map_type::const_iterator>::BaseIterator;
+
+        XrefEntryBasePtr Value() const { return m_current->second; }
+        XrefEntryBasePtr operator*() { return m_current->second; }
 
         const Iterator& operator++() {
             ++BaseIterator<map_type::const_iterator>::m_current;
@@ -54,9 +53,6 @@ public:
         Virtual
     };
 
-    virtual void ObserveeChanged(const IModifyObservable*) override;
-    virtual void OnChanged() override;
-
     virtual void SetFile(WeakReference<File>file) noexcept = 0;
     virtual WeakReference<File> GetFile() const noexcept = 0;
 
@@ -69,16 +65,17 @@ public:
     types::stream_offset GetLastXrefOffset() const noexcept { return _last_xref_offset; }
     void SetLastXrefOffset(types::stream_offset offset) noexcept { _last_xref_offset = offset; }
 
-    virtual bool IsDirty(void) const noexcept = 0;
+    virtual bool IsDirty(void) const = 0;
     virtual void SetDirty(bool dirty = true) noexcept = 0;
 
     IteratorPtr Begin(void) const { return make_deferred_iterator<Iterator>(_entries.begin(), _entries.end()); }
     IteratorPtr End(void) const { return make_deferred_iterator<Iterator>(_entries.end(), _entries.end()); }
 
     virtual void Add(XrefEntryBasePtr entry);
-    bool Remove(XrefEntryBasePtr entry);
+    bool Remove(types::big_uint obj_number);
     types::size_type GetSize(void) const noexcept;
     virtual XrefEntryBasePtr Find(types::big_uint obj_number) const;
+    virtual bool TryFind(types::big_uint obj_number, OutputXrefEntryBasePtr& result) const;
     virtual bool Contains(types::big_uint obj_number) const;
     std::vector<XrefEntryBasePtr> Entries(void) const;
     void Clear(void) noexcept;
@@ -90,7 +87,7 @@ public:
     }
 
     virtual Type GetType(void) const noexcept = 0;
-    virtual ~XrefBase();
+    virtual ~XrefBase() = default;
 
     // stl compatibility
     iterator begin();
@@ -118,7 +115,7 @@ public:
     virtual types::stream_offset GetOffset() const override;
     virtual void SetOffset(types::stream_offset offset) override;
 
-    virtual bool IsDirty(void) const noexcept override;
+    virtual bool IsDirty(void) const override;
     virtual void SetDirty(bool dirty = true) noexcept override;
 
     virtual DictionaryObjectPtr GetTrailerDictionary(void) const override;
@@ -129,12 +126,12 @@ public:
 
     void RecalculateContent();
 
-    ~XrefStream();
+    ~XrefStream() = default;
 
 private:
     StreamObjectPtr _stream;
 
-    void WriteValue(std::ostream& dest, types::big_uint value, int64_t width);
+    void WriteValue(IOutputStream& dest, types::big_uint value, int64_t width);
 };
 
 class XrefTable : public XrefBase {
@@ -149,11 +146,14 @@ public:
     virtual types::stream_offset GetOffset() const override { return _offset; }
     virtual void SetOffset(types::stream_offset offset) override { _offset = offset; }
 
-    virtual bool IsDirty(void) const noexcept override { return m_dirty; }
-    virtual void SetDirty(bool dirty = true) noexcept override { m_dirty = dirty; }
+    virtual bool IsDirty(void) const noexcept override { return m_version > 0; }
+    virtual void SetDirty(bool dirty = true) noexcept override {
+        m_version.store(dirty ? 1 : 0, std::memory_order_relaxed);
+    }
 
     virtual void Add(XrefEntryBasePtr entry) override;
     virtual XrefEntryBasePtr Find(types::big_uint obj_number) const override;
+    virtual bool TryFind(types::big_uint obj_number, OutputXrefEntryBasePtr& result) const override;
     virtual bool Contains(types::big_uint obj_number) const override;
 
     virtual DictionaryObjectPtr GetTrailerDictionary(void) const override;
@@ -169,9 +169,6 @@ private:
     DictionaryObjectPtr m_trailer_dictionary;
 
     types::stream_offset _offset = constant::BAD_OFFSET;
-
-    // Same as Object::m_dirty
-    bool m_dirty = false;
 };
 
 class XrefVirtualTable : public XrefBase {
@@ -186,8 +183,10 @@ public:
     virtual types::stream_offset GetOffset() const override { return _offset; }
     virtual void SetOffset(types::stream_offset offset) override { _offset = offset; }
 
-    virtual bool IsDirty(void) const noexcept override { return m_dirty; }
-    virtual void SetDirty(bool dirty = true) noexcept override { m_dirty = dirty; }
+    virtual bool IsDirty(void) const noexcept override { return m_version > 0; }
+    virtual void SetDirty(bool dirty = true) noexcept override {
+        m_version.store(dirty ? 1 : 0, std::memory_order_relaxed);
+    }
 
     virtual DictionaryObjectPtr GetTrailerDictionary(void) const override { return m_trailer_dictionary; }
     virtual void SetTrailerDictionary(DictionaryObjectPtr dictionary) override { m_trailer_dictionary = dictionary; }
@@ -197,9 +196,6 @@ private:
     DictionaryObjectPtr m_trailer_dictionary;
 
     types::stream_offset _offset = constant::BAD_OFFSET;
-
-    // Same as Object::m_dirty
-    bool m_dirty = false;
 };
 
 } // syntax

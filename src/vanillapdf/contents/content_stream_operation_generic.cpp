@@ -2,7 +2,7 @@
 
 #include "contents/content_stream_operation_generic.h"
 
-#include <sstream>
+#include "utils/streams/stream_utils.h"
 
 namespace vanillapdf {
 namespace contents {
@@ -28,25 +28,25 @@ syntax::ObjectPtr OperationGeneric::GetOperandAt(types::size_type at) const {
 }
 
 std::string OperationGeneric::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     bool first = true;
     for (auto operand : _operands) {
         if (!first) {
-            ss << " ";
+            stream->Write(WhiteSpace::SPACE);
         }
 
-        ss << operand->ToPdf();
+        stream->Write(operand->ToPdf());
         first = false;
     }
 
     if (!first) {
-        ss << " ";
+        stream->Write(WhiteSpace::SPACE);
     }
 
-    ss << _operator->Value();
+    stream->Write(_operator->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 } // contents

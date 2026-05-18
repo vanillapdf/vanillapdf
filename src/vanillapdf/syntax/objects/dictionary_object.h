@@ -71,7 +71,7 @@ protected:
     list_type _list;
 };
 
-class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr>, public IModifyObserver {
+class DictionaryObject : public DictionaryObjectBase<NameObjectPtr, ContainableObjectPtr> {
 public:
     DictionaryObject();
     DictionaryObject(const DictionaryObject&) = delete;
@@ -84,8 +84,7 @@ public:
     virtual void SetFile(WeakReference<File> file) override;
     virtual void SetInitialized(bool initialized = true) override;
 
-    virtual void ObserveeChanged(const IModifyObservable*) override;
-    virtual void OnChanged() override;
+    virtual bool IsDirty() const override;
 
     virtual size_t Hash() const override;
     virtual DictionaryObject* Clone(void) const override;
@@ -140,15 +139,13 @@ public:
     void Merge(const DictionaryObject& other);
     void Clear();
 
-    size_type GetSize() const noexcept;
+    size_type GetSize() const;
 
     virtual ~DictionaryObject();
 
 private:
-    mutable size_t m_hash_cache = 0;
-
     // Protects concurrent access to the dictionary
-    std::shared_ptr<std::recursive_mutex> m_access_lock;
+    std::unique_ptr<std::recursive_mutex> m_access_lock;
 };
 
 } // syntax

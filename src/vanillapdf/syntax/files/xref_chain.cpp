@@ -2,6 +2,7 @@
 
 #include "syntax/files/xref_chain.h"
 
+#include "syntax/utils/output_pointer.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 
 namespace vanillapdf {
@@ -11,17 +12,17 @@ XrefEntryBasePtr XrefChain::GetXrefEntry(types::big_uint obj_number, types::usho
     for (auto it = _list.begin(); it != _list.end(); it++) {
         auto xref = (*it);
 
-        if (!xref->Contains(obj_number)) {
+        OutputXrefEntryBasePtr found;
+        if (!xref->TryFind(obj_number, found)) {
             continue;
         }
 
-        auto item = xref->Find(obj_number);
-        if (item->GetGenerationNumber() != gen_number) {
+        if (found->GetGenerationNumber() != gen_number) {
             continue;
         }
 
-        assert(item->GetObjectNumber() == obj_number && item->GetGenerationNumber() == gen_number);
-        return item;
+        assert(found->GetObjectNumber() == obj_number && found->GetGenerationNumber() == gen_number);
+        return *found;
     }
 
     spdlog::error("Xref entry {} {} was not found in the list", obj_number, gen_number);
@@ -32,16 +33,16 @@ bool XrefChain::Contains(types::big_uint obj_number, types::ushort gen_number) c
     for (auto it = _list.begin(); it != _list.end(); it++) {
         auto xref = (*it);
 
-        if (!xref->Contains(obj_number)) {
+        OutputXrefEntryBasePtr found;
+        if (!xref->TryFind(obj_number, found)) {
             continue;
         }
 
-        auto item = xref->Find(obj_number);
-        if (item->GetGenerationNumber() != gen_number) {
+        if (found->GetGenerationNumber() != gen_number) {
             continue;
         }
 
-        assert(item->GetObjectNumber() == obj_number && item->GetGenerationNumber() == gen_number);
+        assert(found->GetObjectNumber() == obj_number && found->GetGenerationNumber() == gen_number);
         return true;
     }
 
@@ -53,16 +54,16 @@ bool XrefChain::ReleaseEntry(XrefUsedEntryBasePtr entry) {
     for (auto& xref : _list) {
         auto object_number = entry->GetObjectNumber();
 
-        if (!xref->Contains(object_number)) {
+        OutputXrefEntryBasePtr found;
+        if (!xref->TryFind(object_number, found)) {
             continue;
         }
 
-        auto item = xref->Find(object_number);
-        if (item->GetGenerationNumber() != entry->GetGenerationNumber()) {
+        if (found->GetGenerationNumber() != entry->GetGenerationNumber()) {
             continue;
         }
 
-        bool removed = xref->Remove(entry);
+        bool removed = xref->Remove(object_number);
         assert(removed && "Could not remove the xref entry");
 
         if (removed) {

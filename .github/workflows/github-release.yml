@@ -9,6 +9,10 @@ on:
       prerelease:
         required: true
         type: boolean
+      latest:
+        required: false
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       tag:
@@ -18,18 +22,26 @@ on:
         description: "Set to true for prerelease"
         required: true
         type: boolean
+      latest:
+        description: "Set as latest release"
+        required: false
+        type: boolean
+        default: true
 
-permissions:
-  contents: write  # Required to create a release
+permissions: {}
 
 jobs:
   github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write       # Required to create a release and upload assets
+      id-token: write       # Required for Sigstore keyless signing
+      attestations: write   # Required for GitHub artifact attestations
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
 
@@ -45,15 +57,78 @@ jobs:
             echo "Release $TAG already exists. Skipping."
             exit 0
           fi
+          LATEST_FLAG=""
+          if [ "${{ inputs.latest }}" = "false" ]; then
+            LATEST_FLAG="--latest=false"
+          fi
+
           if [ "$PRERELEASE" = "true" ]; then
             gh release create "$TAG" \
               --title "vanillapdf $TAG" \
               --generate-notes \
               --draft \
-              --prerelease
+              --prerelease \
+              $LATEST_FLAG
           else
             gh release create "$TAG" \
               --title "vanillapdf $TAG" \
               --generate-notes \
-              --draft
+              --draft \
+              $LATEST_FLAG
           fi
+
+      - name: Download DEB package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-deb
+          path: ./packages/deb
+
+      - name: Download RPM package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-rpm
+          path: ./packages/rpm
+
+      - name: Download DMG package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-dmg
+          path: ./packages/dmg
+
+      - name: Upload packages to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for file in ./packages/deb/*.deb ./packages/rpm/*.rpm ./packages/dmg/*.dmg; do
+            if [ -f "$file" ]; then
+              echo "Uploading: $file"
+              gh release upload ${{ inputs.tag }} "$file"
+            fi
+          done
+
+      - name: Attest package provenance
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32  # v4.1.0
+        with:
+          subject-path: |
+            ./packages/deb/*.deb
+            ./packages/rpm/*.rpm
+            ./packages/dmg/*.dmg
+
+      - name: Generate SBOM
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api repos/${{ github.repository }}/dependency-graph/sbom \
+            | jq '.sbom' > vanillapdf-${{ inputs.tag }}-sbom.spdx.json
+
+      - name: Upload SBOM to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ inputs.tag }} vanillapdf-${{ inputs.tag }}-sbom.spdx.json
+
+      - name: Attest SBOM
+        uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e  # v4.1.0
+        with:
+          subject-path: vanillapdf-${{ inputs.tag }}-sbom.spdx.json
+          sbom-path: vanillapdf-${{ inputs.tag }}-sbom.spdx.json

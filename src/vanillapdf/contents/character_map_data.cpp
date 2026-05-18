@@ -2,7 +2,25 @@
 
 #include "contents/character_map_data.h"
 
-#include "utils/math_utils.h"
+#include "syntax/exceptions/syntax_exceptions.h"
+
+// Benchmark results (Release, Windows x64 MSVC 17, 16x 3792 MHz, L3 16384 KiB):
+//
+// Before (custom bit-by-bit arithmetic):
+// --------------------------------------------------------------------------------
+// Benchmark                                      Time             CPU   Iterations
+// --------------------------------------------------------------------------------
+// BM_BaseFontRange_Contains                   71.5 ns         71.4 ns     8960000
+// BM_BaseFontRange_GetMappedValue              505 ns          504 ns     1120000
+// BM_BaseFontRange_GetMappedValue_4byte        665 ns          670 ns     1120000
+//
+// After (Buffer::ToInteger/FromInteger with native uint32_t arithmetic):
+// --------------------------------------------------------------------------------
+// Benchmark                                      Time             CPU   Iterations
+// --------------------------------------------------------------------------------
+// BM_BaseFontRange_Contains                   49.3 ns         48.8 ns     11200000
+// BM_BaseFontRange_GetMappedValue              397 ns          392 ns      1792000
+// BM_BaseFontRange_GetMappedValue_4byte        512 ns          516 ns      1000000
 
 namespace vanillapdf {
 namespace contents {
@@ -10,13 +28,18 @@ namespace contents {
 using namespace vanillapdf::syntax;
 
 bool BaseFontRange::Contains(BufferPtr key) const {
-    bool above_low = ValueEqualLessThan(m_low->GetValue(), key);
-    bool below_high = ValueEqualLessThan(key, m_high->GetValue());
-    return (above_low && below_high);
-}
+    auto low_buf = m_low->GetValue();
 
-bool BaseFontRange::ValueEqualLessThan(BufferPtr source, BufferPtr dest) const {
-    return source->ValueEqualLessThan(dest);
+    // Different byte widths never match a range
+    if (key->size() != low_buf->size()) {
+        return false;
+    }
+
+    auto k = key->ToInteger<uint32_t>(endian::big);
+    auto low = low_buf->ToInteger<uint32_t>(endian::big);
+    auto high = m_high->GetValue()->ToInteger<uint32_t>(endian::big);
+
+    return k >= low && k <= high;
 }
 
 BufferPtr BaseFontRange::GetMappedValue(BufferPtr key) const {
@@ -31,164 +54,69 @@ BufferPtr BaseFontRange::GetMappedValue(BufferPtr key) const {
 }
 
 BufferPtr BaseFontRange::GetMappedValueInternal(BufferPtr key) const {
-    if (!Contains(key)) {
+    auto low_buf = m_low->GetValue();
+    auto k = key->ToInteger<uint32_t>(endian::big);
+    auto low = low_buf->ToInteger<uint32_t>(endian::big);
+    auto high = m_high->GetValue()->ToInteger<uint32_t>(endian::big);
 
-        LOG_ERROR_AND_THROW_GENERAL("Key: is out of range: [{},{}]", key->ToHexString(), m_low->GetValue()->ToHexString(), m_high->GetValue()->ToHexString());
+    if (key->size() != low_buf->size() || k < low || k > high) {
+        LOG_ERROR_AND_THROW(syntax::ParseException, "Key: is out of range: [{},{}]", key->ToHexString(), low_buf->ToHexString(), m_high->GetValue()->ToHexString());
     }
+
+    auto offset = k - low;
 
     if (ObjectUtils::IsType<HexadecimalStringObjectPtr>(m_dest)) {
         auto dest_hex = ObjectUtils::ConvertTo<HexadecimalStringObjectPtr>(m_dest);
         auto dest_value = dest_hex->GetValue();
-        auto low_value = m_low->GetValue();
-        auto diff = Difference(key, low_value);
-        return Increment(dest_value, diff);
+        auto dest = dest_value->ToInteger<uint32_t>(endian::big);
+
+        return Buffer::FromInteger(dest + offset, dest_value->size(), endian::big);
     }
 
     if (ObjectUtils::IsType<ArrayObjectPtr<HexadecimalStringObjectPtr>>(m_dest)) {
         auto arr = ObjectUtils::ConvertTo<ArrayObjectPtr<HexadecimalStringObjectPtr>>(m_dest);
-        auto low_value = m_low->GetValue();
-        auto diff = Difference(key, low_value);
-        auto result_obj = arr->GetValue(diff);
+        auto result_obj = arr->GetValue(offset);
         return result_obj->GetValue();
     }
 
-    std::stringstream error_stream;
-    error_stream << "Unknown destination type: " << (int)m_dest->GetObjectType();
-
-    throw GeneralException(error_stream.str());
+    LOG_ERROR_AND_THROW(syntax::ParseException, "Unknown destination type: {}", static_cast<int>(m_dest->GetObjectType()));
 }
 
-uint8_t BaseFontRange::Difference(uint8_t source, uint8_t dest, bool& borrow) const {
-    uint8_t result = 0;
-    uint8_t bit_position = 0x01;
-    for (int i = 0; i < 8; ++i) {
-        uint8_t src_bit = (source & bit_position) != 0;
-        uint8_t dest_bit = (dest & bit_position) != 0;
+bool BaseFontRange::TryGetMappedValue(BufferPtr key, BufferPtr& result) const {
+    auto low_buf = m_low->GetValue();
 
-        assert(src_bit <= 1);
-        assert(dest_bit <= 1);
-
-        if (borrow) {
-            if (0 == src_bit) {
-                src_bit = 1;
-                // keep borrowed
-            } else {
-                src_bit = 0;
-                borrow = false;
-            }
-        }
-
-        uint8_t result_bit = 0;
-        if (src_bit < dest_bit) {
-            assert(!borrow);
-
-            result_bit = 1;
-            borrow = true;
-        } else {
-            result_bit = src_bit - dest_bit;
-        }
-
-        if (1 == result_bit) {
-            result |= bit_position;
-        }
-
-        bit_position = bit_position << 1;
+    if (key->size() != low_buf->size()) {
+        return false;
     }
 
-    return result;
+    auto k = key->ToInteger<uint32_t>(endian::big);
+    auto low = low_buf->ToInteger<uint32_t>(endian::big);
+    auto high = m_high->GetValue()->ToInteger<uint32_t>(endian::big);
+
+    if (k < low || k > high) {
+        return false;
+    }
+
+    auto offset = k - low;
+
+    if (ObjectUtils::IsType<HexadecimalStringObjectPtr>(m_dest)) {
+        auto dest_hex = ObjectUtils::ConvertTo<HexadecimalStringObjectPtr>(m_dest);
+        auto dest_value = dest_hex->GetValue();
+        auto dest = dest_value->ToInteger<uint32_t>(endian::big);
+
+        result = Buffer::FromInteger(dest + offset, dest_value->size(), endian::big);
+        return true;
+    }
+
+    if (ObjectUtils::IsType<ArrayObjectPtr<HexadecimalStringObjectPtr>>(m_dest)) {
+        auto arr = ObjectUtils::ConvertTo<ArrayObjectPtr<HexadecimalStringObjectPtr>>(m_dest);
+        auto result_obj = arr->GetValue(offset);
+        result = result_obj->GetValue();
+        return true;
+    }
+
+    LOG_ERROR_AND_THROW_GENERAL("Unknown destination type: {}", static_cast<int>(m_dest->GetObjectType()));
 }
 
-uint32_t BaseFontRange::Difference(BufferPtr source, BufferPtr dest) const {
-    uint32_t result = 0;
-    bool borrow = false;
-
-    auto src_size = source->size();
-    auto dest_size = dest->size();
-
-    auto longer_size = std::max(src_size, dest_size);
-    assert(longer_size <= sizeof(result));
-
-    for (decltype(longer_size) i = 0; i < longer_size; ++i) {
-        using buffer_type = Buffer::value_type;
-        using unsigned_buffer_type = std::make_unsigned<buffer_type>::type;
-
-        unsigned_buffer_type src_value = 0;
-        unsigned_buffer_type dest_value = 0;
-
-        if (i < src_size) {
-            src_value = source[src_size - i - 1];
-        }
-
-        if (i < dest_size) {
-            dest_value = dest[dest_size - i - 1];
-        }
-
-        uint8_t diff = Difference(src_value, dest_value, borrow);
-        result += (diff << (i * 8));
-    }
-
-    assert(!borrow && "This function does not support negative result");
-    return result;
-}
-
-BufferPtr BaseFontRange::Increment(BufferPtr data, uint32_t count) const {
-    try {
-        return IncrementInternal(data, count);
-    } catch (ExceptionBase& ex) {
-        spdlog::error("Could not increment \"{}\" by {}: {}", data->ToHexString(), count, ex.what());
-
-        // Continue error processing
-        throw;
-    }
-}
-
-BufferPtr BaseFontRange::IncrementInternal(BufferPtr data, uint32_t count) const {
-    BufferPtr result;
-
-    auto data_size = data->size();
-    for (decltype(data_size) i = 0; i < data_size; ++i) {
-        auto item = data[data_size - i - 1];
-
-        using unsigned_type = std::make_unsigned<decltype(item)>::type;
-        auto unsigned_item = reinterpret_cast<unsigned_type&>(item);
-
-        unsigned_type diff = std::numeric_limits<unsigned_type>::max() - unsigned_item;
-        uint32_t current_increment = (count >> (i * 8)) & 0xFF;
-
-        unsigned_type new_value;
-        if (diff >= current_increment) {
-            uint32_t int_value = SafeAddition<uint32_t>(unsigned_item, current_increment);
-            new_value = ValueConvertUtils::SafeConvert<unsigned_type>(int_value);
-            count -= current_increment << (i * 8);
-        } else {
-            uint32_t int_value = (unsigned_item + current_increment) % 256;
-            new_value = ValueConvertUtils::SafeConvert<unsigned_type>(int_value);
-
-            // This should work as borrow
-            count -= current_increment << (i * 8);
-            count += (1 << ((i + 1) * 8));
-        }
-
-        result->insert(result->begin(), new_value);
-    }
-
-    // Check if there was overflow all the way
-    // Example: 0xFF + 1 would be 0 instead of 0x100
-    if (count > 0) {
-
-        // There could be multiple bytes to insert
-        for (uint32_t i = 0; i < sizeof(count); ++i) {
-            uint32_t current_value = count % ((i + 1) * 256);
-            uint8_t current_char_value = ValueConvertUtils::SafeConvert<uint8_t>(current_value);
-
-            if (current_char_value != 0) {
-                result->insert(result->begin(), current_char_value);
-            }
-        }
-    }
-
-    return result;
-}
-
-} // syntax
+} // contents
 } // vanillapdf

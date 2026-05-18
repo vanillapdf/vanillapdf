@@ -25,12 +25,14 @@ set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_license_info.cpp
     implementation/utils/c_logging.cpp
     implementation/utils/c_misc_utils.cpp
+    implementation/utils/c_object_diagnostics.cpp
     implementation/utils/c_output_stream.cpp
     implementation/utils/c_memory_buffer_output_stream.cpp
     implementation/utils/c_pkcs12_key.cpp
     implementation/utils/c_signature_verifier.cpp
     implementation/utils/c_signature_verification_settings.cpp
     implementation/utils/c_signing_key.cpp
+    implementation/utils/c_text_string_encoding.cpp
     implementation/utils/c_unknown_interface.cpp
 )
 
@@ -51,6 +53,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES
     implementation/syntax/c_stream_object.cpp
     implementation/syntax/c_string_object.cpp
     implementation/syntax/c_xref.cpp
+    implementation/syntax/c_file_structure_validator.cpp
     implementation/syntax/c_object_attributes.cpp
     implementation/syntax/c_object_attribute_list.cpp
 )
@@ -150,6 +153,9 @@ set(VANILLAPDF_SYNTAX_SOURCES
 
     syntax/files/file.cpp
     syntax/files/file_writer.cpp
+    syntax/files/file_structure_issue.cpp
+    syntax/files/file_structure_validation_result.cpp
+    syntax/files/file_structure_validator.cpp
     syntax/files/xref.cpp
     syntax/files/xref_entry.cpp
     syntax/files/xref_chain.cpp
@@ -201,14 +207,15 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/license_info.cpp
     utils/log.cpp
     utils/misc_utils.cpp
-    utils/modify_observer_interface.cpp
     utils/pkcs12_key.cpp
     utils/resource.cpp
     utils/signature_verification_result.cpp
     utils/signature_verifier.cpp
+    utils/text_string_encoding.cpp
     utils/time_utils.cpp
     utils/trusted_certificate_store.cpp
     utils/unknown_interface.cpp
+    utils/versionable.cpp
     utils/windows_utils.cpp
     utils/zlib_wrapper.cpp
 
@@ -216,6 +223,7 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/streams/input_stream.cpp
     utils/streams/output_stream.cpp
     utils/streams/stream_utils.cpp
+    utils/streams/memory_buffer_input_stream.cpp
     utils/streams/memory_buffer_output_stream.cpp
 )
 
@@ -283,6 +291,9 @@ set(VANILLAPDF_SYNTAX_HEADERS
     
     syntax/files/file.h
     syntax/files/file_writer.h
+    syntax/files/file_structure_issue.h
+    syntax/files/file_structure_validation_result.h
+    syntax/files/file_structure_validator.h
     syntax/files/header.h
     syntax/files/xref.h
     syntax/files/xref_entry.h
@@ -342,7 +353,9 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/base_iterator.h
     utils/buffer.h
     utils/buffer_array.h
+    utils/byte_order.h
     utils/character.h
+    utils/compiler_utils.h
     utils/constants.h
     utils/conversion_utils.h
     utils/crypto_utils.h
@@ -356,8 +369,8 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/log.h
     utils/math_utils.h
     utils/message_digest_algorithm.h
-    utils/modify_observer_interface.h
     utils/observable_interface.h
+    utils/versionable.h
     utils/misc_utils.h
     utils/pdf_version.h
     utils/pkcs12_key.h
@@ -367,6 +380,7 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/signature_verifier_interface.h
     utils/stack_allocator.h
     utils/template_utils.h
+    utils/text_string_encoding.h
     utils/time_utils.h
     utils/trusted_certificate_store.h
     utils/unknown_interface.h
@@ -381,11 +395,14 @@ set(VANILLAPDF_UTILS_HEADERS
 
     utils/streams/output_stream_interface.h
     utils/streams/output_stream.h
+    utils/streams/memory_buffer_input_stream.h
     utils/streams/memory_buffer_output_stream.h
+    utils/streams/memory_buffer_input_output_stream.h
 
     utils/streams/input_output_stream_interface.h
     utils/streams/input_output_stream.h
 
+    utils/streams/io_strategy.h
     utils/streams/stream_utils.h
     utils/streams/seek_direction.h
 )
@@ -642,8 +659,13 @@ if(VANILLAPDF_ENABLE_COVERAGE)
     enable_coverage_for_target(vanillapdf)
 endif()
 
-# Optional stack sanitizer
-enable_stack_sanitizer_for_target(vanillapdf)
+# Optional sanitizers
+enable_asan_for_target(vanillapdf)
+enable_ubsan_for_target(vanillapdf)
+enable_tsan_for_target(vanillapdf)
+
+# Optional fuzzer coverage instrumentation
+enable_fuzzer_coverage_for_target(vanillapdf)
 
 # Update 30.04.2025
 # We have switched to vcpkg manifest mode, which makes sure all dependencies are automatically installed
@@ -693,10 +715,12 @@ else ()
     find_package(spdlog CONFIG REQUIRED)
 endif()
 
-if (VANILLAPDF_EXTERNAL_NLOHMANN_JSON)
-    find_package(nlohmann_json CONFIG REQUIRED)
-else ()
-    find_package(nlohmann_json CONFIG REQUIRED)
+if (VANILLAPDF_ENABLE_LICENSING)
+    if (VANILLAPDF_EXTERNAL_NLOHMANN_JSON)
+        find_package(nlohmann_json CONFIG REQUIRED)
+    else ()
+        find_package(nlohmann_json CONFIG REQUIRED)
+    endif()
 endif()
 
 if (COMPILE_SKIA)
@@ -738,29 +762,40 @@ endif()
 
 if (VANILLAPDF_ENABLE_JPEG2000 AND TARGET openjp2)
     target_link_libraries(vanillapdf PRIVATE openjp2)
+    target_include_directories(vanillapdf PRIVATE ${OPENJPEG_INCLUDE_DIRS})
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_OPENJPEG)
-    message(STATUS "OpenJPEG found and linked")
+    message(STATUS "OpenJPEG ${OPENJPEG_MAJOR_VERSION}.${OPENJPEG_MINOR_VERSION} found and linked")
 elseif (VANILLAPDF_ENABLE_JPEG2000)
     message(FATAL_ERROR "JPEG2000 enabled but OpenJPEG not found. Please install OpenJPEG or disable JPEG2000 support with -DVANILLAPDF_ENABLE_JPEG2000=OFF")
 else()
     message(STATUS "JPEG2000 support disabled. JPEG2000 images will not be supported")
 endif ()
 
-# Update 30.08.2024:
-# fmtlib is part of spdlog which is a required dependency of the solution
-# Maybe it can be configured to use an external fmtlib, however I do not see any value in investigating this
-# For the time being I am removing the fmtlib dependency and submodule, but keeping the code for tracking purposes
-
-# Add fmtlib dependency as git external submodule
-
-# Use header only version as under linux there are some compilation issues
-# relocation R_X86_64_PC32 against symbol `stderr@@GLIBC_2.2.5' can not be used when making a shared object; recompile with -fPIC
-# https://stackoverflow.com/questions/38296756/what-is-the-idiomatic-way-in-cmake-to-add-the-fpic-compiler-option
-
-#add_subdirectory("${VANILLAPDF_SOLUTION_SOURCE_DIR}/external/fmtlib" build EXCLUDE_FROM_ALL)
+# fmtlib is used directly in source files for string formatting.
+# Do NOT link fmt::fmt explicitly here. spdlog built with SPDLOG_FMT_EXTERNAL
+# declares fmt::fmt as a PUBLIC interface dependency (by design — spdlog headers
+# include fmt headers, so consumers need fmt in scope). Linking fmt explicitly
+# alongside spdlog::spdlog duplicates it on the linker command line, which
+# Apple ld >= 15 warns about and -Wl,-fatal_warnings turns into an error.
+#
+# TODO: if spdlog is ever made optional or removed, add an explicit
+# target_link_libraries(vanillapdf PRIVATE fmt::fmt) here so that the direct
+# fmt usage in vanillapdf source files remains covered.
+if (VANILLAPDF_EXTERNAL_FMT)
+    find_package(fmt CONFIG REQUIRED)
+else ()
+    find_package(fmt CONFIG REQUIRED)
+endif()
 
 target_link_libraries(vanillapdf PRIVATE spdlog::spdlog)
-target_link_libraries(vanillapdf PRIVATE nlohmann_json::nlohmann_json)
+
+if (VANILLAPDF_ENABLE_LICENSING)
+    target_link_libraries(vanillapdf PRIVATE nlohmann_json::nlohmann_json)
+    target_compile_definitions(vanillapdf PRIVATE VANILLAPDF_ENABLE_LICENSING)
+    message(STATUS "Licensing support enabled (nlohmann-json)")
+else()
+    message(STATUS "Licensing support disabled")
+endif()
 
 # This includes the public headers in the project as well as publishing them outside to be consumed
 target_include_directories(vanillapdf PUBLIC
@@ -771,9 +806,9 @@ target_include_directories(vanillapdf PUBLIC
 # Project install targets
 install(TARGETS vanillapdf
     EXPORT vanillapdfTargets
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin COMPONENT Runtime
+    LIBRARY DESTINATION lib COMPONENT Runtime
+    ARCHIVE DESTINATION lib COMPONENT Development
 )
 
 if (MSVC AND BUILD_SHARED_LIBS)
@@ -783,21 +818,23 @@ if (MSVC AND BUILD_SHARED_LIBS)
         "$<TARGET_PDB_FILE:vanillapdf>"
         DESTINATION debug/bin
         CONFIGURATIONS Debug
+        COMPONENT Development
     )
 
     install(FILES
         "$<TARGET_PDB_FILE:vanillapdf>"
         DESTINATION bin
         CONFIGURATIONS Release RelWithDebInfo MinSizeRel
+        COMPONENT Development
     )
 
 endif()
 
-install(FILES ${VANILLAPDF_INCLUDE_HEADERS} DESTINATION "include/vanillapdf")
-install(FILES ${VANILLAPDF_INCLUDE_UTILS_HEADERS} DESTINATION "include/vanillapdf/utils")
-install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillapdf/syntax")
-install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics")
-install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include/vanillapdf/contents")
+install(FILES ${VANILLAPDF_INCLUDE_HEADERS} DESTINATION "include/vanillapdf" COMPONENT Development)
+install(FILES ${VANILLAPDF_INCLUDE_UTILS_HEADERS} DESTINATION "include/vanillapdf/utils" COMPONENT Development)
+install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillapdf/syntax" COMPONENT Development)
+install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics" COMPONENT Development)
+install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include/vanillapdf/contents" COMPONENT Development)
 
 # Additional metadata for the project, that should be bundled together
 install(FILES
@@ -805,72 +842,60 @@ install(FILES
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/LICENSE.txt"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/NOTICE.md"
     DESTINATION "share/vanillapdf"
+    COMPONENT Runtime
 )
 
 # Define installation files and procedures
 include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/vanillapdf_install.cmake")
 
-# Install dependent libraries on windows
-if(WIN32)
+# vcpkg's VCPKG_APPLOCAL_DEPS (ON by default) automatically copies linked
+# DLL dependencies to the build output directory. Enable its install
+# counterpart so that cmake --install also includes them.
+if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG)
+    set(X_VCPKG_APPLOCAL_DEPS_INSTALL ON CACHE BOOL
+        "Automatically copy vcpkg dependencies into install target directory" FORCE)
+endif()
 
-    # OpenSSL dependent libraries
-    if (OPENSSL_FOUND)
-    
-        # Find dll runtime binary file
-        find_file(LIBEAY_RUNTIME
-            NAMES libcrypto-3.dll libcrypto-3-x64.dll legacy.dll
-            PATHS ${VANILLPDF_BINARY_DIR}
+# OpenSSL 3.x legacy provider module — runtime-loaded via OSSL_PROVIDER_load,
+# not a linked dependency, so VCPKG_APPLOCAL_DEPS does not handle it.
+# Neither vcpkg nor CMake's FindOpenSSL expose whether OpenSSL was built as
+# shared or static (VCPKG_LIBRARY_LINKAGE is not available to consumer projects,
+# and imported targets are created as UNKNOWN). The most reliable check is to
+# look for the provider file directly. On static vcpkg triplets, providers are
+# compiled into the library and no separate DLL exists, so find_file fails
+# silently.
+if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG
+        AND OPENSSL_FOUND AND NOT VANILLAPDF_EXTERNAL_OPENSSL
+        AND OPENSSL_VERSION VERSION_GREATER_EQUAL "3.0.0")
+
+    find_file(OPENSSL_LEGACY_PROVIDER
+        NAMES legacy.dll
+        PATHS "${OPENSSL_MODULES_DIR}"
+              "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin"
+        NO_DEFAULT_PATH
+    )
+
+    if(EXISTS "${OPENSSL_LEGACY_PROVIDER}")
+        message(STATUS "OpenSSL legacy provider found at ${OPENSSL_LEGACY_PROVIDER}")
+
+        add_custom_command(
+            TARGET vanillapdf POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${OPENSSL_LEGACY_PROVIDER}"
+            "$<TARGET_FILE_DIR:vanillapdf>"
+            COMMENT "Copying OpenSSL legacy provider module"
         )
+        install(FILES "${OPENSSL_LEGACY_PROVIDER}" DESTINATION bin)
 
-        if (NOT EXISTS ${LIBEAY_RUNTIME})
-            # message(FATAL_ERROR "OpenSSL support is enabled, but the LIBEAY_RUNTIME does not exist")
-        endif(NOT EXISTS ${LIBEAY_RUNTIME})
-        
-        # message(STATUS "LIBEAY runtime was found at ${LIBEAY_RUNTIME}")
-        
-        # Install dependency into output package
-        # install(FILES ${LIBEAY_RUNTIME} DESTINATION bin)
-
-    endif (OPENSSL_FOUND)
-
-    # libjpeg dependent libraries
-    if (JPEG_FOUND)
-
-        # Find dll runtime binary file
-        find_file(LIBJPEG_RUNTIME
-            NAMES turbojpeg.dll
-            PATHS ${VANILLPDF_BINARY_DIR}
-        )
-
-        if (NOT EXISTS ${LIBJPEG_RUNTIME})
-            # message(FATAL_ERROR "JPEG support is enabled, but the LIBJPEG_RUNTIME does not exist")
-        endif(NOT EXISTS ${LIBJPEG_RUNTIME})
-        
-        # message(STATUS "LIBJPEG runtime was found at ${LIBJPEG_RUNTIME}")
-        
-        # Install dependency into output package
-        # install(FILES ${LIBJPEG_RUNTIME} DESTINATION bin)
-    endif (JPEG_FOUND)
-
-    # zlib dependent libraries
-    if (VANILLAPDF_ENABLE_ZLIB AND ZLIB_FOUND)
-
-        # Find dll runtime binary file
-        find_file(ZLIB_RUNTIME
-            NAMES zlib1.dll
-            PATHS ${VANILLPDF_BINARY_DIR}
-        )
-
-        if (NOT EXISTS ${ZLIB_RUNTIME})
-            # message(FATAL_ERROR "zlib support is enabled, but the ZLIB_RUNTIME does not exist")
-        endif(NOT EXISTS ${ZLIB_RUNTIME})
-        
-        # message(STATUS "ZLIB runtime was found at ${ZLIB_RUNTIME}")
-        
-        # Install dependency into output package
-        # install(FILES ${ZLIB_RUNTIME} DESTINATION bin)
-    endif (VANILLAPDF_ENABLE_ZLIB AND ZLIB_FOUND)
-endif(WIN32)
+        # Set the modules directory so test targets can set OPENSSL_MODULES env var.
+        # OpenSSL checks this env var at runtime to locate provider modules.
+        # Users can override via -DVANILLAPDF_OPENSSL_MODULES_DIR=<path>.
+        set(VANILLAPDF_OPENSSL_MODULES_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin"
+            CACHE PATH "Directory containing OpenSSL provider modules")
+    else()
+        message(STATUS "OpenSSL legacy provider not found — assuming static linkage (providers compiled in)")
+    endif()
+endif()
 
 # Add export verification test for shared library builds
 # Only add the test if testing is enabled and we're building shared libraries

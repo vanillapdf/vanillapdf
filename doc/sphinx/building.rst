@@ -13,7 +13,7 @@ Download from https://cmake.org/download/
 
 **Supported compilers:**
 
-- **Windows:** Visual Studio 2022 (MSVC 17.x) or Visual Studio 2026 (MSVC 18.x)
+- **Windows:** Visual Studio 2022 (MSVC 17.x) or Visual Studio 2026 (MSVC 18.x) — x86, x64, ARM64
 - **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
 - **macOS:** AppleClang 15+ (Xcode 15)
 - **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
@@ -45,16 +45,22 @@ List the available build presets:
 
      "windows-x86-msvc-17-static"
      "windows-x64-msvc-17-static"
+     "windows-arm64-msvc-17-static"
      "windows-x86-msvc-17"
      "windows-x64-msvc-17"
+     "windows-arm64-msvc-17"
      "windows-x86-msvc-17-static-md"
      "windows-x64-msvc-17-static-md"
+     "windows-arm64-msvc-17-static-md"
      "windows-x86-msvc-18-static"
      "windows-x64-msvc-18-static"
+     "windows-arm64-msvc-18-static"
      "windows-x86-msvc-18"
      "windows-x64-msvc-18"
+     "windows-arm64-msvc-18"
      "windows-x86-msvc-18-static-md"
      "windows-x64-msvc-18-static-md"
+     "windows-arm64-msvc-18-static-md"
      "default"
      "linux-x64-gcc"
      "linux-arm64-gcc"
@@ -72,12 +78,12 @@ List the available build presets:
 
 Common presets:
 
-- ``windows-x64-msvc-17`` / ``windows-x86-msvc-17`` -- Windows with Visual Studio 2022 (dynamic CRT)
-- ``windows-x64-msvc-17-static`` / ``windows-x86-msvc-17-static`` -- Windows with Visual Studio 2022 (static CRT)
-- ``windows-x64-msvc-17-static-md`` / ``windows-x86-msvc-17-static-md`` -- Windows with Visual Studio 2022 (static libs, dynamic CRT)
-- ``windows-x64-msvc-18`` / ``windows-x86-msvc-18`` -- Windows with Visual Studio 2026 (dynamic CRT)
-- ``windows-x64-msvc-18-static`` / ``windows-x86-msvc-18-static`` -- Windows with Visual Studio 2026 (static CRT)
-- ``windows-x64-msvc-18-static-md`` / ``windows-x86-msvc-18-static-md`` -- Windows with Visual Studio 2026 (static libs, dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-17`` -- Windows with Visual Studio 2022 (dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-17-static`` -- Windows with Visual Studio 2022 (static CRT)
+- ``windows-{x86,x64,arm64}-msvc-17-static-md`` -- Windows with Visual Studio 2022 (static libs, dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-18`` -- Windows with Visual Studio 2026 (dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-18-static`` -- Windows with Visual Studio 2026 (static CRT)
+- ``windows-{x86,x64,arm64}-msvc-18-static-md`` -- Windows with Visual Studio 2026 (static libs, dynamic CRT)
 - ``linux-x64-gcc`` / ``linux-arm64-gcc`` -- Linux with GCC
 - ``linux-x64-clang`` / ``linux-arm64-clang`` -- Linux with Clang
 - ``macos-x64`` / ``macos-arm64`` -- macOS builds
@@ -302,3 +308,26 @@ Troubleshooting
 - **Linux**: Install system packages: ``sudo apt-get install libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev``
 - **macOS**: Install via Homebrew: ``brew install openssl@3 jpeg-turbo zlib openjpeg``
 - **Windows**: Use vcpkg presets or ensure Visual Studio 2022 or 2026 is properly installed
+
+**OpenSSL legacy provider on Windows:**
+
+Static linking is the recommended approach on Windows. Providers are compiled
+directly into the library and no additional configuration is needed.
+
+When linking dynamically, OpenSSL 3.x loads provider modules (e.g.
+``legacy.dll``) at runtime from a compiled-in directory. If that directory does
+not match the actual installation, provider loading will fail:
+
+.. code-block:: text
+
+   Failed to initialize legacy OSSL provider
+   filename(C:\Program Files (x86)\OpenSSL\bin\legacy.dll)
+
+Set the ``OPENSSL_MODULES`` environment variable to the directory containing
+the provider DLLs before running the application:
+
+.. code-block:: bash
+
+   set OPENSSL_MODULES=path/to/bin
+
+The build system handles this automatically for CTest targets.

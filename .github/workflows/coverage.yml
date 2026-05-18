@@ -31,10 +31,11 @@ on:
       - 'CMakePresets.json'
       - 'test/**'
 
-permissions:
-  contents: read  # Download the repository source code
-  statuses: write  # Required for Codecov to post coverage status
-  pull-requests: write  # Required for PR comments
+permissions: {}
+
+env:
+  VCPKG_DISABLE_METRICS: 1
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -42,10 +43,14 @@ concurrency:
 
 jobs:
   coverage:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read        # Download the repository source code
+      statuses: write       # Required for Codecov to post coverage status
+      pull-requests: write  # Required for PR comments
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: recursive
 
@@ -53,18 +58,14 @@ jobs:
         run: sudo apt-get install -y lcov gcovr
 
       - name: Cache vcpkg
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: |
-            build/linux-x64-gcc/vcpkg_installed
             external/vcpkg/downloads
-            external/vcpkg/buildtrees
-            external/vcpkg/packages
-          key: vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-coverage-${{ hashFiles('vcpkg.json.in') }}
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-coverage-
-            vcpkg-${{ runner.os }}-ubuntu-latest-linux-x64-gcc-
-            vcpkg-${{ runner.os }}-ubuntu-latest-
+            vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -83,7 +84,7 @@ jobs:
         run: gcovr -r . --xml-pretty -o coverage.xml
 
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2  # v6.0.0
         with:
           files: coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}

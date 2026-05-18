@@ -20,6 +20,8 @@
 #include "contents/content_stream_operations.h"
 #include "contents/content_stream_objects.h"
 
+#include "utils/streams/stream_utils.h"
+
 #include <fstream>
 #include <unordered_set>
 
@@ -51,7 +53,7 @@ void FileWriter::Write(FilePtr source, FilePtr destination) {
     // Verify that configuration flags are valid
     bool valid_configuration = ValidateConfiguration(source, reason);
     if (!valid_configuration) {
-        throw GeneralException(reason);
+        throw InvalidParameterException(reason);
     }
 
     // Get destination output stream
@@ -117,7 +119,7 @@ void FileWriter::WriteIncremental(FilePtr source, FilePtr destination) {
     // TODO check the there is newline at the end
 
     // Make an extra newline before starting new xref section
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine();
 
     // Get all changed entries
     auto incremental_xref = CreateIncrementalXref(source, destination);
@@ -166,11 +168,8 @@ bool FileWriter::ValidateConfiguration(FilePtr source, std::string& reason) cons
         for (auto& xref : source_xref_chain) {
             if (ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(xref)) {
 
-                std::stringstream ss;
-                ss << "Flag squash table space is disabled, while the source file contains cross-reference streams." << std::endl;
-                ss << "Either also disable remove freed objects flag, or enable squashing table space.";
-
-                reason = ss.str();
+                reason = "Flag squash table space is disabled, while the source file contains cross-reference streams.\n"
+                         "Either also disable remove freed objects flag, or enable squashing table space.";
                 return false;
             }
         }
@@ -197,7 +196,7 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
     // Store array of objects for every object stream
     std::unordered_map<types::big_uint, std::vector<XrefCompressedEntryPtr>> object_stream_map;
 
-    for (auto entry : xref_stream) {
+    for (auto& [obj_num, entry] : xref_stream) {
 
         // Ignore non-compressed entries
         if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(entry)) {
@@ -224,7 +223,7 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 
         assert(object_stream_found && "Object stream was not found");
         if (!object_stream_found) {
-            throw GeneralException("Object stream was not found");
+            throw ParseException("Object stream was not found");
         }
 
         auto object_stream_entry = chain->GetXrefEntry(object_stream_number, 0);
@@ -232,7 +231,7 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 
         assert(object_stream_entry_used && "Object stream is not in use");
         if (!object_stream_entry_used) {
-            throw GeneralException("Object stream is not in use");
+            throw ParseException("Object stream is not in use");
         }
 
         auto object_stream_used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(object_stream_entry);
@@ -244,7 +243,7 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 
         assert(is_stream && "Object stream has incorrect type");
         if (!is_stream) {
-            throw GeneralException("Object stream has incorrect type");
+            throw ParseException("Object stream has incorrect type");
         }
 
         auto object_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(object_stream_object);
@@ -272,8 +271,8 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
         }
 
         // Initialize output streams
-        std::stringstream header_stream;
-        std::stringstream data_stream;
+        auto header_stream = StreamUtils::InputOutputStreamFromMemory();
+        auto data_stream = StreamUtils::InputOutputStreamFromMemory();
 
         // Reset counting indexes
         types::stream_offset current_offset = 0;
@@ -289,19 +288,19 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 
             // Write index with offset into header stream
             if (!first) {
-                header_stream << ' ';
+                header_stream->Write(WhiteSpace::SPACE);
             }
 
-            header_stream << entry_object->GetObjectNumber();
-            header_stream << ' ';
-            header_stream << current_offset;
+            header_stream->Write(std::to_string(entry_object->GetObjectNumber()));
+            header_stream->Write(WhiteSpace::SPACE);
+            header_stream->Write(std::to_string(current_offset));
 
             // Write whole object into data stream
             if (!first) {
-                data_stream << ' ';
+                data_stream->Write(WhiteSpace::SPACE);
             }
 
-            data_stream << entry_object_string;
+            data_stream->Write(entry_object_string);
 
             // Advance counters
             current_offset += entry_object_string.size() + 1;
@@ -309,8 +308,8 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
             first = false;
         }
 
-        auto header_string = header_stream.str();
-        auto data_string = data_stream.str();
+        auto header_string = header_stream->ToString();
+        auto data_string = data_stream->ToString();
 
         // Merge header with data
         BufferPtr new_body;
@@ -347,7 +346,7 @@ void FileWriter::CloneHybridStreams(FilePtr source, FilePtr destination) {
     assert(source_chain->GetSize() == destination_chain->GetSize() && "Error in xref cloning");
 
     if (source_chain->GetSize() != destination_chain->GetSize()) {
-        throw GeneralException("Invalid xref size");
+        throw ParseException("Invalid xref size");
     }
 
     for (; dest_iterator != destination_chain->end(); ++dest_iterator, ++source_iterator) {
@@ -356,7 +355,7 @@ void FileWriter::CloneHybridStreams(FilePtr source, FilePtr destination) {
 
         assert(new_xref->GetType() == original_xref->GetType() && "Cloning error");
         if (new_xref->GetType() != original_xref->GetType()) {
-            throw GeneralException("Error in cloning xref");
+            throw ParseException("Error in cloning xref");
         }
 
         if (original_xref->GetType() != XrefBase::Type::Table) {
@@ -377,13 +376,13 @@ void FileWriter::CloneHybridStreams(FilePtr source, FilePtr destination) {
 
         auto destination_hybrid_entry = destination_chain->GetXrefEntry(source_hybrid_stream_object_number, source_hybrid_stream_generation_number);
         if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(destination_hybrid_entry)) {
-            throw GeneralException("Destination xref is not in use");
+            throw ParseException("Destination xref is not in use");
         }
 
         auto destination_hybrid_used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(destination_hybrid_entry);
         auto destination_hybrid_object = destination_hybrid_used_entry->GetReference();
         if (!ConvertUtils<ObjectPtr>::IsType<StreamObjectPtr>(destination_hybrid_object)) {
-            throw GeneralException("Cloned hybrid xref is not a stream");
+            throw ParseException("Cloned hybrid xref is not a stream");
         }
 
         auto cloned_hybrid_xref = CloneXref(destination, source_hybrid_stream);
@@ -405,7 +404,7 @@ void FileWriter::FixStreamReferences(XrefChainPtr source, XrefChainPtr destinati
     assert(source->GetSize() == destination->GetSize() && "Error in xref cloning");
 
     if (source->GetSize() != destination->GetSize()) {
-        throw GeneralException("Invalid xref size");
+        throw ParseException("Invalid xref size");
     }
 
     for (; dest_iterator != destination->end(); ++dest_iterator, ++source_iterator) {
@@ -414,7 +413,7 @@ void FileWriter::FixStreamReferences(XrefChainPtr source, XrefChainPtr destinati
 
         assert(new_xref->GetType() == original_xref->GetType() && "Cloning error");
         if (new_xref->GetType() != original_xref->GetType()) {
-            throw GeneralException("Error in cloning xref");
+            throw ParseException("Error in cloning xref");
         }
 
         bool is_original_stream = ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(original_xref);
@@ -475,7 +474,7 @@ void FileWriter::SetEncryptionData(FilePtr source, FilePtr destination) {
         auto trailer_dictionary = chain_value->GetTrailerDictionary();
 
         if (!trailer_dictionary->Contains(constant::Name::Encrypt)) {
-            throw GeneralException("Destination trailer dictionary does not contain encryption entry");
+            throw ParseException("Destination trailer dictionary does not contain encryption entry");
         }
 
         // TODO Compare the source and destination dictionaries?
@@ -484,7 +483,7 @@ void FileWriter::SetEncryptionData(FilePtr source, FilePtr destination) {
     }
 
     if (!ObjectUtils::IsType<DictionaryObjectPtr>(destination_encryption_object)) {
-        throw GeneralException("Destination encryption object is not a dictionary");
+        throw ParseException("Destination encryption object is not a dictionary");
     }
 
     auto dictionary_obj = ObjectUtils::ConvertTo<DictionaryObjectPtr>(destination_encryption_object);
@@ -713,7 +712,7 @@ void FileWriter::RecalculateStreamsLength(XrefBasePtr source) {
     }
 
     // Iteration may be unordered, but I don't really care
-    for (auto entry : source) {
+    for (auto& [obj_num, entry] : source) {
         if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
             continue;
         }
@@ -738,7 +737,7 @@ void FileWriter::RecalculateStreamsLength(XrefBasePtr source) {
             assert(!ObjectUtils::IsType<StreamObjectPtr>(new_obj));
 
             if (ObjectUtils::IsType<StreamObjectPtr>(new_obj)) {
-                throw GeneralException("Stream object should not be inside object stream");
+                throw ParseException("Stream object should not be inside object stream");
             }
 
             continue;
@@ -757,7 +756,7 @@ XrefBasePtr FileWriter::FindPreviousXref(XrefChainPtr chain, XrefBasePtr source)
 
         if (Identity(current_xref, source)) {
             if (first_xref) {
-                throw GeneralException("First xref does not have a previous entry");
+                throw InvalidParameterException("First xref does not have a previous entry");
             }
 
             return *prev_xref_iterator;
@@ -772,7 +771,7 @@ XrefBasePtr FileWriter::FindPreviousXref(XrefChainPtr chain, XrefBasePtr source)
         first_xref = false;
     }
 
-    throw GeneralException("Could not find previous xref");
+    throw InvalidParameterException("Could not find previous xref");
 }
 
 HeaderPtr FileWriter::CloneHeader(FilePtr source, FilePtr destination) {
@@ -1245,17 +1244,15 @@ void FileWriter::WriteObject(IOutputStreamPtr output, ObjectPtr obj) {
     output->Write(WhiteSpace::SPACE);
     output->Write(obj->GetGenerationNumber());
     output->Write(WhiteSpace::SPACE);
-    output->Write("obj");
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine("obj");
 
     bool is_indirect = obj->IsIndirect();
     assert(is_indirect && "Written object is not indirect"); UNUSED(is_indirect);
 
     obj->ToPdfStreamUpdateOffset(output);
 
-    output->Write(WhiteSpace::LINE_FEED);
-    output->Write("endobj");
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine();
+    output->WriteLine("endobj");
 
     AfterObjectWrite(obj);
 }
@@ -1264,12 +1261,10 @@ void FileWriter::WriteXrefOffset(IOutputStreamPtr output, types::stream_offset o
 
     assert(offset >= 0 && "Attempting to write negative offset");
 
-    output->Write("startxref");
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine("startxref");
     output->Write(offset);
-    output->Write(WhiteSpace::LINE_FEED);
-    output->Write("%%EOF");
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine();
+    output->WriteLine("%%EOF");
 }
 
 void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
@@ -1298,10 +1293,10 @@ void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
     case Version::PDF20:
         output->Write("2.0"); break;
     default:
-        throw GeneralException("Unknown PDF version: " + std::to_string(static_cast<int32_t>(version)));
+        throw InvalidParameterException("Unknown PDF version: " + std::to_string(static_cast<int32_t>(version)));
     }
 
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine();
 
     // Quote from 7.5.2 File Header
     //
@@ -1325,7 +1320,7 @@ void FileWriter::WriteHeader(IOutputStreamPtr output, HeaderPtr header) {
     output->Write((unsigned char)0xAD);
     output->Write((unsigned char)0xC0);
     output->Write((unsigned char)0xDE);
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine();
 }
 
 void FileWriter::WriteXrefChain(IOutputStreamPtr output, XrefChainPtr chain) {
@@ -1440,8 +1435,7 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
     auto table_size = xref_table->GetSize();
     auto table_items = xref_table->Entries();
 
-    output->Write("xref");
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine("xref");
 
     for (decltype(table_size) i = 0; i < table_size;) {
         auto first = table_items[i];
@@ -1458,7 +1452,7 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
         output->Write(subsection_idx);
         output->Write(WhiteSpace::SPACE);
         output->Write(subsection_size);
-        output->Write(WhiteSpace::LINE_FEED);
+        output->WriteLine();
 
         for (decltype(subsection_size) j = 0; j < subsection_size; ++j) {
             auto entry = table_items[i + j];
@@ -1475,7 +1469,7 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
                 output->Write(WhiteSpace::SPACE);
                 output->Write('f');
                 output->Write(WhiteSpace::SPACE);
-                output->Write(WhiteSpace::LINE_FEED);
+                output->WriteLine();
                 continue;
             }
 
@@ -1496,7 +1490,7 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
                 output->Write(WhiteSpace::SPACE);
                 output->Write('n');
                 output->Write(WhiteSpace::SPACE);
-                output->Write(WhiteSpace::LINE_FEED);
+                output->WriteLine();
                 continue;
             }
         }
@@ -1507,10 +1501,8 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
     auto trailer = xref_table->GetTrailerDictionary();
     auto trailer_pdf = trailer->ToPdf();
 
-    output->Write("trailer");
-    output->Write(WhiteSpace::LINE_FEED);
-    output->Write(trailer_pdf);
-    output->Write(WhiteSpace::LINE_FEED);
+    output->WriteLine("trailer");
+    output->WriteLine(trailer_pdf);
 }
 
 std::string FileWriter::GetFormattedOffset(types::stream_offset offset) {
@@ -1672,10 +1664,10 @@ void FileWriter::ApplyWatermarkPrependSave(StreamObjectPtr obj) {
 
     auto save_operation = make_deferred<contents::OperationSaveGraphicsState>();
 
-    std::stringstream ss;
-    ss << save_operation->ToPdf() << std::endl;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
+    stream->WriteLine(save_operation->ToPdf());
 
-    auto save_operation_text = ss.str();
+    auto save_operation_text = stream->ToString();
 
     auto body = obj->GetBody();
     body->insert(body.begin(), save_operation_text.begin(), save_operation_text.end());
@@ -1709,10 +1701,7 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr
     text_position_operation->SetX(make_deferred<IntegerObject>(20));
     text_position_operation->SetY(make_deferred<IntegerObject>(20));
 
-    std::stringstream watermark_text_stream;
-    watermark_text_stream << WATERMARK_TEXT << " " << COPYRIGHT_TEXT << " " << LibraryInfo::BuildYear() << " " << COMPANY_TEXT;
-
-    auto watermark_text = watermark_text_stream.str();
+    auto watermark_text = fmt::format("{} {} {} {}", WATERMARK_TEXT, COPYRIGHT_TEXT, LibraryInfo::BuildYear(), COMPANY_TEXT);
 
     auto text_show_operation = make_deferred<contents::OperationTextShow>();
     text_show_operation->SetValue(LiteralStringObject::CreateFromDecoded(watermark_text));
@@ -1772,17 +1761,17 @@ void FileWriter::ApplyWatermarkContentStream(StreamObjectPtr obj, ArrayObjectPtr
         instructions->push_back(inline_image_object);
     }
 
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     // Separate from content
-    ss << std::endl;
+    stream->WriteLine();
 
     // Serialize instructions
     for (auto instruction : instructions) {
-        ss << instruction->ToPdf() << std::endl;
+        stream->WriteLine(instruction->ToPdf());
     }
 
-    auto watermark_body = ss.str();
+    auto watermark_body = stream->ToString();
 
     auto body = obj->GetBody();
     body->insert(body.end(), watermark_body.begin(), watermark_body.end());
@@ -1844,7 +1833,7 @@ void FileWriter::RemoveFreedObjects(XrefChainPtr xref) {
             }
 
             // Remove if not used
-            bool removed = current_xref->Remove(current_entry);
+            bool removed = current_xref->Remove(current_entry->GetObjectNumber());
             assert(removed && "Could not release xref entry"); UNUSED(removed);
         }
     }
@@ -1929,7 +1918,7 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
         auto current = *iterator;
 
         // All conflicts are overwritten
-        for (auto item : current) {
+        for (auto& [obj_num, item] : current) {
 
             // Skip unused entries
             if (!item->InUse()) {
@@ -1944,7 +1933,7 @@ void FileWriter::MergeXrefs(XrefChainPtr xref) {
             if (xref_table->HasHybridStream()) {
                 auto hybrid_stream = xref_table->GetHybridStream();
 
-                for (auto item : hybrid_stream) {
+                for (auto& [obj_num, item] : hybrid_stream) {
 
                     // Skip unused entries
                     if (!item->InUse()) {
@@ -1998,7 +1987,7 @@ void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
     for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
         auto current = *iterator;
 
-        for (auto item : current) {
+        for (auto& [obj_num, item] : current) {
 
             // Accept either used and compressed entries
             if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
@@ -2017,7 +2006,7 @@ void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
             if (xref_table->HasHybridStream()) {
                 auto hybrid_stream = xref_table->GetHybridStream();
 
-                for (auto item : hybrid_stream) {
+                for (auto& [obj_num, item] : hybrid_stream) {
                     // Accept either used and compressed entries
                     if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
                         continue;
@@ -2072,7 +2061,7 @@ void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
                 used_entries[xref_stream_entry] = true;
             }
 
-            for (auto stream_entry : xref_stream) {
+            for (auto& [obj_num, stream_entry] : xref_stream) {
                 if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(stream_entry)) {
                     continue;
                 }
@@ -2154,8 +2143,9 @@ void FileWriter::RemoveUnreferencedObjects(XrefChainPtr xref) {
         for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
             auto current = *iterator;
 
-            if (current->Contains(used_entry.first->GetObjectNumber())) {
-                removed = current->Remove(used_entry.first);
+            auto obj_number = used_entry.first->GetObjectNumber();
+            if (current->Contains(obj_number)) {
+                removed = current->Remove(obj_number);
                 break;
             }
         }
@@ -2199,13 +2189,13 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
     }
 
     std::unordered_set<ObjectPtr> unique_set;
-    std::unordered_map<ObjectPtr, ObjectPtr> duplicit_list;
+    DuplicateMap duplicit_list;
 
     // Find all duplicit indirect objects
     for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
         auto current = *iterator;
 
-        for (auto item : current) {
+        for (auto& [obj_num, item] : current) {
 
             // Accept either used and compressed entries
             if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(item)) {
@@ -2256,7 +2246,7 @@ bool FileWriter::RemoveDuplicitIndirectObjects(XrefChainPtr xref) {
     for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
         auto current_xref = *iterator;
 
-        for (auto item : current_xref) {
+        for (auto& [obj_num, item] : current_xref) {
 
             // Accept either used and compressed entries
             if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
@@ -2344,7 +2334,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
     for (auto iterator = xref->begin(); iterator != xref->end(); ++iterator) {
         auto current_xref = *iterator;
 
-        for (auto item : current_xref) {
+        for (auto& [obj_num, item] : current_xref) {
 
             // Initialize used and compressed entries as well
             if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryBasePtr>(item)) {
@@ -2405,7 +2395,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
                 new_entry->SetFile(entry->GetFile());
                 new_entry->SetInitialized();
 
-                bool removed = current_xref->Remove(entry);
+                bool removed = current_xref->Remove(entry->GetObjectNumber());
                 assert(removed && "Could not release xref entry"); UNUSED(removed);
 
                 current_xref->Add(new_entry);
@@ -2431,7 +2421,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
                 new_entry->SetReference(referenced_object);
                 new_entry->SetInitialized();
 
-                bool removed = current_xref->Remove(entry);
+                bool removed = current_xref->Remove(entry->GetObjectNumber());
                 assert(removed && "Could not release xref entry"); UNUSED(removed);
 
                 current_xref->Add(new_entry);
@@ -2459,7 +2449,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
                 new_entry->SetReference(referenced_object);
                 new_entry->SetInitialized();
 
-                bool removed = current_xref->Remove(entry);
+                bool removed = current_xref->Remove(entry->GetObjectNumber());
                 assert(removed && "Could not release xref entry"); UNUSED(removed);
 
                 current_xref->Add(new_entry);
@@ -2475,7 +2465,7 @@ void FileWriter::SquashTableSpace(XrefChainPtr xref) {
     for (auto& item : xref) {
 
         // For every xref
-        for (auto& xref_entry : item) {
+        for (auto& [obj_num, xref_entry] : item) {
 
             // Accept only compressed entries
             if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(xref_entry)) {
@@ -2533,7 +2523,7 @@ void FileWriter::InitializeReferences(ObjectPtr source) {
     }
 }
 
-void FileWriter::RedirectReferences(ObjectPtr source, const std::unordered_map<ObjectPtr, ObjectPtr>& duplicit_items) {
+void FileWriter::RedirectReferences(ObjectPtr source, const DuplicateMap& duplicit_items) {
     if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(source)) {
         auto source_ref = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(source);
         auto referenced_object = source_ref->GetReferencedObject();

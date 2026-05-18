@@ -23,9 +23,6 @@ class ExceptionBase;
 class GeneralException;
 class ConversionException;
 
-class IModifyObserver;
-class IModifyObservable;
-
 class IUnknown;
 class WeakReferenceCounter;
 
@@ -59,6 +56,9 @@ class MemoryBufferOutputStream; using MemoryBufferOutputStreamPtr = Deferred<Mem
 
 class IInputOutputStream; using IInputOutputStreamPtr = Deferred<IInputOutputStream>;
 class InputOutputStream; using InputOutputStreamPtr = Deferred<InputOutputStream>;
+
+class MemoryBufferInputStream; using MemoryBufferInputStreamPtr = Deferred<MemoryBufferInputStream>;
+class MemoryBufferInputOutputStream; using MemoryBufferInputOutputStreamPtr = Deferred<MemoryBufferInputOutputStream>;
 
 // STD wrappers
 template <typename T, typename size_type_template>

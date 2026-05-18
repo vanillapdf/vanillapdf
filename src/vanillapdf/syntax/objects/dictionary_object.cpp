@@ -7,13 +7,13 @@
 
 #include "utils/streams/output_stream_interface.h"
 
-#include <sstream>
+#include "utils/streams/stream_utils.h"
 
 namespace vanillapdf {
 namespace syntax {
 
 DictionaryObject::DictionaryObject() {
-    m_access_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 DictionaryObject* DictionaryObject::Clone(void) const {
@@ -45,24 +45,37 @@ void DictionaryObject::SetFile(WeakReference<File> file) {
 void DictionaryObject::SetInitialized(bool initialized) {
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    IModifyObservable::SetInitialized(initialized);
+    Versionable::SetInitialized(initialized);
     for (auto it = _list.begin(); it != _list.end(); ++it) {
         auto item = it->second;
         item->SetInitialized(initialized);
     }
 }
 
+bool DictionaryObject::IsDirty() const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
+    if (m_version > 0) return true;
+    for (const auto& item : _list) {
+        if (item.first->IsDirty()) return true;
+        if (item.second->IsDirty()) return true;
+    }
+    return false;
+}
+
 std::string DictionaryObject::ToString(void) const {
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    std::stringstream ss;
-    ss << "<<" << std::endl;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
+    stream->WriteLine("<<");
     for (auto item : _list) {
-        ss << item.first->ToString() << " " << item.second->ToString() << std::endl;
+        stream->Write(item.first->ToString());
+        stream->Write(WhiteSpace::SPACE);
+        stream->WriteLine(item.second->ToString());
     }
 
-    ss << ">>";
-    return ss.str();
+    stream->Write(">>");
+    return stream->ToString();
 }
 
 void DictionaryObject::ToPdfStreamInternal(IOutputStreamPtr output) const {
@@ -117,7 +130,7 @@ ContainableObjectPtr DictionaryObject::Find(const NameObjectPtr name) const {
 
     auto result = _list.find(name);
     if (result == _list.end()) {
-        LOG_ERROR_AND_THROW_GENERAL("Item with name {} was not found in dictionary", name->ToString());
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Item with name {} was not found in dictionary", name->ToString());
     }
 
     return result->second;
@@ -164,10 +177,8 @@ bool DictionaryObject::Remove(const NameObjectPtr name) {
 
     found_key->ClearOwner();
     found_value->ClearOwner();
-    found_key->Unsubscribe(this);
-    found_value->Unsubscribe(this);
     _list.erase(found);
-    OnChanged();
+    IncrementVersion();
 
     return true;
 }
@@ -195,8 +206,6 @@ void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bo
 
         found_key->ClearOwner();
         found_value->ClearOwner();
-        found_key->Unsubscribe(this);
-        found_value->Unsubscribe(this);
 
         _list.erase(found);
     }
@@ -207,10 +216,7 @@ void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bo
     name->SetOwner(Object::GetWeakReference());
     value->SetOwner(Object::GetWeakReference());
 
-    name->Subscribe(this);
-    value->Subscribe(this);
-
-    OnChanged();
+    IncrementVersion();
 }
 
 bool DictionaryObject::Contains(const NameObject& name) const {
@@ -228,31 +234,22 @@ DictionaryObject::~DictionaryObject() {
     Clear();
 }
 
-void DictionaryObject::ObserveeChanged(const IModifyObservable*) {
-    OnChanged();
-}
-
-void DictionaryObject::OnChanged() {
-    Object::OnChanged();
-
-    m_hash_cache = 0;
-}
-
 size_t DictionaryObject::Hash() const {
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    if (m_hash_cache != 0) {
-        return m_hash_cache;
-    }
-
-    size_t result = 0;
+    // XOR is order-independent, which is correct for dictionaries since key
+    // order is not significant in PDF. Each key-value pair is combined with
+    // FNV-1a multiply before XOR to avoid cross-pair cancellation
+    // (e.g. {A: 1, B: 2} vs {A: 2, B: 1}).
+    size_t result = constant::FNV1A_OFFSET_BASIS;
     for (auto item : _list) {
-        result ^= item.first->Hash();
-        result ^= item.second->Hash();
+        size_t pair_hash = item.first->Hash();
+        pair_hash ^= item.second->Hash();
+        pair_hash *= constant::FNV1A_PRIME;
+        result ^= pair_hash;
     }
 
-    m_hash_cache = result;
-    return m_hash_cache;
+    return result;
 }
 
 bool DictionaryObject::Equals(ObjectPtr other) const {
@@ -298,14 +295,13 @@ bool DictionaryObject::Equals(ObjectPtr other) const {
 void DictionaryObject::Merge(const DictionaryObject& other) {
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    // TODO: Missing add owner and subscribe
-
+    // TODO: https://github.com/vanillapdf/vanillapdf/issues/270 - SetOwner on merged entries blocked by const Deferred key in std::map
     // Simple insert overriding conflicting entries
     for (auto item : other) {
         _list.insert(item);
     }
 
-    OnChanged();
+    IncrementVersion();
 }
 
 void DictionaryObject::Clear() {
@@ -322,22 +318,15 @@ void DictionaryObject::Clear() {
 
         item_key->ClearOwner();
         item_value->ClearOwner();
-        item_key->Unsubscribe(this);
-        item_value->Unsubscribe(this);
     }
 
     _list.clear();
 
-    OnChanged();
+    IncrementVersion();
 }
 
-DictionaryObject::size_type DictionaryObject::GetSize() const noexcept {
-
-    // https://cplusplus.com/reference/map/map/size/
-    // The container is accessed.
-    // No elements are accessed : concurrently accessing or modifying them is safe.
-
-    // Based on the above I assume that we do not need to lock the list for this call.
+DictionaryObject::size_type DictionaryObject::GetSize() const {
+    ACCESS_LOCK_GUARD(m_access_lock);
 
     return _list.size();
 }

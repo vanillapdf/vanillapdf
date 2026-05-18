@@ -9,6 +9,8 @@ namespace syntax {
 class ParseException : public ExceptionBase {
 public:
     explicit ParseException(types::stream_offset offset);
+    explicit ParseException(const char * const & msg);
+    explicit ParseException(const std::string& msg);
     virtual Type code() const noexcept { return Type::ParseException; }
 };
 
@@ -29,6 +31,8 @@ class ObjectMissingException : public ExceptionBase {
 public:
     explicit ObjectMissingException(types::big_uint objNumber);
     ObjectMissingException(types::big_uint objNumber, types::ushort genNumber);
+    explicit ObjectMissingException(const char * const & msg);
+    explicit ObjectMissingException(const std::string& msg);
     virtual Type code() const noexcept { return Type::ObjectMissing; }
 };
 

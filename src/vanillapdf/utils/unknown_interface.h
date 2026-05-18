@@ -70,13 +70,13 @@ public:
 
     Deferred<T> GetReference() const {
         if (!IsActive()) {
-            throw GeneralException("Object has been already disposed");
+            throw InvalidParameterException("Object has been already disposed");
         }
 
         // This shall not happen, because IsActive should check m_ptr
         assert(m_ptr && "Referenced pointer is empty");
         if (m_ptr == nullptr) {
-            throw GeneralException("Pointer object was not set");
+            throw InvalidParameterException("Pointer object was not set");
         }
 
         return Deferred<T>(m_ptr);
@@ -149,6 +149,12 @@ public:
 
     virtual ~IUnknown() = 0;
 
+    // Object diagnostics - thread-safe counters for tracking live objects
+    static int64_t ActiveObjectCount() noexcept;
+    static int64_t PeakObjectCount() noexcept;
+    static int64_t TotalObjectsCreated() noexcept;
+    static void ResetDiagnosticCounters() noexcept;
+
     // Since we moved IUnknown to virtual inheritance
     // we can no longer use:
     //T* converted = static_cast<T*>(this);
@@ -157,6 +163,10 @@ public:
 
 private:
     std::atomic<uint32_t> m_ref_counter;
+
+    static std::atomic<int64_t> s_active_object_count;
+    static std::atomic<int64_t> s_peak_object_count;
+    static std::atomic<int64_t> s_total_objects_created;
 };
 
 template <typename T>
@@ -207,7 +217,7 @@ public:
 
         T* converted = static_cast<U*>(this);
         if (converted == nullptr) {
-            throw GeneralException("Pointer object was not set");
+            throw InvalidParameterException("Pointer object was not set");
         }
 
         return WeakReference<T>(converted, m_weak_ref);

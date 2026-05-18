@@ -6,7 +6,7 @@
 #include "vanillapdf/utils/c_signing_key.h"
 #include "implementation/c_helper.h"
 
-#include <sstream>
+#include <fmt/core.h>
 
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
@@ -73,14 +73,13 @@ public:
             case MessageDigestAlgorithm::WHIRLPOOL:
                 algorithm_type = MessageDigestAlgorithmType_WHIRLPOOL; break;
             default:
-                LOG_ERROR_AND_THROW_GENERAL("Unknown digest algorithm: {:d}", static_cast<int32_t>(algorithm));
+                LOG_ERROR_AND_THROW(CryptoErrorException,"Unknown digest algorithm: {:d}", static_cast<int32_t>(algorithm));
         }
 
         error_type rv = m_init(m_user_data, algorithm_type);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
-            std::stringstream ss;
-            ss << "Custom key sign init operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("Custom key sign init operation returned: {}", rv));
         }
     }
 
@@ -88,9 +87,8 @@ public:
         auto input_handle = reinterpret_cast<const BufferHandle*>(&data);
         error_type rv = m_update(m_user_data, input_handle);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
-            std::stringstream ss;
-            ss << "Custom key sign update operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("Custom key sign update operation returned: {}", rv));
         }
     }
 
@@ -105,15 +103,13 @@ public:
 
         error_type rv = m_final(m_user_data, &output_ptr);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
-            std::stringstream ss;
-            ss << "Custom key sign final operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("Custom key sign final operation returned: {}", rv));
         }
 
         if (output_ptr == nullptr) {
-            std::stringstream ss;
-            ss << "Custom key sign final operation succeeded, but did not fill the signed data pointer";
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                "Custom key sign final operation succeeded, but did not fill the signed data pointer");
         }
 
         auto result = reinterpret_cast<Buffer*>(output_ptr);
@@ -123,9 +119,8 @@ public:
     void SignCleanup() override {
         error_type rv = m_cleanup(m_user_data);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
-            std::stringstream ss;
-            ss << "Custom key sign cleanup operation returned: " << rv;
-            throw UserCancelledException(ss.str());
+            throw UserCancelledException(
+                fmt::format("Custom key sign cleanup operation returned: {}", rv));
         }
     }
 

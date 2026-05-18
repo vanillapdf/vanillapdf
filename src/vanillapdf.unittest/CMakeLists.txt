@@ -26,11 +26,15 @@ set(VANILLAPDF_UNITTEST_SOURCES
     annotations_creation_test.cpp
     byte_range_test.cpp
     catalog_test.cpp
+    character_map_test.cpp
     color_test.cpp
     date_test.cpp
     document_test.cpp
     destinations_test.cpp
+    fields_test.cpp
     filter_test.cpp
+    text_string_encoding_test.cpp
+    file_structure_validator_test.cpp
     test_environment.cpp
     attributes_test.cpp
     objects_test.cpp
@@ -40,12 +44,15 @@ set(VANILLAPDF_UNITTEST_SOURCES
     signature_verifier_test.cpp
     thread_safety_test.cpp
     name_dictionary_test.cpp
+    io_strategy_test.cpp
+    license_info_test.cpp
 )
 
 set(VANILLAPDF_UNITTEST_HEADERS
     unittest.h
     test_data.h
     handle_guard.h
+    temp_file.h
 )
 
 # Resource files
@@ -76,8 +83,10 @@ if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
     vanillapdf_configure_msvc_runtime(vanillapdf.unittest)
 endif()
 
-# Optional stack sanitizer
-enable_stack_sanitizer_for_target(vanillapdf.unittest)
+# Optional sanitizers
+enable_asan_for_target(vanillapdf.unittest)
+enable_ubsan_for_target(vanillapdf.unittest)
+enable_tsan_for_target(vanillapdf.unittest)
 
 if(WIN32)
     # Copy DLL dependencies on windows to our build directory
@@ -100,11 +109,21 @@ set(VANILLAPDF_UNITTEST_LIBS
     GTest::gtest
 )
 
+# GCC < 9 requires explicit -lstdc++fs for std::filesystem (e.g. Rocky 8)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
+    list(APPEND VANILLAPDF_UNITTEST_LIBS stdc++fs)
+endif()
+
 target_link_libraries(vanillapdf.unittest PRIVATE ${VANILLAPDF_UNITTEST_LIBS})
 
 # In case we have the dynamic link configuration add specific definitions
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_CONFIGURATION_DLL)
+endif()
+
+# Pass licensing flag to test code so it can skip license loading when disabled
+if(VANILLAPDF_ENABLE_LICENSING)
+    target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_ENABLE_LICENSING)
 endif()
 
 # We do not need unit test project to be shipped
@@ -134,4 +153,13 @@ include(GoogleTest)
 # Without this flag, test names include raw memory addresses making output unreadable:
 #   Before: CertificateTypes/.../40-byte object <B0-4E 79-8B F7-7F 00-00...>
 #   After:  CertificateTypes/.../2kDSA_SHA256
-gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST NO_PRETTY_VALUES)
+# OpenSSL 3.x: set provider module search path (see vanillapdf/CMakeLists.txt)
+set(VANILLAPDF_UNITTEST_EXTRA_PROPERTIES "")
+if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG AND NOT VANILLAPDF_EXTERNAL_OPENSSL
+        AND VANILLAPDF_OPENSSL_MODULES_DIR)
+    set(VANILLAPDF_UNITTEST_EXTRA_PROPERTIES PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${VANILLAPDF_OPENSSL_MODULES_DIR}")
+endif()
+
+gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST NO_PRETTY_VALUES
+    ${VANILLAPDF_UNITTEST_EXTRA_PROPERTIES}
+)

@@ -47,7 +47,7 @@ void IndirectReferenceObject::SetReferencedObjectNumber(types::big_uint value) {
     m_reference_object_number = value;
     m_reference.Reset();
 
-    OnChanged();
+    IncrementVersion();
 }
 
 void IndirectReferenceObject::SetReferencedGenerationNumber(types::ushort value) {
@@ -56,7 +56,7 @@ void IndirectReferenceObject::SetReferencedGenerationNumber(types::ushort value)
     m_reference_generation_number = value;
     m_reference.Reset();
 
-    OnChanged();
+    IncrementVersion();
 }
 
 bool IndirectReferenceObject::IsReferenceInitialized(void) const {
@@ -114,18 +114,7 @@ bool IndirectReferenceObject::IsReferenceInitialized(void) const {
 //	return false;
 //}
 
-void IndirectReferenceObject::OnChanged() {
-    Object::OnChanged();
-
-    m_hash_cache = 0;
-}
-
 size_t IndirectReferenceObject::Hash() const {
-
-    if (m_hash_cache != 0) {
-        return m_hash_cache;
-    }
-
     ACCESS_LOCK_GUARD(m_access_lock);
 
     auto object_number = GetReferencedObjectNumber();
@@ -134,21 +123,7 @@ size_t IndirectReferenceObject::Hash() const {
     std::hash<decltype(object_number)> obj_hasher;
     std::hash<decltype(generation_number)> gen_hasher;
 
-    m_hash_cache = obj_hasher(object_number) ^ gen_hasher(generation_number);
-    return m_hash_cache;
-
-    //auto referenced_object = GetReferencedObject();
-
-    // Special case, when this is a reference to object
-    // which contains the reference itself
-    //std::map<ObjectPtr, bool> visited;
-    //if (IsCyclicReference(referenced_object, visited)) {
-
-    //	// Has with value 0 should be ignored
-    //	return 0;
-    //}
-
-    //return referenced_object->Hash();
+    return obj_hasher(object_number) ^ gen_hasher(generation_number);
 }
 
 void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) {
@@ -160,7 +135,7 @@ void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) {
     assert(indirect_or_null && "Referenced object is neither indirect nor null");
 
     if (!indirect_or_null) {
-        throw GeneralException("Indirect reference must point to indirect object");
+        throw InvalidParameterException("Indirect reference must point to indirect object");
     }
 
     if (obj->IsIndirect()) {
@@ -169,15 +144,11 @@ void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) {
     }
 
     m_reference = obj;
-    OnChanged();
+    IncrementVersion();
 }
 
 ObjectPtr IndirectReferenceObject::GetReferencedObject() const {
-    if (IsReferenceInitialized()) {
-        return m_reference.GetReference();
-    }
-
-    ACCESS_LOCK_GUARD(m_access_lock);
+    std::unique_lock<std::recursive_mutex> lock(*m_access_lock);
 
     if (IsReferenceInitialized()) {
         return m_reference.GetReference();
@@ -188,11 +159,19 @@ ObjectPtr IndirectReferenceObject::GetReferencedObject() const {
     }
 
     auto locked_file = m_file.GetReference();
-    auto new_reference = locked_file->GetIndirectObject(
-        m_reference_object_number,
-        m_reference_generation_number);
+    auto obj_number = m_reference_object_number;
+    auto gen_number = m_reference_generation_number;
 
-    m_reference = new_reference;
+    // Release M2 before file I/O to avoid the M2->M0 lock-order inversion:
+    // parsing holds M0 while calling SetFile() which acquires M2 on new objects.
+    lock.unlock();
+    auto new_reference = locked_file->GetIndirectObject(obj_number, gen_number);
+    lock.lock();
+
+    if (!IsReferenceInitialized()) {
+        m_reference = new_reference;
+    }
+
     return new_reference;
 }
 

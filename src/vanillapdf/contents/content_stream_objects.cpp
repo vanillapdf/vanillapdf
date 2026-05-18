@@ -3,7 +3,7 @@
 #include "contents/content_stream_objects.h"
 #include "contents/content_stream_operators.h"
 
-#include <sstream>
+#include "utils/streams/stream_utils.h"
 
 namespace vanillapdf {
 namespace contents {
@@ -13,47 +13,42 @@ TextObject::TextObject(const contents::BaseOperationCollection& ops)
 }
 
 std::string TextObject::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     BeginTextOperatorPtr bt;
-    ss << bt->Value();
-    ss << std::endl;
+    stream->WriteLine(bt->Value()->ToStringView());
 
     for (auto op : _operations) {
-        ss << op->ToPdf() << std::endl;
+        stream->WriteLine(op->ToPdf());
     }
 
     EndTextOperatorPtr et;
-    ss << et->Value();
+    stream->Write(et->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 std::string InlineImageObject::ToPdf() const {
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
 
     BeginInlineImageObjectOperatorPtr bi;
-    ss << bi->Value();
-    ss << std::endl;
+    stream->WriteLine(bi->Value()->ToStringView());
 
     // Image dictionary
     for (auto item : m_dictionary) {
-        ss << item.first->ToPdf();
-        ss << " ";
-        ss << item.second->ToPdf();
-        ss << std::endl;
+        stream->Write(item.first->ToPdf());
+        stream->Write(WhiteSpace::SPACE);
+        stream->WriteLine(item.second->ToPdf());
     }
 
     BeginInlineImageDataOperatorPtr id;
-    ss << id->Value();
-    ss << std::endl;
-    ss << m_data;
-    ss << std::endl;
+    stream->WriteLine(id->Value()->ToStringView());
+    stream->WriteLine(m_data->ToStringView());
 
     EndInlineImageObjectOperatorPtr ei;
-    ss << ei->Value();
+    stream->Write(ei->Value()->ToStringView());
 
-    return ss.str();
+    return stream->ToString();
 }
 
 } // contents

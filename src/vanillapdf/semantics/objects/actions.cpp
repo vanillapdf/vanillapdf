@@ -3,6 +3,7 @@
 #include "semantics/objects/actions.h"
 #include "semantics/objects/destinations.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/utils/name_constants.h"
 
 namespace vanillapdf {
@@ -16,44 +17,44 @@ NamedAction::NamedAction(syntax::DictionaryObjectPtr root) : ActionBase(root) {}
 JavaScriptAction::JavaScriptAction(syntax::DictionaryObjectPtr root) : ActionBase(root) {}
 LaunchAction::LaunchAction(syntax::DictionaryObjectPtr root) : ActionBase(root) {}
 
-std::unique_ptr<ActionBase> ActionBase::Create(syntax::DictionaryObjectPtr root) {
+ActionPtr ActionBase::Create(syntax::DictionaryObjectPtr root) {
     if (!root->Contains(constant::Name::S)) {
-        throw GeneralException("Action dictionary does not contain /S entry");
+        throw syntax::ObjectMissingException("Action dictionary does not contain /S entry");
     }
 
     syntax::ObjectPtr s_obj = root->Find(constant::Name::S);
 
     if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(s_obj)) {
-        throw GeneralException("Invalid action type");
+        throw syntax::ObjectMissingException("Invalid action type");
     }
 
     syntax::NameObjectPtr s = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(s_obj);
 
     if (s == constant::Name::GoTo) {
-        return make_unique<GoToAction>(root);
+        return make_deferred<GoToAction>(root);
     }
 
     if (s == constant::Name::GoToR) {
-        return make_unique<GoToRemoteAction>(root);
+        return make_deferred<GoToRemoteAction>(root);
     }
 
     if (s == constant::Name::URI) {
-        return make_unique<URIAction>(root);
+        return make_deferred<URIAction>(root);
     }
 
     if (s == constant::Name::Launch) {
-        return make_unique<LaunchAction>(root);
+        return make_deferred<LaunchAction>(root);
     }
 
     if (s == constant::Name::Named) {
-        return make_unique<NamedAction>(root);
+        return make_deferred<NamedAction>(root);
     }
 
     if (s == constant::Name::JavaScript) {
-        return make_unique<JavaScriptAction>(root);
+        return make_deferred<JavaScriptAction>(root);
     }
 
-    throw GeneralException("Unknown action type: " + s->ToString());
+    throw syntax::ObjectMissingException("Unknown action type: " + s->ToString());
 }
 
 bool GoToAction::Destination(OutputDestinationPtr& result) const {

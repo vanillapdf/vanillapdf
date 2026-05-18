@@ -22,6 +22,10 @@ public:
         InvalidLicense,
         LicenseRequired,
         InsufficientSpace,
+        DataCorruption,
+        IOError,
+        CryptoError,
+        ImageCodecError,
 
         // syntax
         Conversion = 0x00010000,
@@ -81,7 +85,7 @@ public:
     virtual Type code() const noexcept override { return Type::Conversion; }
 };
 
-class ZlibDataErrorException : public ExceptionBase {
+class [[deprecated("Use DataCorruptionException instead")]] ZlibDataErrorException : public ExceptionBase {
 public:
     explicit ZlibDataErrorException(types::stream_size size);
     explicit ZlibDataErrorException(types::stream_size size, const std::string& message);
@@ -91,6 +95,55 @@ public:
 
 private:
     types::stream_size m_size;
+};
+
+class InvalidParameterException : public ExceptionBase {
+public:
+    explicit InvalidParameterException(const char * const & msg);
+    explicit InvalidParameterException(const std::string& msg);
+    virtual Type code() const noexcept override { return Type::InvalidParameter; }
+};
+
+class InsufficientSpaceException : public ExceptionBase {
+public:
+    explicit InsufficientSpaceException(const char * const & msg);
+    explicit InsufficientSpaceException(const std::string& msg);
+    virtual Type code() const noexcept override { return Type::InsufficientSpace; }
+};
+
+class DataCorruptionException : public ExceptionBase {
+public:
+    explicit DataCorruptionException(const char * const & msg);
+    explicit DataCorruptionException(const std::string& msg);
+    explicit DataCorruptionException(types::stream_size size);
+    DataCorruptionException(types::stream_size size, const std::string& message);
+    virtual Type code() const noexcept override { return Type::DataCorruption; }
+
+    types::stream_size Size(void) const { return m_size; }
+
+private:
+    types::stream_size m_size = 0;
+};
+
+class IOErrorException : public ExceptionBase {
+public:
+    explicit IOErrorException(const char * const & msg);
+    explicit IOErrorException(const std::string& msg);
+    virtual Type code() const noexcept override { return Type::IOError; }
+};
+
+class CryptoErrorException : public ExceptionBase {
+public:
+    explicit CryptoErrorException(const char * const & msg);
+    explicit CryptoErrorException(const std::string& msg);
+    virtual Type code() const noexcept override { return Type::CryptoError; }
+};
+
+class ImageCodecErrorException : public ExceptionBase {
+public:
+    explicit ImageCodecErrorException(const char * const & msg);
+    explicit ImageCodecErrorException(const std::string& msg);
+    virtual Type code() const noexcept override { return Type::ImageCodecError; }
 };
 
 class InvalidLicenseException : public ExceptionBase {

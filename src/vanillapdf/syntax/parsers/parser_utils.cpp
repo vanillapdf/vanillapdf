@@ -2,6 +2,7 @@
 
 #include "syntax/parsers/parser_utils.h"
 #include "syntax/parsers/token.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/misc_utils.h"
 
@@ -18,7 +19,7 @@ BooleanObjectPtr ParserUtils::CreateBoolean(TokenPtr token) {
     }
 
     assert(!"Expected boolean token type");
-    throw GeneralException("Expected boolean token type");
+    throw ParseException("Expected boolean token type");
 }
 
 types::big_int ParserUtils::GetIntegerValue(TokenPtr token) {

@@ -15,6 +15,7 @@
 #include "vanillapdf/syntax/c_file.h"
 #include "vanillapdf/syntax/c_file_writer.h"
 #include "vanillapdf/syntax/c_file_writer_observer.h"
+#include "vanillapdf/syntax/c_file_structure_validator.h"
 #include "vanillapdf/syntax/c_xref.h"
 #include "vanillapdf/syntax/c_filter.h"
 
@@ -82,6 +83,7 @@
 #include "vanillapdf/utils/c_library_info.h"
 #include "vanillapdf/utils/c_license_info.h"
 #include "vanillapdf/utils/c_misc_utils.h"
+#include "vanillapdf/utils/c_object_diagnostics.h"
 #include "vanillapdf/utils/c_errors.h"
 #include "vanillapdf/utils/c_pkcs12_key.h"
 #include "vanillapdf/utils/c_signing_key.h"
@@ -90,9 +92,11 @@
 #include "vanillapdf/utils/c_message_digest_algorithm.h"
 #include "vanillapdf/utils/c_name_constants.h"
 
+#include "vanillapdf/utils/c_io_strategy.h"
 #include "vanillapdf/utils/c_input_stream.h"
 #include "vanillapdf/utils/c_output_stream.h"
 #include "vanillapdf/utils/c_memory_buffer_output_stream.h"
 #include "vanillapdf/utils/c_input_output_stream.h"
+#include "vanillapdf/utils/c_text_string_encoding.h"
 
 #endif /* _C_VANILLAPDF_API_H */

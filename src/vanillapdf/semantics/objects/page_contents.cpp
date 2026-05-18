@@ -4,15 +4,16 @@
 
 #include "semantics/objects/page_contents.h"
 
+#include "syntax/exceptions/syntax_exceptions.h"
+
 #include "contents/content_stream_parser.h"
 #include "contents/content_stream_operations.h"
 #include "contents/content_stream_objects.h"
 
-#include "utils/streams/input_stream.h"
+#include "utils/streams/stream_utils.h"
 
 #include <list>
 #include <numeric>
-#include <sstream>
 
 namespace vanillapdf {
 namespace semantics {
@@ -21,20 +22,10 @@ using namespace syntax;
 using namespace contents;
 
 PageContents::PageContents(StreamObjectPtr obj) : HighLevelObject(obj) {
-    m_instructions->Subscribe(this);
 }
 
 PageContents::PageContents(ArrayObjectPtr<IndirectReferenceObjectPtr> obj)
     : HighLevelObject(obj->Data()) {
-    m_instructions->Subscribe(this);
-}
-
-PageContents::~PageContents() {
-    m_instructions->Unsubscribe(this);
-}
-
-void PageContents::ObserveeChanged(const IModifyObservable*) {
-    SetDirty(true);
 }
 
 bool PageContents::IsDirty() const {
@@ -57,9 +48,9 @@ bool PageContents::RecalculateStreamData() {
 
     spdlog::info("Page {} {} contents are dirty, recalculating", obj_number, gen_number);
 
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
     for (auto instruction : m_instructions) {
-        ss << instruction->ToPdf() << std::endl;
+        stream->WriteLine(instruction->ToPdf());
     }
 
     auto object = GetObject();
@@ -75,7 +66,7 @@ bool PageContents::RecalculateStreamData() {
 
         assert(0 != stream_array_size && "Content stream array is empty");
         if (0 == stream_array_size) {
-            throw GeneralException("Content stream array is empty");
+            throw syntax::ObjectMissingException("Content stream array is empty");
         }
 
         for (decltype(stream_array_size) j = 0; j < stream_array_size; ++j) {
@@ -89,7 +80,7 @@ bool PageContents::RecalculateStreamData() {
         stream_object = stream_array->GetValue(0);
     }
 
-    std::string string_body = ss.str();
+    auto string_body = stream->ToString();
     BufferPtr new_body = make_deferred_container<Buffer>(string_body.begin(), string_body.end());
     stream_object->SetBody(new_body);
 
@@ -114,19 +105,19 @@ BaseInstructionCollectionPtr PageContents::Instructions(void) const {
             contents.push_back(content_stream);
         }
     } else {
-        throw GeneralException("Contents was constructed from unrecognized element: " + _obj->ToString());
+        throw syntax::ObjectMissingException("Contents was constructed from unrecognized element: " + _obj->ToString());
     }
 
     // We are not using contents.Instructions, because objects can be separated
     // into multiple content streams
-    auto ss = std::make_shared<std::stringstream>();
+    auto combined_stream = StreamUtils::InputOutputStreamFromMemory();
     for (auto item : contents) {
         auto stream_object = item->GetObject();
-        *ss << stream_object->GetBody();
+        auto body = stream_object->GetBody();
+        combined_stream->Write(*body);
     }
 
-    InputStreamPtr input_stream = make_deferred<InputStream>(ss);
-    contents::ContentStreamParser parser(_obj->GetFile(), input_stream);
+    contents::ContentStreamParser parser(_obj->GetFile(), combined_stream);
 
     m_instructions = parser.ReadInstructions();
     m_instructions->SetInitialized();

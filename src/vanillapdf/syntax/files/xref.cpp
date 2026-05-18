@@ -2,37 +2,17 @@
 
 #include "syntax/files/xref.h"
 #include "syntax/utils/name_constants.h"
+#include "syntax/utils/output_pointer.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include "utils/math_utils.h"
+#include "utils/streams/stream_utils.h"
 
 #include <bitset>
 #include <climits>
 
 namespace vanillapdf {
 namespace syntax {
-
-XrefStream::~XrefStream() {
-    _stream->Unsubscribe(this);
-}
-
-XrefBase::~XrefBase() {
-    for (auto item : _entries) {
-        item->Unsubscribe(this);
-    }
-}
-
-void XrefBase::OnChanged() {
-    if (m_initialized) {
-        SetDirty();
-    }
-
-    IModifyObservable::OnChanged();
-}
-
-void XrefBase::ObserveeChanged(const IModifyObservable*) {
-    OnChanged();
-}
 
 void XrefStream::RecalculateContent() {
 
@@ -43,14 +23,14 @@ void XrefStream::RecalculateContent() {
 
     auto header = _stream->GetHeader();
     if (!header->Contains(constant::Name::W)) {
-        throw GeneralException("Stream header does not contain width");
+        throw ObjectMissingException("Stream header does not contain width");
     }
 
     auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
 
     assert(fields->GetSize() == 3);
     if (fields->GetSize() != 3) {
-        throw GeneralException("Xref stream width does not contain three integers");
+        throw ObjectMissingException("Xref stream width does not contain three integers");
     }
 
     auto field1_size = fields->GetValue(0);
@@ -124,7 +104,7 @@ void XrefStream::RecalculateContent() {
     types::big_uint section_size = 0;
     types::big_uint prev_number = 0;
 
-    std::stringstream ss;
+    auto stream = StreamUtils::InputOutputStreamFromMemory();
     for (auto entry : sorted_entries) {
         types::big_uint current_number = entry->GetObjectNumber();
 
@@ -148,27 +128,27 @@ void XrefStream::RecalculateContent() {
         if (entry->GetUsage() == XrefEntryBase::Usage::Free) {
             auto free_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefFreeEntryPtr>(entry);
 
-            WriteValue(ss, 0, *field1_size);
-            WriteValue(ss, free_entry->GetNextFreeObjectNumber(), *field2_size);
-            WriteValue(ss, free_entry->GetGenerationNumber(), *field3_size);
+            WriteValue(*stream, 0, *field1_size);
+            WriteValue(*stream, free_entry->GetNextFreeObjectNumber(), *field2_size);
+            WriteValue(*stream, free_entry->GetGenerationNumber(), *field3_size);
             continue;
         }
 
         if (entry->GetUsage() == XrefEntryBase::Usage::Used) {
             auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
 
-            WriteValue(ss, 1, *field1_size);
-            WriteValue(ss, used_entry->GetOffset(), *field2_size);
-            WriteValue(ss, used_entry->GetGenerationNumber(), *field3_size);
+            WriteValue(*stream, 1, *field1_size);
+            WriteValue(*stream, used_entry->GetOffset(), *field2_size);
+            WriteValue(*stream, used_entry->GetGenerationNumber(), *field3_size);
             continue;
         }
 
         if (entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
             auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(entry);
 
-            WriteValue(ss, 2, *field1_size);
-            WriteValue(ss, compressed_entry->GetObjectStreamNumber(), *field2_size);
-            WriteValue(ss, compressed_entry->GetIndex(), *field3_size);
+            WriteValue(*stream, 2, *field1_size);
+            WriteValue(*stream, compressed_entry->GetObjectStreamNumber(), *field2_size);
+            WriteValue(*stream, compressed_entry->GetIndex(), *field3_size);
             continue;
         }
 
@@ -197,12 +177,12 @@ void XrefStream::RecalculateContent() {
         assert(removed && "Could not remove item from dictionary"); UNUSED(removed);
     }
 
-    auto new_data_string = ss.str();
+    auto new_data_string = stream->ToString();
     BufferPtr new_data = make_deferred_container<Buffer>(new_data_string.begin(), new_data_string.end());
     _stream->SetBody(new_data);
 }
 
-void XrefStream::WriteValue(std::ostream& dest, types::big_uint value, int64_t width) {
+void XrefStream::WriteValue(IOutputStream& dest, types::big_uint value, int64_t width) {
 
     // Check if the value fits inside width
     //auto shifted_value = value >> (width * 8);
@@ -219,14 +199,14 @@ void XrefStream::WriteValue(std::ostream& dest, types::big_uint value, int64_t w
     // This means, that the operation would overflow
     assert(shifted_value == 0 && "Xref stream value overflow");
     if (shifted_value != 0) {
-        throw GeneralException("Xref stream width is too small");
+        throw ObjectMissingException("Xref stream width is too small");
     }
 
     // Writes <value> as a sequence of <width> bytes into <dest>
     // starting with most significant byte
     for (decltype(width) i = width - 1; i >= 0; --i) {
         unsigned char raw_byte = (value >> (i * 8)) & 0xFF;
-        dest << raw_byte;
+        dest.Write(raw_byte);
     }
 }
 
@@ -237,7 +217,7 @@ void XrefTable::Add(XrefEntryBasePtr entry) {
     // Xref table can only stored free and used entries
     assert((is_free || is_used) && "Adding unsupported entry type into the xref table");
     if (!is_free && !is_used) {
-        throw GeneralException("Adding unsupported entry type into the xref table");
+        throw ObjectMissingException("Adding unsupported entry type into the xref table");
     }
 
     // Perform the addition
@@ -246,50 +226,20 @@ void XrefTable::Add(XrefEntryBasePtr entry) {
 
 void XrefBase::Add(XrefEntryBasePtr entry) {
 
-    // Try to insert new entry into the list
-    auto result = _entries.insert(entry);
+    // insert_or_assign overwrites on conflict, matching previous behavior
+    _entries.insert_or_assign(entry->GetObjectNumber(), entry);
 
-    // The pair::second element in the pair is set to true if a new element was inserted
-    // or false if an equivalent key already existed.
-    if (!result.second) {
-
-        // TODO: Add overwrite flag, currently it is always overwriting
-
-        // Remove the item as there was a conflict
-        bool removed = Remove(entry);
-        if (!removed) {
-            throw GeneralException("Failed to remove xref entry from the list");
-        }
-
-        // Retry the insertion
-        auto retry_result = _entries.insert(entry);
-        if (!retry_result.second) {
-            throw GeneralException("Failed to insert xref entry into the list");
-        }
-    }
-
-    entry->Subscribe(this);
-    OnChanged();
+    IncrementVersion();
 }
 
-bool XrefBase::Remove(XrefEntryBasePtr entry) {
-    auto found = _entries.find(entry);
-    if (found == _entries.end()) {
-        return false;
+bool XrefBase::Remove(types::big_uint obj_number) {
+    bool removed = _entries.erase(obj_number) > 0;
+
+    if (removed) {
+        IncrementVersion();
     }
 
-    // Store the item reference
-    auto backup_item = *found;
-
-    // Erase the entry
-    _entries.erase(found);
-
-    // Access the backed up item
-    // After erase the "found" is no longer available
-    backup_item->Unsubscribe(this);
-
-    OnChanged();
-    return true;
+    return removed;
 }
 
 types::size_type XrefBase::GetSize(void) const noexcept {
@@ -297,30 +247,37 @@ types::size_type XrefBase::GetSize(void) const noexcept {
 }
 
 XrefEntryBasePtr XrefBase::Find(types::big_uint obj_number) const {
-    XrefFreeEntryPtr temp = make_deferred<XrefFreeEntry>(obj_number, static_cast<types::ushort>(0));
-
-    auto found = _entries.find(temp);
+    auto found = _entries.find(obj_number);
     if (found == _entries.end()) {
         spdlog::error("Xref entry {} was not found in the list", obj_number);
         throw ObjectMissingException(obj_number);
     }
 
-    return *found;
+    return found->second;
+}
+
+bool XrefBase::TryFind(types::big_uint obj_number, OutputXrefEntryBasePtr& result) const {
+    auto found = _entries.find(obj_number);
+    if (found == _entries.end()) {
+        return false;
+    }
+
+    result = found->second;
+    return true;
 }
 
 bool XrefBase::Contains(types::big_uint obj_number) const {
-    XrefFreeEntryPtr temp = make_deferred<XrefFreeEntry>(obj_number, static_cast<types::ushort>(0));
-
-    auto found = _entries.find(temp);
-    return (found != _entries.end());
+    return _entries.find(obj_number) != _entries.end();
 }
 
 std::vector<XrefEntryBasePtr> XrefBase::Entries(void) const {
     std::vector<XrefEntryBasePtr> result;
     result.reserve(_entries.size());
-    std::for_each(_entries.begin(), _entries.end(), [&result](const XrefEntryBasePtr& item) { result.push_back(item); });
+    for (auto& [obj_num, entry] : _entries) {
+        result.push_back(entry);
+    }
 
-    // Since we moved to unordered map, sort is required
+    // Since we use unordered map, sort is required
     std::sort(
         result.begin(),
         result.end(),
@@ -356,12 +313,29 @@ XrefBase::iterator XrefBase::erase(const_iterator pos) {
 }
 
 XrefEntryBasePtr XrefTable::Find(types::big_uint obj_number) const {
-    bool contains = XrefBase::Contains(obj_number);
-    if (!contains && HasHybridStream()) {
+    OutputXrefEntryBasePtr found;
+    if (!XrefBase::TryFind(obj_number, found) && HasHybridStream()) {
         return m_xref_stm->Find(obj_number);
     }
 
-    return XrefBase::Find(obj_number);
+    if (found.empty()) {
+        spdlog::error("Xref entry {} was not found in the list", obj_number);
+        throw ObjectMissingException(obj_number);
+    }
+
+    return *found;
+}
+
+bool XrefTable::TryFind(types::big_uint obj_number, OutputXrefEntryBasePtr& result) const {
+    if (XrefBase::TryFind(obj_number, result)) {
+        return true;
+    }
+
+    if (HasHybridStream()) {
+        return m_xref_stm->TryFind(obj_number, result);
+    }
+
+    return false;
 }
 
 bool XrefTable::Contains(types::big_uint obj_number) const {
@@ -391,7 +365,7 @@ XrefStreamPtr XrefTable::GetHybridStream(void) const {
     assert(has_stream && "Trying to access hybrid stream, that was not set");
 
     if (!has_stream) {
-        throw GeneralException("Trying to access hybrid stream, that was not set");
+        throw ObjectMissingException("Trying to access hybrid stream, that was not set");
     }
 
     return m_xref_stm;
@@ -421,7 +395,7 @@ void XrefStream::SetOffset(types::stream_offset offset) {
     stream->SetOffset(offset);
 }
 
-bool XrefStream::IsDirty(void) const noexcept {
+bool XrefStream::IsDirty(void) const {
     auto stream = GetStreamObject();
     return stream->IsDirty();
 }
@@ -447,16 +421,15 @@ StreamObjectPtr XrefStream::GetStreamObject(void) const {
     assert(has_stream && "Trying to access stream object, that was not set");
 
     if (!has_stream) {
-        throw GeneralException("Trying to access stream object, that was not set");
+        throw ObjectMissingException("Trying to access stream object, that was not set");
     }
 
     return _stream;
 }
 
 void XrefStream::SetStreamObject(StreamObjectPtr stream) {
-    _stream->Unsubscribe(this);
     _stream = stream;
-    _stream->Subscribe(this);
+    IncrementVersion();
 }
 
 } // syntax

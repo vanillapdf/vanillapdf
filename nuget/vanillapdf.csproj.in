@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>vanillapdf</PackageId>
-    <Version>@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_STRING@@VANILLAPDF_VERSION_BUILD_SUFFIX@</Version>
+    <Version>@VANILLAPDF_VERSION@</Version>
     <Title>vanillapdf</Title>
     <Authors>Vanilla.PDF Labs s.r.o.</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -18,12 +18,13 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="vanillapdf.runtime.linux-x64" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_STRING@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
-    <PackageReference Include="vanillapdf.runtime.linux-arm64" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_STRING@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
-    <PackageReference Include="vanillapdf.runtime.win-x86" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_STRING@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
-    <PackageReference Include="vanillapdf.runtime.win-x64" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_STRING@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
-    <PackageReference Include="vanillapdf.runtime.osx-x64" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_STRING@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
-    <PackageReference Include="vanillapdf.runtime.osx-arm64" Version="@VANILLAPDF_VERSION_MAJOR@.@VANILLAPDF_VERSION_MINOR@.@VANILLAPDF_VERSION_PATCH@@VANILLAPDF_VERSION_BUILD_STRING@@VANILLAPDF_VERSION_BUILD_SUFFIX@" />
+    <PackageReference Include="vanillapdf.runtime.linux-x64" Version="@VANILLAPDF_VERSION@" />
+    <PackageReference Include="vanillapdf.runtime.linux-arm64" Version="@VANILLAPDF_VERSION@" />
+    <PackageReference Include="vanillapdf.runtime.win-x86" Version="@VANILLAPDF_VERSION@" />
+    <PackageReference Include="vanillapdf.runtime.win-x64" Version="@VANILLAPDF_VERSION@" />
+    <PackageReference Include="vanillapdf.runtime.win-arm64" Version="@VANILLAPDF_VERSION@" />
+    <PackageReference Include="vanillapdf.runtime.osx-x64" Version="@VANILLAPDF_VERSION@" />
+    <PackageReference Include="vanillapdf.runtime.osx-arm64" Version="@VANILLAPDF_VERSION@" />
   </ItemGroup>
   <ItemGroup>
     <None Include="../include/**/*.h" Pack="true" PackagePath="build/native/include" />

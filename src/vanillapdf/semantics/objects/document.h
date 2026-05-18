@@ -23,9 +23,11 @@ namespace semantics {
 class Document : public IUnknown, public IWeakReferenceable<Document> {
 public:
     static DocumentPtr Open(const std::string& path);
+    static DocumentPtr Open(const std::string& path, IOStrategy strategy);
     static DocumentPtr OpenFile(syntax::FilePtr holder);
 
     static DocumentPtr Create(const std::string& path);
+    static DocumentPtr Create(const std::string& path, IOStrategy strategy);
     static DocumentPtr CreateFile(syntax::FilePtr holder);
 
     static syntax::ArrayObjectPtr<syntax::HexadecimalStringObjectPtr> GenerateDocumentId();

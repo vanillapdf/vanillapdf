@@ -1,13 +1,13 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
   pull_request:
     paths:
       - '.github/workflows/release.yml'
       - '.github/workflows/build-nuget.yml'
+      - '.github/workflows/build-deb-package.yml'
+      - '.github/workflows/build-rpm-package.yml'
+      - '.github/workflows/build-brew-package.yml'
       - '.github/workflows/github-release.yml'
       - '.github/workflows/github-pages.yml'
       - '.github/workflows/create-vcpkg-pr.yml'
@@ -15,24 +15,22 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag name to simulate (e.g. v2.3.0)"
+        description: "Tag name to create (e.g. v2.3.0-alpha.2)"
         required: true
         type: string
       dry_run:
-        description: "Dry run - validate workflow without publishing"
+        description: "Dry run - validate workflow without publishing or tagging"
         required: false
         type: boolean
         default: true
 
-permissions:
-  contents: write
-  packages: write
-  pages: write
-  id-token: write
+permissions: {}
 
 jobs:
   prepare:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       tag: ${{ steps.parse.outputs.tag }}
       latest_tag: ${{ steps.parse.outputs.latest_tag }}
@@ -41,7 +39,7 @@ jobs:
       dry_run: ${{ steps.parse.outputs.dry_run }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
 
@@ -69,20 +67,18 @@ jobs:
             EXTRA="${BASH_REMATCH[1]}"
           fi
           if [[ -n "$EXTRA" ]]; then
-            echo "build_suffix=-${EXTRA#-}" >> "$GITHUB_OUTPUT"
+            echo "build_suffix=${EXTRA#-}" >> "$GITHUB_OUTPUT"
             echo "prerelease=true" >> "$GITHUB_OUTPUT"
           else
             echo "build_suffix=" >> "$GITHUB_OUTPUT"
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
           fi
 
-          # pull_request and workflow_dispatch are always dry_run; tag push is never dry_run
+          # pull_request is always dry_run; workflow_dispatch uses the input value
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "dry_run=true" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
           else
-            echo "dry_run=false" >> "$GITHUB_OUTPUT"
+            echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
           fi
 
           # Find the latest real tag for dry-run validation workflows
@@ -98,9 +94,11 @@ jobs:
 
   verify:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: prepare
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
       - name: Verify repository versions match tag
@@ -120,19 +118,51 @@ jobs:
 
   build-nuget:
     needs: [verify, prepare]
+    permissions:
+      contents: read
+      packages: read
     uses: ./.github/workflows/build-nuget.yml
+    with:
+      build_suffix: ${{ needs.prepare.outputs.build_suffix }}
+    secrets: inherit
+
+  build-deb:
+    needs: [verify, prepare]
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-deb-package.yml
+    with:
+      build_suffix: ${{ needs.prepare.outputs.build_suffix }}
+    secrets: inherit
+
+  build-rpm:
+    needs: [verify, prepare]
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-rpm-package.yml
+    with:
+      build_suffix: ${{ needs.prepare.outputs.build_suffix }}
+    secrets: inherit
+
+  build-dmg:
+    needs: [verify, prepare]
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-brew-package.yml
     with:
       build_suffix: ${{ needs.prepare.outputs.build_suffix }}
     secrets: inherit
 
   nuget-staging:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     environment: staging
     needs: [build-nuget, prepare]
     if: needs.prepare.outputs.dry_run == 'false'
     steps:
       - name: Download NuGet packages
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
         with:
           path: ./nupkgs
       - name: Push to GitHub Packages
@@ -145,6 +175,10 @@ jobs:
   dry-run-pages:
     needs: [build-nuget, prepare]
     if: needs.prepare.outputs.dry_run == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     uses: ./.github/workflows/github-pages.yml
     with:
       deploy: false
@@ -153,6 +187,8 @@ jobs:
   dry-run-vcpkg:
     needs: [build-nuget, prepare]
     if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'true'
+    permissions:
+      contents: read
     uses: ./.github/workflows/create-vcpkg-pr.yml
     with:
       tag: ${{ needs.prepare.outputs.latest_tag }}
@@ -162,6 +198,8 @@ jobs:
   dry-run-conan:
     needs: [build-nuget, prepare]
     if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'true'
+    permissions:
+      contents: read
     uses: ./.github/workflows/create-conan-pr.yml
     with:
       tag: ${{ needs.prepare.outputs.latest_tag }}
@@ -170,7 +208,8 @@ jobs:
 
   dry-run-report:
     runs-on: ubuntu-latest
-    needs: [build-nuget, dry-run-pages, dry-run-vcpkg, dry-run-conan, prepare]
+    permissions: {}
+    needs: [build-nuget, build-deb, build-rpm, build-dmg, dry-run-pages, dry-run-vcpkg, dry-run-conan, prepare]
     if: always() && needs.prepare.outputs.dry_run == 'true'
     steps:
       - name: Dry run summary
@@ -182,6 +221,9 @@ jobs:
           echo "Prerelease: ${{ needs.prepare.outputs.prerelease }}"
           echo ""
           echo "NuGet build: ${{ needs.build-nuget.result }}"
+          echo "DEB build: ${{ needs.build-deb.result }}"
+          echo "RPM build: ${{ needs.build-rpm.result }}"
+          echo "DMG build: ${{ needs.build-dmg.result }}"
           echo "GitHub Pages build: ${{ needs.dry-run-pages.result }}"
           if [ "${{ needs.prepare.outputs.prerelease }}" = "false" ]; then
             echo "vcpkg PR (dry run): ${{ needs.dry-run-vcpkg.result }}"
@@ -193,6 +235,9 @@ jobs:
           echo ""
           FAILED=false
           if [ "${{ needs.build-nuget.result }}" != "success" ]; then FAILED=true; fi
+          if [ "${{ needs.build-deb.result }}" != "success" ]; then FAILED=true; fi
+          if [ "${{ needs.build-rpm.result }}" != "success" ]; then FAILED=true; fi
+          if [ "${{ needs.build-dmg.result }}" != "success" ]; then FAILED=true; fi
           if [ "${{ needs.dry-run-pages.result }}" != "success" ]; then FAILED=true; fi
           if [ "${{ needs.prepare.outputs.prerelease }}" = "false" ]; then
             if [ "${{ needs.dry-run-vcpkg.result }}" != "success" ]; then FAILED=true; fi
@@ -206,20 +251,55 @@ jobs:
 
   production-gate:
     runs-on: ubuntu-latest
-    needs: nuget-staging
-    if: needs.prepare.outputs.dry_run == 'false'
+    permissions: {}
+    needs: [nuget-staging, build-deb, build-rpm, build-dmg, prepare]
     environment: production
+    outputs:
+      tag: ${{ needs.prepare.outputs.tag }}
+      latest_tag: ${{ needs.prepare.outputs.latest_tag }}
+      prerelease: ${{ needs.prepare.outputs.prerelease }}
     steps:
       - run: echo "Awaiting production approval"
 
+  create-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: production-gate
+    outputs:
+      tag: ${{ needs.production-gate.outputs.tag }}
+      latest_tag: ${{ needs.production-gate.outputs.latest_tag }}
+      prerelease: ${{ needs.production-gate.outputs.prerelease }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Create and push tag
+        run: |
+          TAG="${{ needs.production-gate.outputs.tag }}"
+          if git tag -l "$TAG" | grep -q "^${TAG}$"; then
+            echo "::error::Tag $TAG already exists"
+            exit 1
+          fi
+          git tag "$TAG"
+          git push origin "$TAG"
+
   publish-nuget:
     runs-on: ubuntu-latest
-    needs: [production-gate, prepare]
-    if: needs.prepare.outputs.dry_run == 'false'
+    permissions: {}
+    needs: create-tag
     environment: production
     steps:
       - name: Download NuGet packages
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
         with:
           path: ./nupkgs
       - name: Push to NuGet.org
@@ -230,58 +310,160 @@ jobs:
             --skip-duplicate
 
   github-pages:
-    needs: [production-gate, prepare]
-    if: needs.prepare.outputs.dry_run == 'false'
+    needs: create-tag
+    # Only deploy documentation for official releases, not pre-releases (alpha, beta, rc)
+    if: needs.create-tag.outputs.prerelease == 'false'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     uses: ./.github/workflows/github-pages.yml
     with:
       deploy: true
     secrets: inherit
 
   github-release:
-    needs: [production-gate, prepare]
-    if: needs.prepare.outputs.dry_run == 'false'
+    needs: create-tag
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     uses: ./.github/workflows/github-release.yml
     with:
-      tag: ${{ needs.prepare.outputs.tag }}
-      prerelease: ${{ fromJSON(needs.prepare.outputs.prerelease) }}
+      tag: ${{ needs.create-tag.outputs.tag }}
+      prerelease: ${{ fromJSON(needs.create-tag.outputs.prerelease) }}
+      latest: ${{ needs.create-tag.outputs.tag == needs.create-tag.outputs.latest_tag }}
     secrets: inherit
 
   vcpkg-pr:
-    needs: [production-gate, prepare]
+    needs: create-tag
     # Only create vcpkg PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
+    if: needs.create-tag.outputs.prerelease == 'false'
+    permissions:
+      contents: read
     uses: ./.github/workflows/create-vcpkg-pr.yml
     with:
-      tag: ${{ needs.prepare.outputs.tag }}
+      tag: ${{ needs.create-tag.outputs.tag }}
     secrets: inherit
 
   homebrew-pr:
-    needs: [production-gate, prepare]
+    needs: create-tag
     # Only create Homebrew PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.prepare.outputs.prerelease == 'false'
+    if: needs.create-tag.outputs.prerelease == 'false'
+    permissions:
+      contents: read
     uses: ./.github/workflows/update-homebrew.yml
     with:
-      tag: ${{ needs.prepare.outputs.tag }}
+      tag: ${{ needs.create-tag.outputs.tag }}
     secrets: inherit
 
   conan-pr:
-    needs: [production-gate, prepare]
+    needs: create-tag
     # Only create Conan Center PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
+    if: needs.create-tag.outputs.prerelease == 'false'
+    permissions:
+      contents: read
     uses: ./.github/workflows/create-conan-pr.yml
     with:
-      tag: ${{ needs.prepare.outputs.tag }}
+      tag: ${{ needs.create-tag.outputs.tag }}
     secrets: inherit
+
+  attest:
+    name: Attest Release Artifacts
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      attestations: write
+    needs: [publish-nuget, github-release]
+    steps:
+      - name: Download NuGet packages
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          path: ./nupkgs
+          merge-multiple: true
+
+      - name: Download DEB package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-deb
+          path: ./packages/deb
+
+      - name: Download RPM package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-rpm
+          path: ./packages/rpm
+
+      - name: Download DMG package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-dmg
+          path: ./packages/dmg
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32  # v4.1.0
+        with:
+          subject-path: |
+            ./nupkgs/**/*.nupkg
+            ./packages/deb/*.deb
+            ./packages/rpm/*.rpm
+            ./packages/dmg/*.dmg
+
+  verify-attest:
+    name: Verify Artifact Attestations
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    needs: attest
+    steps:
+      - name: Download NuGet packages
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          path: ./nupkgs
+          merge-multiple: true
+
+      - name: Download DEB package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-deb
+          path: ./packages/deb
+
+      - name: Download RPM package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-rpm
+          path: ./packages/rpm
+
+      - name: Download DMG package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: vanillapdf-dmg
+          path: ./packages/dmg
+
+      - name: Verify attestations
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          find ./nupkgs -name "*.nupkg" | while read -r pkg; do
+            echo "Verifying: $pkg"
+            gh attestation verify "$pkg" --repo "${{ github.repository }}"
+          done
+          find ./packages -name "*.deb" -o -name "*.rpm" -o -name "*.dmg" | while read -r pkg; do
+            echo "Verifying: $pkg"
+            gh attestation verify "$pkg" --repo "${{ github.repository }}"
+          done
 
   update-port:
     name: Update Local Port
     runs-on: ubuntu-latest
-    needs: [github-release, prepare]
+    permissions:
+      contents: read
+    needs: [github-release, create-tag]
     # Only update port for official releases, not pre-releases
-    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false'
+    if: needs.create-tag.outputs.prerelease == 'false'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
           token: ${{ secrets.BOT_TOKEN }}
@@ -292,7 +474,7 @@ jobs:
           git config --global user.email "info@vanillapdf.com"
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
         with:
           python-version: '3.x'
 
@@ -303,7 +485,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          VERSION="${{ needs.prepare.outputs.tag }}"
+          VERSION="${{ needs.create-tag.outputs.tag }}"
           VERSION="${VERSION#v}"
           BRANCH="release/port-${VERSION}"
 
@@ -330,7 +512,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          VERSION="${{ needs.prepare.outputs.tag }}"
+          VERSION="${{ needs.create-tag.outputs.tag }}"
           VERSION="${VERSION#v}"
 
           # Get all release tags and find the latest version

@@ -4,14 +4,15 @@ Examples
 API Usage Examples
 ------------------
 
-- `merge.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/merge.c>`_ -- File merge
-- `extract.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/extract.c>`_ -- Image extraction
-- `filter.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/filter.c>`_ -- Compression filters
-- `sign.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign.c>`_ -- Digital signature
-- `sign_custom.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign_custom.c>`_ -- Custom digital signature using interface callbacks
-- `verify.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/verify.c>`_ -- Signature verification
-- `decrypt.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/decrypt.c>`_ -- File decryption
-- `write_custom.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/write_custom.c>`_ -- Custom file writer callbacks
+- `merge.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/merge.c>`_ — File merge
+- `extract.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/extract.c>`_ — Image extraction
+- `filter.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/filter.c>`_ — Compression filters
+- `sign.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign.c>`_ — Digital signature
+- `sign_custom.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign_custom.c>`_ — Custom digital signature using interface callbacks
+- `verify.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/verify.c>`_ — Signature verification
+- `validate.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/validate.c>`_ — File structure validation
+- `decrypt.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/decrypt.c>`_ — File decryption
+- `write_custom.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/write_custom.c>`_ — Custom file writer callbacks
 
 Utilities
 ---------
@@ -59,6 +60,15 @@ Print date
    :language: c
    :start-after: //! [Print date]
    :end-before: //! [Print date]
+   :dedent:
+
+Validate file structure
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../src/vanillapdf.tools/validate.c
+   :language: c
+   :start-after: //! [Validate file structure]
+   :end-before: //! [Validate file structure]
    :dedent:
 
 Enumerate xref

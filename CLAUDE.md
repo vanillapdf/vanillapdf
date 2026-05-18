@@ -6,18 +6,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Configure and build (Windows)
-cmake --preset windows-x64-msvc-17
-cmake --build --preset windows-x64-msvc-17
+cmake --preset windows-x64-msvc-18
+cmake --build --preset windows-x64-msvc-18
 
 # Configure and build (Linux/macOS)
 cmake --preset linux-x64-gcc      # or macos-arm64
 cmake --build --preset linux-x64-gcc
 
 # Run all tests (Windows - must specify build config)
-ctest --preset windows-x64-msvc-17 --build-config Debug
+ctest --preset windows-x64-msvc-18 --build-config Debug
 
 # Run specific test
-ctest --preset windows-x64-msvc-17 --build-config Debug -R "TestName" --output-on-failure
+ctest --preset windows-x64-msvc-18 --build-config Debug -R "TestName" --output-on-failure
 
 # Initialize submodules (required before first build)
 git submodule sync --recursive && git submodule update --init --recursive
@@ -39,7 +39,14 @@ git submodule sync --recursive && git submodule update --init --recursive
 **ALL changes MUST go through a branch and pull request:**
 - NEVER commit directly to `main` or `release/*` branches (protected)
 - Create a new branch for every change: `feature/description` or `fix/description`
+- The `release/` prefix is **reserved for release branches only** (e.g. `release/2.1`, `release/2.2`). Never use it for feature, bump, or fix branches.
 - Base branches on `main` (or `release/*` for hotfixes)
+
+**`git push` must always be a separate, explicit command:**
+- NEVER chain `git push` with `&&` after a commit or other commands
+- Push triggers CI pipelines; it must be a deliberate, standalone action
+- Wrong: `git add ... && git commit -m "..." && git push`
+- Right: commit first, then push as a separate step after confirming
 
 ## GitHub Issues
 
@@ -57,6 +64,29 @@ Example:
 ```bash
 gh issue create --title "Fix iterator lifetime" --label "bug,technical-debt" --body "..."
 ```
+
+## GitHub Actions Security (CRITICAL)
+
+**Always pin GitHub Actions to full commit SHAs**, never to mutable tags like `@v4`. This prevents supply-chain attacks and satisfies OpenSSF Scorecard's Pinned-Dependencies check.
+
+```yaml
+# BAD — mutable tag, flagged by Scorecard
+uses: actions/checkout@v4
+
+# GOOD — immutable SHA with tag comment
+uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+```
+
+To resolve a tag to its commit SHA:
+```bash
+# Lightweight tags: SHA is the commit directly
+gh api repos/OWNER/REPO/git/refs/tags/TAG --jq '.object.sha'
+
+# Annotated tags: dereference the tag object to get the commit SHA
+gh api repos/OWNER/REPO/git/tags/$(gh api repos/OWNER/REPO/git/refs/tags/TAG --jq '.object.sha') --jq '.object.sha'
+```
+
+Always include the original tag name as a comment (`# v4.2.2`) so the pinned version remains human-readable.
 
 ## Automation Bot
 
@@ -85,7 +115,7 @@ For vcpkg port development, work in `ports/vanillapdf/` (not `external/vcpkg/por
 - Uses precompiled headers (`precompiled.h`)
 - Visual Studio .natvis files for debugging support
 - Follow existing patterns in similar classes
-- Do not insert structurally different code into a group of similarly-looking lines without separating it with a blank line and a comment. Uniform blocks (e.g., a series of assignments) should stay visually cohesive.
+- See `.claude/rules/coding-style.md` for detailed coding style preferences
 
 ### Contribution Guidelines
 

@@ -1,5 +1,6 @@
 #include "precompiled.h"
 #include "ascii_85_decode_filter.h"
+#include "syntax/exceptions/syntax_exceptions.h"
 #include "utils/character.h"
 
 namespace vanillapdf {
@@ -18,16 +19,15 @@ BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size le
     // Iterate over all elements
     for (decltype(length) i = 0; i < length; ++i) {
         auto meta = src->Get();
-        auto next = src->Peek();
 
         if (meta == std::char_traits<char>::eof()) {
-            throw GeneralException("Unexpected end of file inside stream");
+            throw ParseException("Unexpected end of file inside stream");
         }
 
         auto ch = ValueConvertUtils::SafeConvert<unsigned char>(meta);
 
         // End of sequence
-        if (ch == '~' && next == '>') {
+        if (ch == '~' && src->Peek() == '>') {
             break;
         }
 
@@ -47,7 +47,7 @@ BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size le
 
         // Character outside of base 85 range
         if (ch < '!' || ch > 'u') {
-            throw GeneralException("Illegal character in ascii 85 filter: " + std::to_string(ch));
+            throw ParseException("Illegal character in ascii 85 filter: " + std::to_string(ch));
         }
 
         // Insert to our sequence

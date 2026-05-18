@@ -41,7 +41,7 @@ types::size_type SignatureVerificationResult::GetCertificateChainCount() const {
 
 BufferPtr SignatureVerificationResult::GetCertificateChainAt(types::size_type index) const {
     if (index >= m_certificate_chain.size()) {
-        LOG_ERROR_AND_THROW_GENERAL("Certificate chain index out of range: {}", index);
+        LOG_ERROR_AND_THROW(CryptoErrorException,"Certificate chain index out of range: {}", index);
     }
     return m_certificate_chain[index];
 }
