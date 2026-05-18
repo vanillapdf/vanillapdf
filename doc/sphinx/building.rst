@@ -230,7 +230,11 @@ Development options
 
 - ``-DVANILLAPDF_ENABLE_COVERAGE=ON`` -- Enable code coverage instrumentation (GCC/Clang only)
 - ``-DVANILLAPDF_FORCE_32_BIT=ON`` -- Force 32-bit output binary regardless of architecture
-- ``-DVANILLAPDF_ENABLE_STACK_SANITIZER=ON`` -- Enable address sanitizer for memory safety testing
+- ``-DVANILLAPDF_ENABLE_ASAN=ON`` -- Enable AddressSanitizer (use with Debug builds)
+- ``-DVANILLAPDF_ENABLE_UBSAN=ON`` -- Enable UndefinedBehaviorSanitizer (use with Debug builds)
+- ``-DVANILLAPDF_ENABLE_TSAN=ON`` -- Enable ThreadSanitizer (use with Debug builds)
+
+ASan and TSan cannot be enabled simultaneously. UBSan can be combined with either.
 
 External dependency options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -273,6 +277,31 @@ so you must specify a build configuration:
 
    ctest --preset windows-x64-msvc-17 --build-config Debug -R "unittest"
    ctest --preset windows-x64-msvc-17 --build-config Release -R "unittest"
+
+Fuzzing
+^^^^^^^
+
+Vanilla.PDF includes libFuzzer-based fuzz targets for the parser, content
+streams, and decompression filters (ASCII85, ASCIIHex, Flate, DCT, JPX).
+Sources live in ``src/vanillapdf.fuzzer/``. Enable with Clang:
+
+.. code-block:: bash
+
+   cmake --preset linux-x64-clang -DVANILLAPDF_ENABLE_FUZZER=ON
+   cmake --build --preset linux-x64-clang
+   ./build/.../fuzz_file_parse src/vanillapdf.fuzzer/corpus/file_parse/
+
+External conformance check
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Vanilla.PDF runs an external PDF conformance suite (qpdf-based) over its test
+corpus to catch malformed output. The script lives at
+``scripts/conformance_check.py`` and runs automatically in CI via
+``.github/workflows/conformance-check.yml``. To run locally:
+
+.. code-block:: bash
+
+   python scripts/conformance_check.py --config scripts/conformance_check.cfg
 
 Code coverage
 ^^^^^^^^^^^^^

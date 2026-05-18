@@ -44,8 +44,10 @@ entries. It is not a rendering engine.
 **What it does:**
 
 - Create, open, modify, and save PDF documents
-- Add and verify CMS (PKCS#7) digital signatures
-- Encrypt and decrypt with AES/RC4 (password and certificate-based)
+- Validate PDF file structure (xref, trailers, streams) and report issues
+- Add and verify CMS digital signatures with RSA, ECDSA (P-256/P-384/P-521), Ed25519, and Ed448
+- Encrypt and decrypt with AES/RC4 (password and certificate-based); compatible with FIPS-enabled OpenSSL
+- Fill and read interactive form fields
 - Extract embedded images (JPEG, JPEG2000)
 - Parse and encode content streams (PostScript-style page instructions)
 - Low-level access to XRef tables, indirect objects, and file trailers
@@ -73,16 +75,22 @@ Functionality
      - Generate PDFs with pages, text, images, and vector paths
    * - **Digital signatures**
      - C API, CLI
-     - Add CMS (PKCS#7) signatures using PKCS#12 keys or custom callbacks
+     - OpenSSL CMS signatures with RSA, ECDSA (P-256/P-384/P-521), Ed25519, and Ed448 using PKCS#12 keys or custom callbacks
    * - **Signature verification**
      - C API, CLI
      - Validate signatures with chain validation, weak-algorithm detection, and signing-time checks
+   * - **File structure validation**
+     - C API, CLI
+     - Walk xref tables, trailers, and streams to detect malformed or corrupt files
+   * - **Interactive forms**
+     - C API
+     - Read and write AcroForm field values (text, choice, checkbox, radio button)
    * - **Merge documents**
      - CLI
      - Combine multiple PDFs into a single file
    * - **Encryption / decryption**
      - CLI
-     - AES and RC4 with owner/user passwords; certificate-based decryption
+     - AES and RC4 with owner/user passwords; certificate-based decryption; compatible with FIPS-enabled OpenSSL
    * - **Image extraction**
      - CLI
      - Export embedded JPEG and JPEG2000 images from PDF streams
@@ -230,7 +238,7 @@ Supported platforms
      - Architectures
    * - Windows
      - Visual Studio 2022 (MSVC 17.x), Visual Studio 2026 (MSVC 18.x)
-     - x86, x64
+     - x86, x64, ARM64
    * - Linux
      - GCC 8.1+, Clang 10+
      - x64, ARM64, ARM

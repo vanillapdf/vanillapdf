@@ -127,8 +127,10 @@ vanillapdf-tools verify -f signed.pdf
 | **Create documents** | `Document_Create` | | Pages, text, images, vector paths |
 | **Digital signatures** | `Document_Sign` | `sign` | OpenSSL CMS — RSA, ECDSA (P-256/P-384/P-521), Ed25519, Ed448 via PKCS#12 keys or custom callbacks |
 | **Signature verification** | `DigitalSignatureExtensions_Verify` | `verify` | Chain validation, weak-algorithm detection, signing-time checks |
+| **File structure validation** | `FileStructureValidator_*` | `validate` | Walk xref/trailers/streams and report malformed files |
+| **Interactive forms** | `FormField_GetValue` / `_SetValue` | | Read/write AcroForm field values |
 | **Merge documents** | | `merge` | Combine multiple PDFs into one |
-| **Encryption** | | `encrypt` / `decrypt` | AES and RC4, owner/user passwords, certificate-based decryption |
+| **Encryption** | | `encrypt` / `decrypt` | AES and RC4, owner/user passwords, certificate-based decryption (FIPS-compatible) |
 | **Image extraction** | | `extract` | JPEG and JPEG2000 from PDF streams |
 | **Content streams** | `ContentStream_*` | `filter` | Parse and encode PostScript-style page content |
 | **Low-level parsing** | `File_Open` | | XRef tables, indirect objects, cross-reference streams |
@@ -154,7 +156,7 @@ The C++ core is hidden behind an ABI-stable ANSI C interface using opaque handle
 
 ## Thread Safety
 
-Vanilla.PDF is thread-safe. Key internal objects (dictionaries, streams, strings, indirect references) are protected by `std::recursive_mutex`, reference counting is atomic, and error context is stored in thread-local buffers so concurrent threads never interfere with each other.
+Vanilla.PDF is thread-safe. Key internal objects (dictionaries, streams, strings, indirect references, xref entries) own a `std::unique_ptr<std::recursive_mutex>`, reference counting is atomic, and error context is stored in thread-local buffers so concurrent threads never interfere with each other.
 
 See the [Architecture Guide](https://vanillapdf.readthedocs.io/en/latest/architecture.html) for implementation details.
 

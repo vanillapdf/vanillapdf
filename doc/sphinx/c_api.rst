@@ -48,6 +48,14 @@ Common handle types:
      - The page tree node containing all pages
    * - ``PageObjectHandle``
      - A single page (content stream, media box, annotations)
+   * - ``InteractiveFormHandle`` / ``FormFieldHandle``
+     - AcroForm tree and individual fields (read/write values)
+   * - ``FileStructureValidatorHandle``
+     - Walks the PDF structure and reports xref/trailer/stream issues
+   * - ``IoStrategyHandle``
+     - Pluggable backend for file I/O (in-memory buffer or file stream)
+   * - ``ObjectDiagnosticsHandle``
+     - Per-type allocation counters for leak detection in tests
    * - ``PKCS12KeyHandle``
      - A PKCS#12 key for signing
    * - ``SigningKeyHandle``
@@ -185,6 +193,23 @@ Usage with ``goto`` cleanup:
 
    The release function should not fail as long as the parameter is valid.
    The error code exists to keep the interface consistent.
+
+Leak detection
+^^^^^^^^^^^^^^
+
+For debugging missing ``_Release`` calls, the ObjectDiagnostics API reports
+the live allocation count per object type. Snapshot before and after a unit
+of work, compare, and any non-zero delta points at a leaked handle. See the
+``ObjectDiagnostics_*`` functions in ``c_object_diagnostics.h``.
+
+Text strings
+------------
+
+PDF text strings are not bare UTF-8; they use PDFDocEncoding by default and
+UTF-16BE when prefixed with a byte-order mark. The ``c_text_string_encoding.h``
+helpers (``TextStringEncoding_DetectEncoding``, ``TextStringEncoding_ToUtf8``,
+``TextStringEncoding_FromUtf8``) handle detection and conversion so callers can
+work with plain UTF-8 at the boundary.
 
 Error handling
 --------------

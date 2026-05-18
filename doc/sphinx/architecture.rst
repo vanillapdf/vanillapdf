@@ -211,13 +211,14 @@ The buffer is pre-allocated to avoid allocation failures when reporting
 out-of-memory errors.
 
 **Object-level locking.** Core PDF objects use ``std::recursive_mutex`` to
-protect concurrent access:
+protect concurrent access. Each object owns its mutex via
+``std::unique_ptr<std::recursive_mutex>``:
 
-- ``DictionaryObject`` -- ``std::shared_ptr<std::recursive_mutex>``
-- ``StreamObject`` -- ``std::shared_ptr<std::recursive_mutex>``
-- ``StringObjectBase`` (literal and hexadecimal) -- ``std::shared_ptr<std::recursive_mutex>``
-- ``IndirectReferenceObject`` -- ``std::recursive_mutex``
-- ``XrefUsedEntryBase`` -- ``std::shared_ptr<std::recursive_mutex>``
+- ``DictionaryObject``
+- ``StreamObject``
+- ``StringObjectBase`` (literal and hexadecimal)
+- ``IndirectReferenceObject``
+- ``XrefUsedEntryBase``
 
 **Reference counting is atomic.** ``IUnknown::m_ref_counter`` uses
 ``std::atomic<uint32_t>``, and ``WeakReferenceCounter::m_active`` uses
@@ -287,6 +288,11 @@ customize behavior without modifying the library itself.
    * - ``FileWriterObserverHandle``
      - Callback interface invoked during PDF file writing. Allows callers
        to monitor or modify the output process.
+   * - ``IoStrategyHandle``
+     - Pluggable file I/O backend. Two implementations ship in-box: an
+       in-memory ``MemoryBuffer`` strategy and a ``FileStream`` strategy
+       that reads from disk. Custom implementations can route reads through
+       arbitrary transports (e.g. encrypted blob stores, network).
 
 For signing, the standard approach uses PKCS#12 key files
 (`RFC 7292 <https://tools.ietf.org/html/rfc7292>`_):
@@ -318,11 +324,9 @@ two stream types:
 - ``InputStreamHandle`` -- for reading source files
 - ``OutputStreamHandle`` -- for writing output files
 
-.. note::
-
-   Stream interfaces may be made overridable in a future version, allowing
-   callers to provide custom I/O implementations for memory-mapped files,
-   network streams, or shared file access.
+For custom I/O backends (memory-mapped files, network streams, encrypted blob
+stores), implement ``IoStrategyHandle``. Two ship in-box: an in-memory buffer
+strategy and a file-stream strategy.
 
 Tokenizer
 ^^^^^^^^^
@@ -363,6 +367,23 @@ Indirect references
 referenced object. For example, ``StreamObjectHandle`` frequently stores its
 ``Length`` as an indirect reference. The file layer resolves these references
 transparently during parsing.
+
+Quality assurance
+-----------------
+
+Beyond the unit and integration test suites, the project runs two additional
+correctness lines:
+
+- **Fuzzing.** libFuzzer-based targets under ``src/vanillapdf.fuzzer/`` exercise
+  the parser, content streams, and decompression filters (Flate, DCT, JPX,
+  ASCII85, ASCIIHex) against a seed corpus. Continuously run via
+  ``.github/workflows/fuzzing.yml``.
+- **External conformance.** ``scripts/conformance_check.py`` runs a qpdf-based
+  PDF conformance suite over generated output to catch malformed files that
+  pass the library's own checks. Continuously run via
+  ``.github/workflows/conformance-check.yml``.
+
+Both feed back into the test corpus when they find issues.
 
 Dependencies
 ------------
