@@ -1,9 +1,6 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
   pull_request:
     paths:
       - '.github/workflows/release.yml'
@@ -18,11 +15,11 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag name to simulate (e.g. v2.3.0)"
+        description: "Tag name to create (e.g. v2.3.0-alpha.2)"
         required: true
         type: string
       dry_run:
-        description: "Dry run - validate workflow without publishing"
+        description: "Dry run - validate workflow without publishing or tagging"
         required: false
         type: boolean
         default: true
@@ -77,13 +74,11 @@ jobs:
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
           fi
 
-          # pull_request and workflow_dispatch are always dry_run; tag push is never dry_run
+          # pull_request is always dry_run; workflow_dispatch uses the input value
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "dry_run=true" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
           else
-            echo "dry_run=false" >> "$GITHUB_OUTPUT"
+            echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
           fi
 
           # Find the latest real tag for dry-run validation workflows
@@ -266,10 +261,41 @@ jobs:
     steps:
       - run: echo "Awaiting production approval"
 
+  create-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: production-gate
+    outputs:
+      tag: ${{ needs.production-gate.outputs.tag }}
+      latest_tag: ${{ needs.production-gate.outputs.latest_tag }}
+      prerelease: ${{ needs.production-gate.outputs.prerelease }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Create and push tag
+        run: |
+          TAG="${{ needs.production-gate.outputs.tag }}"
+          if git tag -l "$TAG" | grep -q "^${TAG}$"; then
+            echo "::error::Tag $TAG already exists"
+            exit 1
+          fi
+          git tag "$TAG"
+          git push origin "$TAG"
+
   publish-nuget:
     runs-on: ubuntu-latest
     permissions: {}
-    needs: production-gate
+    needs: create-tag
     environment: production
     steps:
       - name: Download NuGet packages
@@ -284,9 +310,9 @@ jobs:
             --skip-duplicate
 
   github-pages:
-    needs: production-gate
+    needs: create-tag
     # Only deploy documentation for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.production-gate.outputs.prerelease == 'false'
+    if: needs.create-tag.outputs.prerelease == 'false'
     permissions:
       contents: read
       pages: write
@@ -297,49 +323,49 @@ jobs:
     secrets: inherit
 
   github-release:
-    needs: production-gate
+    needs: create-tag
     permissions:
       contents: write
       id-token: write
       attestations: write
     uses: ./.github/workflows/github-release.yml
     with:
-      tag: ${{ needs.production-gate.outputs.tag }}
-      prerelease: ${{ fromJSON(needs.production-gate.outputs.prerelease) }}
-      latest: ${{ needs.production-gate.outputs.tag == needs.production-gate.outputs.latest_tag }}
+      tag: ${{ needs.create-tag.outputs.tag }}
+      prerelease: ${{ fromJSON(needs.create-tag.outputs.prerelease) }}
+      latest: ${{ needs.create-tag.outputs.tag == needs.create-tag.outputs.latest_tag }}
     secrets: inherit
 
   vcpkg-pr:
-    needs: production-gate
+    needs: create-tag
     # Only create vcpkg PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.production-gate.outputs.prerelease == 'false'
+    if: needs.create-tag.outputs.prerelease == 'false'
     permissions:
       contents: read
     uses: ./.github/workflows/create-vcpkg-pr.yml
     with:
-      tag: ${{ needs.production-gate.outputs.tag }}
+      tag: ${{ needs.create-tag.outputs.tag }}
     secrets: inherit
 
   homebrew-pr:
-    needs: production-gate
+    needs: create-tag
     # Only create Homebrew PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.production-gate.outputs.prerelease == 'false'
+    if: needs.create-tag.outputs.prerelease == 'false'
     permissions:
       contents: read
     uses: ./.github/workflows/update-homebrew.yml
     with:
-      tag: ${{ needs.production-gate.outputs.tag }}
+      tag: ${{ needs.create-tag.outputs.tag }}
     secrets: inherit
 
   conan-pr:
-    needs: production-gate
+    needs: create-tag
     # Only create Conan Center PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.production-gate.outputs.prerelease == 'false'
+    if: needs.create-tag.outputs.prerelease == 'false'
     permissions:
       contents: read
     uses: ./.github/workflows/create-conan-pr.yml
     with:
-      tag: ${{ needs.production-gate.outputs.tag }}
+      tag: ${{ needs.create-tag.outputs.tag }}
     secrets: inherit
 
   attest:
@@ -432,9 +458,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    needs: [github-release, production-gate]
+    needs: [github-release, create-tag]
     # Only update port for official releases, not pre-releases
-    if: needs.production-gate.outputs.prerelease == 'false'
+    if: needs.create-tag.outputs.prerelease == 'false'
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
@@ -459,7 +485,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          VERSION="${{ needs.production-gate.outputs.tag }}"
+          VERSION="${{ needs.create-tag.outputs.tag }}"
           VERSION="${VERSION#v}"
           BRANCH="release/port-${VERSION}"
 
@@ -486,7 +512,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          VERSION="${{ needs.production-gate.outputs.tag }}"
+          VERSION="${{ needs.create-tag.outputs.tag }}"
           VERSION="${VERSION#v}"
 
           # Get all release tags and find the latest version
