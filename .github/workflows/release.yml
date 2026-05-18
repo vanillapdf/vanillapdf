@@ -1,9 +1,6 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
   pull_request:
     paths:
       - '.github/workflows/release.yml'
@@ -14,11 +11,11 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag name to simulate (e.g. v2.2.0)"
+        description: "Tag name to create (e.g. v2.2.1)"
         required: true
         type: string
       dry_run:
-        description: "Dry run - validate workflow without publishing"
+        description: "Dry run - validate workflow without publishing or tagging"
         required: false
         type: boolean
         default: true
@@ -75,13 +72,11 @@ jobs:
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
           fi
 
-          # pull_request and workflow_dispatch are always dry_run; tag push is never dry_run
+          # pull_request is always dry_run; workflow_dispatch uses the input value
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "dry_run=true" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
           else
-            echo "dry_run=false" >> "$GITHUB_OUTPUT"
+            echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
           fi
 
           # Find the latest real tag for dry-run validation workflows
@@ -199,10 +194,40 @@ jobs:
     steps:
       - run: echo "Awaiting production approval"
 
+  create-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: [production-gate, prepare]
+    outputs:
+      tag: ${{ needs.prepare.outputs.tag }}
+      latest_tag: ${{ needs.prepare.outputs.latest_tag }}
+      prerelease: ${{ needs.prepare.outputs.prerelease }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "vanillapdf-bot"
+          git config --global user.email "info@vanillapdf.com"
+
+      - name: Create and push tag
+        run: |
+          TAG="${{ needs.prepare.outputs.tag }}"
+          if git tag -l "$TAG" | grep -q "^${TAG}$"; then
+            echo "::error::Tag $TAG already exists"
+            exit 1
+          fi
+          git tag "$TAG"
+          git push origin "$TAG"
+
   publish-nuget:
     runs-on: ubuntu-latest
-    needs: [production-gate, prepare]
-    if: needs.prepare.outputs.dry_run == 'false'
+    needs: create-tag
     environment: production
     steps:
       - name: Download NuGet packages
@@ -217,28 +242,27 @@ jobs:
             --skip-duplicate
 
   github-pages:
-    needs: [production-gate, prepare]
+    needs: create-tag
     # Only deploy documentation for official releases that are the latest version
-    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false' && needs.prepare.outputs.tag == needs.prepare.outputs.latest_tag
+    if: needs.create-tag.outputs.prerelease == 'false' && needs.create-tag.outputs.tag == needs.create-tag.outputs.latest_tag
     uses: ./.github/workflows/github-pages.yml
     with:
       deploy: true
     secrets: inherit
 
   github-release:
-    needs: [production-gate, prepare]
-    if: needs.prepare.outputs.dry_run == 'false'
+    needs: create-tag
     uses: ./.github/workflows/github-release.yml
     with:
-      tag: ${{ needs.prepare.outputs.tag }}
-      prerelease: ${{ fromJSON(needs.prepare.outputs.prerelease) }}
+      tag: ${{ needs.create-tag.outputs.tag }}
+      prerelease: ${{ fromJSON(needs.create-tag.outputs.prerelease) }}
     secrets: inherit
 
   vcpkg-pr:
-    needs: [production-gate, prepare]
+    needs: create-tag
     # Only create vcpkg PR for official releases that are the latest version
-    if: needs.prepare.outputs.prerelease == 'false' && needs.prepare.outputs.dry_run == 'false' && needs.prepare.outputs.tag == needs.prepare.outputs.latest_tag
+    if: needs.create-tag.outputs.prerelease == 'false' && needs.create-tag.outputs.tag == needs.create-tag.outputs.latest_tag
     uses: ./.github/workflows/create-vcpkg-pr.yml
     with:
-      tag: ${{ needs.prepare.outputs.tag }}
+      tag: ${{ needs.create-tag.outputs.tag }}
     secrets: inherit
