@@ -15,6 +15,8 @@
 #include "syntax/objects/dictionary_object.h"
 #include "syntax/objects/name_object.h"
 
+#include "utils/cached_value.h"
+
 #include <string>
 
 namespace vanillapdf {
@@ -36,6 +38,11 @@ public:
 
     bool GetDocumentCatalog(OutputCatalogPtr& result) const;
     bool GetDocumentInfo(OutputDocumentInfoPtr& result) const;
+
+private:
+    bool ResolveCatalog(OutputCatalogPtr& result) const;
+
+public:
 
     void Save(const std::string& path);
     void Save(syntax::FilePtr destination);
@@ -78,7 +85,7 @@ private:
 private:
     explicit Document(syntax::FilePtr holder);
 
-    mutable OutputCatalogPtr m_catalog;
+    CachedValue<OutputCatalogPtr> m_catalog;
 
     friend class SemanticUtils;
 };
