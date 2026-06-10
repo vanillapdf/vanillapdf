@@ -15,13 +15,15 @@
 
 ## Getting Started
 
-Install the NuGet package:
+Install the native NuGet package:
 
 ```
-dotnet add package vanillapdf.net
+dotnet add package vanillapdf
 ```
 
 The correct native runtime is included automatically. No additional setup is needed — the package handles native binary selection and deployment for your target platform.
+
+You can call the ABI-stable C API directly via P/Invoke. For an idiomatic, managed .NET wrapper, use the dedicated **[vanillapdf.net](https://github.com/vanillapdf/vanillapdf.net)** package instead.
 
 Refer to the [documentation](https://vanillapdf.readthedocs.io/) for usage examples and integration details.
 
