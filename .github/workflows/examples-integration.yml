@@ -226,9 +226,13 @@ jobs:
       - name: Update portfile to use current branch
         env:
           BRANCH: ${{ github.head_ref || github.ref_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./scripts/update_portfile_branch.sh "$BRANCH"
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VCPKG_KEEP_ENV_VARS: GITHUB_TOKEN
         run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=x64-linux
 
       - name: Configure CMake
@@ -273,9 +277,13 @@ jobs:
         shell: bash
         env:
           BRANCH: ${{ github.head_ref || github.ref_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./scripts/update_portfile_branch.sh "$BRANCH"
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VCPKG_KEEP_ENV_VARS: GITHUB_TOKEN
         run: .\external\vcpkg\vcpkg.exe install vanillapdf --head --overlay-ports=./ports --triplet=x64-windows
 
       - name: Configure CMake
@@ -314,9 +322,13 @@ jobs:
       - name: Update portfile to use current branch
         env:
           BRANCH: ${{ github.head_ref || github.ref_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./scripts/update_portfile_branch.sh "$BRANCH"
 
       - name: Install vanillapdf via vcpkg (classic mode with --head)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VCPKG_KEEP_ENV_VARS: GITHUB_TOKEN
         run: ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports --triplet=arm64-osx
 
       - name: Configure CMake
