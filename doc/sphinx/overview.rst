@@ -267,10 +267,10 @@ Package availability
      - No external tools; caller manages dependencies
    * - Conan
      - ``conan install --requires="vanillapdf/2.3.0"``
-     - Via Conan Center
+     - Coming soon; not yet on Conan Center
    * - Homebrew
      - ``brew install vanillapdf``
-     - macOS; uses system dependencies
+     - Coming soon; macOS formula not yet live
    * - NuGet
      - ``dotnet add package vanillapdf.net``
      - .NET interop with native runtime

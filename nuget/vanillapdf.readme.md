@@ -11,7 +11,7 @@
 - 🔏 **Sign & verify** digital signatures (CMS/PKCS#7) with certificate chain validation
 - 🔒 **Encrypt & decrypt** with AES or RC4 using passwords or certificates
 - ⚙️ **ABI-stable C API** — callable via P/Invoke from C#, F#, or any .NET language
-- 🧵 **Thread-safe** — no global state, process documents in parallel without locking
+- 🧵 **Thread-safe** — no global state; synchronization is handled internally
 
 ## Getting Started
 

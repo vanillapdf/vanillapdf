@@ -106,6 +106,11 @@ Run it:
 Conan
 -----
 
+.. note::
+
+   **Coming soon.** The ``vanillapdf`` package is not yet published to Conan
+   Center. The instructions below will apply once it is available.
+
 Install via `Conan <https://conan.io/>`_:
 
 .. code-block:: bash
@@ -136,6 +141,11 @@ A working Conan integration example is available in
 
 Homebrew (macOS)
 ----------------
+
+.. note::
+
+   **Coming soon.** The Homebrew formula is not yet live in Homebrew core. The
+   instructions below will apply once it is available.
 
 Install via `Homebrew <https://brew.sh/>`_:
 

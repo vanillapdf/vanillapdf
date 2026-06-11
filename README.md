@@ -1,13 +1,12 @@
 # Vanilla.PDF – The Ultimate C++ PDF Toolkit
 
-[![Build](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml)
-[![Coverage](https://codecov.io/gh/vanillapdf/vanillapdf/branch/main/graph/badge.svg?token=1UO4W5XGTL)](https://codecov.io/gh/vanillapdf/vanillapdf)
-[![Fuzzing](https://github.com/vanillapdf/vanillapdf/actions/workflows/fuzzing.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/fuzzing.yml)
-[![CodeQL](https://github.com/vanillapdf/vanillapdf/actions/workflows/codeql.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/codeql.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/vanillapdf/vanillapdf/badge)](https://scorecard.dev/viewer/?uri=github.com/vanillapdf/vanillapdf)
-[![Docs](https://readthedocs.org/projects/vanillapdf/badge/?version=latest)](https://vanillapdf.readthedocs.io/)
-[![NuGet](https://img.shields.io/nuget/v/vanillapdf?color=blue)](https://www.nuget.org/packages/vanillapdf)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE.txt)
+<div align="center">
+
+| Distribution | CI & Quality | Security |
+|:---:|:---:|:---:|
+| [![NuGet](https://img.shields.io/nuget/v/vanillapdf?color=blue)](https://www.nuget.org/packages/vanillapdf) [![Docs](https://readthedocs.org/projects/vanillapdf/badge/?version=latest)](https://vanillapdf.readthedocs.io/) [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE.txt) | [![Build](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml) [![Coverage](https://codecov.io/gh/vanillapdf/vanillapdf/branch/main/graph/badge.svg?token=1UO4W5XGTL)](https://codecov.io/gh/vanillapdf/vanillapdf) [![Fuzzing](https://github.com/vanillapdf/vanillapdf/actions/workflows/fuzzing.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/fuzzing.yml) [![CodeQL](https://github.com/vanillapdf/vanillapdf/actions/workflows/codeql.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/codeql.yml) | [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/vanillapdf/vanillapdf/badge)](https://scorecard.dev/viewer/?uri=github.com/vanillapdf/vanillapdf) |
+
+</div>
 
 **Vanilla.PDF** is a modern, high-performance, open-source C++17 SDK for creating, editing, signing, and analyzing PDF documents. With no external runtime dependencies and full cross-platform support, it's ideal for embedding into desktop, server, or automation workflows.
 
@@ -15,22 +14,7 @@
 - 🔏 **Sign & verify** digital signatures (CMS/PKCS#7) with certificate chain validation
 - 🔒 **Encrypt & decrypt** with AES or RC4 using passwords or certificates
 - ⚙️ **ABI-stable C API** — opaque handles callable from any language with a C FFI
-- 🧵 **Thread-safe** — no global state, process documents in parallel without locking
-
-## Contents
-
-- [Install](#install)
-- [Quick Example](#quick-example)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Platforms](#platforms)
-- [Thread Safety](#thread-safety)
-- [Non-Goals](#non-goals)
-- [Versioning](#versioning)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact & Support](#contact--support)
+- 🧵 **Thread-safe** — no global state; synchronization is handled internally
 
 ## Install
 
@@ -51,45 +35,18 @@ FetchContent_MakeAvailable(vanillapdf)
 target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 ```
 
-### Conan
+### Other methods
 
-```bash
-conan install --requires="vanillapdf/2.3.0" --build=missing
-```
+- **NuGet** (.NET interop) — `dotnet add package vanillapdf.net`
+- **Conan** 🚧 — coming soon (not yet published to Conan Center)
+- **Homebrew** (macOS) 🚧 — coming soon (formula not yet live in Homebrew core)
+- **Build from source** — clone with submodules, then configure with a CMake preset
 
-### Homebrew (macOS)
-
-```bash
-brew install vanillapdf
-```
-
-### NuGet (.NET interop)
-
-```bash
-dotnet add package vanillapdf.net
-```
-
-### Build from Source
-
-```bash
-git clone https://github.com/vanillapdf/vanillapdf.git && cd vanillapdf
-git submodule sync --recursive && git submodule update --init --recursive
-cmake --preset linux-x64-gcc      # or windows-x64-msvc-17, macos-arm64
-cmake --build --preset linux-x64-gcc
-```
-
-Then in your CMakeLists.txt:
-
-```cmake
-find_package(vanillapdf CONFIG REQUIRED)
-target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
-```
-
-[Full installation guide](https://vanillapdf.readthedocs.io/en/latest/installation.html) | [Building from source](https://vanillapdf.readthedocs.io/en/latest/building.html)
+See the [installation guide](https://vanillapdf.readthedocs.io/en/latest/installation.html) and [building from source](https://vanillapdf.readthedocs.io/en/latest/building.html) on Read the Docs for full instructions.
 
 ## Quick Example
 
-Create a PDF with a blank page, then sign it:
+Create a PDF with a blank page:
 
 ```c
 #include <vanillapdf/c_vanillapdf_api.h>
@@ -115,36 +72,6 @@ int main(void) {
 }
 ```
 
-```bash
-vanillapdf-tools sign -s hello.pdf -d signed.pdf -k key.p12 -p password
-vanillapdf-tools verify -f signed.pdf
-```
-
-## Features
-
-| Feature | C API | CLI | Description |
-|---------|:-----:|:---:|-------------|
-| **Create documents** | `Document_Create` | | Pages, text, images, vector paths |
-| **Digital signatures** | `Document_Sign` | `sign` | OpenSSL CMS — RSA, ECDSA (P-256/P-384/P-521), Ed25519, Ed448 via PKCS#12 keys or custom callbacks |
-| **Signature verification** | `DigitalSignatureExtensions_Verify` | `verify` | Chain validation, weak-algorithm detection, signing-time checks |
-| **File structure validation** | `FileStructureValidator_*` | `validate` | Walk xref/trailers/streams and report malformed files |
-| **Interactive forms** | `FormField_GetValue` / `_SetValue` | | Read/write AcroForm field values |
-| **Merge documents** | | `merge` | Combine multiple PDFs into one |
-| **Encryption** | | `encrypt` / `decrypt` | AES and RC4, owner/user passwords, certificate-based decryption (FIPS-compatible) |
-| **Image extraction** | | `extract` | JPEG and JPEG2000 from PDF streams |
-| **Content streams** | `ContentStream_*` | `filter` | Parse and encode PostScript-style page content |
-| **Low-level parsing** | `File_Open` | | XRef tables, indirect objects, cross-reference streams |
-
-## Architecture
-
-The library is organized into three layers:
-
-- **Syntax** -- PDF object types, tokenizer, parser, XRef tables, compression filters
-- **Semantics** -- Documents, pages, catalogs, annotations, digital signatures, forms
-- **Contents** -- Content stream parsing, PostScript instruction processing
-
-The C++ core is hidden behind an ABI-stable ANSI C interface using opaque handles (`DocumentHandle*`, `FileHandle*`, `PageObjectHandle*`, etc.) and `cdecl` calling conventions, so any language with a C FFI can use this library. Handles are reference-counted; callers acquire and release references explicitly. This design guarantees binary compatibility across compiler versions and minor/patch releases.
-
 ## Platforms
 
 | Platform | Compilers | Architectures |
@@ -154,11 +81,36 @@ The C++ core is hidden behind an ABI-stable ANSI C interface using opaque handle
 | macOS | AppleClang 15+ (Xcode 15) | x64, ARM64 |
 | Android | NDK toolchain | arm64, armv7, x86, x86_64 |
 
+## Features
+
+| Feature | C API | Description |
+|---------|-------|-------------|
+| **Create documents** | `Document_Create` | Pages, text, images, vector paths |
+| **Digital signatures** | `Document_Sign` | OpenSSL CMS — RSA, ECDSA (P-256/P-384/P-521), Ed25519, Ed448 via PKCS#12 keys or custom callbacks |
+| **Signature verification** | `DigitalSignatureExtensions_Verify` | Chain validation, weak-algorithm detection, signing-time checks |
+| **File structure validation** | `FileStructureValidator_*` | Walk xref/trailers/streams and report malformed files |
+| **Interactive forms** | `FormField_GetValue` / `_SetValue` | Read/write AcroForm field values |
+| **Encryption** | `Document_AddEncryption` / `_RemoveEncryption` | AES and RC4, owner/user passwords, certificate-based decryption (FIPS-compatible) |
+| **Content streams** | `ContentStream_*` | Parse and encode PostScript-style page content |
+| **Low-level parsing** | `File_Open` | XRef tables, indirect objects, cross-reference streams |
+
+> A `vanillapdf-tools` command-line utility is built from source (not yet distributed as a standalone app) and exposes `sign`, `verify`, `merge`, `extract`, `encrypt`/`decrypt`, and more — see [CLI Tools](https://vanillapdf.readthedocs.io/en/latest/cli_tools.html) on Read the Docs.
+
+## Architecture
+
+The library is organized into three layers:
+
+- **Syntax** — PDF object types, tokenizer, parser, XRef tables, compression filters
+- **Semantics** — Documents, pages, catalogs, annotations, digital signatures, forms
+- **Contents** — Content stream parsing, PostScript instruction processing
+
+The C++ core is hidden behind an ABI-stable ANSI C interface using opaque handles (`DocumentHandle*`, `FileHandle*`, `PageObjectHandle*`, etc.) and `cdecl` calling conventions, so any language with a C FFI can use this library. Handles are reference-counted; callers acquire and release references explicitly. This design guarantees binary compatibility across compiler versions and minor/patch releases.
+
 ## Thread Safety
 
-Vanilla.PDF is thread-safe. Key internal objects (dictionaries, streams, strings, indirect references, xref entries) own a `std::unique_ptr<std::recursive_mutex>`, reference counting is atomic, and error context is stored in thread-local buffers so concurrent threads never interfere with each other.
+Vanilla.PDF provides fine-grained thread safety: the **same object** can be accessed concurrently from multiple threads — including objects that initialize lazily on first access — without any caller-side locking. This is a stronger guarantee than merely running separate documents on separate threads; synchronization *within* a shared object is handled internally.
 
-See the [Architecture Guide](https://vanillapdf.readthedocs.io/en/latest/architecture.html) for implementation details.
+See the [Architecture Guide](https://vanillapdf.readthedocs.io/en/latest/architecture.html) for the memory and locking model.
 
 ## Non-Goals
 
