@@ -1,4 +1,4 @@
-PDF Fundamentals
+PDF Format Guide
 ================
 
 In the first place, let's talk about the syntactic structure of the document.

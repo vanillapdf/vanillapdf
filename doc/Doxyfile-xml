@@ -18,9 +18,12 @@ GENERATE_HTML          = NO
 GENERATE_LATEX         = NO
 
 # Preprocessing
-PREDEFINED             = VANILLAPDF_API \
-                         CALLING_CONVENTION \
-                         VANILLAPDF_DEPRECATED
+# Expand these markers to nothing so the declarations Breathe parses are clean
+# C signatures. A bare name (no "=") would expand to "1", which corrupts e.g.
+# function-pointer typedefs into "(1 *Name)(...)" and breaks Breathe's parser.
+PREDEFINED             = VANILLAPDF_API= \
+                         CALLING_CONVENTION= \
+                         VANILLAPDF_DEPRECATED=
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 

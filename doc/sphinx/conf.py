@@ -65,7 +65,6 @@ html_favicon = "_static/favicon.ico"
 
 html_theme_options = {
     "logo_only": False,
-    "display_version": True,
     "navigation_depth": 3,
 }
 

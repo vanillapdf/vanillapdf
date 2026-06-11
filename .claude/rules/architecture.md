@@ -69,6 +69,19 @@ Key classes: `Document` (Open/Create/Save/Sign), `Catalog`, `PageObject`/`PageTr
 
 Poll-based `Versionable` with `std::atomic<uint32_t> m_version`. Leaf: dirty if version > 0. Containers: check own version + iterate children.
 
+## Thread Safety
+
+The library is thread-safe. Key objects use `std::recursive_mutex` for concurrent access, and reference counting is atomic:
+- `IUnknown::m_ref_counter` - `std::atomic<uint32_t>`
+- `WeakReferenceCounter::m_active` - `std::atomic<bool>`
+- `DictionaryObject`, `StreamObject`, `StringObjectBase`, `IndirectReferenceObject`, `XrefUsedEntryBase` - `std::unique_ptr<std::recursive_mutex> _access_lock`
+- `Document::OpenFile` - atomically returns existing or creates new document per file
+- Streams: `ExclusiveInputLock()` / `ExclusiveInputUnlock()`
+- Error context: `thread_local` buffers (no cross-thread interference)
+- Logging: `spdlog` multi-threaded sinks
+
+Thread safety is validated by `thread_safety_test.cpp` (concurrent `Document::OpenFile` with 50 threads x 2000 iterations).
+
 ## Feature Dependencies
 
 Optional via `VANILLAPDF_HAVE_*`: OpenSSL (encryption/signing), libjpeg-turbo, openjpeg, zlib, spdlog, nlohmann-json

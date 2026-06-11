@@ -1,37 +1,52 @@
-# Vanilla.PDF
+# Vanilla.PDF – The Ultimate C++ PDF Toolkit
 
-**Vanilla.PDF** is a modern, high-performance C++17 library for creating, editing, and digitally signing PDF documents. It is cross-platform and runs natively on Windows, Linux, and macOS — without requiring external dependencies or a runtime.
+[![Build](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml)
+[![NuGet](https://img.shields.io/nuget/v/vanillapdf?color=blue)](https://www.nuget.org/packages/vanillapdf)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/vanillapdf)](https://www.nuget.org/packages/vanillapdf)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](https://www.apache.org/licenses/LICENSE-2.0)
 
-## Features
+**Vanilla.PDF** is a modern, high-performance, open-source C++17 SDK for creating, editing, signing, and analyzing PDF documents. The NuGet package provides native runtime binaries for Windows, Linux, and macOS — automatically selected based on your target platform and RID. No manual DLL management required.
 
-- Create or modify PDF files programmatically
-- Add or validate digital signatures (PAdES)
-- Encrypt and decrypt PDF files
-- Access low-level PDF objects and structure directly
-- Fast and lightweight native runtime for each platform
-
-## Supported Platforms & Compilers
-
-- **Windows:** Visual Studio 2022 (MSVC 17.x) or 2026 (MSVC 18.x) — x86, x64, ARM64
-- **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
-- **macOS:** AppleClang 15+ (Xcode 15)
-- **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
+- 📄 **Create & modify** PDF documents — pages, text, images, vector graphics
+- 🔏 **Sign & verify** digital signatures (CMS/PKCS#7) with certificate chain validation
+- 🔒 **Encrypt & decrypt** with AES or RC4 using passwords or certificates
+- ⚙️ **ABI-stable C API** — callable via P/Invoke from C#, F#, or any .NET language
+- 🧵 **Thread-safe** — no global state, process documents in parallel without locking
 
 ## Getting Started
 
-1. Install the NuGet package:
-   ```
-   dotnet add package vanillapdf.net
-   ```
-2. The correct native runtime will be included automatically based on your target platform and RID.
-3. Refer to our [documentation](https://vanillapdf.github.io/vanillapdf) for usage examples and integration details.
+Install the native NuGet package:
+
+```
+dotnet add package vanillapdf
+```
+
+The correct native runtime is included automatically. No additional setup is needed — the package handles native binary selection and deployment for your target platform.
+
+You can call the ABI-stable C API directly via P/Invoke. For an idiomatic, managed .NET wrapper, use the dedicated **[vanillapdf.net](https://github.com/vanillapdf/vanillapdf.net)** package instead.
+
+Refer to the [documentation](https://vanillapdf.readthedocs.io/) for usage examples and integration details.
+
+## Supported Platforms
+
+The package ships native binaries for the following runtime identifiers:
+
+| Platform | RID | Architecture |
+|----------|-----|--------------|
+| Windows | `win-x64` | x64 |
+| Windows | `win-x86` | x86 |
+| Windows | `win-arm64` | ARM64 |
+| Linux | `linux-x64` | x64 |
+| Linux | `linux-arm64` | ARM64 |
+| macOS | `osx-x64` | x64 (Intel) |
+| macOS | `osx-arm64` | ARM64 (Apple Silicon) |
 
 ## Resources
 
-- 🔧 [GitHub Repository](https://github.com/vanillapdf/vanillapdf)
-- 📘 [Documentation](https://vanillapdf.github.io/vanillapdf)
-- 💬 [FAQ](https://vanillapdf.com/faq/)
-- 📨 [Contact](https://vanillapdf.com/contact/)
+- [GitHub Repository](https://github.com/vanillapdf/vanillapdf)
+- [Documentation](https://vanillapdf.readthedocs.io/)
+- [FAQ](https://vanillapdf.com/faq/)
+- [Contact](https://vanillapdf.com/contact/)
 
 ## License
 

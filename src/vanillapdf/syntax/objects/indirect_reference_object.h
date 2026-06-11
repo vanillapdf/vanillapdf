@@ -69,9 +69,7 @@ private:
     mutable types::ushort m_reference_generation_number = 0;
     mutable WeakReference<Object> m_reference;
 
-    // The library interface wants to be thread-safe as much as possible
-    // Even though the are currently no cases for multi-thread access
-    // to the dictonary, let's try to be visionary and prepare for this
+    // Protects concurrent access during lazy reference resolution
     std::unique_ptr<std::recursive_mutex> m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 
     //bool IsCyclicReference(ObjectPtr object, std::map<ObjectPtr, bool>& visited) const;

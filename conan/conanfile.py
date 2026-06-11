@@ -11,6 +11,7 @@ class VanillaPDFConan(ConanFile):
     license = "Apache-2.0"
     url = "https://github.com/conan-io/conan-center-index"
     homepage = "https://vanillapdf.com"
+    documentation = "https://vanillapdf.readthedocs.io/"
     topics = ("pdf", "document", "toolkit")
 
     package_type = "library"

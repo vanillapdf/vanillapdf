@@ -1,11 +1,6 @@
 Examples
 ========
 
-Integration Examples
---------------------
-
-- :doc:`FetchContent Integration <fetchcontent_integration>` — FetchContent integration with cross-platform testing
-
 API Usage Examples
 ------------------
 
@@ -88,5 +83,5 @@ Enumerate xref
 Additional Resources
 --------------------
 
-- `main.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/main.c>`_ — Main file for command-line application vanillapdf.tools
-- `tools.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/tools.h>`_ — Tools project header file including macro definitions
+- `main.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/main.c>`_ -- Main file for command-line application vanillapdf.tools
+- `tools.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/tools.h>`_ -- Tools project header file including macro definitions

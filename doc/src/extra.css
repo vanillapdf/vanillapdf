@@ -1,5 +1,26 @@
 /* Extra CSS */
 
+/* Deprecation banner */
+
+div#deprecation-banner {
+	background-color: #b32424;
+	color: #FFFFFF;
+	text-align: center;
+	padding: 12px 40px;
+	box-sizing: border-box;
+
+	font-family: 'Open sans', sans-serif;
+	font-weight: 400;
+	font-size: 13pt;
+	line-height: 20pt;
+}
+
+div#deprecation-banner a, div#deprecation-banner a:visited {
+	color: #FFFFFF;
+	font-weight: 600;
+	text-decoration: underline;
+}
+
 /* Global */
 
 body, table, div, p, dl, a {

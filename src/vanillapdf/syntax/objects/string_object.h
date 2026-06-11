@@ -33,9 +33,7 @@ public:
     virtual size_t Hash() const override;
 
 protected:
-    // The library interface wants to be thread-safe as much as possible
-    // Even though the are currently no cases for multi-thread access
-    // to the dictonary, let's try to be visionary and prepare for this
+    // Protects concurrent access to the string value
     std::unique_ptr<std::recursive_mutex> _access_lock;
 };
 

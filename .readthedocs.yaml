@@ -9,6 +9,9 @@ build:
 
 sphinx:
   configuration: doc/sphinx/conf.py
+  # Treat every Sphinx/Breathe warning as an error so no doc defect slips by
+  # silently (broken cross-references, malformed directives, parse failures).
+  fail_on_warning: true
 
 python:
   install:

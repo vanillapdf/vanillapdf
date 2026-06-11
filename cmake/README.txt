@@ -11,6 +11,10 @@ Support, such as bug reports is free and available at your service.
 
 Please visit [vanillapdf.com](http://vanillapdf.com) for more information.
 
+## Documentation
+
+Full documentation is hosted on [Read the Docs](https://vanillapdf.readthedocs.io/).
+
 ## FAQ
 
 Frequently asked questions are discussed on our [website](https://vanillapdf.com/faq/).
