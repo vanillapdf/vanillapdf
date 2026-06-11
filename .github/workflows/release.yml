@@ -34,6 +34,7 @@ jobs:
     outputs:
       tag: ${{ steps.parse.outputs.tag }}
       latest_tag: ${{ steps.parse.outputs.latest_tag }}
+      is_latest: ${{ steps.parse.outputs.is_latest }}
       build_suffix: ${{ steps.parse.outputs.build_suffix }}
       prerelease: ${{ steps.parse.outputs.prerelease }}
       dry_run: ${{ steps.parse.outputs.dry_run }}
@@ -90,6 +91,27 @@ jobs:
           else
             echo "latest_tag=$TAG" >> "$GITHUB_OUTPUT"
             echo "No real tags found, using synthetic tag: $TAG"
+          fi
+
+          # Decide whether this release is the newest stable version. The
+          # latest_tag above only sees tags that already exist, but the tag
+          # being released is created later by the create-tag job, so it is
+          # never in that list. Compare the existing stable tags *plus* this
+          # tag to drive the "latest" GitHub release flag and the latest-only
+          # jobs (docs deploy, vcpkg/Homebrew/Conan PRs, port update).
+          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            HIGHEST=$( { git tag -l 'v*.*.*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$'; echo "$TAG"; } | sort -V | tail -1)
+            if [ "$HIGHEST" = "$TAG" ]; then
+              echo "is_latest=true" >> "$GITHUB_OUTPUT"
+              echo "This is the newest stable release"
+            else
+              echo "is_latest=false" >> "$GITHUB_OUTPUT"
+              echo "Not the newest stable release (highest is $HIGHEST)"
+            fi
+          else
+            # Pre-release tags (alpha/beta/rc) are never the latest stable release
+            echo "is_latest=false" >> "$GITHUB_OUTPUT"
+            echo "Pre-release tag, not marked latest"
           fi
 
   verify:
@@ -257,6 +279,7 @@ jobs:
     outputs:
       tag: ${{ needs.prepare.outputs.tag }}
       latest_tag: ${{ needs.prepare.outputs.latest_tag }}
+      is_latest: ${{ needs.prepare.outputs.is_latest }}
       prerelease: ${{ needs.prepare.outputs.prerelease }}
     steps:
       - run: echo "Awaiting production approval"
@@ -269,6 +292,7 @@ jobs:
     outputs:
       tag: ${{ needs.production-gate.outputs.tag }}
       latest_tag: ${{ needs.production-gate.outputs.latest_tag }}
+      is_latest: ${{ needs.production-gate.outputs.is_latest }}
       prerelease: ${{ needs.production-gate.outputs.prerelease }}
     steps:
       - name: Checkout
@@ -311,8 +335,9 @@ jobs:
 
   github-pages:
     needs: create-tag
-    # Only deploy documentation for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.create-tag.outputs.prerelease == 'false'
+    # Only deploy documentation for the newest stable release (not pre-releases
+    # or patches on older release lines, which would clobber current docs)
+    if: needs.create-tag.outputs.prerelease == 'false' && needs.create-tag.outputs.is_latest == 'true'
     permissions:
       contents: read
       pages: write
@@ -332,13 +357,14 @@ jobs:
     with:
       tag: ${{ needs.create-tag.outputs.tag }}
       prerelease: ${{ fromJSON(needs.create-tag.outputs.prerelease) }}
-      latest: ${{ needs.create-tag.outputs.tag == needs.create-tag.outputs.latest_tag }}
+      latest: ${{ fromJSON(needs.create-tag.outputs.is_latest) }}
     secrets: inherit
 
   vcpkg-pr:
     needs: create-tag
-    # Only create vcpkg PR for official releases, not pre-releases (alpha, beta, rc)
-    if: needs.create-tag.outputs.prerelease == 'false'
+    # Only create vcpkg PR for the newest stable release, so the published port
+    # is never downgraded by a pre-release or an older release-line patch
+    if: needs.create-tag.outputs.prerelease == 'false' && needs.create-tag.outputs.is_latest == 'true'
     permissions:
       contents: read
     uses: ./.github/workflows/create-vcpkg-pr.yml
@@ -348,7 +374,9 @@ jobs:
 
   homebrew-pr:
     needs: create-tag
-    # Only create Homebrew PR for official releases, not pre-releases (alpha, beta, rc)
+    # Only create Homebrew PR for official releases, not pre-releases (alpha, beta, rc).
+    # The newest-version check is enforced inside update-homebrew.yml, which runs
+    # after the tag is pushed (so its tag list is accurate).
     if: needs.create-tag.outputs.prerelease == 'false'
     permissions:
       contents: read
@@ -359,7 +387,9 @@ jobs:
 
   conan-pr:
     needs: create-tag
-    # Only create Conan Center PR for official releases, not pre-releases (alpha, beta, rc)
+    # Only create Conan Center PR for official releases, not pre-releases (alpha, beta, rc).
+    # Conan Center holds parallel versions, so this is not gated on is_latest; the
+    # latest-version policy is enforced inside create-conan-pr.yml (post-tag).
     if: needs.create-tag.outputs.prerelease == 'false'
     permissions:
       contents: read
@@ -459,7 +489,9 @@ jobs:
     permissions:
       contents: read
     needs: [github-release, create-tag]
-    # Only update port for official releases, not pre-releases
+    # Update the overlay port for every official release: the job always opens a
+    # PR against its own release/X.Y branch and only updates main when this is the
+    # newest version (that check lives inside the job, post-tag).
     if: needs.create-tag.outputs.prerelease == 'false'
     steps:
       - name: Checkout
