@@ -32,6 +32,7 @@ jobs:
     outputs:
       tag: ${{ steps.parse.outputs.tag }}
       latest_tag: ${{ steps.parse.outputs.latest_tag }}
+      is_latest: ${{ steps.parse.outputs.is_latest }}
       build_suffix: ${{ steps.parse.outputs.build_suffix }}
       prerelease: ${{ steps.parse.outputs.prerelease }}
       dry_run: ${{ steps.parse.outputs.dry_run }}
@@ -88,6 +89,27 @@ jobs:
           else
             echo "latest_tag=$TAG" >> "$GITHUB_OUTPUT"
             echo "No real tags found, using synthetic tag: $TAG"
+          fi
+
+          # Decide whether this release is the newest stable version. The
+          # latest_tag above only sees tags that already exist, but the tag
+          # being released is created later by the create-tag job, so it is
+          # never in that list. Compare the existing stable tags *plus* this
+          # tag to drive the "latest" GitHub release flag, the docs deploy and
+          # the vcpkg PR.
+          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            HIGHEST=$( { git tag -l 'v*.*.*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$'; echo "$TAG"; } | sort -V | tail -1)
+            if [ "$HIGHEST" = "$TAG" ]; then
+              echo "is_latest=true" >> "$GITHUB_OUTPUT"
+              echo "This is the newest stable release"
+            else
+              echo "is_latest=false" >> "$GITHUB_OUTPUT"
+              echo "Not the newest stable release (highest is $HIGHEST)"
+            fi
+          else
+            # Pre-release tags (alpha/beta/rc) are never the latest stable release
+            echo "is_latest=false" >> "$GITHUB_OUTPUT"
+            echo "Pre-release tag, not marked latest"
           fi
 
   verify:
@@ -202,6 +224,7 @@ jobs:
     outputs:
       tag: ${{ needs.prepare.outputs.tag }}
       latest_tag: ${{ needs.prepare.outputs.latest_tag }}
+      is_latest: ${{ needs.prepare.outputs.is_latest }}
       prerelease: ${{ needs.prepare.outputs.prerelease }}
     steps:
       - name: Checkout
@@ -243,8 +266,8 @@ jobs:
 
   github-pages:
     needs: create-tag
-    # Only deploy documentation for official releases that are the latest version
-    if: needs.create-tag.outputs.prerelease == 'false' && needs.create-tag.outputs.tag == needs.create-tag.outputs.latest_tag
+    # Only deploy documentation for the newest stable release
+    if: needs.create-tag.outputs.prerelease == 'false' && needs.create-tag.outputs.is_latest == 'true'
     uses: ./.github/workflows/github-pages.yml
     with:
       deploy: true
@@ -260,8 +283,8 @@ jobs:
 
   vcpkg-pr:
     needs: create-tag
-    # Only create vcpkg PR for official releases that are the latest version
-    if: needs.create-tag.outputs.prerelease == 'false' && needs.create-tag.outputs.tag == needs.create-tag.outputs.latest_tag
+    # Only create vcpkg PR for the newest stable release (single-version registry)
+    if: needs.create-tag.outputs.prerelease == 'false' && needs.create-tag.outputs.is_latest == 'true'
     uses: ./.github/workflows/create-vcpkg-pr.yml
     with:
       tag: ${{ needs.create-tag.outputs.tag }}
