@@ -148,11 +148,10 @@ Document::~Document() {
 }
 
 bool Document::GetDocumentCatalog(OutputCatalogPtr& result) const {
-    if (!m_catalog.empty()) {
-        result = m_catalog;
-        return true;
-    }
+    return m_catalog.GetOrCreate(result, this, &Document::ResolveCatalog);
+}
 
+bool Document::ResolveCatalog(OutputCatalogPtr& result) const {
     auto chain = m_holder->GetXrefChain();
     if (chain->Empty()) {
         return false;
@@ -166,8 +165,7 @@ bool Document::GetDocumentCatalog(OutputCatalogPtr& result) const {
     }
 
     auto root = dictionary->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Root);
-    m_catalog = make_deferred<Catalog>(root);
-    result = m_catalog;
+    result = make_deferred<Catalog>(root);
     return true;
 }
 

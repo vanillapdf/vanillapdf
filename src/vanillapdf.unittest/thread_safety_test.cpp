@@ -448,4 +448,90 @@ TEST(DictionaryObjectThreadSafety, ConcurrentReadWrite) {
     EXPECT_EQ(final_size, static_cast<size_type>(NUM_INSERTS + 1));
 }
 
+// Reproduction for the reported native crash in a multi-threaded environment
+// (last frame: LinkAnnotation_GetDestination). Resolving a named destination
+// reaches Document::GetDocumentCatalog, which lazily initializes a cached
+// Catalog (mutable m_catalog) with no synchronization.
+//
+// This test isolates that member: a freshly created document leaves m_catalog
+// cold (CreateCatalog only inserts /Root into the trailer, it does not populate
+// the cache), so the first concurrent Document_GetCatalog calls all hit the
+// lazy-init path simultaneously. A correct implementation caches exactly one
+// instance, so every concurrent call MUST return the same Catalog handle.
+// The double-init race produces distinct Catalog instances (and races on the
+// underlying Deferred<> pointer / refcount, which can also crash).
+//
+// Each document only races on its first access, so we repeat over many fresh
+// documents to get many cold-cache windows, and use a spin barrier so all
+// threads are released into the cold cache at the same moment.
+TEST(CatalogThreadSafety, ConcurrentLazyInitReturnsSameInstance) {
+    constexpr int NUM_DOCUMENTS = 500;
+    constexpr int NUM_THREADS = 16;
+
+    std::atomic<int> mismatch_count{0};
+    std::atomic<int> error_count{0};
+
+    for (int d = 0; d < NUM_DOCUMENTS; ++d) {
+        HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+        HandleGuard<FileHandle, File_Release> file;
+        HandleGuard<DocumentHandle, Document_Release> doc;
+
+        ASSERT_EQ(InputOutputStream_CreateFromMemory(io_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(File_CreateStream(io_stream, "catalog_race", file.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Document_CreateFile(file, doc.out()), VANILLAPDF_ERROR_SUCCESS);
+
+        // Spin barrier so every thread hits the cold cache simultaneously
+        std::atomic<int> ready{0};
+        std::atomic<bool> go{false};
+
+        std::vector<CatalogHandle*> catalogs(NUM_THREADS, nullptr);
+        std::vector<std::thread> threads;
+
+        for (int t = 0; t < NUM_THREADS; ++t) {
+            threads.emplace_back([&, t]() {
+                ready.fetch_add(1);
+                while (!go.load()) { /* spin until released */ }
+
+                CatalogHandle* catalog = nullptr;
+                if (Document_GetCatalog(doc, &catalog) == VANILLAPDF_ERROR_SUCCESS) {
+                    catalogs[t] = catalog;
+                } else {
+                    error_count.fetch_add(1);
+                }
+            });
+        }
+
+        while (ready.load() < NUM_THREADS) { /* wait for all threads to spin up */ }
+        go.store(true);
+
+        for (auto& thread : threads) {
+            thread.join();
+        }
+
+        // Every thread must observe the same cached Catalog instance
+        CatalogHandle* first = nullptr;
+        for (auto* catalog : catalogs) {
+            if (catalog == nullptr) {
+                continue;
+            }
+
+            if (first == nullptr) {
+                first = catalog;
+            } else if (catalog != first) {
+                mismatch_count.fetch_add(1);
+            }
+        }
+
+        for (auto* catalog : catalogs) {
+            if (catalog != nullptr) {
+                Catalog_Release(catalog);
+            }
+        }
+    }
+
+    EXPECT_EQ(error_count.load(), 0);
+    EXPECT_EQ(mismatch_count.load(), 0)
+        << "Document::GetDocumentCatalog returned multiple Catalog instances under concurrency";
+}
+
 } /* thread_safety */
