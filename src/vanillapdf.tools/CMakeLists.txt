@@ -115,7 +115,7 @@ endif()
 
 # Project install targets
 install(TARGETS vanillapdf.tools
-    RUNTIME DESTINATION bin
+    RUNTIME DESTINATION bin COMPONENT Runtime
 )
 
 # Specify version identificators
