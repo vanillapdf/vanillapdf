@@ -114,8 +114,13 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 # Project install targets
+# The CLI tool is an internal/testing utility (weakly documented) and is
+# intentionally NOT shipped in the distributable packages. It is assigned to a
+# dedicated "Tools" component that is excluded from CPACK_COMPONENTS_ALL, so it
+# can still be installed on demand (cmake --install --component Tools) without
+# leaking into the deb/rpm/etc. packages.
 install(TARGETS vanillapdf.tools
-    RUNTIME DESTINATION bin COMPONENT Runtime
+    RUNTIME DESTINATION bin COMPONENT Tools
 )
 
 # Specify version identificators
