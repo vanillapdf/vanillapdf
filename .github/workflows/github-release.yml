@@ -13,6 +13,11 @@ on:
         required: false
         type: boolean
         default: true
+      target:
+        description: "Commit SHA the tag is created at when the draft is published"
+        required: false
+        type: string
+        default: ''
   workflow_dispatch:
     inputs:
       tag:
@@ -27,6 +32,11 @@ on:
         required: false
         type: boolean
         default: true
+      target:
+        description: "Commit SHA the tag is created at when the draft is published"
+        required: false
+        type: string
+        default: ''
 
 permissions: {}
 
@@ -49,6 +59,7 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
           PRERELEASE: ${{ inputs.prerelease }}
+          TARGET: ${{ inputs.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         run: |
@@ -62,18 +73,28 @@ jobs:
             LATEST_FLAG="--latest=false"
           fi
 
+          # The tag must NOT exist yet: publishing this draft is what creates the
+          # tag (at TARGET) and binds the release to it. Pre-creating the tag would
+          # leave the published release stuck on its untagged-* placeholder.
+          TARGET_FLAG=""
+          if [ -n "$TARGET" ]; then
+            TARGET_FLAG="--target $TARGET"
+          fi
+
           if [ "$PRERELEASE" = "true" ]; then
             gh release create "$TAG" \
               --title "vanillapdf $TAG" \
               --generate-notes \
               --draft \
               --prerelease \
+              $TARGET_FLAG \
               $LATEST_FLAG
           else
             gh release create "$TAG" \
               --title "vanillapdf $TAG" \
               --generate-notes \
               --draft \
+              $TARGET_FLAG \
               $LATEST_FLAG
           fi
 
