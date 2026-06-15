@@ -158,19 +158,23 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - name: win.2025-x86-static
-            os: windows-2025
-            preset: windows-x86-msvc-18-static
+          # Release artifacts must build on GA runner images with a single,
+          # uniform toolchain. windows-2025 dropped VS 2022 and the only GA
+          # arm64 image (windows-11-arm) still ships VS 2022, so all three
+          # release jobs use windows-2022 / windows-11-arm with msvc-17.
+          - name: win.2022-x86-static
+            os: windows-2022
+            preset: windows-x86-msvc-17-static
             build_type: Release
 
-          - name: win.2025-x64-static
-            os: windows-2025
-            preset: windows-x64-msvc-18-static
+          - name: win.2022-x64-static
+            os: windows-2022
+            preset: windows-x64-msvc-17-static
             build_type: Release
 
           - name: win.11-arm64-static
             os: windows-11-arm
-            preset: windows-arm64-msvc-18-static
+            preset: windows-arm64-msvc-17-static
             build_type: Release
 
     steps:
