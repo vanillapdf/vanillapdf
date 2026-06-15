@@ -207,23 +207,23 @@ jobs:
           # Static dependencies + Static CRT (for NuGet builds)
           - { name: "win.2022-x86-static", os: windows-2022, preset: "windows-x86-msvc-17-static" }
           - { name: "win.2022-x64-static", os: windows-2022, preset: "windows-x64-msvc-17-static" }
-          - { name: "win.2025-x86-static", os: windows-2025, preset: "windows-x86-msvc-17-static" }
-          - { name: "win.2025-x64-static", os: windows-2025, preset: "windows-x64-msvc-17-static" }
-          - { name: "win.11-arm64-static", os: windows-11-arm, preset: "windows-arm64-msvc-17-static" }
+          - { name: "win.2025-x86-static", os: windows-2025, preset: "windows-x86-msvc-18-static" }
+          - { name: "win.2025-x64-static", os: windows-2025, preset: "windows-x64-msvc-18-static" }
+          - { name: "win.11-arm64-static", os: windows-11-arm, preset: "windows-arm64-msvc-18-static" }
 
           # Static dependencies + Dynamic CRT (for Python wrappers)
           - { name: "win.2022-x86-static-md", os: windows-2022, preset: "windows-x86-msvc-17-static-md" }
           - { name: "win.2022-x64-static-md", os: windows-2022, preset: "windows-x64-msvc-17-static-md" }
-          - { name: "win.2025-x86-static-md", os: windows-2025, preset: "windows-x86-msvc-17-static-md" }
-          - { name: "win.2025-x64-static-md", os: windows-2025, preset: "windows-x64-msvc-17-static-md" }
-          - { name: "win.11-arm64-static-md", os: windows-11-arm, preset: "windows-arm64-msvc-17-static-md" }
+          - { name: "win.2025-x86-static-md", os: windows-2025, preset: "windows-x86-msvc-18-static-md" }
+          - { name: "win.2025-x64-static-md", os: windows-2025, preset: "windows-x64-msvc-18-static-md" }
+          - { name: "win.11-arm64-static-md", os: windows-11-arm, preset: "windows-arm64-msvc-18-static-md" }
 
           # Dynamic dependencies + Dynamic CRT
           - { name: "win.2022-x86", os: windows-2022, preset: "windows-x86-msvc-17" }
           - { name: "win.2022-x64", os: windows-2022, preset: "windows-x64-msvc-17" }
-          - { name: "win.2025-x86", os: windows-2025, preset: "windows-x86-msvc-17" }
-          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-17" }
-          - { name: "win.11-arm64", os: windows-11-arm, preset: "windows-arm64-msvc-17" }
+          - { name: "win.2025-x86", os: windows-2025, preset: "windows-x86-msvc-18" }
+          - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-18" }
+          - { name: "win.11-arm64", os: windows-11-arm, preset: "windows-arm64-msvc-18" }
 
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
