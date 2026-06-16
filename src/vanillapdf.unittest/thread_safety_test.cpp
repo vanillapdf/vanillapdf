@@ -490,7 +490,7 @@ TEST(CatalogThreadSafety, ConcurrentLazyInitReturnsSameInstance) {
         for (int t = 0; t < NUM_THREADS; ++t) {
             threads.emplace_back([&, t]() {
                 ready.fetch_add(1);
-                while (!go.load()) { /* spin until released */ }
+                while (!go.load()) { std::this_thread::yield(); }
 
                 CatalogHandle* catalog = nullptr;
                 if (Document_GetCatalog(doc, &catalog) == VANILLAPDF_ERROR_SUCCESS) {
@@ -501,7 +501,7 @@ TEST(CatalogThreadSafety, ConcurrentLazyInitReturnsSameInstance) {
             });
         }
 
-        while (ready.load() < NUM_THREADS) { /* wait for all threads to spin up */ }
+        while (ready.load() < NUM_THREADS) { std::this_thread::yield(); }
         go.store(true);
 
         for (auto& thread : threads) {
