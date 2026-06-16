@@ -48,6 +48,12 @@ git submodule sync --recursive && git submodule update --init --recursive
 - Wrong: `git add ... && git commit -m "..." && git push`
 - Right: commit first, then push as a separate step after confirming
 
+**Pull request bodies (gh on PowerShell):**
+- NEVER use `gh pr create --body @-` (or `--body-file -`). In this PowerShell harness nothing is piped to stdin, so `gh` stores the literal string `@-` as the body. This has silently shipped empty PR descriptions.
+- Pass the body inline with a single-quoted here-string: `gh pr create --base main --title "..." --body @'` … `'@`. Inside a single-quoted here-string, apostrophes are literal — do NOT double them (`GitHub's`, not `GitHub''s`); the only restriction is that a line may not begin with `'@`.
+- Alternatively write the body to a temp file and use `--body-file <path>`.
+- ALWAYS verify after creation: `gh pr view <num> --json body --jq '.body'` and confirm the body is the intended text (not `@-`, not empty, apostrophes intact). The same applies to `gh pr edit --body` and `gh issue create --body`.
+
 ## GitHub Issues
 
 **Always add labels** when creating GitHub issues using `gh issue create`. Use appropriate labels from the repository to categorize issues for grouping and filtering. Common labels:

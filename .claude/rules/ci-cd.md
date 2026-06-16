@@ -2,16 +2,25 @@
 
 ## GitHub Actions Workflows
 
+- `sanity-check.yml` - Fast per-PR build and test gate
 - `nightly-check.yml` - Full platform matrix testing (Linux, Windows, macOS, Android)
 - `coverage.yml` - Code coverage with Codecov
 - `sanitizers.yml` - ASan, UBSan, and TSan checks (one workflow, 3 parallel jobs after shared vcpkg-setup)
+- `fuzzing.yml` - Fuzz testing (builds `vanillapdf.fuzzer`)
 - `codeql.yml` - Security analysis
-- `build-nuget.yml` / `build-deb-package.yml` / `build-brew-package.yml` - Package building
+- `scorecard.yml` - OpenSSF Scorecard supply-chain analysis
+- `dependency-review.yml` - Dependency review on pull requests
+- `conformance-check.yml` - PDF conformance validation
+- `signature-interop-check.yml` - Digital signature interoperability checks
+- `examples-integration.yml` - Integration testing of usage examples
+- `validate-workflows.yml` - Lints/validates the workflow YAML files
+- `build-nuget.yml` / `nightly-nuget.yml` - NuGet package building (release / nightly)
+- `build-deb-package.yml` / `build-rpm-package.yml` / `build-brew-package.yml` - Distro package building
 - `github-pages.yml` - Documentation deployment
 - `update-vcpkg.yml` / `create-vcpkg-pr.yml` - vcpkg updates (vanillapdf-bot)
 - `update-homebrew.yml` - Homebrew formula PRs (vanillapdf-bot)
 - `create-conan-pr.yml` - Conan Center PRs (vanillapdf-bot)
-- `release.yml` - Release automation (vanillapdf-bot)
+- `release.yml` / `github-release.yml` - Release automation (vanillapdf-bot)
 - `backport.yml` - Auto-backport merged PRs to release branches
 
 ## Build Matrix
@@ -29,4 +38,4 @@ Add label `backport release/X.Y` to a PR before merging. The workflow cherry-pic
 
 ## Homebrew
 
-Formula in `homebrew/vanillapdf.rb`. Test: `brew install --build-from-source --HEAD ./homebrew/vanillapdf.rb`. Releases auto-PR to `Homebrew/homebrew-core` via `update-homebrew.yml`.
+Formula template in `homebrew/vanillapdf.rb.in` (the concrete `.rb` is generated at release time). Releases auto-PR to `Homebrew/homebrew-core` via `update-homebrew.yml`.

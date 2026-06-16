@@ -7,6 +7,7 @@
 - **src/vanillapdf.test/** - Integration tests (C, one test per PDF)
 - **src/vanillapdf.unittest/** - Unit tests (GoogleTest, C++)
 - **src/vanillapdf.benchmark/** - Benchmarks (Google Benchmark, C++)
+- **src/vanillapdf.fuzzer/** - Fuzz targets (libFuzzer, C++), gated by `VANILLAPDF_ENABLE_FUZZING` (requires Clang)
 
 ## Layered Architecture
 
