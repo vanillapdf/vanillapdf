@@ -886,7 +886,7 @@ if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG
             "$<TARGET_FILE_DIR:vanillapdf>"
             COMMENT "Copying OpenSSL legacy provider module"
         )
-        install(FILES "${OPENSSL_LEGACY_PROVIDER}" DESTINATION bin)
+        install(FILES "${OPENSSL_LEGACY_PROVIDER}" DESTINATION bin COMPONENT Runtime)
 
         # Set the modules directory so test targets can set OPENSSL_MODULES env var.
         # OpenSSL checks this env var at runtime to locate provider modules.

@@ -8,7 +8,7 @@
 
 ## CMake Presets
 
-Presets organized by platform in `cmake/presets/{windows,linux,macos,android}.json`. Each includes configure, build, and test configurations. List with `cmake --list-presets`.
+Presets organized by platform in `cmake/presets/{windows,linux,macos,android}.json`, with shared base configs in `cmake/presets/shared.json`. Each includes configure, build, and test configurations. List with `cmake --list-presets`.
 
 Common patterns: `windows-x64-msvc-17`, `windows-x64-msvc-17-static` (static CRT), `windows-x64-msvc-17-static-md` (static libs + dynamic CRT). Same variants for `msvc-18` (VS 2026). Linux: `linux-x64-gcc`, `linux-x64-clang`, `linux-x64-musl`. macOS: `macos-x64`, `macos-arm64`.
 
@@ -21,6 +21,7 @@ Common patterns: `windows-x64-msvc-17`, `windows-x64-msvc-17-static` (static CRT
 | `vanillapdf.unittest` | Executable | C++ | `VANILLAPDF_ENABLE_TESTS=ON` |
 | `vanillapdf.test` | Executable | C | `VANILLAPDF_ENABLE_TESTS=ON` |
 | `vanillapdf.benchmark` | Executable | C++ | `VANILLAPDF_ENABLE_BENCHMARK=ON` |
+| `vanillapdf.fuzzer` | Executable | C++ | `VANILLAPDF_ENABLE_FUZZING=ON` (Clang only) |
 
 ## Adding New Source Files
 
