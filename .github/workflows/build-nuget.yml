@@ -155,17 +155,20 @@ jobs:
 
   build-windows:
     name: ${{ matrix.config.name }}
-    runs-on: windows-2025
+    runs-on: windows-2022
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - name: win.2025-x86-static
+          # Release artifacts must build on GA runner images with a single,
+          # uniform toolchain. windows-2025 dropped VS 2022, so the release
+          # jobs use windows-2022 with msvc-17.
+          - name: win.2022-x86-static
             preset: windows-x86-msvc-17-static
             build_type: Release
 
-          - name: win.2025-x64-static
+          - name: win.2022-x64-static
             preset: windows-x64-msvc-17-static
             build_type: Release
 
