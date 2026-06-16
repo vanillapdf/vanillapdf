@@ -107,12 +107,27 @@ jobs:
           done
 
       - name: Attest package provenance
+        id: attest-packages
         uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32  # v4.1.0
         with:
           subject-path: |
             ./packages/deb/*.deb
             ./packages/rpm/*.rpm
             ./packages/dmg/*.dmg
+
+      - name: Upload provenance to release
+        # Attach the signed provenance bundle as a release asset. The attestation
+        # also lives in GitHub's attestation store, but OpenSSF Scorecard's
+        # Signed-Releases check only inspects release assets and credits a
+        # *.intoto.jsonl provenance file.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BUNDLE_PATH: ${{ steps.attest-packages.outputs.bundle-path }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          PROVENANCE="vanillapdf-${TAG}.intoto.jsonl"
+          cp "$BUNDLE_PATH" "$PROVENANCE"
+          gh release upload "$TAG" "$PROVENANCE"
 
       - name: Generate SBOM
         env:
