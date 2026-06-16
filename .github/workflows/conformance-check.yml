@@ -104,13 +104,13 @@ jobs:
         run: ${{ github.workspace }}\external\vcpkg\bootstrap-vcpkg.bat
 
       - name: Configure
-        run: cmake --preset windows-x64-msvc-17-static -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+        run: cmake --preset windows-x64-msvc-18-static -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
 
       - name: Build vanillapdf.tools
-        run: cmake --build --preset windows-x64-msvc-17-static --config Release --target vanillapdf.tools
+        run: cmake --build --preset windows-x64-msvc-18-static --config Release --target vanillapdf.tools
 
       - name: Install vanillapdf.tools
-        run: cmake --install build/windows-x64-msvc-17-static --prefix install --config Release
+        run: cmake --install build/windows-x64-msvc-18-static --prefix install --config Release
 
       - name: Run conformance check
         run: python scripts/conformance_check.py --tools-binary install/bin/vanillapdf.tools.exe --source-dir . --config scripts/conformance_check.cfg --verbose
