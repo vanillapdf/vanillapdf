@@ -95,8 +95,8 @@ jobs:
 
           # Decide whether this release is the newest stable version. The
           # latest_tag above only sees tags that already exist, but the tag
-          # being released is created later by the create-tag job, so it is
-          # never in that list. Compare the existing stable tags *plus* this
+          # being released is created later when the draft is published, so it
+          # is never in that list. Compare the existing stable tags *plus* this
           # tag to drive the "latest" GitHub release flag and the latest-only
           # jobs (docs deploy, vcpkg/Homebrew/Conan PRs, port update).
           if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -271,10 +271,30 @@ jobs:
           fi
           echo "=== All dry-run validations passed ==="
 
+  # Create the GitHub release as a *draft* before the production gate. The tag is
+  # deliberately not created here - publishing the draft (publish-release, after
+  # the gate) is what creates it. This lets a human edit the release body during
+  # the gate pause and avoids the untagged-* binding bug that a pre-existing tag
+  # causes when a draft is published.
+  create-draft-release:
+    needs: [nuget-staging, build-deb, build-rpm, build-dmg, prepare]
+    if: needs.prepare.outputs.dry_run == 'false'
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    uses: ./.github/workflows/github-release.yml
+    with:
+      tag: ${{ needs.prepare.outputs.tag }}
+      prerelease: ${{ fromJSON(needs.prepare.outputs.prerelease) }}
+      latest: ${{ fromJSON(needs.prepare.outputs.is_latest) }}
+      target: ${{ github.sha }}
+    secrets: inherit
+
   production-gate:
     runs-on: ubuntu-latest
     permissions: {}
-    needs: [nuget-staging, build-deb, build-rpm, build-dmg, prepare]
+    needs: [create-draft-release, prepare]
     environment: production
     outputs:
       tag: ${{ needs.prepare.outputs.tag }}
@@ -282,9 +302,12 @@ jobs:
       is_latest: ${{ needs.prepare.outputs.is_latest }}
       prerelease: ${{ needs.prepare.outputs.prerelease }}
     steps:
-      - run: echo "Awaiting production approval"
+      - run: echo "Draft release created. Edit the release body in the UI, then approve to publish."
 
-  create-tag:
+  # Flip the reviewed draft to a published release. Publishing creates the tag at
+  # the draft's target commit and binds the release to it. BOT_TOKEN is used so
+  # the tag can be created under any tag protection rulesets.
+  publish-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -295,32 +318,24 @@ jobs:
       is_latest: ${{ needs.production-gate.outputs.is_latest }}
       prerelease: ${{ needs.production-gate.outputs.prerelease }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.BOT_TOKEN }}
-
-      - name: Configure Git
+      - name: Publish draft release
+        env:
+          TAG: ${{ needs.production-gate.outputs.tag }}
+          IS_LATEST: ${{ needs.production-gate.outputs.is_latest }}
+          GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GH_REPO: ${{ github.repository }}
         run: |
-          git config --global user.name "vanillapdf-bot"
-          git config --global user.email "info@vanillapdf.com"
-
-      - name: Create and push tag
-        run: |
-          TAG="${{ needs.production-gate.outputs.tag }}"
-          if git tag -l "$TAG" | grep -q "^${TAG}$"; then
-            echo "::error::Tag $TAG already exists"
-            exit 1
+          LATEST_FLAG=""
+          if [ "$IS_LATEST" = "false" ]; then
+            LATEST_FLAG="--latest=false"
           fi
-          git tag "$TAG"
-          git push origin "$TAG"
+          gh release edit "$TAG" --draft=false $LATEST_FLAG
 
   publish-nuget:
     runs-on: ubuntu-latest
     permissions:
       id-token: write  # Enable GitHub OIDC token issuance for NuGet trusted publishing
-    needs: create-tag
+    needs: publish-release
     environment: production
     steps:
       - name: Download NuGet packages
@@ -343,10 +358,10 @@ jobs:
             --skip-duplicate
 
   github-pages:
-    needs: create-tag
+    needs: publish-release
     # Only deploy documentation for the newest stable release (not pre-releases
     # or patches on older release lines, which would clobber current docs)
-    if: needs.create-tag.outputs.prerelease == 'false' && needs.create-tag.outputs.is_latest == 'true'
+    if: needs.publish-release.outputs.prerelease == 'false' && needs.publish-release.outputs.is_latest == 'true'
     permissions:
       contents: read
       pages: write
@@ -356,55 +371,42 @@ jobs:
       deploy: true
     secrets: inherit
 
-  github-release:
-    needs: create-tag
-    permissions:
-      contents: write
-      id-token: write
-      attestations: write
-    uses: ./.github/workflows/github-release.yml
-    with:
-      tag: ${{ needs.create-tag.outputs.tag }}
-      prerelease: ${{ fromJSON(needs.create-tag.outputs.prerelease) }}
-      latest: ${{ fromJSON(needs.create-tag.outputs.is_latest) }}
-    secrets: inherit
-
   vcpkg-pr:
-    needs: create-tag
+    needs: publish-release
     # Only create vcpkg PR for the newest stable release, so the published port
     # is never downgraded by a pre-release or an older release-line patch
-    if: needs.create-tag.outputs.prerelease == 'false' && needs.create-tag.outputs.is_latest == 'true'
+    if: needs.publish-release.outputs.prerelease == 'false' && needs.publish-release.outputs.is_latest == 'true'
     permissions:
       contents: read
     uses: ./.github/workflows/create-vcpkg-pr.yml
     with:
-      tag: ${{ needs.create-tag.outputs.tag }}
+      tag: ${{ needs.publish-release.outputs.tag }}
     secrets: inherit
 
   homebrew-pr:
-    needs: create-tag
+    needs: publish-release
     # Only create Homebrew PR for official releases, not pre-releases (alpha, beta, rc).
     # The newest-version check is enforced inside update-homebrew.yml, which runs
     # after the tag is pushed (so its tag list is accurate).
-    if: needs.create-tag.outputs.prerelease == 'false'
+    if: needs.publish-release.outputs.prerelease == 'false'
     permissions:
       contents: read
     uses: ./.github/workflows/update-homebrew.yml
     with:
-      tag: ${{ needs.create-tag.outputs.tag }}
+      tag: ${{ needs.publish-release.outputs.tag }}
     secrets: inherit
 
   conan-pr:
-    needs: create-tag
+    needs: publish-release
     # Only create Conan Center PR for official releases, not pre-releases (alpha, beta, rc).
     # Conan Center holds parallel versions, so this is not gated on is_latest; the
     # latest-version policy is enforced inside create-conan-pr.yml (post-tag).
-    if: needs.create-tag.outputs.prerelease == 'false'
+    if: needs.publish-release.outputs.prerelease == 'false'
     permissions:
       contents: read
     uses: ./.github/workflows/create-conan-pr.yml
     with:
-      tag: ${{ needs.create-tag.outputs.tag }}
+      tag: ${{ needs.publish-release.outputs.tag }}
     secrets: inherit
 
   attest:
@@ -413,7 +415,7 @@ jobs:
     permissions:
       id-token: write
       attestations: write
-    needs: [publish-nuget, github-release]
+    needs: [publish-nuget, publish-release]
     steps:
       - name: Download NuGet packages
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
@@ -497,11 +499,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    needs: [github-release, create-tag]
+    needs: publish-release
     # Update the overlay port for every official release: the job always opens a
     # PR against its own release/X.Y branch and only updates main when this is the
     # newest version (that check lives inside the job, post-tag).
-    if: needs.create-tag.outputs.prerelease == 'false'
+    if: needs.publish-release.outputs.prerelease == 'false'
     steps:
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
@@ -526,7 +528,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          VERSION="${{ needs.create-tag.outputs.tag }}"
+          VERSION="${{ needs.publish-release.outputs.tag }}"
           VERSION="${VERSION#v}"
           BRANCH="release/port-${VERSION}"
 
@@ -553,7 +555,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          VERSION="${{ needs.create-tag.outputs.tag }}"
+          VERSION="${{ needs.publish-release.outputs.tag }}"
           VERSION="${VERSION#v}"
 
           # Get all release tags and find the latest version

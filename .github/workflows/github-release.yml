@@ -13,6 +13,11 @@ on:
         required: false
         type: boolean
         default: true
+      target:
+        description: "Commit SHA the tag is created at when the draft is published"
+        required: false
+        type: string
+        default: ''
   workflow_dispatch:
     inputs:
       tag:
@@ -27,6 +32,11 @@ on:
         required: false
         type: boolean
         default: true
+      target:
+        description: "Commit SHA the tag is created at when the draft is published"
+        required: false
+        type: string
+        default: ''
 
 permissions: {}
 
@@ -49,6 +59,7 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
           PRERELEASE: ${{ inputs.prerelease }}
+          TARGET: ${{ inputs.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         run: |
@@ -62,18 +73,28 @@ jobs:
             LATEST_FLAG="--latest=false"
           fi
 
+          # The tag must NOT exist yet: publishing this draft is what creates the
+          # tag (at TARGET) and binds the release to it. Pre-creating the tag would
+          # leave the published release stuck on its untagged-* placeholder.
+          TARGET_FLAG=""
+          if [ -n "$TARGET" ]; then
+            TARGET_FLAG="--target $TARGET"
+          fi
+
           if [ "$PRERELEASE" = "true" ]; then
             gh release create "$TAG" \
               --title "vanillapdf $TAG" \
               --generate-notes \
               --draft \
               --prerelease \
+              $TARGET_FLAG \
               $LATEST_FLAG
           else
             gh release create "$TAG" \
               --title "vanillapdf $TAG" \
               --generate-notes \
               --draft \
+              $TARGET_FLAG \
               $LATEST_FLAG
           fi
 
@@ -107,12 +128,27 @@ jobs:
           done
 
       - name: Attest package provenance
+        id: attest-packages
         uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32  # v4.1.0
         with:
           subject-path: |
             ./packages/deb/*.deb
             ./packages/rpm/*.rpm
             ./packages/dmg/*.dmg
+
+      - name: Upload provenance to release
+        # Attach the signed provenance bundle as a release asset. The attestation
+        # also lives in GitHub's attestation store, but OpenSSF Scorecard's
+        # Signed-Releases check only inspects release assets and credits a
+        # *.intoto.jsonl provenance file.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BUNDLE_PATH: ${{ steps.attest-packages.outputs.bundle-path }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          PROVENANCE="vanillapdf-${TAG}.intoto.jsonl"
+          cp "$BUNDLE_PATH" "$PROVENANCE"
+          gh release upload "$TAG" "$PROVENANCE"
 
       - name: Generate SBOM
         env:
