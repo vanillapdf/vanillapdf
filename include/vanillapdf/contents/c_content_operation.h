@@ -179,13 +179,15 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationBeginTextHandle
+    * \deprecated Use ContentOperationBeginText_FromContentOperation instead
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToBeginText(ContentOperationHandle* handle, ContentOperationBeginTextHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToBeginText(ContentOperationHandle* handle, ContentOperationBeginTextHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationEndTextHandle
+    * \deprecated Use ContentOperationEndText_FromContentOperation instead
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle* handle, ContentOperationEndTextHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle* handle, ContentOperationEndTextHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ContentInstructionHandle
@@ -369,9 +371,42 @@ extern "C"
     /** @} */
 
     /**
+    * \memberof ContentOperationBeginTextHandle
+    * @{
+    */
+
+    /**
+    * \brief Reinterpret current object as \ref ContentOperationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationBeginText_ToContentOperation(ContentOperationBeginTextHandle* handle, ContentOperationHandle** result);
+
+    /**
+    * \brief Convert \ref ContentOperationHandle to \ref ContentOperationBeginTextHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationBeginText_FromContentOperation(ContentOperationHandle* handle, ContentOperationBeginTextHandle** result);
+
+    /**
+    * \copydoc IUnknown_Release
+    * \see \ref IUnknown_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationBeginText_Release(ContentOperationBeginTextHandle* handle);
+
+    /** @} */
+
+    /**
     * \memberof ContentOperationEndTextHandle
     * @{
     */
+
+    /**
+    * \brief Reinterpret current object as \ref ContentOperationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationEndText_ToContentOperation(ContentOperationEndTextHandle* handle, ContentOperationHandle** result);
+
+    /**
+    * \brief Convert \ref ContentOperationHandle to \ref ContentOperationEndTextHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationEndText_FromContentOperation(ContentOperationHandle* handle, ContentOperationEndTextHandle** result);
 
     /**
     * \copydoc IUnknown_Release

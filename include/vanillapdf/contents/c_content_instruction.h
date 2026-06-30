@@ -68,8 +68,9 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationHandle
+    * \deprecated Use ContentOperation_FromInstruction instead
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(ContentInstructionHandle* handle, ContentOperationHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(ContentInstructionHandle* handle, ContentOperationHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
