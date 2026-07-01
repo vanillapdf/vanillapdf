@@ -376,6 +376,11 @@ extern "C"
     */
 
     /**
+    * \brief Create a new begin text (BT) operation
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationBeginText_Create(ContentOperationBeginTextHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref ContentOperationHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationBeginText_ToContentOperation(ContentOperationBeginTextHandle* handle, ContentOperationHandle** result);
@@ -397,6 +402,11 @@ extern "C"
     * \memberof ContentOperationEndTextHandle
     * @{
     */
+
+    /**
+    * \brief Create a new end text (ET) operation
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationEndText_Create(ContentOperationEndTextHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationHandle

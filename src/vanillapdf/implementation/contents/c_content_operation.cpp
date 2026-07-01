@@ -388,6 +388,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_Relea
     return ObjectRelease<OperationTextShowArray, ContentOperationTextShowArrayHandle>(handle);
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationBeginText_Create(ContentOperationBeginTextHandle** result) {
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto operation = make_deferred<OperationBeginText>();
+        auto ptr = operation.AddRefGet();
+        *result = reinterpret_cast<ContentOperationBeginTextHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationBeginText_ToContentOperation(ContentOperationBeginTextHandle* handle, ContentOperationHandle** result) {
     return SafeObjectConvert<OperationBeginText, OperationBase, ContentOperationBeginTextHandle, ContentOperationHandle>(handle, result);
 }
@@ -398,6 +409,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationBeginText_FromConte
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationBeginText_Release(ContentOperationBeginTextHandle* handle) {
     return ObjectRelease<OperationBeginText, ContentOperationBeginTextHandle>(handle);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationEndText_Create(ContentOperationEndTextHandle** result) {
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto operation = make_deferred<OperationEndText>();
+        auto ptr = operation.AddRefGet();
+        *result = reinterpret_cast<ContentOperationEndTextHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationEndText_ToContentOperation(ContentOperationEndTextHandle* handle, ContentOperationHandle** result) {
