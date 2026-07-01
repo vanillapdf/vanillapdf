@@ -304,7 +304,7 @@ error_type process_page_contents(PageContentsHandle* page_contents, size_type pa
             continue;
         }
 
-        RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_ToInlineImage(content_object, &content_image));
+        RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectInlineImage_FromContentObject(content_object, &content_image));
         RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectInlineImage_GetDictionary(content_image, &content_image_dictionary));
         RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectInlineImage_GetData(content_image, &content_image_data));
 

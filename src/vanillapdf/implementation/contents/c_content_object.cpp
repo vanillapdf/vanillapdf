@@ -70,6 +70,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(Co
     CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_ToContentObject(ContentObjectInlineImageHandle* handle, ContentObjectHandle** result) {
+    return SafeObjectConvert<InlineImageObject, ContentObjectBase, ContentObjectInlineImageHandle, ContentObjectHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_FromContentObject(ContentObjectHandle* handle, ContentObjectInlineImageHandle** result) {
+    return SafeObjectConvert<ContentObjectBase, InlineImageObject, ContentObjectHandle, ContentObjectInlineImageHandle>(handle, result);
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_Release(ContentObjectInlineImageHandle* handle) {
     return ObjectRelease<InlineImageObject, ContentObjectInlineImageHandle>(handle);
 }

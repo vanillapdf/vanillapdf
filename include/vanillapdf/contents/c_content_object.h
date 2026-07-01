@@ -73,8 +73,9 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ContentObjectInlineImageHandle
+    * \deprecated Use ContentObjectInlineImage_FromContentObject instead
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle* handle, ContentObjectInlineImageHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle* handle, ContentObjectInlineImageHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ContentInstructionHandle
@@ -141,6 +142,16 @@ extern "C"
     * \brief Get raw image data
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(ContentObjectInlineImageHandle* handle, BufferHandle** result);
+
+    /**
+    * \brief Reinterpret current object as \ref ContentObjectHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_ToContentObject(ContentObjectInlineImageHandle* handle, ContentObjectHandle** result);
+
+    /**
+    * \brief Convert \ref ContentObjectHandle to \ref ContentObjectInlineImageHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_FromContentObject(ContentObjectHandle* handle, ContentObjectInlineImageHandle** result);
 
     /**
     * \copydoc IUnknown_Release

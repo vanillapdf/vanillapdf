@@ -28,7 +28,7 @@ error_type process_content_object(ContentObjectHandle* obj, int nested) {
             RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectText_Release(text_object));
             break;
         case ContentObjectType_InlineImage:
-            RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_ToInlineImage(obj, &image_object));
+            RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectInlineImage_FromContentObject(obj, &image_object));
             RETURN_ERROR_IF_NOT_SUCCESS(process_content_object_inline_image(image_object, nested + 1));
             RETURN_ERROR_IF_NOT_SUCCESS(ContentObjectInlineImage_Release(image_object));
             break;
@@ -120,7 +120,7 @@ error_type process_content_operation(ContentOperationHandle* obj, int nested) {
             RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationTextShowArray_Release(text_show_array_operation));
             break;
         case ContentOperationType_EndText:
-            RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_ToEndText(obj, &end_text_operation));
+            RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationEndText_FromContentOperation(obj, &end_text_operation));
             RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation_endtext(end_text_operation, nested + 1));
             RETURN_ERROR_IF_NOT_SUCCESS(ContentOperationEndText_Release(end_text_operation));
             break;
@@ -264,7 +264,7 @@ error_type process_content_instruction(ContentInstructionHandle* obj, int nested
             RETURN_ERROR_IF_NOT_SUCCESS(ContentObject_Release(object_handle));
             break;
         case ContentInstructionType_Operation:
-            RETURN_ERROR_IF_NOT_SUCCESS(ContentInstruction_ToOperation(obj, &operation_handle));
+            RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_FromInstruction(obj, &operation_handle));
             RETURN_ERROR_IF_NOT_SUCCESS(process_content_operation(operation_handle, nested + 1));
             RETURN_ERROR_IF_NOT_SUCCESS(ContentOperation_Release(operation_handle));
             break;
