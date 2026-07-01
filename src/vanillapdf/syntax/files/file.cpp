@@ -1191,6 +1191,24 @@ BufferPtr File::GetByteRange(types::stream_size begin, types::size_type length) 
         throw FileNotInitializedException(filename);
     }
 
+    // The input stream cursor is shared across all readers (a single underlying stream,
+    // regardless of whether it is backed by a file on disk or an in-memory buffer).
+    // The seek and the read must be performed atomically under the exclusive lock,
+    // otherwise a concurrent thread (e.g. lazy object initialization in another thread,
+    // or another signature validation) can move the cursor between our seek and our read,
+    // making us return the wrong bytes. For signature verification this silently breaks
+    // the digest comparison; for object parsing it produces "Could not parse object at offset".
+    _input->ExclusiveInputLock();
+
+    auto rewind_pos = _input->GetInputPosition();
+
+    auto cleanup_lambda = [this, rewind_pos]() {
+        _input->SetInputPosition(rewind_pos);
+        _input->ExclusiveInputUnlock();
+    };
+
+    SCOPE_GUARD(cleanup_lambda);
+
     _input->SetInputPosition(begin);
     return _input->Read(length);
 }
@@ -1200,6 +1218,18 @@ IInputStreamPtr File::GetByteRangeStream(types::stream_size begin, types::size_t
         auto filename = GetFilenameString();
         throw FileNotInitializedException(filename);
     }
+
+    // See GetByteRange - the shared cursor seek and read must be atomic under the lock.
+    _input->ExclusiveInputLock();
+
+    auto rewind_pos = _input->GetInputPosition();
+
+    auto cleanup_lambda = [this, rewind_pos]() {
+        _input->SetInputPosition(rewind_pos);
+        _input->ExclusiveInputUnlock();
+    };
+
+    SCOPE_GUARD(cleanup_lambda);
 
     // Avoid huge allocation and use filtering stream buffer
     _input->SetInputPosition(begin);
