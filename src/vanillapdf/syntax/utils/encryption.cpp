@@ -6,6 +6,8 @@
 #include "syntax/utils/encryption.h"
 #include "syntax/utils/name_constants.h"
 
+#include <cstring>
+
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
 #include <openssl/rc4.h>
