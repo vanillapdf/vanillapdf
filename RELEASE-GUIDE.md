@@ -12,9 +12,6 @@ This guide outlines how to manage stable, alpha, beta, and RC releases for Vanil
 * Nightly builds (`*-nightly-*`) are triggered from this branch.
 * Prerelease tags (`alpha`, `beta`, `rc`) can be made directly from here.
 * 🔒 `release/x.y` branches are **not merged back** into `main`; instead, new development continues directly from `main`.
-* Development happens here.
-* Nightly builds (`*-nightly-*`) are triggered from this branch.
-* Prerelease tags (`alpha`, `beta`, `rc`) can be made directly from here.
 
 ### `release/x.y` (optional)
 
@@ -43,7 +40,7 @@ To maintain a clean history and avoid merging release branches back into `main`,
 * If the `release/x.y` branch is protected (e.g., requires PRs), you **must** create a pull request with the cherry-picked commit.
 * If it's not protected, you may push cherry-picked commits directly.
 
-```bashbash
+```bash
 # Example:
 git checkout main
 # Make your fix and commit
@@ -54,50 +51,44 @@ git cherry-pick <commit-sha>
 
 ---
 
-## 🏷️ Tagging for Prereleases
+## 🏷️ Creating a Release (Prerelease or Stable)
 
-Create annotated tags to publish prerelease builds:
+Tags are **not** created manually with `git tag`/`git push`. The `release.yml`
+workflow owns tag creation end-to-end, for both prereleases (`alpha`, `beta`,
+`rc`) and stable releases:
 
-```bash
-git tag -a v2.2.0-alpha.1 -m "Alpha release of Vanilla.PDF 2.2.0"
-git push origin v2.2.0-alpha.1
+1. Trigger `release.yml` via `workflow_dispatch` (Actions tab, or
+   `gh workflow run release.yml -f tag=v2.3.0-rc.1 -f dry_run=true`) with the
+   desired tag name. Run it once with `dry_run: true` first — this builds and
+   validates every package (NuGet, deb, rpm, dmg, docs, and, for stable tags
+   only, the vcpkg/Conan submission dry-runs) without publishing or tagging
+   anything.
+2. Re-run with `dry_run: false`. This builds the packages for real and creates
+   the GitHub release as a **draft**, still without creating the tag.
+3. The `production` environment gate pauses the workflow. Review/edit the
+   draft release body in the GitHub UI, then approve the gate.
+4. Approving publishes the draft, which is what actually **creates the tag**
+   at the draft's target commit. This ordering avoids binding the release to
+   a pre-existing tag before the draft is finalized.
 
-# Later:
-git tag -a v2.2.0-beta.1 -m "Beta release of Vanilla.PDF 2.2.0"
-git push origin v2.2.0-beta.1
-
-# And then:
-git tag -a v2.2.0-rc.1 -m "Release candidate for Vanilla.PDF 2.2.0"
-git push origin v2.2.0-rc.1
-```
-
-> These tags trigger GitHub Actions to publish prerelease NuGet packages.
-
----
-
-## 🚀 Tagging for Stable Releases
-
-Tag from `release/x.y` (or `main` if you skipped a release branch).
-If the last prerelease (e.g., `v2.2.0-rc.1`) is already the final state, you can tag the exact same commit as the stable release:
-
-```bash
-git tag -a v2.2.0 -m "Final stable release of Vanilla.PDF 2.2.0"
-git push origin v2.2.0
-```
+> Whether a tag counts as a prerelease is derived automatically from its
+> suffix (`-alpha.N`, `-beta.N`, `-rc.N`) — see the tag-parsing logic in
+> `release.yml`'s `prepare` job.
 
 ---
 
 ## 📦 Package Version Handling
 
-### In `Directory.Packages.props`
+`cmake/version.cmake` (`VANILLAPDF_VERSION_MAJOR/MINOR/PATCH`) is the single
+source of truth for the release version. The `verify` job in `release.yml`
+fails the run if the tag doesn't match these values.
 
-Use stable version by default:
-
-```xml
-<PackageVersion Include="vanillapdf" Version="2.1.0" />
-```
-
-> ⚠️ Overriding this version dynamically in CI is currently not supported.
+`vcpkg.json` is generated from `cmake/version.cmake` at configure time
+(`cmake/vcpkg_manifest.cmake`) — it does not need to be hand-edited before
+tagging. `ports/vanillapdf/vcpkg.json` (the upstream vcpkg port) is updated
+**after** the release via `scripts/update_port.py`, since it needs the
+SHA512 of the published release tarball, which only exists once the tag has
+been pushed.
 
 ---
 
@@ -105,13 +96,15 @@ Use stable version by default:
 
 | Workflow                                           | Trigger                             | Version Source             | Publishes? |
 | -------------------------------------------------- | ----------------------------------- | -------------------------- | ---------- |
-| `release.yml` (calls packaging, pages, release) | Tag: `v*` | Manifest versions | ✅ Yes |
+| `release.yml` (calls packaging, pages, release) | `workflow_dispatch` (tag input) | `cmake/version.cmake` | ✅ Yes (unless `dry_run: true`) |
 
-### Syncing manifest versions
+### Version source
 
-Before tagging a release, run `scripts/sync_versions.sh <version>` to update
-`vcpkg.json` and `ports/vanillapdf/vcpkg.json` with the new version number.
-The release workflows will fail if these files do not match the tag.
+`cmake/version.cmake` is the only file that needs to match the tag before
+release — the `verify` job in `release.yml` checks this and fails the run on
+a mismatch. `vcpkg.json` is generated from it automatically; the upstream
+`ports/vanillapdf/vcpkg.json` is synced post-release (see
+[Package Version Handling](#-package-version-handling) above).
 
 The `github-release.yml` workflow is invoked by `release.yml` with the tag and
 prerelease flag already provided, so version checks are centralized in
@@ -125,12 +118,13 @@ invokes it with deployment enabled.
 
 ## 🔧 Notes
 
-* All prereleases must be pushed as annotated tags (`git tag -a` or with `-m`).
-* Prerelease detection is handled in workflows using tag parsing:
+* Tags are created by `release.yml` (via publishing the draft release), not pushed manually.
+* `release.yml` has no `push: tags:` trigger — it only runs on `pull_request`
+  (dry-run only, synthetic tag from `cmake/version.cmake`) and
+  `workflow_dispatch` (real releases, tag supplied as input). Prerelease
+  detection is derived from that tag in the `prepare` job:
 
 ```bash
-TAG="${GITHUB_REF#refs/tags/}"
-echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 VERSION="${TAG#v}"
 EXTRA=""
 if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(.*)$ ]]; then
@@ -143,8 +137,11 @@ else
 fi
 ```
 
-* Stable workflows **must not** match prerelease tags.
+* Jobs that must only run for the newest stable release (docs deploy,
+  vcpkg/Homebrew/Conan submission) additionally check `is_latest`, computed
+  by comparing this tag against existing stable tags — see `prepare` in
+  `release.yml`.
 
 ---
 
-*Last updated: 2025-07-09*
+*Last updated: 2026-07-01*
