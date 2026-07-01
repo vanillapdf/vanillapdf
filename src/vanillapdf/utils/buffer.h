@@ -12,6 +12,7 @@
 #include <string>
 #include <ostream>
 #include <cassert>
+#include <cstring>
 
 namespace vanillapdf {
 
