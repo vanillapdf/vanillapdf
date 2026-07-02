@@ -144,6 +144,8 @@ Full documentation is hosted on **[Read the Docs](https://vanillapdf.readthedocs
 | [Examples](https://vanillapdf.readthedocs.io/en/latest/examples.html) | Code samples for signing, merging, encryption |
 | [PDF Format](https://vanillapdf.readthedocs.io/en/latest/pdf_format.html) | PDF syntax, objects, and document structure |
 
+See the [Changelog](CHANGELOG.md) for release notes.
+
 ## Contributing
 
 We welcome pull requests, feature proposals, and bug reports.
