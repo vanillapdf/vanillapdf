@@ -404,16 +404,23 @@ bool File::SetEncryptionPassword(const Buffer& password) {
     // R=6 uses SHA-256 based key derivation (ISO 32000-2)
     if (revision_value == 6) {
         // Truncate password to 127 bytes
-        BufferPtr truncated_password;
-        if (password.size() > 127) {
-            truncated_password = make_deferred_container<Buffer>(password.begin(), password.begin() + 127);
-        } else {
-            truncated_password = make_deferred_container<Buffer>(password);
+        auto pw_length = std::min(password.size(), static_cast<types::size_type>(127));
+        BufferPtr truncated_password = make_deferred_container<Buffer>(password.begin(), password.begin() + pw_length);
+
+        OutputStringObjectPtr ue_value;
+        if (!dict->TryFindAs(constant::Name::UE, ue_value)) {
+            LOG_ERROR_AND_THROW(CryptoErrorException, "R=6 encryption dictionary is missing required /UE entry");
         }
 
-        auto ue_value = dict->FindAs<StringObjectPtr>(constant::Name::UE);
-        auto oe_value = dict->FindAs<StringObjectPtr>(constant::Name::OE);
-        auto perms_entry = dict->FindAs<StringObjectPtr>(constant::Name::Perms);
+        OutputStringObjectPtr oe_value;
+        if (!dict->TryFindAs(constant::Name::OE, oe_value)) {
+            LOG_ERROR_AND_THROW(CryptoErrorException, "R=6 encryption dictionary is missing required /OE entry");
+        }
+
+        OutputStringObjectPtr perms_entry;
+        if (!dict->TryFindAs(constant::Name::Perms, perms_entry)) {
+            LOG_ERROR_AND_THROW(CryptoErrorException, "R=6 encryption dictionary is missing required /Perms entry");
+        }
 
         BufferPtr temp_key;
         if (EncryptionUtils::CheckKeyR6(

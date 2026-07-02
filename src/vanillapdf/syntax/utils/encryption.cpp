@@ -51,6 +51,7 @@ const uint8_t AES_ADDITIONAL_SALT[] = {
 const types::size_type AES_CBC_IV_LENGTH = 16;
 const types::size_type AES_CBC_BLOCK_SIZE = 16;
 
+
 BufferPtr EncryptionUtils::ComputeObjectKey(
     const Buffer& key,
     types::big_uint objNumber,
@@ -1539,6 +1540,7 @@ BufferPtr EncryptionUtils::ComputeHashR6(
 
     // Step 1: K = SHA-256(password + salt + u_value)
     Buffer initial_input;
+    initial_input.reserve(password.size() + salt.size() + u_value.size());
     initial_input.insert(initial_input.end(), password.begin(), password.end());
     initial_input.insert(initial_input.end(), salt.begin(), salt.end());
     initial_input.insert(initial_input.end(), u_value.begin(), u_value.end());
@@ -1546,17 +1548,18 @@ BufferPtr EncryptionUtils::ComputeHashR6(
     BufferPtr k = ComputeSHA256(initial_input);
 
     // Step 2: Iterative round loop
-    for (int round = 0; ; round += 1) {
+    for (int round = 0; ; ++round) {
 
         // Build K1 = (password + K + u_value) repeated 64 times
         Buffer single_sequence;
+        single_sequence.reserve(password.size() + 32 + u_value.size());
         single_sequence.insert(single_sequence.end(), password.begin(), password.end());
         single_sequence.insert(single_sequence.end(), k.begin(), k.begin() + std::min(k->size(), static_cast<types::size_type>(32)));
         single_sequence.insert(single_sequence.end(), u_value.begin(), u_value.end());
 
         Buffer k1;
         k1.reserve(single_sequence.size() * 64);
-        for (int i = 0; i < 64; i += 1) {
+        for (int i = 0; i < 64; ++i) {
             k1.insert(k1.end(), single_sequence.begin(), single_sequence.end());
         }
 
@@ -1715,6 +1718,51 @@ EncryptionUtils::EncryptionDataR6 EncryptionUtils::GenerateEncryptionDataR6(
 
 }
 
+// Validate the Perms entry by decrypting with the candidate file encryption key
+// and checking for the "adb" sentinel at bytes 9-11 (ISO 32000-2, Table 21)
+static bool VerifyPermsEntry(const BufferPtr& fek, const Buffer& perms_value) {
+    BufferPtr decrypted = EncryptionUtils::AESDecryptECB(fek, perms_value);
+    if (decrypted->size() < 12) {
+        return false;
+    }
+
+    return decrypted[9] == 'a' && decrypted[10] == 'd' && decrypted[11] == 'b';
+}
+
+// Try to recover the file encryption key using a password against a credential entry (U or O).
+// The credential_value contains: 32-byte hash + 8-byte validation salt + 8-byte key salt.
+// The u_for_hash parameter is empty for user password checks, or the full U value for owner checks.
+static bool TryRecoverKeyR6(
+    const Buffer& pw,
+    const Buffer& credential_value,
+    const Buffer& encrypted_key,
+    const Buffer& perms_value,
+    const Buffer& u_for_hash,
+    Buffer& decryption_key) {
+
+    if (credential_value.size() < 48) {
+        return false;
+    }
+
+    Buffer validation_salt(credential_value.begin() + 32, credential_value.begin() + 40);
+    Buffer key_salt(credential_value.begin() + 40, credential_value.begin() + 48);
+
+    BufferPtr hash = EncryptionUtils::ComputeHashR6(pw, validation_salt, u_for_hash);
+    if (!std::equal(hash.begin(), hash.begin() + 32, credential_value.begin())) {
+        return false;
+    }
+
+    BufferPtr key = EncryptionUtils::ComputeHashR6(pw, key_salt, u_for_hash);
+    BufferPtr fek = EncryptionUtils::AESDecryptCBC_ZeroIV(key, encrypted_key);
+
+    if (!VerifyPermsEntry(fek, perms_value)) {
+        return false;
+    }
+
+    decryption_key = make_deferred_container<Buffer>(fek.begin(), fek.end());
+    return true;
+}
+
 // ISO 32000-2:2020 - Password verification for R=6
 bool EncryptionUtils::CheckKeyR6(
     const Buffer& password,
@@ -1733,53 +1781,13 @@ bool EncryptionUtils::CheckKeyR6(
     Buffer pw(password.begin(), password.begin() + std::min(password.size(), static_cast<types::size_type>(127)));
     Buffer empty_u;
 
-    // Try user password
-    if (u_value.size() >= 48) {
-        Buffer user_validation_salt(u_value.begin() + 32, u_value.begin() + 40);
-        Buffer user_key_salt(u_value.begin() + 40, u_value.begin() + 48);
-
-        BufferPtr hash = ComputeHashR6(pw, user_validation_salt, empty_u);
-
-        if (std::equal(hash.begin(), hash.begin() + 32, u_value.begin())) {
-            BufferPtr key = ComputeHashR6(pw, user_key_salt, empty_u);
-            BufferPtr fek = AESDecryptCBC_ZeroIV(key, ue_value);
-
-            // Verify via Perms entry
-            BufferPtr perms_decrypted = AESDecryptECB(fek, perms_value);
-            if (perms_decrypted->size() >= 12 &&
-                (*perms_decrypted)[9] == 'a' &&
-                (*perms_decrypted)[10] == 'd' &&
-                (*perms_decrypted)[11] == 'b') {
-                decryption_key = make_deferred_container<Buffer>(fek.begin(), fek.end());
-                return true;
-            }
-        }
+    // Try user password (u_for_hash is empty for user checks)
+    if (TryRecoverKeyR6(pw, u_value, ue_value, perms_value, empty_u, decryption_key)) {
+        return true;
     }
 
-    // Try owner password
-    if (o_value.size() >= 48) {
-        Buffer owner_validation_salt(o_value.begin() + 32, o_value.begin() + 40);
-        Buffer owner_key_salt(o_value.begin() + 40, o_value.begin() + 48);
-
-        BufferPtr hash = ComputeHashR6(pw, owner_validation_salt, u_value);
-
-        if (std::equal(hash.begin(), hash.begin() + 32, o_value.begin())) {
-            BufferPtr key = ComputeHashR6(pw, owner_key_salt, u_value);
-            BufferPtr fek = AESDecryptCBC_ZeroIV(key, oe_value);
-
-            // Verify via Perms entry
-            BufferPtr perms_decrypted = AESDecryptECB(fek, perms_value);
-            if (perms_decrypted->size() >= 12 &&
-                (*perms_decrypted)[9] == 'a' &&
-                (*perms_decrypted)[10] == 'd' &&
-                (*perms_decrypted)[11] == 'b') {
-                decryption_key = make_deferred_container<Buffer>(fek.begin(), fek.end());
-                return true;
-            }
-        }
-    }
-
-    return false;
+    // Try owner password (u_for_hash is the full U value for owner checks)
+    return TryRecoverKeyR6(pw, o_value, oe_value, perms_value, u_value, decryption_key);
 
 #else
     (void) password; (void) u_value; (void) ue_value;
