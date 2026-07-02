@@ -343,14 +343,13 @@ TEST_F(DestinationNameTreeWithDocument, Remove) {
     ArrayObject_Release(dest_arr);
 }
 
-// Test iterator with single item (requires document context)
-// Note: Multiple inserts fail due to "Limits key already present" bug - see issue #227
+// Test iterator with multiple items (requires document context)
 TEST_F(DestinationNameTreeWithDocument, Iterator_WithItems) {
     HandleGuard<DestinationNameTreeHandle, DestinationNameTree_Release> tree;
     ASSERT_EQ(DestinationNameTree_Create(tree.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(tree.get(), nullptr);
 
-    // Create one destination (multiple inserts blocked by issue #227)
+    // Create first destination
     DestinationHandle* dest1 = nullptr;
     ArrayObjectHandle* dest_arr1 = nullptr;
     CreateFitDestinationWithPage(&dest1, &dest_arr1);
@@ -363,6 +362,21 @@ TEST_F(DestinationNameTreeWithDocument, Iterator_WithItems) {
     ASSERT_NE(name_str1.get(), nullptr);
 
     ASSERT_EQ(DestinationNameTree_Insert(tree, name_str1, dest1), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create a second destination. A second Insert previously failed with
+    // "The key Limits was already present in the dictionary" - see issue #227
+    DestinationHandle* dest2 = nullptr;
+    ArrayObjectHandle* dest_arr2 = nullptr;
+    CreateFitDestinationWithPage(&dest2, &dest_arr2);
+
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> name2;
+    ASSERT_EQ(LiteralStringObject_CreateFromEncodedString("OtherDest", name2.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name2.get(), nullptr);
+    HandleGuard<StringObjectHandle, StringObject_Release> name_str2;
+    ASSERT_EQ(LiteralStringObject_ToStringObject(name2, name_str2.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(name_str2.get(), nullptr);
+
+    ASSERT_EQ(DestinationNameTree_Insert(tree, name_str2, dest2), VANILLAPDF_ERROR_SUCCESS);
 
     // Get iterator
     HandleGuard<DestinationNameTreeIteratorHandle, DestinationNameTreeIterator_Release> iter;
@@ -389,8 +403,10 @@ TEST_F(DestinationNameTreeWithDocument, Iterator_WithItems) {
         ASSERT_EQ(DestinationNameTreeIterator_IsValid(iter, &valid), VANILLAPDF_ERROR_SUCCESS);
     }
 
-    EXPECT_EQ(count, 1);
+    EXPECT_EQ(count, 2);
 
     Destination_Release(dest1);
     ArrayObject_Release(dest_arr1);
+    Destination_Release(dest2);
+    ArrayObject_Release(dest_arr2);
 }
