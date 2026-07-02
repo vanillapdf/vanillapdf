@@ -32,7 +32,11 @@ The script will:
 
 ## Updating Conan Data
 
-Use the Python script to update `conan/conandata.yml` with a new version's SHA256:
+`conan/conandata.yml` is **not tracked in git** (gitignored) — `conan create conan/`
+always builds from the local checkout via `export_sources()`, so this file is
+never read in that flow, and a committed copy would only ever go stale. It
+exists solely for locally exercising the download-based `source()` path
+(mirroring how Conan Center Index consumes the recipe). Generate it on demand:
 
 ```bash
 # Auto-detect latest tag and update
@@ -52,4 +56,4 @@ python scripts/update_conandata.py --dry-run
 The script will:
 1. Download the release archive from GitHub
 2. Calculate the SHA256 hash
-3. Add or update the version entry in `conan/conandata.yml`
+3. Add or update the version entry in `conan/conandata.yml` (local file only)
