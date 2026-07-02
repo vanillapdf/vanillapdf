@@ -1550,11 +1550,12 @@ BufferPtr EncryptionUtils::ComputeHashR6(
     // Step 2: Iterative round loop
     for (int round = 0; ; ++round) {
 
-        // Build K1 = (password + K + u_value) repeated 64 times
+        // Build K1 = (password + K + u_value) repeated 64 times. K is the full hash
+        // from the previous round, which is 32, 48 or 64 bytes (SHA-256/384/512).
         Buffer single_sequence;
-        single_sequence.reserve(password.size() + 32 + u_value.size());
+        single_sequence.reserve(password.size() + k->size() + u_value.size());
         single_sequence.insert(single_sequence.end(), password.begin(), password.end());
-        single_sequence.insert(single_sequence.end(), k.begin(), k.begin() + std::min(k->size(), static_cast<types::size_type>(32)));
+        single_sequence.insert(single_sequence.end(), k.begin(), k.end());
         single_sequence.insert(single_sequence.end(), u_value.begin(), u_value.end());
 
         Buffer k1;
@@ -1606,20 +1607,25 @@ BufferPtr EncryptionUtils::ComputeHashR6(
         total_length += final_offset;
         e->resize(total_length);
 
-        // Select hash based on last byte of E mod 3
-        uint8_t last_byte = static_cast<uint8_t>((*e)[e->size() - 1]);
-        int hash_select = last_byte % 3;
+        // Step (c): select the next hash from the first 16 bytes of E interpreted
+        // as an unsigned big-endian integer, modulo 3 (ISO 32000-2, Algorithm 2.B).
+        unsigned int remainder = 0;
+        for (int i = 0; i < 16; ++i) {
+            remainder = (remainder * 256u + static_cast<uint8_t>((*e)[i])) % 3;
+        }
 
-        if (hash_select == 0) {
+        if (remainder == 0) {
             k = ComputeSHA256(e);
-        } else if (hash_select == 1) {
+        } else if (remainder == 1) {
             k = ComputeSHA384(e);
         } else {
             k = ComputeSHA512(e);
         }
 
-        // Termination: at least 64 rounds, then stop when last_byte <= (round - 32)
-        if (round >= 63 && last_byte <= static_cast<uint8_t>(round - 32)) {
+        // Step (d) termination: at least 64 rounds, then stop when the last byte
+        // of E is <= (round - 32).
+        uint8_t last_byte = static_cast<uint8_t>(e->back());
+        if (round >= 63 && last_byte <= round - 32) {
             break;
         }
     }
