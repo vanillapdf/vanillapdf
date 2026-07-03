@@ -1,0 +1,124 @@
+name: Encryption interoperability check (qpdf + pyhanko)
+
+on:
+  workflow_dispatch:
+
+  pull_request:
+    branches: [ "main", "release/*" ]
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'scripts/verify_encryption_interop_pyhanko.py'
+      - 'scripts/verify_encryption_interop_qpdf.py'
+      - '.github/workflows/encryption-interop-check.yml'
+
+  schedule:
+    - cron: '0 5 * * 1'  # Every Monday at 5 AM UTC
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: read
+
+env:
+  VCPKG_ROOT: external/vcpkg
+  VCPKG_DISABLE_METRICS: 1
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
+
+jobs:
+
+  pyhanko:
+    name: pyhanko / ubuntu.26.04-x64
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/vanillapdf/vanillapdf-ubuntu:26.04
+      options: --platform=linux/amd64
+
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: |
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-ubuntu.26.04-x64-${{ hashFiles('vcpkg.json.in') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-ubuntu.26.04-x64-
+
+      - name: Bootstrap vcpkg
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+
+      - name: Configure
+        run: cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+
+      - name: Build vanillapdf.tools
+        run: cmake --build --preset linux-x64-gcc --target vanillapdf.tools
+
+      - name: Install vanillapdf.tools
+        run: cmake --install build/linux-x64-gcc --prefix install
+
+      # Forward: vanillapdf.tools encrypts -> pyhanko authenticates and decrypts.
+      # AES-256 (V=5, R=6) creation is not available on this branch.
+      - name: "[vanillapdf->pyhanko] RC4-40 encryption interop"
+        run: python3 scripts/verify_encryption_interop_pyhanko.py install/bin/vanillapdf.tools test/pdftest2.pdf /tmp/interop RC4 40
+
+      - name: "[vanillapdf->pyhanko] RC4-128 encryption interop"
+        run: python3 scripts/verify_encryption_interop_pyhanko.py install/bin/vanillapdf.tools test/pdftest2.pdf /tmp/interop RC4 128
+
+      - name: "[vanillapdf->pyhanko] AES-128 encryption interop"
+        run: python3 scripts/verify_encryption_interop_pyhanko.py install/bin/vanillapdf.tools test/pdftest2.pdf /tmp/interop AES 128
+
+  qpdf:
+    name: qpdf / ubuntu.26.04-x64
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/vanillapdf/vanillapdf-ubuntu:26.04
+      options: --platform=linux/amd64
+
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+        with:
+          submodules: recursive
+
+      - name: Cache vcpkg
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: |
+            external/vcpkg/downloads
+            external/vcpkg/bincache
+          key: vcpkg-${{ runner.os }}-ubuntu.26.04-x64-${{ hashFiles('vcpkg.json.in') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-ubuntu.26.04-x64-
+
+      - name: Install qpdf
+        run: apt-get update && apt-get install -y qpdf
+
+      - name: Bootstrap vcpkg
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+
+      - name: Configure
+        run: cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+
+      - name: Build vanillapdf.tools
+        run: cmake --build --preset linux-x64-gcc --target vanillapdf.tools
+
+      - name: Install vanillapdf.tools
+        run: cmake --install build/linux-x64-gcc --prefix install
+
+      # Forward: vanillapdf.tools encrypts -> qpdf decrypts.
+      # AES-256 (V=5, R=6) creation is not available on this branch.
+      - name: "[vanillapdf->qpdf] RC4-40 encryption interop"
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools test/pdftest2.pdf /tmp/interop RC4 40
+
+      - name: "[vanillapdf->qpdf] RC4-128 encryption interop"
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools test/pdftest2.pdf /tmp/interop RC4 128
+
+      - name: "[vanillapdf->qpdf] AES-128 encryption interop"
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools test/pdftest2.pdf /tmp/interop AES 128
