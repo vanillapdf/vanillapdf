@@ -395,6 +395,13 @@ bool File::SetEncryptionPassword(const Buffer& password) {
     // This seems very dirty, however it works, so just clean hands afterwards.
     uint32_t permissions_uint32_value = static_cast<uint32_t>(permissions_int64_value);
 
+    // ISO 32000 Table 22: bit positions 1 and 2 are reserved and shall be 0.
+    // Some writers (including older versions of this library) leave them set;
+    // we still decrypt such files, but surface the nonconformance for diagnostics.
+    if ((permissions_uint32_value & 0x1) || (permissions_uint32_value & 0x2)) {
+        spdlog::warn("Permission field has reserved bits 1-2 set ({:#x}), which is not standards-compliant", permissions_uint32_value);
+    }
+
     auto permissions_value = ValueConvertUtils::SafeConvert<uint32_t>(permissions_uint32_value);
     auto revision_value = ValueConvertUtils::SafeConvert<int32_t>(revision->GetIntegerValue());
     auto key_length_value = ValueConvertUtils::SafeConvert<int32_t>(length_bits->GetIntegerValue());
