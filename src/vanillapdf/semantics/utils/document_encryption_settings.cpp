@@ -48,6 +48,14 @@ namespace semantics {
             permission_value &= ~UserAccessPermissionFlags::PrintFaithful;
         }
 
+        // ISO 32000 Table 22: bit positions 1 and 2 are reserved and shall be 0.
+        // Leaving them set yields a /P value (e.g. -1) that we can still decrypt
+        // ourselves but that standards-compliant readers reject: for the V<=4
+        // security handlers /P is folded into the file encryption key, and a
+        // conformant reader normalizes these reserved bits before deriving it.
+        permission_value &= ~0x1;
+        permission_value &= ~0x2;
+
         return permission_value;
     }
 
