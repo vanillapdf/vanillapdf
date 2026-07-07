@@ -778,4 +778,30 @@ TEST(DocumentCreateThreadSafety, StaleRegistryEntryDoesNotBlockCreate) {
     }
 }
 
+// Positive counterpart to the guard: creating a second document for a file that
+// already has a LIVE document must fail. This exercises the create guard's
+// active-entry path - HasMappedDocument finds a present, IsActive() entry and
+// reports the file as already opened - whereas StaleRegistryEntryDoesNotBlockCreate
+// above covers the present-but-inactive case.
+TEST(DocumentCreateThreadSafety, CreateOnAlreadyOpenFileFails) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> doc;
+
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(stream, "already_open", file.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    // First create registers a live document mapping for the file.
+    ASSERT_EQ(Document_CreateFile(file, doc.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(doc.get(), nullptr);
+
+    // While that document is still alive, a second create on the same file must
+    // be rejected - the registry already holds an active entry for it.
+    HandleGuard<DocumentHandle, Document_Release> second_doc;
+    error_type rv = Document_CreateFile(file, second_doc.out());
+    EXPECT_NE(rv, VANILLAPDF_ERROR_SUCCESS)
+        << "creating a second document for an already-open file must fail";
+    EXPECT_EQ(second_doc.get(), nullptr);
+}
+
 } /* thread_safety */
