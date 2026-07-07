@@ -369,20 +369,23 @@ TEST(DocumentCreateThreadSafety, StaleRegistryEntryDoesNotBlockCreate) {
         // so the entry is never erased. Releasing the File frees its address
         // while the dead entry lingers in the registry.
         {
-            HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;
-            HandleGuard<FileHandle, File_Release> file;
+            InputOutputStreamHandle* stream = nullptr;
+            FileHandle* file = nullptr;
 
-            ASSERT_EQ(InputOutputStream_CreateFromMemory(stream.out()), VANILLAPDF_ERROR_SUCCESS);
-            ASSERT_EQ(File_OpenStream(stream, name.c_str(), file.out()), VANILLAPDF_ERROR_SUCCESS);
+            ASSERT_EQ(InputOutputStream_CreateFromMemory(&stream), VANILLAPDF_ERROR_SUCCESS);
+            ASSERT_EQ(File_OpenStream(stream, name.c_str(), &file), VANILLAPDF_ERROR_SUCCESS);
 
             DocumentHandle* doc = nullptr;
             error_type rv = Document_OpenFile(file, &doc);
-            ASSERT_NE(rv, VANILLAPDF_ERROR_SUCCESS)
+            EXPECT_NE(rv, VANILLAPDF_ERROR_SUCCESS)
                 << "empty file was expected to fail initialization and seed a stale registry entry";
 
             if (doc != nullptr) {
                 Document_Release(doc);
             }
+
+            File_Release(file);
+            InputOutputStream_Release(stream);
         }
 
         // Create a real document. Its fresh File frequently reuses the address
@@ -390,17 +393,24 @@ TEST(DocumentCreateThreadSafety, StaleRegistryEntryDoesNotBlockCreate) {
         // must treat that dead entry as absent; a presence-only guard reports
         // the fresh file as already opened.
         {
-            HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;
-            HandleGuard<FileHandle, File_Release> file;
-            HandleGuard<DocumentHandle, Document_Release> doc;
+            InputOutputStreamHandle* stream = nullptr;
+            FileHandle* file = nullptr;
+            DocumentHandle* doc = nullptr;
 
-            ASSERT_EQ(InputOutputStream_CreateFromMemory(stream.out()), VANILLAPDF_ERROR_SUCCESS);
-            ASSERT_EQ(File_CreateStream(stream, name.c_str(), file.out()), VANILLAPDF_ERROR_SUCCESS);
+            ASSERT_EQ(InputOutputStream_CreateFromMemory(&stream), VANILLAPDF_ERROR_SUCCESS);
+            ASSERT_EQ(File_CreateStream(stream, name.c_str(), &file), VANILLAPDF_ERROR_SUCCESS);
 
-            error_type rv = Document_CreateFile(file, doc.out());
-            ASSERT_EQ(rv, VANILLAPDF_ERROR_SUCCESS)
+            error_type rv = Document_CreateFile(file, &doc);
+            EXPECT_EQ(rv, VANILLAPDF_ERROR_SUCCESS)
                 << "iteration " << i << ": a stale registry entry blocked a valid "
                 << "Document_CreateFile - the create guard is not liveness-aware";
+
+            if (doc != nullptr) {
+                Document_Release(doc);
+            }
+
+            File_Release(file);
+            InputOutputStream_Release(stream);
         }
     }
 }
@@ -411,24 +421,32 @@ TEST(DocumentCreateThreadSafety, StaleRegistryEntryDoesNotBlockCreate) {
 // reports the file as already opened - whereas StaleRegistryEntryDoesNotBlockCreate
 // above covers the present-but-inactive case.
 TEST(DocumentCreateThreadSafety, CreateOnAlreadyOpenFileFails) {
-    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;
-    HandleGuard<FileHandle, File_Release> file;
-    HandleGuard<DocumentHandle, Document_Release> doc;
+    InputOutputStreamHandle* stream = nullptr;
+    FileHandle* file = nullptr;
+    DocumentHandle* doc = nullptr;
 
-    ASSERT_EQ(InputOutputStream_CreateFromMemory(stream.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(File_CreateStream(stream, "already_open", file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(&stream), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(stream, "already_open", &file), VANILLAPDF_ERROR_SUCCESS);
 
     // First create registers a live document mapping for the file.
-    ASSERT_EQ(Document_CreateFile(file, doc.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(doc.get(), nullptr);
+    ASSERT_EQ(Document_CreateFile(file, &doc), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(doc, nullptr);
 
     // While that document is still alive, a second create on the same file must
     // be rejected - the registry already holds an active entry for it.
-    HandleGuard<DocumentHandle, Document_Release> second_doc;
-    error_type rv = Document_CreateFile(file, second_doc.out());
+    DocumentHandle* second_doc = nullptr;
+    error_type rv = Document_CreateFile(file, &second_doc);
     EXPECT_NE(rv, VANILLAPDF_ERROR_SUCCESS)
         << "creating a second document for an already-open file must fail";
-    EXPECT_EQ(second_doc.get(), nullptr);
+    EXPECT_EQ(second_doc, nullptr);
+
+    if (second_doc != nullptr) {
+        Document_Release(second_doc);
+    }
+
+    Document_Release(doc);
+    File_Release(file);
+    InputOutputStream_Release(stream);
 }
 
 } /* thread_safety */
