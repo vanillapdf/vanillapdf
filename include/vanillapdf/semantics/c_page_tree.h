@@ -36,16 +36,18 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION PageTree_GetPageCount(PageTreeHandle* handle, size_type* result);
 
     /**
-    * \brief Get page at index \p at.
+    * \brief Get page at the 1-based index \p at.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageTree_GetPage(PageTreeHandle* handle, size_type at, PageObjectHandle** result);
 
     /**
-    * \brief Insert new page at index \p at.
+    * \brief Insert new page at the 1-based index \p at.
     *
     * The page tree is extended by inserting new element before the
     * element \p at the specified position,
-    * effectively increasing the container by one.
+    * effectively increasing the container by one. \p at must be at
+    * least 1; pass \p PageTree_GetPageCount() + 1 (or use \ref
+    * PageTree_AppendPage) to insert after the last page.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageTree_InsertPage(PageTreeHandle* handle, size_type at, PageObjectHandle* page);
 
@@ -57,7 +59,7 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION PageTree_AppendPage(PageTreeHandle* handle, PageObjectHandle* page);
 
     /**
-    * \brief Removed a page at index \p at.
+    * \brief Removed a page at the 1-based index \p at.
     *
     * This effectively reduces the container size by one.
     */

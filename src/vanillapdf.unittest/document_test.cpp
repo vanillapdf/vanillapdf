@@ -552,4 +552,41 @@ TEST(Document, NonTerminalFieldCreation) {
     ASSERT_EQ(DictionaryObject_Release(dict), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(PageTree, InsertRemovePageZeroIndexIsRejected) {
+    InputOutputStreamHandle* io_stream = nullptr;
+    FileHandle* file = nullptr;
+    DocumentHandle* doc = nullptr;
+    CatalogHandle* catalog = nullptr;
+    PageTreeHandle* page_tree = nullptr;
+    PageObjectHandle* new_page = nullptr;
+    size_type page_count = 0;
+
+    // Create in-memory document with an empty page tree
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(&io_stream), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(io_stream, "temp", &file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_CreateFile(file, &doc), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_GetCatalog(doc, &catalog), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_GetPages(catalog, &page_tree), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_CreateFromDocument(doc, &new_page), VANILLAPDF_ERROR_SUCCESS);
+
+    // Page indices are 1-based; index 0 must be rejected, not silently
+    // reinterpreted as "insert at the front" via an unsigned underflow.
+    EXPECT_NE(PageTree_InsertPage(page_tree, 0, new_page), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_NE(PageTree_RemovePage(page_tree, 0), VANILLAPDF_ERROR_SUCCESS);
+
+    // 1-based index 1 still works, including on the front of the tree
+    ASSERT_EQ(PageTree_GetPageCount(page_tree, &page_count), VANILLAPDF_ERROR_SUCCESS);
+    size_type initial_count = page_count;
+    ASSERT_EQ(PageTree_InsertPage(page_tree, 1, new_page), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageTree_GetPageCount(page_tree, &page_count), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(page_count, initial_count + 1);
+
+    ASSERT_EQ(PageObject_Release(new_page), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageTree_Release(page_tree), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_Release(catalog), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_Release(doc), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_Release(file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InputOutputStream_Release(io_stream), VANILLAPDF_ERROR_SUCCESS);
+}
+
 } /* documents */
