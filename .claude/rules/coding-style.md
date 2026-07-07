@@ -8,6 +8,12 @@ Detailed coding style preferences for C++ code in this project. This file is con
   - Good: `std::atomic<int64_t> counter = 0;` / `int m_count = 0;`
   - Avoid: `std::atomic<int64_t> counter{0};` / `int m_count{0};`
 
+## Naming
+
+- Prefer full, descriptive identifiers over abbreviations for locals, members, and parameters. The codebase spells names out in full (`key_length`, `error_message_length`, `range_length`, `after_signature_contents_length`, `m_key_length`).
+  - Good: `auto password_length = std::min<types::size_type>(password.size(), 127);`
+  - Avoid: `auto pw_length = std::min<types::size_type>(password.size(), 127);`
+
 ## Move Semantics
 
 - Do not use `std::move` unless it is mandatory (e.g., moving a non-copyable type like `unique_ptr`). The codebase uses copy semantics for smart pointers (Deferred<T>) and will adopt `std::move` incrementally. Sprinkling `std::move` ahead of that effort breaks style consistency.
