@@ -127,6 +127,10 @@ bool PageTree::FindPageIndexInternal(PageTreeNodePtr node, DictionaryObjectPtr p
 
 
 void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
+    if (page_index < 1) {
+        throw InvalidParameterException(fmt::format("Invalid page index: {}. Page indices are 1-based", page_index));
+    }
+
     auto array_index = page_index - 1;
 
     auto raw_obj = object->GetObject();
@@ -147,6 +151,10 @@ void PageTree::Append(PageObjectPtr object) {
 }
 
 void PageTree::Remove(types::size_type page_index) {
+    if (page_index < 1) {
+        throw InvalidParameterException(fmt::format("Invalid page index: {}. Page indices are 1-based", page_index));
+    }
+
     auto array_index = page_index - 1;
 
     auto kids = GetKidsInternal();
