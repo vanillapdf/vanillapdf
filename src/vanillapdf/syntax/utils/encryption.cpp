@@ -1653,8 +1653,8 @@ EncryptionUtils::EncryptionDataR6 EncryptionUtils::GenerateEncryptionDataR6(
 
     // Truncate passwords to 127 bytes max (UTF-8, SASLprep skipped for now)
     // TODO: Add SASLprep (RFC 4013) normalization for full Unicode support
-    Buffer user_pw(user_password.begin(), user_password.begin() + std::min(user_password.size(), static_cast<types::size_type>(127)));
-    Buffer owner_pw(owner_password.begin(), owner_password.begin() + std::min(owner_password.size(), static_cast<types::size_type>(127)));
+    Buffer user_password_truncated(user_password.begin(), user_password.begin() + std::min<types::size_type>(user_password.size(), 127));
+    Buffer owner_password_truncated(owner_password.begin(), owner_password.begin() + std::min<types::size_type>(owner_password.size(), 127));
 
     EncryptionDataR6 result;
 
@@ -1667,7 +1667,7 @@ EncryptionUtils::EncryptionDataR6 EncryptionUtils::GenerateEncryptionDataR6(
 
     // Compute U (48 bytes): hash + validation salt + key salt
     Buffer empty_u;
-    BufferPtr u_hash = ComputeHashR6(user_pw, user_validation_salt, empty_u);
+    BufferPtr u_hash = ComputeHashR6(user_password_truncated, user_validation_salt, empty_u);
 
     result.u_value = make_deferred_container<Buffer>(48);
     std::copy_n(u_hash.begin(), 32, result.u_value.begin());
@@ -1675,7 +1675,7 @@ EncryptionUtils::EncryptionDataR6 EncryptionUtils::GenerateEncryptionDataR6(
     std::copy_n(user_key_salt.begin(), 8, result.u_value.begin() + 40);
 
     // Compute UE (32 bytes): AES-256-CBC encrypt FEK with key derived from user key salt
-    BufferPtr ue_key = ComputeHashR6(user_pw, user_key_salt, empty_u);
+    BufferPtr ue_key = ComputeHashR6(user_password_truncated, user_key_salt, empty_u);
     result.ue_value = AESEncryptCBC_ZeroIV(ue_key, result.file_encryption_key);
 
     // Generate owner validation salt (8 bytes) and owner key salt (8 bytes)
@@ -1683,7 +1683,7 @@ EncryptionUtils::EncryptionDataR6 EncryptionUtils::GenerateEncryptionDataR6(
     BufferPtr owner_key_salt = GenerateRandomData(8);
 
     // Compute O (48 bytes): hash + validation salt + key salt
-    BufferPtr o_hash = ComputeHashR6(owner_pw, owner_validation_salt, result.u_value);
+    BufferPtr o_hash = ComputeHashR6(owner_password_truncated, owner_validation_salt, result.u_value);
 
     result.o_value = make_deferred_container<Buffer>(48);
     std::copy_n(o_hash.begin(), 32, result.o_value.begin());
@@ -1691,7 +1691,7 @@ EncryptionUtils::EncryptionDataR6 EncryptionUtils::GenerateEncryptionDataR6(
     std::copy_n(owner_key_salt.begin(), 8, result.o_value.begin() + 40);
 
     // Compute OE (32 bytes): AES-256-CBC encrypt FEK with key derived from owner key salt
-    BufferPtr oe_key = ComputeHashR6(owner_pw, owner_key_salt, result.u_value);
+    BufferPtr oe_key = ComputeHashR6(owner_password_truncated, owner_key_salt, result.u_value);
     result.oe_value = AESEncryptCBC_ZeroIV(oe_key, result.file_encryption_key);
 
     // Compute Perms (16 bytes)
@@ -1739,7 +1739,7 @@ static bool VerifyPermsEntry(const BufferPtr& fek, const Buffer& perms_value) {
 // The credential_value contains: 32-byte hash + 8-byte validation salt + 8-byte key salt.
 // The u_for_hash parameter is empty for user password checks, or the full U value for owner checks.
 static bool TryRecoverKeyR6(
-    const Buffer& pw,
+    const Buffer& password,
     const Buffer& credential_value,
     const Buffer& encrypted_key,
     const Buffer& perms_value,
@@ -1753,12 +1753,12 @@ static bool TryRecoverKeyR6(
     Buffer validation_salt(credential_value.begin() + 32, credential_value.begin() + 40);
     Buffer key_salt(credential_value.begin() + 40, credential_value.begin() + 48);
 
-    BufferPtr hash = EncryptionUtils::ComputeHashR6(pw, validation_salt, u_for_hash);
+    BufferPtr hash = EncryptionUtils::ComputeHashR6(password, validation_salt, u_for_hash);
     if (!std::equal(hash.begin(), hash.begin() + 32, credential_value.begin())) {
         return false;
     }
 
-    BufferPtr key = EncryptionUtils::ComputeHashR6(pw, key_salt, u_for_hash);
+    BufferPtr key = EncryptionUtils::ComputeHashR6(password, key_salt, u_for_hash);
     BufferPtr fek = EncryptionUtils::AESDecryptCBC_ZeroIV(key, encrypted_key);
 
     if (!VerifyPermsEntry(fek, perms_value)) {
@@ -1784,16 +1784,16 @@ bool EncryptionUtils::CheckKeyR6(
     CryptoUtils::InitializeOpenSSL();
 
     // Truncate password to 127 bytes
-    Buffer pw(password.begin(), password.begin() + std::min(password.size(), static_cast<types::size_type>(127)));
+    Buffer password_truncated(password.begin(), password.begin() + std::min<types::size_type>(password.size(), 127));
     Buffer empty_u;
 
     // Try user password (u_for_hash is empty for user checks)
-    if (TryRecoverKeyR6(pw, u_value, ue_value, perms_value, empty_u, decryption_key)) {
+    if (TryRecoverKeyR6(password_truncated, u_value, ue_value, perms_value, empty_u, decryption_key)) {
         return true;
     }
 
     // Try owner password (u_for_hash is the full U value for owner checks)
-    return TryRecoverKeyR6(pw, o_value, oe_value, perms_value, u_value, decryption_key);
+    return TryRecoverKeyR6(password_truncated, o_value, oe_value, perms_value, u_value, decryption_key);
 
 #else
     (void) password; (void) u_value; (void) ue_value;
