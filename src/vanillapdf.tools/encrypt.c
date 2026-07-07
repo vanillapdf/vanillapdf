@@ -75,11 +75,8 @@ int process_encrypt(int argc, char *argv[]) {
         return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
     }
 
-    if (license_file_path == NULL) {
-        print_encrypt_help();
-        return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-    }
-
+    // Licensing is opt-in (VANILLAPDF_ENABLE_LICENSING, off by default), so the
+    // license file is optional; only apply it when one was supplied.
     if (license_file_path != NULL) {
         RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_SetLicenseFile(license_file_path));
     }
