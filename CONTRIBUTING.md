@@ -73,6 +73,20 @@ For more information, visit [developercertificate.org](https://developercertific
 
 ---
 
+## 🪝 Git Hooks
+
+The repository ships committed hooks in [`.githooks/`](.githooks/). Enable them once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+- **`commit-msg`** — rejects commit messages whose subject is a lone `@`. This is the signature of a PowerShell here-string (`@'...'@`) accidentally used in a POSIX shell, which corrupts the subject line. Write multi-line messages with `git commit -F <file>` (or a heredoc) instead.
+
+Hooks are a local, best-effort convenience — they run only after you opt in with the command above. The equivalent server-side enforcement runs automatically on every pull request (see the *Lint commit messages* workflow), so a required check still gates merges even if a clone hasn't enabled the hooks.
+
+---
+
 ## 🔐 Release Tag Signing
 
 All release tags must be GPG-signed by a maintainer. This allows users to cryptographically verify that a release was created by a trusted maintainer and has not been tampered with.

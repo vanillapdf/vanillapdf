@@ -1,0 +1,44 @@
+name: Lint commit messages
+
+on:
+  pull_request:
+    branches: [ "main", "release/*" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  commit-subjects:
+    name: Reject corrupted commit subjects
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Check subjects in PR commit range
+        run: |
+          set -eu
+          base="origin/${{ github.base_ref }}"
+          git rev-parse "$base" >/dev/null
+
+          # A PowerShell here-string (@'...'@) leaking into a POSIX `git commit`
+          # produces a subject that is a lone `@` or begins with `@ `.
+          bad=$(git log --no-merges --format='%H %s' "$base..HEAD" \
+                | awk '{ s=$0; sub(/^[0-9a-f]+ /,"",s); if (s=="@" || s ~ /^@ /) print }')
+
+          if [ -n "$bad" ]; then
+            echo "Corrupted commit subject(s) detected:"
+            echo "$bad"
+            echo
+            echo "These look like a PowerShell here-string (@'...'@) leaked into 'git commit'."
+            echo "Reword them (git rebase -i $base) using: git commit -F <file>."
+            exit 1
+          fi
+
+          echo "All commit subjects OK."

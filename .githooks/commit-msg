@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# Reject commit messages corrupted by PowerShell here-string delimiters
+# (@'...'@) leaking into a POSIX shell. In POSIX sh, `git commit -m @'...'@`
+# is parsed as a literal `@`, a single-quoted string, and another literal `@`,
+# so the commit SUBJECT becomes a lone `@` and a `@` trailer is appended.
+#
+# Enable this hook once per clone:
+#   git config core.hooksPath .githooks
+#
+# Correct way to write a multi-line message in a POSIX shell:
+#   git commit -F <file>      (write the message to a file first)
+#   git commit -F - <<'EOF' ... EOF
+# The @'...'@ here-string is valid ONLY in PowerShell, never in POSIX sh.
+
+msg_file="$1"
+
+# Subject = first non-comment, non-blank line.
+subject=$(grep -vE '^[[:space:]]*#' "$msg_file" | grep -vE '^[[:space:]]*$' | head -n1)
+
+if [ "$subject" = "@" ]; then
+    echo "commit-msg: the subject line is a lone '@'." >&2
+    echo "  This is a PowerShell here-string (@'...'@) leaking into a POSIX 'git commit'." >&2
+    echo "  Write the message to a file and use:  git commit -F <file>  (or a heredoc <<'EOF')." >&2
+    exit 1
+fi
+
+# A bare '@' on its own line anywhere is a stray here-string delimiter (e.g. the
+# trailing '@'). Legitimate messages never contain a line that is just '@'.
+if grep -qxE '@' "$msg_file"; then
+    echo "commit-msg: the message contains a line that is a lone '@' (stray here-string delimiter)." >&2
+    echo "  Use:  git commit -F <file>, or a heredoc <<'EOF'." >&2
+    exit 1
+fi
+
+exit 0
