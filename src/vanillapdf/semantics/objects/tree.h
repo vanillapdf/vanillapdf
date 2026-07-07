@@ -337,9 +337,12 @@ void TreeBase<KeyT, ValueT>::Rebuild() {
         limit_values->Append(lower_bound->Clone());
         limit_values->Append(upper_bound->Clone());
 
-        // Insert as first item into leaf dictionary
+        // Insert as first item into leaf dictionary. Overwrite: RemoveAllChilds()
+        // does not clear Limits (it may be absent if a prior Rebuild() had no
+        // values), so a plain Insert() would throw DuplicateKeyException here
+        // on the second Rebuild() of an otherwise-unchanged tree.
         //leaf_dict->Insert(constant::Name::Limits, limit_values);
-        _obj->Insert(constant::Name::Limits, limit_values);
+        _obj->Insert(constant::Name::Limits, limit_values, true);
     }
 
     // Insert leaf values
