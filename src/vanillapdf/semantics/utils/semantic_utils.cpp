@@ -71,7 +71,11 @@ bool SemanticUtils::HasMappedDocument(WeakReference<syntax::File> file) {
     auto shared = file.GetReference();
     auto found = document_map->find(shared.get());
 
-    return (found != document_map->end());
+    // A stale, inactive entry can linger under a File* address (e.g. a partially
+    // constructed Document that threw after AddDocumentMapping, or a recycled
+    // address). Mirror GetOrCreateDocument and treat such entries as absent, so
+    // the create path does not falsely report the file as already opened.
+    return (found != document_map->end() && found->second.IsActive());
 }
 
 WeakReference<Document> SemanticUtils::GetMappedDocument(WeakReference<syntax::File> file) {

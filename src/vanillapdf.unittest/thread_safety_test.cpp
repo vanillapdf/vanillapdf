@@ -336,4 +336,99 @@ TEST(GetByteRangeThreadSafety, ConcurrentSignatureValidationKeepsDocumentIntact)
     if (source_stream) InputOutputStream_Release(source_stream);
 }
 
+// Regression test for the Document create guard against a stale registry entry.
+//
+// Document::CreateFile guards on SemanticUtils::HasMappedDocument, which
+// originally reported mere key-presence in the global File*-keyed document
+// registry. The sibling open path (GetOrCreateDocument) additionally required
+// found->second.IsActive(), so only the create path trusted dead entries.
+//
+// A stale, inactive entry is easy to produce: the Document constructor calls
+// AddDocumentMapping BEFORE Initialize(), so opening a file that fails to
+// initialize maps the File and then throws, and ~Document never runs to erase
+// the entry. Once that File is released its address becomes free, and the next
+// File the allocator hands out frequently reuses it. With a presence-only
+// guard, Document_CreateFile for that brand-new File then wrongly fails with
+// "the file instance was already opened".
+//
+// This does not require threads - it is a plain registry-consistency bug. It
+// only surfaced through the Python binding once #40 let create/open/destroy
+// overlap (previously the GIL serialized them), and it reproduced most easily
+// on macOS whose allocator recycles freed addresses aggressively. The loop
+// below reproduces it deterministically on any platform: each iteration seeds a
+// stale entry via a failed open, frees the File, then immediately creates a new
+// document whose File tends to land on the just-freed address.
+TEST(DocumentCreateThreadSafety, StaleRegistryEntryDoesNotBlockCreate) {
+    constexpr int ITERATIONS = 2000;
+
+    for (int i = 0; i < ITERATIONS; ++i) {
+        std::string name = "stale_registry_" + std::to_string(i);
+
+        // Seed a stale, inactive registry entry: opening an empty stream as a
+        // document maps the File (Document ctor) and then fails in Initialize(),
+        // so the entry is never erased. Releasing the File frees its address
+        // while the dead entry lingers in the registry.
+        {
+            HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;
+            HandleGuard<FileHandle, File_Release> file;
+
+            ASSERT_EQ(InputOutputStream_CreateFromMemory(stream.out()), VANILLAPDF_ERROR_SUCCESS);
+            ASSERT_EQ(File_OpenStream(stream, name.c_str(), file.out()), VANILLAPDF_ERROR_SUCCESS);
+
+            DocumentHandle* doc = nullptr;
+            error_type rv = Document_OpenFile(file, &doc);
+            ASSERT_NE(rv, VANILLAPDF_ERROR_SUCCESS)
+                << "empty file was expected to fail initialization and seed a stale registry entry";
+
+            if (doc != nullptr) {
+                Document_Release(doc);
+            }
+        }
+
+        // Create a real document. Its fresh File frequently reuses the address
+        // just freed above, colliding with the stale entry. The create guard
+        // must treat that dead entry as absent; a presence-only guard reports
+        // the fresh file as already opened.
+        {
+            HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;
+            HandleGuard<FileHandle, File_Release> file;
+            HandleGuard<DocumentHandle, Document_Release> doc;
+
+            ASSERT_EQ(InputOutputStream_CreateFromMemory(stream.out()), VANILLAPDF_ERROR_SUCCESS);
+            ASSERT_EQ(File_CreateStream(stream, name.c_str(), file.out()), VANILLAPDF_ERROR_SUCCESS);
+
+            error_type rv = Document_CreateFile(file, doc.out());
+            ASSERT_EQ(rv, VANILLAPDF_ERROR_SUCCESS)
+                << "iteration " << i << ": a stale registry entry blocked a valid "
+                << "Document_CreateFile - the create guard is not liveness-aware";
+        }
+    }
+}
+
+// Positive counterpart to the guard: creating a second document for a file that
+// already has a LIVE document must fail. This exercises the create guard's
+// active-entry path - HasMappedDocument finds a present, IsActive() entry and
+// reports the file as already opened - whereas StaleRegistryEntryDoesNotBlockCreate
+// above covers the present-but-inactive case.
+TEST(DocumentCreateThreadSafety, CreateOnAlreadyOpenFileFails) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> doc;
+
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(stream, "already_open", file.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    // First create registers a live document mapping for the file.
+    ASSERT_EQ(Document_CreateFile(file, doc.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(doc.get(), nullptr);
+
+    // While that document is still alive, a second create on the same file must
+    // be rejected - the registry already holds an active entry for it.
+    HandleGuard<DocumentHandle, Document_Release> second_doc;
+    error_type rv = Document_CreateFile(file, second_doc.out());
+    EXPECT_NE(rv, VANILLAPDF_ERROR_SUCCESS)
+        << "creating a second document for an already-open file must fail";
+    EXPECT_EQ(second_doc.get(), nullptr);
+}
+
 } /* thread_safety */
