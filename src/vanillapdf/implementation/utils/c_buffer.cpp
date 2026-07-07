@@ -17,8 +17,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_Create(BufferHandle** result
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Buffer_CreateFromData(string_type data, size_type size, BufferHandle** result) {
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    // A null pointer is a valid representation of an empty buffer.
+    // Only reject it when the caller also claims a non-zero length.
+    if (data == nullptr && size > 0) {
+        return VANILLAPDF_ERROR_PARAMETER_VALUE;
+    }
 
     try {
         auto buffer = make_deferred_container<Buffer>();
@@ -46,7 +51,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle* handle
 {
     Buffer* obj = reinterpret_cast<Buffer*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+
+    // A null pointer is a valid representation of an empty buffer.
+    // Only reject it when the caller also claims a non-zero length.
+    if (data == nullptr && size > 0) {
+        return VANILLAPDF_ERROR_PARAMETER_VALUE;
+    }
 
     try
     {

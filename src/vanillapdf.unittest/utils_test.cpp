@@ -52,6 +52,55 @@ TEST(Buffer, NullCheck) {
     EXPECT_EQ(Buffer_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
+TEST(Buffer, CreateFromNullZeroLength) {
+    HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
+    string_type check_data_ptr = nullptr;
+    size_type check_data_len = 0;
+
+    // A null pointer with zero length is a valid representation of an empty buffer
+    ASSERT_EQ(Buffer_CreateFromData(nullptr, 0, buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr.get(), nullptr);
+
+    // The resulting buffer is empty
+    ASSERT_EQ(Buffer_GetData(buffer_ptr, &check_data_ptr, &check_data_len), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(check_data_len, 0);
+}
+
+TEST(Buffer, CreateFromNullNonZeroLengthRejected) {
+    HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
+
+    // A null pointer with a non-zero length is invalid and must be rejected
+    EXPECT_EQ(Buffer_CreateFromData(nullptr, 1, buffer_ptr.out()), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(buffer_ptr.get(), nullptr);
+}
+
+TEST(Buffer, SetDataNullZeroLength) {
+    const char INITIAL_DATA[] = "initial";
+
+    HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
+    string_type check_data_ptr = nullptr;
+    size_type check_data_len = 0;
+
+    ASSERT_EQ(Buffer_CreateFromData(INITIAL_DATA, sizeof(INITIAL_DATA) - 1, buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr.get(), nullptr);
+
+    // A null pointer with zero length clears the buffer instead of failing
+    ASSERT_EQ(Buffer_SetData(buffer_ptr, nullptr, 0), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Buffer_GetData(buffer_ptr, &check_data_ptr, &check_data_len), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(check_data_len, 0);
+}
+
+TEST(Buffer, SetDataNullNonZeroLengthRejected) {
+    HandleGuard<BufferHandle, Buffer_Release> buffer_ptr;
+
+    ASSERT_EQ(Buffer_Create(buffer_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(buffer_ptr.get(), nullptr);
+
+    // A null pointer with a non-zero length is invalid and must be rejected
+    EXPECT_EQ(Buffer_SetData(buffer_ptr, nullptr, 1), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
 TEST(Buffer, Conversion) {
     HandleGuard<BufferHandle, Buffer_Release> buffer_handle;
     HandleGuard<IUnknownHandle, IUnknown_Release> unknown_buffer_handle;
