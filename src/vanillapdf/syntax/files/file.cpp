@@ -404,7 +404,7 @@ bool File::SetEncryptionPassword(const Buffer& password) {
     // R=6 uses SHA-256 based key derivation (ISO 32000-2)
     if (revision_value == 6) {
         // Truncate password to 127 bytes
-        auto pw_length = std::min(password.size(), static_cast<types::size_type>(127));
+        auto pw_length = std::min<types::size_type>(password.size(), 127);
         BufferPtr truncated_password = make_deferred_container<Buffer>(password.begin(), password.begin() + pw_length);
 
         OutputStringObjectPtr ue_value;
