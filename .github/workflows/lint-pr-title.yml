@@ -1,0 +1,29 @@
+name: Lint PR title
+
+# This repository squash-merges pull requests, so the PR TITLE becomes the
+# commit subject that lands on the target branch. Validate it against the
+# Conventional Commits spec. A lone "@" (the signature of a PowerShell
+# here-string leaking into `git commit`) is not a valid type, so this also
+# rejects the historical "@"-corrupted subjects without any bespoke logic.
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+    branches: ["main", "release/*"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  pull-requests: read
+
+jobs:
+  validate:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate against Conventional Commits
+        uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

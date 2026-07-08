@@ -177,7 +177,7 @@ class VcpkgUpdater:
 
     def create_pull_request(self, current_version: str, new_version: str, commit_hash: str, branch_name: str) -> Optional[str]:
         """Create a pull request for the vcpkg update."""
-        title = f"🤖 Update vcpkg to latest tag {new_version}"
+        title = f"build: 🤖 Update vcpkg to latest tag {new_version}"
 
         body = f"""## 🔄 Manual vcpkg Update
 
