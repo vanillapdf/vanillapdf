@@ -22,7 +22,7 @@ The PKCS#7 digital signature verification implementation is **production-ready**
 
 ## Overview
 
-VanillaPDF now provides comprehensive digital signature verification for PDF documents, including:
+Vanilla.PDF now provides comprehensive digital signature verification for PDF documents, including:
 
 - **PKCS#7 signature verification** against document byte ranges
 - **X.509 certificate chain validation** with custom trust stores

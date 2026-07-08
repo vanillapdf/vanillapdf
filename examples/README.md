@@ -1,10 +1,14 @@
-# VanillaPDF Examples
+# Vanilla.PDF Examples
 
-This directory contains practical examples demonstrating VanillaPDF integration and usage patterns.
+This directory contains practical examples demonstrating Vanilla.PDF integration and usage patterns.
 
 ## Available Examples
 
 - **[`fetchcontent-integration/`](fetchcontent-integration/)** - Complete CMake FetchContent integration example with cross-platform testing
+- **[`vcpkg-port-integration/`](vcpkg-port-integration/)** - Consuming Vanilla.PDF via its vcpkg port
+- **[`conan-integration/`](conan-integration/)** - Consuming Vanilla.PDF via its Conan recipe
+- **[`homebrew-integration/`](homebrew-integration/)** - Consuming Vanilla.PDF via its Homebrew formula
+- **[`shared/`](shared/)** - Header-only helpers (e.g. `scope_guard.h`) shared across the examples above; not a standalone example
 
 ## Documentation
 

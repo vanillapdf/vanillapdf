@@ -1,6 +1,6 @@
 # FetchContent Integration Example
 
-This example demonstrates real-world integration of VanillaPDF using CMake's FetchContent mechanism.
+This example demonstrates real-world integration of Vanilla.PDF using CMake's FetchContent mechanism.
 
 ## Quick Start
 

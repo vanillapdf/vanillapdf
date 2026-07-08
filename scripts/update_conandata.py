@@ -5,6 +5,13 @@ Conan Data Update Script
 Updates conan/conandata.yml with a new version entry by downloading the
 release archive and calculating its SHA256 hash.
 
+conan/conandata.yml is gitignored, not committed: `conan create conan/`
+always builds via export_sources() from the local checkout, so this file is
+never read in that flow. It exists only to locally exercise the
+download-based source() path (the one Conan Center Index actually uses, via
+its own freshly-generated conandata.yml - see create-conan-pr.yml). Run this
+script to regenerate it whenever you need that.
+
 Usage:
     python scripts/update_conandata.py                    # Auto-detect latest tag
     python scripts/update_conandata.py --version 2.3.0    # Specific version

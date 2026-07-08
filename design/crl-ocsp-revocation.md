@@ -1635,5 +1635,5 @@ enum class RevocationErrorCode {
 
 **Document Version**: 2.0
 **Last Updated**: November 2025
-**Authors**: VanillaPDF Development Team
+**Authors**: Vanilla.PDF Development Team
 **Status**: Design Specification - Pending Implementation

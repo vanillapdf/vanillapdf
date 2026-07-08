@@ -76,7 +76,7 @@ if(VANILLAPDF_VERSION_BUILD_SUFFIX)
 endif()
 
 # Variables specific to CPack RPM generator
-set(CPACK_RPM_PACKAGE_LICENSE			"Proprietary")
+set(CPACK_RPM_PACKAGE_LICENSE			"Apache-2.0")
 set(CPACK_RPM_PACKAGE_GROUP				"Development/Libraries/C and C++")
 set(CPACK_RPM_PACKAGE_URL				"https://vanillapdf.com/")
 set(CPACK_RPM_PACKAGE_AUTOREQ			1)
