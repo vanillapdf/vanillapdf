@@ -149,7 +149,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
                     uint32_t added_value = (current_byte + prior_byte);
                     auto divided_value = (added_value / 2.0f);
                     auto rounded_value = std::floor(divided_value);
-                    current[i] += static_cast<uint8_t>(rounded_value);
+                    current[bytes_per_pixel + i] += static_cast<uint8_t>(rounded_value);
                 }
 
                 break;
@@ -181,7 +181,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
                         value = c;
                     }
 
-                    current[i] += value;
+                    current[bytes_per_pixel + i] += value;
                 }
 
                 break;

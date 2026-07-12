@@ -66,6 +66,24 @@ VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Decode(FilterBaseHandle*
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_DecodeParams(FilterBaseHandle* handle, BufferHandle* data_handle, DictionaryObjectHandle* parameters_handle, BufferHandle** result) {
+    FilterBase* filter = reinterpret_cast<FilterBase*>(handle);
+    DictionaryObject* params = reinterpret_cast<DictionaryObject*>(parameters_handle);
+    Buffer* data = reinterpret_cast<Buffer*>(data_handle);
+
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(filter);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(params);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto decoded = filter->Decode(data, params);
+        auto ptr = decoded.AddRefGet();
+        *result = reinterpret_cast<BufferHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_ToUnknown(FilterBaseHandle* handle, IUnknownHandle** result) {
     return SafeObjectConvert<FilterBase, IUnknown, FilterBaseHandle, IUnknownHandle>(handle, result);
 }
@@ -114,6 +132,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Decode(FlateDecod
     FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
 
     return FilterBase_Decode(base_filter_handle, data_handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_DecodeParams(FlateDecodeFilterHandle* handle, BufferHandle* data_handle, DictionaryObjectHandle* parameters_handle, BufferHandle** result) {
+    FlateDecodeFilter* filter = reinterpret_cast<FlateDecodeFilter*>(handle);
+    FilterBase* base_filter = static_cast<FilterBase*>(filter);
+    FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+    return FilterBase_DecodeParams(base_filter_handle, data_handle, parameters_handle, result);
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Release(FlateDecodeFilterHandle* handle) {
