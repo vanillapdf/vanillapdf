@@ -20,15 +20,21 @@ This tool runs offline (never in CI). It:
   3. Emits C arrays: the zlib-compressed filtered stream (the decoder input)
      and the raw image (the expected output).
 
-Paste the emitted arrays into ``src/vanillapdf.unittest/filter_test.cpp``.
-Re-run this tool and replace the arrays whenever the geometry, sample data, or
-filter selection changes.
+Paste the emitted arrays into ``src/vanillapdf.unittest/filter_test.cpp``. To
+reproduce the exact arrays committed there, run
+``scripts/regenerate_filter_test_vectors.py``, which pins the parameters they
+were generated with.
+
+Sub-byte pixel depths (``colors * bits`` not a multiple of 8) are rejected:
+the byte stride this tool mirrors from ``flate_decode_filter.cpp`` floors,
+while the PNG specification (and MuPDF) round up, so such vectors can never
+certify (see GitHub issue #443).
 
 Requires PyMuPDF (``pip install pymupdf``).
 
 Run with no arguments to print one vector per PNG filter type::
 
-    python scripts/generate_predictor_test_vectors.py
+    python scripts/png_predictor_vectors.py
 """
 
 from __future__ import annotations
@@ -240,7 +246,13 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--bytes-per-line", type=positive_int, default=12,
                         dest="bytes_per_line",
                         help="bytes per line in the emitted C arrays (default 12)")
-    return parser.parse_args(argv)
+
+    args = parser.parse_args(argv)
+    if (args.colors * args.bits_per_component) % 8 != 0:
+        parser.error("colors * bits must be a multiple of 8 (whole-byte pixels); "
+                     "sub-byte pixel depths cannot certify against MuPDF "
+                     "(see GitHub issue #443)")
+    return args
 
 
 def render_vectors(geometry: Geometry, raw_rows: Sequence[Sequence[int]],

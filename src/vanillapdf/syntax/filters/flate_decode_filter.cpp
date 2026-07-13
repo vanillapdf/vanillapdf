@@ -67,7 +67,8 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
     syntax::IntegerObjectPtr bits = make_deferred<IntegerObject>(8);
     if (parameters->Contains(constant::Name::BitsPerComponent)) {
         bits = parameters->FindAs<IntegerObjectPtr>(constant::Name::BitsPerComponent);
-        assert(*bits == 1 || *bits == 2 || *bits == 4 || *bits == 8);
+        // PDF 32000-1 Table 8: valid values are 1, 2, 4, 8 and (PDF 1.5) 16
+        assert(*bits == 1 || *bits == 2 || *bits == 4 || *bits == 8 || *bits == 16);
     }
 
     IntegerObjectPtr columns = make_deferred<IntegerObject>(1);
