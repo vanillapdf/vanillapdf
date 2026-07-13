@@ -228,8 +228,14 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_le
 }
 
 BufferPtr EncryptionUtils::ComputeMD5(const Buffer& data) {
+    return ComputeMD5(data, data.size());
+}
+
+BufferPtr EncryptionUtils::ComputeMD5(const Buffer& data, types::size_type length) {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
+
+    assert(length <= data.size() && "MD5 prefix length exceeds buffer size");
 
     auto evp_md = EVP_md5();
     auto evp_md_ctx = EVP_MD_CTX_new();
@@ -247,7 +253,8 @@ BufferPtr EncryptionUtils::ComputeMD5(const Buffer& data) {
         LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize MD5 digest: {}", openssl_error);
     }
 
-    auto update_document_id_result = EVP_DigestUpdate(evp_md_ctx, data.data(), data.std_size());
+    auto update_length = ValueConvertUtils::SafeConvert<size_t>(length);
+    auto update_document_id_result = EVP_DigestUpdate(evp_md_ctx, data.data(), update_length);
     if (update_document_id_result != 1) {
         auto openssl_error = CryptoUtils::GetLastOpensslError();
         LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
@@ -855,16 +862,6 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
         // Initialize the MD5 hash function and pass the result of step (a) as input to this function.
         BufferPtr stepb = ComputeMD5(pad_owner_password);
 
-        // (Security handlers of revision 3 or greater) Do the following 50 times:
-        // Take the output from the previous MD5 hash and pass it as input into a new MD5 hash.
-        BufferPtr stepc = stepb;
-
-        if (revision >= 3) {
-            for (int i = 0; i < 50; ++i) {
-                stepc = ComputeMD5(stepc);
-            }
-        }
-
         // Create an RC4 encryption key using the first n bytes of the output from the final MD5 hash,
         // where n shall always be 5 for security handlers of revision 2 but, for security handlers of revision 3 or greater,
         // shall depend on the value of the encryption dictionary's Length entry.
@@ -873,11 +870,26 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
             rc4_key_length = (key_length / 8);
         }
 
+        auto rc4_key_length_converted = ValueConvertUtils::SafeConvert<types::size_type>(rc4_key_length);
+
+        // (Security handlers of revision 3 or greater) Do the following 50 times:
+        // Take the first n bytes of the output from the previous MD5 hash and pass them as input into a new MD5 hash.
+        // The specification text for this step omits the "first n bytes" wording, but Adobe, qpdf and this library's
+        // own owner-authentication path (ComputeAuthenticationOwnerData) all truncate to n. Hashing the full 16-byte
+        // digest instead breaks owner authentication for sub-128-bit keys (n == 16 for the common 128-bit case, so
+        // that path is unaffected).
+        BufferPtr stepc = stepb;
+
+        if (revision >= 3) {
+            for (int i = 0; i < 50; ++i) {
+                stepc = ComputeMD5(stepc, rc4_key_length_converted);
+            }
+        }
+
         // Pad or truncate the user password string as described in step (a) of "Algorithm 2: Computing an encryption key".
         BufferPtr pad_user_password = EncryptionUtils::PadTruncatePassword(user_password);
 
         // Encrypt the result of step (e), using an RC4 encryption function with the encryption key obtained in step (d).
-        auto rc4_key_length_converted = ValueConvertUtils::SafeConvert<types::size_type>(rc4_key_length);
         BufferPtr stepf = EncryptionUtils::ComputeRC4(stepc, rc4_key_length_converted, pad_user_password);
 
         // (Security handlers of revision 3 or greater) Do the following 19 times:
@@ -887,11 +899,12 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
         BufferPtr stepg = stepf;
 
         if (revision >= 3) {
+            // The RC4 key is the first rc4_key_length bytes (n), matching step (f) above. Using the
+            // full digest here would break owner-string generation for sub-128-bit keys.
             for (int i = 1; i < 20; ++i) {
-                BufferPtr key = make_deferred_container<Buffer>(stepc->size());
+                BufferPtr key = make_deferred_container<Buffer>(rc4_key_length_converted);
 
-                auto stepc_size = stepc->size();
-                for (decltype(stepc_size) j = 0; j < stepc->size(); ++j) {
+                for (decltype(rc4_key_length_converted) j = 0; j < rc4_key_length_converted; ++j) {
                     key[j] = (stepc[j] ^ i) & 0xFF;
                 }
 
@@ -1073,17 +1086,20 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
 
     // Encrypt the 16-byte result of the hash,
     // using an RC4 encryption function with the encryption key from step (a).
-    BufferPtr compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, key_digest);
+    // The key length is n bytes (key_length / 8), which is 5 for revision 2 but depends on the
+    // Length entry for revision 3 or greater. The digest buffer is always MD5_DIGEST_LENGTH (16),
+    // so we must restrict the RC4 key to the first decryption_key_length bytes; otherwise files
+    // with a sub-128-bit key (e.g. Adobe's inconsistent /V 1 /R 3 /Length 40) fail to authenticate.
+    BufferPtr compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, decryption_key_length, key_digest);
 
     // Do the following 19 times: Take the output from the previous invocation of the RC4 function and pass it as
     // input to a new invocation of the function; use an encryption key generated by taking each byte of the
     // original encryption key obtained in step(a) and performing an XOR(exclusive or ) operation between that
     // byte and the single - byte value of the iteration counter(from 1 to 19).
     for (Buffer::value_type i = 1; i < 20; ++i) {
-        BufferPtr key = make_deferred_container<Buffer>(decryption_key_digest->size());
+        BufferPtr key = make_deferred_container<Buffer>(decryption_key_length);
 
-        auto decryption_key_digest_size = decryption_key_digest->size();
-        for (decltype(decryption_key_digest_size) j = 0; j < decryption_key_digest->size(); ++j) {
+        for (decltype(decryption_key_length) j = 0; j < decryption_key_length; ++j) {
             key[j] = (decryption_key_digest[j] ^ i);
         }
 
@@ -1480,12 +1496,13 @@ BufferPtr EncryptionUtils::ComputeAuthenticationOwnerData(const Buffer& pad_pass
         // between each byte of the key and the single-byte value of the iteration counter (from 19 to 0).
         BufferPtr encrypted_owner_data = make_deferred_container<Buffer>(*owner_value->GetValue());
 
+        // The RC4 key is n bytes (password_length), not the full 16-byte digest. Using the full
+        // digest breaks owner authentication for sub-128-bit keys (e.g. /V 1 /R 3 /Length 40).
         for (int i = 19; i >= 0; --i) {
-            BufferPtr key = make_deferred_container<Buffer>(password_digest.size());
+            BufferPtr key = make_deferred_container<Buffer>(password_length);
             auto current_iteration = ValueConvertUtils::SafeConvert<Buffer::value_type>(i);
 
-            auto password_digest_size = password_digest.size();
-            for (decltype(password_digest_size) j = 0; j < password_digest.size(); ++j) {
+            for (decltype(password_length) j = 0; j < password_length; ++j) {
                 key[j] = (password_digest[j] ^ current_iteration);
             }
 

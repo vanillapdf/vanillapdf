@@ -32,6 +32,7 @@ public:
     static BufferPtr ComputeRC4(const Buffer& key, types::size_type key_length, const Buffer& data);
 
     static BufferPtr ComputeMD5(const Buffer& data);
+    static BufferPtr ComputeMD5(const Buffer& data, types::size_type length);
     static BufferPtr ComputeSHA256(const Buffer& data);
     static BufferPtr ComputeSHA384(const Buffer& data);
     static BufferPtr ComputeSHA512(const Buffer& data);

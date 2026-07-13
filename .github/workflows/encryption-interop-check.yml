@@ -118,6 +118,17 @@ jobs:
       - name: "[vanillapdf->qpdf] RC4-40 encryption interop"
         run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools test/pdftest2.pdf /tmp/interop RC4 40
 
+      # Sub-128-bit RC4 keys use the revision-3 handler (V=2/R=3). These exercise the
+      # n = key_length/8 truncation in Algorithm 2/3 key derivation, which the 40- and
+      # 128-bit cases (n = 5 with R=2, and n = 16) cannot. qpdf handles arbitrary RC4
+      # key lengths; pyHanko's cryptography backend rejects non-standard RC4 key sizes,
+      # so these intermediate lengths are qpdf-only.
+      - name: "[vanillapdf->qpdf] RC4-56 encryption interop"
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools test/pdftest2.pdf /tmp/interop RC4 56
+
+      - name: "[vanillapdf->qpdf] RC4-80 encryption interop"
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools test/pdftest2.pdf /tmp/interop RC4 80
+
       - name: "[vanillapdf->qpdf] RC4-128 encryption interop"
         run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools test/pdftest2.pdf /tmp/interop RC4 128
 
