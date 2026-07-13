@@ -3,6 +3,10 @@
 /build/
 /out/
 
+# Python bytecode caches (from scripts/*.py)
+__pycache__/
+*.py[cod]
+
 # Generated files (from .in templates by CMake)
 /vcpkg.json
 /homebrew/vanillapdf.rb
