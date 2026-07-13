@@ -32,6 +32,7 @@ public:
     static BufferPtr ComputeRC4(const Buffer& key, types::size_type key_length, const Buffer& data);
 
     static BufferPtr ComputeMD5(const Buffer& data);
+    static BufferPtr ComputeMD5(const Buffer& data, types::size_type length);
 
     static BufferPtr AESDecrypt(const Buffer& key, const Buffer& data);
     static BufferPtr AESDecrypt(const Buffer& key, types::size_type key_length, const Buffer& data);
