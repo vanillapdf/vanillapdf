@@ -26,13 +26,9 @@ filter selection changes.
 
 Requires PyMuPDF (``pip install pymupdf``).
 
-Examples::
+Run with no arguments to print one vector per PNG filter type::
 
-    # Default: RGB 4x3 image, Average + Paeth vectors (the regression targets)
     python scripts/generate_predictor_test_vectors.py
-
-    # All five filters
-    python scripts/generate_predictor_test_vectors.py --filters all
 """
 
 from __future__ import annotations
@@ -41,7 +37,7 @@ import argparse
 import random
 import zlib
 from dataclasses import dataclass
-from typing import Callable, Dict, List, Sequence
+from typing import Dict, List, Sequence
 
 try:
     import fitz  # PyMuPDF
@@ -57,26 +53,43 @@ FILTER_CODES: Dict[str, int] = {
     "paeth": 4,
 }
 
-# PDF "PNG optimal" predictor: every scanline declares its own filter in its
-# first byte, so a single value covers all five filter types (PDF 32000-1, 7.4.4.4).
-PNG_OPTIMAL_PREDICTOR = 15
-BITS_PER_BYTE = 8
-ZLIB_COMPRESSION_LEVEL = 9
-BITS_PER_COMPONENT_CHOICES = (1, 2, 4, 8, 16)
 
-# Emitted C arrays are wrapped at this many bytes per line.
-C_ARRAY_BYTES_PER_LINE = 12
+def paeth_predictor(left: int, above: int, above_left: int) -> int:
+    """Return the PNG Paeth prediction from the three neighbouring bytes.
 
+    The predictor is whichever neighbour is closest to the linear estimate
+    ``left + above - above_left``; ties prefer the left neighbour, then above.
+    """
+    estimate = left + above - above_left
 
-def paeth_predictor(left: int, up: int, up_left: int) -> int:
-    """Return the PNG PaethPredictor of the left, above and above-left bytes."""
-    base = left + up - up_left
-    p_left, p_up, p_up_left = abs(base - left), abs(base - up), abs(base - up_left)
-    if p_left <= p_up and p_left <= p_up_left:
+    distance_to_left = abs(estimate - left)
+    distance_to_above = abs(estimate - above)
+    distance_to_above_left = abs(estimate - above_left)
+
+    if distance_to_left <= distance_to_above and distance_to_left <= distance_to_above_left:
         return left
-    if p_up <= p_up_left:
-        return up
-    return up_left
+    if distance_to_above <= distance_to_above_left:
+        return above
+    return above_left
+
+
+def png_filtered_byte(filter_code: int, current: int, left: int, above: int, above_left: int) -> int:
+    """Return ``current`` minus the PNG prediction for the given filter.
+
+    Every PNG filter encodes a byte as the raw value minus a prediction from
+    already-known neighbours; the caller reduces the result modulo 256.
+    """
+    if filter_code == FILTER_CODES["none"]:
+        return current
+    if filter_code == FILTER_CODES["sub"]:
+        return current - left
+    if filter_code == FILTER_CODES["up"]:
+        return current - above
+    if filter_code == FILTER_CODES["average"]:
+        return current - (left + above) // 2
+    if filter_code == FILTER_CODES["paeth"]:
+        return current - paeth_predictor(left, above, above_left)
+    raise ValueError(f"unknown PNG filter code: {filter_code}")
 
 
 @dataclass(frozen=True)
@@ -90,64 +103,66 @@ class Geometry:
     @property
     def bytes_per_pixel(self) -> int:
         # Matches flate_decode_filter.cpp: colors * bits / 8 (integer division).
-        return self.colors * self.bits_per_component // BITS_PER_BYTE
+        return self.colors * self.bits_per_component // 8
 
     @property
     def bytes_per_row(self) -> int:
         # Matches flate_decode_filter.cpp: (colors * columns * bits + 7) / 8.
-        bits = self.colors * self.columns * self.bits_per_component
-        return (bits + BITS_PER_BYTE - 1) // BITS_PER_BYTE
-
-
-class PngFilterEncoder:
-    """Forward PNG predictor codec: raw scanlines -> filtered scanlines.
-
-    Forward filtering references the raw (not reconstructed) neighbours, so a
-    scanline has no left-to-right dependency: the left and above-left rows can
-    be pre-aligned and the whole row filtered in one pass. Only the encode
-    direction lives here; the library implements decode, and the MuPDF oracle
-    plus the unit test confirm that decode(encode(raw)) == raw.
-    """
-
-    def __init__(self, geometry: Geometry) -> None:
-        self._geometry = geometry
-        # Each entry maps a filter code to its per-byte delta from the raw
-        # value; all share one signature so the encode loop stays uniform.
-        self._filters: Dict[int, Callable[[int, int, int, int], int]] = {
-            FILTER_CODES["none"]: lambda cur, left, up, up_left: cur,
-            FILTER_CODES["sub"]: lambda cur, left, up, up_left: cur - left,
-            FILTER_CODES["up"]: lambda cur, left, up, up_left: cur - up,
-            FILTER_CODES["average"]: lambda cur, left, up, up_left: cur - (left + up) // 2,
-            FILTER_CODES["paeth"]: lambda cur, left, up, up_left: cur - paeth_predictor(left, up, up_left),
-        }
-
-    def encode(self, raw_rows: Sequence[Sequence[int]], filter_code: int) -> bytes:
-        """Filter every scanline, prefixing each with its ``filter_code`` byte."""
-        apply_filter = self._filters[filter_code]
-        bpp = self._geometry.bytes_per_pixel
-        width = self._geometry.bytes_per_row
-
-        def one_pixel_left(row: Sequence[int]) -> List[int]:
-            # row shifted right by one pixel; the first pixel's neighbour is 0.
-            return ([0] * bpp + list(row))[:width]
-
-        out = bytearray()
-        prior: Sequence[int] = [0] * width
-        for row in raw_rows:
-            left = one_pixel_left(row)
-            up_left = one_pixel_left(prior)
-            out.append(filter_code)
-            out.extend(apply_filter(cur, lft, up, uplft) & 0xFF
-                       for cur, lft, up, uplft in zip(row, left, prior, up_left))
-            prior = row
-        return bytes(out)
+        total_bits = self.colors * self.columns * self.bits_per_component
+        return (total_bits + 7) // 8
 
 
 def build_raw_rows(geometry: Geometry, rows: int, seed: int) -> List[List[int]]:
     """Return a deterministic pseudo-random sample image of the given geometry."""
     rng = random.Random(seed)
     width = geometry.bytes_per_row
-    return [[rng.randrange(256) for _ in range(width)] for _ in range(rows)]
+
+    image = []
+    for _ in range(rows):
+        row = []
+        for _ in range(width):
+            row.append(rng.randrange(256))
+        image.append(row)
+    return image
+
+
+def encode_scanlines(geometry: Geometry, raw_rows: Sequence[Sequence[int]], filter_code: int) -> bytes:
+    """Forward-filter every scanline, prefixing each with its filter-code byte.
+
+    Forward filtering reads the raw (not reconstructed) neighbours, so there is
+    no left-to-right dependency within a row. Only encode lives here; the
+    library decodes, and the MuPDF oracle plus the unit test confirm the round
+    trip.
+    """
+    bytes_per_pixel = geometry.bytes_per_pixel
+    width = geometry.bytes_per_row
+
+    out = bytearray()
+    previous_row: Sequence[int] = [0] * width
+    for row in raw_rows:
+        out.append(filter_code)
+        for x in range(width):
+            # Off-image neighbours (past the left edge) are treated as zero.
+            if x >= bytes_per_pixel:
+                left = row[x - bytes_per_pixel]
+                above_left = previous_row[x - bytes_per_pixel]
+            else:
+                left = 0
+                above_left = 0
+            above = previous_row[x]
+
+            filtered = png_filtered_byte(filter_code, row[x], left, above, above_left)
+            out.append(filtered & 0xFF)
+        previous_row = row
+    return bytes(out)
+
+
+def flatten_rows(raw_rows: Sequence[Sequence[int]]) -> bytes:
+    """Concatenate the scanlines into one byte string (the expected image)."""
+    flat = bytearray()
+    for row in raw_rows:
+        flat.extend(row)
+    return bytes(flat)
 
 
 def decode_with_pdf_engine(compressed: bytes, geometry: Geometry) -> bytes:
@@ -164,9 +179,11 @@ def decode_with_pdf_engine(compressed: bytes, geometry: Geometry) -> bytes:
         # is stored verbatim (compress=False) and the filter is declared after.
         doc.update_object(xref, "<< >>")
         doc.update_stream(xref, compressed, new=True, compress=False)
+        # Predictor 15 = PNG "optimal": each scanline carries its own filter byte,
+        # which is what the encoder emits, so it is fixed rather than configurable.
         doc.update_object(
             xref,
-            f"<< /Filter /FlateDecode /DecodeParms << /Predictor {PNG_OPTIMAL_PREDICTOR} "
+            "<< /Filter /FlateDecode /DecodeParms << /Predictor 15 "
             f"/Colors {geometry.colors} /BitsPerComponent {geometry.bits_per_component} "
             f"/Columns {geometry.columns} >> /Length {len(compressed)} >>")
         return doc.xref_stream(xref)
@@ -181,12 +198,15 @@ def certify_vector(compressed: bytes, geometry: Geometry, expected: bytes, filte
                          "the generated vector is NOT trustworthy")
 
 
-def format_c_array(name: str, data: bytes) -> str:
+def format_c_array(name: str, data: bytes, bytes_per_line: int) -> str:
     """Render ``data`` as a C ``static const unsigned char[]`` definition."""
-    lines = [f"static const unsigned char {name}[] = {{"]
-    for offset in range(0, len(data), C_ARRAY_BYTES_PER_LINE):
-        chunk = ", ".join(f"0x{byte:02X}" for byte in data[offset:offset + C_ARRAY_BYTES_PER_LINE])
-        lines.append(f"    {chunk},")
+    lines = []
+    lines.append("static const unsigned char " + name + "[] = {")
+    for start in range(0, len(data), bytes_per_line):
+        hex_values = []
+        for byte in data[start:start + bytes_per_line]:
+            hex_values.append(f"0x{byte:02X}")
+        lines.append("    " + ", ".join(hex_values) + ",")
     lines.append("};")
     return "\n".join(lines)
 
@@ -195,19 +215,8 @@ def positive_int(value: str) -> int:
     """argparse ``type`` for a strictly positive integer."""
     parsed = int(value)
     if parsed < 1:
-        raise argparse.ArgumentTypeError(f"must be a positive integer, got {value}")
+        raise argparse.ArgumentTypeError(f"must be a positive integer, got {value!r}")
     return parsed
-
-
-def resolve_filters(spec: str) -> List[str]:
-    """Parse a ``--filters`` value into an ordered list of filter names."""
-    if spec.strip().lower() == "all":
-        return list(FILTER_CODES)
-    names = [name.strip().lower() for name in spec.split(",") if name.strip()]
-    unknown = [name for name in names if name not in FILTER_CODES]
-    if unknown:
-        raise SystemExit(f"unknown filter(s): {', '.join(unknown)}")
-    return names
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -217,45 +226,53 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--colors", type=positive_int, default=3,
                         help="samples per pixel (/Colors, default 3)")
     parser.add_argument("--bits", type=int, default=8, dest="bits_per_component",
-                        choices=BITS_PER_COMPONENT_CHOICES,
+                        choices=(1, 2, 4, 8, 16),
                         help="bits per component (/BitsPerComponent, default 8)")
     parser.add_argument("--columns", type=positive_int, default=4,
                         help="pixels per row (/Columns, default 4)")
     parser.add_argument("--rows", type=positive_int, default=3,
                         help="number of scanlines (default 3)")
-    parser.add_argument("--filters", default="average,paeth",
-                        help="comma-separated filter names or 'all' "
-                             f"(choices: {', '.join(FILTER_CODES)}; default average,paeth)")
     parser.add_argument("--seed", type=int, default=0,
                         help="seed for the pseudo-random sample image (default 0)")
+    parser.add_argument("--compression-level", type=int, default=9, choices=range(0, 10),
+                        dest="compression_level",
+                        help="zlib compression level (default 9)")
+    parser.add_argument("--bytes-per-line", type=positive_int, default=12,
+                        dest="bytes_per_line",
+                        help="bytes per line in the emitted C arrays (default 12)")
     return parser.parse_args(argv)
 
 
-def render_vectors(geometry: Geometry, encoder: PngFilterEncoder,
-                   raw_rows: Sequence[Sequence[int]], filter_names: Sequence[str]) -> str:
-    """Encode, certify and render every requested filter as one C source block."""
-    expected = bytes(byte for row in raw_rows for byte in row)
+def render_vectors(geometry: Geometry, raw_rows: Sequence[Sequence[int]],
+                   compression_level: int, bytes_per_line: int) -> str:
+    """Encode, certify and render one vector per PNG filter as a C source block."""
+    expected = flatten_rows(raw_rows)
 
     blocks = []
-    for name in filter_names:
-        compressed = zlib.compress(encoder.encode(raw_rows, FILTER_CODES[name]), ZLIB_COMPRESSION_LEVEL)
+    for name, filter_code in FILTER_CODES.items():
+        filtered = encode_scanlines(geometry, raw_rows, filter_code)
+        compressed = zlib.compress(filtered, compression_level)
         certify_vector(compressed, geometry, expected, name)
-        blocks.append(format_c_array(f"INPUT_{name.upper()}", compressed))
+        blocks.append(format_c_array("INPUT_" + name.upper(), compressed, bytes_per_line))
 
-    blocks.append(format_c_array("EXPECTED_RAW", expected))
-    blocks.append(
-        f"// geometry: Colors={geometry.colors} BitsPerComponent={geometry.bits_per_component} "
-        f"Columns={geometry.columns} rows={len(raw_rows)} bytes_per_row={geometry.bytes_per_row}\n"
+    blocks.append(format_c_array("EXPECTED_RAW", expected, bytes_per_line))
+
+    geometry_comment = (
+        f"// geometry: Colors={geometry.colors} "
+        f"BitsPerComponent={geometry.bits_per_component} "
+        f"Columns={geometry.columns} rows={len(raw_rows)} "
+        f"bytes_per_row={geometry.bytes_per_row}\n"
         "// verified against MuPDF (PyMuPDF) before emission")
+    blocks.append(geometry_comment)
     return "\n\n".join(blocks)
 
 
 def main(argv: Sequence[str] | None = None) -> None:
     args = parse_args(argv)
     geometry = Geometry(args.colors, args.bits_per_component, args.columns)
-    encoder = PngFilterEncoder(geometry)
     raw_rows = build_raw_rows(geometry, args.rows, args.seed)
-    print(render_vectors(geometry, encoder, raw_rows, resolve_filters(args.filters)))
+    output = render_vectors(geometry, raw_rows, args.compression_level, args.bytes_per_line)
+    print(output)
 
 
 if __name__ == "__main__":
