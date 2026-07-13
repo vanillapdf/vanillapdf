@@ -37,8 +37,8 @@ subprocess.run(
 # -- Project information ---------------------------------------------------
 
 project = "Vanilla.PDF"
-copyright = "2025, Vanilla.PDF contributors"
-author = "Vanilla.PDF contributors"
+copyright = "2018-2026, Vanilla.PDF Labs s.r.o."
+author = "Vanilla.PDF Labs s.r.o."
 version = "{}.{}".format(_version_parts["MAJOR"], _version_parts["MINOR"])
 release = _version
 

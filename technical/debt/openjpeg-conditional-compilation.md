@@ -2,7 +2,7 @@
 
 ## Overview
 
-VanillaPDF currently requires OpenJPEG (JPEG2000) dependencies to be available even when `VANILLAPDF_ENABLE_JPEG2000=OFF`. This prevents compilation without OpenJPEG and causes build failures in scenarios where JPEG2000 support is intentionally disabled.
+Vanilla.PDF currently requires OpenJPEG (JPEG2000) dependencies to be available even when `VANILLAPDF_ENABLE_JPEG2000=OFF`. This prevents compilation without OpenJPEG and causes build failures in scenarios where JPEG2000 support is intentionally disabled.
 
 ## Problem
 

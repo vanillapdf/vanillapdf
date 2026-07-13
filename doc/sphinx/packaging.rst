@@ -11,9 +11,10 @@ Automated Package Building
 
 The project includes automated GitHub Actions workflows for package generation:
 
-- **Debian packages**: ``.github/workflows/packaging/build-deb-package.yml``
-- **Homebrew packages**: ``.github/workflows/packaging/build-brew-package.yml``
-- **NuGet packages**: ``.github/workflows/packaging/build-nuget.yml``
+- **Debian packages**: ``.github/workflows/build-deb-package.yml``
+- **RPM packages**: ``.github/workflows/build-rpm-package.yml``
+- **Homebrew packages**: ``.github/workflows/build-brew-package.yml``
+- **NuGet packages**: ``.github/workflows/build-nuget.yml``
 
 These workflows are continuously tested and use the exact configuration shown below.
 
@@ -89,4 +90,4 @@ Configuration Notes
 - **Windows**: vcpkg dependencies provide consistent, self-contained packages
 
 For automated package building in CI environments, refer to the GitHub Actions workflows
-in ``.github/workflows/packaging/`` which demonstrate the complete build process.
+in ``.github/workflows/`` which demonstrate the complete build process.

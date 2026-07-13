@@ -401,6 +401,43 @@ bool File::SetEncryptionPassword(const Buffer& password) {
     auto revision_value = ValueConvertUtils::SafeConvert<int32_t>(revision->GetIntegerValue());
     auto key_length_value = ValueConvertUtils::SafeConvert<int32_t>(length_bits->GetIntegerValue());
 
+    // R=6 uses SHA-256 based key derivation (ISO 32000-2)
+    if (revision_value == 6) {
+        // Truncate password to 127 bytes
+        auto password_length = std::min<types::size_type>(password.size(), 127);
+        BufferPtr truncated_password = make_deferred_container<Buffer>(password.begin(), password.begin() + password_length);
+
+        OutputStringObjectPtr ue_value;
+        if (!dict->TryFindAs(constant::Name::UE, ue_value)) {
+            LOG_ERROR_AND_THROW(CryptoErrorException, "R=6 encryption dictionary is missing required /UE entry");
+        }
+
+        OutputStringObjectPtr oe_value;
+        if (!dict->TryFindAs(constant::Name::OE, oe_value)) {
+            LOG_ERROR_AND_THROW(CryptoErrorException, "R=6 encryption dictionary is missing required /OE entry");
+        }
+
+        OutputStringObjectPtr perms_entry;
+        if (!dict->TryFindAs(constant::Name::Perms, perms_entry)) {
+            LOG_ERROR_AND_THROW(CryptoErrorException, "R=6 encryption dictionary is missing required /Perms entry");
+        }
+
+        BufferPtr temp_key;
+        if (EncryptionUtils::CheckKeyR6(
+                truncated_password,
+                user_value->GetValue(),
+                ue_value->GetValue(),
+                owner_value->GetValue(),
+                oe_value->GetValue(),
+                perms_entry->GetValue(),
+                temp_key)) {
+            _decryption_key = temp_key;
+            return true;
+        }
+
+        return false;
+    }
+
     // Pad password with predefined scheme
     BufferPtr padPassword = EncryptionUtils::PadTruncatePassword(password);
     BufferPtr encrypted_owner_data = EncryptionUtils::ComputeAuthenticationOwnerData(padPassword, dict);

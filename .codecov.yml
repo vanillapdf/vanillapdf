@@ -5,22 +5,22 @@
 # - Sets pass/fail status checks for project and patch coverage
 # - Helps enforce or improve test coverage over time
 #
-# Current coverage is around 50%, so the configuration is relaxed:
-# - Requires no regression on overall project coverage
-# - Encourages testing of new code, but tolerates moderate gaps
+# Current coverage is around 58%, so the thresholds are tightened modestly:
+# - Holds overall project coverage near its current level (with a small buffer)
+# - Enforces testing of new code with only a small tolerance for gaps
 #
-# Once test coverage improves, you can tighten thresholds.
+# Once test coverage improves further, you can tighten these thresholds again.
 
 coverage:
   status:
     project:
       default:
-        target: 50%        # Current overall coverage goal
+        target: 55%        # Overall coverage goal (actual ~58%, leaves a buffer)
         threshold: 5%      # Allow up to 5% drop without failing
     patch:
       default:
         target: auto       # Enforce coverage for new/changed lines
-        threshold: 10%     # Allow up to 10% drop on new code
+        threshold: 5%      # Allow up to 5% drop on new code
 
 comment:
   layout: "reach,diff,flags,files,footer"

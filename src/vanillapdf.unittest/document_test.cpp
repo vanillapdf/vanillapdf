@@ -118,18 +118,19 @@ TEST(Document, Encrypt_AES_128) {
     EncryptDocument("owner", "user", EncryptionAlgorithmType_AES, 128, UserAccessPermissionFlag_None);
 }
 
-// TODO: FIX AES-256
-//TEST(Document, Encrypt_AES_256) {
-//	EncryptDocument("owner", "user", EncryptionAlgorithmType_AES, 256, UserAccessPermissionFlag_None);
-//}
+TEST(Document, Encrypt_AES_256) {
+    EncryptDocument("owner", "user", EncryptionAlgorithmType_AES, 256, UserAccessPermissionFlag_None);
+}
 
 // Parameterized test for AES encryption roundtrip with various string sizes.
 // Verifies that encrypt→save→reopen→decrypt preserves the original data.
 // Uses sizes that are not multiples of the AES block size (16) to exercise
-// PKCS#7 padding correctness.
+// PKCS#7 padding correctness. Runs for both AES-128 (V=4, R=4) and AES-256
+// (V=5, R=6), which use entirely different key derivation schemes.
 struct AESRoundtripParam {
     std::string name;
     std::string test_data;
+    integer_type key_length;
 };
 
 class AESEncryptionRoundtrip : public ::testing::TestWithParam<AESRoundtripParam> {
@@ -148,7 +149,7 @@ TEST_P(AESEncryptionRoundtrip, VerifyStringContent) {
     ASSERT_EQ(File_CreateStream(src_io, "src", src_file.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Document_CreateFile(src_file, src_doc.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    // Configure AES-128 encryption
+    // Configure AES encryption at the parameterized key length
     HandleGuard<BufferHandle, Buffer_Release> owner_pw;
     HandleGuard<BufferHandle, Buffer_Release> user_pw;
     std::string owner_password = "owner";
@@ -156,7 +157,7 @@ TEST_P(AESEncryptionRoundtrip, VerifyStringContent) {
 
     ASSERT_EQ(DocumentEncryptionSettings_Create(enc_settings.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(DocumentEncryptionSettings_SetAlgorithm(enc_settings, EncryptionAlgorithmType_AES), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DocumentEncryptionSettings_SetKeyLength(enc_settings, 128), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentEncryptionSettings_SetKeyLength(enc_settings, param.key_length), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(DocumentEncryptionSettings_SetUserAccessPermissions(enc_settings, UserAccessPermissionFlag_None), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_CreateFromData(owner_password.data(), owner_password.length(), owner_pw.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Buffer_CreateFromData(user_password.data(), user_password.length(), user_pw.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -258,14 +259,25 @@ INSTANTIATE_TEST_SUITE_P(
     EncryptionPadding,
     AESEncryptionRoundtrip,
     ::testing::Values(
-        AESRoundtripParam{"1byte",  "X"},
-        AESRoundtripParam{"5bytes", "Hello"},
-        AESRoundtripParam{"15bytes", "FifteenBytesXX!"},
-        AESRoundtripParam{"16bytes", "SixteenBytes!!!!"},
-        AESRoundtripParam{"17bytes", "SeventeenBytesXX!"},
-        AESRoundtripParam{"31bytes", "ThirtyOneBytesOfTestDataHere!!!"},
-        AESRoundtripParam{"32bytes", "ThirtyTwoBytesOfTestDataGoHere!!"},
-        AESRoundtripParam{"33bytes", "ThirtyThreeBytesOfTestDataGoHere!"}
+        // AES-128 (V=4, R=4)
+        AESRoundtripParam{"aes128_1byte",  "X", 128},
+        AESRoundtripParam{"aes128_5bytes", "Hello", 128},
+        AESRoundtripParam{"aes128_15bytes", "FifteenBytesXX!", 128},
+        AESRoundtripParam{"aes128_16bytes", "SixteenBytes!!!!", 128},
+        AESRoundtripParam{"aes128_17bytes", "SeventeenBytesXX!", 128},
+        AESRoundtripParam{"aes128_31bytes", "ThirtyOneBytesOfTestDataHere!!!", 128},
+        AESRoundtripParam{"aes128_32bytes", "ThirtyTwoBytesOfTestDataGoHere!!", 128},
+        AESRoundtripParam{"aes128_33bytes", "ThirtyThreeBytesOfTestDataGoHere!", 128},
+
+        // AES-256 (V=5, R=6)
+        AESRoundtripParam{"aes256_1byte",  "X", 256},
+        AESRoundtripParam{"aes256_5bytes", "Hello", 256},
+        AESRoundtripParam{"aes256_15bytes", "FifteenBytesXX!", 256},
+        AESRoundtripParam{"aes256_16bytes", "SixteenBytes!!!!", 256},
+        AESRoundtripParam{"aes256_17bytes", "SeventeenBytesXX!", 256},
+        AESRoundtripParam{"aes256_31bytes", "ThirtyOneBytesOfTestDataHere!!!", 256},
+        AESRoundtripParam{"aes256_32bytes", "ThirtyTwoBytesOfTestDataGoHere!!", 256},
+        AESRoundtripParam{"aes256_33bytes", "ThirtyThreeBytesOfTestDataGoHere!", 256}
     ),
     [](const ::testing::TestParamInfo<AESRoundtripParam>& info) {
         return info.param.name;

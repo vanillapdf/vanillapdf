@@ -5,6 +5,11 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 20
+    # Produce Conventional Commits titles (e.g. "build(deps): Bump ...") so PRs
+    # pass the "Lint PR title" check that gates the squash-merge commit subject.
+    commit-message:
+      prefix: "build"
+      include: "scope"
     groups:
       github-actions:
         patterns:
