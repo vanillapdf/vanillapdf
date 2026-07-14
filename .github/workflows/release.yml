@@ -29,6 +29,7 @@ permissions: {}
 jobs:
   prepare:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     permissions:
       contents: read
     outputs:
@@ -116,6 +117,7 @@ jobs:
 
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     permissions:
       contents: read
     needs: prepare
@@ -177,6 +179,7 @@ jobs:
 
   nuget-staging:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     permissions:
       packages: write
     environment: staging
@@ -230,6 +233,7 @@ jobs:
 
   dry-run-report:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     permissions: {}
     needs: [build-nuget, build-deb, build-rpm, build-dmg, dry-run-pages, dry-run-vcpkg, dry-run-conan, prepare]
     if: always() && needs.prepare.outputs.dry_run == 'true'
@@ -293,6 +297,7 @@ jobs:
 
   production-gate:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     permissions: {}
     needs: [create-draft-release, prepare]
     environment: production
@@ -309,6 +314,7 @@ jobs:
   # the tag can be created under any tag protection rulesets.
   publish-release:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     permissions:
       contents: write
     needs: production-gate
@@ -333,6 +339,7 @@ jobs:
 
   publish-nuget:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     permissions:
       id-token: write  # Enable GitHub OIDC token issuance for NuGet trusted publishing
     needs: publish-release
@@ -412,6 +419,7 @@ jobs:
   attest:
     name: Attest Release Artifacts
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     permissions:
       id-token: write
       attestations: write
@@ -453,6 +461,7 @@ jobs:
   verify-attest:
     name: Verify Artifact Attestations
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     permissions:
       contents: read
     needs: attest
@@ -497,6 +506,7 @@ jobs:
   update-port:
     name: Update Local Port
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     permissions:
       contents: read
     needs: publish-release

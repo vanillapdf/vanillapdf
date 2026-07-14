@@ -30,6 +30,7 @@ jobs:
   prepare-conan-changes:
     name: Prepare Conan Center update
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     outputs:
       branch-name: vanillapdf-${{ steps.version.outputs.version }}
       pr-url: ${{ steps.pr-info.outputs.pr-url }}
@@ -158,6 +159,7 @@ jobs:
   create-official-pr:
     name: Create PR to Conan Center Index
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     needs: prepare-conan-changes
     if: ${{ !inputs.dry_run && needs.prepare-conan-changes.outputs.is_latest == 'true' }}
     environment: production

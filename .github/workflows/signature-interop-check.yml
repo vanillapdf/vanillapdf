@@ -33,6 +33,7 @@ jobs:
   interop:
     name: ubuntu.26.04-x64
     runs-on: ubuntu-24.04
+    timeout-minutes: 90
     container:
       image: ghcr.io/vanillapdf/vanillapdf-ubuntu:26.04
       options: --platform=linux/amd64

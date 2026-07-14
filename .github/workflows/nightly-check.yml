@@ -46,6 +46,7 @@ jobs:
   linux:
     name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: ${{ matrix.config.os }}
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false
@@ -194,6 +195,7 @@ jobs:
   windows:
     name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: ${{ matrix.config.os }}
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false
@@ -249,6 +251,7 @@ jobs:
   macos:
     name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: ${{ matrix.config.runner }}
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false

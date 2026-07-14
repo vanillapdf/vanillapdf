@@ -46,6 +46,7 @@ jobs:
   setup:
     name: Setup Git Reference
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     outputs:
       git_tag: ${{ steps.git_ref.outputs.git_tag }}
       version: ${{ steps.version.outputs.version }}
@@ -87,6 +88,7 @@ jobs:
   fetchcontent-linux:
     name: FetchContent - Linux ${{ matrix.preset }}
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     needs: setup
 
     strategy:
@@ -125,6 +127,7 @@ jobs:
   fetchcontent-windows:
     name: FetchContent - Windows ${{ matrix.preset }}
     runs-on: windows-latest
+    timeout-minutes: 90
     needs: setup
 
     strategy:
@@ -163,6 +166,7 @@ jobs:
   fetchcontent-macos:
     name: FetchContent - macOS ${{ matrix.preset }}
     runs-on: macos-26
+    timeout-minutes: 90
     needs: setup
 
     strategy:
@@ -203,6 +207,7 @@ jobs:
   vcpkg-port-linux:
     name: vcpkg Port - Linux ${{ matrix.preset }}
     runs-on: ubuntu-latest
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false
@@ -250,6 +255,7 @@ jobs:
   vcpkg-port-windows:
     name: vcpkg Port - Windows ${{ matrix.preset }}
     runs-on: windows-latest
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false
@@ -301,6 +307,7 @@ jobs:
   vcpkg-port-macos:
     name: vcpkg Port - macOS ${{ matrix.preset }}
     runs-on: macos-26
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false
@@ -350,6 +357,7 @@ jobs:
   homebrew-macos:
     name: Homebrew - macOS ${{ matrix.preset }}
     runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false
@@ -410,6 +418,7 @@ jobs:
   conan-linux:
     name: Conan - Linux ${{ matrix.build_type }}
     runs-on: ubuntu-24.04
+    timeout-minutes: 90
     needs: setup
     permissions:
       contents: read
@@ -460,6 +469,7 @@ jobs:
   conan-windows:
     name: Conan - Windows ${{ matrix.build_type }}
     runs-on: windows-latest
+    timeout-minutes: 90
     needs: setup
 
     strategy:
@@ -513,6 +523,7 @@ jobs:
   conan-macos:
     name: Conan - macOS ${{ matrix.build_type }}
     runs-on: macos-26
+    timeout-minutes: 90
     needs: setup
 
     strategy:

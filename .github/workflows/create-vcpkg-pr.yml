@@ -30,6 +30,7 @@ jobs:
   prepare-vcpkg-changes:
     name: Prepare vcpkg update changes
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     outputs:
       branch-name: update-vanillapdf-${{ inputs.tag }}
       pr-url: ${{ steps.pr-info.outputs.pr-url }}
@@ -148,6 +149,7 @@ jobs:
   create-official-pr:
     name: Create PR to official vcpkg repo
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     needs: prepare-vcpkg-changes
     if: ${{ !inputs.dry_run }}
     environment: production
