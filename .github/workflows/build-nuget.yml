@@ -67,6 +67,7 @@ jobs:
   build-linux:
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false
@@ -153,6 +154,7 @@ jobs:
   build-windows:
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false
@@ -236,6 +238,7 @@ jobs:
   build-macos:
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.runner }}
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false
@@ -321,6 +324,7 @@ jobs:
   build-vanillapdf-core:
     name: vanillapdf core
     runs-on: ubuntu-latest
+    timeout-minutes: 90
 
     needs:
       - build-linux

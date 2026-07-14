@@ -44,6 +44,7 @@ jobs:
   github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     permissions:
       contents: write       # Required to create a release and upload assets
       id-token: write       # Required for Sigstore keyless signing

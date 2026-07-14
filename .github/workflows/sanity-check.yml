@@ -54,6 +54,7 @@ jobs:
   linux:
     name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: ${{ matrix.config.os }}
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
@@ -124,6 +125,7 @@ jobs:
   windows:
     name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: windows-2025
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails
@@ -172,6 +174,7 @@ jobs:
   macos:
     name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
     runs-on: ${{ matrix.config.runner }}
+    timeout-minutes: 90
 
     strategy:
       fail-fast: false # We would like to see the results of all jobs even in case one of them fails

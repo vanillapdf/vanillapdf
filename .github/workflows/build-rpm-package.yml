@@ -18,6 +18,7 @@ jobs:
   build-package:
     name: Build package
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     container: rockylinux/rockylinux:10
     steps:
       - name: Install build tools and system dependencies
@@ -69,6 +70,7 @@ jobs:
   install-package:
     name: Install package
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     needs: build-package
     container: rockylinux/rockylinux:10
     steps:
