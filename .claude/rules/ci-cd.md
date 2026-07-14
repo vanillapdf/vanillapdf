@@ -34,7 +34,33 @@ Windows 2022/2025 (x86/x64), Linux Ubuntu 22.04/24.04, Rocky 8/9, Fedora 41/42 (
 
 ## Backporting
 
-Add label `backport release/X.Y` to a PR before merging. The workflow cherry-picks and creates a backport PR automatically. If cherry-pick fails, manually create the backport.
+Add label `backport release/X.Y` to a PR **before merging**. On merge, `backport.yml` cherry-picks the squash commit onto `release/X.Y` and opens a backport PR automatically.
+
+**Label lifecycle** (driven by `backport.yml` + `.github/scripts/backport.sh`):
+- `backport release/X.Y` — request: backport this PR to that branch.
+- `backported release/X.Y` — applied automatically when the backport PR **merges** (removes the `backport` label). Only fires when the backport PR title is `[Backport release/X.Y] …` and its body contains `Backport of #<original>` — keep that format so the automation runs.
+- `backport-failed release/X.Y` — applied automatically when the auto cherry-pick **fails**. This is the queryable signal that a manual backport is owed.
+
+**Find backports that still need attention:**
+```bash
+gh pr list --state all --label "backport-failed release/2.2"
+```
+The label is not auto-cleared, so remove it by hand once the manual backport is done (or as part of doing it).
+
+**Manual backport** (when the auto cherry-pick conflicts — common when the release branch predates a feature the PR was built on):
+```bash
+git fetch origin
+git checkout -b backport/<PR>-release-2.2 origin/release/2.2
+git cherry-pick -x <squash-merge-commit-of-original-PR>   # resolve conflicts
+# Drop parts that don't belong on the older branch (e.g. code for features not on release/X.Y).
+git push origin backport/<PR>-release-2.2
+gh pr create --base release/2.2 \
+  --title "[Backport release/2.2] <original title> (#<PR>)" \
+  --body-file <body>   # body must contain: Backport of #<PR> to `release/2.2`
+```
+Build and run the affected tests against the release branch before opening the PR — release branches diverge from `main`.
+
+**When creating a new `release/X.Y` branch**, also create its three labels (`backport release/X.Y`, `backported release/X.Y`, `backport-failed release/X.Y`) — they are created manually, and `backport.sh` applies `backport-failed` with a bare `gh` call that assumes the label exists.
 
 ## Homebrew
 
