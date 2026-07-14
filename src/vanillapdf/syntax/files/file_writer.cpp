@@ -981,7 +981,7 @@ void FileWriter::WriteXrefObjects(IOutputStreamPtr output, XrefBasePtr source) {
         auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryBasePtr>(entry);
 
         // Some used entries can be released, but they were not compacted
-        if (!used_entry->InUse()) {
+        if (!used_entry->HasReference()) {
             continue;
         }
 
@@ -1134,7 +1134,7 @@ XrefBasePtr FileWriter::CreateIncrementalXref(FilePtr source, FilePtr destinatio
                 auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
 
                 // Entry was released
-                if (!used_entry->InUse()) {
+                if (!used_entry->HasReference()) {
                     continue;
                 }
 
@@ -1477,7 +1477,7 @@ void FileWriter::WriteXrefTable(IOutputStreamPtr output, XrefTablePtr xref_table
                 auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
 
                 // Entry was released
-                if (!used_entry->InUse()) {
+                if (!used_entry->HasReference()) {
                     continue;
                 }
 

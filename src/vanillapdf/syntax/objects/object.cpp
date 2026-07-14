@@ -121,7 +121,7 @@ bool Object::IsIndirect(void) const {
 
         // Verify that the entry refers to this object
         auto entry = m_entry.GetReference();
-        if (entry->InUse()) {
+        if (entry->HasReference()) {
             bool identity = Identity(entry->GetReference());
             assert(identity && "Indirect entry does not reference to this object"); UNUSED(identity);
         }
@@ -145,7 +145,7 @@ void Object::ClearXrefEntry(bool check_xref_reference) {
 
         // Verify that the entry refers to this object
         auto entry = m_entry.GetReference();
-        if (entry->InUse()) {
+        if (entry->HasReference()) {
             assert(entry->GetReference()->Identity(this) && "Reference entry has changed");
             entry->ReleaseReference(false);
         }

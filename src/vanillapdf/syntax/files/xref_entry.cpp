@@ -109,14 +109,14 @@ void XrefUsedEntryBase::SetReference(ObjectPtr ref) {
 ObjectPtr XrefUsedEntryBase::GetReference(void) {
     Initialize();
 
-    if (!InUse()) {
+    if (!HasReference()) {
         return NullObject::GetInstance();
     }
 
     return _reference;
 }
 
-bool XrefUsedEntryBase::InUse(void) const noexcept {
+bool XrefUsedEntryBase::HasReference(void) const noexcept {
     if (!m_used) {
         assert(_reference.empty() && "Unused entry contains reference");
     }
@@ -125,8 +125,8 @@ bool XrefUsedEntryBase::InUse(void) const noexcept {
 }
 
 void XrefUsedEntryBase::ReleaseReference(bool check_object_xref) {
-    // Unused entries have nothing to release
-    if (!InUse()) {
+    // Entries without a materialized reference have nothing to release
+    if (!HasReference()) {
         return;
     }
 
