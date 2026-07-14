@@ -1,4 +1,5 @@
 #include "unittest.h"
+#include "handle_guard.h"
 
 #include <cstring>
 #include <string_view>
