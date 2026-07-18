@@ -37,7 +37,12 @@ public:
 
     virtual Usage GetUsage(void) const noexcept = 0;
 
-    virtual bool InUse(void) const noexcept = 0;
+    // True if the entry occupies an object slot in the file - it is either used or compressed.
+    // This is derived from the entry usage, therefore it does not materialize the referenced object.
+    bool InUse(void) const noexcept {
+        Usage usage = GetUsage();
+        return (usage == Usage::Used) || (usage == Usage::Compressed);
+    }
 
     void SetFile(WeakReference<File> file) noexcept { _file = file; }
     WeakReference<File> GetFile() const noexcept { return _file; }
@@ -66,10 +71,6 @@ class XrefNullEntry : public XrefEntryBase {
 public:
     virtual Usage GetUsage(void) const noexcept override {
         return XrefEntryBase::Usage::Null;
-    }
-
-    virtual bool InUse(void) const noexcept override {
-        return false;
     }
 };
 
@@ -100,10 +101,6 @@ public:
         IncrementVersion();
     }
 
-    virtual bool InUse(void) const noexcept override {
-        return false;
-    }
-
 private:
     types::big_uint m_next_free_object = 0;
 };
@@ -123,7 +120,10 @@ public:
         return false;
     }
 
-    virtual bool InUse(void) const noexcept override;
+    // True if the entry currently holds a materialized object reference.
+    // Lazily loaded entries report false until the object has been parsed
+    // and released entries report false again afterwards.
+    bool HasReference(void) const noexcept;
 
     ~XrefUsedEntryBase();
 

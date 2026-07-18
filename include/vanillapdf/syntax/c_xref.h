@@ -322,6 +322,11 @@ extern "C"
 
     /**
     * \brief Quick check, if the entry is used or compressed
+    *
+    * Returns VANILLAPDF_RV_TRUE for used and compressed entries and VANILLAPDF_RV_FALSE for free entries.
+    * The result is derived from the entry type, therefore the referenced object is not parsed.
+    *
+    * To tell used and compressed entries apart, use \ref XrefEntry_GetType.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_InUse(XrefEntryHandle* handle, boolean_type* result);
 

@@ -344,69 +344,6 @@ TEST(MemoryBufferOutputStream, Flush) {
     EXPECT_EQ(MemoryBufferOutputStream_Flush(stream_ptr), VANILLAPDF_ERROR_SUCCESS);
 }
 
-namespace xref {
-
-TEST(Xref, CreateRelease) {
-    HandleGuard<XrefHandle, Xref_Release> xref_ptr;
-
-    ASSERT_EQ(Xref_Create(xref_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(xref_ptr.get(), nullptr);
-}
-
-TEST(Xref, NullCheck) {
-    EXPECT_EQ(Xref_Create(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
-    EXPECT_EQ(Xref_Release(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
-}
-
-TEST(Xref, AddRemoveEntry) {
-    HandleGuard<XrefHandle, Xref_Release> xref_ptr;
-
-    HandleGuard<XrefEntryHandle, XrefEntry_Release> xref_entry_ptr;
-    HandleGuard<XrefFreeEntryHandle, XrefFreeEntry_Release> xref_free_entry_ptr;
-
-    boolean_type remove_result = VANILLAPDF_RV_FALSE;
-    boolean_type contains_result = VANILLAPDF_RV_FALSE;
-
-    ASSERT_EQ(Xref_Create(xref_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(xref_ptr.get(), nullptr);
-
-    ASSERT_EQ(XrefFreeEntry_Create(1, 0, 65535, xref_free_entry_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(xref_free_entry_ptr.get(), nullptr);
-
-    ASSERT_EQ(XrefFreeEntry_ToEntry(xref_free_entry_ptr, xref_entry_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(xref_entry_ptr.get(), nullptr);
-
-    ASSERT_EQ(Xref_Insert(xref_ptr, xref_entry_ptr), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Xref_Contains(xref_ptr, 1, &contains_result), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Xref_Remove(xref_ptr, 1, &remove_result), VANILLAPDF_ERROR_SUCCESS);
-
-    EXPECT_EQ(contains_result, VANILLAPDF_RV_TRUE);
-    EXPECT_EQ(remove_result, VANILLAPDF_RV_TRUE);
-}
-
-TEST(XrefFreeEntry, CreateRelease) {
-    HandleGuard<XrefFreeEntryHandle, XrefFreeEntry_Release> xref_free_entry_ptr;
-
-    ASSERT_EQ(XrefFreeEntry_Create(0, 0, 0, xref_free_entry_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(xref_free_entry_ptr.get(), nullptr);
-}
-
-TEST(XrefUsedEntry, CreateRelease) {
-    HandleGuard<XrefUsedEntryHandle, XrefUsedEntry_Release> xref_used_entry_ptr;
-
-    ASSERT_EQ(XrefUsedEntry_Create(0, 0, 0, xref_used_entry_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(xref_used_entry_ptr.get(), nullptr);
-}
-
-TEST(XrefCompressedEntry, CreateRelease) {
-    HandleGuard<XrefCompressedEntryHandle, XrefCompressedEntry_Release> xref_compressed_entry_ptr;
-
-    ASSERT_EQ(XrefCompressedEntry_Create(0, 0, 0, 0, xref_compressed_entry_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(xref_compressed_entry_ptr.get(), nullptr);
-}
-
-} /* xref */
-
 int main(int argc, char *argv[]) {
 
     TestEnvironment* test_environment = new TestEnvironment();

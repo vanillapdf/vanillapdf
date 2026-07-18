@@ -49,6 +49,12 @@ set(VANILLAPDF_UNITTEST_SOURCES
     content_stream_test.cpp
 )
 
+# Tests are gradually being moved out of the flat list above
+# into folders mirroring the library layers - syntax, semantics, contents and utils
+set(VANILLAPDF_UNITTEST_SYNTAX_SOURCES
+    syntax/xref_test.cpp
+)
+
 set(VANILLAPDF_UNITTEST_HEADERS
     unittest.h
     test_data.h
@@ -69,9 +75,14 @@ source_group("Source Files" FILES
     ${VANILLAPDF_UNITTEST_SOURCES}
 )
 
+source_group("Source Files\\syntax" FILES
+    ${VANILLAPDF_UNITTEST_SYNTAX_SOURCES}
+)
+
 add_executable(vanillapdf.unittest
     ${VANILLAPDF_UNITTEST_HEADERS}
     ${VANILLAPDF_UNITTEST_SOURCES}
+    ${VANILLAPDF_UNITTEST_SYNTAX_SOURCES}
     ${VANILLAPDF_UNITTEST_RESOURCE_FILES}
 )
 
