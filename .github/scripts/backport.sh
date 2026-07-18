@@ -144,6 +144,7 @@ process_target() {
     # Check if target branch exists
     if ! check_target_branch "$target"; then
         gh pr comment "$PR_NUMBER" --body "❌ Backport to \`$target\` failed: branch does not exist."
+        gh pr edit "$PR_NUMBER" --add-label "backport-failed $target"
         echo "::endgroup::"
         return 1
     fi
@@ -158,6 +159,7 @@ process_target() {
         else
             echo "::error::Push or PR creation failed for $target"
             post_push_failure_comment "$target" "$branch_name"
+            gh pr edit "$PR_NUMBER" --add-label "backport-failed $target"
             result=1
         fi
     else
@@ -165,6 +167,7 @@ process_target() {
         git cherry-pick --abort 2>/dev/null || true
         echo "::error::Cherry-pick failed for $target (likely conflicts)"
         post_failure_comment "$target" "$branch_name"
+        gh pr edit "$PR_NUMBER" --add-label "backport-failed $target"
         result=1
     fi
 
