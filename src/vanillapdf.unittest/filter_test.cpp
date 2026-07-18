@@ -1,4 +1,5 @@
 #include "unittest.h"
+#include "handle_guard.h"
 
 #include <cstring>
 #include <string_view>
@@ -80,6 +81,135 @@ TEST(FlateDecodeFilter, InvalidDataDecodeError) {
     ASSERT_EQ(Buffer_Release(input_data_buffer), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(FlateDecodeFilter_Release(filter_handle), VANILLAPDF_ERROR_SUCCESS);
 }
+
+// --- PNG predictor reconstruction regression -----------------------------
+//
+// Regenerate with scripts/regenerate_filter_test_vectors.py, which pins the
+// parameters and prints these arrays. The underlying tool
+// (scripts/png_predictor_vectors.py) certifies every vector against MuPDF
+// (PyMuPDF), an independent PDF engine, before emitting it. Each INPUT_* array
+// is a zlib-compressed, PNG-filtered RGB image (Colors=3, BitsPerComponent=8,
+// Columns=4, 3 rows); decoding it with the matching DecodeParms must yield
+// EXPECTED_RAW. Average and Paeth carry the historical bug (the reconstructed
+// byte was written to current[i] instead of current[bytes_per_pixel + i]);
+// None/Sub/Up are covered too so every filter branch is guarded.
+
+static const unsigned char INPUT_NONE[] = {
+    0x78, 0xDA, 0x01, 0x27, 0x00, 0xD8, 0xFF, 0x00, 0xC5, 0xD7, 0x14, 0x84,
+    0xF8, 0xCF, 0x9B, 0xF4, 0xB7, 0x6F, 0x47, 0x90, 0x00, 0x47, 0x30, 0x80,
+    0x4B, 0x9E, 0x32, 0x25, 0xA9, 0xF1, 0x33, 0xB5, 0xDE, 0x00, 0xA1, 0x68,
+    0xF4, 0xE2, 0x85, 0x1F, 0x07, 0x2F, 0xCC, 0x00, 0xFC, 0xAA, 0x87, 0x1D,
+    0x13, 0x4A,
+};
+
+static const unsigned char INPUT_SUB[] = {
+    0x78, 0xDA, 0x01, 0x27, 0x00, 0xD8, 0xFF, 0x01, 0xC5, 0xD7, 0x14, 0xBF,
+    0x21, 0xBB, 0x17, 0xFC, 0xE8, 0xD4, 0x53, 0xD9, 0x01, 0x47, 0x30, 0x80,
+    0x04, 0x6E, 0xB2, 0xDA, 0x0B, 0xBF, 0x0E, 0x0C, 0xED, 0x01, 0xA1, 0x68,
+    0xF4, 0x41, 0x1D, 0x2B, 0x25, 0xAA, 0xAD, 0xF9, 0xCD, 0xDE, 0x6B, 0x61,
+    0x12, 0xB6,
+};
+
+static const unsigned char INPUT_UP[] = {
+    0x78, 0xDA, 0x01, 0x27, 0x00, 0xD8, 0xFF, 0x02, 0xC5, 0xD7, 0x14, 0x84,
+    0xF8, 0xCF, 0x9B, 0xF4, 0xB7, 0x6F, 0x47, 0x90, 0x02, 0x82, 0x59, 0x6C,
+    0xC7, 0xA6, 0x63, 0x8A, 0xB5, 0x3A, 0xC4, 0x6E, 0x4E, 0x02, 0x5A, 0x38,
+    0x74, 0x97, 0xE7, 0xED, 0xE2, 0x86, 0xDB, 0xCD, 0x47, 0xCC, 0x9B, 0xBE,
+    0x15, 0x32,
+};
+
+static const unsigned char INPUT_AVERAGE[] = {
+    0x78, 0xDA, 0x63, 0x3E, 0x7A, 0x5D, 0x44, 0xA9, 0xF7, 0x68, 0x64, 0x45,
+    0x80, 0xD2, 0x59, 0x53, 0xE6, 0xA7, 0x47, 0xCB, 0x9E, 0x71, 0x75, 0x6F,
+    0x7A, 0x50, 0xFB, 0xD2, 0x56, 0x8E, 0xB9, 0x2E, 0x60, 0x4B, 0x0E, 0x53,
+    0x4F, 0xCB, 0x0C, 0x97, 0xC7, 0x5D, 0x57, 0x01, 0x63, 0x98, 0x12, 0x7F,
+};
+
+static const unsigned char INPUT_PAETH[] = {
+    0x78, 0xDA, 0x01, 0x27, 0x00, 0xD8, 0xFF, 0x04, 0xC5, 0xD7, 0x14, 0xBF,
+    0x21, 0xBB, 0x17, 0xFC, 0xE8, 0xD4, 0x53, 0xD9, 0x04, 0x82, 0x59, 0x6C,
+    0x04, 0x6E, 0x63, 0xDA, 0x0B, 0xBF, 0x0E, 0x6E, 0x27, 0x04, 0x5A, 0x38,
+    0x74, 0x41, 0xE7, 0x9F, 0x25, 0xAA, 0xDB, 0xF9, 0xCD, 0xDE, 0x68, 0xA8,
+    0x12, 0xD1,
+};
+
+static const unsigned char EXPECTED_RAW[] = {
+    0xC5, 0xD7, 0x14, 0x84, 0xF8, 0xCF, 0x9B, 0xF4, 0xB7, 0x6F, 0x47, 0x90,
+    0x47, 0x30, 0x80, 0x4B, 0x9E, 0x32, 0x25, 0xA9, 0xF1, 0x33, 0xB5, 0xDE,
+    0xA1, 0x68, 0xF4, 0xE2, 0x85, 0x1F, 0x07, 0x2F, 0xCC, 0x00, 0xFC, 0xAA,
+};
+
+static void InsertIntegerEntry(DictionaryObjectHandle* dict, string_type key, bigint_type value) {
+    HandleGuard<NameObjectHandle, NameObject_Release> name;
+    HandleGuard<IntegerObjectHandle, IntegerObject_Release> integer;
+    HandleGuard<ObjectHandle, Object_Release> object;
+
+    ASSERT_EQ(NameObject_CreateFromDecodedString(key, name.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(IntegerObject_CreateFromIntegerValue(value, integer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(IntegerObject_ToObject(integer, object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Insert(dict, name, object, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+}
+
+static void DecodePngPredictorAndCompare(
+    const unsigned char* input, size_type input_len,
+    const unsigned char* expected, size_type expected_len) {
+
+    HandleGuard<FlateDecodeFilterHandle, FlateDecodeFilter_Release> filter;
+    HandleGuard<BufferHandle, Buffer_Release> input_buffer;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> params;
+    HandleGuard<BufferHandle, Buffer_Release> decoded_buffer;
+
+    ASSERT_EQ(FlateDecodeFilter_Create(filter.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(input), input_len, input_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Create(params.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    // DecodeParms for a PNG-predicted (Predictor >= 10) RGB image.
+    InsertIntegerEntry(params, "Predictor", 15);
+    InsertIntegerEntry(params, "Colors", 3);
+    InsertIntegerEntry(params, "BitsPerComponent", 8);
+    InsertIntegerEntry(params, "Columns", 4);
+
+    ASSERT_EQ(FlateDecodeFilter_DecodeParams(filter, input_buffer, params, decoded_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(decoded_buffer.get(), nullptr);
+
+    string_type decoded_data = nullptr;
+    size_type decoded_len = 0;
+    ASSERT_EQ(Buffer_GetData(decoded_buffer, &decoded_data, &decoded_len), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(decoded_data, nullptr);
+
+    ASSERT_EQ(decoded_len, expected_len);
+    for (size_type i = 0; i < expected_len; ++i) {
+        EXPECT_EQ(static_cast<unsigned char>(decoded_data[i]), expected[i]);
+    }
+}
+
+struct PngPredictorCase {
+    std::string_view name;
+    const unsigned char* input;
+    size_type input_len;
+};
+
+class PngPredictorReconstructionTest : public ::testing::TestWithParam<PngPredictorCase> {};
+
+TEST_P(PngPredictorReconstructionTest, ReconstructsExpectedImage) {
+    const auto& param = GetParam();
+    DecodePngPredictorAndCompare(param.input, param.input_len, EXPECTED_RAW, sizeof(EXPECTED_RAW));
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    FlateDecodeFilter,
+    PngPredictorReconstructionTest,
+    ::testing::Values(
+        PngPredictorCase{ "None", INPUT_NONE, sizeof(INPUT_NONE) },
+        PngPredictorCase{ "Sub", INPUT_SUB, sizeof(INPUT_SUB) },
+        PngPredictorCase{ "Up", INPUT_UP, sizeof(INPUT_UP) },
+        PngPredictorCase{ "Average", INPUT_AVERAGE, sizeof(INPUT_AVERAGE) },
+        PngPredictorCase{ "Paeth", INPUT_PAETH, sizeof(INPUT_PAETH) }
+    ),
+    [](const ::testing::TestParamInfo<PngPredictorCase>& info) {
+        return std::string(info.param.name);
+    }
+);
 
 TEST(DCTDecodeFilter, Decode) {
 

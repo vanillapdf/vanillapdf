@@ -67,7 +67,8 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
     syntax::IntegerObjectPtr bits = make_deferred<IntegerObject>(8);
     if (parameters->Contains(constant::Name::BitsPerComponent)) {
         bits = parameters->FindAs<IntegerObjectPtr>(constant::Name::BitsPerComponent);
-        assert(*bits == 1 || *bits == 2 || *bits == 4 || *bits == 8);
+        // PDF 32000-1 Table 8: valid values are 1, 2, 4, 8 and (PDF 1.5) 16
+        assert(*bits == 1 || *bits == 2 || *bits == 4 || *bits == 8 || *bits == 16);
     }
 
     IntegerObjectPtr columns = make_deferred<IntegerObject>(1);
@@ -146,7 +147,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
                     uint32_t added_value = (current_byte + prior_byte);
                     auto divided_value = (added_value / 2.0f);
                     auto rounded_value = std::floor(divided_value);
-                    current[i] += static_cast<uint8_t>(rounded_value);
+                    current[bytes_per_pixel + i] += static_cast<uint8_t>(rounded_value);
                 }
 
                 break;
@@ -178,7 +179,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
                         value = c;
                     }
 
-                    current[i] += value;
+                    current[bytes_per_pixel + i] += value;
                 }
 
                 break;

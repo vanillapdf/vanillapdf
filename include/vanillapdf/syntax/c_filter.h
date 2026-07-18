@@ -100,6 +100,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_Decode(FilterBaseHandle* handle, BufferHandle* data, BufferHandle** result);
 
     /**
+    * \brief Decodes source \p data with specified \p params and returns decoded \p result data
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FilterBase_DecodeParams(FilterBaseHandle* handle, BufferHandle* data, DictionaryObjectHandle* parameters, BufferHandle** result);
+
+    /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
     */
@@ -134,6 +139,12 @@ extern "C"
     * \see \ref FilterBase_Decode
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_Decode(FlateDecodeFilterHandle* handle, BufferHandle* data, BufferHandle** result);
+
+    /**
+    * \copydoc FilterBase_DecodeParams
+    * \see \ref FilterBase_DecodeParams
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FlateDecodeFilter_DecodeParams(FlateDecodeFilterHandle* handle, BufferHandle* data, DictionaryObjectHandle* parameters, BufferHandle** result);
 
     /**
     * \copydoc FilterBase_Release
