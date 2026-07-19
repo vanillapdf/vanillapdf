@@ -306,8 +306,9 @@ jobs:
       latest_tag: ${{ needs.prepare.outputs.latest_tag }}
       is_latest: ${{ needs.prepare.outputs.is_latest }}
       prerelease: ${{ needs.prepare.outputs.prerelease }}
+      release_id: ${{ needs.create-draft-release.outputs.release_id }}
     steps:
-      - run: echo "Draft release created. Edit the release body in the UI, then approve to publish."
+      - run: echo "Draft release created. Review and edit the release body, then approve to publish."
 
   # Flip the reviewed draft to a published release. Publishing creates the tag at
   # the draft's target commit and binds the release to it. This uses GITHUB_TOKEN,
@@ -317,6 +318,12 @@ jobs:
   # creation - with no bypass actors, so no bot identity is needed. A token without
   # push access cannot even see a draft release (GitHub answers 404, not 403), so a
   # bot PAT here would only add a failure mode, not remove one.
+  #
+  # The draft is addressed by its numeric id, never by tag: the tag does not exist
+  # as a ref until this step, and an API edit to the draft body that omits tag_name
+  # resets it, so tag-based lookup can fail with "release not found". Re-asserting
+  # tag_name in the same PATCH that flips draft=false makes the publish immune to
+  # that quirk, however the body was edited during the gate.
   publish-release:
     runs-on: ubuntu-latest
     timeout-minutes: 90
@@ -331,16 +338,20 @@ jobs:
     steps:
       - name: Publish draft release
         env:
+          RELEASE_ID: ${{ needs.production-gate.outputs.release_id }}
           TAG: ${{ needs.production-gate.outputs.tag }}
           IS_LATEST: ${{ needs.production-gate.outputs.is_latest }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
-          LATEST_FLAG=""
-          if [ "$IS_LATEST" = "false" ]; then
-            LATEST_FLAG="--latest=false"
+          MAKE_LATEST=false
+          if [ "$IS_LATEST" = "true" ]; then
+            MAKE_LATEST=true
           fi
-          gh release edit "$TAG" --draft=false $LATEST_FLAG
+          gh api --method PATCH "repos/${GH_REPO}/releases/${RELEASE_ID}" \
+            -f tag_name="$TAG" \
+            -F draft=false \
+            -f make_latest="$MAKE_LATEST"
 
   publish-nuget:
     runs-on: ubuntu-latest
