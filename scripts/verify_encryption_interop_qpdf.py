@@ -28,6 +28,7 @@ Usage:
     key_length  : 40 | 128 | 256
 """
 
+import collections
 import os
 import re
 import subprocess
@@ -37,15 +38,36 @@ OWNER_PASSWORD = "owner-secret"
 USER_PASSWORD = "user-secret"
 WRONG_PASSWORD = "definitely-not-the-password"
 
-# Security handler revision and encryption method that "qpdf --show-encryption"
-# must report for each requested algorithm/key length combination. The method is
-# compared case-insensitively.
-EXPECTED_ENCRYPTION = {
-    ("RC4", "40"): (2, "rc4"),
-    ("RC4", "128"): (3, "rc4"),
-    ("AES", "128"): (4, "aesv2"),
-    ("AES", "256"): (6, "aesv3"),
-}
+ExpectedEncryption = collections.namedtuple("ExpectedEncryption", "method revision")
+
+
+def expected_encryption(algorithm, key_length):
+    """What "qpdf --show-encryption" must report for a requested algorithm and key length.
+
+    Mirrors the selection in EncryptionUtils::CreateEncryptionDictionary rather than
+    enumerating key lengths, so every valid RC4 length is covered. The method is compared
+    case-insensitively.
+
+    Returns None for combinations the standard security handler cannot express.
+    """
+
+    if algorithm == "AES":
+        if key_length == 128:
+            return ExpectedEncryption(method="aesv2", revision=4)
+
+        if key_length == 256:
+            return ExpectedEncryption(method="aesv3", revision=6)
+
+        return None
+
+    if algorithm == "RC4":
+        if 40 <= key_length <= 128 and key_length % 8 == 0:
+            # Revision 2 only carries 40-bit keys; anything longer moves to revision 3.
+            return ExpectedEncryption(method="rc4", revision=(2 if key_length == 40 else 3))
+
+        return None
+
+    return None
 
 
 def main():
@@ -102,13 +124,11 @@ def main():
             r"^(\s*User password\s*=\s*).*$", re.IGNORECASE | re.MULTILINE
         )
 
-        expected = EXPECTED_ENCRYPTION.get((algorithm.upper(), key_length))
+        expected = expected_encryption(algorithm.upper(), int(key_length))
         if expected is None:
-            return "no expected encryption recorded for {} {}".format(
+            return "{} {} is not a combination the standard security handler can express".format(
                 algorithm, key_length
             )
-
-        expected_revision, expected_method = expected
 
         show = subprocess.run(
             ["qpdf", "--show-encryption", "--password=" + OWNER_PASSWORD, destination],
@@ -149,21 +169,21 @@ def main():
             revision, stream_method, string_method
         ))
 
-        if revision != expected_revision:
+        if revision != expected.revision:
             return "security handler revision is {}, expected {}".format(
-                revision, expected_revision
+                revision, expected.revision
             )
 
         # Streams and strings are checked separately: a writer can get the /StmF
         # and /StrF crypt filters out of step with each other.
-        if stream_method != expected_method:
+        if stream_method != expected.method:
             return "stream encryption method is {}, expected {}".format(
-                stream_method, expected_method
+                stream_method, expected.method
             )
 
-        if string_method != expected_method:
+        if string_method != expected.method:
             return "string encryption method is {}, expected {}".format(
-                string_method, expected_method
+                string_method, expected.method
             )
 
         return None

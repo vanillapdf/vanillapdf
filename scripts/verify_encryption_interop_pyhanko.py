@@ -29,6 +29,7 @@ Usage:
     key_length  : 40 | 128 | 256
 """
 
+import collections
 import os
 import subprocess
 import sys
@@ -37,15 +38,49 @@ OWNER_PASSWORD = "owner-secret"
 USER_PASSWORD = "user-secret"
 WRONG_PASSWORD = "definitely-not-the-password"
 
-# Crypt filter method and file encryption key length (in bytes) that each
-# requested algorithm/key length combination must produce. The method name is
-# the authoritative signal: /V2 is RC4, /AESV2 is AES-128, /AESV3 is AES-256.
-EXPECTED_CRYPT_FILTER = {
-    ("RC4", "40"): ("/V2", 5),
-    ("RC4", "128"): ("/V2", 16),
-    ("AES", "128"): ("/AESV2", 16),
-    ("AES", "256"): ("/AESV3", 32),
-}
+ExpectedEncryption = collections.namedtuple(
+    "ExpectedEncryption", "method key_length_bytes revision"
+)
+
+
+def expected_encryption(algorithm, key_length):
+    """What pyHanko must report for a requested algorithm and key length.
+
+    Mirrors the selection in EncryptionUtils::CreateEncryptionDictionary rather than
+    enumerating key lengths, so every valid RC4 length is covered. The crypt filter method
+    is the authoritative signal: /V2 is RC4, /AESV2 is AES-128, /AESV3 is AES-256.
+
+    Returns None for combinations the standard security handler cannot express.
+    """
+
+    if algorithm == "AES":
+        if key_length == 128:
+            return ExpectedEncryption(method="/AESV2", key_length_bytes=16, revision=4)
+
+        if key_length == 256:
+            return ExpectedEncryption(method="/AESV3", key_length_bytes=32, revision=6)
+
+        return None
+
+    if algorithm == "RC4":
+        if 40 <= key_length <= 128 and key_length % 8 == 0:
+            # Revision 2 only carries 40-bit keys; anything longer moves to revision 3.
+            return ExpectedEncryption(
+                method="/V2",
+                key_length_bytes=key_length // 8,
+                revision=(2 if key_length == 40 else 3),
+            )
+
+        return None
+
+    return None
+
+
+# Only RC4-40 and RC4-128 are exercised against pyHanko, even though the library writes any
+# length from 40 to 128. Algorithm 1 makes the object key min(file key + 5, 16) bytes, so
+# RC4-56 needs a 96-bit and RC4-80 a 120-bit RC4 key. Both are valid per ISO 32000-1, but the
+# "cryptography" backend pyHanko uses accepts only 40, 56, 64, 80, 128, 160, 192 and 256 bit
+# keys and raises on the rest. qpdf covers those lengths instead; do not add them here.
 
 
 def main():
@@ -86,13 +121,11 @@ def main():
         Returns an error string, or None when the file matches expectations.
         """
 
-        expected = EXPECTED_CRYPT_FILTER.get((algorithm.upper(), key_length))
+        expected = expected_encryption(algorithm.upper(), int(key_length))
         if expected is None:
-            return "no expected crypt filter recorded for {} {}".format(
+            return "{} {} is not a combination the standard security handler can express".format(
                 algorithm, key_length
             )
-
-        expected_method, expected_keylen = expected
 
         with open(destination, "rb") as handle:
             reader = PdfFileReader(handle, strict=False)
@@ -120,19 +153,24 @@ def main():
 
             # Streams and strings are checked separately: a writer can get the
             # /StmF and /StrF crypt filters out of step with each other.
-            if stream_filter.method != expected_method:
+            if stream_filter.method != expected.method:
                 return "stream crypt filter is {}, expected {}".format(
-                    stream_filter.method, expected_method
+                    stream_filter.method, expected.method
                 )
 
-            if string_filter.method != expected_method:
+            if string_filter.method != expected.method:
                 return "string crypt filter is {}, expected {}".format(
-                    string_filter.method, expected_method
+                    string_filter.method, expected.method
                 )
 
-            if handler.keylen != expected_keylen:
+            if handler.keylen != expected.key_length_bytes:
                 return "file encryption key is {} bytes, expected {}".format(
-                    handler.keylen, expected_keylen
+                    handler.keylen, expected.key_length_bytes
+                )
+
+            if handler.revision.value != expected.revision:
+                return "security handler revision is {}, expected {}".format(
+                    handler.revision.value, expected.revision
                 )
 
         return None
