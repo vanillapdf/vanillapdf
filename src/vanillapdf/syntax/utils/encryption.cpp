@@ -1639,10 +1639,12 @@ BufferPtr EncryptionUtils::ComputeHashR6(
             k = ComputeSHA512(e);
         }
 
-        // Step (d) termination: at least 64 rounds, then stop when the last byte
-        // of E is <= (round - 32).
+        // Step (d) termination: run at least 64 rounds, then stop once the last byte of E is
+        // <= (round number - 32). The spec counts rounds from 1 while this loop counts from 0,
+        // so the number of completed rounds is (round + 1): the loop must have run 64 times
+        // (round >= 63) and the threshold is (round + 1) - 32, which is (round - 31).
         uint8_t last_byte = static_cast<uint8_t>(e->back());
-        if (round >= 63 && last_byte <= round - 32) {
+        if (round >= 63 && last_byte <= round - 31) {
             break;
         }
     }
