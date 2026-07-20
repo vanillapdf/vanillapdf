@@ -1564,8 +1564,9 @@ BufferPtr EncryptionUtils::ComputeHashR6(
 
     BufferPtr k = ComputeSHA256(initial_input);
 
-    // Step 2: Iterative round loop
-    for (int round = 0; ; ++round) {
+    // Step 2: Iterative round loop. Rounds are numbered from 1, as the specification does,
+    // so the termination test below can be read straight out of Algorithm 2.B.
+    for (int round = 1; ; ++round) {
 
         // Build K1 = (password + K + u_value) repeated 64 times. K is the full hash
         // from the previous round, which is 32, 48 or 64 bytes (SHA-256/384/512).
@@ -1639,12 +1640,10 @@ BufferPtr EncryptionUtils::ComputeHashR6(
             k = ComputeSHA512(e);
         }
 
-        // Step (d) termination: run at least 64 rounds, then stop once the last byte of E is
-        // <= (round number - 32). The spec counts rounds from 1 while this loop counts from 0,
-        // so the number of completed rounds is (round + 1): the loop must have run 64 times
-        // (round >= 63) and the threshold is (round + 1) - 32, which is (round - 31).
+        // Step (d) termination: perform at least 64 rounds, then stop once the last byte of E
+        // is less than or equal to the round number minus 32.
         uint8_t last_byte = static_cast<uint8_t>(e->back());
-        if (round >= 63 && last_byte <= round - 31) {
+        if (round >= 64 && last_byte <= round - 32) {
             break;
         }
     }
