@@ -37,20 +37,15 @@ OWNER_PASSWORD = "owner-secret"
 USER_PASSWORD = "user-secret"
 WRONG_PASSWORD = "definitely-not-the-password"
 
-# Encryption method name that "qpdf --show-encryption" must report for each
-# requested algorithm/key length combination. Compared case-insensitively.
-EXPECTED_ENCRYPTION_METHOD = {
-    ("RC4", "40"): "rc4",
-    ("RC4", "128"): "rc4",
-    ("AES", "128"): "aesv2",
-    ("AES", "256"): "aesv3",
+# Security handler revision and encryption method that "qpdf --show-encryption"
+# must report for each requested algorithm/key length combination. The method is
+# compared case-insensitively.
+EXPECTED_ENCRYPTION = {
+    ("RC4", "40"): (2, "rc4"),
+    ("RC4", "128"): (3, "rc4"),
+    ("AES", "128"): (4, "aesv2"),
+    ("AES", "256"): (6, "aesv3"),
 }
-
-# "stream encryption method: AESv2", "string encryption method: RC4", ...
-ENCRYPTION_METHOD_PATTERN = re.compile(
-    r"^\s*(stream|string|file) encryption method:\s*(\S+)\s*$",
-    re.IGNORECASE | re.MULTILINE,
-)
 
 
 def main():
@@ -90,11 +85,30 @@ def main():
         Returns an error string, or None when the file matches expectations.
         """
 
-        expected = EXPECTED_ENCRYPTION_METHOD.get((algorithm.upper(), key_length))
+        # "stream encryption method: AESv2", "string encryption method: RC4", ...
+        # qpdf only emits these lines when crypt filters are in play (/V 4 and
+        # above). For RC4 (/V 1 and /V 2) it prints none, and RC4 is implied by
+        # the revision.
+        method_pattern = re.compile(
+            r"^\s*(stream|string|file) encryption method:\s*(\S+)\s*$",
+            re.IGNORECASE | re.MULTILINE,
+        )
+
+        revision_pattern = re.compile(r"^\s*R\s*=\s*(\d+)\s*$", re.MULTILINE)
+
+        # qpdf echoes the user password back when handed the owner password.
+        # Keep it out of the CI log even though these are throwaway credentials.
+        user_password_pattern = re.compile(
+            r"^(\s*User password\s*=\s*).*$", re.IGNORECASE | re.MULTILINE
+        )
+
+        expected = EXPECTED_ENCRYPTION.get((algorithm.upper(), key_length))
         if expected is None:
-            return "no expected encryption method recorded for {} {}".format(
+            return "no expected encryption recorded for {} {}".format(
                 algorithm, key_length
             )
+
+        expected_revision, expected_method = expected
 
         show = subprocess.run(
             ["qpdf", "--show-encryption", "--password=" + OWNER_PASSWORD, destination],
@@ -103,38 +117,55 @@ def main():
             universal_newlines=True,
         )
 
-        output = show.stdout or ""
+        output = user_password_pattern.sub(r"\1<redacted>", show.stdout or "")
         if show.returncode != 0:
             return "qpdf --show-encryption exited with {}:\n{}".format(
                 show.returncode, output
             )
 
-        methods = {
-            scope.lower(): method for scope, method in
-            ENCRYPTION_METHOD_PATTERN.findall(output)
-        }
+        revision_match = revision_pattern.search(output)
 
         # Fail loudly rather than silently passing if qpdf ever changes how it
-        # words this output -- a missing match must never read as success.
-        if not methods:
+        # words this output -- an unparseable report must never read as success.
+        if revision_match is None:
             return (
-                "could not find any 'encryption method' line in qpdf output; "
-                "the output format may have changed:\n{}".format(output)
+                "could not find the 'R = ' line in qpdf output; the output "
+                "format may have changed:\n{}".format(output)
             )
 
-        for scope in ("stream", "string"):
-            actual = methods.get(scope)
-            if actual is None:
-                return "qpdf did not report a {} encryption method:\n{}".format(
-                    scope, output
-                )
+        revision = int(revision_match.group(1))
 
-            if actual.lower() != expected:
-                return "{} encryption method is {}, expected {}".format(
-                    scope, actual, expected
-                )
+        methods = {
+            scope.lower(): method.lower() for scope, method in
+            method_pattern.findall(output)
+        }
 
-        print("qpdf: encryption methods {}".format(methods))
+        # Absent method lines mean /V 1 or /V 2, which can only ever be RC4. An
+        # AES expectation therefore fails here exactly as it should.
+        stream_method = methods.get("stream", "rc4")
+        string_method = methods.get("string", "rc4")
+
+        print("qpdf: R={} stream={} string={}".format(
+            revision, stream_method, string_method
+        ))
+
+        if revision != expected_revision:
+            return "security handler revision is {}, expected {}".format(
+                revision, expected_revision
+            )
+
+        # Streams and strings are checked separately: a writer can get the /StmF
+        # and /StrF crypt filters out of step with each other.
+        if stream_method != expected_method:
+            return "stream encryption method is {}, expected {}".format(
+                stream_method, expected_method
+            )
+
+        if string_method != expected_method:
+            return "string encryption method is {}, expected {}".format(
+                string_method, expected_method
+            )
+
         return None
 
     algorithm_error = verify_algorithm()
