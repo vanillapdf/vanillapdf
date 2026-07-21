@@ -4,7 +4,7 @@
 // Environment: Windows x64, MSVC 17, Release build
 //   CPU: 16 x 3792 MHz, L1 32 KiB (x8), L2 256 KiB (x8), L3 16384 KiB (x1)
 //
-// File sizes: minimalist.pdf ~1KB, Report.pdf ~750KB, MPK_SLOVLEX.pdf ~9.5MB
+// File sizes: minimalist.pdf ~334B, sample-document.pdf ~6KB, flat-pages.pdf ~136KB
 //
 // Baseline (fstream - File_Open + File_Initialize only):
 //   Benchmark                         Time             CPU   Iterations
@@ -97,10 +97,10 @@ static void BM_FileOpen(benchmark::State& state, IOStrategyType strategy, const 
     }
 }
 
-BENCHMARK_CAPTURE(BM_FileOpen, FileStream_minimalist, IOStrategy_FileStream, TEST_DIR + "/custom/minimalist.pdf");
-BENCHMARK_CAPTURE(BM_FileOpen, FileStream_Report, IOStrategy_FileStream, TEST_DIR + "/Report.pdf");
-BENCHMARK_CAPTURE(BM_FileOpen, FileStream_MPK_SLOVLEX, IOStrategy_FileStream, TEST_DIR + "/MPK_SLOVLEX.pdf");
+BENCHMARK_CAPTURE(BM_FileOpen, FileStream_minimalist, IOStrategy_FileStream, TEST_DIR + "/minimalist.pdf");
+BENCHMARK_CAPTURE(BM_FileOpen, FileStream_sample, IOStrategy_FileStream, TEST_DIR + "/sample-document.pdf");
+BENCHMARK_CAPTURE(BM_FileOpen, FileStream_flat_pages, IOStrategy_FileStream, TEST_DIR + "/flat-pages.pdf");
 
-BENCHMARK_CAPTURE(BM_FileOpen, Memory_minimalist, IOStrategy_Memory, TEST_DIR + "/custom/minimalist.pdf");
-BENCHMARK_CAPTURE(BM_FileOpen, Memory_Report, IOStrategy_Memory, TEST_DIR + "/Report.pdf");
-BENCHMARK_CAPTURE(BM_FileOpen, Memory_MPK_SLOVLEX, IOStrategy_Memory, TEST_DIR + "/MPK_SLOVLEX.pdf");
+BENCHMARK_CAPTURE(BM_FileOpen, Memory_minimalist, IOStrategy_Memory, TEST_DIR + "/minimalist.pdf");
+BENCHMARK_CAPTURE(BM_FileOpen, Memory_sample, IOStrategy_Memory, TEST_DIR + "/sample-document.pdf");
+BENCHMARK_CAPTURE(BM_FileOpen, Memory_flat_pages, IOStrategy_Memory, TEST_DIR + "/flat-pages.pdf");

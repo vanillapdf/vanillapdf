@@ -6,7 +6,7 @@
 // implementation re-traverses from the root on every call, costing
 // O(1+2+...+N) = O(N²) total.
 //
-// MPK_SLOVLEX.pdf: 1,450 pages, single flat /Pages node.
+// flat-pages.pdf: 1,450 pages, single flat /Pages node.
 //
 // Environment: Windows 11 x64, 16 CPUs @ 3792 MHz, MSVC 18, Release
 // L1D 32 KiB, L2 256 KiB, L3 16 MiB, Google Benchmark v1.9.4
@@ -101,8 +101,8 @@ struct PageTreeFixture {
 
 static void BM_PageTreeSequentialAccess(benchmark::State& state) {
     PageTreeFixture fixture;
-    if (!fixture.Open("MPK_SLOVLEX.pdf")) {
-        state.SkipWithError("Could not open MPK_SLOVLEX.pdf");
+    if (!fixture.Open("flat-pages.pdf")) {
+        state.SkipWithError("Could not open flat-pages.pdf");
         return;
     }
 
@@ -145,8 +145,8 @@ BENCHMARK(BM_PageTreeSequentialAccess)
 
 static void BM_PageTreeSingleAccess(benchmark::State& state) {
     PageTreeFixture fixture;
-    if (!fixture.Open("MPK_SLOVLEX.pdf")) {
-        state.SkipWithError("Could not open MPK_SLOVLEX.pdf");
+    if (!fixture.Open("flat-pages.pdf")) {
+        state.SkipWithError("Could not open flat-pages.pdf");
         return;
     }
 
@@ -195,8 +195,8 @@ static void BM_PageTreeColdFirstAccess(benchmark::State& state) {
     for (auto _ : state) {
         state.PauseTiming();
         PageTreeFixture fixture;
-        if (!fixture.Open("MPK_SLOVLEX.pdf")) {
-            state.SkipWithError("Could not open MPK_SLOVLEX.pdf");
+        if (!fixture.Open("flat-pages.pdf")) {
+            state.SkipWithError("Could not open flat-pages.pdf");
             return;
         }
 

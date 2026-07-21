@@ -24,6 +24,7 @@ set(VANILLAPDF_TOOLS_SOURCES
     encrypt.c
     decrypt.c
     write_custom.c
+    generate.c
 )
 
 set(VANILLAPDF_TOOLS_HEADERS

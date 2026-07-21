@@ -143,8 +143,7 @@ static void BM_ContentStreamSerialize(benchmark::State& state, const std::string
     }
 }
 
-BENCHMARK_CAPTURE(BM_ContentStreamSerialize, Report, TEST_DIR + "/Report.pdf");
-BENCHMARK_CAPTURE(BM_ContentStreamSerialize, example, TEST_DIR + "/example.pdf");
+BENCHMARK_CAPTURE(BM_ContentStreamSerialize, sample, TEST_DIR + "/sample-document.pdf");
 
 // Benchmark for content stream parsing via PageContents_GetInstructionCollection.
 // This exercises Instructions() which reads stream bodies, concatenates them,
@@ -228,5 +227,4 @@ static void BM_ContentStreamParse(benchmark::State& state, const std::string& pa
     }
 }
 
-BENCHMARK_CAPTURE(BM_ContentStreamParse, Report, TEST_DIR + "/Report.pdf");
-BENCHMARK_CAPTURE(BM_ContentStreamParse, example, TEST_DIR + "/example.pdf");
+BENCHMARK_CAPTURE(BM_ContentStreamParse, sample, TEST_DIR + "/sample-document.pdf");
