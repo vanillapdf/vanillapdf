@@ -14,7 +14,7 @@ include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/generate_test_certificates.cmak
 set(GENERATED_CERTIFICATES_HEADER "${CMAKE_CURRENT_BINARY_DIR}/test_certificates.h")
 generate_test_certificates_header(
     OUTPUT_FILE ${GENERATED_CERTIFICATES_HEADER}
-    CERTIFICATES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/certificates"
+    CERTIFICATES_DIR "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/certificates"
 )
 
 # Include directory for generated header
