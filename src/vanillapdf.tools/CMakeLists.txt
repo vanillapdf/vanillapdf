@@ -243,4 +243,16 @@ if(VANILLAPDF_ENABLE_TESTS)
             COMMAND $<TARGET_FILE:vanillapdf.tools> read -f "${VANILLAPDF_CORPUS_DIR}/${TEST_FILE}"
         )
     endforeach()
+
+    # Non-ASCII path coverage: this CJK-named fixture lives in-repo rather than in
+    # the fetched corpus. git checks out a UTF-8 filename correctly on every
+    # platform and locale, whereas a non-ASCII name inside the downloaded archive
+    # trips libarchive's locale conversion during extraction ("Pathname can't be
+    # converted from UTF-8 to current locale" under a C/POSIX locale). Reading it
+    # through the CLI exercises the UTF-8 app manifest end to end (argv ->
+    # File_Open) — the reason narrow non-ASCII paths survive on Windows.
+    add_test(
+        NAME "Tools.read.chinese_names_中文的名字-2"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> read -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/chinese_names_中文的名字-2.pdf"
+    )
 endif()
