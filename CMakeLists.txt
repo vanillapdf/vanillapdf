@@ -136,6 +136,9 @@ endif(NOT CMAKE_BUILD_TYPE)
 if(VANILLAPDF_ENABLE_TESTS)
   include(cmake/build_name.cmake)
   include(CTest)
+
+  # Fetch the shared test corpus + manifest before any test target consumes it
+  include(cmake/testdata.cmake)
 endif()
 
 # Include source directories

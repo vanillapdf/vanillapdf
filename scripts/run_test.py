@@ -1,136 +1,121 @@
 #!/usr/bin/python
 
-import ntpath
-import os
+# Runs a single test fixture through vanillapdf.test.
+#
+# Expectations (passwords, skip flags, merge/signing fixtures) come from the
+# vanillapdf-testdata manifest.json, keyed by the fixture's repo-relative path.
+# Every path in the manifest resolves against the extracted testdata root, so
+# the fixture, the merge file, the signing certificate and any decryption
+# certificate all live inside the fetched corpus.
+
+import argparse
 import io
+import json
+import os
 import subprocess
 import sys
-import json
 import unicodedata
 
 USER_PASSWORD_KEY = "user_password"
 OWNER_PASSWORD_KEY = "owner_password"
 CERTIFICATE_KEY = "certificate"
+MERGE_KEY = "merge_file"
+SIGNING_KEY = "signing_certificate"
 
 LICENSE_OPTION = "-l"
 PASSWORD_OPTION = "-p"
 CERTIFICATE_OPTION = "-k"
 MERGE_OPTION = "-m"
 QUIET_OPTION = "-q"
-SKIP_PROCESS_OPTION = "-sp"
-SKIP_SAVE_OPTION = "-ss"
-SKIP_EDIT_OPTION = "-se"
-SKIP_INCREMENTAL_SAVE_OPTION = "-si"
 SIGNING_CERTIFICATE_OPTION = "-sc"
 
-def normalize_string( str ):
-    normalized = unicodedata.normalize('NFC', str)
-    encoded = normalized.encode('utf8')
-    return encoded.decode('latin-1')
+# Maps a manifest "skip" value to the vanillapdf.test command line option
+SKIP_OPTIONS = {
+    "process": "-sp",
+    "save": "-ss",
+    "edit": "-se",
+    "incremental_save": "-si",
+}
 
-if (len(sys.argv) < 6):
-    print ("Incorrect number of arguments!")
-    print ("Usage: executable_path test_file_path encryption_config license_file_path source_root_path")
-    sys.exit(1)
 
-# Initialize return value
-rv = -1
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Run a single fixture through vanillapdf.test")
+    parser.add_argument("--exe", required=True, help="path to the vanillapdf.test executable")
+    parser.add_argument("--testdata-root", required=True, help="root the manifest paths resolve against")
+    parser.add_argument("--key", required=True, help="manifest key (repo-relative path) of this fixture")
+    parser.add_argument("--manifest", required=True, help="path to manifest.json")
+    parser.add_argument("--license", required=True, help="path to the license file")
+    return parser.parse_args()
 
-# Parse command line arguments
-executable_path = sys.argv[1]
-test_file_path = sys.argv[2]
-encryption_config_path = sys.argv[3]
-license_file_path = sys.argv[4]
-source_root_path = sys.argv[5]
 
-encryption_config_dir = os.path.dirname(encryption_config_path)
-test_filename = ntpath.basename(test_file_path)
+def normalize_password(value):
+    # PDF passwords are compared as bytes; normalize then map to latin-1
+    normalized = unicodedata.normalize('NFC', value)
+    return normalized.encode('utf8').decode('latin-1')
 
-# Open the settings for encrypted files
-config_data = ""
-encryption_data = ""
-with io.open(encryption_config_path, encoding='utf8') as test_config:
-    config_data = json.load(test_config)
-    encryption_data = config_data["Encryption"]
 
-# Create devnull for output of test case
-FNULL = open(os.devnull, 'w')
+def build_base_parameters(args, config, entry):
+    # Common parameters for every invocation of this fixture
+    test_file = os.path.join(args.testdata_root, args.key)
+    parameters = [args.exe, test_file, LICENSE_OPTION, args.license, QUIET_OPTION]
 
-# Create list of base parameters
-base_parameters = [executable_path, test_file_path, LICENSE_OPTION, license_file_path, QUIET_OPTION]
+    if (MERGE_KEY in config):
+        parameters.append(MERGE_OPTION)
+        parameters.append(os.path.join(args.testdata_root, config[MERGE_KEY]))
 
-if ("Merge" in config_data):
-    base_parameters.append(MERGE_OPTION)
-    base_parameters.append(os.path.join(source_root_path, config_data["Merge"]))
+    for skip in entry.get("skip", []):
+        parameters.append(SKIP_OPTIONS[skip])
 
-if ("SkipProcess" in config_data and test_filename in config_data["SkipProcess"]):
-    base_parameters.append(SKIP_PROCESS_OPTION)
+    if (SIGNING_KEY in config):
+        parameters.append(SIGNING_CERTIFICATE_OPTION)
+        parameters.append(os.path.join(args.testdata_root, config[SIGNING_KEY]))
 
-if ("SkipSave" in config_data and test_filename in config_data["SkipSave"]):
-    base_parameters.append(SKIP_SAVE_OPTION)
+    return parameters
 
-if ("SkipEdit" in config_data and test_filename in config_data["SkipEdit"]):
-    base_parameters.append(SKIP_EDIT_OPTION)
 
-if ("SkipIncrementalSave" in config_data and test_filename in config_data["SkipIncrementalSave"]):
-    base_parameters.append(SKIP_INCREMENTAL_SAVE_OPTION)
+def run(parameters):
+    # Route stdout to devnull: successful runs can emit large volumes of output
+    # and dominate the runtime. stderr is left intact so failures stay visible.
+    return subprocess.call(parameters, stdout=subprocess.DEVNULL)
 
-if ("SigningCertificate" in config_data):
-    signing_certificate_path = os.path.join(source_root_path, config_data["SigningCertificate"])
 
-    base_parameters.append(SIGNING_CERTIFICATE_OPTION)
-    base_parameters.append(signing_certificate_path)
+def main():
+    args = parse_arguments()
 
-# Determine if the file is encrypted
-is_encrypted = test_filename in encryption_data
+    with io.open(args.manifest, encoding='utf8') as manifest_file:
+        manifest = json.load(manifest_file)
 
-# Check if filename is in our encrypted configuration file
-if (is_encrypted):
-    # Authentication using user or owner password
-    if (USER_PASSWORD_KEY in encryption_data[test_filename] or OWNER_PASSWORD_KEY in encryption_data[test_filename]):
-        # User password
-        if (USER_PASSWORD_KEY in encryption_data[test_filename]):
-            raw_password = encryption_data[test_filename][USER_PASSWORD_KEY]
-            user_password = normalize_string(raw_password)
-            user_specific_parameters = base_parameters
-            user_specific_parameters.append(PASSWORD_OPTION)
-            user_specific_parameters.append(user_password)
-            
-            rv = subprocess.call(user_specific_parameters)
+    config = manifest.get("config", {})
+    entry = manifest["files"][args.key]
+
+    base_parameters = build_base_parameters(args, config, entry)
+
+    # Encrypted fixtures carry their credentials in the manifest entry
+    if (USER_PASSWORD_KEY in entry or OWNER_PASSWORD_KEY in entry):
+        rv = -1
+
+        if (USER_PASSWORD_KEY in entry):
+            user_password = normalize_password(entry[USER_PASSWORD_KEY])
+            rv = run(base_parameters + [PASSWORD_OPTION, user_password])
             if (rv != 0):
-                sys.exit(rv)
-            
-        # Owner password
-        if (OWNER_PASSWORD_KEY in encryption_data[test_filename]):
-            raw_password = encryption_data[test_filename][OWNER_PASSWORD_KEY]
-            owner_password = normalize_string(raw_password)
-            owner_specific_parameters = base_parameters
-            owner_specific_parameters.append(PASSWORD_OPTION)
-            owner_specific_parameters.append(owner_password)
+                return rv
 
-            rv = subprocess.call(owner_specific_parameters)
+        if (OWNER_PASSWORD_KEY in entry):
+            owner_password = normalize_password(entry[OWNER_PASSWORD_KEY])
+            rv = run(base_parameters + [PASSWORD_OPTION, owner_password])
             if (rv != 0):
-                sys.exit(rv)
-            
-        sys.exit(rv)
+                return rv
 
-    # Authentication using certificate
-    if (CERTIFICATE_KEY in encryption_data[test_filename]):
-        key = encryption_data[test_filename][CERTIFICATE_KEY]
-        
-        # Key may address a file local to the encryption config
-        full_key_path = os.path.join(encryption_config_dir, key)
+        return rv
 
-        specific_parameters = base_parameters
-        specific_parameters.append(CERTIFICATE_OPTION)
-        specific_parameters.append(full_key_path)
+    # Authentication using a certificate (path resolves inside the testdata root)
+    if (CERTIFICATE_KEY in entry):
+        certificate_path = os.path.join(args.testdata_root, entry[CERTIFICATE_KEY])
+        return run(base_parameters + [CERTIFICATE_OPTION, certificate_path])
 
-        rv = subprocess.call(specific_parameters)
-        sys.exit(rv)
+    # Unencrypted fixture: default behavior
+    return run(base_parameters)
 
-    # Configuration error
-    sys.exit(1)
 
-# Run test with default behavior
-rv = subprocess.call(base_parameters)
-sys.exit(rv)
+if __name__ == "__main__":
+    sys.exit(main())
