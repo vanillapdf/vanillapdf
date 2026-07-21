@@ -827,6 +827,162 @@ BufferPtr EncryptionUtils::AESDecryptECB(const Buffer& key, const Buffer& data) 
 
 }
 
+// Reject algorithm and key length combinations the standard security handler cannot
+// express. Encrypting with an algorithm other than the one requested would misrepresent
+// the strength of the resulting document, so fail instead of silently substituting.
+static void ValidateEncryptionSettings(EncryptionAlgorithm algorithm, int32_t key_length) {
+    if (algorithm == EncryptionAlgorithm::AES) {
+        if (key_length != 128 && key_length != 256) {
+            LOG_ERROR_AND_THROW(InvalidParameterException,
+                "AES supports only 128-bit and 256-bit keys, got {}", key_length);
+        }
+    } else if (algorithm == EncryptionAlgorithm::RC4) {
+        if (key_length < 40 || key_length > 128 || (key_length % 8) != 0) {
+            LOG_ERROR_AND_THROW(InvalidParameterException,
+                "RC4 supports only 40 to 128 bit keys in 8-bit steps, got {}", key_length);
+        }
+    } else {
+        LOG_ERROR_AND_THROW(InvalidParameterException,
+            "Unsupported encryption algorithm: {}", static_cast<int32_t>(algorithm));
+    }
+}
+
+// Table 20 and 21 - the entries every standard security handler dictionary carries.
+static syntax::DictionaryObjectPtr CreateCommonEntries(
+    int32_t algorithm_version,
+    int32_t security_revision,
+    int32_t key_length,
+    int32_t permissions) {
+
+    syntax::DictionaryObjectPtr encryption_dictionary;
+
+    encryption_dictionary->Insert(constant::Name::Filter, NameObject::CreateFromDecoded("Standard"));
+    encryption_dictionary->Insert(constant::Name::V, make_deferred<IntegerObject>(algorithm_version));
+    encryption_dictionary->Insert(constant::Name::Length, make_deferred<IntegerObject>(key_length));
+    encryption_dictionary->Insert(constant::Name::R, make_deferred<IntegerObject>(security_revision));
+    encryption_dictionary->Insert(constant::Name::P, make_deferred<IntegerObject>(permissions));
+
+    return encryption_dictionary;
+}
+
+// Table 25 - Both AES variants are selected through a crypt filter:
+// /CF << /StdCF << /CFM /AESV2 or /AESV3 /AuthEvent /DocOpen /Length n >> >>
+// The /Length inside a crypt filter is in bytes, unlike the /Length above it, which is in bits.
+static void InsertCryptFilter(
+    syntax::DictionaryObjectPtr encryption_dictionary,
+    int32_t key_length) {
+
+    const auto& crypt_filter_method = (key_length == 256 ? constant::Name::AESV3 : constant::Name::AESV2);
+
+    DictionaryObjectPtr std_cf_dict;
+    std_cf_dict->Insert(constant::Name::CFM, make_deferred<NameObject>(crypt_filter_method));
+    std_cf_dict->Insert(constant::Name::AuthEvent, make_deferred<NameObject>(constant::Name::DocOpen));
+    std_cf_dict->Insert(constant::Name::Length, make_deferred<IntegerObject>(key_length / 8));
+
+    DictionaryObjectPtr cf_dict;
+    cf_dict->Insert(constant::Name::StdCF, std_cf_dict);
+
+    encryption_dictionary->Insert(constant::Name::CF, cf_dict);
+    encryption_dictionary->Insert(constant::Name::StmF, make_deferred<NameObject>(constant::Name::StdCF));
+    encryption_dictionary->Insert(constant::Name::StrF, make_deferred<NameObject>(constant::Name::StdCF));
+}
+
+// AES-256 (ISO 32000-2, /V 5 /R 6). Derives the password entries with SHA-256 (Algorithm 2.B)
+// and stores the file encryption key itself in /OE and /UE. The document ID is not involved.
+static syntax::DictionaryObjectPtr CreateRevision6Dictionary(
+    const Buffer& user_password,
+    const Buffer& owner_password,
+    int32_t permissions) {
+
+    auto encryption_dictionary = CreateCommonEntries(5, 6, 256, permissions);
+    auto r6_data = EncryptionUtils::GenerateEncryptionDataR6(user_password, owner_password, permissions);
+
+    encryption_dictionary->Insert(constant::Name::O, HexadecimalStringObject::CreateFromDecoded(r6_data.o_value));
+    encryption_dictionary->Insert(constant::Name::U, HexadecimalStringObject::CreateFromDecoded(r6_data.u_value));
+    encryption_dictionary->Insert(constant::Name::OE, HexadecimalStringObject::CreateFromDecoded(r6_data.oe_value));
+    encryption_dictionary->Insert(constant::Name::UE, HexadecimalStringObject::CreateFromDecoded(r6_data.ue_value));
+    encryption_dictionary->Insert(constant::Name::Perms, HexadecimalStringObject::CreateFromDecoded(r6_data.perms_value));
+    encryption_dictionary->Insert(constant::Name::EncryptMetadata, make_deferred<BooleanObject>(true));
+
+    InsertCryptFilter(encryption_dictionary, 256);
+
+    return encryption_dictionary;
+}
+
+// RC4 (any length) and AES-128, which derive the password entries with MD5 (Algorithm 2)
+// from the document ID.
+static syntax::DictionaryObjectPtr CreateLegacyDictionary(
+    const Buffer& document_id,
+    const Buffer& user_password,
+    const Buffer& owner_password,
+    EncryptionAlgorithm algorithm,
+    int32_t key_length,
+    int32_t permissions) {
+
+    int32_t algorithm_version = 0;
+    int32_t security_revision = 0;
+
+    if (algorithm == EncryptionAlgorithm::AES) {
+
+        // /V 1 and /V 2 always mean RC4 - there is no way to request AES within them. AES-128 is
+        // only expressible through a crypt filter (ISO 32000-1 7.6.5), which requires /V 4 and
+        // /R 4 with /CFM /AESV2. Key derivation is unchanged: /R 4 takes the "revision 3 or
+        // greater" path in Algorithm 2.
+        algorithm_version = 4;
+        security_revision = 4;
+    } else if (key_length > 40) {
+
+        // There is some bug preventing to use security handler revision 2 with keys longer than 40.
+        // I have tried multiple tweaks, however either Acrobat or Foxit are not able to open such file.
+        // Since we have a solution, that works with both, let's not spend more time on this.
+        algorithm_version = 2;
+        security_revision = 3;
+    } else {
+
+        // (PDF 1.4) "Algorithm 1: Encryption of data using the RC4 or AES algorithms"in 7.6.2,
+        // "General Encryption Algorithm," but permitting encryption key lengths greater than 40 bits.
+        algorithm_version = 1;
+        security_revision = 2;
+    }
+
+    auto encryption_dictionary = CreateCommonEntries(algorithm_version, security_revision, key_length, permissions);
+
+    auto owner_key_buffer = EncryptionUtils::GenerateOwnerEncryptionKey(
+        document_id, owner_password, user_password,
+        algorithm, key_length, permissions, security_revision);
+
+    auto user_key_buffer = EncryptionUtils::GenerateUserEncryptionKey(
+        document_id, user_password, owner_key_buffer,
+        algorithm, key_length, permissions, security_revision);
+
+    encryption_dictionary->Insert(constant::Name::O, HexadecimalStringObject::CreateFromDecoded(owner_key_buffer));
+    encryption_dictionary->Insert(constant::Name::U, HexadecimalStringObject::CreateFromDecoded(user_key_buffer));
+
+    if (algorithm == EncryptionAlgorithm::AES) {
+        InsertCryptFilter(encryption_dictionary, key_length);
+    }
+
+    return encryption_dictionary;
+}
+
+syntax::DictionaryObjectPtr EncryptionUtils::CreateEncryptionDictionary(
+    const Buffer& document_id,
+    const Buffer& user_password,
+    const Buffer& owner_password,
+    EncryptionAlgorithm algorithm,
+    int32_t key_length,
+    int32_t permissions) {
+
+    ValidateEncryptionSettings(algorithm, key_length);
+
+    // AES-256 is the only combination using the SHA-256 based key derivation of ISO 32000-2.
+    if (algorithm == EncryptionAlgorithm::AES && key_length == 256) {
+        return CreateRevision6Dictionary(user_password, owner_password, permissions);
+    }
+
+    return CreateLegacyDictionary(document_id, user_password, owner_password, algorithm, key_length, permissions);
+}
+
 BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
     const Buffer& document_id,
     const Buffer& owner_password,

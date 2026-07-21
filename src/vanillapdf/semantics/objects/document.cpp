@@ -872,120 +872,16 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
         LOG_ERROR_AND_THROW(CryptoErrorException, "Could not encrypt document with empty document ID");
     }
 
-    auto key_length = settings->GetKeyLength();
-
     auto permissions_flags = settings->GetUserPermissions();
     auto permission_value = DocumentEncryptionSettings::GetPermissionInteger(permissions_flags);
 
-    // AES-256 uses a completely different key derivation scheme (V=5, R=6)
-    if (key_length == 256 && settings->GetEncryptionAlgorithm() == syntax::EncryptionAlgorithm::AES) {
-
-        auto r6_data = EncryptionUtils::GenerateEncryptionDataR6(
-            settings->GetUserPassword(),
-            settings->GetOwnerPassword(),
-            permission_value);
-
-        // Create encryption dictionary for V=5, R=6
-        DictionaryObjectPtr encryption_dictionary;
-
-        // Table 20 - Entries common to all encryption dictionaries
-        encryption_dictionary->Insert(constant::Name::Filter, NameObject::CreateFromDecoded("Standard"));
-        encryption_dictionary->Insert(constant::Name::V, make_deferred<IntegerObject>(5));
-        encryption_dictionary->Insert(constant::Name::Length, make_deferred<IntegerObject>(256));
-
-        // Table 21 - Standard security handler entries for R=6
-        encryption_dictionary->Insert(constant::Name::R, make_deferred<IntegerObject>(6));
-        encryption_dictionary->Insert(constant::Name::O, HexadecimalStringObject::CreateFromDecoded(r6_data.o_value));
-        encryption_dictionary->Insert(constant::Name::U, HexadecimalStringObject::CreateFromDecoded(r6_data.u_value));
-        encryption_dictionary->Insert(constant::Name::OE, HexadecimalStringObject::CreateFromDecoded(r6_data.oe_value));
-        encryption_dictionary->Insert(constant::Name::UE, HexadecimalStringObject::CreateFromDecoded(r6_data.ue_value));
-        encryption_dictionary->Insert(constant::Name::P, make_deferred<IntegerObject>(permission_value));
-        encryption_dictionary->Insert(constant::Name::Perms, HexadecimalStringObject::CreateFromDecoded(r6_data.perms_value));
-        encryption_dictionary->Insert(constant::Name::EncryptMetadata, make_deferred<BooleanObject>(true));
-
-        // Build CryptFilter dictionary: /CF << /StdCF << /CFM /AESV3 /AuthEvent /DocOpen /Length 32 >> >>
-        DictionaryObjectPtr std_cf_dict;
-        std_cf_dict->Insert(constant::Name::CFM, make_deferred<NameObject>(constant::Name::AESV3));
-        std_cf_dict->Insert(constant::Name::AuthEvent, make_deferred<NameObject>(constant::Name::DocOpen));
-        std_cf_dict->Insert(constant::Name::Length, make_deferred<IntegerObject>(32));
-
-        DictionaryObjectPtr cf_dict;
-        cf_dict->Insert(constant::Name::StdCF, std_cf_dict);
-
-        encryption_dictionary->Insert(constant::Name::CF, cf_dict);
-        encryption_dictionary->Insert(constant::Name::StmF, make_deferred<NameObject>(constant::Name::StdCF));
-        encryption_dictionary->Insert(constant::Name::StrF, make_deferred<NameObject>(constant::Name::StdCF));
-
-        encryption_dictionary->SetEncryptionExempted();
-
-        auto encryption_entry = m_holder->AllocateNewEntry();
-        encryption_entry->SetReference(encryption_dictionary);
-        encryption_entry->SetFile(m_holder);
-        encryption_entry->SetInitialized();
-
-        auto encryption_dictionary_reference = make_deferred<syntax::IndirectReferenceObject>(encryption_dictionary);
-        trailer_dictionary->Insert(constant::Name::Encrypt, encryption_dictionary_reference);
-
-        m_holder->SetEncryptionDictionary(encryption_dictionary);
-
-        bool password_set = m_holder->SetEncryptionPassword(settings->GetUserPassword());
-        if (!password_set) {
-            throw CryptoErrorException("Could not verify the encryption password");
-        }
-
-        return;
-    }
-
-    // (PDF 1.4) "Algorithm 1: Encryption of data using the RC4 or AES algorithms"in 7.6.2,
-    // "General Encryption Algorithm," but permitting encryption key lengths greater than 40 bits.
-    int32_t algorithm_version = 1;
-
-    // if the document is encrypted with a V value of 2 or 3,
-    // or has any "Security handlers of revision 3 or greater" access permissions set to 0
-    int32_t security_revision = 2;
-
-    // There is some bug preventing to use security handler revision 2 with keys longer than 40.
-    // I have tried multiple tweaks, however either Acrobat or Foxit are not able to open such file.
-    // Since we have a solution, that works with both, let's not spend more time on this.
-    if (key_length > 40) {
-        algorithm_version = 2;
-        security_revision = 3;
-    }
-
-    // Calculate the encryption entries
-    auto owner_key_buffer = EncryptionUtils::GenerateOwnerEncryptionKey(
+    auto encryption_dictionary = EncryptionUtils::CreateEncryptionDictionary(
         document_id_buffer,
+        settings->GetUserPassword(),
         settings->GetOwnerPassword(),
-        settings->GetUserPassword(),
         settings->GetEncryptionAlgorithm(),
-        key_length,
-        permission_value,
-        security_revision);
-
-    auto user_key_buffer = EncryptionUtils::GenerateUserEncryptionKey(
-        document_id_buffer,
-        settings->GetUserPassword(),
-        owner_key_buffer,
-        settings->GetEncryptionAlgorithm(),
-        key_length,
-        permission_value,
-        security_revision);
-
-    // Create new encryption dictionary
-    DictionaryObjectPtr encryption_dictionary;
-
-    // Table 20 - Entries common to all encryption dictionaries
-    encryption_dictionary->Insert(constant::Name::Filter, NameObject::CreateFromDecoded("Standard"));
-    //encryption_dictionary->Insert(constant::Name::SubFilter, make_deferred<IntegerObject>(2));
-    encryption_dictionary->Insert(constant::Name::V, make_deferred<IntegerObject>(algorithm_version));
-    encryption_dictionary->Insert(constant::Name::Length, make_deferred<IntegerObject>(key_length));
-
-    // Table 21 - Additional encryption dictionary entries for the standard security handler
-    encryption_dictionary->Insert(constant::Name::R, make_deferred<IntegerObject>(security_revision));
-    encryption_dictionary->Insert(constant::Name::O, HexadecimalStringObject::CreateFromDecoded(owner_key_buffer));
-    encryption_dictionary->Insert(constant::Name::U, HexadecimalStringObject::CreateFromDecoded(user_key_buffer));
-    encryption_dictionary->Insert(constant::Name::P, make_deferred<IntegerObject>(permission_value));
-    //encryption_dictionary->Insert(constant::Name::EncryptMetadata, make_deferred<IntegerObject>(2));
+        settings->GetKeyLength(),
+        permission_value);
 
     // Mark this entry as encryption exempted
     encryption_dictionary->SetEncryptionExempted();

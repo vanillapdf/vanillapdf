@@ -102,6 +102,52 @@ void EncryptDocument(
     ASSERT_EQ(File_SetEncryptionPassword(destination_load_file, user_password.data()), VANILLAPDF_ERROR_SUCCESS);
 }
 
+void EncryptDocumentExpectingError(
+    std::string owner_password,
+    std::string user_password,
+    EncryptionAlgorithmType encryption_algorithm,
+    integer_type encryption_key_length,
+    UserAccessPermissionFlags user_permissions,
+    error_type expected_encryption_result) {
+
+    HandleGuard<FileHandle, File_Release> memory_file;
+    HandleGuard<DocumentHandle, Document_Release> memory_document;
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<DocumentEncryptionSettingsHandle, DocumentEncryptionSettings_Release> encryption_settings;
+
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(io_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(io_stream.get(), nullptr);
+
+    ASSERT_EQ(File_CreateStream(io_stream, "temp", memory_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(memory_file.get(), nullptr);
+
+    ASSERT_EQ(Document_CreateFile(memory_file, memory_document.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(memory_document.get(), nullptr);
+
+    ASSERT_EQ(DocumentEncryptionSettings_Create(encryption_settings.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(encryption_settings.get(), nullptr);
+
+    ASSERT_EQ(DocumentEncryptionSettings_SetAlgorithm(encryption_settings, encryption_algorithm), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentEncryptionSettings_SetKeyLength(encryption_settings, encryption_key_length), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentEncryptionSettings_SetUserAccessPermissions(encryption_settings, user_permissions), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> owner_password_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> user_password_buffer;
+
+    ASSERT_EQ(Buffer_CreateFromData(owner_password.data(), owner_password.length(), owner_password_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData(user_password.data(), user_password.length(), user_password_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_NE(owner_password_buffer.get(), nullptr);
+    ASSERT_NE(user_password_buffer.get(), nullptr);
+
+    ASSERT_EQ(DocumentEncryptionSettings_SetOwnerPassword(encryption_settings, owner_password_buffer), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentEncryptionSettings_SetUserPassword(encryption_settings, user_password_buffer), VANILLAPDF_ERROR_SUCCESS);
+
+    // The requested configuration cannot be expressed by the standard security handler.
+    // Encryption must be refused rather than silently substituting another algorithm.
+    ASSERT_EQ(Document_AddEncryption(memory_document, encryption_settings), expected_encryption_result);
+}
+
 TEST(Document, Encrypt_RC4_40) {
     EncryptDocument("owner", "user", EncryptionAlgorithmType_RC4, 40, UserAccessPermissionFlag_None);
 }
@@ -110,16 +156,29 @@ TEST(Document, Encrypt_RC4_128) {
     EncryptDocument("owner", "user", EncryptionAlgorithmType_RC4, 128, UserAccessPermissionFlag_None);
 }
 
-TEST(Document, Encrypt_AES_40) {
-    EncryptDocument("owner", "user", EncryptionAlgorithmType_AES, 40, UserAccessPermissionFlag_None);
-}
-
 TEST(Document, Encrypt_AES_128) {
     EncryptDocument("owner", "user", EncryptionAlgorithmType_AES, 128, UserAccessPermissionFlag_None);
 }
 
 TEST(Document, Encrypt_AES_256) {
     EncryptDocument("owner", "user", EncryptionAlgorithmType_AES, 256, UserAccessPermissionFlag_None);
+}
+
+// PDF defines exactly two AES crypt filter methods: AESV2 (128-bit) and AESV3 (256-bit).
+// There is no crypt filter for any other key size, so these combinations are rejected
+// instead of being silently downgraded to RC4.
+TEST(Document, Encrypt_AES_40_Rejected) {
+    EncryptDocumentExpectingError("owner", "user", EncryptionAlgorithmType_AES, 40, UserAccessPermissionFlag_None, VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+TEST(Document, Encrypt_AES_192_Rejected) {
+    EncryptDocumentExpectingError("owner", "user", EncryptionAlgorithmType_AES, 192, UserAccessPermissionFlag_None, VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+// RC4 keys range from 40 to 128 bits. /V 2 cannot express a longer key, and the
+// resulting document would be rejected by conformant readers.
+TEST(Document, Encrypt_RC4_256_Rejected) {
+    EncryptDocumentExpectingError("owner", "user", EncryptionAlgorithmType_RC4, 256, UserAccessPermissionFlag_None, VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 // Parameterized test for AES encryption roundtrip with various string sizes.
