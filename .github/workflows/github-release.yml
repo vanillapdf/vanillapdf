@@ -18,6 +18,10 @@ on:
         required: false
         type: string
         default: ''
+    outputs:
+      release_id:
+        description: "Numeric id of the draft release. Later jobs must address the draft by id, not tag: the tag does not exist as a ref until the draft is published, and an API edit to the draft body that omits tag_name resets it, after which tag-based lookup fails."
+        value: ${{ jobs.github-release.outputs.release_id }}
   workflow_dispatch:
     inputs:
       tag:
@@ -45,6 +49,8 @@ jobs:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    outputs:
+      release_id: ${{ steps.create.outputs.release_id }}
     permissions:
       contents: write       # Required to create a release and upload assets
       id-token: write       # Required for Sigstore keyless signing
@@ -56,48 +62,63 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create release from tag
+      - name: Create draft release
+        id: create
         env:
           TAG: ${{ inputs.tag }}
           PRERELEASE: ${{ inputs.prerelease }}
+          LATEST: ${{ inputs.latest }}
           TARGET: ${{ inputs.target }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
         run: |
-          echo "Creating draft release for tag: $TAG"
-          if gh release view "$TAG" &>/dev/null; then
-            echo "Release $TAG already exists. Skipping."
-            exit 0
-          fi
-          LATEST_FLAG=""
-          if [ "${{ inputs.latest }}" = "false" ]; then
-            LATEST_FLAG="--latest=false"
-          fi
+          # Reuse the draft from an earlier attempt rather than creating a second
+          # release for the same tag. A draft from a previous run has long since
+          # propagated, so the list endpoint is safe to consult here - which is NOT
+          # true of a draft created milliseconds ago (see below).
+          RELEASE_ID=$(gh api "repos/${GH_REPO}/releases" \
+            --jq ".[] | select(.tag_name == \"$TAG\") | .id" | head -n 1)
 
-          # The tag must NOT exist yet: publishing this draft is what creates the
-          # tag (at TARGET) and binds the release to it. Pre-creating the tag would
-          # leave the published release stuck on its untagged-* placeholder.
-          TARGET_FLAG=""
-          if [ -n "$TARGET" ]; then
-            TARGET_FLAG="--target $TARGET"
-          fi
-
-          if [ "$PRERELEASE" = "true" ]; then
-            gh release create "$TAG" \
-              --title "vanillapdf $TAG" \
-              --generate-notes \
-              --draft \
-              --prerelease \
-              $TARGET_FLAG \
-              $LATEST_FLAG
+          if [ -n "$RELEASE_ID" ]; then
+            echo "Release $TAG already exists (id $RELEASE_ID). Skipping create."
           else
-            gh release create "$TAG" \
-              --title "vanillapdf $TAG" \
-              --generate-notes \
-              --draft \
-              $TARGET_FLAG \
-              $LATEST_FLAG
+            echo "Creating draft release for tag: $TAG"
+
+            MAKE_LATEST=true
+            if [ "$LATEST" = "false" ]; then
+              MAKE_LATEST=false
+            fi
+
+            TARGET_ARG=()
+            if [ -n "$TARGET" ]; then
+              TARGET_ARG=(-f target_commitish="$TARGET")
+            fi
+
+            # Create through the REST API, not `gh release create`, because the POST
+            # response carries the new release's id. Re-reading the releases list to
+            # find the id of a release created milliseconds earlier is a race: that
+            # endpoint is eventually consistent and can return a stale page.
+            #
+            # The tag must NOT exist yet: publishing this draft is what creates the
+            # tag (at TARGET) and binds the release to it. Pre-creating the tag would
+            # leave the published release stuck on its untagged-* placeholder.
+            RELEASE_ID=$(gh api --method POST "repos/${GH_REPO}/releases" \
+              -f tag_name="$TAG" \
+              -f name="vanillapdf $TAG" \
+              -F draft=true \
+              -F prerelease="$PRERELEASE" \
+              -F generate_release_notes=true \
+              -f make_latest="$MAKE_LATEST" \
+              "${TARGET_ARG[@]}" \
+              --jq .id)
           fi
+
+          if [ -z "$RELEASE_ID" ]; then
+            echo "::error::Could not resolve release id for $TAG"
+            exit 1
+          fi
+          echo "Resolved release id: $RELEASE_ID"
+          echo "release_id=$RELEASE_ID" >> "$GITHUB_OUTPUT"
 
       - name: Download DEB package
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
