@@ -59,12 +59,14 @@ vanillapdf_target_compile_defaults(vanillapdf.tools)
 
 # Embed a UTF-8 active-code-page manifest so the CLI receives UTF-8 argv and
 # treats narrow file paths as UTF-8 on Windows (non-ASCII paths and passwords
-# survive the argv boundary unchanged). /MANIFEST* are MSVC-linker options
-# (cl and clang-cl); MinGW would need a .rc-based manifest instead.
+# survive the argv boundary unchanged). Adding the .manifest as a target source
+# lets CMake embed it through its own manifest-tool invocation, which works with
+# both the Visual Studio and Ninja generators. Passing explicit
+# "/MANIFEST:EMBED /MANIFESTINPUT" link options instead collides with CMake's
+# default "/MANIFESTFILE" under Ninja (LNK4075 -> LNK1218 under the vcpkg port
+# build's linker /WX). MSVC only (cl and clang-cl); MinGW would need a .rc manifest.
 if(MSVC)
-    target_link_options(vanillapdf.tools PRIVATE
-        "/MANIFEST:EMBED"
-        "/MANIFESTINPUT:${CMAKE_CURRENT_SOURCE_DIR}/vanillapdf.tools.manifest")
+    target_sources(vanillapdf.tools PRIVATE vanillapdf.tools.manifest)
 endif()
 
 # Configure MSVC runtime library for tools target
