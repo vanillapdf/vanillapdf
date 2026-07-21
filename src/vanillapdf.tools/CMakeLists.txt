@@ -57,6 +57,16 @@ add_executable(vanillapdf.tools
 # Configure default compilation parameters, strict warnings, config based definition for DEBUG/RELEASE, etc.
 vanillapdf_target_compile_defaults(vanillapdf.tools)
 
+# Embed a UTF-8 active-code-page manifest so the CLI receives UTF-8 argv and
+# treats narrow file paths as UTF-8 on Windows (non-ASCII paths and passwords
+# survive the argv boundary unchanged). /MANIFEST* are MSVC-linker options
+# (cl and clang-cl); MinGW would need a .rc-based manifest instead.
+if(MSVC)
+    target_link_options(vanillapdf.tools PRIVATE
+        "/MANIFEST:EMBED"
+        "/MANIFESTINPUT:${CMAKE_CURRENT_SOURCE_DIR}/vanillapdf.tools.manifest")
+endif()
+
 # Configure MSVC runtime library for tools target
 # Skip if already set externally (e.g. vcpkg toolchain, user, parent project)
 if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)

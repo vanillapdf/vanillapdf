@@ -14,7 +14,6 @@ import json
 import os
 import subprocess
 import sys
-import unicodedata
 
 USER_PASSWORD_KEY = "user_password"
 OWNER_PASSWORD_KEY = "owner_password"
@@ -46,12 +45,6 @@ def parse_arguments():
     parser.add_argument("--manifest", required=True, help="path to manifest.json")
     parser.add_argument("--license", required=True, help="path to the license file")
     return parser.parse_args()
-
-
-def normalize_password(value):
-    # PDF passwords are compared as bytes; normalize then map to latin-1
-    normalized = unicodedata.normalize('NFC', value)
-    return normalized.encode('utf8').decode('latin-1')
 
 
 def build_base_parameters(args, config, entry):
@@ -95,13 +88,13 @@ def main():
         rv = -1
 
         if (USER_PASSWORD_KEY in entry):
-            user_password = normalize_password(entry[USER_PASSWORD_KEY])
+            user_password = entry[USER_PASSWORD_KEY]
             rv = run(base_parameters + [PASSWORD_OPTION, user_password])
             if (rv != 0):
                 return rv
 
         if (OWNER_PASSWORD_KEY in entry):
-            owner_password = normalize_password(entry[OWNER_PASSWORD_KEY])
+            owner_password = entry[OWNER_PASSWORD_KEY]
             rv = run(base_parameters + [PASSWORD_OPTION, owner_password])
             if (rv != 0):
                 return rv
