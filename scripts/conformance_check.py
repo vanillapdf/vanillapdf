@@ -3,14 +3,18 @@
 External PDF conformance validation using qpdf.
 
 Re-saves each test PDF through vanillapdf.tools and validates the output
-with ``qpdf --check``.  Uses a dedicated config file (conformance_check.cfg)
-with an explicit allowlist of files to test.
+with ``qpdf --check``.
+
+Which files to test is an opt-in allowlist (conformance_check.cfg), keyed by
+corpus-relative path. Passwords for encrypted files come from the corpus
+manifest.json (single source of truth), not the allowlist.
 
 Usage:
     python scripts/conformance_check.py \
         --tools-binary build/.../vanillapdf.tools[.exe] \
-        --source-dir . \
+        --source-dir <extracted corpus dir> \
         --config scripts/conformance_check.cfg
+        # --manifest defaults to <source-dir>/../manifest.json
 """
 
 import argparse
@@ -36,9 +40,9 @@ def load_config(config_path):
         return json.load(fh)
 
 
-def password_for(filename, encryption_data):
-    """Return a password string for *filename*, or None."""
-    entry = encryption_data.get(filename)
+def password_for(rel_path, manifest_files):
+    """Return a password for corpus file *rel_path* from the manifest, or None."""
+    entry = manifest_files.get("corpus/" + rel_path)
     if entry is None:
         return None
     for key in ("owner_password", "user_password"):
@@ -108,7 +112,12 @@ def main():
     parser.add_argument(
         "--config",
         required=True,
-        help="Path to conformance_check.cfg",
+        help="Path to the conformance opt-in list (conformance_check.cfg)",
+    )
+    parser.add_argument(
+        "--manifest",
+        default=None,
+        help="Path to the corpus manifest.json (default: alongside the corpus)",
     )
     parser.add_argument(
         "--qpdf",
@@ -157,11 +166,21 @@ def main():
 
     config = load_config(args.config)
     file_list = config.get("Files", [])
-    encryption_data = config.get("Encryption", {})
 
     if not file_list:
         print("No files listed in config")
         return 1
+
+    # Passwords come from the corpus manifest (single source of truth), not the
+    # opt-in list. Default to the manifest co-located with the corpus.
+    manifest_path = args.manifest
+    if manifest_path is None:
+        manifest_path = os.path.join(
+            os.path.dirname(os.path.normpath(args.source_dir)), "manifest.json")
+    if not os.path.isfile(manifest_path):
+        print(f"ERROR: manifest not found: {manifest_path}")
+        return 1
+    manifest_files = load_config(manifest_path).get("files", {})
 
     # Prepare output directory
     tmp_created = False
@@ -189,7 +208,7 @@ def main():
             print(f"  MISS  {rel_path} (file not found)")
             continue
 
-        password = password_for(filename, encryption_data)
+        password = password_for(rel_path, manifest_files)
 
         # Build output path preserving relative structure
         out_path = os.path.join(output_dir, rel_path)

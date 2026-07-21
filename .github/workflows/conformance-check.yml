@@ -61,7 +61,7 @@ jobs:
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
       - name: Configure
-        run: cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+        run: cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_ENABLE_BENCHMARK=OFF -DFETCHCONTENT_BASE_DIR=${{ github.workspace }}/.deps
 
       - name: Build vanillapdf.tools
         run: cmake --build --preset linux-x64-gcc --target vanillapdf.tools
@@ -73,7 +73,7 @@ jobs:
         run: |
           python3 scripts/conformance_check.py \
             --tools-binary install/bin/vanillapdf.tools \
-            --source-dir . \
+            --source-dir ${{ github.workspace }}/.deps/vanillapdf_testdata-src/corpus \
             --config scripts/conformance_check.cfg \
             --verbose
 
@@ -106,7 +106,7 @@ jobs:
         run: ${{ github.workspace }}\external\vcpkg\bootstrap-vcpkg.bat
 
       - name: Configure
-        run: cmake --preset windows-x64-msvc-18-static -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+        run: cmake --preset windows-x64-msvc-18-static -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_ENABLE_BENCHMARK=OFF -DFETCHCONTENT_BASE_DIR=${{ github.workspace }}/.deps
 
       - name: Build vanillapdf.tools
         run: cmake --build --preset windows-x64-msvc-18-static --config Release --target vanillapdf.tools
@@ -115,7 +115,7 @@ jobs:
         run: cmake --install build/windows-x64-msvc-18-static --prefix install --config Release
 
       - name: Run conformance check
-        run: python scripts/conformance_check.py --tools-binary install/bin/vanillapdf.tools.exe --source-dir . --config scripts/conformance_check.cfg --verbose
+        run: python scripts/conformance_check.py --tools-binary install/bin/vanillapdf.tools.exe --source-dir ${{ github.workspace }}/.deps/vanillapdf_testdata-src/corpus --config scripts/conformance_check.cfg --verbose
 
 
   macos:
@@ -154,7 +154,7 @@ jobs:
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
       - name: Configure
-        run: cmake --preset macos-arm64 -DCMAKE_BUILD_TYPE=Release -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+        run: cmake --preset macos-arm64 -DCMAKE_BUILD_TYPE=Release -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_ENABLE_BENCHMARK=OFF -DFETCHCONTENT_BASE_DIR=${{ github.workspace }}/.deps
 
       - name: Build vanillapdf.tools
         run: cmake --build --preset macos-arm64 --target vanillapdf.tools
@@ -166,6 +166,6 @@ jobs:
         run: |
           python3 scripts/conformance_check.py \
             --tools-binary install/bin/vanillapdf.tools \
-            --source-dir . \
+            --source-dir ${{ github.workspace }}/.deps/vanillapdf_testdata-src/corpus \
             --config scripts/conformance_check.cfg \
             --verbose
