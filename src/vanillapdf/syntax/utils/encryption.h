@@ -55,6 +55,18 @@ public:
         EncryptionAlgorithm algorithm,
         IEncryptionKey& key);
 
+    // Builds a complete standard security handler dictionary for the requested algorithm and
+    // key length, deriving the /O, /U (and for revision 6 the /OE, /UE, /Perms) entries and
+    // declaring a crypt filter where the algorithm requires one. Throws InvalidParameterException
+    // for algorithm and key length combinations the standard security handler cannot express.
+    static syntax::DictionaryObjectPtr CreateEncryptionDictionary(
+        const Buffer& document_id,
+        const Buffer& user_password,
+        const Buffer& owner_password,
+        EncryptionAlgorithm algorithm,
+        int32_t key_length,
+        int32_t permissions);
+
     static BufferPtr GenerateOwnerEncryptionKey(
         const Buffer& document_id,
         const Buffer& owner_password,
