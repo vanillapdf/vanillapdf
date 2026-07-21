@@ -2,20 +2,10 @@
 <!-- Sets the process ANSI code page to UTF-8 (Windows 10 1903+) so the executable
      receives UTF-8 argv and treats narrow file paths as UTF-8. Non-ASCII paths and
      passwords then survive the argv boundary unchanged; the library owns any
-     revision-dependent password transcoding. Merged into the linker-generated
-     manifest via /MANIFESTINPUT. -->
+     revision-dependent password transcoding. Embedded by CMake as a target
+     source (see CMakeLists.txt); works on any Windows 1903+ with no
+     <supportedOS> compatibility block required. -->
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
-  <!-- Declare Windows 10+ (and Server 2016/2019/2022) support. activeCodePage is
-       honored only when the process reports one of these OS versions; without this
-       block Windows runs the binary under a compatibility shim that reports an older
-       OS (6.2), so activeCodePage is ignored and CP_ACP stays the legacy code page.
-       This is why non-ASCII paths worked on Windows 11 but failed on the Server 2022
-       CI runner. GUID {8e0f7a12-...} = Windows 10/11, Windows Server 2016/2019/2022. -->
-  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
-    <application>
-      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"/>
-    </application>
-  </compatibility>
   <application xmlns="urn:schemas-microsoft-com:asm.v3">
     <windowsSettings>
       <activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage>
