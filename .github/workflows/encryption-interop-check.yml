@@ -67,16 +67,16 @@ jobs:
 
       # Forward: vanillapdf.tools encrypts -> pyhanko authenticates and decrypts.
       - name: "[vanillapdf->pyhanko] RC4-40 encryption interop"
-        run: python3 scripts/verify_encryption_interop_pyhanko.py install/bin/vanillapdf.tools fixtures/sample-document.pdf /tmp/interop RC4 40
+        run: python3 scripts/verify_encryption_interop_pyhanko.py install/bin/vanillapdf.tools fixtures/minimalist.pdf /tmp/interop RC4 40
 
       - name: "[vanillapdf->pyhanko] RC4-128 encryption interop"
-        run: python3 scripts/verify_encryption_interop_pyhanko.py install/bin/vanillapdf.tools fixtures/sample-document.pdf /tmp/interop RC4 128
+        run: python3 scripts/verify_encryption_interop_pyhanko.py install/bin/vanillapdf.tools fixtures/minimalist.pdf /tmp/interop RC4 128
 
       - name: "[vanillapdf->pyhanko] AES-128 encryption interop"
-        run: python3 scripts/verify_encryption_interop_pyhanko.py install/bin/vanillapdf.tools fixtures/sample-document.pdf /tmp/interop AES 128
+        run: python3 scripts/verify_encryption_interop_pyhanko.py install/bin/vanillapdf.tools fixtures/minimalist.pdf /tmp/interop AES 128
 
       - name: "[vanillapdf->pyhanko] AES-256 encryption interop"
-        run: python3 scripts/verify_encryption_interop_pyhanko.py install/bin/vanillapdf.tools fixtures/sample-document.pdf /tmp/interop AES 256
+        run: python3 scripts/verify_encryption_interop_pyhanko.py install/bin/vanillapdf.tools fixtures/minimalist.pdf /tmp/interop AES 256
 
   qpdf:
     name: qpdf / ubuntu.26.04-x64
@@ -118,7 +118,7 @@ jobs:
 
       # Forward: vanillapdf.tools encrypts -> qpdf decrypts.
       - name: "[vanillapdf->qpdf] RC4-40 encryption interop"
-        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/sample-document.pdf /tmp/interop RC4 40
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/minimalist.pdf /tmp/interop RC4 40
 
       # Sub-128-bit RC4 keys use the revision-3 handler (V=2/R=3). These exercise the
       # n = key_length/8 truncation in Algorithm 2/3 key derivation, which the 40- and
@@ -126,16 +126,16 @@ jobs:
       # key lengths; pyHanko's cryptography backend rejects non-standard RC4 key sizes,
       # so these intermediate lengths are qpdf-only.
       - name: "[vanillapdf->qpdf] RC4-56 encryption interop"
-        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/sample-document.pdf /tmp/interop RC4 56
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/minimalist.pdf /tmp/interop RC4 56
 
       - name: "[vanillapdf->qpdf] RC4-80 encryption interop"
-        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/sample-document.pdf /tmp/interop RC4 80
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/minimalist.pdf /tmp/interop RC4 80
 
       - name: "[vanillapdf->qpdf] RC4-128 encryption interop"
-        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/sample-document.pdf /tmp/interop RC4 128
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/minimalist.pdf /tmp/interop RC4 128
 
       - name: "[vanillapdf->qpdf] AES-128 encryption interop"
-        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/sample-document.pdf /tmp/interop AES 128
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/minimalist.pdf /tmp/interop AES 128
 
       - name: "[vanillapdf->qpdf] AES-256 encryption interop"
-        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/sample-document.pdf /tmp/interop AES 256
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/minimalist.pdf /tmp/interop AES 256
