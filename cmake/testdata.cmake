@@ -17,7 +17,7 @@ include(FetchContent)
 
 FetchContent_Declare(vanillapdf_testdata
     URL      https://github.com/vanillapdf/vanillapdf-testdata/releases/download/v1.0/corpus.tar.gz
-    URL_HASH SHA256=13f86f337dec527b8aa838376f471cf2991a788230287dc3047318cddfdb984f
+    URL_HASH SHA256=51813b7279ae9c4ec3c261d158750e8174991f92a8d683dd178a3d458ef40551
 )
 FetchContent_MakeAvailable(vanillapdf_testdata)
 
@@ -26,7 +26,7 @@ FetchContent_MakeAvailable(vanillapdf_testdata)
 file(DOWNLOAD
     https://github.com/vanillapdf/vanillapdf-testdata/releases/download/v1.0/manifest.json
     "${vanillapdf_testdata_SOURCE_DIR}/manifest.json"
-    EXPECTED_HASH SHA256=18a068a371aeb6b34fcc34b946a90ec66a38780f6560feded7cca1b58b5b24b6
+    EXPECTED_HASH SHA256=1fff58b76678ef2c586da90a31c405669801b3122d045ce989555545c88991c5
 )
 
 set(VANILLAPDF_TESTDATA_ROOT "${vanillapdf_testdata_SOURCE_DIR}"
