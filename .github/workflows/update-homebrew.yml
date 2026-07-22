@@ -86,7 +86,7 @@ jobs:
           cd homebrew-core
           git remote add upstream https://github.com/Homebrew/homebrew-core.git
           git fetch upstream
-          git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/master
+          git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/main
 
       - name: Calculate SHA256 for source archive
         if: steps.check-latest.outputs.is_latest == 'true'
@@ -123,8 +123,14 @@ jobs:
         if: steps.check-latest.outputs.is_latest == 'true'
         run: |
           cd homebrew-core
-          # Audit the formula for issues
-          brew audit --strict --online Formula/v/vanillapdf.rb || true
+          # First submissions must pass the stricter new-formula audit;
+          # subsequent version bumps use the standard audit. upstream is the
+          # real Homebrew/homebrew-core.
+          if git ls-tree upstream/main --name-only | grep -q "Formula/v/vanillapdf.rb"; then
+            brew audit --strict --online Formula/v/vanillapdf.rb || true
+          else
+            brew audit --new --strict --online Formula/v/vanillapdf.rb || true
+          fi
 
       - name: Show prepared changes (dry run)
         if: ${{ steps.check-latest.outputs.is_latest == 'true' && inputs.dry_run }}
@@ -161,7 +167,7 @@ jobs:
           git add Formula/v/vanillapdf.rb
 
           # Check if formula already exists in upstream (update vs new)
-          if git ls-tree upstream/master --name-only | grep -q "Formula/v/vanillapdf.rb"; then
+          if git ls-tree upstream/main --name-only | grep -q "Formula/v/vanillapdf.rb"; then
             git commit -m "vanillapdf ${VERSION}"
           else
             git commit -m "vanillapdf ${VERSION} (new formula)"
@@ -173,9 +179,9 @@ jobs:
         if: steps.check-latest.outputs.is_latest == 'true'
         id: pr-info
         run: |
-          echo "pr-url=https://github.com/vanillapdf/homebrew-core/compare/master...vanillapdf-${{ steps.version.outputs.version }}" >> "$GITHUB_OUTPUT"
+          echo "pr-url=https://github.com/vanillapdf/homebrew-core/compare/main...vanillapdf-${{ steps.version.outputs.version }}" >> "$GITHUB_OUTPUT"
           echo "Changes prepared and pushed to vanillapdf/homebrew-core"
-          echo "Review the changes at: https://github.com/vanillapdf/homebrew-core/compare/master...vanillapdf-${{ steps.version.outputs.version }}"
+          echo "Review the changes at: https://github.com/vanillapdf/homebrew-core/compare/main...vanillapdf-${{ steps.version.outputs.version }}"
 
   create-official-pr:
     name: Create PR to official Homebrew repo
@@ -206,8 +212,8 @@ jobs:
           VERSION_NO_V="${VERSION#v}"
 
           # Check if this is a new formula or update
-          git fetch upstream master
-          if git ls-tree upstream/master --name-only | grep -q "Formula/v/vanillapdf.rb"; then
+          git fetch upstream main
+          if git ls-tree upstream/main --name-only | grep -q "Formula/v/vanillapdf.rb"; then
             TITLE="vanillapdf ${VERSION_NO_V}"
             IS_NEW="false"
           else
@@ -246,7 +252,7 @@ jobs:
             --repo Homebrew/homebrew-core \
             --title "$TITLE" \
             --body "$BODY" \
-            --base master \
+            --base main \
             --head vanillapdf:${{ needs.prepare-homebrew-changes.outputs.branch-name }} \
             --draft
         env:
