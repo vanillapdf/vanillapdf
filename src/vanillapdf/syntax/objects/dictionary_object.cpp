@@ -189,6 +189,21 @@ void DictionaryObject::Insert(const NameObject& name, ContainableObjectPtr value
 }
 
 void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bool overwrite) {
+    InsertInternal(name, value, overwrite, true /* mark_dirty */);
+}
+
+void DictionaryObject::ReplaceSerializationEntry(const NameObject& name, ContainableObjectPtr value) {
+    NameObjectPtr temp = make_deferred<NameObject>(name);
+    ReplaceSerializationEntry(temp, value);
+}
+
+void DictionaryObject::ReplaceSerializationEntry(NameObjectPtr name, ContainableObjectPtr value) {
+    // Stamps a write-time derived entry (e.g. /Length) without dirtying the object - see the
+    // header declaration and issue #460.
+    InsertInternal(name, value, true /* overwrite */, false /* mark_dirty */);
+}
+
+void DictionaryObject::InsertInternal(NameObjectPtr name, ContainableObjectPtr value, bool overwrite, bool mark_dirty) {
 
     ACCESS_LOCK_GUARD(m_access_lock);
 
@@ -198,7 +213,10 @@ void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bo
             throw DuplicateKeyException("The key " + name->ToString() + " was already present in the dictionary");
         }
 
-        spdlog::info("Overwriting dictionary entry for key: {}", name->ToString());
+        // Only a genuine, dirtying overwrite is worth flagging.
+        if (mark_dirty) {
+            spdlog::info("Overwriting dictionary entry for key: {}", name->ToString());
+        }
 
         // Preserve the state of the existing objects before removing them
         auto found_key = found->first;
@@ -216,7 +234,9 @@ void DictionaryObject::Insert(NameObjectPtr name, ContainableObjectPtr value, bo
     name->SetOwner(Object::GetWeakReference());
     value->SetOwner(Object::GetWeakReference());
 
-    IncrementVersion();
+    if (mark_dirty) {
+        IncrementVersion();
+    }
 }
 
 bool DictionaryObject::Contains(const NameObject& name) const {
