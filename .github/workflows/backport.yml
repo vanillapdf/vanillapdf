@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 60
     if: |
       github.event.pull_request.merged == true &&
-      !startsWith(github.event.pull_request.title, '[Backport')
+      !startsWith(github.event.pull_request.head.ref, 'backport-')
     steps:
       - name: Get target branches from labels
         id: get-targets
@@ -69,31 +69,25 @@ jobs:
     timeout-minutes: 60
     if: |
       github.event.pull_request.merged == true &&
-      startsWith(github.event.pull_request.title, '[Backport')
+      startsWith(github.event.pull_request.head.ref, 'backport-')
     steps:
       - name: Extract original PR and target branch
         id: extract-info
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
         with:
           script: |
-            const title = context.payload.pull_request.title;
             const body = context.payload.pull_request.body || '';
 
-            // Extract target branch from title: "[Backport release/2.2] Original title"
-            const titleMatch = title.match(/^\[Backport ([^\]]+)\]/);
-            if (!titleMatch) {
-              console.log('Could not parse backport target from title');
+            // Both the original PR number and the target branch come from the
+            // canonical marker backport.sh writes at the top of the body:
+            // "Backport of #123 to `release/2.2`."
+            const match = body.match(/Backport of #(\d+) to `([^`]+)`/);
+            if (!match) {
+              console.log('Could not parse backport info (original PR / target) from body');
               return;
             }
-            const targetBranch = titleMatch[1];
-
-            // Extract original PR number from body: "Backport of #123 to ..."
-            const bodyMatch = body.match(/Backport of #(\d+)/);
-            if (!bodyMatch) {
-              console.log('Could not find original PR number in body');
-              return;
-            }
-            const originalPR = bodyMatch[1];
+            const originalPR = match[1];
+            const targetBranch = match[2];
 
             console.log(`Target branch: ${targetBranch}`);
             console.log(`Original PR: #${originalPR}`);
