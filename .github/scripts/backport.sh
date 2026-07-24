@@ -128,8 +128,11 @@ gh pr create --base $target --head $branch_name
 cleanup() {
     local branch_name="$1"
 
-    git checkout main 2>/dev/null || git checkout master 2>/dev/null || true
-    git branch -D "$branch_name" 2>/dev/null || true
+    # Return to the base branch and drop the temp branch. Both always exist here
+    # (main is the default branch; the temp branch was created in
+    # create_backport_branch), so a failure is a real error, not noise to hide.
+    git checkout main
+    git branch -D "$branch_name"
 }
 
 # Process a single backport target
@@ -163,8 +166,8 @@ process_target() {
             result=1
         fi
     else
-        # Cherry-pick failed
-        git cherry-pick --abort 2>/dev/null || true
+        # Cherry-pick failed with conflicts, so one is in progress — abort it.
+        git cherry-pick --abort
         echo "::error::Cherry-pick failed for $target (likely conflicts)"
         post_failure_comment "$target" "$branch_name"
         gh pr edit "$PR_NUMBER" --add-label "backport-failed $target"
