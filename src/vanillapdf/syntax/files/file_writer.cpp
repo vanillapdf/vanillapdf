@@ -686,21 +686,22 @@ void FileWriter::RecalculateStreamLength(StreamObjectPtr obj) {
     auto stream_data = obj->GetBodyEncoded();
     auto stream_header = obj->GetHeader();
 
-    // Remove only if the value is different
-    // There was a case that the length was indirect reference to another integer
-    // Two different streams were pointing to this integer and the final
-    // value was updated to a different stream
+    // Only touch /Length if it does not already match. A fresh direct integer also replaces
+    // any indirect /Length shared between streams.
+    bool length_matches = false;
     if (stream_header->Contains(constant::Name::Length)) {
         auto length_obj = stream_header->FindAs<IntegerObjectPtr>(constant::Name::Length);
-        if (length_obj->GetUnsignedIntegerValue() != stream_data->size()) {
-            bool removed = stream_header->Remove(constant::Name::Length);
-            assert(removed && "Could not remove stream length"); UNUSED(removed);
-        }
+        length_matches = (length_obj->GetUnsignedIntegerValue() == stream_data->size());
     }
 
-    if (!stream_header->Contains(constant::Name::Length)) {
+    if (!length_matches) {
+
+        // Stamp /Length without dirtying: it is derived from the bytes being written, so
+        // dirtying here would send the body-write pass down a different GetBodyEncoded()
+        // branch and the two would disagree on the size (issue #460).
+        // TODO(2.4.0): encode the body once and derive /Length from that buffer at write time.
         IntegerObjectPtr new_length = make_deferred<IntegerObject>(stream_data->size());
-        stream_header->Insert(constant::Name::Length, new_length);
+        stream_header->ReplaceSerializationEntry(constant::Name::Length, new_length);
     }
 }
 

@@ -382,6 +382,10 @@ BufferPtr StreamObject::GetBodyEncoded() const {
         auto filters_size = filter_array->GetSize();
         for (decltype(filters_size) i = 0; i < filters_size; ++i) {
             auto current_filter = (*filter_array)[i];
+
+            // NOTE: array /Crypt is unsupported and inconsistent with the single-name branch -
+            // it ignores the named handler and then throws at GetFilterByName below. Left as-is;
+            // see https://github.com/vanillapdf/vanillapdf/issues/461.
             if (current_filter == constant::Name::Crypt) {
                 decoded_body = EncryptStream(decoded_body, GetRootObjectNumber(), GetRootGenerationNumber());
             }
@@ -406,7 +410,11 @@ BufferPtr StreamObject::GetBodyEncoded() const {
             decoded_body = filter->Encode(decoded_body, DictionaryObjectPtr(), m_attributes);
         }
 
-        return decoded_body;
+        // Encrypt the encoded result, like the single-name branch does. Without this, array-
+        // filter streams (e.g. /Filter [/FlateDecode] images) were written unencrypted while
+        // /Length recorded the encrypted size, corrupting the file (issue #460). Not reached
+        // for /Crypt arrays - those throw at GetFilterByName above (see #461).
+        return EncryptStream(decoded_body, GetRootObjectNumber(), GetRootGenerationNumber());
     }
 
     assert(is_filter_name ^ is_filter_array);

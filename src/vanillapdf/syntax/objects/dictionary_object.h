@@ -133,6 +133,12 @@ public:
     void Insert(NameObjectPtr name, ContainableObjectPtr value, bool overwrite = false);
     void Insert(const NameObject& name, ContainableObjectPtr value, bool overwrite = false);
 
+    // Replaces a write-time derived entry (e.g. /Length) WITHOUT marking the dictionary dirty;
+    // stamping such a value is not a logical mutation. TODO(2.4.0): drop this once the writer
+    // derives /Length from a single encode pass. See issue #460.
+    void ReplaceSerializationEntry(NameObjectPtr name, ContainableObjectPtr value);
+    void ReplaceSerializationEntry(const NameObject& name, ContainableObjectPtr value);
+
     bool Remove(const NameObjectPtr name);
     bool Remove(const NameObject& name);
 
@@ -144,6 +150,10 @@ public:
     virtual ~DictionaryObject();
 
 private:
+    // Shared implementation of Insert() and ReplaceSerializationEntry(). mark_dirty controls
+    // whether the change bumps the version (Insert: yes; serialization-derived stamp: no).
+    void InsertInternal(NameObjectPtr name, ContainableObjectPtr value, bool overwrite, bool mark_dirty);
+
     // Protects concurrent access to the dictionary
     std::unique_ptr<std::recursive_mutex> m_access_lock;
 };

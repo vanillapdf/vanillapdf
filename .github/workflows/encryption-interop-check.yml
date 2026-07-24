@@ -134,8 +134,13 @@ jobs:
       - name: "[vanillapdf->qpdf] RC4-128 encryption interop"
         run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/flat-pages.pdf /tmp/interop RC4 128
 
-      - name: "[vanillapdf->qpdf] AES-128 encryption interop"
-        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/flat-pages.pdf /tmp/interop AES 128
+      # AES runs against sample-document.pdf, which carries streams with an array /Filter
+      # (/Filter [ /FlateDecode ]). flat-pages.pdf is stream-less, so it never reaches the
+      # stream path where issue #460 lived: the body was written unencrypted while /Length
+      # recorded the encrypted size, which qpdf rejects on decrypt. This fixture also covers
+      # the plain algorithm/method check, so a separate stream-less AES case would be redundant.
+      - name: "[vanillapdf->qpdf] AES-128 encryption interop (array-filter stream)"
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/sample-document.pdf /tmp/interop AES 128
 
-      - name: "[vanillapdf->qpdf] AES-256 encryption interop"
-        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/flat-pages.pdf /tmp/interop AES 256
+      - name: "[vanillapdf->qpdf] AES-256 encryption interop (array-filter stream)"
+        run: python3 scripts/verify_encryption_interop_qpdf.py install/bin/vanillapdf.tools fixtures/sample-document.pdf /tmp/interop AES 256
