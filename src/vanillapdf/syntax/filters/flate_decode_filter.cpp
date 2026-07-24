@@ -91,8 +91,12 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
     uint32_t columns_int = columns->SafeConvert<uint32_t>();
     uint32_t bits_int = bits->SafeConvert<uint32_t>();
 
-    // Division should be safe?
-    uint32_t bytes_per_pixel = SafeMultiply<uint32_t>(colors_int, bits_int) / 8;
+    // PNG bytes-per-pixel is the pixel bit depth rounded UP to whole bytes
+    // (min 1); flooring yields 0 for sub-byte depths and corrupts output.
+    // Division by 8 cannot overflow, as in bytes_per_row below.
+    // https://github.com/vanillapdf/vanillapdf/issues/443
+    uint32_t pixel_bits = SafeMultiply<uint32_t>(colors_int, bits_int);
+    uint32_t bytes_per_pixel = SafeAddition<uint32_t>(pixel_bits, 7) / 8;
 
     uint32_t colors_columns = SafeMultiply<uint32_t>(colors_int, columns_int);
     uint32_t colors_columns_bits = SafeMultiply<uint32_t>(colors_columns, bits_int);
@@ -109,9 +113,11 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
         }
         auto read = src->Read(reinterpret_cast<char*>(current.data()), bytes_per_row);
 
-        assert(read == bytes_per_row);
+        // A short read means a truncated final scanline, which is reachable
+        // corrupt input (not a programming bug), so throw rather than assert.
+        // https://github.com/vanillapdf/vanillapdf/issues/442
         if (read != bytes_per_row) {
-            throw DataCorruptionException("Corrupted deflate compressed data");
+            LOG_ERROR_AND_THROW(DataCorruptionException, "Corrupted deflate compressed data: read {} of {} scanline bytes", read, bytes_per_row);
         }
 
         switch (filter) {
@@ -187,8 +193,10 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
 
                 break;
             default:
-                spdlog::error("Unknown PNG filter type: {}", filter);
-                break;
+                // A valid PDF never carries a PNG filter type outside 0-4; fail
+                // closed instead of appending the raw row and returning corrupt data.
+                // https://github.com/vanillapdf/vanillapdf/issues/442
+                LOG_ERROR_AND_THROW(DataCorruptionException, "Unknown PNG predictor filter type: {}", filter);
         }
 
         result->insert(result.end(), current.begin(), current.end());
