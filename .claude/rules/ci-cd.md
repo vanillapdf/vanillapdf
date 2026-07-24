@@ -62,6 +62,17 @@ Build and run the affected tests against the release branch before opening the P
 
 **When creating a new `release/X.Y` branch**, also create its three labels (`backport release/X.Y`, `backported release/X.Y`, `backport-failed release/X.Y`) — they are created manually, and `backport.sh` applies `backport-failed` with a bare `gh` call that assumes the label exists.
 
+**Retiring a release line (EOL):** when a `release/X.Y` line is no longer supported, prune only the *actionable* labels and keep the historical one.
+- **Delete** `backport release/X.Y` (a request trigger — no meaning once the line is dead) and `backport-failed release/X.Y` (an action-needed signal — moot for an EOL line).
+- **Keep `backported release/X.Y` forever** — it is the historical record of what shipped where.
+- **Leave the `release/X.Y` branch in place** — the `deletion` rule in the "Protect release branches" ruleset blocks removal anyway, and the branch is harmless history.
+
+The `backported release/X.Y` label is the fast filter, but it is not the system of record: every backport also lands as a PR titled `[Backport release/X.Y] …` (body `Backport of #<original>`) plus a commit on the release branch, so the full trail survives even a label deletion:
+```bash
+gh pr list --state all --search "[Backport release/2.1] in:title"   # reconstruct a line's history without the label
+```
+Note: **deleting a label erases it from every PR it was on, and recreating the label does not restore those associations** — so never delete `backported release/X.Y`.
+
 ## Homebrew
 
 Formula template in `homebrew/vanillapdf.rb.in` (the concrete `.rb` is generated at release time). Releases auto-PR to `Homebrew/homebrew-core` via `update-homebrew.yml`.
