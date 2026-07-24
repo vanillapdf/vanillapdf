@@ -25,10 +25,10 @@ reproduce the exact arrays committed there, run
 ``scripts/regenerate_filter_test_vectors.py``, which pins the parameters they
 were generated with.
 
-Sub-byte pixel depths (``colors * bits`` not a multiple of 8) are rejected:
-the byte stride this tool mirrors from ``flate_decode_filter.cpp`` floors,
-while the PNG specification (and MuPDF) round up, so such vectors can never
-certify (see GitHub issue #443).
+Sub-byte pixel depths (``colors * bits`` not a multiple of 8) are supported:
+the byte stride mirrors ``flate_decode_filter.cpp`` and the PNG specification
+(and MuPDF), which round the pixel bit depth up to whole bytes
+(see https://github.com/vanillapdf/vanillapdf/issues/443).
 
 Requires PyMuPDF (``pip install pymupdf``).
 
@@ -108,8 +108,9 @@ class Geometry:
 
     @property
     def bytes_per_pixel(self) -> int:
-        # Matches flate_decode_filter.cpp: colors * bits / 8 (integer division).
-        return self.colors * self.bits_per_component // 8
+        # Matches flate_decode_filter.cpp and the PNG spec: ceil(colors * bits / 8),
+        # minimum 1. See https://github.com/vanillapdf/vanillapdf/issues/443
+        return (self.colors * self.bits_per_component + 7) // 8
 
     @property
     def bytes_per_row(self) -> int:
@@ -246,17 +247,16 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--bytes-per-line", type=positive_int, default=12,
                         dest="bytes_per_line",
                         help="bytes per line in the emitted C arrays (default 12)")
+    parser.add_argument("--name-prefix", type=str, default="", dest="name_prefix",
+                        help="prefix for the emitted C array names, e.g. SUBBYTE_ "
+                             "(default empty)")
 
-    args = parser.parse_args(argv)
-    if (args.colors * args.bits_per_component) % 8 != 0:
-        parser.error("colors * bits must be a multiple of 8 (whole-byte pixels); "
-                     "sub-byte pixel depths cannot certify against MuPDF "
-                     "(see GitHub issue #443)")
-    return args
+    return parser.parse_args(argv)
 
 
 def render_vectors(geometry: Geometry, raw_rows: Sequence[Sequence[int]],
-                   compression_level: int, bytes_per_line: int) -> str:
+                   compression_level: int, bytes_per_line: int,
+                   name_prefix: str = "") -> str:
     """Encode, certify and render one vector per PNG filter as a C source block."""
     expected = flatten_rows(raw_rows)
 
@@ -265,9 +265,9 @@ def render_vectors(geometry: Geometry, raw_rows: Sequence[Sequence[int]],
         filtered = encode_scanlines(geometry, raw_rows, filter_code)
         compressed = zlib.compress(filtered, compression_level)
         certify_vector(compressed, geometry, expected, name)
-        blocks.append(format_c_array("INPUT_" + name.upper(), compressed, bytes_per_line))
+        blocks.append(format_c_array(name_prefix + "INPUT_" + name.upper(), compressed, bytes_per_line))
 
-    blocks.append(format_c_array("EXPECTED_RAW", expected, bytes_per_line))
+    blocks.append(format_c_array(name_prefix + "EXPECTED_RAW", expected, bytes_per_line))
 
     geometry_comment = (
         f"// geometry: Colors={geometry.colors} "
@@ -283,7 +283,8 @@ def main(argv: Sequence[str] | None = None) -> None:
     args = parse_args(argv)
     geometry = Geometry(args.colors, args.bits_per_component, args.columns)
     raw_rows = build_raw_rows(geometry, args.rows, args.seed)
-    output = render_vectors(geometry, raw_rows, args.compression_level, args.bytes_per_line)
+    output = render_vectors(geometry, raw_rows, args.compression_level,
+                            args.bytes_per_line, args.name_prefix)
     print(output)
 
 
