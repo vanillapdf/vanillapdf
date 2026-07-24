@@ -83,6 +83,18 @@ jobs:
           git fetch upstream
           git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/master
 
+      - name: Require existing recipe (updates only)
+        if: ${{ steps.check_latest.outputs.is_latest == 'true' }}
+        run: |
+          cd conan-center-index
+          # This automation only bumps an already-registered recipe; first
+          # submissions to conan-io/conan-center-index are done manually.
+          if ! git cat-file -e upstream/master:recipes/vanillapdf/config.yml 2>/dev/null; then
+            echo "::error::vanillapdf is not yet in conan-io/conan-center-index. First submissions must be created manually; this automation only updates an existing recipe."
+            exit 1
+          fi
+          echo "Existing recipe found upstream - proceeding with update."
+
       - name: Calculate SHA256 for source archive
         if: ${{ steps.check_latest.outputs.is_latest == 'true' }}
         id: sha256
@@ -145,7 +157,7 @@ jobs:
         run: |
           cd conan-center-index
           git add recipes/vanillapdf/
-          git commit -m "Add vanillapdf/${{ steps.version.outputs.version }}"
+          git commit -m "vanillapdf: add version ${{ steps.version.outputs.version }}"
           git push origin vanillapdf-${{ steps.version.outputs.version }}
 
       - name: Generate PR info
@@ -184,7 +196,7 @@ jobs:
           VERSION="${{ inputs.tag }}"
           VERSION_NO_V="${VERSION#v}"
 
-          BODY="## New Recipe: vanillapdf/${VERSION_NO_V}
+          BODY="## Update: vanillapdf/${VERSION_NO_V}
 
           **Description:**
           Cross-platform toolkit for creating and modifying PDF documents.
@@ -206,7 +218,7 @@ jobs:
 
           gh pr create \
             --repo conan-io/conan-center-index \
-            --title "Add vanillapdf/${VERSION_NO_V}" \
+            --title "vanillapdf: add version ${VERSION_NO_V}" \
             --body "$BODY" \
             --base master \
             --head vanillapdf:${{ needs.prepare-conan-changes.outputs.branch-name }} \

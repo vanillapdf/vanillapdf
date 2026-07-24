@@ -88,6 +88,18 @@ jobs:
           git fetch upstream
           git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/main
 
+      - name: Require existing formula (updates only)
+        if: steps.check-latest.outputs.is_latest == 'true'
+        run: |
+          cd homebrew-core
+          # This automation only bumps an already-published formula; first
+          # submissions to Homebrew/homebrew-core are done manually.
+          if ! git cat-file -e upstream/main:Formula/v/vanillapdf.rb 2>/dev/null; then
+            echo "::error::vanillapdf is not yet in Homebrew/homebrew-core. First submissions must be created manually; this automation only updates an existing formula."
+            exit 1
+          fi
+          echo "Existing formula found upstream - proceeding with update."
+
       - name: Calculate SHA256 for source archive
         if: steps.check-latest.outputs.is_latest == 'true'
         id: sha256
@@ -123,14 +135,10 @@ jobs:
         if: steps.check-latest.outputs.is_latest == 'true'
         run: |
           cd homebrew-core
-          # First submissions must pass the stricter new-formula audit;
-          # subsequent version bumps use the standard audit. upstream is the
-          # real Homebrew/homebrew-core.
-          if git ls-tree upstream/main --name-only | grep -q "Formula/v/vanillapdf.rb"; then
-            brew audit --strict --online Formula/v/vanillapdf.rb || true
-          else
-            brew audit --new --strict --online Formula/v/vanillapdf.rb || true
-          fi
+          # Formula already exists upstream (enforced by the guard above), so
+          # this is always a version bump — use the standard audit. A failing
+          # audit fails the job rather than being swallowed.
+          brew audit --strict --online Formula/v/vanillapdf.rb
 
       - name: Show prepared changes (dry run)
         if: ${{ steps.check-latest.outputs.is_latest == 'true' && inputs.dry_run }}
@@ -165,14 +173,7 @@ jobs:
           cd homebrew-core
           VERSION="${{ steps.version.outputs.version }}"
           git add Formula/v/vanillapdf.rb
-
-          # Check if formula already exists in upstream (update vs new)
-          if git ls-tree upstream/main --name-only | grep -q "Formula/v/vanillapdf.rb"; then
-            git commit -m "vanillapdf ${VERSION}"
-          else
-            git commit -m "vanillapdf ${VERSION} (new formula)"
-          fi
-
+          git commit -m "vanillapdf ${VERSION}"
           git push origin vanillapdf-${{ steps.version.outputs.version }}
 
       - name: Generate PR info
@@ -211,26 +212,13 @@ jobs:
           VERSION="${{ inputs.tag }}"
           VERSION_NO_V="${VERSION#v}"
 
-          # Check if this is a new formula or update
-          git fetch upstream main
-          if git ls-tree upstream/main --name-only | grep -q "Formula/v/vanillapdf.rb"; then
-            TITLE="vanillapdf ${VERSION_NO_V}"
-            IS_NEW="false"
-          else
-            TITLE="vanillapdf ${VERSION_NO_V} (new formula)"
-            IS_NEW="true"
-          fi
+          # This automation only updates an existing formula; first submissions
+          # are done manually.
+          TITLE="vanillapdf ${VERSION_NO_V}"
 
           BODY="## Description
 
-          "
-          if [ "$IS_NEW" = "true" ]; then
-            BODY="${BODY}Add vanillapdf formula - a cross-platform toolkit for creating and modifying PDF documents."
-          else
-            BODY="${BODY}Update vanillapdf to version ${VERSION_NO_V}."
-          fi
-
-          BODY="${BODY}
+          Update vanillapdf to version ${VERSION_NO_V}.
 
           - **Homepage**: https://vanillapdf.com
           - **Repository**: https://github.com/vanillapdf/vanillapdf
