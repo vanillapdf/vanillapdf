@@ -66,10 +66,14 @@ ${PR_BODY:-No description provided.}"
 
     # Create the PR
     local pr_url
+    # Keep the original (Conventional-Commits-compliant) title and append the
+    # backport marker, so the title still passes the PR-title lint. The marker
+    # is for humans; the automation identifies backports by branch name and
+    # reads the target from the body (see backport.yml).
     pr_url=$(gh pr create \
         --base "$target" \
         --head "$branch_name" \
-        --title "[Backport $target] $PR_TITLE" \
+        --title "$PR_TITLE (backport #${PR_NUMBER} to $target)" \
         --body "$pr_body")
 
     echo "$pr_url"
