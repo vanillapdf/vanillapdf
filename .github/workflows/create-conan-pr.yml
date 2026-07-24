@@ -84,7 +84,9 @@ jobs:
           git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/master
 
       - name: Require existing recipe (updates only)
-        if: ${{ steps.check_latest.outputs.is_latest == 'true' }}
+        # Real runs only: the guard exists to stop the automation from pushing a
+        # new recipe. A dry run never pushes, so it may proceed for inspection.
+        if: ${{ !inputs.dry_run && steps.check_latest.outputs.is_latest == 'true' }}
         run: |
           cd conan-center-index
           # This automation only bumps an already-registered recipe; first

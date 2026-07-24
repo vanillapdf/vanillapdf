@@ -89,7 +89,9 @@ jobs:
           git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/main
 
       - name: Require existing formula (updates only)
-        if: steps.check-latest.outputs.is_latest == 'true'
+        # Real runs only: the guard exists to stop the automation from pushing a
+        # new formula. A dry run never pushes, so it may proceed for inspection.
+        if: ${{ !inputs.dry_run && steps.check-latest.outputs.is_latest == 'true' }}
         run: |
           cd homebrew-core
           # This automation only bumps an already-published formula; first
