@@ -94,6 +94,26 @@ gh api repos/OWNER/REPO/git/tags/$(gh api repos/OWNER/REPO/git/refs/tags/TAG --j
 
 Always include the original tag name as a comment (`# v4.2.2`) so the pinned version remains human-readable.
 
+## CI Script Error Handling (CRITICAL)
+
+**Never append `|| true` to a command — anywhere.** It discards the exit code, so a real failure (a validation, build, test, or audit) turns into a silent green. This has shipped broken output before: `brew audit ... || true` let broken formulae through because the audit could never fail the job. The ban is unconditional, including "harmless" cleanup — there is always an explicit alternative below.
+
+```bash
+# BAD — a failing audit is swallowed, the job stays green
+brew audit --strict --online Formula/v/foo.rb || true
+
+# GOOD — a failing audit fails the job
+brew audit --strict --online Formula/v/foo.rb
+```
+
+First ask whether the command is *allowed* to fail at all. Usually it is not: if it should succeed in the surrounding context, call it plainly and let a genuine failure surface loudly — that is a signal, not noise. Defensively guarding a command that should always succeed just hides the bug you would want to see (e.g. `git cherry-pick --abort` right after a cherry-pick is known to have failed will succeed; a plain call is correct).
+
+When a command is genuinely *allowed* to fail, make that intent explicit — never implicit via `|| true`, and avoid fragile `set +e`/`set -e` toggling:
+- **Step-level (preferred in workflows):** set `continue-on-error: true` on the workflow step. The step's failure is recorded, not hidden.
+- **Restructure so it cannot fail:** guard on the precondition instead of tolerating the error — e.g. delete a branch only if it exists: `if git show-ref --quiet "refs/heads/$tmp"; then git branch -D "$tmp"; fi`.
+- **Non-trivial logic:** move it into a Python (or other dedicated) script that inspects exit codes explicitly and readably, rather than piling conditionals into inline bash.
+- **Probing a condition** (testing, not tolerating failure): branch on the exit code — `if ! git cat-file -e <rev>:<path> 2>/dev/null; then …`. Suppressing *stderr* with `2>/dev/null` is fine because the exit code is still inspected; only the exit code must never be thrown away.
+
 ## Automation Bot
 
 The repository uses `vanillapdf-bot` (info@vanillapdf.com) for automated operations:
