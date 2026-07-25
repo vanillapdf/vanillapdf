@@ -12,18 +12,6 @@ using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
 
-VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_Create(InteractiveFormHandle** result) {
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        DictionaryObjectPtr dictionary;
-        auto form = make_deferred<InteractiveForm>(dictionary);
-        auto ptr = form.AddRefGet();
-        *result = reinterpret_cast<InteractiveFormHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
 VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_CreateFromDictionary(DictionaryObjectHandle* handle, InteractiveFormHandle** result) {
     DictionaryObject* dictionary = reinterpret_cast<DictionaryObject*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(dictionary);

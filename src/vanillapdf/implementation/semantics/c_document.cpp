@@ -1,5 +1,6 @@
 #include "precompiled.h"
 #include "semantics/objects/document.h"
+#include "semantics/objects/interactive_forms.h"
 
 #include "vanillapdf/semantics/c_document.h"
 #include "vanillapdf/utils/c_io_strategy.h"
@@ -168,6 +169,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle*
 
         auto ptr = catalog.AddRefGet();
         *result = reinterpret_cast<CatalogHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Document_CreateAcroForm(DocumentHandle* handle, InteractiveFormHandle** result)
+{
+    Document* document = reinterpret_cast<Document*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto interactive_form = document->CreateAcroForm();
+        auto ptr = interactive_form.AddRefGet();
+        *result = reinterpret_cast<InteractiveFormHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

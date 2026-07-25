@@ -33,22 +33,15 @@ extern "C"
 
     /**
     * \brief
-    * Create an empty interactive form.
-    *
-    * Documents that already contain an AcroForm expose it through
-    * \ref Catalog_GetAcroForm. This function is the entry point for documents
-    * that do not have one yet - attach the resulting dictionary to the
-    * document catalog under the /AcroForm key.
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_Create(InteractiveFormHandle** result);
-
-    /**
-    * \brief
     * Create an interactive form from an existing low-level dictionary object.
     *
-    * Use this overload to wrap a dictionary that is already registered
-    * in the document, for example an indirect object obtained
-    * through \ref File_AllocateNewEntry.
+    * Use this overload to wrap a dictionary that is already registered in the
+    * document, for example an indirect object obtained through
+    * \ref File_AllocateNewEntry, and attached to the document catalog under
+    * the /AcroForm key.
+    *
+    * To obtain a form that is already registered and attached, use
+    * \ref Document_CreateAcroForm instead.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_CreateFromDictionary(DictionaryObjectHandle* handle, InteractiveFormHandle** result);
 
