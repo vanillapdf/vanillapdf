@@ -33,10 +33,24 @@ extern "C"
 
     /**
     * \brief
+    * Create empty page contents backed by a new, empty content stream
+    * registered as an indirect object within the document.
+    *
+    * This is the entry point for \ref PageObject_SetContents, which stores an
+    * indirect reference to the content stream - the stream therefore has to
+    * own a cross-reference entry. There is deliberately no parameterless
+    * create, as an unregistered stream would produce a dangling reference
+    * that only fails when the document is written.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageContents_CreateFromDocument(DocumentHandle* handle, PageContentsHandle** result);
+
+    /**
+    * \brief
     * Create page contents from an existing low-level content stream object.
     *
-    * Required for \ref PageObject_SetContents, as the semantic layer
-    * does not offer any other way of obtaining new page contents.
+    * Use this overload when the content stream is already registered in the
+    * document, for example through \ref File_AllocateNewEntry. Prefer
+    * \ref PageContents_CreateFromDocument otherwise.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageContents_CreateFromStream(StreamObjectHandle* handle, PageContentsHandle** result);
 

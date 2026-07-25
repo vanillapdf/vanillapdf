@@ -3,7 +3,9 @@
 #include "syntax/files/file.h"
 
 #include "semantics/objects/page_contents.h"
+#include "semantics/objects/document.h"
 
+#include "syntax/objects/stream_object.h"
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include "contents/content_stream_parser.h"
@@ -26,6 +28,22 @@ PageContents::PageContents(StreamObjectPtr obj) : HighLevelObject(obj) {
 
 PageContents::PageContents(ArrayObjectPtr<IndirectReferenceObjectPtr> obj)
     : HighLevelObject(obj->Data()) {
+}
+
+PageContentsPtr PageContents::Create(DocumentPtr document) {
+    auto file = document->GetFile();
+
+    StreamObjectPtr content_stream;
+
+    XrefUsedEntryBasePtr new_entry = file->AllocateNewEntry();
+    new_entry->SetReference(content_stream);
+    new_entry->SetFile(file);
+    new_entry->SetInitialized();
+
+    content_stream->SetFile(file);
+    content_stream->SetInitialized();
+
+    return make_deferred<PageContents>(content_stream);
 }
 
 bool PageContents::IsDirty() const {

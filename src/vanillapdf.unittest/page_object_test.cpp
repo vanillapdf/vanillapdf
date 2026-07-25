@@ -134,6 +134,72 @@ TEST(PageContents, CreateFromStream) {
     ASSERT_NE(contents.get(), nullptr);
 }
 
+// The one call variant registers the content stream as an indirect object,
+// so the caller does not have to allocate the xref entry by hand
+TEST(PageContents, CreateFromDocument) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    HandleGuard<PageObjectHandle, PageObject_Release> page;
+    CreateMemoryDocumentWithPage(io_stream, file, document, page);
+
+    HandleGuard<PageContentsHandle, PageContents_Release> contents;
+    ASSERT_EQ(PageContents_CreateFromDocument(document, contents.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(contents.get(), nullptr);
+
+    ASSERT_EQ(PageObject_SetContents(page, contents), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<PageContentsHandle, PageContents_Release> found_contents;
+    ASSERT_EQ(PageObject_GetContents(page, found_contents.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(found_contents.get(), nullptr);
+}
+
+TEST(PageContents, CreateFromDocumentRejectsNullParameters) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    HandleGuard<PageObjectHandle, PageObject_Release> page;
+    CreateMemoryDocumentWithPage(io_stream, file, document, page);
+
+    EXPECT_EQ(PageContents_CreateFromDocument(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(PageContents_CreateFromDocument(document, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+// The indirect reference written by SetContents has to resolve after a save,
+// which is what an unregistered content stream would fail to do
+TEST(PageContents, CreateFromDocumentPersistsAcrossSave) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    HandleGuard<PageObjectHandle, PageObject_Release> page;
+    CreateMemoryDocumentWithPage(io_stream, file, document, page);
+
+    HandleGuard<PageContentsHandle, PageContents_Release> contents;
+    ASSERT_EQ(PageContents_CreateFromDocument(document, contents.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_SetContents(page, contents), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> destination_stream;
+    HandleGuard<FileHandle, File_Release> destination_file;
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(destination_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(destination_stream, "temp_destination", destination_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SaveFile(document, destination_file), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FileHandle, File_Release> reloaded_file;
+    HandleGuard<DocumentHandle, Document_Release> reloaded_document;
+    HandleGuard<CatalogHandle, Catalog_Release> reloaded_catalog;
+    HandleGuard<PageTreeHandle, PageTree_Release> reloaded_page_tree;
+    HandleGuard<PageObjectHandle, PageObject_Release> reloaded_page;
+    ASSERT_EQ(File_OpenStream(destination_stream, "temp_destination", reloaded_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_Initialize(reloaded_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_OpenFile(reloaded_file, reloaded_document.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_GetCatalog(reloaded_document, reloaded_catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_GetPages(reloaded_catalog, reloaded_page_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageTree_GetPage(reloaded_page_tree, 1, reloaded_page.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<PageContentsHandle, PageContents_Release> reloaded_contents;
+    EXPECT_EQ(PageObject_GetContents(reloaded_page, reloaded_contents.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
 TEST(PageContents, CreateFromStreamRejectsNullParameters) {
     EXPECT_EQ(PageContents_CreateFromStream(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 
@@ -189,6 +255,41 @@ TEST(PageObject, SetContentsRejectsNullParameters) {
 
     EXPECT_EQ(PageObject_SetContents(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
     EXPECT_EQ(PageObject_SetContents(page, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+// A blank resource dictionary is attached as a direct object, so it is
+// serialized inline with the page - confirm it reaches the written file
+TEST(PageObject, SetResourcesPersistAcrossSave) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    HandleGuard<PageObjectHandle, PageObject_Release> page;
+    CreateMemoryDocumentWithPage(io_stream, file, document, page);
+
+    HandleGuard<ResourceDictionaryHandle, ResourceDictionary_Release> resources;
+    ASSERT_EQ(ResourceDictionary_Create(resources.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_SetResources(page, resources), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> dest_stream;
+    HandleGuard<FileHandle, File_Release> dest_file;
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(dest_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(dest_stream, "temp_destination", dest_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SaveFile(document, dest_file), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FileHandle, File_Release> reloaded_file;
+    HandleGuard<DocumentHandle, Document_Release> reloaded_doc;
+    HandleGuard<CatalogHandle, Catalog_Release> reloaded_catalog;
+    HandleGuard<PageTreeHandle, PageTree_Release> reloaded_tree;
+    HandleGuard<PageObjectHandle, PageObject_Release> reloaded_page;
+    ASSERT_EQ(File_OpenStream(dest_stream, "temp_destination", reloaded_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_Initialize(reloaded_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_OpenFile(reloaded_file, reloaded_doc.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_GetCatalog(reloaded_doc, reloaded_catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_GetPages(reloaded_catalog, reloaded_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageTree_GetPage(reloaded_tree, 1, reloaded_page.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ResourceDictionaryHandle, ResourceDictionary_Release> reloaded_resources;
+    EXPECT_EQ(PageObject_GetResources(reloaded_page, reloaded_resources.out()), VANILLAPDF_ERROR_SUCCESS);
 }
 
 } // namespace page_object

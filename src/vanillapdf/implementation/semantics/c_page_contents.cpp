@@ -1,5 +1,6 @@
 #include "precompiled.h"
 #include "semantics/objects/page_contents.h"
+#include "semantics/objects/document.h"
 
 #include "contents/content_stream_instruction_base.h"
 
@@ -11,6 +12,21 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageContents_CreateFromDocument(DocumentHandle* handle, PageContentsHandle** result)
+{
+    Document* document = reinterpret_cast<Document*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto contents = PageContents::Create(document);
+        auto ptr = contents.AddRefGet();
+        *result = reinterpret_cast<PageContentsHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
 
 VANILLAPDF_API error_type CALLING_CONVENTION PageContents_CreateFromStream(StreamObjectHandle* handle, PageContentsHandle** result)
 {

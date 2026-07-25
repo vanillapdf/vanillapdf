@@ -14,6 +14,11 @@ public:
     explicit PageContents(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> obj);
     ~PageContents() = default;
 
+    // Creates empty page contents backed by a new indirect content stream.
+    // PageObject::SetContents stores an indirect reference, so the stream has
+    // to own an xref entry - this registers one within the document's file.
+    static PageContentsPtr Create(DocumentPtr document);
+
     contents::BaseInstructionCollectionPtr Instructions(void) const;
 
     bool IsDirty() const;
