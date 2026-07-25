@@ -10,6 +10,10 @@ on:
         required: false
         type: boolean
         default: false
+      submit:
+        required: false
+        type: boolean
+        default: false
 
   workflow_dispatch:
     inputs:
@@ -22,6 +26,15 @@ on:
         required: false
         type: boolean
         default: true
+      # vanillapdf is not in Homebrew/homebrew-core yet. Until that first
+      # submission is accepted, the formula is only generated and audited -
+      # nothing is pushed to the fork and no PR is opened. Flip the default to
+      # true once the formula is live upstream.
+      submit:
+        description: "Submit to homebrew-core - keep off until the formula is accepted upstream"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -89,9 +102,10 @@ jobs:
           git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/main
 
       - name: Require existing formula (updates only)
-        # Real runs only: the guard exists to stop the automation from pushing a
-        # new formula. A dry run never pushes, so it may proceed for inspection.
-        if: ${{ !inputs.dry_run && steps.check-latest.outputs.is_latest == 'true' }}
+        # Submitting runs only: the guard exists to stop the automation from
+        # pushing a new formula. Dry runs and non-submitting runs never push, so
+        # they may proceed for inspection.
+        if: ${{ inputs.submit && !inputs.dry_run && steps.check-latest.outputs.is_latest == 'true' }}
         run: |
           cd homebrew-core
           # This automation only bumps an already-published formula; first
@@ -137,16 +151,24 @@ jobs:
         if: steps.check-latest.outputs.is_latest == 'true'
         run: |
           cd homebrew-core
-          # Formula already exists upstream (enforced by the guard above), so
-          # this is always a version bump — use the standard audit. A failing
-          # audit fails the job rather than being swallowed.
-          brew audit --strict --online Formula/v/vanillapdf.rb
+          # While submission is disabled the formula is not upstream yet, so
+          # every run is a first submission and Homebrew audits those with
+          # --new-formula. Once submission is enabled the guard above has proven
+          # the formula exists, making it a version bump that takes the standard
+          # audit. A failing audit fails the job rather than being swallowed.
+          if [ "${{ inputs.submit }}" = "true" ]; then
+            brew audit --strict --online Formula/v/vanillapdf.rb
+          else
+            brew audit --strict --online --new-formula Formula/v/vanillapdf.rb
+          fi
 
-      - name: Show prepared changes (dry run)
-        if: ${{ steps.check-latest.outputs.is_latest == 'true' && inputs.dry_run }}
+      - name: Show prepared changes
+        # Always shown: while submission is disabled this output is the entire
+        # point of the job, and it stays useful once submission is enabled.
+        if: ${{ steps.check-latest.outputs.is_latest == 'true' }}
         run: |
           cd homebrew-core
-          echo "=== Dry run mode - showing prepared changes ==="
+          echo "=== Prepared changes ==="
           echo ""
           echo "=== Formula file ==="
           cat Formula/v/vanillapdf.rb
@@ -162,7 +184,7 @@ jobs:
           echo "=== Dry run complete - no changes committed ==="
 
       - name: Set authenticated origin for push
-        if: ${{ steps.check-latest.outputs.is_latest == 'true' && !inputs.dry_run }}
+        if: ${{ inputs.submit && steps.check-latest.outputs.is_latest == 'true' && !inputs.dry_run }}
         run: |
           cd homebrew-core
           git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/vanillapdf/homebrew-core.git"
@@ -170,7 +192,7 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
 
       - name: Commit and push changes to fork
-        if: ${{ steps.check-latest.outputs.is_latest == 'true' && !inputs.dry_run }}
+        if: ${{ inputs.submit && steps.check-latest.outputs.is_latest == 'true' && !inputs.dry_run }}
         run: |
           cd homebrew-core
           VERSION="${{ steps.version.outputs.version }}"
@@ -179,7 +201,7 @@ jobs:
           git push origin vanillapdf-${{ steps.version.outputs.version }}
 
       - name: Generate PR info
-        if: steps.check-latest.outputs.is_latest == 'true'
+        if: ${{ inputs.submit && steps.check-latest.outputs.is_latest == 'true' }}
         id: pr-info
         run: |
           echo "pr-url=https://github.com/vanillapdf/homebrew-core/compare/main...vanillapdf-${{ steps.version.outputs.version }}" >> "$GITHUB_OUTPUT"
@@ -191,7 +213,7 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 60
     needs: prepare-homebrew-changes
-    if: ${{ !inputs.dry_run && needs.prepare-homebrew-changes.outputs.is-latest == 'true' }}
+    if: ${{ inputs.submit && !inputs.dry_run && needs.prepare-homebrew-changes.outputs.is-latest == 'true' }}
     environment: production
     steps:
       - name: Setup Git & GitHub CLI
