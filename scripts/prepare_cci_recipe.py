@@ -16,6 +16,55 @@ import shutil
 
 import yaml
 
+CCI_STRIP_BEGIN = "# cci-strip-begin"
+CCI_STRIP_END = "# cci-strip-end"
+
+
+def copy_recipe(src, dst):
+    """Copy conanfile.py, dropping the blocks marked as checkout-only.
+
+    Conan Center builds every recipe from the released tarball referenced by
+    conandata.yml, so the export_sources() path that local builds use must not
+    reach the submitted recipe. Marking the blocks keeps conan/conanfile.py the
+    single source of truth instead of maintaining a second copy.
+    """
+    with open(src) as f:
+        lines = f.readlines()
+
+    kept = []
+    stripping = False
+    stripped_any = False
+    for number, line in enumerate(lines, start=1):
+        marker = line.strip()
+        if marker == CCI_STRIP_BEGIN:
+            if stripping:
+                raise ValueError(f"{src}:{number}: nested {CCI_STRIP_BEGIN}")
+            stripping = True
+            stripped_any = True
+            continue
+        if marker == CCI_STRIP_END:
+            if not stripping:
+                raise ValueError(f"{src}:{number}: {CCI_STRIP_END} without {CCI_STRIP_BEGIN}")
+            stripping = False
+            continue
+        if not stripping:
+            kept.append(line)
+
+    if stripping:
+        raise ValueError(f"{src}: unterminated {CCI_STRIP_BEGIN}")
+
+    # A recipe that lost its markers would silently ship the local build path,
+    # which is exactly what review rejects - fail loudly instead.
+    if not stripped_any:
+        raise ValueError(f"{src}: no {CCI_STRIP_BEGIN} block found")
+
+    recipe = "".join(kept)
+    if "export_sources" in recipe:
+        raise ValueError(f"{src}: export_sources survived the strip")
+
+    with open(dst, "w") as f:
+        f.write(recipe)
+
 
 def load_yaml(path):
     """Load a YAML mapping from path.
@@ -56,8 +105,8 @@ def main():
     # Create directory structure
     os.makedirs(test_pkg_dir, exist_ok=True)
 
-    # Copy conanfile.py (single source of truth)
-    shutil.copy2(
+    # Copy conanfile.py (single source of truth), minus the local build path
+    copy_recipe(
         os.path.join(args.source_dir, "conan", "conanfile.py"),
         os.path.join(recipe_dir, "conanfile.py"),
     )
