@@ -32,6 +32,15 @@ extern "C"
     */
 
     /**
+    * \brief
+    * Create page contents from an existing low-level content stream object.
+    *
+    * Required for \ref PageObject_SetContents, as the semantic layer
+    * does not offer any other way of obtaining new page contents.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageContents_CreateFromStream(StreamObjectHandle* handle, PageContentsHandle** result);
+
+    /**
     * \brief Return collection of the content stream instructions
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageContents_GetInstructionCollection(PageContentsHandle* handle, ContentInstructionCollectionHandle** result);

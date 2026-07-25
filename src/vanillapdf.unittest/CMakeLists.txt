@@ -38,6 +38,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     test_environment.cpp
     attributes_test.cpp
     objects_test.cpp
+    page_object_test.cpp
     page_tree_test.cpp
     utils_test.cpp
     digital_signature_test.cpp
