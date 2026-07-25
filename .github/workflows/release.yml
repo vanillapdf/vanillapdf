@@ -556,7 +556,7 @@ jobs:
         run: |
           VERSION="${{ needs.publish-release.outputs.tag }}"
           VERSION="${VERSION#v}"
-          BRANCH="release/port-${VERSION}"
+          BRANCH="automated/update-port-${VERSION}"
 
           # Determine base branch from version (e.g., 2.2.1 -> release/2.2)
           MAJOR=$(echo "$VERSION" | cut -d. -f1)
@@ -599,7 +599,7 @@ jobs:
           echo "This is the latest version, creating PR to main"
 
           # Create a new branch for the main PR
-          BRANCH_MAIN="release/port-${VERSION}-main"
+          BRANCH_MAIN="automated/update-port-${VERSION}-main"
           git checkout -b "$BRANCH_MAIN"
           git push -u origin "$BRANCH_MAIN"
 
