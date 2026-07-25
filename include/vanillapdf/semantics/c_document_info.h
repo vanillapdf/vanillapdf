@@ -108,6 +108,55 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInfoHandle* handle, DocumentTrappedType* result);
 
     /**
+    * \brief Set the document's title.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_SetTitle(DocumentInfoHandle* handle, StringObjectHandle* value);
+
+    /**
+    * \brief Set the name of the person who created the document.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_SetAuthor(DocumentInfoHandle* handle, StringObjectHandle* value);
+
+    /**
+    * \brief Set the subject of the document.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_SetSubject(DocumentInfoHandle* handle, StringObjectHandle* value);
+
+    /**
+    * \brief Set the keywords associated with the document.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_SetKeywords(DocumentInfoHandle* handle, StringObjectHandle* value);
+
+    /**
+    * \brief
+    * Set the name of the conforming product that created the original
+    * document from which it was converted.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_SetCreator(DocumentInfoHandle* handle, StringObjectHandle* value);
+
+    /**
+    * \brief
+    * Set the name of the conforming product that converted the original
+    * document to PDF.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_SetProducer(DocumentInfoHandle* handle, StringObjectHandle* value);
+
+    /**
+    * \brief Set the date and time the document was created.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_SetCreationDate(DocumentInfoHandle* handle, DateHandle* value);
+
+    /**
+    * \brief Set the date and time the document was most recently modified.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_SetModificationDate(DocumentInfoHandle* handle, DateHandle* value);
+
+    /**
+    * \copydoc DocumentTrappedType
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_SetTrapped(DocumentInfoHandle* handle, DocumentTrappedType value);
+
+    /**
     * \brief Reinterpret current object as \ref IUnknownHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_ToUnknown(DocumentInfoHandle* handle, IUnknownHandle** result);

@@ -228,6 +228,14 @@ CatalogPtr Document::CreateCatalog() {
 }
 
 DocumentInfoPtr Document::CreateDocumentInfo() {
+
+    // Return the existing document information dictionary when there is one,
+    // inserting a second /Info entry would throw and orphan the original object
+    OutputDocumentInfoPtr existing_info;
+    if (GetDocumentInfo(existing_info)) {
+        return *existing_info;
+    }
+
     auto chain = m_holder->GetXrefChain();
     auto entry = m_holder->AllocateNewEntry();
 

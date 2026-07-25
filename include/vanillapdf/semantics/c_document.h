@@ -92,6 +92,16 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHandle* handle, DocumentInfoHandle** result);
 
     /**
+    * \brief Get detailed document metadata, creating an empty
+    * document information dictionary when the document does not have any yet.
+    *
+    * Unlike \ref Document_GetDocumentInfo this function never reports
+    * \ref VANILLAPDF_ERROR_OBJECT_MISSING and is therefore the entry point
+    * for populating metadata through the \ref DocumentInfoHandle setters.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Document_CreateDocumentInfo(DocumentHandle* handle, DocumentInfoHandle** result);
+
+    /**
     * \brief Append another document's contents at the end of the file.
     *
     * This appends all \p source document's pages beyond \p handle document's pages.
