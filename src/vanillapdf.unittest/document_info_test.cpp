@@ -17,20 +17,19 @@ static void CreateMemoryDocument(
     ASSERT_EQ(Document_CreateFile(file, document.out()), VANILLAPDF_ERROR_SUCCESS);
 }
 
-// Reads the decoded contents of a string object into a std::string
-static std::string GetDecodedString(StringObjectHandle* handle) {
+// Reads the decoded contents of a string object into result.
+// Buffer data is a std::vector<char> and is not null terminated, so it is
+// copied into a std::string, whose c_str() is terminated and therefore safe
+// to compare with EXPECT_STREQ.
+static void GetDecodedString(StringObjectHandle* handle, std::string& result) {
     HandleGuard<BufferHandle, Buffer_Release> buffer;
-    if (StringObject_GetValue(handle, buffer.out()) != VANILLAPDF_ERROR_SUCCESS) {
-        return std::string();
-    }
+    ASSERT_EQ(StringObject_GetValue(handle, buffer.out()), VANILLAPDF_ERROR_SUCCESS);
 
     string_type data = nullptr;
     size_type size = 0;
-    if (Buffer_GetData(buffer, &data, &size) != VANILLAPDF_ERROR_SUCCESS) {
-        return std::string();
-    }
+    ASSERT_EQ(Buffer_GetData(buffer, &data, &size), VANILLAPDF_ERROR_SUCCESS);
 
-    return std::string(data, size);
+    result.assign(data, size);
 }
 
 static void SetAndExpectString(
@@ -46,7 +45,10 @@ static void SetAndExpectString(
 
     HandleGuard<StringObjectHandle, StringObject_Release> result;
     ASSERT_EQ(getter(info, result.out()), VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(GetDecodedString(result), std::string(value));
+
+    std::string decoded;
+    GetDecodedString(result, decoded);
+    EXPECT_STREQ(decoded.c_str(), value);
 }
 
 TEST(DocumentInfo, SetAndGetStringEntries) {
@@ -167,7 +169,10 @@ TEST(DocumentInfo, CreateDocumentInfoIsIdempotent) {
 
     HandleGuard<StringObjectHandle, StringObject_Release> title;
     ASSERT_EQ(DocumentInfo_GetTitle(second, title.out()), VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(GetDecodedString(title), std::string("Persisted title"));
+
+    std::string decoded_title;
+    GetDecodedString(title, decoded_title);
+    EXPECT_STREQ(decoded_title.c_str(), "Persisted title");
 }
 
 // Metadata set through the setters has to survive a save/reload cycle
@@ -202,8 +207,13 @@ TEST(DocumentInfo, SettersPersistAcrossSave) {
     ASSERT_EQ(DocumentInfo_GetTitle(reloaded_info, title.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(DocumentInfo_GetAuthor(reloaded_info, author.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    EXPECT_EQ(GetDecodedString(title), std::string("Saved title"));
-    EXPECT_EQ(GetDecodedString(author), std::string("Saved author"));
+    std::string decoded_title;
+    std::string decoded_author;
+    GetDecodedString(title, decoded_title);
+    GetDecodedString(author, decoded_author);
+
+    EXPECT_STREQ(decoded_title.c_str(), "Saved title");
+    EXPECT_STREQ(decoded_author.c_str(), "Saved author");
 }
 
 TEST(DocumentInfo, SettersRejectNullParameters) {
