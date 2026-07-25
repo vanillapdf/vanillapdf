@@ -86,7 +86,21 @@ jobs:
           cd homebrew-core
           git remote add upstream https://github.com/Homebrew/homebrew-core.git
           git fetch upstream
-          git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/master
+          git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/main
+
+      - name: Require existing formula (updates only)
+        # Real runs only: the guard exists to stop the automation from pushing a
+        # new formula. A dry run never pushes, so it may proceed for inspection.
+        if: ${{ !inputs.dry_run && steps.check-latest.outputs.is_latest == 'true' }}
+        run: |
+          cd homebrew-core
+          # This automation only bumps an already-published formula; first
+          # submissions to Homebrew/homebrew-core are done manually.
+          if ! git cat-file -e upstream/main:Formula/v/vanillapdf.rb 2>/dev/null; then
+            echo "::error::vanillapdf is not yet in Homebrew/homebrew-core. First submissions must be created manually; this automation only updates an existing formula."
+            exit 1
+          fi
+          echo "Existing formula found upstream - proceeding with update."
 
       - name: Calculate SHA256 for source archive
         if: steps.check-latest.outputs.is_latest == 'true'
@@ -123,8 +137,10 @@ jobs:
         if: steps.check-latest.outputs.is_latest == 'true'
         run: |
           cd homebrew-core
-          # Audit the formula for issues
-          brew audit --strict --online Formula/v/vanillapdf.rb || true
+          # Formula already exists upstream (enforced by the guard above), so
+          # this is always a version bump — use the standard audit. A failing
+          # audit fails the job rather than being swallowed.
+          brew audit --strict --online Formula/v/vanillapdf.rb
 
       - name: Show prepared changes (dry run)
         if: ${{ steps.check-latest.outputs.is_latest == 'true' && inputs.dry_run }}
@@ -159,23 +175,16 @@ jobs:
           cd homebrew-core
           VERSION="${{ steps.version.outputs.version }}"
           git add Formula/v/vanillapdf.rb
-
-          # Check if formula already exists in upstream (update vs new)
-          if git ls-tree upstream/master --name-only | grep -q "Formula/v/vanillapdf.rb"; then
-            git commit -m "vanillapdf ${VERSION}"
-          else
-            git commit -m "vanillapdf ${VERSION} (new formula)"
-          fi
-
+          git commit -m "vanillapdf ${VERSION}"
           git push origin vanillapdf-${{ steps.version.outputs.version }}
 
       - name: Generate PR info
         if: steps.check-latest.outputs.is_latest == 'true'
         id: pr-info
         run: |
-          echo "pr-url=https://github.com/vanillapdf/homebrew-core/compare/master...vanillapdf-${{ steps.version.outputs.version }}" >> "$GITHUB_OUTPUT"
+          echo "pr-url=https://github.com/vanillapdf/homebrew-core/compare/main...vanillapdf-${{ steps.version.outputs.version }}" >> "$GITHUB_OUTPUT"
           echo "Changes prepared and pushed to vanillapdf/homebrew-core"
-          echo "Review the changes at: https://github.com/vanillapdf/homebrew-core/compare/master...vanillapdf-${{ steps.version.outputs.version }}"
+          echo "Review the changes at: https://github.com/vanillapdf/homebrew-core/compare/main...vanillapdf-${{ steps.version.outputs.version }}"
 
   create-official-pr:
     name: Create PR to official Homebrew repo
@@ -205,26 +214,13 @@ jobs:
           VERSION="${{ inputs.tag }}"
           VERSION_NO_V="${VERSION#v}"
 
-          # Check if this is a new formula or update
-          git fetch upstream master
-          if git ls-tree upstream/master --name-only | grep -q "Formula/v/vanillapdf.rb"; then
-            TITLE="vanillapdf ${VERSION_NO_V}"
-            IS_NEW="false"
-          else
-            TITLE="vanillapdf ${VERSION_NO_V} (new formula)"
-            IS_NEW="true"
-          fi
+          # This automation only updates an existing formula; first submissions
+          # are done manually.
+          TITLE="vanillapdf ${VERSION_NO_V}"
 
           BODY="## Description
 
-          "
-          if [ "$IS_NEW" = "true" ]; then
-            BODY="${BODY}Add vanillapdf formula - a cross-platform toolkit for creating and modifying PDF documents."
-          else
-            BODY="${BODY}Update vanillapdf to version ${VERSION_NO_V}."
-          fi
-
-          BODY="${BODY}
+          Update vanillapdf to version ${VERSION_NO_V}.
 
           - **Homepage**: https://vanillapdf.com
           - **Repository**: https://github.com/vanillapdf/vanillapdf
@@ -246,7 +242,7 @@ jobs:
             --repo Homebrew/homebrew-core \
             --title "$TITLE" \
             --body "$BODY" \
-            --base master \
+            --base main \
             --head vanillapdf:${{ needs.prepare-homebrew-changes.outputs.branch-name }} \
             --draft
         env:
