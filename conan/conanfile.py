@@ -15,7 +15,7 @@ class VanillaPDFConan(ConanFile):
     topics = ("pdf", "document", "toolkit")
 
     package_type = "library"
-    settings = "os", "compiler", "build_type", "arch"
+    settings = "os", "arch", "compiler", "build_type"
 
     options = {
         "shared": [True, False],
@@ -70,7 +70,14 @@ class VanillaPDFConan(ConanFile):
         self.requires("openjpeg/[>=2.5 <3]")
 
     def layout(self):
+        # cci-strip-begin
+        # A local build exports the tree straight into the source root.
         cmake_layout(self, src_folder=".")
+        return
+        # cci-strip-end
+        # Conan Center extracts the downloaded tarball into a src subfolder so
+        # it stays separate from the exported conanfile.py and conandata.yml.
+        cmake_layout(self, src_folder="src")
 
     def generate(self):
         tc = CMakeToolchain(self)

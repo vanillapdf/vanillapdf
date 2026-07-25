@@ -99,7 +99,7 @@ def main():
     args = parser.parse_args()
 
     recipe_dir = os.path.join(args.cci_dir, "recipes", "vanillapdf", "all")
-    test_pkg_dir = os.path.join(recipe_dir, "test_package", "src")
+    test_pkg_dir = os.path.join(recipe_dir, "test_package")
     config_path = os.path.join(args.cci_dir, "recipes", "vanillapdf", "config.yml")
 
     # Create directory structure
@@ -112,14 +112,11 @@ def main():
     )
 
     # Copy test_package
-    for name in ("conanfile.py", "CMakeLists.txt"):
+    for name in ("conanfile.py", "CMakeLists.txt", "test_package.c"):
         shutil.copy2(
             os.path.join(args.source_dir, "conan", "test_package", name),
-            os.path.join(recipe_dir, "test_package", name),
+            os.path.join(test_pkg_dir, name),
         )
-    src_dir = os.path.join(args.source_dir, "conan", "test_package", "src")
-    for entry in os.listdir(src_dir):
-        shutil.copy2(os.path.join(src_dir, entry), test_pkg_dir)
 
     # Generate conandata.yml. Merge into any existing file so older releases
     # keep their source entries — CCI expects every published version to remain
