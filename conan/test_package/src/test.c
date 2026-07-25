@@ -2,21 +2,19 @@
 #include <vanillapdf/c_vanillapdf_api.h>
 
 int main(void) {
-    DocumentHandle* document = NULL;
-    error_type result = Document_Create("test_output.pdf", &document);
+    integer_type major = 0;
+    integer_type minor = 0;
+    integer_type patch = 0;
 
-    if (result != VANILLAPDF_ERROR_SUCCESS) {
-        fprintf(stderr, "Failed to create document (error: %d)\n", (int)result);
+    /* Querying the linked library version proves the headers, the linkage and
+     * the C API all work, without writing anything to the filesystem. */
+    if (LibraryInfo_GetVersionMajor(&major) != VANILLAPDF_ERROR_SUCCESS
+        || LibraryInfo_GetVersionMinor(&minor) != VANILLAPDF_ERROR_SUCCESS
+        || LibraryInfo_GetVersionPatch(&patch) != VANILLAPDF_ERROR_SUCCESS) {
+        fprintf(stderr, "Failed to query the vanillapdf version\n");
         return 1;
     }
 
-    if (!document) {
-        fprintf(stderr, "Document handle is null\n");
-        return 1;
-    }
-
-    Document_Release(document);
-
-    printf("vanillapdf Conan package test passed\n");
+    printf("vanillapdf %d.%d.%d\n", (int)major, (int)minor, (int)patch);
     return 0;
 }
