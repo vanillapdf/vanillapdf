@@ -352,16 +352,11 @@ TEST(ChoiceField, GetOptionCountMissing) {
     ASSERT_EQ(ChoiceField_GetOptionCount(choice_field, &count), VANILLAPDF_ERROR_OBJECT_MISSING);
 }
 
-// --- InteractiveForm NeedAppearances tests ---
+// --- FieldFlags bit position tests ---
 
-TEST(InteractiveForm, NeedAppearancesMissing) {
-    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
-    ASSERT_EQ(DictionaryObject_Create(dict.out()), VANILLAPDF_ERROR_SUCCESS);
-
-    // Wrap as InteractiveForm via reinterpret (it's the same underlying dictionary)
-    // We need to go through the proper API path - create a minimal document structure
-    // For now, test that the C API handles exist correctly
-    // This test verifies the enum values are accessible
+// The flag values are part of the ABI, so their bit positions are pinned here.
+// InteractiveForm behaviour itself is covered in interactive_forms_test.cpp.
+TEST(Field, FieldFlagsBitPositions) {
     ASSERT_EQ(FieldFlags_ReadOnly, (1 << 0));
     ASSERT_EQ(FieldFlags_Required, (1 << 1));
     ASSERT_EQ(FieldFlags_NoExport, (1 << 2));

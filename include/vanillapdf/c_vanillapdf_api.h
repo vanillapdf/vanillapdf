@@ -53,6 +53,7 @@
 #include "vanillapdf/semantics/c_annotations.h"
 #include "vanillapdf/semantics/c_resource_dictionary.h"
 #include "vanillapdf/semantics/c_interactive_forms.h"
+#include "vanillapdf/semantics/c_signature_flags.h"
 #include "vanillapdf/semantics/c_fields.h"
 #include "vanillapdf/semantics/c_byte_range.h"
 #include "vanillapdf/semantics/c_digital_signature.h"

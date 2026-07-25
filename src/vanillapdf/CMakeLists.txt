@@ -87,6 +87,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_page_tree.cpp
     implementation/semantics/c_rectangle.cpp
     implementation/semantics/c_resource_dictionary.cpp
+    implementation/semantics/c_signature_flags.cpp
     implementation/semantics/c_viewer_preferences.cpp
 )
 

@@ -86,6 +86,7 @@ set(VANILLAPDF_INCLUDE_SEMANTICS_HEADERS
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_page_tree.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_rectangle.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_resource_dictionary.h"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_signature_flags.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_viewer_preferences.h"
 )
 
