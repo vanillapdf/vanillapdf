@@ -14,6 +14,32 @@ import argparse
 import os
 import shutil
 
+import yaml
+
+
+def load_yaml(path):
+    """Load a YAML mapping from path.
+
+    A missing file is expected for a first-time submission and yields an empty
+    mapping. A file that is present but malformed (unparseable, or parsing to
+    something other than a mapping) is a hard error: silently returning {} would
+    drop every previously published version from the regenerated recipe.
+    """
+    if not os.path.exists(path):
+        return {}
+    with open(path) as f:
+        data = yaml.safe_load(f)
+    if data is None:
+        return {}
+    if not isinstance(data, dict):
+        raise ValueError(f"{path} did not parse to a YAML mapping")
+    return data
+
+
+def dump_yaml(path, data):
+    with open(path, "w") as f:
+        yaml.safe_dump(data, f, sort_keys=False, default_flow_style=False)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Prepare CCI recipe files")
@@ -46,18 +72,22 @@ def main():
     for entry in os.listdir(src_dir):
         shutil.copy2(os.path.join(src_dir, entry), test_pkg_dir)
 
-    # Generate conandata.yml
-    with open(os.path.join(recipe_dir, "conandata.yml"), "w") as f:
-        f.write(f'sources:\n')
-        f.write(f'  "{args.version}":\n')
-        f.write(f'    url: "https://github.com/vanillapdf/vanillapdf/archive/refs/tags/v{args.version}.tar.gz"\n')
-        f.write(f'    sha256: "{args.sha256}"\n')
+    # Generate conandata.yml. Merge into any existing file so older releases
+    # keep their source entries — CCI expects every published version to remain
+    # buildable, and cloning the fork off upstream/master carries the existing
+    # recipe once vanillapdf is registered.
+    conandata_path = os.path.join(recipe_dir, "conandata.yml")
+    conandata = load_yaml(conandata_path)
+    conandata.setdefault("sources", {})[args.version] = {
+        "url": f"https://github.com/vanillapdf/vanillapdf/archive/refs/tags/v{args.version}.tar.gz",
+        "sha256": args.sha256,
+    }
+    dump_yaml(conandata_path, conandata)
 
-    # Generate config.yml
-    with open(config_path, "w") as f:
-        f.write(f'versions:\n')
-        f.write(f'  "{args.version}":\n')
-        f.write(f'    folder: all\n')
+    # Generate config.yml. Merge so previously published versions are preserved.
+    config = load_yaml(config_path)
+    config.setdefault("versions", {})[args.version] = {"folder": "all"}
+    dump_yaml(config_path, config)
 
     print(f"CCI recipe prepared for vanillapdf/{args.version}")
     print(f"  Recipe dir: {recipe_dir}")
