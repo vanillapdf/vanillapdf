@@ -60,12 +60,14 @@ class VanillaPDFConan(ConanFile):
         check_min_cppstd(self, 17)
 
     def requirements(self):
-        self.requires("spdlog/[>=1.14]")
-        self.requires("fmt/[>=10.0]")
+        # Every range is capped at the next major, matching Conan Center
+        # practice: a new major is an ABI break we have not built against.
+        self.requires("spdlog/[>=1.14 <2]")
+        self.requires("fmt/[>=10.0 <13]")
         self.requires("openssl/[>=3.0 <4]")
-        self.requires("zlib/[>=1.2]")
-        self.requires("libjpeg-turbo/[>=2.0]")
-        self.requires("openjpeg/[>=2.5]")
+        self.requires("zlib/[>=1.2 <2]")
+        self.requires("libjpeg-turbo/[>=2.0 <4]")
+        self.requires("openjpeg/[>=2.5 <3]")
 
     def layout(self):
         cmake_layout(self, src_folder=".")
