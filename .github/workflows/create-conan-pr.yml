@@ -10,6 +10,10 @@ on:
         required: false
         type: boolean
         default: false
+      submit:
+        required: false
+        type: boolean
+        default: false
 
   workflow_dispatch:
     inputs:
@@ -22,6 +26,15 @@ on:
         required: false
         type: boolean
         default: true
+      # vanillapdf is not in conan-io/conan-center-index yet. Until that first
+      # submission is accepted, the recipe is only generated and inspected -
+      # nothing is pushed to the fork and no PR is opened. Flip the default to
+      # true once the recipe is live upstream.
+      submit:
+        description: "Submit to Conan Center - keep off until the recipe is accepted upstream"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -84,9 +97,10 @@ jobs:
           git checkout -b vanillapdf-${{ steps.version.outputs.version }} upstream/master
 
       - name: Require existing recipe (updates only)
-        # Real runs only: the guard exists to stop the automation from pushing a
-        # new recipe. A dry run never pushes, so it may proceed for inspection.
-        if: ${{ !inputs.dry_run && steps.check_latest.outputs.is_latest == 'true' }}
+        # Submitting runs only: the guard exists to stop the automation from
+        # pushing a new recipe. Dry runs and non-submitting runs never push, so
+        # they may proceed for inspection.
+        if: ${{ inputs.submit && !inputs.dry_run && steps.check_latest.outputs.is_latest == 'true' }}
         run: |
           cd conan-center-index
           # This automation only bumps an already-registered recipe; first
@@ -122,11 +136,13 @@ jobs:
             --source-dir vanillapdf \
             --cci-dir conan-center-index
 
-      - name: Show prepared changes (dry run)
-        if: ${{ inputs.dry_run && steps.check_latest.outputs.is_latest == 'true' }}
+      - name: Show prepared changes
+        # Always shown: while submission is disabled this output is the entire
+        # point of the job, and it stays useful once submission is enabled.
+        if: ${{ steps.check_latest.outputs.is_latest == 'true' }}
         run: |
           cd conan-center-index
-          echo "=== Dry run mode - showing prepared changes ==="
+          echo "=== Prepared changes ==="
           echo ""
           echo "=== Recipe files ==="
           echo "--- config.yml ---"
@@ -143,11 +159,9 @@ jobs:
           echo ""
           echo "=== Git status ==="
           git status
-          echo ""
-          echo "=== Dry run complete - no changes committed ==="
 
       - name: Set authenticated origin for push
-        if: ${{ !inputs.dry_run && steps.check_latest.outputs.is_latest == 'true' }}
+        if: ${{ inputs.submit && !inputs.dry_run && steps.check_latest.outputs.is_latest == 'true' }}
         run: |
           cd conan-center-index
           git remote set-url origin "https://x-access-token:${BOT_TOKEN}@github.com/vanillapdf/conan-center-index.git"
@@ -155,7 +169,7 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
 
       - name: Commit and push changes to fork
-        if: ${{ !inputs.dry_run && steps.check_latest.outputs.is_latest == 'true' }}
+        if: ${{ inputs.submit && !inputs.dry_run && steps.check_latest.outputs.is_latest == 'true' }}
         run: |
           cd conan-center-index
           git add recipes/vanillapdf/
@@ -163,7 +177,7 @@ jobs:
           git push origin vanillapdf-${{ steps.version.outputs.version }}
 
       - name: Generate PR info
-        if: ${{ steps.check_latest.outputs.is_latest == 'true' }}
+        if: ${{ inputs.submit && steps.check_latest.outputs.is_latest == 'true' }}
         id: pr-info
         run: |
           echo "pr-url=https://github.com/vanillapdf/conan-center-index/compare/master...vanillapdf-${{ steps.version.outputs.version }}" >> "$GITHUB_OUTPUT"
@@ -175,7 +189,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     needs: prepare-conan-changes
-    if: ${{ !inputs.dry_run && needs.prepare-conan-changes.outputs.is_latest == 'true' }}
+    if: ${{ inputs.submit && !inputs.dry_run && needs.prepare-conan-changes.outputs.is_latest == 'true' }}
     environment: production
     steps:
       - name: Setup Git & GitHub CLI
