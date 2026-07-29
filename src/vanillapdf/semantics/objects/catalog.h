@@ -56,6 +56,7 @@ public:
     bool Names(OutputNameDictionaryPtr& result) const;
     void SetNames(NameDictionaryPtr value);
     bool AcroForm(OuputInteractiveFormPtr& result) const;
+    void SetAcroForm(InteractiveFormPtr value);
 
     bool GetOpenAction(syntax::ObjectPtr& result) const;
 

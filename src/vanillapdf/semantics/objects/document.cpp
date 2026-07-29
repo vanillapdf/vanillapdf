@@ -297,23 +297,6 @@ NameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
     return make_deferred<NameDictionary>(raw_dictionary);
 }
 
-InteractiveFormPtr Document::CreateAcroForm() {
-    OutputCatalogPtr catalog;
-    bool has_catalog = GetDocumentCatalog(catalog);
-    if (!has_catalog) {
-        catalog = CreateCatalog();
-    }
-
-    // Return the existing interactive form when there is one, inserting a
-    // second /AcroForm entry would throw and orphan the original dictionary
-    OuputInteractiveFormPtr existing_form;
-    if (catalog->AcroForm(existing_form)) {
-        return *existing_form;
-    }
-
-    return CreateAcroForm(catalog);
-}
-
 InteractiveFormPtr Document::CreateAcroForm(CatalogPtr catalog) {
     auto entry = m_holder->AllocateNewEntry();
 

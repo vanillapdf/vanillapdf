@@ -2,6 +2,7 @@
 
 #include "semantics/objects/catalog.h"
 #include "semantics/objects/name_dictionary.h"
+#include "semantics/objects/interactive_forms.h"
 
 #include "vanillapdf/semantics/c_catalog.h"
 #include "implementation/c_helper.h"
@@ -235,6 +236,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_SetNames(CatalogHandle* han
     try
     {
         obj->SetNames(names_obj);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Catalog_SetAcroForm(CatalogHandle* handle, InteractiveFormHandle* value) {
+    Catalog* obj = reinterpret_cast<Catalog*>(handle);
+    InteractiveForm* form = reinterpret_cast<InteractiveForm*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
+
+    try {
+        obj->SetAcroForm(form);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

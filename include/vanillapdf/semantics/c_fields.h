@@ -163,6 +163,14 @@ extern "C"
     */
 
     /**
+    * \brief
+    * Create an empty field collection.
+    *
+    * Attach it to an interactive form with \ref InteractiveForm_SetFields.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Create(FieldCollectionHandle** result);
+
+    /**
     * \brief Get size of field collection
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_GetSize(FieldCollectionHandle* handle, size_type* result);

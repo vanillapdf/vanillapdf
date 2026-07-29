@@ -34,6 +34,15 @@ extern "C"
 
     /**
     * \brief
+    * Create a set of signature flags with every flag cleared.
+    *
+    * Attach it to an interactive form with
+    * \ref InteractiveForm_SetSignatureFlags.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureFlags_Create(SignatureFlagsHandle** result);
+
+    /**
+    * \brief
     * If \ref VANILLAPDF_RV_TRUE, the document contains at least one signature field.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureFlags_GetSignaturesExist(SignatureFlagsHandle* handle, boolean_type* result);

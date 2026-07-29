@@ -37,13 +37,21 @@ extern "C"
     *
     * Use this overload to wrap a dictionary that is already registered in the
     * document, for example an indirect object obtained through
-    * \ref File_AllocateNewEntry, and attached to the document catalog under
-    * the /AcroForm key.
-    *
-    * To obtain a form that is already registered and attached, use
-    * \ref Document_CreateAcroForm instead.
+    * \ref File_AllocateNewEntry. Prefer
+    * \ref InteractiveForm_CreateFromDocument otherwise.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_CreateFromDictionary(DictionaryObjectHandle* handle, InteractiveFormHandle** result);
+
+    /**
+    * \brief
+    * Create an empty interactive form registered as an indirect object
+    * within the document.
+    *
+    * The form does not take effect until it is attached with
+    * \ref Catalog_SetAcroForm. Creating and attaching are deliberately
+    * separate steps, so that reading a document never modifies it.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_CreateFromDocument(DocumentHandle* handle, InteractiveFormHandle** result);
 
     /**
     * \brief
@@ -53,13 +61,12 @@ extern "C"
 
     /**
     * \brief
-    * An array of references to the document's root fields,
-    * created as an empty array when the form does not have any yet.
+    * Set the array of references to the document's root fields.
     *
-    * Unlike \ref InteractiveForm_GetFields this function never reports
-    * \ref VANILLAPDF_ERROR_OBJECT_MISSING.
+    * Obtain an empty collection from \ref FieldCollection_Create for a form
+    * that does not have any fields yet.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_CreateFields(InteractiveFormHandle* handle, FieldCollectionHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetFields(InteractiveFormHandle* handle, FieldCollectionHandle* value);
 
     /**
     * \brief
@@ -70,13 +77,13 @@ extern "C"
 
     /**
     * \brief
-    * A set of flags specifying various document-level characteristics related to
-    * signature fields, created with all flags cleared when the form does not have any yet.
+    * Set the flags specifying document-level characteristics related to
+    * signature fields.
     *
-    * Unlike \ref InteractiveForm_GetSignatureFlags this function never reports
-    * \ref VANILLAPDF_ERROR_OBJECT_MISSING.
+    * Obtain a cleared set of flags from \ref SignatureFlags_Create for a form
+    * that does not have any yet.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_CreateSignatureFlags(InteractiveFormHandle* handle, SignatureFlagsHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetSignatureFlags(InteractiveFormHandle* handle, SignatureFlagsHandle* value);
 
     /**
     * \brief

@@ -154,6 +154,16 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle* handle, InteractiveFormHandle** result);
 
     /**
+    * \brief
+    * Attach an interactive form to the document.
+    *
+    * The catalog stores an indirect reference, so the form has to be
+    * registered within the document - use
+    * \ref InteractiveForm_CreateFromDocument to obtain one.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Catalog_SetAcroForm(CatalogHandle* handle, InteractiveFormHandle* value);
+
+    /**
     * \brief Get the open action entry from the catalog.
     *
     * The returned object can be either an array (destination) or a dictionary (action).

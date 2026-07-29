@@ -8,6 +8,17 @@
 using namespace vanillapdf;
 using namespace vanillapdf::semantics;
 
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureFlags_Create(SignatureFlagsHandle** result) {
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto flags = SignatureFlags::Create();
+        auto ptr = flags.AddRefGet();
+        *result = reinterpret_cast<SignatureFlagsHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION SignatureFlags_GetSignaturesExist(SignatureFlagsHandle* handle, boolean_type* result) {
     SignatureFlags* flags = reinterpret_cast<SignatureFlags*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(flags);

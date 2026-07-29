@@ -195,6 +195,15 @@ bool Catalog::AcroForm(OuputInteractiveFormPtr& result) const {
     return true;
 }
 
+void Catalog::SetAcroForm(InteractiveFormPtr value) {
+
+    // The form is an indirect object, so the catalog stores a reference to it
+    auto form_object = value->GetObject();
+    IndirectReferenceObjectPtr reference = make_deferred<syntax::IndirectReferenceObject>(form_object);
+
+    _obj->Insert(constant::Name::AcroForm, reference, true);
+}
+
 bool Catalog::GetOpenAction(syntax::ObjectPtr& result) const {
     if (!_obj->Contains(constant::Name::OpenAction)) {
         return false;

@@ -2,6 +2,8 @@
 
 #include "semantics/objects/interactive_forms.h"
 #include "semantics/objects/signature_flags.h"
+#include "semantics/objects/fields.h"
+#include "semantics/objects/document.h"
 
 #include "syntax/objects/dictionary_object.h"
 
@@ -19,6 +21,19 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_CreateFromDictionar
 
     try {
         auto form = make_deferred<InteractiveForm>(dictionary);
+        auto ptr = form.AddRefGet();
+        *result = reinterpret_cast<InteractiveFormHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_CreateFromDocument(DocumentHandle* handle, InteractiveFormHandle** result) {
+    Document* document = reinterpret_cast<Document*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto form = InteractiveForm::Create(document);
         auto ptr = form.AddRefGet();
         *result = reinterpret_cast<InteractiveFormHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -43,15 +58,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(Interacti
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_CreateFields(InteractiveFormHandle* handle, FieldCollectionHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetFields(InteractiveFormHandle* handle, FieldCollectionHandle* value) {
     InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
+    FieldCollection* fields = reinterpret_cast<FieldCollection*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(fields);
 
     try {
-        auto fields = form->CreateFields();
-        auto ptr = fields.AddRefGet();
-        *result = reinterpret_cast<FieldCollectionHandle*>(ptr);
+        form->SetFields(fields);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -74,15 +88,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetSignatureFlags(I
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_CreateSignatureFlags(InteractiveFormHandle* handle, SignatureFlagsHandle** result) {
+VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetSignatureFlags(InteractiveFormHandle* handle, SignatureFlagsHandle* value) {
     InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
+    SignatureFlags* flags = reinterpret_cast<SignatureFlags*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(flags);
 
     try {
-        auto flags = form->CreateSignatureFlags();
-        auto ptr = flags.AddRefGet();
-        *result = reinterpret_cast<SignatureFlagsHandle*>(ptr);
+        form->SetSignatureFlags(flags);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

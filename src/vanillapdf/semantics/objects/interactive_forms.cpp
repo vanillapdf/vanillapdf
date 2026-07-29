@@ -2,6 +2,8 @@
 
 #include "semantics/objects/signature_flags.h"
 #include "semantics/objects/interactive_forms.h"
+#include "semantics/objects/fields.h"
+#include "semantics/objects/document.h"
 
 #include "syntax/files/file.h"
 #include "syntax/utils/name_constants.h"
@@ -10,6 +12,30 @@ namespace vanillapdf {
 namespace semantics {
 
 InteractiveForm::InteractiveForm(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
+
+InteractiveFormPtr InteractiveForm::Create(DocumentPtr document) {
+    auto file = document->GetFile();
+
+    syntax::DictionaryObjectPtr raw_dictionary;
+
+    auto new_entry = file->AllocateNewEntry();
+    new_entry->SetReference(raw_dictionary);
+    new_entry->SetFile(file);
+    new_entry->SetInitialized();
+
+    raw_dictionary->SetFile(file);
+    raw_dictionary->SetInitialized();
+
+    return make_deferred<InteractiveForm>(raw_dictionary);
+}
+
+void InteractiveForm::SetFields(FieldCollectionPtr value) {
+    _obj->Insert(constant::Name::Fields, value->GetObject(), true);
+}
+
+void InteractiveForm::SetSignatureFlags(SignatureFlagsPtr value) {
+    _obj->Insert(constant::Name::SigFlags, value->GetObject(), true);
+}
 
 bool InteractiveForm::GetFields(OuputFieldCollectionPtr& result) const {
     if (!_obj->Contains(constant::Name::Fields)) {

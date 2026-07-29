@@ -39,10 +39,6 @@ public:
     bool GetDocumentCatalog(OutputCatalogPtr& result) const;
     bool GetDocumentInfo(OutputDocumentInfoPtr& result) const;
 
-    // Returns the existing interactive form, creating an empty one attached to
-    // the document catalog under /AcroForm when the document does not have any
-    InteractiveFormPtr CreateAcroForm();
-
 private:
     bool ResolveCatalog(OutputCatalogPtr& result) const;
 
