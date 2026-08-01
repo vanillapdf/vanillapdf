@@ -1,5 +1,6 @@
 #include "precompiled.h"
 #include "semantics/objects/document_info.h"
+#include "semantics/objects/document.h"
 #include "semantics/objects/date.h"
 
 #include "vanillapdf/semantics/c_document_info.h"
@@ -8,6 +9,21 @@
 using namespace vanillapdf;
 using namespace vanillapdf::syntax;
 using namespace vanillapdf::semantics;
+
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_CreateFromDocument(DocumentHandle* handle, DocumentInfoHandle** result)
+{
+    Document* document = reinterpret_cast<Document*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto info = DocumentInfo::Create(document);
+        auto ptr = info.AddRefGet();
+        *result = reinterpret_cast<DocumentInfoHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
 
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoHandle* handle, StringObjectHandle** result)
 {

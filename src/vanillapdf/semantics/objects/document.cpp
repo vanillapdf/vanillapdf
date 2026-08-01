@@ -227,15 +227,20 @@ CatalogPtr Document::CreateCatalog() {
     return make_deferred<Catalog>(raw_dictionary);
 }
 
+void Document::SetDocumentInfo(DocumentInfoPtr value) {
+    auto chain = m_holder->GetXrefChain();
+    auto xref = chain->Begin()->Value();
+    auto trailer_dictionary = xref->GetTrailerDictionary();
+
+    // The information dictionary is an indirect object,
+    // so the trailer stores a reference to it
+    auto info_object = value->GetObject();
+    IndirectReferenceObjectPtr reference = make_deferred<IndirectReferenceObject>(info_object);
+
+    trailer_dictionary->Insert(constant::Name::Info, reference, true);
+}
+
 DocumentInfoPtr Document::CreateDocumentInfo() {
-
-    // Return the existing document information dictionary when there is one,
-    // inserting a second /Info entry would throw and orphan the original object
-    OutputDocumentInfoPtr existing_info;
-    if (GetDocumentInfo(existing_info)) {
-        return *existing_info;
-    }
-
     auto chain = m_holder->GetXrefChain();
     auto entry = m_holder->AllocateNewEntry();
 

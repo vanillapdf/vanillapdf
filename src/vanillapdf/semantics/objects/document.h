@@ -38,10 +38,7 @@ public:
 
     bool GetDocumentCatalog(OutputCatalogPtr& result) const;
     bool GetDocumentInfo(OutputDocumentInfoPtr& result) const;
-
-    // Returns the existing document information dictionary,
-    // creating an empty one when the document does not have any yet
-    DocumentInfoPtr CreateDocumentInfo();
+    void SetDocumentInfo(DocumentInfoPtr value);
 
 private:
     bool ResolveCatalog(OutputCatalogPtr& result) const;
@@ -67,6 +64,7 @@ private:
     syntax::FilePtr m_holder;
 
     CatalogPtr CreateCatalog();
+    DocumentInfoPtr CreateDocumentInfo();
     PageTreePtr CreatePageTree(CatalogPtr catalog);
     NamedDestinationsPtr CreateNameDestinations(CatalogPtr catalog);
     NameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);

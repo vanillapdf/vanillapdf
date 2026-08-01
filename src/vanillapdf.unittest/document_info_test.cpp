@@ -58,7 +58,8 @@ TEST(DocumentInfo, SetAndGetStringEntries) {
     CreateMemoryDocument(io_stream, file, document);
 
     HandleGuard<DocumentInfoHandle, DocumentInfo_Release> info;
-    ASSERT_EQ(Document_CreateDocumentInfo(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentInfo_CreateFromDocument(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SetDocumentInfo(document, info), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(info.get(), nullptr);
 
     SetAndExpectString(info, DocumentInfo_SetTitle, DocumentInfo_GetTitle, "Quarterly Report");
@@ -76,7 +77,8 @@ TEST(DocumentInfo, SetStringEntryOverwrite) {
     CreateMemoryDocument(io_stream, file, document);
 
     HandleGuard<DocumentInfoHandle, DocumentInfo_Release> info;
-    ASSERT_EQ(Document_CreateDocumentInfo(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentInfo_CreateFromDocument(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SetDocumentInfo(document, info), VANILLAPDF_ERROR_SUCCESS);
 
     SetAndExpectString(info, DocumentInfo_SetTitle, DocumentInfo_GetTitle, "First title");
     SetAndExpectString(info, DocumentInfo_SetTitle, DocumentInfo_GetTitle, "Second title");
@@ -89,7 +91,8 @@ TEST(DocumentInfo, SetAndGetDateEntries) {
     CreateMemoryDocument(io_stream, file, document);
 
     HandleGuard<DocumentInfoHandle, DocumentInfo_Release> info;
-    ASSERT_EQ(Document_CreateDocumentInfo(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentInfo_CreateFromDocument(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SetDocumentInfo(document, info), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<DateHandle, Date_Release> source_date;
     ASSERT_EQ(Date_CreateEmpty(source_date.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -121,7 +124,8 @@ TEST(DocumentInfo, SetAndGetTrapped) {
     CreateMemoryDocument(io_stream, file, document);
 
     HandleGuard<DocumentInfoHandle, DocumentInfo_Release> info;
-    ASSERT_EQ(Document_CreateDocumentInfo(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentInfo_CreateFromDocument(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SetDocumentInfo(document, info), VANILLAPDF_ERROR_SUCCESS);
 
     DocumentTrappedType trapped = DocumentTrappedType_Undefined;
 
@@ -147,32 +151,40 @@ TEST(DocumentInfo, SetTrappedUndefinedRejected) {
     CreateMemoryDocument(io_stream, file, document);
 
     HandleGuard<DocumentInfoHandle, DocumentInfo_Release> info;
-    ASSERT_EQ(Document_CreateDocumentInfo(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentInfo_CreateFromDocument(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SetDocumentInfo(document, info), VANILLAPDF_ERROR_SUCCESS);
 
     EXPECT_EQ(DocumentInfo_SetTrapped(info, DocumentTrappedType_Undefined), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
-// Repeated calls must return the same document information dictionary
-// rather than allocating a second one and orphaning the original
-TEST(DocumentInfo, CreateDocumentInfoIsIdempotent) {
+// Attaching a second dictionary must replace the trailer entry rather than
+// throw on the duplicate /Info key
+TEST(DocumentInfo, SetDocumentInfoOverwrite) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
     HandleGuard<FileHandle, File_Release> file;
     HandleGuard<DocumentHandle, Document_Release> document;
     CreateMemoryDocument(io_stream, file, document);
 
     HandleGuard<DocumentInfoHandle, DocumentInfo_Release> first;
-    ASSERT_EQ(Document_CreateDocumentInfo(document, first.out()), VANILLAPDF_ERROR_SUCCESS);
-    SetAndExpectString(first, DocumentInfo_SetTitle, DocumentInfo_GetTitle, "Persisted title");
+    ASSERT_EQ(DocumentInfo_CreateFromDocument(document, first.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SetDocumentInfo(document, first), VANILLAPDF_ERROR_SUCCESS);
+    SetAndExpectString(first, DocumentInfo_SetTitle, DocumentInfo_GetTitle, "First title");
 
     HandleGuard<DocumentInfoHandle, DocumentInfo_Release> second;
-    ASSERT_EQ(Document_CreateDocumentInfo(document, second.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentInfo_CreateFromDocument(document, second.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SetDocumentInfo(document, second), VANILLAPDF_ERROR_SUCCESS);
+    SetAndExpectString(second, DocumentInfo_SetTitle, DocumentInfo_GetTitle, "Second title");
+
+    // The document now reports the most recently attached dictionary
+    HandleGuard<DocumentInfoHandle, DocumentInfo_Release> found;
+    ASSERT_EQ(Document_GetDocumentInfo(document, found.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<StringObjectHandle, StringObject_Release> title;
-    ASSERT_EQ(DocumentInfo_GetTitle(second, title.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentInfo_GetTitle(found, title.out()), VANILLAPDF_ERROR_SUCCESS);
 
     std::string decoded_title;
     GetDecodedString(title, decoded_title);
-    EXPECT_STREQ(decoded_title.c_str(), "Persisted title");
+    EXPECT_STREQ(decoded_title.c_str(), "Second title");
 }
 
 // Metadata set through the setters has to survive a save/reload cycle
@@ -183,7 +195,8 @@ TEST(DocumentInfo, SettersPersistAcrossSave) {
     CreateMemoryDocument(io_stream, file, document);
 
     HandleGuard<DocumentInfoHandle, DocumentInfo_Release> info;
-    ASSERT_EQ(Document_CreateDocumentInfo(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentInfo_CreateFromDocument(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SetDocumentInfo(document, info), VANILLAPDF_ERROR_SUCCESS);
     SetAndExpectString(info, DocumentInfo_SetTitle, DocumentInfo_GetTitle, "Saved title");
     SetAndExpectString(info, DocumentInfo_SetAuthor, DocumentInfo_GetAuthor, "Saved author");
 
@@ -223,13 +236,15 @@ TEST(DocumentInfo, SettersRejectNullParameters) {
     CreateMemoryDocument(io_stream, file, document);
 
     HandleGuard<DocumentInfoHandle, DocumentInfo_Release> info;
-    ASSERT_EQ(Document_CreateDocumentInfo(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentInfo_CreateFromDocument(document, info.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SetDocumentInfo(document, info), VANILLAPDF_ERROR_SUCCESS);
 
     EXPECT_EQ(DocumentInfo_SetTitle(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
     EXPECT_EQ(DocumentInfo_SetTitle(info, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
     EXPECT_EQ(DocumentInfo_SetCreationDate(info, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
-    EXPECT_EQ(Document_CreateDocumentInfo(nullptr, info.out()), VANILLAPDF_ERROR_PARAMETER_VALUE);
-    EXPECT_EQ(Document_CreateDocumentInfo(document, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(DocumentInfo_CreateFromDocument(nullptr, info.out()), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(DocumentInfo_CreateFromDocument(document, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Document_SetDocumentInfo(document, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 } // namespace document_info

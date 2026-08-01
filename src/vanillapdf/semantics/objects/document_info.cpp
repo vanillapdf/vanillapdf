@@ -4,6 +4,7 @@
 #include "syntax/files/file.h"
 
 #include "semantics/objects/document_info.h"
+#include "semantics/objects/document.h"
 #include "semantics/objects/date.h"
 
 #include "syntax/utils/name_constants.h"
@@ -142,6 +143,22 @@ bool DocumentInfo::Trapped(DocumentTrapped& result) const {
 
     assert(false && "Document trapped is neither of name or string");
     return false;
+}
+
+DocumentInfoPtr DocumentInfo::Create(DocumentPtr document) {
+    auto file = document->GetFile();
+
+    syntax::DictionaryObjectPtr raw_dictionary;
+
+    auto new_entry = file->AllocateNewEntry();
+    new_entry->SetReference(raw_dictionary);
+    new_entry->SetFile(file);
+    new_entry->SetInitialized();
+
+    raw_dictionary->SetFile(file);
+    raw_dictionary->SetInitialized();
+
+    return make_deferred<DocumentInfo>(raw_dictionary);
 }
 
 void DocumentInfo::SetTitle(syntax::StringObjectPtr value) {

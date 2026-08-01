@@ -58,6 +58,17 @@ extern "C"
     */
 
     /**
+    * \brief
+    * Create an empty document information dictionary registered as an
+    * indirect object within the document.
+    *
+    * The dictionary does not take effect until it is attached with
+    * \ref Document_SetDocumentInfo. Creating and attaching are deliberately
+    * separate steps, so that reading a document never modifies it.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_CreateFromDocument(DocumentHandle* handle, DocumentInfoHandle** result);
+
+    /**
     * \brief The document's title.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoHandle* handle, StringObjectHandle** result);
