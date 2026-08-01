@@ -76,6 +76,13 @@ include(cmake/vcpkg_init.cmake)
 # Define main solution
 project(vanillapdf)
 
+# Standard installation directory layout (CMAKE_INSTALL_BINDIR, CMAKE_INSTALL_LIBDIR, ...)
+# Included here rather than in cmake/vanillapdf_install.cmake, because the install
+# rules in src/vanillapdf/CMakeLists.txt run before that file is included.
+# It must come after project(), which GNUInstallDirs relies on to detect the
+# platform specific library directory.
+include(GNUInstallDirs)
+
 # Prefer files in CMAKE_MODULE_PATH over shipped ones in module directory
 # In the future, they may possibly add conflicting search modules
 # so let's be cautious and prevent it!
