@@ -28,6 +28,7 @@ void print_help() {
     printf("  read            Read a PDF using memory IO strategy\n");
     printf("  resave          Re-save a PDF document\n");
     printf("  write_custom    Write PDF with custom handler\n");
+    printf("  generate        Generate a PDF with N empty pages\n");
     printf("\nOptions:\n");
     printf("  --help, -h      Show this help message\n");
     printf("  --version, -v   Show version information\n");
@@ -105,6 +106,10 @@ int main(int argc, char *argv[]) {
 
     if (0 == strcmp(argv[1], "write_custom")) {
         return process_write_custom(argc - 2, &argv[2]);
+    }
+
+    if (0 == strcmp(argv[1], "generate")) {
+        return process_generate(argc - 2, &argv[2]);
     }
 
     print_help();

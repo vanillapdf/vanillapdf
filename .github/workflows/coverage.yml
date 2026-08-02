@@ -14,7 +14,6 @@ on:
       - 'scripts/**'
       - 'CMakeLists.txt'
       - 'CMakePresets.json'
-      - 'test/**'
 
   pull_request:
     branches:
@@ -29,7 +28,6 @@ on:
       - 'scripts/**'
       - 'CMakeLists.txt'
       - 'CMakePresets.json'
-      - 'test/**'
 
 permissions: {}
 

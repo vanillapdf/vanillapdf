@@ -47,6 +47,18 @@ add_executable(vanillapdf.test
 # Configure default compilation parameters, strict warnings, config based definition for DEBUG/RELEASE, etc.
 vanillapdf_target_compile_defaults(vanillapdf.test)
 
+# Embed a UTF-8 active-code-page manifest so the CLI receives UTF-8 argv and
+# treats narrow file paths as UTF-8 on Windows (non-ASCII paths and passwords
+# survive the argv boundary unchanged). Adding the .manifest as a target source
+# lets CMake embed it through its own manifest-tool invocation, which works with
+# both the Visual Studio and Ninja generators. Passing explicit
+# "/MANIFEST:EMBED /MANIFESTINPUT" link options instead collides with CMake's
+# default "/MANIFESTFILE" under Ninja (LNK4075 -> LNK1218 under the vcpkg port
+# build's linker /WX). MSVC only (cl and clang-cl); MinGW would need a .rc manifest.
+if(MSVC)
+    target_sources(vanillapdf.test PRIVATE vanillapdf.test.manifest)
+endif()
+
 # Configure MSVC runtime library for test target
 # Skip if already set externally (e.g. vcpkg toolchain, user, parent project)
 if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
@@ -103,23 +115,41 @@ target_compile_definitions(vanillapdf.test PRIVATE -DVANILLAPDF_TEST_ICON="${VAN
 # Python for running the test cases
 find_package (Python3 COMPONENTS Interpreter REQUIRED)
 
-# Case insensitive
-file(GLOB_RECURSE TEST_FILES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/*.[Pp][Dd][Ff]")
+# The test corpus + manifest are fetched once by cmake/testdata.cmake (included
+# from the top-level CMakeLists). Enumerate one ctest per tested corpus fixture
+# straight from the manifest — the authoritative fixture list — no globbing.
+# All manifest paths resolve against the extracted testdata root.
+file(READ "${VANILLAPDF_MANIFEST_FILE}" VANILLAPDF_MANIFEST)
 
-foreach(TEST_FILE ${TEST_FILES})
-    # Get filename from full path
-    get_filename_component(TEST_FILENAME ${TEST_FILE} NAME)
+string(JSON VANILLAPDF_MANIFEST_FILES GET "${VANILLAPDF_MANIFEST}" files)
+string(JSON VANILLAPDF_MANIFEST_COUNT LENGTH "${VANILLAPDF_MANIFEST_FILES}")
+math(EXPR VANILLAPDF_MANIFEST_LAST "${VANILLAPDF_MANIFEST_COUNT} - 1")
 
-    # Add every test file as separate entry
+foreach(_index RANGE ${VANILLAPDF_MANIFEST_LAST})
+    string(JSON TEST_KEY MEMBER "${VANILLAPDF_MANIFEST_FILES}" ${_index})
+
+    # A fixture is a test case only when it is a PDF in valid status. The
+    # manifest's orthogonal type/status fields say so directly: certificate
+    # inputs fall out by type, broken/analysis fixtures by status. No directory
+    # convention required.
+    string(JSON TEST_TYPE GET "${VANILLAPDF_MANIFEST_FILES}" "${TEST_KEY}" type)
+    string(JSON TEST_STATUS GET "${VANILLAPDF_MANIFEST_FILES}" "${TEST_KEY}" status)
+    if(NOT (TEST_TYPE STREQUAL "pdf" AND TEST_STATUS STREQUAL "valid"))
+        continue()
+    endif()
+
+    # Test name is the bare filename (corpus basenames are collision-free)
+    get_filename_component(TEST_FILENAME "${TEST_KEY}" NAME)
+
     add_test(
-        NAME ${TEST_FILENAME}							# test name same with file name
-        COMMAND ${Python3_EXECUTABLE}					# reference to python executable
-        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/run_test.py"		# path to run_test python script
-        "$<TARGET_FILE:vanillapdf.test>"				# destination of the test executable
-        "${TEST_FILE}"									# destination of the source file
-        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/vanilla_test.cfg"	# path to additional configuration file
-        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/VanillaPDF.lic"	# path to license file for test purposes
-        "${VANILLAPDF_SOLUTION_SOURCE_DIR}"							# path to root of the source directory
+        NAME ${TEST_FILENAME}
+        COMMAND ${Python3_EXECUTABLE}
+        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/run_test.py"
+        --exe            "$<TARGET_FILE:vanillapdf.test>"
+        --testdata-root  "${VANILLAPDF_TESTDATA_ROOT}"				# all manifest paths resolve here
+        --key            "${TEST_KEY}"								# manifest key for this fixture
+        --manifest       "${VANILLAPDF_MANIFEST_FILE}"				# expectations (passwords, skips, merge, signing)
+        --license        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/VanillaPDF.lic"
     )
 
     # OpenSSL 3.x: set provider module search path (see vanillapdf/CMakeLists.txt)
@@ -129,8 +159,8 @@ foreach(TEST_FILE ${TEST_FILES})
             ENVIRONMENT "OPENSSL_MODULES=${VANILLAPDF_OPENSSL_MODULES_DIR}"
         )
     endif()
-endforeach(TEST_FILE)
+endforeach()
 
 # MPK_SLOVLEX.pdf: 9.5 MB, 1,450 pages — takes 600-1500s under sanitizers and
-# dominates CI time. Disabled until test files are moved to a dedicated repo.
+# dominates CI time, so it is disabled.
 set_tests_properties(MPK_SLOVLEX.pdf PROPERTIES DISABLED TRUE)

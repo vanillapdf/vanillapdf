@@ -24,6 +24,7 @@ set(VANILLAPDF_TOOLS_SOURCES
     encrypt.c
     decrypt.c
     write_custom.c
+    generate.c
 )
 
 set(VANILLAPDF_TOOLS_HEADERS
@@ -55,6 +56,18 @@ add_executable(vanillapdf.tools
 
 # Configure default compilation parameters, strict warnings, config based definition for DEBUG/RELEASE, etc.
 vanillapdf_target_compile_defaults(vanillapdf.tools)
+
+# Embed a UTF-8 active-code-page manifest so the CLI receives UTF-8 argv and
+# treats narrow file paths as UTF-8 on Windows (non-ASCII paths and passwords
+# survive the argv boundary unchanged). Adding the .manifest as a target source
+# lets CMake embed it through its own manifest-tool invocation, which works with
+# both the Visual Studio and Ninja generators. Passing explicit
+# "/MANIFEST:EMBED /MANIFESTINPUT" link options instead collides with CMake's
+# default "/MANIFESTFILE" under Ninja (LNK4075 -> LNK1218 under the vcpkg port
+# build's linker /WX). MSVC only (cl and clang-cl); MinGW would need a .rc manifest.
+if(MSVC)
+    target_sources(vanillapdf.tools PRIVATE vanillapdf.tools.manifest)
+endif()
 
 # Configure MSVC runtime library for tools target
 # Skip if already set externally (e.g. vcpkg toolchain, user, parent project)
@@ -144,13 +157,13 @@ if(VANILLAPDF_ENABLE_TESTS)
     # Uses --skip-certificate-validation to bypass untrusted root check
     add_test(
         NAME "Tools.verify.Granizo-signed.with-flag"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/custom/Granizo-signed.PDF" --skip-certificate-validation
+        COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_CORPUS_DIR}/custom/Granizo-signed.PDF" --skip-certificate-validation
     )
 
     # Verify test for Granizo-signed.PDF without flag - should fail (untrusted root)
     add_test(
         NAME "Tools.verify.Granizo-signed.without-flag"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/custom/Granizo-signed.PDF"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_CORPUS_DIR}/custom/Granizo-signed.PDF"
     )
     set_tests_properties("Tools.verify.Granizo-signed.without-flag" PROPERTIES WILL_FAIL TRUE)
 
@@ -160,12 +173,12 @@ if(VANILLAPDF_ENABLE_TESTS)
         set_tests_properties("Tools.verify.Granizo-signed.without-flag" ${VANILLAPDF_TOOLS_EXTRA_PROPERTIES})
     endif()
 
-    # Validate tests
+    # Validate tests (paths are relative to the fetched corpus)
     set(VALIDATE_TEST_FILES
-        "test/example.pdf"
-        "test/19005-1_FAQ.PDF"
-        "test/custom/minimalist.pdf"
-        "test/pdf-association/pdf20examples/Simple-PDF-2.0-file.pdf"
+        "example.pdf"
+        "19005-1_FAQ.PDF"
+        "custom/minimalist.pdf"
+        "pdf-association/pdf20examples/Simple-PDF-2.0-file.pdf"
     )
 
     foreach(TEST_FILE ${VALIDATE_TEST_FILES})
@@ -175,7 +188,7 @@ if(VANILLAPDF_ENABLE_TESTS)
 
         add_test(
             NAME "Tools.validate.${TEST_NAME}"
-            COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/${TEST_FILE}"
+            COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_CORPUS_DIR}/${TEST_FILE}"
         )
         set_tests_properties("Tools.validate.${TEST_NAME}" PROPERTIES
             PASS_REGULAR_EXPRESSION "Issues: 0 \\(0 error"
@@ -186,37 +199,37 @@ if(VANILLAPDF_ENABLE_TESTS)
 
     # issue5874.pdf: 1 xref bad-offset error (code=300), no warnings
     add_test(
-        NAME "Tools.validate.test.pdfjs.issue5874"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/pdfjs/issue5874.pdf"
+        NAME "Tools.validate.pdfjs.issue5874"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_CORPUS_DIR}/pdfjs/issue5874.pdf"
     )
-    set_tests_properties("Tools.validate.test.pdfjs.issue5874" PROPERTIES
+    set_tests_properties("Tools.validate.pdfjs.issue5874" PROPERTIES
         PASS_REGULAR_EXPRESSION "Issues: 1 \\(1 error\\(s\\), 0 warning"
     )
 
     # request_for_taxpayer.pdf: 1 TrailerSizeMismatch warning (code=202) + 1 xref bad-offset error (code=300)
     add_test(
-        NAME "Tools.validate.test.request_for_taxpayer"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/request_for_taxpayer.pdf"
+        NAME "Tools.validate.request_for_taxpayer"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_CORPUS_DIR}/request_for_taxpayer.pdf"
     )
-    set_tests_properties("Tools.validate.test.request_for_taxpayer" PROPERTIES
+    set_tests_properties("Tools.validate.request_for_taxpayer" PROPERTIES
         PASS_REGULAR_EXPRESSION "Issues: 2 \\(1 error\\(s\\), 1 warning"
     )
 
     # bug1011159.pdf: 1 TrailerSizeMismatch warning (code=202) only - still reports VALID
     add_test(
-        NAME "Tools.validate.test.pdfjs.bug1011159"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/test/pdfjs/bug1011159.pdf"
+        NAME "Tools.validate.pdfjs.bug1011159"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_CORPUS_DIR}/pdfjs/bug1011159.pdf"
     )
-    set_tests_properties("Tools.validate.test.pdfjs.bug1011159" PROPERTIES
+    set_tests_properties("Tools.validate.pdfjs.bug1011159" PROPERTIES
         PASS_REGULAR_EXPRESSION "Issues: 1 \\(0 error\\(s\\), 1 warning"
     )
 
-    # Read tests using memory IO strategy
+    # Read tests using memory IO strategy (paths are relative to the fetched corpus)
     set(MEMORY_STRATEGY_TEST_FILES
-        "test/example.pdf"
-        "test/19005-1_FAQ.PDF"
-        "test/custom/minimalist.pdf"
-        "test/pdf-association/pdf20examples/Simple-PDF-2.0-file.pdf"
+        "example.pdf"
+        "19005-1_FAQ.PDF"
+        "custom/minimalist.pdf"
+        "pdf-association/pdf20examples/Simple-PDF-2.0-file.pdf"
     )
 
     foreach(TEST_FILE ${MEMORY_STRATEGY_TEST_FILES})
@@ -227,7 +240,19 @@ if(VANILLAPDF_ENABLE_TESTS)
 
         add_test(
             NAME "Tools.read.${TEST_NAME}"
-            COMMAND $<TARGET_FILE:vanillapdf.tools> read -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/${TEST_FILE}"
+            COMMAND $<TARGET_FILE:vanillapdf.tools> read -f "${VANILLAPDF_CORPUS_DIR}/${TEST_FILE}"
         )
     endforeach()
+
+    # Non-ASCII path coverage: this CJK-named fixture lives in-repo rather than in
+    # the fetched corpus. git checks out a UTF-8 filename correctly on every
+    # platform and locale, whereas a non-ASCII name inside the downloaded archive
+    # trips libarchive's locale conversion during extraction ("Pathname can't be
+    # converted from UTF-8 to current locale" under a C/POSIX locale). Reading it
+    # through the CLI exercises the UTF-8 app manifest end to end (argv ->
+    # File_Open) — the reason narrow non-ASCII paths survive on Windows.
+    add_test(
+        NAME "Tools.read.chinese_names_中文的名字-2"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> read -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/chinese_names_中文的名字-2.pdf"
+    )
 endif()

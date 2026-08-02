@@ -25,9 +25,6 @@ __pycache__/
 CMakeSettings.json
 /.claude/settings.local.json
 
-# Test files
-!/test/*.pdf
-
 # Log files
 *.log
 

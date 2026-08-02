@@ -33,7 +33,7 @@ Source files use **explicit lists** (NOT `file(GLOB)`):
 | Add public header | `include/files.cmake` → `VANILLAPDF_INCLUDE_*_HEADERS` variable |
 | Add C API wrapper | `src/vanillapdf/CMakeLists.txt` → `VANILLAPDF_C_IMPLEMENTATION_*` variable |
 | Add unit test file | `src/vanillapdf.unittest/CMakeLists.txt` → `VANILLAPDF_UNITTEST_SOURCES` |
-| Add integration test | Place `.pdf` in `test/` directory (auto-discovered via `file(GLOB_RECURSE)`) |
+| Add integration test | Add the `.pdf` to the external `vanillapdf-testdata` corpus and its `manifest.json`, then re-cut the release archive and bump the URL/hash in `cmake/testdata.cmake`. Tests are enumerated from the manifest at configure time. |
 
 ## Key CMake Options
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- Sets the process ANSI code page to UTF-8 (Windows 10 1903+) so the executable
+     receives UTF-8 argv and treats narrow file paths as UTF-8. Non-ASCII paths and
+     passwords then survive the argv boundary unchanged; the library owns any
+     revision-dependent password transcoding. Embedded by CMake as a target
+     source (see CMakeLists.txt); works on any Windows 1903+ with no
+     <supportedOS> compatibility block required. -->
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <application xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings>
+      <activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage>
+    </windowsSettings>
+  </application>
+</assembly>
