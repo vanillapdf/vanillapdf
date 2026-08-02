@@ -55,6 +55,11 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHandle* handle, PageContentsHandle** result);
 
     /**
+    * \copydoc PageObject_GetContents
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetContents(PageObjectHandle* handle, PageContentsHandle* value);
+
+    /**
     * \brief
     * The page tree node that is the immediate parent of this page object.
     */
@@ -71,6 +76,11 @@ extern "C"
     * shall be inherited from an ancestor node in the page tree.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectHandle* handle, ResourceDictionaryHandle** result);
+
+    /**
+    * \copydoc PageObject_GetResources
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetResources(PageObjectHandle* handle, ResourceDictionaryHandle* value);
 
     /**
     * \brief

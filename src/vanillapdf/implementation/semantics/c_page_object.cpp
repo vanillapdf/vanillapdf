@@ -27,6 +27,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHa
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetContents(PageObjectHandle* handle, PageContentsHandle* value)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    PageContents* contents = reinterpret_cast<PageContents*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(contents);
+
+    try
+    {
+        obj->SetContents(contents);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION PageObject_CreateFromDocument(DocumentHandle* handle, PageObjectHandle** result)
 {
     Document* obj = reinterpret_cast<Document*>(handle);
@@ -88,6 +102,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectH
 
         auto ptr = resources.AddRefGet();
         *result = reinterpret_cast<ResourceDictionaryHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetResources(PageObjectHandle* handle, ResourceDictionaryHandle* value)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    ResourceDictionary* resources = reinterpret_cast<ResourceDictionary*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(resources);
+
+    try
+    {
+        obj->SetResources(resources);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

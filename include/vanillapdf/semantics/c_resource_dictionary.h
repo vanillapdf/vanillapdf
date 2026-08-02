@@ -36,6 +36,25 @@ extern "C"
     * \brief
     * A dictionary that maps resource names to font dictionaries.
     */
+    /**
+    * \brief
+    * Create an empty resource dictionary.
+    *
+    * The resulting dictionary is a direct object and becomes part of the
+    * document once it is attached through \ref PageObject_SetResources.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_Create(ResourceDictionaryHandle** result);
+
+    /**
+    * \brief
+    * Create a resource dictionary from an existing low-level dictionary object.
+    *
+    * Use this overload to wrap a dictionary that is already registered
+    * in the document, for example an indirect object obtained
+    * through \ref File_AllocateNewEntry.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_CreateFromDictionary(DictionaryObjectHandle* handle, ResourceDictionaryHandle** result);
+
     VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(ResourceDictionaryHandle* handle, FontMapHandle** result);
 
     /**
