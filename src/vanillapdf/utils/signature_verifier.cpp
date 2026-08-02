@@ -160,6 +160,12 @@ void SignatureVerifier::ExtractCertificateChain(CMS_ContentInfo* cms, SignatureV
             } else {
                 auto cn_buffer = make_deferred_container<Buffer>(cn_len + 1);
                 X509_NAME_get_text_by_NID(subject, NID_commonName, cn_buffer->data(), cn_len + 1);
+
+                // OpenSSL writes a terminating null, which is not part of the value.
+                // Trim it so the buffer size is the length of the common name, the
+                // same meaning it has for every other buffer the library hands out.
+                cn_buffer->resize(cn_len);
+
                 result->SetSignerCommonName(cn_buffer);
             }
         }

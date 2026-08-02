@@ -3,6 +3,22 @@
 #include "test_certificates.h"
 #include "handle_guard.h"
 
+#include <cstring>
+
+// The common name buffer holds exactly the name, with no trailing null, so
+// the length is checked explicitly and the contents compared element wise.
+static void ExpectBufferContent(BufferHandle* handle, const char* expected) {
+    string_type data = nullptr;
+    size_type size = 0;
+    ASSERT_EQ(Buffer_GetData(handle, &data, &size), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(size, strlen(expected));
+
+    for (size_type i = 0; i < size; ++i) {
+        EXPECT_EQ(data[i], expected[i]);
+    }
+}
+
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 #include <openssl/opensslv.h>
 #endif
@@ -1003,12 +1019,8 @@ TEST(SignatureVerifier, CreateAndVerifySignature) {
               VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(common_name_buffer.get(), nullptr);
 
-    string_type cn_data = nullptr;
-    size_type cn_len = 0;
-    ASSERT_EQ(Buffer_GetData(common_name_buffer, &cn_data, &cn_len), VANILLAPDF_ERROR_SUCCESS);
-
     // Common name should be "Unit test signer" from SIGNING_CERTIFICATE
-    EXPECT_STREQ(cn_data, "Unit test signer");
+    ExpectBufferContent(common_name_buffer, "Unit test signer");
 
     // Validate certificate chain
     size_type chain_count = 0;
@@ -1214,10 +1226,7 @@ TEST(DigitalSignatureExtensions, SignAndVerifyDocument) {
               VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(common_name_buffer.get(), nullptr);
 
-    string_type cn_data = nullptr;
-    size_type cn_len = 0;
-    ASSERT_EQ(Buffer_GetData(common_name_buffer, &cn_data, &cn_len), VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_STREQ(cn_data, "Unit test signer");
+    ExpectBufferContent(common_name_buffer, "Unit test signer");
 
     // Validate results
     EXPECT_EQ(status, SignatureStatus_Valid);
@@ -1322,11 +1331,8 @@ TEST_P(CertificateTypeTest, SignAndVerify_Integration) {
               VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(common_name_buffer.get(), nullptr);
 
-    string_type cn_data = nullptr;
-    size_type cn_len = 0;
-    ASSERT_EQ(Buffer_GetData(common_name_buffer, &cn_data, &cn_len), VANILLAPDF_ERROR_SUCCESS);
-
-    EXPECT_STREQ(cn_data, cert_info.expected_cn) << "Common name mismatch for " << cert_info.name;
+    SCOPED_TRACE(cert_info.name);
+    ExpectBufferContent(common_name_buffer, cert_info.expected_cn);
 }
 
 // Instantiate the parameterized test with different certificate types
