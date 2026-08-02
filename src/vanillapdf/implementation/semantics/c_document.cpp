@@ -192,6 +192,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHa
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Document_SetDocumentInfo(DocumentHandle* handle, DocumentInfoHandle* value)
+{
+    Document* document = reinterpret_cast<Document*>(handle);
+    DocumentInfo* info = reinterpret_cast<DocumentInfo*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(info);
+
+    try
+    {
+        document->SetDocumentInfo(info);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Document_AppendDocument(DocumentHandle* handle, DocumentHandle* source_handle)
 {
     Document* document = reinterpret_cast<Document*>(handle);

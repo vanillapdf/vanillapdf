@@ -38,6 +38,7 @@ public:
 
     bool GetDocumentCatalog(OutputCatalogPtr& result) const;
     bool GetDocumentInfo(OutputDocumentInfoPtr& result) const;
+    void SetDocumentInfo(DocumentInfoPtr value);
 
 private:
     bool ResolveCatalog(OutputCatalogPtr& result) const;

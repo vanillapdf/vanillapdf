@@ -92,6 +92,16 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHandle* handle, DocumentInfoHandle** result);
 
     /**
+    * \brief
+    * Attach a document information dictionary to the document.
+    *
+    * The trailer stores an indirect reference, so the dictionary has to be
+    * registered within the document - use
+    * \ref DocumentInfo_CreateFromDocument to obtain one.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Document_SetDocumentInfo(DocumentHandle* handle, DocumentInfoHandle* value);
+
+    /**
     * \brief Append another document's contents at the end of the file.
     *
     * This appends all \p source document's pages beyond \p handle document's pages.

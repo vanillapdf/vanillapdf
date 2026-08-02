@@ -20,6 +20,10 @@ class DocumentInfo : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
     explicit DocumentInfo(syntax::DictionaryObjectPtr root);
 
+    // Creates an empty information dictionary registered as an indirect object
+    // within the document. Attach it through Document::SetDocumentInfo.
+    static DocumentInfoPtr Create(DocumentPtr document);
+
     // optional
     bool Title(syntax::OutputStringObjectPtr& result) const;
     bool Author(syntax::OutputStringObjectPtr& result) const;

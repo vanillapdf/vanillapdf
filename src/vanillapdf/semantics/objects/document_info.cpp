@@ -4,6 +4,7 @@
 #include "syntax/files/file.h"
 
 #include "semantics/objects/document_info.h"
+#include "semantics/objects/document.h"
 #include "semantics/objects/date.h"
 
 #include "syntax/utils/name_constants.h"
@@ -144,36 +145,52 @@ bool DocumentInfo::Trapped(DocumentTrapped& result) const {
     return false;
 }
 
+DocumentInfoPtr DocumentInfo::Create(DocumentPtr document) {
+    auto file = document->GetFile();
+
+    syntax::DictionaryObjectPtr raw_dictionary;
+
+    auto new_entry = file->AllocateNewEntry();
+    new_entry->SetReference(raw_dictionary);
+    new_entry->SetFile(file);
+    new_entry->SetInitialized();
+
+    raw_dictionary->SetFile(file);
+    raw_dictionary->SetInitialized();
+
+    return make_deferred<DocumentInfo>(raw_dictionary);
+}
+
 void DocumentInfo::SetTitle(syntax::StringObjectPtr value) {
-    _obj->Insert(constant::Name::Title, value);
+    _obj->Insert(constant::Name::Title, value, true);
 }
 
 void DocumentInfo::SetAuthor(syntax::StringObjectPtr value) {
-    _obj->Insert(constant::Name::Author, value);
+    _obj->Insert(constant::Name::Author, value, true);
 }
 
 void DocumentInfo::SetSubject(syntax::StringObjectPtr value) {
-    _obj->Insert(constant::Name::Subject, value);
+    _obj->Insert(constant::Name::Subject, value, true);
 }
 
 void DocumentInfo::SetKeywords(syntax::StringObjectPtr value) {
-    _obj->Insert(constant::Name::Keywords, value);
+    _obj->Insert(constant::Name::Keywords, value, true);
 }
 
 void DocumentInfo::SetCreator(syntax::StringObjectPtr value) {
-    _obj->Insert(constant::Name::Creator, value);
+    _obj->Insert(constant::Name::Creator, value, true);
 }
 
 void DocumentInfo::SetProducer(syntax::StringObjectPtr value) {
-    _obj->Insert(constant::Name::Producer, value);
+    _obj->Insert(constant::Name::Producer, value, true);
 }
 
 void DocumentInfo::SetCreationDate(DatePtr value) {
-    _obj->Insert(constant::Name::CreationDate, value->GetObject());
+    _obj->Insert(constant::Name::CreationDate, value->GetObject(), true);
 }
 
 void DocumentInfo::SetModificationDate(DatePtr value) {
-    _obj->Insert(constant::Name::ModDate, value->GetObject());
+    _obj->Insert(constant::Name::ModDate, value->GetObject(), true);
 }
 
 void DocumentInfo::SetTrapped(DocumentTrapped value) {
@@ -194,7 +211,7 @@ void DocumentInfo::SetTrapped(DocumentTrapped value) {
             throw InvalidParameterException("Unknown trapped type");
     }
 
-    _obj->Insert(constant::Name::Trapped, name);
+    _obj->Insert(constant::Name::Trapped, name, true);
 }
 
 } // semantics
