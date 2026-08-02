@@ -196,6 +196,7 @@ extern "C"
     DECLARE_OBJECT_HANDLE(InkAnnotation);
 
     DECLARE_OBJECT_HANDLE(InteractiveForm);
+    DECLARE_OBJECT_HANDLE(SignatureFlags);
 
     DECLARE_OBJECT_HANDLE(DigitalSignature);
     DECLARE_OBJECT_HANDLE(ByteRangeCollection);

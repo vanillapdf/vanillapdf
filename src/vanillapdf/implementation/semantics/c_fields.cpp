@@ -240,6 +240,17 @@ VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionAt(ChoiceField
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Create(FieldCollectionHandle** result) {
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto collection = FieldCollection::Create();
+        auto ptr = collection.AddRefGet();
+        *result = reinterpret_cast<FieldCollectionHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_GetSize(FieldCollectionHandle* handle, size_type* result) {
     FieldCollection* collection = reinterpret_cast<FieldCollection*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(collection);

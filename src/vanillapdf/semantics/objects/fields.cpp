@@ -186,6 +186,11 @@ bool SignatureField::Value(OuputDigitalSignaturePtr& result) const {
     return true;
 }
 
+FieldCollectionPtr FieldCollection::Create() {
+    syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> fields;
+    return make_deferred<FieldCollection>(fields);
+}
+
 types::size_type FieldCollection::GetSize() const {
     return _obj->GetSize();
 }

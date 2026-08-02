@@ -11,6 +11,11 @@ namespace semantics {
 class FieldCollection : public HighLevelObject<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>> {
 public:
     explicit FieldCollection(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root) : HighLevelObject(root) {}
+
+    // Creates an empty field collection. The array is attached as a direct
+    // object through InteractiveForm::SetFields.
+    static FieldCollectionPtr Create();
+
     types::size_type GetSize() const;
     FieldPtr At(types::size_type index) const;
 };

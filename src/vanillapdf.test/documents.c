@@ -1790,6 +1790,7 @@ error_type process_document_edit(
 
 error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
     FieldCollectionHandle* fields = NULL;
+    SignatureFlagsHandle* signature_flags = NULL;
     boolean_type need_appearances = VANILLAPDF_RV_FALSE;
 
     print_spaces(nested);
@@ -1798,12 +1799,41 @@ error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(InteractiveForm_GetNeedAppearances(obj, &need_appearances),
         VANILLAPDF_TEST_ERROR_SUCCESS);
 
+    print_spaces(nested + 1);
+    print_text("Need appearances: %d\n", need_appearances);
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(InteractiveForm_GetSignatureFlags(obj, &signature_flags),
+        process_signature_flags(signature_flags, nested + 1),
+        SignatureFlags_Release(signature_flags));
+
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(InteractiveForm_GetFields(obj, &fields),
         process_field_collection(fields, nested + 1),
         FieldCollection_Release(fields));
 
     print_spaces(nested);
     print_text("Interactive form end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_signature_flags(SignatureFlagsHandle* obj, int nested) {
+    boolean_type signatures_exist = VANILLAPDF_RV_FALSE;
+    boolean_type append_only = VANILLAPDF_RV_FALSE;
+
+    print_spaces(nested);
+    print_text("Signature flags begin\n");
+
+    RETURN_ERROR_IF_NOT_SUCCESS(SignatureFlags_GetSignaturesExist(obj, &signatures_exist));
+    RETURN_ERROR_IF_NOT_SUCCESS(SignatureFlags_GetAppendOnly(obj, &append_only));
+
+    print_spaces(nested + 1);
+    print_text("Signatures exist: %d\n", signatures_exist);
+
+    print_spaces(nested + 1);
+    print_text("Append only: %d\n", append_only);
+
+    print_spaces(nested);
+    print_text("Signature flags end\n");
 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
