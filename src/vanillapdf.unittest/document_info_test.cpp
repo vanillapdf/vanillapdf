@@ -17,11 +17,11 @@ static void CreateMemoryDocument(
     ASSERT_EQ(Document_CreateFile(file, document.out()), VANILLAPDF_ERROR_SUCCESS);
 }
 
-// Reads the decoded contents of a string object into result.
-// Buffer data is a std::vector<char> and is not null terminated, so it is
-// copied into a std::string, whose c_str() is terminated and therefore safe
-// to compare with EXPECT_STREQ.
-static void GetDecodedString(StringObjectHandle* handle, std::string& result) {
+// Verifies that a string object holds the expected decoded contents.
+// Buffer data is a std::vector<char> and carries no null terminator, so the
+// length is checked explicitly and the contents compared element wise rather
+// than handing the raw pointer to a string comparison.
+static void ExpectDecodedString(StringObjectHandle* handle, const std::string& expected) {
     HandleGuard<BufferHandle, Buffer_Release> buffer;
     ASSERT_EQ(StringObject_GetValue(handle, buffer.out()), VANILLAPDF_ERROR_SUCCESS);
 
@@ -29,7 +29,11 @@ static void GetDecodedString(StringObjectHandle* handle, std::string& result) {
     size_type size = 0;
     ASSERT_EQ(Buffer_GetData(buffer, &data, &size), VANILLAPDF_ERROR_SUCCESS);
 
-    result.assign(data, size);
+    ASSERT_EQ(size, expected.size());
+
+    for (size_type i = 0; i < size; ++i) {
+        EXPECT_EQ(data[i], expected[i]);
+    }
 }
 
 static void SetAndExpectString(
@@ -46,9 +50,7 @@ static void SetAndExpectString(
     HandleGuard<StringObjectHandle, StringObject_Release> result;
     ASSERT_EQ(getter(info, result.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    std::string decoded;
-    GetDecodedString(result, decoded);
-    EXPECT_STREQ(decoded.c_str(), value);
+    ExpectDecodedString(result, value);
 }
 
 TEST(DocumentInfo, SetAndGetStringEntries) {
@@ -182,9 +184,7 @@ TEST(DocumentInfo, SetDocumentInfoOverwrite) {
     HandleGuard<StringObjectHandle, StringObject_Release> title;
     ASSERT_EQ(DocumentInfo_GetTitle(found, title.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    std::string decoded_title;
-    GetDecodedString(title, decoded_title);
-    EXPECT_STREQ(decoded_title.c_str(), "Second title");
+    ExpectDecodedString(title, "Second title");
 }
 
 // Metadata set through the setters has to survive a save/reload cycle
@@ -220,13 +220,8 @@ TEST(DocumentInfo, SettersPersistAcrossSave) {
     ASSERT_EQ(DocumentInfo_GetTitle(reloaded_info, title.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(DocumentInfo_GetAuthor(reloaded_info, author.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    std::string decoded_title;
-    std::string decoded_author;
-    GetDecodedString(title, decoded_title);
-    GetDecodedString(author, decoded_author);
-
-    EXPECT_STREQ(decoded_title.c_str(), "Saved title");
-    EXPECT_STREQ(decoded_author.c_str(), "Saved author");
+    ExpectDecodedString(title, "Saved title");
+    ExpectDecodedString(author, "Saved author");
 }
 
 TEST(DocumentInfo, SettersRejectNullParameters) {
