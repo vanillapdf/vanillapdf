@@ -807,25 +807,27 @@ target_include_directories(vanillapdf PUBLIC
 # Project install targets
 install(TARGETS vanillapdf
     EXPORT vanillapdfTargets
-    RUNTIME DESTINATION bin COMPONENT Runtime
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT Runtime
     LIBRARY DESTINATION lib COMPONENT Runtime
     ARCHIVE DESTINATION lib COMPONENT Development
 )
 
 if (MSVC AND BUILD_SHARED_LIBS)
 
-    # Install PDBs in vcpkg-style folders
+    # The PDB belongs next to the DLL it describes. Package managers that keep
+    # debug and release side by side in a single tree (vcpkg, conan) produce that
+    # split by installing each configuration into its own prefix, so the
+    # destination must not encode it. Hardcoding "debug/bin" here made vcpkg
+    # place the debug PDB in "debug/debug/bin"
+    # See https://github.com/vanillapdf/vanillapdf/issues/484
+    #
+    # $<TARGET_PDB_FILE:...> resolves per configuration, so a single rule covers
+    # all of them, including custom ones. The rule is deliberately not OPTIONAL,
+    # a missing PDB means an incomplete package and has to fail the installation
+    # instead of shipping silently.
     install(FILES
         "$<TARGET_PDB_FILE:vanillapdf>"
-        DESTINATION debug/bin
-        CONFIGURATIONS Debug
-        COMPONENT Development
-    )
-
-    install(FILES
-        "$<TARGET_PDB_FILE:vanillapdf>"
-        DESTINATION bin
-        CONFIGURATIONS Release RelWithDebInfo MinSizeRel
+        DESTINATION "${CMAKE_INSTALL_BINDIR}"
         COMPONENT Development
     )
 
