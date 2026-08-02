@@ -826,10 +826,11 @@ if (MSVC AND BUILD_SHARED_LIBS)
     # all of them, including custom ones. The rule is deliberately not OPTIONAL,
     # a missing PDB means an incomplete package and has to fail the installation
     # instead of shipping silently.
+    # Own component so consumers that reject debug symbols can skip them.
     install(FILES
         "$<TARGET_PDB_FILE:vanillapdf>"
         DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        COMPONENT Development
+        COMPONENT Symbols
     )
 
 endif()
@@ -840,13 +841,23 @@ install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillap
 install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics" COMPONENT Development)
 install(FILES ${VANILLAPDF_INCLUDE_CONTENTS_HEADERS} DESTINATION "include/vanillapdf/contents" COMPONENT Development)
 
-# Additional metadata for the project, that should be bundled together
+# Split because Apache-2.0 section 4(d) requires LICENSE and NOTICE to be
+# redistributed, while the readme is informational. The destination is
+# overridable for packagers that expect them elsewhere (Conan uses licenses/).
+set(VANILLAPDF_INSTALL_LICENSEDIR "share/vanillapdf" CACHE STRING
+    "Destination for LICENSE.txt and NOTICE.md, relative to the install prefix")
+
 install(FILES
-    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/README.txt"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/LICENSE.txt"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/NOTICE.md"
+    DESTINATION "${VANILLAPDF_INSTALL_LICENSEDIR}"
+    COMPONENT Licenses
+)
+
+install(FILES
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/cmake/README.txt"
     DESTINATION "share/vanillapdf"
-    COMPONENT Runtime
+    COMPONENT Documentation
 )
 
 # Define installation files and procedures
