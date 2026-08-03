@@ -37,8 +37,16 @@ install(FILES
   COMPONENT Development
 )
 
+# Which dependencies a consumer has to resolve depends on how this package was
+# built, so the build options are recorded in the generated file.
+configure_file(
+  ${CMAKE_CURRENT_LIST_DIR}/vanillapdfDependencies.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/vanillapdfDependencies.cmake
+  @ONLY
+)
+
 install(FILES
-  ${CMAKE_CURRENT_LIST_DIR}/vanillapdfDependencies.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/vanillapdfDependencies.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vanillapdf
   COMPONENT Development
 )
