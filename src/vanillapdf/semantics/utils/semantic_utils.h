@@ -15,7 +15,7 @@ public:
     static bool HasMappedDocument(WeakReference<syntax::File> file);
     static WeakReference<Document> GetMappedDocument(WeakReference<syntax::File> file);
     static void AddDocumentMapping(WeakReference<syntax::File> file, WeakReference<Document> value);
-    static void ReleaseMapping(WeakReference<syntax::File> file);
+    static void ReleaseMapping(WeakReference<syntax::File> file, const Document* owner);
 
     /**
      * @brief Atomically get existing or create new document for the given file.

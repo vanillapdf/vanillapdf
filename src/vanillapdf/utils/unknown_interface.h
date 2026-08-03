@@ -6,6 +6,7 @@
 #include <memory>
 #include <atomic>
 #include <cassert>
+#include <optional>
 
 namespace vanillapdf {
 
@@ -60,6 +61,14 @@ public:
         return (m_ptr == other.m_ptr);
     }
 
+    bool Identity(const T* other) const noexcept {
+        if (m_ptr == nullptr) {
+            return false;
+        }
+
+        return (m_ptr == other);
+    }
+
     bool IsEmpty() const noexcept {
         return (m_ptr == nullptr);
     }
@@ -68,18 +77,29 @@ public:
         return (m_counter ? m_counter->IsActive() : false);
     }
 
-    Deferred<T> GetReference() const {
-        if (!IsActive()) {
-            throw InvalidParameterException("Object has been already disposed");
+    // Upgrade to a strong reference in a single step, reporting failure instead
+    // of throwing. Prefer this over the IsActive() + GetReference() pair, which
+    // leaves a window for the object to reach the end of its life in between.
+    std::optional<Deferred<T>> TryGetReference() const {
+        if (m_ptr == nullptr || !IsActive() || !m_ptr->TryAddRef()) {
+            return std::nullopt;
         }
 
-        // This shall not happen, because IsActive should check m_ptr
-        assert(m_ptr && "Referenced pointer is empty");
-        if (m_ptr == nullptr) {
+        // Adopt the reference TryAddRef has already taken
+        return Deferred<T>(m_ptr, false);
+    }
+
+    Deferred<T> GetReference() const {
+        if (IsEmpty()) {
             throw InvalidParameterException("Pointer object was not set");
         }
 
-        return Deferred<T>(m_ptr);
+        auto acquired = TryGetReference();
+        if (!acquired.has_value()) {
+            throw InvalidParameterException("Object has been already disposed");
+        }
+
+        return acquired.value();
     }
 
     //// The reason why value cannot be const is
@@ -146,6 +166,11 @@ public:
 
     void AddRef() noexcept;
     void Release() noexcept;
+
+    // Raise the counter only if it has not reached zero yet. At zero the object
+    // has committed to destruction and reviving it would create a second owner
+    // of storage that is already being torn down.
+    bool TryAddRef() noexcept;
 
     virtual ~IUnknown() = 0;
 
