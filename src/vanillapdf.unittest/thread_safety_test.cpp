@@ -535,6 +535,221 @@ TEST(CatalogThreadSafety, ConcurrentLazyInitReturnsSameInstance) {
         << "Document::GetDocumentCatalog returned multiple Catalog instances under concurrency";
 }
 
+// Give the document a few more pages, each carrying a content stream, so that
+// the walk below has a real page pipeline to traverse rather than the single
+// empty page Document_CreateFile leaves behind.
+void AppendPagesWithContents(DocumentHandle* doc, PageTreeHandle* page_tree, int count) {
+    for (int i = 0; i < count; ++i) {
+        HandleGuard<PageObjectHandle, PageObject_Release> page;
+        HandleGuard<PageContentsHandle, PageContents_Release> contents;
+
+        ASSERT_EQ(PageObject_CreateFromDocument(doc, page.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(PageContents_CreateFromDocument(doc, contents.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(PageObject_SetContents(page, contents), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
+    }
+}
+
+// What one walking thread observed. The two handles are kept so the caller can
+// compare instance identity across threads; everything else is released as the
+// walk goes.
+struct SemanticWalkObservation {
+    CatalogHandle* catalog = nullptr;
+    PageTreeHandle* page_tree = nullptr;
+    size_type page_count = 0;
+    int errors = 0;
+};
+
+// Walk the chain a viewer actually follows to paint a page:
+// document -> catalog -> page tree -> page -> contents -> instructions.
+//
+// Every level of it caches lazily, so a walk that starts on a cold document
+// exercises Document::m_catalog, Catalog::m_pages, PageTree's flat page cache,
+// PageObject::m_contents and PageContents::m_instructions in one pass.
+void SemanticWalkWorker(DocumentHandle* doc, SemanticWalkObservation& observation) {
+    if (Document_GetCatalog(doc, &observation.catalog) != VANILLAPDF_ERROR_SUCCESS) {
+        observation.errors += 1;
+        return;
+    }
+
+    if (Catalog_GetPages(observation.catalog, &observation.page_tree) != VANILLAPDF_ERROR_SUCCESS) {
+        observation.errors += 1;
+        return;
+    }
+
+    if (PageTree_GetPageCount(observation.page_tree, &observation.page_count) != VANILLAPDF_ERROR_SUCCESS) {
+        observation.errors += 1;
+        return;
+    }
+
+    // Pages are indexed from 1
+    for (size_type at = 1; at <= observation.page_count; ++at) {
+        PageObjectHandle* page = nullptr;
+        if (PageTree_GetPage(observation.page_tree, at, &page) != VANILLAPDF_ERROR_SUCCESS) {
+            observation.errors += 1;
+            continue;
+        }
+
+        // The first page carries no contents, so a missing entry is expected
+        // and only a hard failure below counts as an error
+        PageContentsHandle* contents = nullptr;
+        if (PageObject_GetContents(page, &contents) == VANILLAPDF_ERROR_SUCCESS) {
+            ContentInstructionCollectionHandle* instructions = nullptr;
+            if (PageContents_GetInstructionCollection(contents, &instructions) == VANILLAPDF_ERROR_SUCCESS) {
+                size_type instruction_count = 0;
+                if (ContentInstructionCollection_GetSize(instructions, &instruction_count) != VANILLAPDF_ERROR_SUCCESS) {
+                    observation.errors += 1;
+                }
+
+                ContentInstructionCollection_Release(instructions);
+            }
+
+            PageContents_Release(contents);
+        }
+
+        PageObject_Release(page);
+    }
+}
+
+// Regression test for lazy caches along the page pipeline, of which
+// Catalog::Pages was the one still hand-rolled.
+//
+// Document::GetDocumentCatalog was moved onto CachedValue, but Catalog::Pages
+// kept the older form - test the cache, build a PageTree, assign to the mutable
+// member - which is unsafe under concurrent first access: two threads both see
+// the empty cache, both construct, and both assign over the same refcounted
+// member, racing on its pointer and reference count.
+//
+// Rather than poking that one accessor, this walks the whole chain a viewer
+// follows to paint a page, so any level of it that caches unsafely shows up
+// here. A correct implementation hands every thread the same cached Catalog and
+// the same cached PageTree, and every thread agrees on the page count.
+//
+// Each document only races on its first access, so many fresh documents are
+// used to get many cold-cache windows, with a spin barrier releasing all
+// threads into the cold caches at the same moment.
+TEST(SemanticLayerThreadSafety, ConcurrentPagePipelineWalkIsConsistent) {
+    constexpr int NUM_DOCUMENTS = 250;
+    constexpr int NUM_THREADS = 16;
+    constexpr int EXTRA_PAGES = 3;
+
+    std::atomic<int> catalog_mismatches{0};
+    std::atomic<int> page_tree_mismatches{0};
+    std::atomic<int> page_count_mismatches{0};
+    std::atomic<int> error_count{0};
+
+    bigint_type baseline_objects = 0;
+
+    for (int d = 0; d < NUM_DOCUMENTS; ++d) {
+        {
+            HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+            HandleGuard<FileHandle, File_Release> file;
+
+            ASSERT_EQ(InputOutputStream_CreateFromMemory(io_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+            ASSERT_EQ(File_CreateStream(io_stream, "page_pipeline_race", file.out()), VANILLAPDF_ERROR_SUCCESS);
+
+            // Build the pages through a document that is then dropped entirely.
+            // Releasing only the handles would not help - the page tree is
+            // cached on the catalog, and the catalog on the document, so the
+            // caches stay warm for as long as that document lives.
+            {
+                HandleGuard<DocumentHandle, Document_Release> setup_doc;
+                HandleGuard<CatalogHandle, Catalog_Release> setup_catalog;
+                HandleGuard<PageTreeHandle, PageTree_Release> setup_pages;
+
+                ASSERT_EQ(Document_CreateFile(file, setup_doc.out()), VANILLAPDF_ERROR_SUCCESS);
+                ASSERT_EQ(Document_GetCatalog(setup_doc, setup_catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+                ASSERT_EQ(Catalog_GetPages(setup_catalog, setup_pages.out()), VANILLAPDF_ERROR_SUCCESS);
+
+                AppendPagesWithContents(setup_doc, setup_pages, EXTRA_PAGES);
+            }
+
+            // Re-open the same file. The previous document is gone, so this is a
+            // fresh one whose catalog and page tree caches are both cold.
+            HandleGuard<DocumentHandle, Document_Release> doc;
+            ASSERT_EQ(Document_OpenFile(file, doc.out()), VANILLAPDF_ERROR_SUCCESS);
+
+            std::atomic<int> ready{0};
+            std::atomic<bool> go{false};
+
+            std::vector<SemanticWalkObservation> observations(NUM_THREADS);
+            std::vector<std::thread> threads;
+
+            for (int t = 0; t < NUM_THREADS; ++t) {
+                threads.emplace_back([&, t]() {
+                    ready.fetch_add(1);
+                    while (!go.load()) { std::this_thread::yield(); }
+
+                    SemanticWalkWorker(doc, observations[t]);
+                });
+            }
+
+            while (ready.load() < NUM_THREADS) { std::this_thread::yield(); }
+            go.store(true);
+
+            for (auto& thread : threads) {
+                thread.join();
+            }
+
+            const SemanticWalkObservation* first = nullptr;
+            for (const auto& observation : observations) {
+                error_count.fetch_add(observation.errors);
+
+                if (observation.catalog == nullptr || observation.page_tree == nullptr) {
+                    continue;
+                }
+
+                if (first == nullptr) {
+                    first = &observation;
+                    continue;
+                }
+
+                if (observation.catalog != first->catalog) {
+                    catalog_mismatches.fetch_add(1);
+                }
+
+                if (observation.page_tree != first->page_tree) {
+                    page_tree_mismatches.fetch_add(1);
+                }
+
+                if (observation.page_count != first->page_count) {
+                    page_count_mismatches.fetch_add(1);
+                }
+            }
+
+            for (const auto& observation : observations) {
+                if (observation.page_tree != nullptr) {
+                    PageTree_Release(observation.page_tree);
+                }
+
+                if (observation.catalog != nullptr) {
+                    Catalog_Release(observation.catalog);
+                }
+            }
+        }
+
+        // Take the baseline once the first document has been built and torn
+        // down, so anything allocated lazily on the way is already accounted for
+        if (d == 0) {
+            ASSERT_EQ(ObjectDiagnostics_GetActiveObjectCount(&baseline_objects), VANILLAPDF_ERROR_SUCCESS);
+        }
+    }
+
+    EXPECT_EQ(error_count.load(), 0);
+    EXPECT_EQ(catalog_mismatches.load(), 0)
+        << "Document::GetDocumentCatalog returned multiple Catalog instances under concurrency";
+    EXPECT_EQ(page_tree_mismatches.load(), 0)
+        << "Catalog::Pages returned multiple PageTree instances under concurrency";
+    EXPECT_EQ(page_count_mismatches.load(), 0)
+        << "Threads disagreed on the page count, the page tree cache was built concurrently";
+
+    // Every document and handle above has been released, so the live object
+    // count has to be back where it started
+    bigint_type remaining_objects = 0;
+    ASSERT_EQ(ObjectDiagnostics_GetActiveObjectCount(&remaining_objects), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(remaining_objects, baseline_objects);
+}
+
 // Regression test for the shared input-stream cursor race in File::GetByteRange.
 //
 // A single PDF File is backed by one input stream with a single read cursor. Reading a
