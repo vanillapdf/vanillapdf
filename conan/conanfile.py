@@ -15,7 +15,7 @@ class VanillaPDFConan(ConanFile):
     topics = ("pdf", "document", "toolkit")
 
     package_type = "library"
-    settings = "os", "compiler", "build_type", "arch"
+    settings = "os", "arch", "compiler", "build_type"
 
     options = {
         "shared": [True, False],
@@ -26,18 +26,27 @@ class VanillaPDFConan(ConanFile):
         "fPIC": True,
     }
 
+    # cci-strip-begin
+    # Building from a repo checkout exports the tree directly, which is how
+    # `conan create conan/` works for versions that have no release tag yet.
+    # Conan Center recipes carry no sources at all - they build the released
+    # tarball named in conandata.yml - so scripts/prepare_cci_recipe.py drops
+    # every cci-strip block when it copies this recipe into the CCI layout.
     def export_sources(self):
-        # For local builds from repo checkout
         src = os.path.join(self.recipe_folder, "..")
         for pattern in ["CMakeLists.txt", "LICENSE.txt", "NOTICE.md"]:
             copy(self, pattern, src=src, dst=self.export_sources_folder)
         for dir in ["cmake", "include", "src"]:
             copy(self, f"{dir}/*", src=src, dst=self.export_sources_folder)
 
+    # cci-strip-end
     def source(self):
-        # For CCI builds - download if source not already exported
-        if not os.path.exists(os.path.join(self.source_folder, "CMakeLists.txt")):
-            get(self, **self.conan_data["sources"][self.version], strip_root=True)
+        # cci-strip-begin
+        # A local build already exported the sources - nothing to download.
+        if os.path.exists(os.path.join(self.source_folder, "CMakeLists.txt")):
+            return
+        # cci-strip-end
+        get(self, **self.conan_data["sources"][self.version], strip_root=True)
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -51,15 +60,24 @@ class VanillaPDFConan(ConanFile):
         check_min_cppstd(self, 17)
 
     def requirements(self):
-        self.requires("spdlog/[>=1.14]")
-        self.requires("fmt/[>=10.0]")
+        # Every range is capped at the next major, matching Conan Center
+        # practice: a new major is an ABI break we have not built against.
+        self.requires("spdlog/[>=1.14 <2]")
+        self.requires("fmt/[>=10.0 <13]")
         self.requires("openssl/[>=3.0 <4]")
-        self.requires("zlib/[>=1.2]")
-        self.requires("libjpeg-turbo/[>=2.0]")
-        self.requires("openjpeg/[>=2.5]")
+        self.requires("zlib/[>=1.2 <2]")
+        self.requires("libjpeg-turbo/[>=2.0 <4]")
+        self.requires("openjpeg/[>=2.5 <3]")
 
     def layout(self):
+        # cci-strip-begin
+        # A local build exports the tree straight into the source root.
         cmake_layout(self, src_folder=".")
+        return
+        # cci-strip-end
+        # Conan Center extracts the downloaded tarball into a src subfolder so
+        # it stays separate from the exported conanfile.py and conandata.yml.
+        cmake_layout(self, src_folder="src")
 
     def generate(self):
         tc = CMakeToolchain(self)

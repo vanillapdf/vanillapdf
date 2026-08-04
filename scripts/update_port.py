@@ -38,7 +38,9 @@ class PortUpdater:
         """Run a command and return the result."""
         cwd = cwd or self.repo_root
         print(f"Running: {' '.join(cmd)} (in {cwd})")
-        return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, check=check)
+        # Capture stdout only - stderr is inherited so git's own error messages
+        # reach the log instead of being swallowed with the exit status.
+        return subprocess.run(cmd, cwd=cwd, stdout=subprocess.PIPE, text=True, check=check)
 
     def get_latest_release_tag(self) -> Tuple[str, str]:
         """Get the latest release tag and version from the repository."""
@@ -140,7 +142,9 @@ class PortUpdater:
 
     def create_update_branch(self, version: str) -> str:
         """Create a new branch for the port update."""
-        branch_name = f"release/port-{version}"
+        # The release/ prefix is reserved for real release branches, which are
+        # protected and reject direct pushes - see automated/update-vcpkg-*.
+        branch_name = f"automated/update-port-{version}"
         print(f"Creating branch: {branch_name}")
 
         # Check if we're on a clean state
@@ -221,7 +225,7 @@ def main():
             print(f"\nDRY RUN: Would update port from {current_version} to {version}")
             print(f"DRY RUN: Would download tarball for {tag} and calculate SHA512")
             if not args.no_branch:
-                print(f"DRY RUN: Would create branch 'release/port-{version}'")
+                print(f"DRY RUN: Would create branch 'automated/update-port-{version}'")
             if not args.no_push:
                 print("DRY RUN: Would push branch to remote")
             return

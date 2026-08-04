@@ -6,7 +6,9 @@ import os
 
 class VanillaPDFTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    generators = "CMakeDeps", "CMakeToolchain"
+    # VirtualRunEnv writes conanrun, which the test below activates. A shared
+    # build needs it to find the library at runtime.
+    generators = "CMakeDeps", "CMakeToolchain", "VirtualRunEnv"
 
     def layout(self):
         cmake_layout(self)
@@ -21,5 +23,5 @@ class VanillaPDFTestConan(ConanFile):
 
     def test(self):
         if can_run(self):
-            cmd = os.path.join(self.cpp.build.bindir, "test_vanillapdf")
+            cmd = os.path.join(self.cpp.build.bindirs[0], "test_package")
             self.run(cmd, env="conanrun")
