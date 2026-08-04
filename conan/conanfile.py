@@ -1,8 +1,15 @@
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps, cmake_layout
 from conan.tools.build import check_min_cppstd
-from conan.tools.files import get, copy
+from conan.tools.files import get
+# cci-strip-begin
+from conan.tools.files import copy
+# cci-strip-end
+from conan.tools.microsoft import is_msvc
 import os
+
+
+required_conan_version = ">=2.0.9"
 
 
 class VanillaPDFConan(ConanFile):
@@ -106,6 +113,8 @@ class VanillaPDFConan(ConanFile):
         # Conan's CMakeDeps generates its own find_package config files
         tc.cache_variables["VANILLAPDF_SKIP_CMAKE_CONFIG_INSTALL"] = True
 
+        tc.cache_variables["VANILLAPDF_INSTALL_LICENSEDIR"] = "licenses"
+
         # Disable developer-only features
         tc.cache_variables["VANILLAPDF_ENABLE_TESTS"] = False
         tc.cache_variables["VANILLAPDF_ENABLE_BENCHMARK"] = False
@@ -121,12 +130,21 @@ class VanillaPDFConan(ConanFile):
         cmake.build()
 
     def package(self):
-        copy(self, "LICENSE.txt", src=self.source_folder, dst=os.path.join(self.package_folder, "licenses"))
+        # Selected components only: skips the command line tool and the debug
+        # symbols. Licenses lands in licenses/ via VANILLAPDF_INSTALL_LICENSEDIR.
         cmake = CMake(self)
-        cmake.install()
+        cmake.install(component="Runtime")
+        cmake.install(component="Development")
+        cmake.install(component="Licenses")
 
     def package_info(self):
-        self.cpp_info.libs = ["vanillapdf"]
+        # PREFIX "lib" keeps the runtime artifact named identically on every
+        # platform, which the .NET bindings rely on. Import libraries follow
+        # IMPORT_PREFIX instead, so only an MSVC static build is libvanillapdf.
+        if is_msvc(self) and not self.options.shared:
+            self.cpp_info.libs = ["libvanillapdf"]
+        else:
+            self.cpp_info.libs = ["vanillapdf"]
         self.cpp_info.set_property("cmake_file_name", "vanillapdf")
         self.cpp_info.set_property("cmake_target_name", "vanillapdf::vanillapdf")
         self.cpp_info.requires = [
