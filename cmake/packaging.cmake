@@ -61,13 +61,20 @@ set(CPACK_PACKAGE_ICON					${CMAKE_CURRENT_SOURCE_DIR}/cmake/vanilla_logo.ico)
 set(CPACK_PACKAGE_CHECKSUM				SHA256)
 
 # Component-based packaging (used by DEB and RPM generators)
-set(CPACK_COMPONENTS_ALL Runtime Development)
+# Licenses and Documentation were part of Runtime; listed so the packages keep
+# the same contents. Symbols is omitted, it is MSVC-only.
+set(CPACK_COMPONENTS_ALL Runtime Development Licenses Documentation)
 set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "Vanilla.PDF Runtime")
 set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "Shared library")
 set(CPACK_COMPONENT_RUNTIME_REQUIRED ON)
 set(CPACK_COMPONENT_DEVELOPMENT_DISPLAY_NAME "Vanilla.PDF Development")
 set(CPACK_COMPONENT_DEVELOPMENT_DESCRIPTION "Headers, static libraries, and CMake config files")
 set(CPACK_COMPONENT_DEVELOPMENT_DEPENDS Runtime)
+set(CPACK_COMPONENT_LICENSES_DISPLAY_NAME "Vanilla.PDF Licenses")
+set(CPACK_COMPONENT_LICENSES_DESCRIPTION "License and notice texts required for redistribution")
+set(CPACK_COMPONENT_LICENSES_REQUIRED ON)
+set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Vanilla.PDF Documentation")
+set(CPACK_COMPONENT_DOCUMENTATION_DESCRIPTION "Readme bundled with the installation")
 
 # DEB and RPM use '~' for pre-release (sorts before release version)
 set(PACKAGE_VERSION_NAME_DEB_RPM "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
