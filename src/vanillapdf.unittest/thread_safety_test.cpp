@@ -535,17 +535,18 @@ TEST(CatalogThreadSafety, ConcurrentLazyInitReturnsSameInstance) {
         << "Document::GetDocumentCatalog returned multiple Catalog instances under concurrency";
 }
 
-// Give the document a few more pages, each carrying a content stream, so that
-// the walk below has a real page pipeline to traverse rather than the single
-// empty page Document_CreateFile leaves behind.
-void AppendPagesWithContents(DocumentHandle* doc, PageTreeHandle* page_tree, int count) {
+// Give the document a few more pages so that the walk below has a real page
+// tree to traverse rather than the single page Document_CreateFile leaves
+// behind.
+//
+// The pages carry no content stream. Attaching one needs
+// PageContents_CreateFromDocument and PageObject_SetContents, which arrived
+// with the page contents setters and are not part of the 2.3 line.
+void AppendPages(DocumentHandle* doc, PageTreeHandle* page_tree, int count) {
     for (int i = 0; i < count; ++i) {
         HandleGuard<PageObjectHandle, PageObject_Release> page;
-        HandleGuard<PageContentsHandle, PageContents_Release> contents;
 
         ASSERT_EQ(PageObject_CreateFromDocument(doc, page.out()), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_EQ(PageContents_CreateFromDocument(doc, contents.out()), VANILLAPDF_ERROR_SUCCESS);
-        ASSERT_EQ(PageObject_SetContents(page, contents), VANILLAPDF_ERROR_SUCCESS);
         ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
     }
 }
@@ -564,8 +565,9 @@ struct SemanticWalkObservation {
 // document -> catalog -> page tree -> page -> contents -> instructions.
 //
 // Every level of it caches lazily, so a walk that starts on a cold document
-// exercises Document::m_catalog, Catalog::m_pages, PageTree's flat page cache,
-// PageObject::m_contents and PageContents::m_instructions in one pass.
+// exercises Document::m_catalog, Catalog::m_pages and PageTree's flat page
+// cache in one pass. The pages built here carry no contents (see AppendPages),
+// so the walk stops short of PageObject::m_contents.
 void SemanticWalkWorker(DocumentHandle* doc, SemanticWalkObservation& observation) {
     if (Document_GetCatalog(doc, &observation.catalog) != VANILLAPDF_ERROR_SUCCESS) {
         observation.errors += 1;
@@ -590,8 +592,8 @@ void SemanticWalkWorker(DocumentHandle* doc, SemanticWalkObservation& observatio
             continue;
         }
 
-        // The first page carries no contents, so a missing entry is expected
-        // and only a hard failure below counts as an error
+        // No page carries contents, so a missing entry is expected and only a
+        // hard failure below counts as an error
         PageContentsHandle* contents = nullptr;
         if (PageObject_GetContents(page, &contents) == VANILLAPDF_ERROR_SUCCESS) {
             ContentInstructionCollectionHandle* instructions = nullptr;
@@ -661,7 +663,7 @@ TEST(SemanticLayerThreadSafety, ConcurrentPagePipelineWalkIsConsistent) {
                 ASSERT_EQ(Document_GetCatalog(setup_doc, setup_catalog.out()), VANILLAPDF_ERROR_SUCCESS);
                 ASSERT_EQ(Catalog_GetPages(setup_catalog, setup_pages.out()), VANILLAPDF_ERROR_SUCCESS);
 
-                AppendPagesWithContents(setup_doc, setup_pages, EXTRA_PAGES);
+                AppendPages(setup_doc, setup_pages, EXTRA_PAGES);
             }
 
             // Re-open the same file. The previous document is gone, so this is a
