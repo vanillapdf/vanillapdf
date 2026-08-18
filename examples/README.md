@@ -8,6 +8,7 @@ This directory contains practical examples demonstrating Vanilla.PDF integration
 - **[`vcpkg-port-integration/`](vcpkg-port-integration/)** - Consuming Vanilla.PDF via its vcpkg port
 - **[`conan-integration/`](conan-integration/)** - Consuming Vanilla.PDF via its Conan recipe
 - **[`homebrew-integration/`](homebrew-integration/)** - Consuming Vanilla.PDF via its Homebrew formula
+- **[`system-package-integration/`](system-package-integration/)** - Consuming Vanilla.PDF from an installed DEB or RPM package
 - **[`shared/`](shared/)** - Header-only helpers (e.g. `scope_guard.h`) shared across the examples above; not a standalone example
 
 ## Documentation

@@ -1,0 +1,38 @@
+name: Packaging check
+
+# Installing a package and consuming one are different things, and only the
+# second catches an install layout that does not add up. The packaging
+# workflows otherwise run through release.yml, whose pull_request trigger is
+# scoped to workflow files, so a change to the install rules themselves would
+# reach a release without either package ever being built from it.
+
+on:
+  pull_request:
+    paths:
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'include/files.cmake'
+      - 'src/vanillapdf/CMakeLists.txt'
+      - 'src/vanillapdf.tools/CMakeLists.txt'
+      - 'examples/system-package-integration/**'
+      - '.github/workflows/packaging-check.yml'
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deb:
+    name: DEB
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-deb-package.yml
+    secrets: inherit
+
+  rpm:
+    name: RPM
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-rpm-package.yml
+    secrets: inherit
