@@ -579,33 +579,55 @@ XrefStreamPtr Parser::ParseXrefStream(
     auto field2_size = fields->GetValue(1);
     auto field3_size = fields->GetValue(2);
 
+    types::big_int field1_width = field1_size->GetIntegerValue();
+    types::big_int field2_width = field2_size->GetIntegerValue();
+    types::big_int field3_width = field3_size->GetIntegerValue();
+
+    // A field can never be wider than the value it is read into. The widths are
+    // stream-level constants declared in /W, so they are validated once here
+    // rather than on every entry, and each field is named so the error points at it.
+    const types::big_int MAXIMUM_FIELD_WIDTH = sizeof(types::big_uint);
+
+    if (field1_width < 0 || field1_width > MAXIMUM_FIELD_WIDTH) {
+        LOG_ERROR_AND_THROW(ParseException, "Unsupported cross-reference stream type field width {}", field1_width);
+    }
+
+    if (field2_width < 0 || field2_width > MAXIMUM_FIELD_WIDTH) {
+        LOG_ERROR_AND_THROW(ParseException, "Unsupported cross-reference stream offset field width {}", field2_width);
+    }
+
+    if (field3_width < 0 || field3_width > MAXIMUM_FIELD_WIDTH) {
+        LOG_ERROR_AND_THROW(ParseException, "Unsupported cross-reference stream generation field width {}", field3_width);
+    }
+
+    // 7.5.8.2 Cross-reference stream dictionary, Table 17
+    // The three widths are the byte lengths of the type, offset and generation
+    // fields, so their sum is the stride of a single entry. A zero stride would
+    // decouple the entry count from the body length: a stream of a few hundred
+    // bytes could then declare millions of entries and force that many
+    // allocations. Every entry occupies at least one byte.
+    if (field1_width + field2_width + field3_width == 0) {
+        LOG_ERROR_AND_THROW(ParseException, "Cross-reference stream declares zero-width entries in /W");
+    }
+
     bool contains_self = false;
 
     // Iterate over entries
     auto it = body.begin();
 
-    // Reads a single big-endian cross-reference field of the width declared in /W.
-    // A width of zero means the field is not present and takes its default value.
+    // Reads a single big-endian cross-reference field of the given width. A width
+    // of zero means the field is not present and takes its default value.
     //
     // The declared entry count and the decoded body length are independent values,
     // both taken from the document, therefore every byte is bounds checked instead
     // of letting the iterator run past the end of the buffer.
-    auto read_field = [&it, &body](const IntegerObjectPtr& field_size, types::big_uint default_value = 0) {
-
-        // A field can never be wider than the value it is read into
-        const types::big_int MAXIMUM_FIELD_WIDTH = sizeof(types::big_uint);
-
-        auto field_width = field_size->GetIntegerValue();
-        if (field_width < 0 || field_width > MAXIMUM_FIELD_WIDTH) {
-            LOG_ERROR_AND_THROW(ParseException, "Unsupported cross-reference stream field width {}", field_width);
-        }
-
-        if (0 == field_width) {
+    auto read_field = [&it, &body](types::big_int width, types::big_uint default_value) {
+        if (width == 0) {
             return default_value;
         }
 
         types::big_uint result = 0;
-        for (decltype(field_width) i = 0; i < field_width; ++i) {
+        for (types::big_int i = 0; i < width; ++i) {
             if (it == body.end()) {
                 LOG_ERROR_AND_THROW(ParseException, "Cross-reference stream body is shorter than the declared entry count");
             }
@@ -629,9 +651,9 @@ XrefStreamPtr Parser::ParseXrefStream(
             // field shall not be present in the stream, and the default value shall be used,
             // if there is one. [...] If the first element is zero, the type field shall not be
             // present, and shall default to Type 1."
-            auto field1 = read_field(field1_size, 1);
-            auto field2 = read_field(field2_size);
-            auto field3 = read_field(field3_size);
+            auto field1 = read_field(field1_width, 1);
+            auto field2 = read_field(field2_width, 0);
+            auto field3 = read_field(field3_width, 0);
 
             types::big_uint obj_number = SafeAddition<types::big_uint, types::big_uint, int>(*subsection_index, idx);
 
@@ -648,19 +670,19 @@ XrefStreamPtr Parser::ParseXrefStream(
             // Field 3 only holds a generation number for types 0 and 1,
             // for type 2 it is an index within the object stream.
             auto gen_number = field3;
-            if ((0 == field1 || 1 == field1) && gen_number > constant::MAX_GENERATION_NUMBER) {
+            if ((field1 == 0 || field1 == 1) && gen_number > constant::MAX_GENERATION_NUMBER) {
                 spdlog::warn("Invalid object generation number {}, converting", gen_number);
                 gen_number = constant::MAX_GENERATION_NUMBER;
             }
 
-            if (0 == field1) {
+            if (field1 == 0) {
                 XrefFreeEntryPtr entry = make_deferred<XrefFreeEntry>(obj_number, ValueConvertUtils::SafeConvert<types::ushort>(gen_number), field2);
                 entry->SetFile(_file);
                 result->Add(entry);
                 continue;
             }
 
-            if (1 == field1) {
+            if (field1 == 1) {
 
                 // 7.5.8.3 Cross-reference stream data, Table 18
                 // Field 2 of a type 1 entry is "The byte offset of the object,
@@ -698,7 +720,7 @@ XrefStreamPtr Parser::ParseXrefStream(
                 continue;
             }
 
-            if (2 == field1) {
+            if (field1 == 2) {
                 XrefCompressedEntryPtr entry = make_deferred<XrefCompressedEntry>(obj_number, static_cast<types::ushort>(0), field2, ValueConvertUtils::SafeConvert<types::size_type>(field3));
                 entry->SetFile(_file);
                 result->Add(entry);
