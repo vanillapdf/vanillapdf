@@ -100,14 +100,16 @@ if(BUILD_SHARED_LIBS)
     # has no RPATH entries and cannot find libvanillapdf in ../lib.
     # Only set if CMAKE_INSTALL_RPATH was not provided externally (e.g. by a
     # package manager), so their value is respected when present.
+    # The path has to follow CMAKE_INSTALL_LIBDIR, which is lib64 on 64-bit
+    # RPM distributions and a multiarch triplet on Debian.
     if(NOT CMAKE_INSTALL_RPATH)
         if(UNIX AND NOT APPLE)
             set_target_properties(vanillapdf.tools PROPERTIES
-                INSTALL_RPATH "$ORIGIN/../lib"
+                INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
             )
         elseif(APPLE)
             set_target_properties(vanillapdf.tools PROPERTIES
-                INSTALL_RPATH "@loader_path/../lib"
+                INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
             )
         endif()
     endif()
