@@ -78,7 +78,7 @@ bool SemanticUtils::HasMappedDocument(WeakReference<syntax::File> file) {
     return (found != document_map->end() && found->second.IsActive());
 }
 
-WeakReference<Document> SemanticUtils::GetMappedDocument(WeakReference<syntax::File> file) {
+bool SemanticUtils::TryGetMappedDocument(WeakReference<syntax::File> file, OutputDocumentPtr& result) {
     if (!file.IsActive()) {
         throw syntax::FileDisposedException();
     }
@@ -87,10 +87,23 @@ WeakReference<Document> SemanticUtils::GetMappedDocument(WeakReference<syntax::F
     auto document_map = GetDocumentMapInstance();
 
     auto shared = file.GetReference();
-    auto weak_ref = (*document_map)[shared.get()];
-    assert(weak_ref.IsActive() && !weak_ref.IsEmpty());
+    auto found = document_map->find(shared.get());
+    if (found == document_map->end()) {
+        return false;
+    }
 
-    return weak_ref;
+    // The upgrade has to stay inside the registry critical section. ~Document
+    // acquires this lock before its storage can be freed, so an upgrade under
+    // the lock never touches deallocated memory - handing the weak reference
+    // out and upgrading it after the lock is released would be a use after
+    // free racing the final Release.
+    auto existing = found->second.TryGetReference();
+    if (!existing.has_value()) {
+        return false;
+    }
+
+    result = existing.value();
+    return true;
 }
 
 void SemanticUtils::AddDocumentMapping(WeakReference<syntax::File> file, WeakReference<Document> value) {
@@ -110,7 +123,7 @@ void SemanticUtils::AddDocumentMapping(WeakReference<syntax::File> file, WeakRef
     (*document_map)[shared.get()] = value;
 }
 
-void SemanticUtils::ReleaseMapping(WeakReference<syntax::File> file) {
+void SemanticUtils::ReleaseMapping(WeakReference<syntax::File> file, const Document* owner) {
     if (!file.IsActive()) {
         throw syntax::FileDisposedException();
     }
@@ -119,21 +132,39 @@ void SemanticUtils::ReleaseMapping(WeakReference<syntax::File> file) {
     auto document_map = GetDocumentMapInstance();
 
     auto shared = file.GetReference();
-    document_map->erase(shared.get());
+    auto found = document_map->find(shared.get());
+    if (found == document_map->end()) {
+        spdlog::debug("File {} had no document mapping to release, a replacement has already claimed and released it", shared->GetFilenameString());
+        return;
+    }
+
+    // While this document was dying, another thread may have failed to upgrade
+    // it, built a replacement and mapped it under the same file. Erasing the
+    // entry then would drop that live document out of the registry, and the
+    // next open would build a second one beside it.
+    if (!found->second.Identity(owner)) {
+        spdlog::warn("File {} is mapped to a different document than the one being released, keeping the mapping", shared->GetFilenameString());
+        return;
+    }
+
+    document_map->erase(found);
 }
 
 DocumentPtr SemanticUtils::GetOrCreateDocument(syntax::FilePtr file) {
-    std::lock_guard<std::recursive_mutex> locker(document_map_lock);
-    auto document_map = GetDocumentMapInstance();
 
-    // Single lookup to check if document exists
-    auto found = document_map->find(file.get());
-    if (found != document_map->end() && found->second.IsActive()) {
-        return found->second.GetReference();
+    // The recursive lock is held across both the lookup and the create, so no
+    // other thread can map a competing document in between
+    std::lock_guard<std::recursive_mutex> locker(document_map_lock);
+
+    OutputDocumentPtr existing;
+    if (TryGetMappedDocument(file, existing)) {
+        return existing;
     }
 
-    // Create new document while still holding the lock
-    // The Document constructor calls AddDocumentMapping internally
+    // Either the file has no mapping, or the mapped document has already
+    // committed to destruction and cannot be revived. It is unreachable by
+    // now, so replacing it never leaves two live documents sharing one file.
+    // The Document constructor calls AddDocumentMapping internally.
     return DocumentPtr(pdf_new Document(file));
 }
 
