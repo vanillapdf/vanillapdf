@@ -14,6 +14,7 @@
 #include "semantics/objects/interactive_forms.h"
 
 #include "utils/pdf_version.h"
+#include "utils/cached_value.h"
 
 namespace vanillapdf {
 namespace semantics {
@@ -62,7 +63,9 @@ public:
     PageTreePtr CreatePages();
 
 private:
-    mutable OutputPageTreePtr m_pages;
+    bool ResolvePages(OutputPageTreePtr& result) const;
+
+    CachedValue<OutputPageTreePtr> m_pages;
 };
 
 } // semantics

@@ -51,18 +51,16 @@ bool Catalog::Extensions(OutputDeveloperExtensionsPtr& result) const {
 }
 
 bool Catalog::Pages(OutputPageTreePtr& result) const {
-    if (!m_pages.empty()) {
-        result = m_pages;
-        return true;
-    }
+    return m_pages.GetOrCreate(result, this, &Catalog::ResolvePages);
+}
 
+bool Catalog::ResolvePages(OutputPageTreePtr& result) const {
     if (!_obj->Contains(constant::Name::Pages)) {
         return false;
     }
 
     auto pages_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::Pages);
-    m_pages = make_deferred<PageTree>(pages_obj);
-    result = m_pages;
+    result = make_deferred<PageTree>(pages_obj);
     return true;
 }
 
