@@ -46,10 +46,17 @@ private:
     void InvalidatePageCache();
     void BuildPageCache() const;
 
+    // Page numbers count leaf pages across the whole tree, while Kids arrays
+    // are per node - the two only coincide on a completely flat tree. This
+    // returns the node holding the given page and the position of the page
+    // within its Kids array. Throws when the document has no such page.
+    PageTreeNodePtr FindPageParent(types::size_type page_number, types::size_type& kid_index) const;
+    bool FindPageParentInternal(PageTreeNodePtr node, types::size_type page_number, types::size_type& current_page_number, PageTreeNodePtr& parent_node, types::size_type& kid_index) const;
+
     bool FindPageIndexInternal(PageTreeNodePtr node, syntax::DictionaryObjectPtr page_dict, types::size_type& current_index) const;
     void UpdateKidsCount();
-    syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> GetKidsInternal();
 
+    static syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> GetKidsInternal(syntax::DictionaryObjectPtr node_dictionary);
     static types::size_type UpdateKidsCount(PageNodeBasePtr node);
 
 };

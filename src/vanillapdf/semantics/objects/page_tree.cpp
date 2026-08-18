@@ -126,17 +126,67 @@ bool PageTree::FindPageIndexInternal(PageTreeNodePtr node, DictionaryObjectPtr p
 }
 
 
+PageTreeNodePtr PageTree::FindPageParent(types::size_type page_number, types::size_type& kid_index) const {
+    auto root = make_deferred<PageTreeNode>(_obj);
+
+    // The result placeholder is overwritten on success and unused on failure
+    auto parent_node = root;
+
+    types::size_type current_page_number = 0;
+    if (!FindPageParentInternal(root, page_number, current_page_number, parent_node, kid_index)) {
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Page number was not found: {}", page_number);
+    }
+
+    return parent_node;
+}
+
+bool PageTree::FindPageParentInternal(PageTreeNodePtr node, types::size_type page_number, types::size_type& current_page_number, PageTreeNodePtr& parent_node, types::size_type& kid_index) const {
+    auto kids = node->Kids();
+    auto count = kids->GetSize();
+    for (decltype(count) i = 0; i < count; ++i) {
+        auto kid = kids->GetValue(i);
+
+        if (kid->GetNodeType() == PageNodeBase::NodeType::Tree) {
+            auto tree_node = ConvertUtils<PageNodeBasePtr>::ConvertTo<PageTreeNodePtr>(kid);
+            if (FindPageParentInternal(tree_node, page_number, current_page_number, parent_node, kid_index)) {
+                return true;
+            }
+            continue;
+        }
+
+        current_page_number += 1;
+        if (current_page_number == page_number) {
+            parent_node = node;
+            kid_index = i;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
     if (page_index < 1) {
         throw InvalidParameterException(fmt::format("Invalid page index: {}. Page indices are 1-based", page_index));
     }
 
-    auto array_index = page_index - 1;
-
     auto raw_obj = object->GetObject();
-    auto kids = GetKidsInternal();
-    kids->Insert(array_index, make_deferred<IndirectReferenceObject>(raw_obj));
-    object->SetParent(make_deferred<PageTreeNode>(_obj));
+    auto page_reference = make_deferred<IndirectReferenceObject>(raw_obj);
+
+    // Inserting after the current last page appends to the root Kids array.
+    // Any other position lands in the node that currently holds the page at
+    // the target flat position, so the new page takes that page number.
+    if (page_index == PageCount() + 1) {
+        auto root_kids = GetKidsInternal(_obj);
+        root_kids->Append(page_reference);
+        object->SetParent(make_deferred<PageTreeNode>(_obj));
+    } else {
+        types::size_type kid_index = 0;
+        auto parent_node = FindPageParent(page_index, kid_index);
+        auto parent_kids = GetKidsInternal(parent_node->GetObject());
+        parent_kids->Insert(kid_index, page_reference);
+        object->SetParent(parent_node);
+    }
 
     UpdateKidsCount();
     InvalidatePageCache();
@@ -144,10 +194,8 @@ void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
 
 void PageTree::Append(PageObjectPtr object) {
 
-    auto kids = GetKidsInternal();
-
-    // Insert at the end of kids array
-    Insert(object, kids->GetSize() + 1);
+    // Insert after the current last page
+    Insert(object, PageCount() + 1);
 }
 
 void PageTree::Remove(types::size_type page_index) {
@@ -155,11 +203,43 @@ void PageTree::Remove(types::size_type page_index) {
         throw InvalidParameterException(fmt::format("Invalid page index: {}. Page indices are 1-based", page_index));
     }
 
-    auto array_index = page_index - 1;
+    types::size_type kid_index = 0;
+    auto parent_node = FindPageParent(page_index, kid_index);
+    auto parent_dictionary = parent_node->GetObject();
 
-    auto kids = GetKidsInternal();
-    bool removed = kids->Remove(array_index);
-    assert(removed && "Could not remove page"); UNUSED(removed);
+    auto parent_kids = GetKidsInternal(parent_dictionary);
+    bool removed = parent_kids->Remove(kid_index);
+    if (!removed) {
+        LOG_ERROR_AND_THROW_GENERAL("Could not remove page {} from its parent node", page_index);
+    }
+
+    // Prune intermediate nodes left empty by the removal, so the tree does
+    // not accumulate childless Pages nodes. The root node always stays.
+    auto current_dictionary = parent_dictionary;
+    while (!current_dictionary->Identity(_obj) && GetKidsInternal(current_dictionary)->GetSize() == 0) {
+        if (!current_dictionary->Contains(constant::Name::Parent)) {
+            break;
+        }
+
+        auto node_parent_dictionary = current_dictionary->FindAs<DictionaryObjectPtr>(constant::Name::Parent);
+        auto node_parent_kids = GetKidsInternal(node_parent_dictionary);
+
+        bool pruned = false;
+        auto node_parent_kids_size = node_parent_kids->GetSize();
+        for (decltype(node_parent_kids_size) i = 0; i < node_parent_kids_size; ++i) {
+            auto kid_reference = node_parent_kids->GetValue(i);
+            if (kid_reference->GetReferencedObject()->Identity(current_dictionary)) {
+                pruned = node_parent_kids->Remove(i);
+                break;
+            }
+        }
+
+        if (!pruned) {
+            break;
+        }
+
+        current_dictionary = node_parent_dictionary;
+    }
 
     UpdateKidsCount();
     InvalidatePageCache();
@@ -196,14 +276,14 @@ types::size_type PageTree::UpdateKidsCount(PageNodeBasePtr node) {
     throw syntax::ParseException("Unknown page object type");
 }
 
-ArrayObjectPtr<IndirectReferenceObjectPtr> PageTree::GetKidsInternal() {
+ArrayObjectPtr<IndirectReferenceObjectPtr> PageTree::GetKidsInternal(DictionaryObjectPtr node_dictionary) {
 
-    if (!_obj->Contains(constant::Name::Kids)) {
+    if (!node_dictionary->Contains(constant::Name::Kids)) {
         ArrayObjectPtr<IndirectReferenceObjectPtr> empty_kids_obj;
-        _obj->Insert(constant::Name::Kids, empty_kids_obj);
+        node_dictionary->Insert(constant::Name::Kids, empty_kids_obj);
     }
 
-    return _obj->FindAs<ArrayObjectPtr<IndirectReferenceObjectPtr>>(constant::Name::Kids);
+    return node_dictionary->FindAs<ArrayObjectPtr<IndirectReferenceObjectPtr>>(constant::Name::Kids);
 }
 
 } // semantics

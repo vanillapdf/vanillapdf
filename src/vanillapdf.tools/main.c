@@ -27,6 +27,7 @@ void print_help() {
     printf("  decrypt         Decrypt a PDF document\n");
     printf("  read            Read a PDF using memory IO strategy\n");
     printf("  resave          Re-save a PDF document\n");
+    printf("  remove_page     Remove a page from a PDF document\n");
     printf("  write_custom    Write PDF with custom handler\n");
     printf("  generate        Generate a PDF with N empty pages\n");
     printf("\nOptions:\n");
@@ -102,6 +103,10 @@ int main(int argc, char *argv[]) {
 
     if (0 == strcmp(argv[1], "resave")) {
         return process_resave(argc - 2, &argv[2]);
+    }
+
+    if (0 == strcmp(argv[1], "remove_page")) {
+        return process_remove_page(argc - 2, &argv[2]);
     }
 
     if (0 == strcmp(argv[1], "write_custom")) {
