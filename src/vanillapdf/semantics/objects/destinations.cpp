@@ -266,14 +266,12 @@ DestinationPtr DestinationBase::ResolveDestination(syntax::ObjectPtr dest_obj) {
     // Handle string name reference to named destinations (via Names dictionary)
     if (syntax::ObjectUtils::IsType<syntax::StringObjectPtr>(dest_obj)) {
         auto weak_file = dest_obj->GetFile();
-        auto document_ref = SemanticUtils::GetMappedDocument(weak_file);
 
-        assert(!document_ref.IsEmpty() && "Document reference was not set");
-        if (!document_ref.IsActive()) {
-            throw syntax::ObjectMissingException("Document reference is not active");
+        OutputDocumentPtr document;
+        if (!SemanticUtils::TryGetMappedDocument(weak_file, document)) {
+            auto file = weak_file.GetReference();
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Document for file {} is not mapped or is no longer active", file->GetFilenameString());
         }
-
-        DocumentPtr document = document_ref.GetReference();
 
         OutputCatalogPtr catalog_ptr;
         bool has_catalog = document->GetDocumentCatalog(catalog_ptr);
@@ -307,14 +305,12 @@ DestinationPtr DestinationBase::ResolveDestination(syntax::ObjectPtr dest_obj) {
     // Handle name object reference to named destinations (via Destinations dictionary)
     if (syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(dest_obj)) {
         auto weak_file = dest_obj->GetFile();
-        auto document_ref = SemanticUtils::GetMappedDocument(weak_file);
 
-        assert(!document_ref.IsEmpty() && "Document reference was not set");
-        if (!document_ref.IsActive()) {
-            throw syntax::ObjectMissingException("Document reference is not active");
+        OutputDocumentPtr document;
+        if (!SemanticUtils::TryGetMappedDocument(weak_file, document)) {
+            auto file = weak_file.GetReference();
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Document for file {} is not mapped or is no longer active", file->GetFilenameString());
         }
-
-        DocumentPtr document = document_ref.GetReference();
 
         OutputCatalogPtr catalog;
         bool has_catalog = document->GetDocumentCatalog(catalog);
