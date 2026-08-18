@@ -170,23 +170,23 @@ void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
         throw InvalidParameterException(fmt::format("Invalid page index: {}. Page indices are 1-based", page_index));
     }
 
+    // Inserting after the current last page is an append
+    if (page_index == PageCount() + 1) {
+        Append(object);
+        return;
+    }
+
+    // The new page lands in the node that currently holds the page at the
+    // target flat position, so it takes that page number. A page's Parent
+    // entry must reference the node whose Kids array contains it.
     auto raw_obj = object->GetObject();
     auto page_reference = make_deferred<IndirectReferenceObject>(raw_obj);
 
-    // Inserting after the current last page appends to the root Kids array.
-    // Any other position lands in the node that currently holds the page at
-    // the target flat position, so the new page takes that page number.
-    if (page_index == PageCount() + 1) {
-        auto root_kids = GetKidsInternal(_obj);
-        root_kids->Append(page_reference);
-        object->SetParent(make_deferred<PageTreeNode>(_obj));
-    } else {
-        types::size_type kid_index = 0;
-        auto parent_node = FindPageParent(page_index, kid_index);
-        auto parent_kids = GetKidsInternal(parent_node->GetObject());
-        parent_kids->Insert(kid_index, page_reference);
-        object->SetParent(parent_node);
-    }
+    types::size_type kid_index = 0;
+    auto parent_node = FindPageParent(page_index, kid_index);
+    auto parent_kids = GetKidsInternal(parent_node->GetObject());
+    parent_kids->Insert(kid_index, page_reference);
+    object->SetParent(parent_node);
 
     UpdateKidsCount();
     InvalidatePageCache();
@@ -194,8 +194,18 @@ void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
 
 void PageTree::Append(PageObjectPtr object) {
 
-    // Insert after the current last page
-    Insert(object, PageCount() + 1);
+    // Appended pages become direct children of the root node - the position
+    // after the last page always coincides with the end of the root Kids
+    // array, and without tree balancing there is no benefit in nesting deeper
+    auto raw_obj = object->GetObject();
+    auto page_reference = make_deferred<IndirectReferenceObject>(raw_obj);
+
+    auto root_kids = GetKidsInternal(_obj);
+    root_kids->Append(page_reference);
+    object->SetParent(make_deferred<PageTreeNode>(_obj));
+
+    UpdateKidsCount();
+    InvalidatePageCache();
 }
 
 void PageTree::Remove(types::size_type page_index) {
