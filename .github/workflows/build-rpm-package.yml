@@ -85,3 +85,15 @@ jobs:
           dnf install -y epel-release
           dnf install -y ./pkg/*.rpm
           ldconfig
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      # Rocky is where CMAKE_INSTALL_LIBDIR becomes lib64, so this is the job
+      # that detects the library and the CMake config drifting apart.
+      - name: Consume the installed package
+        run: |
+          dnf install -y cmake gcc-c++ make
+          cmake -B build-consumer -S examples/system-package-integration
+          cmake --build build-consumer
+          ctest --test-dir build-consumer --output-on-failure

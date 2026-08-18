@@ -76,3 +76,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ./pkg/*.deb
           sudo ldconfig
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Consume the installed package
+        run: |
+          sudo apt-get install -y cmake g++
+          cmake -B build-consumer -S examples/system-package-integration
+          cmake --build build-consumer
+          ctest --test-dir build-consumer --output-on-failure

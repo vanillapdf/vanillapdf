@@ -1,0 +1,37 @@
+# This file is included *before* vanillapdfTargets.cmake
+# to ensure all required targets are defined for INTERFACE_LINK_LIBRARIES
+
+include(CMakeFindDependencyMacro)
+
+# Recorded from the build that produced this package
+set(VANILLAPDF_SHARED_BUILD @BUILD_SHARED_LIBS@)
+set(VANILLAPDF_WITH_ENCRYPTION @VANILLAPDF_ENABLE_ENCRYPTION@)
+set(VANILLAPDF_WITH_ZLIB @VANILLAPDF_ENABLE_ZLIB@)
+set(VANILLAPDF_WITH_JPEG @VANILLAPDF_ENABLE_JPEG@)
+set(VANILLAPDF_WITH_JPEG2000 @VANILLAPDF_ENABLE_JPEG2000@)
+
+# Dependencies are linked PRIVATE. A shared library resolves them internally and
+# exports nothing, so a consumer needs none of them installed. A static library
+# propagates them into its link interface, so every one has to be resolvable
+# here. An undefined VANILLAPDF_SHARED_BUILD is treated as static, which is the
+# safe direction to guess.
+if(NOT TARGET vanillapdf AND NOT VANILLAPDF_SHARED_BUILD)
+  if(VANILLAPDF_WITH_ENCRYPTION)
+    find_dependency(OpenSSL REQUIRED)      # Used for PDF encryption/signing
+  endif()
+
+  if(VANILLAPDF_WITH_ZLIB)
+    find_dependency(ZLIB REQUIRED)         # Required for FlateDecode filter
+  endif()
+
+  if(VANILLAPDF_WITH_JPEG)
+    find_dependency(JPEG REQUIRED)         # Required for DCTDecode (JPEG images)
+  endif()
+
+  if(VANILLAPDF_WITH_JPEG2000)
+    find_dependency(OpenJPEG REQUIRED)     # Required for JPXDecode (JPEG2000 codec)
+  endif()
+
+  find_dependency(fmt CONFIG REQUIRED)     # High-performance string formatting
+  find_dependency(spdlog CONFIG REQUIRED)  # Internal logging/debugging
+endif()
