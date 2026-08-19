@@ -3,3 +3,4 @@ sphinx-rtd-theme>=3.0,<4
 breathe>=4.35,<5
 sphinx-copybutton>=0.5,<1
 sphinxext-opengraph>=0.9,<1
+sphinx-substitution-extensions>=2024.2,<2026
