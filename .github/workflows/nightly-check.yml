@@ -339,7 +339,10 @@ jobs:
 
       # The emulator provides the Android OS the cross-compiled binaries need.
       # ctest runs on the host; every test binary invocation is routed through
-      # the adb wrapper configured as CMAKE_CROSSCOMPILING_EMULATOR.
+      # the adb wrapper configured as CMAKE_CROSSCOMPILING_EMULATOR. Only the
+      # integration and tools suites run (per suite directory): the unit test
+      # suite is skipped because gtest per-case discovery has to execute the
+      # binary on the host, which is impossible when cross-compiling.
       - name: Test android-x86_64 on emulator
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d  # v2.38.0
         with:
@@ -350,5 +353,6 @@ jobs:
           disable-animations: false
           script: |
             ./scripts/android/push_test_payload.sh
-            ctest --preset android-x86_64 --output-on-failure
+            ctest --test-dir build/android-x86_64/src/vanillapdf.test --output-on-failure
+            ctest --test-dir build/android-x86_64/src/vanillapdf.tools --output-on-failure
 

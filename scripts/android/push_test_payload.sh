@@ -31,12 +31,10 @@ push() {
 push "$build_directory/src/vanillapdf/libvanillapdf.so"
 push "$build_directory/src/vanillapdf.test/vanillapdf.test"
 push "$build_directory/src/vanillapdf.tools/vanillapdf.tools"
-push "$build_directory/src/vanillapdf.unittest/vanillapdf.unittest"
 push "$build_directory/_deps/vanillapdf_testdata-src"
 push "$host_root/scripts/VanillaPDF.lic"
 push "$host_root/fixtures"
 
 adb shell chmod +x \
     "$device_root/build/android-x86_64/src/vanillapdf.test/vanillapdf.test" \
-    "$device_root/build/android-x86_64/src/vanillapdf.tools/vanillapdf.tools" \
-    "$device_root/build/android-x86_64/src/vanillapdf.unittest/vanillapdf.unittest"
+    "$device_root/build/android-x86_64/src/vanillapdf.tools/vanillapdf.tools"
