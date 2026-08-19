@@ -266,7 +266,7 @@ Package availability
      - ``FetchContent_Declare(vanillapdf ...)``
      - No external tools; caller manages dependencies
    * - Conan
-     - ``conan install --requires="vanillapdf/2.3.0"``
+     - :substitution-code:`conan install --requires="vanillapdf/|release|"`
      - Coming soon; not yet on Conan Center
    * - Homebrew
      - ``brew install vanillapdf``
