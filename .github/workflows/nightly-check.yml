@@ -287,7 +287,7 @@ jobs:
 
 
   android:
-    name: android.x86_64 - ${{ matrix.build_type }}
+    name: android.${{ matrix.api_level }}-x86_64 - ${{ matrix.build_type }}
     runs-on: ubuntu-24.04
     timeout-minutes: 120
 
@@ -295,6 +295,12 @@ jobs:
       fail-fast: false
       matrix:
         build_type: [Release]
+
+        # The binaries always target API 28 (the presets' CMAKE_SYSTEM_VERSION,
+        # matching the vcpkg android triplets); the matrix picks the Android OS
+        # they run on. Testing brackets the supported range: the oldest
+        # supported release and the newest available emulator image.
+        api_level: ["28", "37.0"]
 
     env:
       # Consumed by scripts/android/push_test_payload.sh and by the adb wrapper
@@ -346,7 +352,7 @@ jobs:
       - name: Test android-x86_64 on emulator
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d  # v2.38.0
         with:
-          api-level: 35
+          api-level: ${{ matrix.api_level }}
           arch: x86_64
           target: google_apis
           emulator-options: -no-window -no-audio -no-boot-anim -no-metrics
