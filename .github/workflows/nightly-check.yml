@@ -285,3 +285,70 @@ jobs:
       - name: Test
         run: ctest --preset ${{ matrix.config.preset }} --output-on-failure
 
+
+  android:
+    name: android.x86_64 - ${{ matrix.build_type }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release]
+
+    env:
+      # Consumed by scripts/android/push_test_payload.sh and by the adb wrapper
+      # (scripts/android/adb_test_runner.sh) that rewrites host paths to their
+      # pushed device-side counterparts
+      VANILLAPDF_ANDROID_HOST_ROOT: ${{ github.workspace }}
+      VANILLAPDF_ANDROID_DEVICE_ROOT: /data/local/tmp/vanillapdf
+      VANILLAPDF_ANDROID_LIBRARY_DIR: ${{ github.workspace }}/build/android-x86_64/src/vanillapdf
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: recursive
+
+      # KVM exists on GitHub-hosted Linux runners but is not accessible to the
+      # runner user by default; without it the emulator falls back to software
+      # rendering and boots too slowly to be usable
+      - name: Enable KVM group permissions
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Bootstrap vcpkg (Linux)
+        run: ./external/vcpkg/bootstrap-vcpkg.sh
+        shell: bash
+
+      # ANDROID_NDK_HOME is consumed by the vcpkg android toolchain (ports),
+      # CMAKE_ANDROID_NDK by the project build itself. Point both at the
+      # runner's latest preinstalled NDK (r28+ aligns 16 KB page sizes by
+      # default). Benchmarks are disabled: they are never executed on the
+      # emulator and only add dependency build time.
+      - name: Configure android-x86_64
+        run: |
+          export ANDROID_NDK_HOME="$ANDROID_NDK_LATEST_HOME"
+          cmake --preset android-x86_64 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_ANDROID_NDK="$ANDROID_NDK_LATEST_HOME" -DVANILLAPDF_ENABLE_TESTS=ON -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+
+      - name: Build android-x86_64
+        run: |
+          export ANDROID_NDK_HOME="$ANDROID_NDK_LATEST_HOME"
+          cmake --build --preset android-x86_64
+
+      # The emulator provides the Android OS the cross-compiled binaries need.
+      # ctest runs on the host; every test binary invocation is routed through
+      # the adb wrapper configured as CMAKE_CROSSCOMPILING_EMULATOR.
+      - name: Test android-x86_64 on emulator
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d  # v2.38.0
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          emulator-options: -no-window -no-audio -no-boot-anim -no-metrics
+          disable-animations: false
+          script: |
+            ./scripts/android/push_test_payload.sh
+            ctest --preset android-x86_64 --output-on-failure
+

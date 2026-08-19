@@ -44,6 +44,7 @@ def parse_arguments():
     parser.add_argument("--key", required=True, help="manifest key (repo-relative path) of this fixture")
     parser.add_argument("--manifest", required=True, help="path to manifest.json")
     parser.add_argument("--license", required=True, help="path to the license file")
+    parser.add_argument("--launcher", help="optional launcher that executes the test binary (e.g. the adb wrapper when cross-compiling for Android)")
     return parser.parse_args()
 
 
@@ -51,6 +52,9 @@ def build_base_parameters(args, config, entry):
     # Common parameters for every invocation of this fixture
     test_file = os.path.join(args.testdata_root, args.key)
     parameters = [args.exe, test_file, LICENSE_OPTION, args.license, QUIET_OPTION]
+
+    if (args.launcher):
+        parameters.insert(0, args.launcher)
 
     if (MERGE_KEY in config):
         parameters.append(MERGE_OPTION)

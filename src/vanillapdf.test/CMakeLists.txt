@@ -115,6 +115,15 @@ target_compile_definitions(vanillapdf.test PRIVATE -DVANILLAPDF_TEST_ICON="${VAN
 # Python for running the test cases
 find_package (Python3 COMPONENTS Interpreter REQUIRED)
 
+# When cross-compiling (e.g. Android), the test binary cannot execute on the
+# host. CMAKE_CROSSCOMPILING_EMULATOR carries the launcher that runs it in the
+# target environment (the adb wrapper for Android presets); the Python driver
+# itself stays on the host.
+set(VANILLAPDF_TEST_LAUNCHER_OPTIONS "")
+if(CMAKE_CROSSCOMPILING_EMULATOR)
+    set(VANILLAPDF_TEST_LAUNCHER_OPTIONS --launcher "${CMAKE_CROSSCOMPILING_EMULATOR}")
+endif()
+
 # The test corpus + manifest are fetched once by cmake/testdata.cmake (included
 # from the top-level CMakeLists). Enumerate one ctest per tested corpus fixture
 # straight from the manifest — the authoritative fixture list — no globbing.
@@ -150,6 +159,7 @@ foreach(_index RANGE ${VANILLAPDF_MANIFEST_LAST})
         --key            "${TEST_KEY}"								# manifest key for this fixture
         --manifest       "${VANILLAPDF_MANIFEST_FILE}"				# expectations (passwords, skips, merge, signing)
         --license        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/VanillaPDF.lic"
+        ${VANILLAPDF_TEST_LAUNCHER_OPTIONS}
     )
 
     # OpenSSL 3.x: set provider module search path (see vanillapdf/CMakeLists.txt)
