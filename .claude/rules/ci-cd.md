@@ -25,7 +25,7 @@
 
 ## Build Matrix
 
-Windows 2022/2025 (x86/x64), Linux Ubuntu 22.04/24.04, Rocky 8/9, Fedora 41/42 (x64/ARM64), macOS 13 (x64), 14/15 (ARM64), Android (arm64, armv7, x86, x86_64)
+Windows 2022/2025 (x86/x64), Windows 11 (ARM64), Linux Ubuntu 22.04/24.04/26.04, Rocky 8/9/10, Fedora 43/44 (x64/ARM64), macOS 15/26 (x64/ARM64)
 
 ## Release Process
 
