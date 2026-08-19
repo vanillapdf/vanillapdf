@@ -10,9 +10,9 @@ The following Vanilla.PDF versions currently receive **security fixes and critic
 
 | Version | Supported |
 | ------- | --------- |
+| 2.3.x   | ✅        |
 | 2.2.x   | ✅        |
-| 2.1.x   | ✅        |
-| < 2.1   | ❌        |
+| < 2.2   | ❌        |
 
 ## Reporting a Vulnerability
 
@@ -67,4 +67,4 @@ We are grateful to security researchers who help keep Vanilla.PDF safe. With you
 
 ---
 
-_Last updated: February 2026_
+_Last updated: August 2026_
