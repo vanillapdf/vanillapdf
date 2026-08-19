@@ -58,6 +58,7 @@ CMake FetchContent
 Self-contained approach without external package managers:
 
 .. code-block:: cmake
+   :substitutions:
 
    cmake_minimum_required(VERSION 3.20)
    project(MyApp)
@@ -66,7 +67,7 @@ Self-contained approach without external package managers:
    FetchContent_Declare(
        vanillapdf
        GIT_REPOSITORY https://github.com/vanillapdf/vanillapdf.git
-       GIT_TAG        main  # or "v2.1.0" for a specific release
+       GIT_TAG        main  # or "v|release|" for a specific release
    )
    FetchContent_MakeAvailable(vanillapdf)
 
@@ -114,13 +115,15 @@ Conan
 Install via `Conan <https://conan.io/>`_:
 
 .. code-block:: bash
+   :substitutions:
 
    pip install conan
-   conan install --requires="vanillapdf/2.3.0" --build=missing
+   conan install --requires="vanillapdf/|release|" --build=missing
 
 Or add a ``conanfile.py`` to your project:
 
 .. code-block:: python
+   :substitutions:
 
    from conan import ConanFile
    from conan.tools.cmake import cmake_layout
@@ -130,7 +133,7 @@ Or add a ``conanfile.py`` to your project:
        generators = "CMakeDeps", "CMakeToolchain"
 
        def requirements(self):
-           self.requires("vanillapdf/2.3.0")
+           self.requires("vanillapdf/|release|")
 
        def layout(self):
            cmake_layout(self)
