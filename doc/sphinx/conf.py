@@ -48,7 +48,15 @@ extensions = [
     "breathe",
     "sphinx_copybutton",
     "sphinxext.opengraph",
+    "sphinx_substitution_extensions",
 ]
+
+# Make |release| resolvable inside literal blocks: code-block directives
+# marked with :substitutions: and the :substitution-code: inline role
+# (sphinx-substitution-extensions) read definitions from rst_prolog.
+rst_prolog = """
+.. |release| replace:: {}
+""".format(_version)
 
 breathe_projects = {
     "vanillapdf": "_build/doxygen/xml",
