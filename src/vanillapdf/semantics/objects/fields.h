@@ -36,6 +36,20 @@ public:
     bool GetAlternateName(syntax::OutputStringObjectPtr& result) const;
     bool GetFieldFlags(types::big_int& result) const;
     void SetFieldFlags(types::big_int value);
+
+protected:
+    // Resolves an inheritable field attribute - /FT, /Ff, /V and /DV per Table 220,
+    // /DA and /Q per 12.7.3.3 - by searching the field dictionary and then walking
+    // the /Parent chain. Returns false when the key is present in none of them.
+    // Each /Parent shall be an indirect reference (Table 220); a chain hop
+    // that is not one ends the search. Visited parent references are tracked
+    // by object identity, so a cyclic chain terminates instead of looping.
+    static bool FindInheritedEntry(
+        const syntax::DictionaryObjectPtr& dictionary,
+        const syntax::NameObject& key,
+        syntax::OutputObjectPtr& result);
+
+    bool GetInheritedEntry(const syntax::NameObject& key, syntax::OutputObjectPtr& result) const;
 };
 
 class NonTerminalField : public Field {
