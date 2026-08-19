@@ -299,8 +299,11 @@ jobs:
         # The binaries always target API 28 (the presets' CMAKE_SYSTEM_VERSION,
         # matching the vcpkg android triplets); the matrix picks the Android OS
         # they run on. Testing brackets the supported range: the oldest
-        # supported release and the newest available emulator image.
-        api_level: ["28", "37.0"]
+        # supported release and the newest image that boots on GPU-less
+        # runners. API 37.0 does not: Android 17 images need a Vulkan host
+        # stack and hang under software Vulkan (lavapipe), never bringing up
+        # adb. The emulator-runner action's own CI tests no further than 35.
+        api_level: ["28", "36"]
 
     env:
       # Consumed by scripts/android/push_test_payload.sh and by the adb wrapper
