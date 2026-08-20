@@ -29,8 +29,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftX(RectangleHa
 
     try
     {
-        auto converted_value = ValueConvertUtils::SafeConvert<bigint_type>(obj->GetLowerLeftX());
-        *result = converted_value;
+        *result = ValueConvertUtils::SafeConvert<bigint_type>(obj->GetLowerLeftX());
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -54,8 +53,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftX(RectangleHa
 
     try
     {
-        auto converted_value = ValueConvertUtils::SafeConvert<types::real>(data);
-        obj->SetLowerLeftX(converted_value);
+        obj->SetLowerLeftX(ValueConvertUtils::SafeConvert<types::real>(data));
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -79,8 +77,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftY(RectangleHa
 
     try
     {
-        auto converted_value = ValueConvertUtils::SafeConvert<bigint_type>(obj->GetLowerLeftY());
-        *result = converted_value;
+        *result = ValueConvertUtils::SafeConvert<bigint_type>(obj->GetLowerLeftY());
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -104,8 +101,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftY(RectangleHa
 
     try
     {
-        auto converted_value = ValueConvertUtils::SafeConvert<types::real>(data);
-        obj->SetLowerLeftY(converted_value);
+        obj->SetLowerLeftY(ValueConvertUtils::SafeConvert<types::real>(data));
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -129,8 +125,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightX(RectangleH
 
     try
     {
-        auto converted_value = ValueConvertUtils::SafeConvert<bigint_type>(obj->GetUpperRightX());
-        *result = converted_value;
+        *result = ValueConvertUtils::SafeConvert<bigint_type>(obj->GetUpperRightX());
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -154,8 +149,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightX(RectangleH
 
     try
     {
-        auto converted_value = ValueConvertUtils::SafeConvert<types::real>(data);
-        obj->SetUpperRightX(converted_value);
+        obj->SetUpperRightX(ValueConvertUtils::SafeConvert<types::real>(data));
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -179,8 +173,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightY(RectangleH
 
     try
     {
-        auto converted_value = ValueConvertUtils::SafeConvert<bigint_type>(obj->GetUpperRightY());
-        *result = converted_value;
+        *result = ValueConvertUtils::SafeConvert<bigint_type>(obj->GetUpperRightY());
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -204,8 +197,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightY(RectangleH
 
     try
     {
-        auto converted_value = ValueConvertUtils::SafeConvert<types::real>(data);
-        obj->SetUpperRightY(converted_value);
+        obj->SetUpperRightY(ValueConvertUtils::SafeConvert<types::real>(data));
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
