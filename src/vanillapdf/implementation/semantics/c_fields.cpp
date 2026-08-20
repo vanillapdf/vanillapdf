@@ -100,6 +100,141 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_SetFieldFlags(FieldHandle* ha
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Field_SetName(FieldHandle* handle, StringObjectHandle* value) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    StringObjectBase* name = reinterpret_cast<StringObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(name);
+
+    try {
+        obj->SetName(name);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_SetAlternateName(FieldHandle* handle, StringObjectHandle* value) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    StringObjectBase* alternate_name = reinterpret_cast<StringObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(alternate_name);
+
+    try {
+        obj->SetAlternateName(alternate_name);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_SetDefaultAppearance(FieldHandle* handle, StringObjectHandle* value) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    StringObjectBase* appearance = reinterpret_cast<StringObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(appearance);
+
+    try {
+        obj->SetDefaultAppearance(appearance);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_SetQuadding(FieldHandle* handle, QuaddingType value) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try {
+        Field::Quadding quadding = Field::Quadding::LeftJustified;
+        switch (value) {
+            case QuaddingType_LeftJustified:
+                quadding = Field::Quadding::LeftJustified; break;
+            case QuaddingType_Centered:
+                quadding = Field::Quadding::Centered; break;
+            case QuaddingType_RightJustified:
+                quadding = Field::Quadding::RightJustified; break;
+            default:
+                return VANILLAPDF_ERROR_PARAMETER_VALUE;
+        }
+
+        obj->SetQuadding(quadding);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_IsTerminal(FieldHandle* handle, boolean_type* result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        *result = obj->IsTerminal() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetQualifiedName(FieldHandle* handle, BufferHandle** result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto qualified_name = obj->GetQualifiedName();
+        auto ptr = qualified_name.AddRefGet();
+        *result = reinterpret_cast<BufferHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetDefaultAppearance(FieldHandle* handle, StringObjectHandle** result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputStringObjectPtr direct;
+        bool contains = obj->GetDefaultAppearance(direct);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = direct.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetQuadding(FieldHandle* handle, QuaddingType* result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        Field::Quadding quadding = Field::Quadding::LeftJustified;
+        bool contains = obj->GetQuadding(quadding);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+
+        switch (quadding) {
+            case Field::Quadding::LeftJustified:
+                *result = QuaddingType_LeftJustified; break;
+            case Field::Quadding::Centered:
+                *result = QuaddingType_Centered; break;
+            case Field::Quadding::RightJustified:
+                *result = QuaddingType_RightJustified; break;
+            default:
+                return VANILLAPDF_ERROR_GENERAL;
+        }
+
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetBaseObject(FieldHandle* handle, DictionaryObjectHandle** result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto base_object = obj->GetObject();
+        auto ptr = base_object.AddRefGet();
+        *result = reinterpret_cast<DictionaryObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_GetValue(ButtonFieldHandle* handle, NameObjectHandle** result) {
     ButtonField* obj = reinterpret_cast<ButtonField*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);

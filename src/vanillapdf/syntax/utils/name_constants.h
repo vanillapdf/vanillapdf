@@ -265,6 +265,7 @@ extern const syntax::NameObject Rect;
 extern const syntax::NameObject T;
 extern const syntax::NameObject QuadPoints;
 extern const syntax::NameObject DA;
+extern const syntax::NameObject Q;
 extern const syntax::NameObject Open;
 extern const syntax::NameObject IC;
 extern const syntax::NameObject InkList;

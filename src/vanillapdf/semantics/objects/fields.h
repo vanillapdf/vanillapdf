@@ -31,16 +31,63 @@ public:
         Signature
     };
 
+    // Form of quadding (justification) of variable text fields (Table 222)
+    enum class Quadding {
+        LeftJustified = 0,
+        Centered = 1,
+        RightJustified = 2
+    };
+
 public:
     explicit Field(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
     static FieldPtr Create(syntax::DictionaryObjectPtr root);
 
     virtual Field::Type GetFieldType() const noexcept = 0;
 
+    // A terminal field has no children other than widget annotations (12.7.3.2).
+    // Child fields are recognized by their /T partial name, which widget
+    // annotations do not carry.
+    static bool IsTerminalDictionary(const syntax::DictionaryObjectPtr& dictionary);
+    bool IsTerminal() const;
+
+    // Fully qualified field name: the /T partial names joined with '.' from
+    // the root of the hierarchy down to this field (12.7.3.2). Levels without
+    // a /T entry do not contribute a segment. Each /T is a text string
+    // (7.9.2.2) normalized to UTF-8, so the result is a UTF-8 buffer
+    // regardless of how the partial names are encoded in the document.
+    BufferPtr GetQualifiedName() const;
+
     bool GetName(syntax::OutputStringObjectPtr& result) const;
+
+    // Sets the partial field name (/T). Because the PERIOD separates the
+    // segments of fully qualified names, a partial name shall not contain
+    // one (12.7.3.2) - such a value is an InvalidParameterException
+    void SetName(syntax::StringObjectPtr value);
+
     bool GetAlternateName(syntax::OutputStringObjectPtr& result) const;
+    void SetAlternateName(syntax::StringObjectPtr value);
+
     bool GetFieldFlags(types::big_int& result) const;
     void SetFieldFlags(types::big_int value);
+
+    // Default appearance string (/DA) and quadding (/Q) for variable text
+    // fields, resolved through the /Parent chain. The document-wide default
+    // lives in the AcroForm dictionary (12.7.3.3) and is exposed by
+    // InteractiveForm::GetDefaultAppearance / GetQuadding - when the entry is
+    // missing here, the caller applies that fallback. The setters write this
+    // field's own dictionary, overriding any inherited value.
+    bool GetDefaultAppearance(syntax::OutputStringObjectPtr& result) const;
+    void SetDefaultAppearance(syntax::StringObjectPtr value);
+    bool GetQuadding(Quadding& result) const;
+    void SetQuadding(Quadding value);
+
+    // Maps a raw /Q value to the enumerated form; an unknown value read from
+    // the document is a ParseException
+    static Quadding ConvertQuadding(const syntax::IntegerObjectPtr& value);
+
+    // Maps the enumerated form back to its raw /Q value; an unknown
+    // enumeration value is a ConversionException
+    static types::big_int ConvertQuadding(Quadding value);
 
 protected:
     // Resolves an inheritable field attribute - /FT, /Ff, /V and /DV per Table 220,

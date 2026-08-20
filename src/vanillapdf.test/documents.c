@@ -1792,6 +1792,10 @@ error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
     FieldCollectionHandle* fields = NULL;
     SignatureFlagsHandle* signature_flags = NULL;
     boolean_type need_appearances = VANILLAPDF_RV_FALSE;
+    StringObjectHandle* default_appearance = NULL;
+    QuaddingType quadding = QuaddingType_LeftJustified;
+    size_type field_count = 0;
+    size_type i = 0;
 
     print_spaces(nested);
     print_text("Interactive form begin\n");
@@ -1802,6 +1806,16 @@ error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
     print_spaces(nested + 1);
     print_text("Need appearances: %d\n", need_appearances);
 
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(InteractiveForm_GetDefaultAppearance(obj, &default_appearance),
+        process_string(default_appearance, nested + 1),
+        StringObject_Release(default_appearance));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(InteractiveForm_GetQuadding(obj, &quadding),
+        VANILLAPDF_TEST_ERROR_SUCCESS);
+
+    print_spaces(nested + 1);
+    print_text("Document default quadding: %d\n", quadding);
+
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(InteractiveForm_GetSignatureFlags(obj, &signature_flags),
         process_signature_flags(signature_flags, nested + 1),
         SignatureFlags_Release(signature_flags));
@@ -1809,6 +1823,22 @@ error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(InteractiveForm_GetFields(obj, &fields),
         process_field_collection(fields, nested + 1),
         FieldCollection_Release(fields));
+
+    // Flat enumeration of resolved terminal fields
+    RETURN_ERROR_IF_NOT_SUCCESS(InteractiveForm_GetFieldCount(obj, &field_count));
+
+    print_spaces(nested + 1);
+
+    unsigned long long converted_field_count = field_count;
+    print_text("Terminal field count: %llu\n", converted_field_count);
+
+    for (i = 0; i < field_count; ++i) {
+        FieldHandle* terminal_field = NULL;
+
+        RETURN_ERROR_IF_NOT_SUCCESS(InteractiveForm_GetField(obj, i, &terminal_field));
+        RETURN_ERROR_IF_NOT_SUCCESS(process_field(terminal_field, nested + 1));
+        RETURN_ERROR_IF_NOT_SUCCESS(Field_Release(terminal_field));
+    }
 
     print_spaces(nested);
     print_text("Interactive form end\n");
@@ -1875,6 +1905,10 @@ error_type process_field(FieldHandle* obj, int nested) {
     StringObjectHandle* field_name = NULL;
     StringObjectHandle* alt_name = NULL;
     FieldFlags flags = FieldFlags_None;
+    BufferHandle* qualified_name = NULL;
+    boolean_type is_terminal = VANILLAPDF_RV_FALSE;
+    StringObjectHandle* default_appearance = NULL;
+    QuaddingType quadding = QuaddingType_LeftJustified;
 
     print_spaces(nested);
     print_text("Field begin\n");
@@ -1890,6 +1924,25 @@ error_type process_field(FieldHandle* obj, int nested) {
 
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Field_GetFieldFlags(obj, &flags),
         VANILLAPDF_TEST_ERROR_SUCCESS);
+
+    RETURN_ERROR_IF_NOT_SUCCESS(Field_GetQualifiedName(obj, &qualified_name));
+    RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(qualified_name, nested + 1));
+    RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(qualified_name));
+
+    RETURN_ERROR_IF_NOT_SUCCESS(Field_IsTerminal(obj, &is_terminal));
+
+    print_spaces(nested + 1);
+    print_text("Terminal: %d\n", is_terminal);
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Field_GetDefaultAppearance(obj, &default_appearance),
+        process_string(default_appearance, nested + 1),
+        StringObject_Release(default_appearance));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Field_GetQuadding(obj, &quadding),
+        VANILLAPDF_TEST_ERROR_SUCCESS);
+
+    print_spaces(nested + 1);
+    print_text("Quadding: %d\n", quadding);
 
     RETURN_ERROR_IF_NOT_SUCCESS(Field_GetType(obj, &type));
 
