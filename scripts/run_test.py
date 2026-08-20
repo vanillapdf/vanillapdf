@@ -12,6 +12,7 @@ import argparse
 import io
 import json
 import os
+import posixpath
 import subprocess
 import sys
 
@@ -44,24 +45,31 @@ def parse_arguments():
     parser.add_argument("--key", required=True, help="manifest key (repo-relative path) of this fixture")
     parser.add_argument("--manifest", required=True, help="path to manifest.json")
     parser.add_argument("--license", required=True, help="path to the license file")
+    parser.add_argument("--launcher", nargs="+", help="optional launcher command that executes the test binary (e.g. the adb wrapper when cross-compiling for Android); may span multiple words")
     return parser.parse_args()
 
 
 def build_base_parameters(args, config, entry):
+    # posixpath keeps the joined separators forward slashes on every host:
+    # these paths are consumed by the test binary, which may run on a remote
+    # device (Android via the adb launcher) where only POSIX paths are valid.
     # Common parameters for every invocation of this fixture
-    test_file = os.path.join(args.testdata_root, args.key)
+    test_file = posixpath.join(args.testdata_root, args.key)
     parameters = [args.exe, test_file, LICENSE_OPTION, args.license, QUIET_OPTION]
+
+    if (args.launcher):
+        parameters = args.launcher + parameters
 
     if (MERGE_KEY in config):
         parameters.append(MERGE_OPTION)
-        parameters.append(os.path.join(args.testdata_root, config[MERGE_KEY]))
+        parameters.append(posixpath.join(args.testdata_root, config[MERGE_KEY]))
 
     for skip in entry.get("skip", []):
         parameters.append(SKIP_OPTIONS[skip])
 
     if (SIGNING_KEY in config):
         parameters.append(SIGNING_CERTIFICATE_OPTION)
-        parameters.append(os.path.join(args.testdata_root, config[SIGNING_KEY]))
+        parameters.append(posixpath.join(args.testdata_root, config[SIGNING_KEY]))
 
     return parameters
 
@@ -103,7 +111,7 @@ def main():
 
     # Authentication using a certificate (path resolves inside the testdata root)
     if (CERTIFICATE_KEY in entry):
-        certificate_path = os.path.join(args.testdata_root, entry[CERTIFICATE_KEY])
+        certificate_path = posixpath.join(args.testdata_root, entry[CERTIFICATE_KEY])
         return run(base_parameters + [CERTIFICATE_OPTION, certificate_path])
 
     # Unencrypted fixture: default behavior

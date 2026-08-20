@@ -155,17 +155,22 @@ if(VANILLAPDF_ENABLE_TESTS)
         set(VANILLAPDF_TOOLS_EXTRA_PROPERTIES PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${VANILLAPDF_OPENSSL_MODULES_DIR}")
     endif()
 
+    # Tests reference the target by name (not $<TARGET_FILE:...>) so CMake
+    # prepends CMAKE_CROSSCOMPILING_EMULATOR when cross-compiling — the adb
+    # wrapper that runs the binary on an Android device (see the android
+    # presets and scripts/android/adb_test_runner.sh).
+
     # Verify test for Granizo-signed.PDF (self-signed certificate) - should succeed with flag
     # Uses --skip-certificate-validation to bypass untrusted root check
     add_test(
         NAME "Tools.verify.Granizo-signed.with-flag"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_CORPUS_DIR}/custom/Granizo-signed.PDF" --skip-certificate-validation
+        COMMAND vanillapdf.tools verify -f "${VANILLAPDF_CORPUS_DIR}/custom/Granizo-signed.PDF" --skip-certificate-validation
     )
 
     # Verify test for Granizo-signed.PDF without flag - should fail (untrusted root)
     add_test(
         NAME "Tools.verify.Granizo-signed.without-flag"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_CORPUS_DIR}/custom/Granizo-signed.PDF"
+        COMMAND vanillapdf.tools verify -f "${VANILLAPDF_CORPUS_DIR}/custom/Granizo-signed.PDF"
     )
     set_tests_properties("Tools.verify.Granizo-signed.without-flag" PROPERTIES WILL_FAIL TRUE)
 
@@ -190,7 +195,7 @@ if(VANILLAPDF_ENABLE_TESTS)
 
         add_test(
             NAME "Tools.validate.${TEST_NAME}"
-            COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_CORPUS_DIR}/${TEST_FILE}"
+            COMMAND vanillapdf.tools validate -f "${VANILLAPDF_CORPUS_DIR}/${TEST_FILE}"
         )
         set_tests_properties("Tools.validate.${TEST_NAME}" PROPERTIES
             PASS_REGULAR_EXPRESSION "Issues: 0 \\(0 error"
@@ -202,7 +207,7 @@ if(VANILLAPDF_ENABLE_TESTS)
     # issue5874.pdf: 1 xref bad-offset error (code=300), no warnings
     add_test(
         NAME "Tools.validate.pdfjs.issue5874"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_CORPUS_DIR}/pdfjs/issue5874.pdf"
+        COMMAND vanillapdf.tools validate -f "${VANILLAPDF_CORPUS_DIR}/pdfjs/issue5874.pdf"
     )
     set_tests_properties("Tools.validate.pdfjs.issue5874" PROPERTIES
         PASS_REGULAR_EXPRESSION "Issues: 1 \\(1 error\\(s\\), 0 warning"
@@ -211,7 +216,7 @@ if(VANILLAPDF_ENABLE_TESTS)
     # request_for_taxpayer.pdf: 1 TrailerSizeMismatch warning (code=202) + 1 xref bad-offset error (code=300)
     add_test(
         NAME "Tools.validate.request_for_taxpayer"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_CORPUS_DIR}/request_for_taxpayer.pdf"
+        COMMAND vanillapdf.tools validate -f "${VANILLAPDF_CORPUS_DIR}/request_for_taxpayer.pdf"
     )
     set_tests_properties("Tools.validate.request_for_taxpayer" PROPERTIES
         PASS_REGULAR_EXPRESSION "Issues: 2 \\(1 error\\(s\\), 1 warning"
@@ -220,7 +225,7 @@ if(VANILLAPDF_ENABLE_TESTS)
     # bug1011159.pdf: 1 TrailerSizeMismatch warning (code=202) only - still reports VALID
     add_test(
         NAME "Tools.validate.pdfjs.bug1011159"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_CORPUS_DIR}/pdfjs/bug1011159.pdf"
+        COMMAND vanillapdf.tools validate -f "${VANILLAPDF_CORPUS_DIR}/pdfjs/bug1011159.pdf"
     )
     set_tests_properties("Tools.validate.pdfjs.bug1011159" PROPERTIES
         PASS_REGULAR_EXPRESSION "Issues: 1 \\(0 error\\(s\\), 1 warning"
@@ -242,7 +247,7 @@ if(VANILLAPDF_ENABLE_TESTS)
 
         add_test(
             NAME "Tools.read.${TEST_NAME}"
-            COMMAND $<TARGET_FILE:vanillapdf.tools> read -f "${VANILLAPDF_CORPUS_DIR}/${TEST_FILE}"
+            COMMAND vanillapdf.tools read -f "${VANILLAPDF_CORPUS_DIR}/${TEST_FILE}"
         )
     endforeach()
 
@@ -255,6 +260,6 @@ if(VANILLAPDF_ENABLE_TESTS)
     # File_Open) — the reason narrow non-ASCII paths survive on Windows.
     add_test(
         NAME "Tools.read.chinese_names_中文的名字-2"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> read -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/chinese_names_中文的名字-2.pdf"
+        COMMAND vanillapdf.tools read -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/chinese_names_中文的名字-2.pdf"
     )
 endif()
