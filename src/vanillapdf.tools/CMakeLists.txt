@@ -17,6 +17,7 @@ set(VANILLAPDF_TOOLS_SOURCES
     merge.c
     read.c
     resave.c
+    remove_page.c
     sign.c
     sign_custom.c
     verify.c
@@ -261,5 +262,57 @@ if(VANILLAPDF_ENABLE_TESTS)
     add_test(
         NAME "Tools.read.chinese_names_中文的名字-2"
         COMMAND vanillapdf.tools read -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/chinese_names_中文的名字-2.pdf"
+    )
+
+    # remove_page sanity tests on the in-repo fixtures. The tool itself checks
+    # that the page count dropped by exactly one, so each test only asserts
+    # the reported counts.
+
+    # nested-pages.pdf: root -> [3-page node, 2-page node]. Page 4 is the
+    # first page of the second subtree - the regression case where the flat
+    # page number used to be applied directly to the root Kids array.
+    add_test(
+        NAME "Tools.remove_page.nested-pages.subtree-boundary"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> remove_page -s "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/nested-pages.pdf" -d "${CMAKE_CURRENT_BINARY_DIR}/remove_page-nested-pages.pdf" -n 4
+    )
+    set_tests_properties("Tools.remove_page.nested-pages.subtree-boundary" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Removed page 4 \\(5 -> 4 pages\\)"
+    )
+
+    # Flat single-node tree, removal from the middle of the wide Kids array
+    add_test(
+        NAME "Tools.remove_page.flat-pages.middle"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> remove_page -s "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/flat-pages.pdf" -d "${CMAKE_CURRENT_BINARY_DIR}/remove_page-flat-pages.pdf" -n 725
+    )
+    set_tests_properties("Tools.remove_page.flat-pages.middle" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Removed page 725 \\(1451 -> 1450 pages\\)"
+    )
+
+    # First page of a document with real content
+    add_test(
+        NAME "Tools.remove_page.sample-document.first"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> remove_page -s "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/sample-document.pdf" -d "${CMAKE_CURRENT_BINARY_DIR}/remove_page-sample-document.pdf" -n 1
+    )
+    set_tests_properties("Tools.remove_page.sample-document.first" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Removed page 1 \\(2 -> 1 pages\\)"
+    )
+
+    # Removing the only page leaves a document with an empty page tree
+    add_test(
+        NAME "Tools.remove_page.chinese_names.only-page"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> remove_page -s "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/chinese_names_中文的名字-2.pdf" -d "${CMAKE_CURRENT_BINARY_DIR}/remove_page-chinese_names.pdf" -n 1
+    )
+    set_tests_properties("Tools.remove_page.chinese_names.only-page" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Removed page 1 \\(1 -> 0 pages\\)"
+    )
+
+    # Removing from an empty document reports a clean out-of-range error
+    # instead of the historical silent success
+    add_test(
+        NAME "Tools.remove_page.minimalist.out-of-range"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> remove_page -s "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/minimalist.pdf" -d "${CMAKE_CURRENT_BINARY_DIR}/remove_page-minimalist.pdf" -n 1
+    )
+    set_tests_properties("Tools.remove_page.minimalist.out-of-range" PROPERTIES
+        PASS_REGULAR_EXPRESSION "out of range, the document has 0 pages"
     )
 endif()
