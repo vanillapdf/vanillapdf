@@ -11,7 +11,7 @@ Rectangle::Rectangle() {
     _obj->Append(m_ury);
 }
 
-Rectangle::Rectangle(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> list) : HighLevelObject(list) {
+Rectangle::Rectangle(syntax::ArrayObjectPtr<syntax::RealObjectPtr> list) : HighLevelObject(list) {
     assert(list->GetSize() == 4 && "Only fully specified rectangles are yet supported");
     if (list->GetSize() != 4) {
         throw InvalidParameterException("Invalid rectangle size: " + std::to_string(list->GetSize()));

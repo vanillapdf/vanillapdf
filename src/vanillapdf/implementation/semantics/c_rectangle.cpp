@@ -1,6 +1,8 @@
 #include "precompiled.h"
 #include "semantics/objects/rectangle.h"
 
+#include "utils/conversion_utils.h"
+
 #include "vanillapdf/semantics/c_rectangle.h"
 #include "implementation/c_helper.h"
 
@@ -27,12 +29,38 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftX(RectangleHa
 
     try
     {
+        auto converted_value = ValueConvertUtils::SafeConvert<bigint_type>(obj->GetLowerLeftX());
+        *result = converted_value;
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftXReal(RectangleHandle* handle, real_type* result)
+{
+    Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
         *result = obj->GetLowerLeftX();
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftX(RectangleHandle* handle, bigint_type data) {
+    Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try
+    {
+        auto converted_value = ValueConvertUtils::SafeConvert<types::real>(data);
+        obj->SetLowerLeftX(converted_value);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftXReal(RectangleHandle* handle, real_type data) {
     Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
@@ -51,12 +79,38 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftY(RectangleHa
 
     try
     {
+        auto converted_value = ValueConvertUtils::SafeConvert<bigint_type>(obj->GetLowerLeftY());
+        *result = converted_value;
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftYReal(RectangleHandle* handle, real_type* result)
+{
+    Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
         *result = obj->GetLowerLeftY();
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftY(RectangleHandle* handle, bigint_type data) {
+    Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try
+    {
+        auto converted_value = ValueConvertUtils::SafeConvert<types::real>(data);
+        obj->SetLowerLeftY(converted_value);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftYReal(RectangleHandle* handle, real_type data) {
     Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
@@ -75,12 +129,38 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightX(RectangleH
 
     try
     {
+        auto converted_value = ValueConvertUtils::SafeConvert<bigint_type>(obj->GetUpperRightX());
+        *result = converted_value;
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightXReal(RectangleHandle* handle, real_type* result)
+{
+    Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
         *result = obj->GetUpperRightX();
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightX(RectangleHandle* handle, bigint_type data) {
+    Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try
+    {
+        auto converted_value = ValueConvertUtils::SafeConvert<types::real>(data);
+        obj->SetUpperRightX(converted_value);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightXReal(RectangleHandle* handle, real_type data) {
     Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 
@@ -99,12 +179,38 @@ VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightY(RectangleH
 
     try
     {
+        auto converted_value = ValueConvertUtils::SafeConvert<bigint_type>(obj->GetUpperRightY());
+        *result = converted_value;
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightYReal(RectangleHandle* handle, real_type* result)
+{
+    Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
         *result = obj->GetUpperRightY();
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightY(RectangleHandle* handle, bigint_type data) {
+    Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try
+    {
+        auto converted_value = ValueConvertUtils::SafeConvert<types::real>(data);
+        obj->SetUpperRightY(converted_value);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightYReal(RectangleHandle* handle, real_type data) {
     Rectangle* obj = reinterpret_cast<Rectangle*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
 

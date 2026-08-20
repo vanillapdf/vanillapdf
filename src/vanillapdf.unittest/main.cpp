@@ -186,18 +186,18 @@ TEST(Rectangle, NullCheck) {
 
 TEST(Rectangle, GetSet) {
 
-    const bigint_type CHECK_VALUE = 123456;
+    const real_type CHECK_VALUE = 123456.789;
 
-    bigint_type int_value = 0;
+    real_type real_value = 0;
     HandleGuard<RectangleHandle, Rectangle_Release> rectangle_ptr;
 
     ASSERT_EQ(Rectangle_Create(rectangle_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(rectangle_ptr.get(), nullptr);
 
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rectangle_ptr, CHECK_VALUE), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_GetLowerLeftX(rectangle_ptr, &int_value), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rectangle_ptr, CHECK_VALUE), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_GetLowerLeftXReal(rectangle_ptr, &real_value), VANILLAPDF_ERROR_SUCCESS);
 
-    EXPECT_EQ(int_value, CHECK_VALUE);
+    EXPECT_EQ(real_value, CHECK_VALUE);
 }
 
 TEST(File, LoadEmptyError) {
