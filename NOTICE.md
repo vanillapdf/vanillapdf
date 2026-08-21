@@ -1,3 +1,15 @@
+# Vanilla.PDF
+
+Copyright (c) Vanilla.PDF Labs s.r.o. and contributors.
+
+"Contributors" refers to the individuals whose work is recorded in this repository's git history. Contributors retain copyright in their contributions, which are licensed to the project under the [Contributor License Agreement](CLA.md).
+
+Vanilla.PDF is licensed under the Apache License, Version 2.0 — see [LICENSE.txt](LICENSE.txt).
+
+This product includes the third-party software listed below.
+
+---
+
 # OpenSSL
 
 https://github.com/openssl/openssl
