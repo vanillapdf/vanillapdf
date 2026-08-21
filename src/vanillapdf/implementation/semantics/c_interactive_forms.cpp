@@ -70,6 +70,18 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetFields(Interacti
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_AddField(InteractiveFormHandle* handle, FieldHandle* value) {
+    InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
+    Field* field = reinterpret_cast<Field*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(field);
+
+    try {
+        form->AddField(field);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetSignatureFlags(InteractiveFormHandle* handle, SignatureFlagsHandle** result) {
     InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(form);

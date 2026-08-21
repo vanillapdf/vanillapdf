@@ -883,7 +883,6 @@ TEST(GetByteRangeThreadSafety, ConcurrentSignatureValidationKeepsDocumentIntact)
     DocumentHandle* signed_document = nullptr;
     CatalogHandle* catalog = nullptr;
     InteractiveFormHandle* acro_form = nullptr;
-    FieldCollectionHandle* fields = nullptr;
     FieldHandle* field = nullptr;
     SignatureFieldHandle* sig_field = nullptr;
     DigitalSignatureHandle* digital_signature = nullptr;
@@ -923,13 +922,12 @@ TEST(GetByteRangeThreadSafety, ConcurrentSignatureValidationKeepsDocumentIntact)
 
     ASSERT_EQ(Document_GetCatalog(signed_document, &catalog), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Catalog_GetAcroForm(catalog, &acro_form), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InteractiveForm_GetFields(acro_form, &fields), VANILLAPDF_ERROR_SUCCESS);
 
     size_type field_count = 0;
-    ASSERT_EQ(FieldCollection_GetSize(fields, &field_count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_GetFieldCount(acro_form, &field_count), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_GT(field_count, 0);
 
-    ASSERT_EQ(FieldCollection_At(fields, 0, &field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_GetField(acro_form, 0, &field), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(SignatureField_FromField(field, &sig_field), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(SignatureField_GetValue(sig_field, &digital_signature), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(digital_signature, nullptr);
@@ -1006,7 +1004,6 @@ TEST(GetByteRangeThreadSafety, ConcurrentSignatureValidationKeepsDocumentIntact)
     if (digital_signature) DigitalSignature_Release(digital_signature);
     if (sig_field) SignatureField_Release(sig_field);
     if (field) Field_Release(field);
-    if (fields) FieldCollection_Release(fields);
     if (acro_form) InteractiveForm_Release(acro_form);
     if (catalog) Catalog_Release(catalog);
     if (trust_store) TrustedCertificateStore_Release(trust_store);

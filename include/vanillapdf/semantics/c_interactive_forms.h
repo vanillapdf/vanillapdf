@@ -57,17 +57,34 @@ extern "C"
     /**
     * \brief
     * An array of references to the document's root fields.
+    * \deprecated
+    * Enumerate the resolved terminal fields with
+    * \ref InteractiveForm_GetFieldCount and \ref InteractiveForm_GetField
+    * instead.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(InteractiveFormHandle* handle, FieldCollectionHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(InteractiveFormHandle* handle, FieldCollectionHandle** result);
 
     /**
     * \brief
     * Set the array of references to the document's root fields.
-    *
-    * Obtain an empty collection from \ref FieldCollection_Create for a form
-    * that does not have any fields yet.
+    * \deprecated
+    * Append fields with \ref InteractiveForm_AddField, which creates the
+    * /Fields array on demand.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetFields(InteractiveFormHandle* handle, FieldCollectionHandle* value);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetFields(InteractiveFormHandle* handle, FieldCollectionHandle* value);
+
+    /**
+    * \brief
+    * Append a field to the root /Fields array, creating the array when the
+    * form does not have one yet.
+    *
+    * The array holds indirect references, so the field's underlying
+    * dictionary shall be registered as an indirect object within the
+    * document, for example through \ref File_AllocateNewEntry.
+    * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the field's
+    * dictionary is a direct object.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_AddField(InteractiveFormHandle* handle, FieldHandle* value);
 
     /**
     * \brief

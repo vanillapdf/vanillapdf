@@ -1789,7 +1789,6 @@ error_type process_document_edit(
 }
 
 error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
-    FieldCollectionHandle* fields = NULL;
     SignatureFlagsHandle* signature_flags = NULL;
     boolean_type need_appearances = VANILLAPDF_RV_FALSE;
     StringObjectHandle* default_appearance = NULL;
@@ -1819,10 +1818,6 @@ error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(InteractiveForm_GetSignatureFlags(obj, &signature_flags),
         process_signature_flags(signature_flags, nested + 1),
         SignatureFlags_Release(signature_flags));
-
-    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(InteractiveForm_GetFields(obj, &fields),
-        process_field_collection(fields, nested + 1),
-        FieldCollection_Release(fields));
 
     // Flat enumeration of resolved terminal fields
     RETURN_ERROR_IF_NOT_SUCCESS(InteractiveForm_GetFieldCount(obj, &field_count));
@@ -1864,34 +1859,6 @@ error_type process_signature_flags(SignatureFlagsHandle* obj, int nested) {
 
     print_spaces(nested);
     print_text("Signature flags end\n");
-
-    return VANILLAPDF_TEST_ERROR_SUCCESS;
-}
-
-error_type process_field_collection(FieldCollectionHandle* obj, int nested) {
-    size_type i = 0;
-    size_type size = 0;
-
-    print_spaces(nested);
-    print_text("Field collection begin\n");
-
-    RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_GetSize(obj, &size));
-
-    print_spaces(nested);
-
-    unsigned long long converted_size = size;
-    print_text("Size: %llu\n", converted_size);
-
-    for (i = 0; i < size; ++i) {
-        FieldHandle* field = NULL;
-
-        RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_At(obj, i, &field));
-        RETURN_ERROR_IF_NOT_SUCCESS(process_field(field, nested + 1));
-        RETURN_ERROR_IF_NOT_SUCCESS(Field_Release(field));
-    }
-
-    print_spaces(nested);
-    print_text("Field collection end\n");
 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }

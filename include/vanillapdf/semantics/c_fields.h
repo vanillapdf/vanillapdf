@@ -20,6 +20,11 @@ extern "C"
     * \extends IUnknownHandle
     * \ingroup group_fields
     * \brief Collection of \ref FieldHandle
+    * \deprecated
+    * The raw /Fields array models dictionary nodes rather than logical
+    * fields. Enumerate the resolved terminal fields with
+    * \ref InteractiveForm_GetFieldCount and \ref InteractiveForm_GetField,
+    * and append new fields with \ref InteractiveForm_AddField.
     */
 
     /**
@@ -182,25 +187,33 @@ extern "C"
     * Create an empty field collection.
     *
     * Attach it to an interactive form with \ref InteractiveForm_SetFields.
+    * \deprecated
+    * Append fields directly with \ref InteractiveForm_AddField, which
+    * creates the /Fields array on demand.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Create(FieldCollectionHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Create(FieldCollectionHandle** result);
 
     /**
     * \brief Get size of field collection
+    * \deprecated Use \ref InteractiveForm_GetFieldCount instead
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_GetSize(FieldCollectionHandle* handle, size_type* result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_GetSize(FieldCollectionHandle* handle, size_type* result);
 
     /**
     * \brief
     * Get single field from array at specific position
+    * \deprecated Use \ref InteractiveForm_GetField instead
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_At(FieldCollectionHandle* handle, size_type at, FieldHandle** result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_At(FieldCollectionHandle* handle, size_type at, FieldHandle** result);
 
     /**
     * \copydoc IUnknown_Release
     * \see \ref IUnknown_Release
+    * \deprecated
+    * Retained for releasing collections obtained through the deprecated
+    * accessors - new code has no \ref FieldCollectionHandle to release.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Release(FieldCollectionHandle* handle);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Release(FieldCollectionHandle* handle);
 
     /** @} */
 

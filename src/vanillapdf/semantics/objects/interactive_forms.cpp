@@ -42,6 +42,30 @@ void InteractiveForm::SetFields(FieldCollectionPtr value) {
     InvalidateFieldCache();
 }
 
+void InteractiveForm::AddField(FieldPtr value) {
+    auto field_dictionary = value->GetObject();
+
+    // The /Fields array holds indirect references (Table 218) - a direct
+    // dictionary cannot be referenced and would serialize as a dangling 0 0 R
+    if (!field_dictionary->IsIndirect()) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The field dictionary shall be an indirect object - allocate a cross-reference entry for it first");
+    }
+
+    if (!_obj->Contains(constant::Name::Fields)) {
+        syntax::MixedArrayObjectPtr mixed_array;
+        mixed_array->SetFile(_obj->GetFile());
+        mixed_array->SetInitialized();
+
+        _obj->Insert(constant::Name::Fields, mixed_array);
+    }
+
+    auto root_fields = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr>>(constant::Name::Fields);
+    auto field_reference = make_deferred<syntax::IndirectReferenceObject>(field_dictionary);
+    root_fields->Append(field_reference);
+
+    InvalidateFieldCache();
+}
+
 void InteractiveForm::BuildFieldCache() const {
     if (!_obj->Contains(constant::Name::Fields)) {
         m_cache_built = true;

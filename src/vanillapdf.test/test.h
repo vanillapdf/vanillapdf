@@ -105,7 +105,6 @@ error_type process_resource_dictionary(ResourceDictionaryHandle* obj, int nested
 error_type process_font_map(FontMapHandle* obj, int nested);
 error_type process_interactive_form(InteractiveFormHandle* obj, int nested);
 error_type process_signature_flags(SignatureFlagsHandle* obj, int nested);
-error_type process_field_collection(FieldCollectionHandle* obj, int nested);
 error_type process_field(FieldHandle* obj, int nested);
 error_type process_button_field(ButtonFieldHandle* obj, int nested);
 error_type process_text_field(TextFieldHandle* obj, int nested);

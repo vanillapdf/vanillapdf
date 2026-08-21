@@ -38,6 +38,12 @@ public:
     bool GetFields(OuputFieldCollectionPtr& result) const;
     void SetFields(FieldCollectionPtr value);
 
+    // Appends a field to the root /Fields array, creating the array when the
+    // form does not have one yet. The array holds indirect references
+    // (Table 218), so the field's dictionary shall be an indirect object -
+    // a direct dictionary is an InvalidParameterException.
+    void AddField(FieldPtr value);
+
     bool GetSignatureFlags(OutputSignatureFlagsPtr& result) const;
     void SetSignatureFlags(SignatureFlagsPtr value);
 
@@ -60,9 +66,9 @@ public:
 
 private:
     // Flat cache of terminal field dictionary pointers in document order.
-    // Built in full on first access and cleared by SetFields, so structural
-    // changes are reflected on the next access (same pattern as PageTree's
-    // page cache). GetField constructs a Field on demand from the cached
+    // Built in full on first access and cleared by SetFields and AddField, so
+    // structural changes are reflected on the next access (same pattern as
+    // PageTree's page cache). GetField constructs a Field on demand from the cached
     // dictionary pointer. Mutating the raw /Fields array through the
     // dictionary API bypasses the invalidation.
     mutable std::unique_ptr<std::recursive_mutex> m_cache_lock;

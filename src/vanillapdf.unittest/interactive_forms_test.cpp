@@ -107,65 +107,6 @@ TEST(InteractiveForm, CreateRejectsNullParameters) {
     EXPECT_EQ(InteractiveForm_CreateFromDictionary(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
-// A blank form has no /Fields entry at all
-TEST(InteractiveForm, GetFieldsMissing) {
-    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
-    HandleGuard<FileHandle, File_Release> file;
-    HandleGuard<DocumentHandle, Document_Release> document;
-    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
-    CreateMemoryDocumentWithForm(io_stream, file, document, form);
-
-    FieldCollectionHandle* fields = nullptr;
-    EXPECT_EQ(InteractiveForm_GetFields(form, &fields), VANILLAPDF_ERROR_OBJECT_MISSING);
-    EXPECT_EQ(fields, nullptr);
-}
-
-// SetFields inserts the /Fields array, which GetFields then finds
-TEST(InteractiveForm, SetFieldsThenGetFields) {
-    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
-    HandleGuard<FileHandle, File_Release> file;
-    HandleGuard<DocumentHandle, Document_Release> document;
-    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
-    CreateMemoryDocumentWithForm(io_stream, file, document, form);
-
-    HandleGuard<FieldCollectionHandle, FieldCollection_Release> created_fields;
-    ASSERT_EQ(FieldCollection_Create(created_fields.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InteractiveForm_SetFields(form, created_fields), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(created_fields.get(), nullptr);
-
-    size_type size = 1;
-    ASSERT_EQ(FieldCollection_GetSize(created_fields, &size), VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(size, 0u);
-
-    HandleGuard<FieldCollectionHandle, FieldCollection_Release> found_fields;
-    ASSERT_EQ(InteractiveForm_GetFields(form, found_fields.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_NE(found_fields.get(), nullptr);
-}
-
-// Setting fields twice must replace the previous array rather than throw
-TEST(InteractiveForm, SetFieldsOverwrite) {
-    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
-    HandleGuard<FileHandle, File_Release> file;
-    HandleGuard<DocumentHandle, Document_Release> document;
-    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
-    CreateMemoryDocumentWithForm(io_stream, file, document, form);
-
-    HandleGuard<FieldCollectionHandle, FieldCollection_Release> first;
-    HandleGuard<FieldCollectionHandle, FieldCollection_Release> second;
-    ASSERT_EQ(FieldCollection_Create(first.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(FieldCollection_Create(second.out()), VANILLAPDF_ERROR_SUCCESS);
-
-    ASSERT_EQ(InteractiveForm_SetFields(form, first), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InteractiveForm_SetFields(form, second), VANILLAPDF_ERROR_SUCCESS);
-
-    HandleGuard<FieldCollectionHandle, FieldCollection_Release> found;
-    ASSERT_EQ(InteractiveForm_GetFields(form, found.out()), VANILLAPDF_ERROR_SUCCESS);
-
-    size_type size = 1;
-    ASSERT_EQ(FieldCollection_GetSize(found, &size), VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(size, 0u);
-}
-
 TEST(InteractiveForm, NeedAppearancesMissingOnBlankForm) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
     HandleGuard<FileHandle, File_Release> file;
@@ -706,9 +647,9 @@ TEST(InteractiveForm, FindFieldByQualifiedName) {
     EXPECT_EQ(InteractiveForm_FindField(form, "group.missing", missing.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 }
 
-// Replacing the /Fields array through SetFields must be reflected by the
-// enumeration built before the change
-TEST(InteractiveForm, FieldCacheInvalidatedOnSetFields) {
+// Appending a field through AddField must be reflected by the enumeration
+// built before the change
+TEST(InteractiveForm, FieldCacheInvalidatedOnAddField) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
     HandleGuard<FileHandle, File_Release> file;
     HandleGuard<DocumentHandle, Document_Release> document;
@@ -731,12 +672,127 @@ TEST(InteractiveForm, FieldCacheInvalidatedOnSetFields) {
     ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(count, 1u);
 
-    HandleGuard<FieldCollectionHandle, FieldCollection_Release> empty_fields;
-    ASSERT_EQ(FieldCollection_Create(empty_fields.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InteractiveForm_SetFields(form, empty_fields), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> appended;
+    ASSERT_EQ(DictionaryObject_Create(appended.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(appended, "T", "phone");
+    InsertNameEntry(appended, "FT", "Tx");
+    RegisterIndirectObject(file, appended);
+
+    HandleGuard<FieldHandle, Field_Release> appended_field;
+    ASSERT_EQ(Field_CreateFromDictionary(appended, appended_field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_AddField(form, appended_field), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(count, 2u);
+
+    // Appending preserves document order
+    EXPECT_EQ(GetFieldQualifiedName(form, 0), "email");
+    EXPECT_EQ(GetFieldQualifiedName(form, 1), "phone");
+}
+
+// AddField creates the /Fields array on a form that does not have one yet
+TEST(InteractiveForm, AddFieldCreatesFieldsArray) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
+    CreateMemoryDocumentWithForm(io_stream, file, document, form);
+
+    size_type count = 1;
+    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(count, 0u);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> field_dictionary;
+    ASSERT_EQ(DictionaryObject_Create(field_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(field_dictionary, "T", "email");
+    InsertNameEntry(field_dictionary, "FT", "Tx");
+    RegisterIndirectObject(file, field_dictionary);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(field_dictionary, field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_AddField(form, field), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(count, 1u);
+
+    HandleGuard<FieldHandle, Field_Release> found;
+    EXPECT_EQ(InteractiveForm_FindField(form, "email", found.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
+// The /Fields array holds indirect references, so a field backed by a direct
+// dictionary is refused instead of serializing a dangling reference
+TEST(InteractiveForm, AddFieldRejectsDirectDictionary) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
+    CreateMemoryDocumentWithForm(io_stream, file, document, form);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> field_dictionary;
+    ASSERT_EQ(DictionaryObject_Create(field_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(field_dictionary, "T", "email");
+    InsertNameEntry(field_dictionary, "FT", "Tx");
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(field_dictionary, field.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(InteractiveForm_AddField(form, field), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    // The refused append must not leave a half-created /Fields array behind
+    size_type count = 1;
+    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(count, 0u);
+}
+
+TEST(InteractiveForm, AddFieldRejectsNullParameters) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
+    CreateMemoryDocumentWithForm(io_stream, file, document, form);
+
+    EXPECT_EQ(InteractiveForm_AddField(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(InteractiveForm_AddField(form, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+// The appended reference has to survive a save and reopen cycle
+TEST(InteractiveForm, AddedFieldPersistsAcrossSave) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
+    CreateMemoryDocumentWithForm(io_stream, file, document, form);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> field_dictionary;
+    ASSERT_EQ(DictionaryObject_Create(field_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(field_dictionary, "T", "email");
+    InsertNameEntry(field_dictionary, "FT", "Tx");
+    RegisterIndirectObject(file, field_dictionary);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(field_dictionary, field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_AddField(form, field), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> destination_stream;
+    HandleGuard<FileHandle, File_Release> destination_file;
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(destination_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(destination_stream, "temp_destination", destination_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_SaveFile(document, destination_file), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FileHandle, File_Release> reloaded_file;
+    HandleGuard<DocumentHandle, Document_Release> reloaded_document;
+    HandleGuard<CatalogHandle, Catalog_Release> reloaded_catalog;
+    ASSERT_EQ(File_OpenStream(destination_stream, "temp_destination", reloaded_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_Initialize(reloaded_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_OpenFile(reloaded_file, reloaded_document.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_GetCatalog(reloaded_document, reloaded_catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> reloaded_form;
+    ASSERT_EQ(Catalog_GetAcroForm(reloaded_catalog, reloaded_form.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    size_type count = 0;
+    ASSERT_EQ(InteractiveForm_GetFieldCount(reloaded_form, &count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(count, 1u);
+    EXPECT_EQ(GetFieldQualifiedName(reloaded_form, 0), "email");
 }
 
 // Malformed documents can link /Kids in a cycle; the enumeration has to
