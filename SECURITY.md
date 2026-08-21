@@ -19,7 +19,7 @@ Security fixes are provided for the **two most recent minor releases**. Older ve
 If you discover a security vulnerability in Vanilla.PDF, please report it **privately and responsibly**:
 
 - **GitHub (preferred):** Submit a draft security advisory at [github.com/vanillapdf/vanillapdf/security/advisories](https://github.com/vanillapdf/vanillapdf/security/advisories)
-- **Email (alternative):** Contact us directly at `security@vanillapdf.com`. If you wish to encrypt your report, maintainer public keys are available on the [GitHub profile](https://github.com/vanillapdf) and via public keyservers.
+- **Email (alternative):** Contact us directly at `security@vanillapdf.com`. Email is not encrypted in transit end to end; for anything sensitive, please use the GitHub advisory form above, which is access-controlled and keeps the report confidential until an advisory is published.
 
 > ⚠️ **Do NOT open a public GitHub issue for security vulnerabilities.** Public issues are visible to everyone and may put users at risk before a fix is available.
 

@@ -108,33 +108,22 @@ Pull requests that add per-file copyright notices will be asked to remove them b
 
 ---
 
-## 🔐 Release Tag Signing
+## 🔐 Release Verification
 
-All release tags must be GPG-signed by a maintainer. This allows users to cryptographically verify that a release was created by a trusted maintainer and has not been tampered with.
-
-**Creating a signed tag:**
+Every release artifact carries a GitHub build provenance attestation, which records the repository, workflow, and commit it was built from. Verification is keyless — there is no public key to fetch, trust, or keep current — using the [GitHub CLI](https://cli.github.com/):
 
 ```bash
-git tag -s v2.3.0 -m "Release v2.3.0"
-git push origin v2.3.0
-```
-
-**Verifying a signed tag:**
-
-```bash
-git tag -v v2.3.0
-```
-
-This will show the GPG signature details and the signer's key. Maintainer public keys are available in the [GitHub profile](https://github.com/vanillapdf) and via public keyservers.
-
-**Release artifact verification:**
-
-Each release includes a GitHub build provenance attestation for every artifact, enabling keyless verification via the [GitHub CLI](https://cli.github.com/):
-
-```bash
-gh attestation verify vanillapdf.2.3.0.nupkg \
+gh attestation verify <downloaded-artifact> \
   --repo vanillapdf/vanillapdf
 ```
+
+Any published release artifact works in place of `<downloaded-artifact>` — package, archive, or binary.
+
+A successful result means the artifact was produced by this repository's release workflow from the commit named in the attestation, and has not been altered since. That is a stronger statement than a signature alone: it binds the artifact to the build that produced it, not merely to whoever held a key.
+
+Releases are not GPG-signed. Signing tags from an automated release pipeline would require a long-lived private key held in CI secrets, and a signature made by such a key attests to nothing more than that the release workflow ran — which the provenance attestation already establishes, without a key to protect, rotate, or revoke.
+
+If your organization has a policy requiring signed tags, open an issue and tell us about it — it is a decision we are willing to revisit, but one that needs a proper key-custody and revocation story rather than an assertion in a document.
 
 ---
 
