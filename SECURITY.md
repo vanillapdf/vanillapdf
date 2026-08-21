@@ -88,7 +88,7 @@ Vanilla.PDF does not operate a bug bounty programme and does not offer monetary 
 
 We are grateful to security researchers who help keep Vanilla.PDF safe. With your permission, we will acknowledge your contribution in the published security advisory, and the commit containing the fix carries a `Reported-by:` trailer crediting you.
 
-If you submit a fix yourself rather than only a report, it is a contribution like any other: it requires a `Signed-off-by:` line and a signed Contributor License Agreement. See [CONTRIBUTING.md](CONTRIBUTING.md). Please still report the issue privately first — do not open a public pull request describing an unfixed vulnerability.
+If you submit a fix yourself rather than only a report, it is a contribution like any other and requires a signed Contributor License Agreement. See [CONTRIBUTING.md](CONTRIBUTING.md). Please still report the issue privately first — do not open a public pull request describing an unfixed vulnerability.
 
 ---
 

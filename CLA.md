@@ -134,8 +134,6 @@ When you open a pull request against the Project, an automated check will ask yo
 
 The check then turns green automatically. Comment `recheck` if it needs a nudge.
 
-Signing this Agreement does not replace the Developer Certificate of Origin (DCO) sign-off required on each commit — see [CONTRIBUTING.md](CONTRIBUTING.md) for details on both requirements.
-
 ---
 
 *This Agreement is adapted from the Apache Software Foundation Individual Contributor License Agreement V2.2.*

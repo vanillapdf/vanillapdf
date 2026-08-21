@@ -2,7 +2,9 @@
 
 Thank you for considering contributing to **Vanilla.PDF**! Your involvement helps improve the project for everyone. Whether you're fixing bugs, improving documentation, or suggesting new features—we welcome your input.
 
-Vanilla.PDF is released under the [Apache License 2.0](LICENSE.txt). Contributions are accepted into this repository on those terms and are distributed as part of the project under that license. Contributors additionally sign a [Contributor License Agreement](CLA.md) — see below.
+Vanilla.PDF is released under the [Apache License 2.0](LICENSE.txt). Contributions are accepted into this repository on those terms and are distributed as part of the project under that license. The license is declared once at project level rather than in per-file headers — see [Copyright Notices and Credits](#️-copyright-notices-and-credits) below.
+
+There is one requirement for contributing code: sign the [Contributor License Agreement](CLA.md). It is requested automatically on your first pull request and takes one comment.
 
 ---
 
@@ -49,75 +51,11 @@ We welcome contributions! Please follow these guidelines:
 - 🧠 **Discuss major changes first**: For anything beyond a bug fix, contact the team before investing time. Be aware that changes to core subsystems (the parser, cross-reference handling, encryption) are often reimplemented by the maintainers rather than merged as-is — open an issue before spending a weekend on one; your report is credited with a `Reported-by:` trailer either way.
 - 🌳 **Base your PR on the `main` branch** (or appropriate `release/*` branch for hotfixes)
 - 🧹 **Match the existing coding style**
-- ✍️ **Sign off your commits** with `git commit -s` (see the DCO section below)
 - 📜 **Sign the CLA** (see below) — requested automatically on your first pull request; one signature per version of the agreement
 - 🚫 **Submit only your own work**: do not include third-party code in a pull request (see below)
 - 🤖 **Disclose AI assistance**: if generative AI tools helped produce your change, say so in the pull request or add an `Assisted-by:` trailer to the affected commits (see Section 6 of the [CLA](CLA.md))
 - 🧪 **Ensure tests pass**: Run the test suite before submitting
 - 📝 **Use clear commit messages**: conventional commit format is preferred but not enforced
-
----
-
-## ✅ Developer Certificate of Origin (DCO)
-
-Every commit must carry a `Signed-off-by:` line. That line is not a formality: it certifies the **Developer Certificate of Origin, version 1.1**, reproduced in full below.
-
-Where the certificate refers to "the open source license indicated in the file," read it as the license declared for this repository — the Apache License 2.0, set out in [LICENSE.txt](LICENSE.txt). Vanilla.PDF declares its license once at project level rather than in per-file headers; see [Copyright Notices and Credits](#️-copyright-notices-and-credits) below.
-
-```
-Developer Certificate of Origin
-Version 1.1
-
-Copyright (C) 2004, 2006 The Linux Foundation and its contributors.
-
-Everyone is permitted to copy and distribute verbatim copies of this
-license document, but changing it is not allowed.
-
-
-Developer's Certificate of Origin 1.1
-
-By making a contribution to this project, I certify that:
-
-(a) The contribution was created in whole or in part by me and I
-    have the right to submit it under the open source license
-    indicated in the file; or
-
-(b) The contribution is based upon previous work that, to the best
-    of my knowledge, is covered under an appropriate open source
-    license and I have the right under that license to submit that
-    work with modifications, whether created in whole or in part
-    by me, under the same open source license (unless I am
-    permitted to submit under a different license), as indicated
-    in the file; or
-
-(c) The contribution was provided directly to me by some other
-    person who certified (a), (b) or (c) and I have not modified
-    it.
-
-(d) I understand and agree that this project and the contribution
-    are public and that a record of the contribution (including all
-    personal information I submit with it, including my sign-off) is
-    maintained indefinitely and may be redistributed consistent with
-    this project or the open source license(s) involved.
-```
-
-Add the sign-off automatically with the `-s` flag:
-
-```bash
-git commit -s -m "Fix PDF metadata encoding"
-```
-
-This appends a line like:
-
-```
-Signed-off-by: Your Name <you@example.com>
-```
-
-The name and email must be your real ones and must match your git configuration. If you forget the sign-off, amend the commit (`git commit --amend -s`) or rebase to add it across a range (`git rebase --signoff main`) and force-push the branch.
-
-**Note the lower-case `-s`.** `git commit -S` (upper case) creates a GPG *signature*, which is a different thing. GPG signing of commits is **not required** in this repository — only maintainers' release tags are GPG-signed, as described at the end of this document.
-
-For more information, visit [developercertificate.org](https://developercertificate.org)
 
 ---
 
@@ -137,7 +75,7 @@ The check then turns green automatically (comment `recheck` if it needs a nudge)
 
 **Tell us if your situation changes.** If you change employer, or take on a client or contract that may claim rights in the code you write, obtain that party's permission before your next contribution and let us know — see Section 9 of the [CLA](CLA.md). We may ask you to sign again.
 
-**CLA and commit sign-off serve different purposes.** The CLA is the legal grant covering your contributions. The `Signed-off-by:` trailer (see the DCO section above) is a per-commit assertion, attached to each individual change and recorded in the history itself. The CLA is what permits merging; the sign-off is required on every commit in this repository.
+**One agreement, not a per-commit ritual.** Some projects additionally require a `Signed-off-by:` trailer on every commit under the Developer Certificate of Origin. Vanilla.PDF does not: the CLA covers the same ground and more, and every signature is recorded with the exact text it was given against. You are welcome to sign off your commits out of habit — `git commit -s` does no harm — but nothing here requires it.
 
 **Individual contributions only.** You sign the CLA as an individual, and you must have your employer's permission if they hold rights in your work. We do not currently offer a corporate contributor agreement — the full conditions are in Section 12 of the [CLA](CLA.md). If you cannot sign, please open an issue describing the change instead; if we implement it, the commit credits you with a `Reported-by:` trailer.
 
