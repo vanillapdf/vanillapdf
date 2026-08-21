@@ -12,6 +12,13 @@ name: CLA Assistant
 # and the custom-notsigned-prcomment below. If you ever set
 # custom-pr-sign-comment here, update all of those in the same change —
 # a mismatch produces a check that can never turn green.
+#
+# RELEASING A NEW CLA VERSION requires three coordinated changes here:
+#   1. path-to-signatures  -> a new register, e.g. signatures/v2/cla.json
+#   2. path-to-document    -> the tag holding the new text, e.g. cla-v2.0
+#   3. signed-commit-message / create-file-commit-message -> the new version
+# Contributors who signed an earlier version are then asked to sign again,
+# which is the intended behaviour.
 
 on:
   issue_comment:
@@ -26,7 +33,15 @@ jobs:
   cla-check:
     name: CLA check
     runs-on: ubuntu-latest
-    if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
+    # For comment events, require that the comment is on a pull request:
+    # issue_comment also fires for plain issues, where this job has nothing
+    # to act on.
+    if: >-
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       (github.event.comment.body == 'recheck' ||
+        github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA')) ||
+      github.event_name == 'pull_request_target'
     permissions:
       actions: write
       contents: read
@@ -43,10 +58,30 @@ jobs:
           remote-repository-name: vanillapdf-cla
           branch: main
           path-to-signatures: signatures/v1/cla.json
-          path-to-document: https://github.com/vanillapdf/vanillapdf/blob/main/CLA.md
-          allowlist: jurzik,vanillapdf-bot,dependabot[bot]
+
+          # Pinned to an immutable tag, not to main. A contributor's signature
+          # must point at the exact text they agreed to; a branch link would
+          # silently change under them whenever CLA.md is edited.
+          path-to-document: https://github.com/vanillapdf/vanillapdf/blob/cla-v1.0/CLA.md
+
+          # Identities that cannot meaningfully sign. Bots are listed
+          # explicitly rather than by wildcard so that a new account cannot
+          # exempt itself by choosing a matching name.
+          allowlist: jurzik,vanillapdf-bot,dependabot[bot],github-actions[bot]
+
+          # Threads stay open after merge. Locking would block regression
+          # reports and follow-up questions, and provides no tamper
+          # resistance: the signature record lives in the registry repository,
+          # and a locked thread does not prevent a comment being deleted.
+          lock-pullrequest-aftermerge: false
+
+          # Each signature becomes one legible commit in the registry, so the
+          # commit log reads as a ledger of who agreed to what, and when.
+          create-file-commit-message: "Create CLA v1.0 signature register"
+          signed-commit-message: "@$contributorName signed CLA v1.0 in vanillapdf/vanillapdf#$pullRequestNo"
+
           custom-notsigned-prcomment: |
-            👋 Thank you for contributing to **Vanilla.PDF**! One step before we can merge: please sign our [Contributor License Agreement](https://github.com/vanillapdf/vanillapdf/blob/main/CLA.md) — it takes one comment and you only ever do it once.
+            👋 Thank you for contributing to **Vanilla.PDF**! One step before we can merge: please sign our [Contributor License Agreement](https://github.com/vanillapdf/vanillapdf/blob/cla-v1.0/CLA.md) — it takes one comment and you only ever do it once.
 
             **In short:** you keep the copyright to your work; the project gets a license to use and distribute it; code released under Apache 2.0 stays Apache 2.0. The full text is at the link above.
 
