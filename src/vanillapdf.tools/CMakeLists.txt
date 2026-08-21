@@ -17,6 +17,7 @@ set(VANILLAPDF_TOOLS_SOURCES
     merge.c
     read.c
     resave.c
+    remove_page.c
     sign.c
     sign_custom.c
     verify.c
@@ -155,17 +156,22 @@ if(VANILLAPDF_ENABLE_TESTS)
         set(VANILLAPDF_TOOLS_EXTRA_PROPERTIES PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${VANILLAPDF_OPENSSL_MODULES_DIR}")
     endif()
 
+    # Tests reference the target by name (not $<TARGET_FILE:...>) so CMake
+    # prepends CMAKE_CROSSCOMPILING_EMULATOR when cross-compiling — the adb
+    # wrapper that runs the binary on an Android device (see the android
+    # presets and scripts/android/adb_test_runner.sh).
+
     # Verify test for Granizo-signed.PDF (self-signed certificate) - should succeed with flag
     # Uses --skip-certificate-validation to bypass untrusted root check
     add_test(
         NAME "Tools.verify.Granizo-signed.with-flag"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_CORPUS_DIR}/custom/Granizo-signed.PDF" --skip-certificate-validation
+        COMMAND vanillapdf.tools verify -f "${VANILLAPDF_CORPUS_DIR}/custom/Granizo-signed.PDF" --skip-certificate-validation
     )
 
     # Verify test for Granizo-signed.PDF without flag - should fail (untrusted root)
     add_test(
         NAME "Tools.verify.Granizo-signed.without-flag"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> verify -f "${VANILLAPDF_CORPUS_DIR}/custom/Granizo-signed.PDF"
+        COMMAND vanillapdf.tools verify -f "${VANILLAPDF_CORPUS_DIR}/custom/Granizo-signed.PDF"
     )
     set_tests_properties("Tools.verify.Granizo-signed.without-flag" PROPERTIES WILL_FAIL TRUE)
 
@@ -190,7 +196,7 @@ if(VANILLAPDF_ENABLE_TESTS)
 
         add_test(
             NAME "Tools.validate.${TEST_NAME}"
-            COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_CORPUS_DIR}/${TEST_FILE}"
+            COMMAND vanillapdf.tools validate -f "${VANILLAPDF_CORPUS_DIR}/${TEST_FILE}"
         )
         set_tests_properties("Tools.validate.${TEST_NAME}" PROPERTIES
             PASS_REGULAR_EXPRESSION "Issues: 0 \\(0 error"
@@ -202,7 +208,7 @@ if(VANILLAPDF_ENABLE_TESTS)
     # issue5874.pdf: 1 xref bad-offset error (code=300), no warnings
     add_test(
         NAME "Tools.validate.pdfjs.issue5874"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_CORPUS_DIR}/pdfjs/issue5874.pdf"
+        COMMAND vanillapdf.tools validate -f "${VANILLAPDF_CORPUS_DIR}/pdfjs/issue5874.pdf"
     )
     set_tests_properties("Tools.validate.pdfjs.issue5874" PROPERTIES
         PASS_REGULAR_EXPRESSION "Issues: 1 \\(1 error\\(s\\), 0 warning"
@@ -211,7 +217,7 @@ if(VANILLAPDF_ENABLE_TESTS)
     # request_for_taxpayer.pdf: 1 TrailerSizeMismatch warning (code=202) + 1 xref bad-offset error (code=300)
     add_test(
         NAME "Tools.validate.request_for_taxpayer"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_CORPUS_DIR}/request_for_taxpayer.pdf"
+        COMMAND vanillapdf.tools validate -f "${VANILLAPDF_CORPUS_DIR}/request_for_taxpayer.pdf"
     )
     set_tests_properties("Tools.validate.request_for_taxpayer" PROPERTIES
         PASS_REGULAR_EXPRESSION "Issues: 2 \\(1 error\\(s\\), 1 warning"
@@ -220,7 +226,7 @@ if(VANILLAPDF_ENABLE_TESTS)
     # bug1011159.pdf: 1 TrailerSizeMismatch warning (code=202) only - still reports VALID
     add_test(
         NAME "Tools.validate.pdfjs.bug1011159"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> validate -f "${VANILLAPDF_CORPUS_DIR}/pdfjs/bug1011159.pdf"
+        COMMAND vanillapdf.tools validate -f "${VANILLAPDF_CORPUS_DIR}/pdfjs/bug1011159.pdf"
     )
     set_tests_properties("Tools.validate.pdfjs.bug1011159" PROPERTIES
         PASS_REGULAR_EXPRESSION "Issues: 1 \\(0 error\\(s\\), 1 warning"
@@ -242,7 +248,7 @@ if(VANILLAPDF_ENABLE_TESTS)
 
         add_test(
             NAME "Tools.read.${TEST_NAME}"
-            COMMAND $<TARGET_FILE:vanillapdf.tools> read -f "${VANILLAPDF_CORPUS_DIR}/${TEST_FILE}"
+            COMMAND vanillapdf.tools read -f "${VANILLAPDF_CORPUS_DIR}/${TEST_FILE}"
         )
     endforeach()
 
@@ -255,6 +261,58 @@ if(VANILLAPDF_ENABLE_TESTS)
     # File_Open) — the reason narrow non-ASCII paths survive on Windows.
     add_test(
         NAME "Tools.read.chinese_names_中文的名字-2"
-        COMMAND $<TARGET_FILE:vanillapdf.tools> read -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/chinese_names_中文的名字-2.pdf"
+        COMMAND vanillapdf.tools read -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/chinese_names_中文的名字-2.pdf"
+    )
+
+    # remove_page sanity tests on the in-repo fixtures. The tool itself checks
+    # that the page count dropped by exactly one, so each test only asserts
+    # the reported counts.
+
+    # nested-pages.pdf: root -> [3-page node, 2-page node]. Page 4 is the
+    # first page of the second subtree - the regression case where the flat
+    # page number used to be applied directly to the root Kids array.
+    add_test(
+        NAME "Tools.remove_page.nested-pages.subtree-boundary"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> remove_page -s "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/nested-pages.pdf" -d "${CMAKE_CURRENT_BINARY_DIR}/remove_page-nested-pages.pdf" -n 4
+    )
+    set_tests_properties("Tools.remove_page.nested-pages.subtree-boundary" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Removed page 4 \\(5 -> 4 pages\\)"
+    )
+
+    # Flat single-node tree, removal from the middle of the wide Kids array
+    add_test(
+        NAME "Tools.remove_page.flat-pages.middle"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> remove_page -s "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/flat-pages.pdf" -d "${CMAKE_CURRENT_BINARY_DIR}/remove_page-flat-pages.pdf" -n 725
+    )
+    set_tests_properties("Tools.remove_page.flat-pages.middle" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Removed page 725 \\(1451 -> 1450 pages\\)"
+    )
+
+    # First page of a document with real content
+    add_test(
+        NAME "Tools.remove_page.sample-document.first"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> remove_page -s "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/sample-document.pdf" -d "${CMAKE_CURRENT_BINARY_DIR}/remove_page-sample-document.pdf" -n 1
+    )
+    set_tests_properties("Tools.remove_page.sample-document.first" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Removed page 1 \\(2 -> 1 pages\\)"
+    )
+
+    # Removing the only page leaves a document with an empty page tree
+    add_test(
+        NAME "Tools.remove_page.chinese_names.only-page"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> remove_page -s "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/chinese_names_中文的名字-2.pdf" -d "${CMAKE_CURRENT_BINARY_DIR}/remove_page-chinese_names.pdf" -n 1
+    )
+    set_tests_properties("Tools.remove_page.chinese_names.only-page" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Removed page 1 \\(1 -> 0 pages\\)"
+    )
+
+    # Removing from an empty document reports a clean out-of-range error
+    # instead of the historical silent success
+    add_test(
+        NAME "Tools.remove_page.minimalist.out-of-range"
+        COMMAND $<TARGET_FILE:vanillapdf.tools> remove_page -s "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/minimalist.pdf" -d "${CMAKE_CURRENT_BINARY_DIR}/remove_page-minimalist.pdf" -n 1
+    )
+    set_tests_properties("Tools.remove_page.minimalist.out-of-range" PROPERTIES
+        PASS_REGULAR_EXPRESSION "out of range, the document has 0 pages"
     )
 endif()
