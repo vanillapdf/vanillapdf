@@ -61,7 +61,7 @@ We welcome contributions! Please follow these guidelines:
 
 ## 📜 Contributor License Agreement (CLA)
 
-Before your first pull request can be merged, you must sign our [Contributor License Agreement](CLA.md). You sign once per version of the agreement: if the text is ever amended you will be asked to sign the new version, otherwise you are never asked again.
+Before your first pull request can be merged, you must sign our [Contributor License Agreement](CLA.md). You sign once per version of the agreement: if the text is ever amended you will be asked to sign the new version, and you may be asked to sign again if your employment situation changes. Otherwise you are not asked again.
 
 **Why a CLA?** Vanilla.PDF is released under Apache 2.0. The CLA gives the project the rights to license contributions on other terms as well — including commercially — should the project need that in the future. It does not transfer your copyright: you keep full ownership of your contributions and may use them however you like elsewhere. Code already released under Apache 2.0 remains available under Apache 2.0; the CLA does not and cannot change that.
 

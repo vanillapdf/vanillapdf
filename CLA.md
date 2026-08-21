@@ -78,7 +78,7 @@ The Maintainer does not currently offer a corporate contributor license agreemen
 
 This Agreement is signed electronically, in the manner described under "How to sign" below.
 
-Each Contribution is governed by the version of this Agreement in effect at the time that Contribution is submitted. You sign once per version: a signature remains effective for all Contributions submitted while that version is in effect, and You will not be asked to sign again unless the text is amended.
+Each Contribution is governed by the version of this Agreement in effect at the time that Contribution is submitted. You sign once per version: a signature remains effective for all Contributions submitted while that version is in effect, and You will not be asked to sign again unless the text is amended or Your circumstances change as described in Section 9.
 
 This Agreement also applies to Contributions previously submitted by You and accepted into the Project before the date of Your signature, as if they had been submitted under it. Your representations apply to each such Contribution as of the date it was originally submitted. Where a Contribution was submitted before any version of this Agreement was in effect, it is governed by the first version You sign.
 

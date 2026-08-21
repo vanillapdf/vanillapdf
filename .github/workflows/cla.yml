@@ -81,7 +81,7 @@ jobs:
           signed-commit-message: "@$contributorName signed CLA v1.0 in vanillapdf/vanillapdf#$pullRequestNo"
 
           custom-notsigned-prcomment: |
-            👋 Thank you for contributing to **Vanilla.PDF**! One step before we can merge: please sign our [Contributor License Agreement](https://github.com/vanillapdf/vanillapdf/blob/cla-v1.0/CLA.md) — it takes one comment and you only ever do it once.
+            👋 Thank you for contributing to **Vanilla.PDF**! One step before we can merge: please sign our [Contributor License Agreement](https://github.com/vanillapdf/vanillapdf/blob/cla-v1.0/CLA.md) — it takes one comment, and you sign at most once per version of the agreement.
 
             **In short:** you keep the copyright to your work; the project gets a license to use and distribute it; code released under Apache 2.0 stays Apache 2.0. The full text is at the link above.
 
