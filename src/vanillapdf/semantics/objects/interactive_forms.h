@@ -71,6 +71,12 @@ private:
     // PageTree's page cache). GetField constructs a Field on demand from the cached
     // dictionary pointer. Mutating the raw /Fields array through the
     // dictionary API bypasses the invalidation.
+    //
+    // The mutators hold the cache lock across the whole mutation, so
+    // AddField's create-if-missing check is atomic with respect to concurrent
+    // mutators and cache builds on this form instance. Distinct
+    // InteractiveForm wrappers over the same dictionary each carry their own
+    // cache and lock (canonicalization is issue #524).
     mutable std::unique_ptr<std::recursive_mutex> m_cache_lock;
     mutable std::vector<syntax::DictionaryObjectPtr> m_field_cache;
     mutable bool m_cache_built = false;

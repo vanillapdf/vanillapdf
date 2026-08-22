@@ -38,6 +38,8 @@ InteractiveFormPtr InteractiveForm::Create(DocumentPtr document) {
 }
 
 void InteractiveForm::SetFields(FieldCollectionPtr value) {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
     _obj->Insert(constant::Name::Fields, value->GetObject(), true);
     InvalidateFieldCache();
 }
@@ -50,6 +52,11 @@ void InteractiveForm::AddField(FieldPtr value) {
     if (!field_dictionary->IsIndirect()) {
         LOG_ERROR_AND_THROW(InvalidParameterException, "The field dictionary shall be an indirect object - allocate a cross-reference entry for it first");
     }
+
+    // The cache lock spans the whole mutation, so the create-if-missing
+    // check and the append are atomic with respect to concurrent mutators
+    // and cache builds on this form
+    ACCESS_LOCK_GUARD(m_cache_lock);
 
     if (!_obj->Contains(constant::Name::Fields)) {
         syntax::MixedArrayObjectPtr mixed_array;
