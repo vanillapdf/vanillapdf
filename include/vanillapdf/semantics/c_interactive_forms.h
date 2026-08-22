@@ -4,6 +4,7 @@
 #include "vanillapdf/c_export.h"
 #include "vanillapdf/c_handles.h"
 #include "vanillapdf/c_values.h"
+#include "vanillapdf/semantics/c_fields.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -98,6 +99,74 @@ extern "C"
     * Set to \ref VANILLAPDF_RV_TRUE to instruct the viewer to regenerate all field appearances from their values.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetNeedAppearances(InteractiveFormHandle* handle, boolean_type value);
+
+    /**
+    * \brief
+    * Get the number of resolved terminal fields in the document.
+    *
+    * Terminal fields are the logical fields a user interacts with. The field
+    * hierarchy's grouping nodes exist only for naming and attribute
+    * inheritance and are not included - the same way the page tree hides its
+    * interior nodes. A radio button group is a single terminal field with one
+    * value, regardless of how many widget annotations represent it on the
+    * page.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFieldCount(InteractiveFormHandle* handle, size_type* result);
+
+    /**
+    * \brief
+    * Get the resolved terminal field at the given zero-based index, in
+    * document order.
+    *
+    * \see \ref InteractiveForm_GetFieldCount
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetField(InteractiveFormHandle* handle, size_type index, FieldHandle** result);
+
+    /**
+    * \brief
+    * Find a terminal field by its fully qualified name - the partial field
+    * names (/T entries) joined with '.', UTF-8 encoded.
+    *
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when no terminal field has
+    * that name.
+    * \see \ref Field_GetQualifiedName
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_FindField(InteractiveFormHandle* handle, string_type qualified_name, FieldHandle** result);
+
+    /**
+    * \brief
+    * Get the document-wide default appearance string (/DA entry).
+    *
+    * Fields resolve /DA through their /Parent chain only - when
+    * \ref Field_GetDefaultAppearance reports
+    * \ref VANILLAPDF_ERROR_OBJECT_MISSING, fall back to this document
+    * default.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetDefaultAppearance(InteractiveFormHandle* handle, StringObjectHandle** result);
+
+    /**
+    * \brief Set the document-wide default appearance string (/DA entry).
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetDefaultAppearance(InteractiveFormHandle* handle, StringObjectHandle* value);
+
+    /**
+    * \brief
+    * Get the document-wide default quadding (/Q entry) - the text
+    * justification of variable text fields.
+    *
+    * Fields resolve /Q through their /Parent chain only - when
+    * \ref Field_GetQuadding reports \ref VANILLAPDF_ERROR_OBJECT_MISSING,
+    * fall back to this document default. When this entry is missing as well,
+    * the specification default is \ref QuaddingType_LeftJustified.
+    * \see QuaddingType
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetQuadding(InteractiveFormHandle* handle, QuaddingType* result);
+
+    /**
+    * \brief Set the document-wide default quadding (/Q entry).
+    * \see QuaddingType
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetQuadding(InteractiveFormHandle* handle, QuaddingType value);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle

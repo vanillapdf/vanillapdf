@@ -158,6 +158,21 @@ extern "C"
     } FieldFlags;
 
     /**
+    * \brief Form of quadding (justification) of variable text fields (PDF 32000-1:2008, Table 222)
+    * \ingroup group_fields
+    */
+    typedef enum {
+        /** \brief Text is left-justified */
+        QuaddingType_LeftJustified = 0,
+
+        /** \brief Text is centered */
+        QuaddingType_Centered = 1,
+
+        /** \brief Text is right-justified */
+        QuaddingType_RightJustified = 2,
+    } QuaddingType;
+
+    /**
     * \memberof FieldCollectionHandle
     * @{
     */
@@ -215,10 +230,25 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetName(FieldHandle* handle, StringObjectHandle** result);
 
     /**
+    * \brief
+    * Set the partial field name (/T entry).
+    *
+    * Because the PERIOD is used as a separator for fully qualified names,
+    * a partial name shall not contain a PERIOD character.
+    * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE if the name contains a PERIOD.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_SetName(FieldHandle* handle, StringObjectHandle* value);
+
+    /**
     * \brief Get the alternate field name (/TU entry), used as tooltip text.
     * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateName(FieldHandle* handle, StringObjectHandle** result);
+
+    /**
+    * \brief Set the alternate field name (/TU entry), used as tooltip text.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_SetAlternateName(FieldHandle* handle, StringObjectHandle* value);
 
     /**
     * \brief Get the field flags (/Ff entry).
@@ -232,6 +262,76 @@ extern "C"
     * \see FieldFlags
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_SetFieldFlags(FieldHandle* handle, FieldFlags value);
+
+    /**
+    * \brief
+    * Determine whether this is a terminal field.
+    *
+    * A terminal field has no children other than widget annotations - it is
+    * a logical field the user interacts with. A non-terminal field groups
+    * other fields for naming and attribute inheritance.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_IsTerminal(FieldHandle* handle, boolean_type* result);
+
+    /**
+    * \brief
+    * Get the fully qualified field name.
+    *
+    * Partial field names (/T entries) joined with '.' from the root of the
+    * field hierarchy down to this field. Levels without a /T entry do not
+    * contribute a segment. Each partial name is a text string and is
+    * normalized to UTF-8, so the result is UTF-8 encoded regardless of how
+    * the names are stored in the document.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetQualifiedName(FieldHandle* handle, BufferHandle** result);
+
+    /**
+    * \brief
+    * Get the default appearance string (/DA entry) for variable text fields,
+    * resolved through the /Parent chain.
+    *
+    * The document-wide default lives in the interactive form dictionary -
+    * when this function reports \ref VANILLAPDF_ERROR_OBJECT_MISSING, fall
+    * back to \ref InteractiveForm_GetDefaultAppearance.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetDefaultAppearance(FieldHandle* handle, StringObjectHandle** result);
+
+    /**
+    * \brief
+    * Set the default appearance string (/DA entry) in this field's own
+    * dictionary, overriding any inherited value.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_SetDefaultAppearance(FieldHandle* handle, StringObjectHandle* value);
+
+    /**
+    * \brief
+    * Get the quadding (/Q entry) - the text justification of variable text
+    * fields - resolved through the /Parent chain.
+    *
+    * The document-wide default lives in the interactive form dictionary -
+    * when this function reports \ref VANILLAPDF_ERROR_OBJECT_MISSING, fall
+    * back to \ref InteractiveForm_GetQuadding.
+    * \see QuaddingType
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetQuadding(FieldHandle* handle, QuaddingType* result);
+
+    /**
+    * \brief
+    * Set the quadding (/Q entry) in this field's own dictionary, overriding
+    * any inherited value.
+    * \see QuaddingType
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_SetQuadding(FieldHandle* handle, QuaddingType value);
+
+    /**
+    * \brief
+    * Get the underlying field dictionary.
+    *
+    * This is the escape hatch for anything the field API does not model -
+    * the raw hierarchy is reachable through the dictionary's /Parent and
+    * /Kids entries.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetBaseObject(FieldHandle* handle, DictionaryObjectHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ButtonFieldHandle.

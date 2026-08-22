@@ -523,6 +523,382 @@ TEST(ChoiceField, GetOptionCountMissing) {
     ASSERT_EQ(ChoiceField_GetOptionCount(choice_field, &count), VANILLAPDF_ERROR_OBJECT_MISSING);
 }
 
+// Inserts a /Kids array of indirect references to the given children
+static void InsertKidsEntry(
+    FileHandle* file,
+    DictionaryObjectHandle* parent,
+    std::initializer_list<DictionaryObjectHandle*> kids
+) {
+    HandleGuard<ArrayObjectHandle, ArrayObject_Release> kids_array;
+    ASSERT_EQ(ArrayObject_Create(kids_array.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    for (DictionaryObjectHandle* kid : kids) {
+        HandleGuard<ObjectHandle, Object_Release> kid_object;
+        ASSERT_EQ(DictionaryObject_ToObject(kid, kid_object.out()), VANILLAPDF_ERROR_SUCCESS);
+
+        HandleGuard<XrefUsedEntryHandle, XrefUsedEntry_Release> kid_entry;
+        ASSERT_EQ(File_AllocateNewEntry(file, kid_entry.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(XrefUsedEntry_SetReference(kid_entry, kid_object), VANILLAPDF_ERROR_SUCCESS);
+
+        HandleGuard<IndirectReferenceObjectHandle, IndirectReferenceObject_Release> kid_reference;
+        ASSERT_EQ(IndirectReferenceObject_Create(kid_reference.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(IndirectReferenceObject_SetReferencedObject(kid_reference, kid_object), VANILLAPDF_ERROR_SUCCESS);
+
+        HandleGuard<ObjectHandle, Object_Release> kid_reference_object;
+        ASSERT_EQ(IndirectReferenceObject_ToObject(kid_reference, kid_reference_object.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(kids_array, kid_reference_object), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    HandleGuard<ObjectHandle, Object_Release> kids_array_object;
+    ASSERT_EQ(ArrayObject_ToObject(kids_array, kids_array_object.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> key;
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Kids", key.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Insert(parent, key, kids_array_object, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+}
+
+// Reads the buffer contents into a std::string for comparisons
+static std::string BufferToString(BufferHandle* buffer) {
+    string_type data = nullptr;
+    size_type size = 0;
+    EXPECT_EQ(Buffer_GetData(buffer, &data, &size), VANILLAPDF_ERROR_SUCCESS);
+    return std::string(data, size);
+}
+
+// --- Qualified name tests (12.7.3.2) ---
+
+TEST(Field, QualifiedNameOwnOnly) {
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    CreateFieldDict(dict, "Tx");
+    InsertStringEntry(dict, "T", "solo");
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> qualified_name;
+    ASSERT_EQ(Field_GetQualifiedName(field, qualified_name.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(qualified_name), "solo");
+}
+
+TEST(Field, QualifiedNameNested) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> parent;
+    ASSERT_EQ(DictionaryObject_Create(parent.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(parent, "T", "group");
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> child;
+    CreateFieldDict(child, "Tx");
+    InsertStringEntry(child, "T", "first");
+    InsertParentEntry(file, child, parent);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(child, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> qualified_name;
+    ASSERT_EQ(Field_GetQualifiedName(field, qualified_name.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(qualified_name), "group.first");
+}
+
+// Hierarchy levels without a /T partial name do not contribute a segment
+TEST(Field, QualifiedNameSkipsUnnamedLevels) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> grandparent;
+    ASSERT_EQ(DictionaryObject_Create(grandparent.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(grandparent, "T", "root");
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> parent;
+    ASSERT_EQ(DictionaryObject_Create(parent.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertParentEntry(file, parent, grandparent);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> child;
+    CreateFieldDict(child, "Tx");
+    InsertStringEntry(child, "T", "leaf");
+    InsertParentEntry(file, child, parent);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(child, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> qualified_name;
+    ASSERT_EQ(Field_GetQualifiedName(field, qualified_name.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(qualified_name), "root.leaf");
+}
+
+// Partial names are text strings - a UTF-16BE segment joins the qualified
+// name as UTF-8 instead of raw bytes
+TEST(Field, QualifiedNameNormalizesUtf16Segments) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    // UTF-16BE with BOM: U+0141 (LATIN CAPITAL LETTER L WITH STROKE)
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> parent;
+    ASSERT_EQ(DictionaryObject_Create(parent.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(parent, "T", "\xFE\xFF\x01\x41");
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> child;
+    CreateFieldDict(child, "Tx");
+    InsertStringEntry(child, "T", "leaf");
+    InsertParentEntry(file, child, parent);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(child, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> qualified_name;
+    ASSERT_EQ(Field_GetQualifiedName(field, qualified_name.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(qualified_name), "\xC5\x81.leaf");
+}
+
+// --- Attribute inheritance tests (Table 220) ---
+
+TEST(Field, InheritedFieldFlags) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> parent;
+    CreateFieldDict(parent, "Tx");
+    InsertIntegerEntry(parent, "Ff", FieldFlags_ReadOnly);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> child;
+    ASSERT_EQ(DictionaryObject_Create(child.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertParentEntry(file, child, parent);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(child, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    FieldFlags flags = FieldFlags_None;
+    ASSERT_EQ(Field_GetFieldFlags(field, &flags), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(flags, FieldFlags_ReadOnly);
+}
+
+TEST(TextField, InheritedValue) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> parent;
+    CreateFieldDict(parent, "Tx");
+    InsertStringEntry(parent, "V", "inherited text");
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> child;
+    ASSERT_EQ(DictionaryObject_Create(child.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertParentEntry(file, child, parent);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(child, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<TextFieldHandle, TextField_Release> text_field;
+    ASSERT_EQ(TextField_FromField(field, text_field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<StringObjectHandle, StringObject_Release> value;
+    ASSERT_EQ(TextField_GetValue(text_field, value.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> value_buffer;
+    ASSERT_EQ(StringObject_GetValue(value, value_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(value_buffer), "inherited text");
+}
+
+// --- Terminal field classification tests (12.7.3.2) ---
+
+TEST(Field, TerminalWithoutKids) {
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    CreateFieldDict(dict, "Tx");
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type terminal = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(Field_IsTerminal(field, &terminal), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(terminal, VANILLAPDF_RV_TRUE);
+}
+
+// Widget annotation kids carry no /T partial name, so the field stays terminal
+TEST(Field, TerminalWithWidgetKids) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    CreateFieldDict(dict, "Btn");
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> widget;
+    ASSERT_EQ(DictionaryObject_Create(widget.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertNameEntry(widget, "Subtype", "Widget");
+
+    InsertKidsEntry(file, dict, { widget.get() });
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type terminal = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(Field_IsTerminal(field, &terminal), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(terminal, VANILLAPDF_RV_TRUE);
+}
+
+// A kid carrying a /T partial name is a child field, making the node a
+// non-terminal grouping node
+TEST(Field, NonTerminalWithFieldKids) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    CreateFieldDict(dict, "Tx");
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> child;
+    ASSERT_EQ(DictionaryObject_Create(child.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(child, "T", "first");
+
+    InsertKidsEntry(file, dict, { child.get() });
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type terminal = VANILLAPDF_RV_TRUE;
+    ASSERT_EQ(Field_IsTerminal(field, &terminal), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(terminal, VANILLAPDF_RV_FALSE);
+}
+
+// --- Quadding tests (Table 222) ---
+
+TEST(Field, QuaddingKnownValues) {
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    CreateFieldDict(dict, "Tx");
+    InsertIntegerEntry(dict, "Q", 1);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    QuaddingType quadding = QuaddingType_LeftJustified;
+    ASSERT_EQ(Field_GetQuadding(field, &quadding), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(quadding, QuaddingType_Centered);
+}
+
+// A value outside the enumerated codes is a malformed document
+TEST(Field, QuaddingUnknownValueFails) {
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    CreateFieldDict(dict, "Tx");
+    InsertIntegerEntry(dict, "Q", 7);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    QuaddingType quadding = QuaddingType_LeftJustified;
+    EXPECT_EQ(Field_GetQuadding(field, &quadding), VANILLAPDF_ERROR_PARSE_EXCEPTION);
+}
+
+// Creates a string object from a literal value
+static void CreateStringObject(
+    const char* value,
+    HandleGuard<StringObjectHandle, StringObject_Release>& result
+) {
+    HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> literal;
+    ASSERT_EQ(LiteralStringObject_CreateFromDecodedString(value, literal.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(LiteralStringObject_ToStringObject(literal, result.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
+// --- Setter tests ---
+
+// Because the PERIOD is used as a separator for fully qualified names,
+// a partial name shall not contain a PERIOD (12.7.3.2)
+TEST(Field, SetNameRejectsPeriod) {
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    CreateFieldDict(dict, "Tx");
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<StringObjectHandle, StringObject_Release> invalid_name;
+    CreateStringObject("group.first", invalid_name);
+    EXPECT_EQ(Field_SetName(field, invalid_name), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+TEST(Field, SetAndGetName) {
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    CreateFieldDict(dict, "Tx");
+    InsertStringEntry(dict, "T", "old_name");
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<StringObjectHandle, StringObject_Release> new_name;
+    CreateStringObject("renamed", new_name);
+    ASSERT_EQ(Field_SetName(field, new_name), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<StringObjectHandle, StringObject_Release> read_name;
+    ASSERT_EQ(Field_GetName(field, read_name.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> read_name_value;
+    ASSERT_EQ(StringObject_GetValue(read_name, read_name_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(read_name_value), "renamed");
+}
+
+TEST(Field, SetAndGetAlternateName) {
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    CreateFieldDict(dict, "Tx");
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<StringObjectHandle, StringObject_Release> alternate_name;
+    CreateStringObject("Enter your first name", alternate_name);
+    ASSERT_EQ(Field_SetAlternateName(field, alternate_name), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<StringObjectHandle, StringObject_Release> read_name;
+    ASSERT_EQ(Field_GetAlternateName(field, read_name.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> read_name_value;
+    ASSERT_EQ(StringObject_GetValue(read_name, read_name_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(read_name_value), "Enter your first name");
+}
+
+TEST(Field, SetAndGetDefaultAppearance) {
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    CreateFieldDict(dict, "Tx");
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<StringObjectHandle, StringObject_Release> appearance;
+    CreateStringObject("/Helv 12 Tf 0 g", appearance);
+    ASSERT_EQ(Field_SetDefaultAppearance(field, appearance), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<StringObjectHandle, StringObject_Release> read_appearance;
+    ASSERT_EQ(Field_GetDefaultAppearance(field, read_appearance.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> read_appearance_value;
+    ASSERT_EQ(StringObject_GetValue(read_appearance, read_appearance_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(read_appearance_value), "/Helv 12 Tf 0 g");
+}
+
+TEST(Field, SetQuaddingOverridesValue) {
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dict;
+    CreateFieldDict(dict, "Tx");
+    InsertIntegerEntry(dict, "Q", 0);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(dict, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Field_SetQuadding(field, QuaddingType_RightJustified), VANILLAPDF_ERROR_SUCCESS);
+
+    QuaddingType quadding = QuaddingType_LeftJustified;
+    ASSERT_EQ(Field_GetQuadding(field, &quadding), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(quadding, QuaddingType_RightJustified);
+}
+
 // --- FieldFlags bit position tests ---
 
 // The flag values are part of the ABI, so their bit positions are pinned here.
