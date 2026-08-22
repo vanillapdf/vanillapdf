@@ -90,6 +90,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_resource_dictionary.cpp
     implementation/semantics/c_signature_flags.cpp
     implementation/semantics/c_viewer_preferences.cpp
+    implementation/semantics/c_xobject.cpp
 )
 
 set(VANILLAPDF_C_IMPLEMENTATION_CONTENTS_SOURCES
@@ -134,6 +135,7 @@ set(VANILLAPDF_SEMANTICS_SOURCES
     semantics/objects/page_labels.cpp
     semantics/objects/rectangle.cpp
     semantics/objects/tree.cpp
+    semantics/objects/xobject.cpp
     semantics/objects/name_dictionary.cpp
     semantics/objects/fields.cpp
     semantics/objects/field_tree.cpp
@@ -276,6 +278,7 @@ set(VANILLAPDF_SEMANTICS_HEADERS
     semantics/objects/page_labels.h
     semantics/objects/rectangle.h
     semantics/objects/tree.h
+    semantics/objects/xobject.h
     semantics/objects/viewer_preferences.h
 
     semantics/extensions/digital_signature_extensions.h

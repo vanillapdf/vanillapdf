@@ -66,6 +66,7 @@
 #include "vanillapdf/semantics/c_rectangle.h"
 #include "vanillapdf/semantics/c_color.h"
 #include "vanillapdf/semantics/c_page_contents.h"
+#include "vanillapdf/semantics/c_xobject.h"
 
 /* contents */
 #include "vanillapdf/contents/c_base_font_range.h"

@@ -293,6 +293,16 @@ class WidgetAnnotation : public AnnotationBase {
 public:
     explicit WidgetAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
+
+    static WidgetAnnotationPtr CreateFromRect(RectanglePtr rect);
+
+    // Appearance dictionary (Table 168) - normal appearance stream (/AP /N)
+    bool GetNormalAppearance(OutputFormXObjectPtr& result) const;
+    void SetNormalAppearance(FormXObjectPtr appearance);
+
+    // Appearance characteristics dictionary (Table 189)
+    bool GetAppearanceCharacteristics(syntax::OutputDictionaryObjectPtr& result) const;
+    void SetAppearanceCharacteristics(syntax::DictionaryObjectPtr value);
 };
 
 class ScreenAnnotation : public AnnotationBase {

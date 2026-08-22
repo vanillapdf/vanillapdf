@@ -194,6 +194,10 @@ extern "C"
     DECLARE_OBJECT_HANDLE(StrikeOutAnnotation);
     DECLARE_OBJECT_HANDLE(SquigglyAnnotation);
     DECLARE_OBJECT_HANDLE(InkAnnotation);
+    DECLARE_OBJECT_HANDLE(WidgetAnnotation);
+
+    DECLARE_OBJECT_HANDLE(XObject);
+    DECLARE_OBJECT_HANDLE(FormXObject);
 
     DECLARE_OBJECT_HANDLE(InteractiveForm);
     DECLARE_OBJECT_HANDLE(SignatureFlags);

@@ -6,6 +6,7 @@
 #include "semantics/objects/date.h"
 #include "semantics/objects/destinations.h"
 #include "semantics/objects/document.h"
+#include "semantics/objects/xobject.h"
 #include "semantics/objects/name_dictionary.h"
 #include "semantics/objects/rectangle.h"
 
@@ -875,6 +876,55 @@ void InkAnnotation::SetCreationDate(DatePtr date) {
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
     }
     _obj->Insert(constant::Name::CreationDate, date->GetObject());
+}
+
+// WidgetAnnotation methods
+
+WidgetAnnotationPtr WidgetAnnotation::CreateFromRect(RectanglePtr rect) {
+    auto dict = CreateBaseDictionary(constant::Name::Widget.Clone(), rect);
+    return make_deferred<WidgetAnnotation>(dict);
+}
+
+bool WidgetAnnotation::GetNormalAppearance(OutputFormXObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::AP)) {
+        return false;
+    }
+
+    auto appearance_dictionary = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::AP);
+    if (!appearance_dictionary->Contains(constant::Name::N)) {
+        return false;
+    }
+
+    auto appearance_stream = appearance_dictionary->FindAs<syntax::StreamObjectPtr>(constant::Name::N);
+    result = make_deferred<FormXObject>(appearance_stream);
+    return true;
+}
+
+void WidgetAnnotation::SetNormalAppearance(FormXObjectPtr appearance) {
+    if (!_obj->Contains(constant::Name::AP)) {
+        syntax::DictionaryObjectPtr new_appearance_dictionary;
+        _obj->Insert(constant::Name::AP, new_appearance_dictionary);
+    }
+
+    auto appearance_dictionary = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::AP);
+
+    // The appearance stream is an indirect object,
+    // so the appearance dictionary stores a reference to it
+    syntax::IndirectReferenceObjectPtr reference = make_deferred<syntax::IndirectReferenceObject>(appearance->GetObject());
+    appearance_dictionary->Insert(constant::Name::N, reference, true);
+}
+
+bool WidgetAnnotation::GetAppearanceCharacteristics(syntax::OutputDictionaryObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::MK)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::MK);
+    return true;
+}
+
+void WidgetAnnotation::SetAppearanceCharacteristics(syntax::DictionaryObjectPtr value) {
+    _obj->Insert(constant::Name::MK, value, true);
 }
 
 // PageAnnotations methods

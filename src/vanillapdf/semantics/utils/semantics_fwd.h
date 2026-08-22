@@ -98,7 +98,14 @@ class UnderlineAnnotation; using UnderlineAnnotationPtr = Deferred<UnderlineAnno
 class StrikeOutAnnotation; using StrikeOutAnnotationPtr = Deferred<StrikeOutAnnotation>;
 class SquigglyAnnotation; using SquigglyAnnotationPtr = Deferred<SquigglyAnnotation>;
 class InkAnnotation; using InkAnnotationPtr = Deferred<InkAnnotation>;
+class WidgetAnnotation; using WidgetAnnotationPtr = Deferred<WidgetAnnotation>;
 class PageAnnotations; using PageAnnotationsPtr = Deferred<PageAnnotations>; using OutputPageAnnotationsPtr = OutputPointer<PageAnnotationsPtr>;
+
+// XObjects
+class XObjectBase; using XObjectPtr = Deferred<XObjectBase>; using OutputXObjectPtr = OutputPointer<XObjectPtr>;
+class FormXObject; using FormXObjectPtr = Deferred<FormXObject>; using OutputFormXObjectPtr = OutputPointer<FormXObjectPtr>;
+class ImageXObject; using ImageXObjectPtr = Deferred<ImageXObject>;
+class PostScriptXObject; using PostScriptXObjectPtr = Deferred<PostScriptXObject>;
 
 // Fonts
 class FontMap; using FontMapPtr = Deferred<FontMap>; using OutputFontMapPtr = OutputPointer<FontMapPtr>;

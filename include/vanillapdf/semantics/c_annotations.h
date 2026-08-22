@@ -970,6 +970,74 @@ extern "C"
     /** @} */
 
     /**
+    * \class WidgetAnnotationHandle
+    * \extends AnnotationHandle
+    * \ingroup group_annotations
+    * \brief
+    * Interactive forms use widget annotations (PDF 1.2) to represent
+    * the appearance of fields and to manage user interactions.
+    *
+    * For more details please visit [section 12.5.6.19 - Widget Annotations](PDF32000_2008.pdf#G11.2093142).
+    */
+
+    /**
+    * \memberof WidgetAnnotationHandle
+    * @{
+    */
+
+    /**
+    * \brief Create a new widget annotation with the specified rectangle
+    * \param rect the bounding rectangle for the annotation in default user space units
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_CreateFromRect(RectangleHandle* rect, WidgetAnnotationHandle** result);
+
+    /**
+    * \brief Get the normal appearance stream (N entry of the AP dictionary)
+    * \param handle a handle to the widget annotation
+    * \param result a pointer to variable that will contain the appearance stream upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_GetNormalAppearance(WidgetAnnotationHandle* handle, FormXObjectHandle** result);
+
+    /**
+    * \brief Set the normal appearance stream (N entry of the AP dictionary)
+    *
+    * The appearance dictionary stores an indirect reference to the appearance
+    * stream, so the form XObject has to be registered within the document -
+    * see \ref FormXObject_CreateFromDocument.
+    * \param handle a handle to the widget annotation
+    * \param value the form XObject defining the annotation's visual presentation
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_SetNormalAppearance(WidgetAnnotationHandle* handle, FormXObjectHandle* value);
+
+    /**
+    * \brief Get the appearance characteristics dictionary (MK entry)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_GetAppearanceCharacteristics(WidgetAnnotationHandle* handle, DictionaryObjectHandle** result);
+
+    /**
+    * \brief Set the appearance characteristics dictionary (MK entry)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_SetAppearanceCharacteristics(WidgetAnnotationHandle* handle, DictionaryObjectHandle* value);
+
+    /**
+    * \brief Reinterpret current object as \ref AnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_ToBaseAnnotation(WidgetAnnotationHandle* handle, AnnotationHandle** result);
+
+    /**
+    * \brief Convert \ref AnnotationHandle to \ref WidgetAnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_FromBaseAnnotation(AnnotationHandle* handle, WidgetAnnotationHandle** result);
+
+    /**
+    * \copydoc Annotation_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_Release(WidgetAnnotationHandle* handle);
+
+    /** @} */
+
+    /**
     * \memberof LinkAnnotationHandle
     * @{
     */

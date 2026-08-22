@@ -279,6 +279,13 @@ extern const syntax::NameObject Q;
 extern const syntax::NameObject Open;
 extern const syntax::NameObject IC;
 extern const syntax::NameObject InkList;
+extern const syntax::NameObject Form;
+extern const syntax::NameObject FormType;
+extern const syntax::NameObject PS;
+extern const syntax::NameObject BBox;
+extern const syntax::NameObject Matrix;
+extern const syntax::NameObject MK;
+extern const syntax::NameObject DR;
 
 } // Constant
 } // Name

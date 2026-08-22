@@ -58,6 +58,68 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(ResourceDictionaryHandle* handle, FontMapHandle** result);
 
     /**
+    * \brief
+    * Get the number of entries in the XObject sub-dictionary.
+    *
+    * The count is zero when the resource dictionary has no XObject entry.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetXObjectCount(ResourceDictionaryHandle* handle, size_type* result);
+
+    /**
+    * \brief
+    * Get the resource name of the XObject entry at the specified position.
+    * \param handle a handle to the resource dictionary
+    * \param at position of the entry, valid within [0, \ref ResourceDictionary_GetXObjectCount)
+    * \param result a pointer to variable that will contain the resource name upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetXObjectName(ResourceDictionaryHandle* handle, size_type at, NameObjectHandle** result);
+
+    /**
+    * \brief
+    * Look up a named entry in the XObject sub-dictionary.
+    *
+    * Fails with \ref VANILLAPDF_ERROR_OBJECT_MISSING when the resource
+    * dictionary has no XObject entry or the name is not present.
+    * Check \ref XObject_GetXObjectType and convert the result to the
+    * concrete type, e.g. via \ref FormXObject_FromBaseXObject.
+    * \param handle a handle to the resource dictionary
+    * \param name the resource name to look up
+    * \param result a pointer to variable that will contain the XObject upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_FindXObject(ResourceDictionaryHandle* handle, const NameObjectHandle* name, XObjectHandle** result);
+
+    /**
+    * \brief
+    * Register an XObject under the resource name, creating the XObject
+    * sub-dictionary when missing and overwriting an existing entry.
+    *
+    * The entry stores an indirect reference, so the XObject's stream has
+    * to be registered within the document - see \ref FormXObject_CreateFromDocument.
+    * \param handle a handle to the resource dictionary
+    * \param name the resource name to register the XObject under
+    * \param value the XObject to register
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_AddXObject(ResourceDictionaryHandle* handle, const NameObjectHandle* name, XObjectHandle* value);
+
+    /**
+    * \brief
+    * Remove a named entry from the XObject sub-dictionary.
+    * \param handle a handle to the resource dictionary
+    * \param name the resource name to remove
+    * \param result a pointer to variable that will contain false when the
+    * resource dictionary has no XObject entry or the name is not present
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_RemoveXObject(ResourceDictionaryHandle* handle, const NameObjectHandle* name, boolean_type* result);
+
+    /**
+    * \brief
+    * Switch object to low-level syntax API
+    *
+    * Useful for cases, where semantic API is not sufficient.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetBaseObject(ResourceDictionaryHandle* handle, ObjectHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref IUnknownHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_ToUnknown(ResourceDictionaryHandle* handle, IUnknownHandle** result);
