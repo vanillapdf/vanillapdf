@@ -140,8 +140,20 @@ extern "C"
 
     /**
     * \brief Get raw image data
+    *
+    * The data are stored exactly as they appear in the content stream,
+    * meaning they may still be compressed with the filters
+    * specified in the image meta-data dictionary.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(ContentObjectInlineImageHandle* handle, BufferHandle** result);
+
+    /**
+    * \brief Get image data with all the filters from the image meta-data dictionary applied
+    *
+    * Both the abbreviated (AHx, A85, LZW, Fl, DCT) and the full filter names are recognized.
+    * When the image dictionary does not specify any filter, the raw data are returned.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetDecodedData(ContentObjectInlineImageHandle* handle, BufferHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ContentObjectHandle
