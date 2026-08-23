@@ -194,6 +194,11 @@ TEST(ContentObjectInlineImage, DataDelimiters) {
     // additional white-space belongs to the image data
     ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID  abc EI ", image_data, decoded_image_data));
     ASSERT_EQ(image_data, " abc");
+
+    // A missing delimiter after "ID" is tolerated with a warning,
+    // the image data begin immediately after the operator
+    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID(a) EI ", image_data, decoded_image_data));
+    ASSERT_EQ(image_data, "(a)");
 }
 
 // The decoded image data have all the filters from the image dictionary applied,

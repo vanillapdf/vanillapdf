@@ -86,8 +86,11 @@ InlineImageObjectPtr ContentStreamParser::ReadInlineImageObject(void) {
     // The ID operator shall be followed by a single white-space character,
     // which is a delimiter and not a part of the image data itself
     auto delimiter_meta = m_stream->Peek();
-    if (delimiter_meta != std::char_traits<char>::eof() && IsWhiteSpace(delimiter_meta)) {
-        m_stream->Get();
+    if (IsWhiteSpace(delimiter_meta)) {
+        m_stream->Ignore();
+    } else {
+        // Keep the byte in the stream - the image data begins immediately after the ID operator
+        spdlog::warn("Missing white-space delimiter after the inline image ID operator");
     }
 
     // The image data is terminated by the EI operator, which is only recognized
