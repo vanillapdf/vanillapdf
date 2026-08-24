@@ -16,6 +16,9 @@ set(VANILLAPDF_SOLUTION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Build configuration options
 
+# Tests are off by default so that consumers (vcpkg port, Conan, Homebrew,
+# FetchContent) get the library alone. The CMake presets turn them on together
+# with vanillapdf.tools: building from source means verifying the build.
 option(VANILLAPDF_ENABLE_TESTS "Perform test scenarios to ensure stable releases" OFF)
 option(VANILLAPDF_ENABLE_BENCHMARK "Include benchmarking project to measure performance" OFF)
 option(VANILLAPDF_ENABLE_PACKAGING "Enable packaging features (CPack, DEB, Brew, etc.)" OFF)
@@ -33,11 +36,10 @@ option(VANILLAPDF_ENABLE_LICENSING "Enable licensing and JSON metadata support" 
 option(VANILLAPDF_INTERNAL_VCPKG "Enable internal vcpkg dependency management" ON)
 
 # vanillapdf.tools is a repository-local validation utility that depends on
-# CLI11. It is built by default only in the standalone configuration, where the
-# internal vcpkg manifest provides CLI11; package-manager builds (vcpkg port,
-# Conan, Homebrew, system packages) set VANILLAPDF_INTERNAL_VCPKG=OFF and must
-# not pick up the tool or its dependency.
-option(VANILLAPDF_ENABLE_TOOLS "Build the vanillapdf.tools validation utility" ${VANILLAPDF_INTERNAL_VCPKG})
+# CLI11. Like the tests it is off by default so that no package-manager build
+# picks up the tool or its dependency, and on in the CMake presets
+# (cmake/presets/shared.json), where the internal vcpkg manifest provides CLI11.
+option(VANILLAPDF_ENABLE_TOOLS "Build the vanillapdf.tools validation utility" OFF)
 
 # Allow linking selected dependencies from the system instead of vcpkg,
 # or provided externally

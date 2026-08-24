@@ -17,7 +17,7 @@ Common patterns: `windows-x64-msvc-17`, `windows-x64-msvc-17-static` (static CRT
 | Target | Type | Language | Enabled By |
 |--------|------|----------|------------|
 | `vanillapdf` | STATIC/SHARED lib | C++17 | Always |
-| `vanillapdf.tools` | Executable | C++ | `VANILLAPDF_ENABLE_TOOLS=ON` (defaults to `VANILLAPDF_INTERNAL_VCPKG`; needs CLI11) |
+| `vanillapdf.tools` | Executable | C++ | `VANILLAPDF_ENABLE_TOOLS=ON` (default OFF; the presets turn it on; needs CLI11) |
 | `vanillapdf.unittest` | Executable | C++ | `VANILLAPDF_ENABLE_TESTS=ON` |
 | `vanillapdf.test` | Executable | C | `VANILLAPDF_ENABLE_TESTS=ON` |
 | `vanillapdf.benchmark` | Executable | C++ | `VANILLAPDF_ENABLE_BENCHMARK=ON` |
@@ -39,7 +39,7 @@ Source files use **explicit lists** (NOT `file(GLOB)`):
 
 Features (all default ON): `VANILLAPDF_ENABLE_{ENCRYPTION,JPEG,JPEG2000,ZLIB}` → defines `VANILLAPDF_HAVE_*`
 
-Build options: `VANILLAPDF_INTERNAL_VCPKG` (ON), `VANILLAPDF_ENABLE_TESTS` (ON), `VANILLAPDF_ENABLE_BENCHMARK` (ON), `VANILLAPDF_USE_STATIC_CRT` (OFF), `BUILD_SHARED_LIBS` (ON), `VANILLAPDF_ENABLE_COVERAGE`, `VANILLAPDF_ENABLE_ASAN`, `VANILLAPDF_ENABLE_UBSAN`, `VANILLAPDF_ENABLE_TSAN`
+Build options: `VANILLAPDF_INTERNAL_VCPKG` (ON), `VANILLAPDF_ENABLE_TESTS` (OFF), `VANILLAPDF_ENABLE_TOOLS` (OFF) — every CMake preset sets both of these ON, `VANILLAPDF_ENABLE_BENCHMARK` (OFF), `VANILLAPDF_USE_STATIC_CRT` (OFF), `BUILD_SHARED_LIBS` (ON), `VANILLAPDF_ENABLE_COVERAGE`, `VANILLAPDF_ENABLE_ASAN`, `VANILLAPDF_ENABLE_UBSAN`, `VANILLAPDF_ENABLE_TSAN`
 
 External deps (all OFF): `VANILLAPDF_EXTERNAL_{OPENSSL,JPEG,OPENJPEG,ZLIB,SPDLOG,NLOHMANN_JSON}` — use system instead of vcpkg.
 

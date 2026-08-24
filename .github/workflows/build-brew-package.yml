@@ -27,10 +27,14 @@ jobs:
           brew update
           brew install ninja openssl@3 jpeg-turbo zlib openjpeg spdlog nlohmann-json googletest
 
+      # The presets enable tests and vanillapdf.tools together; this package
+      # build resolves dependencies from Homebrew, which does not provide the
+      # CLI11 the tool needs, so the tool alone is switched back off.
       - name: Configure
         run: |
           cmake --preset macos-arm64 -DCMAKE_BUILD_TYPE=Release \
             -DVANILLAPDF_INTERNAL_VCPKG=OFF \
+            -DVANILLAPDF_ENABLE_TOOLS=OFF \
             -DVANILLAPDF_ENABLE_PACKAGING=ON \
             -DVANILLAPDF_ENABLE_TESTS=ON \
             -DVANILLAPDF_ENABLE_ENCRYPTION=ON -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
