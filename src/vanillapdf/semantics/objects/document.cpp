@@ -145,7 +145,11 @@ syntax::FilePtr Document::GetFile() const {
 }
 
 Document::~Document() {
-    SemanticUtils::ReleaseMapping(m_holder);
+
+    // This has to stay the first statement. It takes the registry lock, which
+    // is what stops GetOrCreateDocument from freeing this instance underneath
+    // an upgrade that is already inspecting it.
+    SemanticUtils::ReleaseMapping(m_holder, this);
 }
 
 bool Document::GetDocumentCatalog(OutputCatalogPtr& result) const {
