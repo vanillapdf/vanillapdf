@@ -251,6 +251,16 @@ extern const syntax::NameObject ColorSpace;
 extern const syntax::NameObject RGB;
 extern const syntax::NameObject G;
 extern const syntax::NameObject CMYK;
+
+// Inline image abbreviations, see 8.9.7
+extern const syntax::NameObject DP;
+extern const syntax::NameObject AHx;
+extern const syntax::NameObject A85;
+extern const syntax::NameObject LZW;
+extern const syntax::NameObject Fl;
+extern const syntax::NameObject RL;
+extern const syntax::NameObject CCF;
+extern const syntax::NameObject DCT;
 extern const syntax::NameObject DeviceRGB;
 extern const syntax::NameObject DeviceGray;
 extern const syntax::NameObject DeviceCMYK;

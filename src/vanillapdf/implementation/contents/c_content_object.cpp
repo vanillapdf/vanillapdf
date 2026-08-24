@@ -70,6 +70,20 @@ VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetData(Co
     CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_GetSamples(ContentObjectInlineImageHandle* handle, BufferHandle** result) {
+    InlineImageObject* obj = reinterpret_cast<InlineImageObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto item = obj->GetSamples();
+        auto ptr = item.AddRefGet();
+        *result = reinterpret_cast<BufferHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    }
+    CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_ToContentObject(ContentObjectInlineImageHandle* handle, ContentObjectHandle** result) {
     return SafeObjectConvert<InlineImageObject, ContentObjectBase, ContentObjectInlineImageHandle, ContentObjectHandle>(handle, result);
 }

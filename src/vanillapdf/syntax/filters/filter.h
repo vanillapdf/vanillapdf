@@ -26,6 +26,10 @@ public:
 
     static FilterBasePtr GetFilterByName(const NameObject& name);
 
+    // Translates the abbreviated filter names allowed in inline images (see 8.9.7)
+    // to their full equivalents, passing any other name through unchanged
+    static const NameObject& GetFullFilterName(const NameObject& filter_name);
+
     virtual BufferPtr Encode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr(), AttributeListPtr object_attributes = AttributeListPtr()) const = 0;
     virtual BufferPtr Decode(BufferPtr src, DictionaryObjectPtr parameters = DictionaryObjectPtr(), AttributeListPtr object_attributes = AttributeListPtr()) const = 0;
 
