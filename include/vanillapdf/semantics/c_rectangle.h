@@ -34,43 +34,91 @@ extern "C"
 
     /**
     * \brief Get X-coordinate of lower-left corner
+    * \deprecated Rectangle coordinates are real numbers and fractional values are truncated. Use \ref Rectangle_GetLowerLeftXReal instead.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftX(RectangleHandle* handle, bigint_type* result);
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftX(RectangleHandle* handle, bigint_type* result);
+
+    /**
+    * \brief Get X-coordinate of lower-left corner
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftXReal(RectangleHandle* handle, real_type* result);
+
+    /**
+    * \brief Set X-coordinate of lower-left corner
+    * \deprecated Rectangle coordinates are real numbers. Use \ref Rectangle_SetLowerLeftXReal instead.
+    */
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftX(RectangleHandle* handle, bigint_type data);
 
     /**
     * \brief Set X-coordinate of lower-left corner
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftX(RectangleHandle* handle, bigint_type data);
+    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftXReal(RectangleHandle* handle, real_type data);
+
+    /**
+    * \brief Get Y-coordinate of lower-left corner
+    * \deprecated Rectangle coordinates are real numbers and fractional values are truncated. Use \ref Rectangle_GetLowerLeftYReal instead.
+    */
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftY(RectangleHandle* handle, bigint_type* result);
 
     /**
     * \brief Get Y-coordinate of lower-left corner
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftY(RectangleHandle* handle, bigint_type* result);
+    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetLowerLeftYReal(RectangleHandle* handle, real_type* result);
+
+    /**
+    * \brief Set Y-coordinate of lower-left corner
+    * \deprecated Rectangle coordinates are real numbers. Use \ref Rectangle_SetLowerLeftYReal instead.
+    */
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftY(RectangleHandle* handle, bigint_type data);
 
     /**
     * \brief Set Y-coordinate of lower-left corner
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftY(RectangleHandle* handle, bigint_type data);
+    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetLowerLeftYReal(RectangleHandle* handle, real_type data);
+
+    /**
+    * \brief Get X-coordinate of upper-right corner
+    * \deprecated Rectangle coordinates are real numbers and fractional values are truncated. Use \ref Rectangle_GetUpperRightXReal instead.
+    */
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightX(RectangleHandle* handle, bigint_type* result);
 
     /**
     * \brief Get X-coordinate of upper-right corner
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightX(RectangleHandle* handle, bigint_type* result);
+    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightXReal(RectangleHandle* handle, real_type* result);
+
+    /**
+    * \brief Set X-coordinate of upper-right corner
+    * \deprecated Rectangle coordinates are real numbers. Use \ref Rectangle_SetUpperRightXReal instead.
+    */
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightX(RectangleHandle* handle, bigint_type data);
 
     /**
     * \brief Set X-coordinate of upper-right corner
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightX(RectangleHandle* handle, bigint_type data);
+    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightXReal(RectangleHandle* handle, real_type data);
+
+    /**
+    * \brief Get Y-coordinate of upper-right corner
+    * \deprecated Rectangle coordinates are real numbers and fractional values are truncated. Use \ref Rectangle_GetUpperRightYReal instead.
+    */
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightY(RectangleHandle* handle, bigint_type* result);
 
     /**
     * \brief Get Y-coordinate of upper-right corner
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightY(RectangleHandle* handle, bigint_type* result);
+    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_GetUpperRightYReal(RectangleHandle* handle, real_type* result);
+
+    /**
+    * \brief Set Y-coordinate of upper-right corner
+    * \deprecated Rectangle coordinates are real numbers. Use \ref Rectangle_SetUpperRightYReal instead.
+    */
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightY(RectangleHandle* handle, bigint_type data);
 
     /**
     * \brief Set Y-coordinate of upper-right corner
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightY(RectangleHandle* handle, bigint_type data);
+    VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_SetUpperRightYReal(RectangleHandle* handle, real_type data);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle

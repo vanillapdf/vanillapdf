@@ -352,23 +352,23 @@ error_type process_resource_dictionary(ResourceDictionaryHandle* obj, int nested
 }
 
 error_type process_rectangle(RectangleHandle* obj, int nested) {
-    bigint_type lower_left_x = 0;
-    bigint_type lower_left_y = 0;
-    bigint_type upper_right_x = 0;
-    bigint_type upper_right_y = 0;
+    real_type lower_left_x = 0;
+    real_type lower_left_y = 0;
+    real_type upper_right_x = 0;
+    real_type upper_right_y = 0;
 
     print_spaces(nested);
     print_text("Rectangle begin\n");
 
-    RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_GetLowerLeftX(obj, &lower_left_x));
-    RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_GetLowerLeftY(obj, &lower_left_y));
-    RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_GetUpperRightX(obj, &upper_right_x));
-    RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_GetUpperRightY(obj, &upper_right_y));
+    RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_GetLowerLeftXReal(obj, &lower_left_x));
+    RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_GetLowerLeftYReal(obj, &lower_left_y));
+    RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_GetUpperRightXReal(obj, &upper_right_x));
+    RETURN_ERROR_IF_NOT_SUCCESS(Rectangle_GetUpperRightYReal(obj, &upper_right_y));
 
-    print_spaces(nested + 1); print_text("Lower left X: %lld\n", lower_left_x);
-    print_spaces(nested + 1); print_text("Lower left Y: %lld\n", lower_left_y);
-    print_spaces(nested + 1); print_text("Upper right X: %lld\n", upper_right_x);
-    print_spaces(nested + 1); print_text("Upper right Y: %lld\n", upper_right_y);
+    print_spaces(nested + 1); print_text("Lower left X: %g\n", lower_left_x);
+    print_spaces(nested + 1); print_text("Lower left Y: %g\n", lower_left_y);
+    print_spaces(nested + 1); print_text("Upper right X: %g\n", upper_right_x);
+    print_spaces(nested + 1); print_text("Upper right Y: %g\n", upper_right_y);
 
     print_spaces(nested);
     print_text("Rectangle end\n");

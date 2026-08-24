@@ -52,7 +52,7 @@ bool PageObject::GetMediaBox(OutputRectanglePtr& result) const {
         return false;
     }
 
-    auto box_obj = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(Name::MediaBox);
+    auto box_obj = _obj->FindAs<syntax::ArrayObjectPtr<syntax::RealObjectPtr>>(Name::MediaBox);
     auto box = make_deferred<Rectangle>(box_obj);
     result = box;
     return true;

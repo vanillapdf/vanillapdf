@@ -229,7 +229,7 @@ bool AnnotationBase::GetRect(OutputRectanglePtr& result) const {
         return false;
     }
 
-    auto rect_obj = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IntegerObjectPtr>>(constant::Name::Rect);
+    auto rect_obj = _obj->FindAs<syntax::ArrayObjectPtr<syntax::RealObjectPtr>>(constant::Name::Rect);
     auto rect = make_deferred<Rectangle>(rect_obj);
     result = rect;
     return true;

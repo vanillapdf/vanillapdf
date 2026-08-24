@@ -65,10 +65,10 @@ TEST(PageTree, InsertAndRemovePage) {
     // Set media box
     RectangleHandle* media_box = nullptr;
     ASSERT_EQ(Rectangle_Create(&media_box), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(PageObject_SetMediaBox(new_page, media_box), VANILLAPDF_ERROR_SUCCESS);
 
     // Insert page at position 1
