@@ -76,6 +76,13 @@ int process_remove_page(int argc, char *argv[]) {
     if ((size_type) page_number > page_count_before) {
         printf("Page number %d is out of range, the document has %llu pages\n",
             page_number, page_count_before_converted);
+
+        // Release the handles on this expected error path - a leak here trips
+        // LeakSanitizer, whose abort also discards the buffered message above
+        PageTree_Release(page_tree);
+        Catalog_Release(catalog);
+        Document_Release(document);
+        File_Release(source_file);
         return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
     }
 
@@ -87,6 +94,11 @@ int process_remove_page(int argc, char *argv[]) {
     if (page_count_after != page_count_before - 1) {
         printf("Page count mismatch after removal: %llu -> %llu\n",
             page_count_before_converted, page_count_after_converted);
+
+        PageTree_Release(page_tree);
+        Catalog_Release(catalog);
+        Document_Release(document);
+        File_Release(source_file);
         return VANILLAPDF_TOOLS_ERROR_FAILURE;
     }
 
