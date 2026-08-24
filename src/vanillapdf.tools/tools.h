@@ -3,9 +3,15 @@
 
 #include "vanillapdf/c_vanillapdf_api.h"
 
+#include "handle_guard.h"
+
+#include <CLI/CLI.hpp>
+
+#include <memory>
+#include <string>
+#include <vector>
+
 #include <stdio.h>
-#include <stdlib.h> 
-#include <string.h>
 #include <assert.h>
 
 #if defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
@@ -13,29 +19,34 @@
     #include <crtdbg.h>
 #endif /* DEBUG && COMPILER_MICROSOFT_VISUAL_STUDIO */
 
-extern const int VANILLAPDF_TOOLS_ERROR_SUCCESS;
-extern const int VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-extern const int VANILLAPDF_TOOLS_ERROR_FAILURE;
+constexpr int VANILLAPDF_TOOLS_ERROR_SUCCESS = 0;
+constexpr int VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS = 1;
+constexpr int VANILLAPDF_TOOLS_ERROR_FAILURE = 255;
 
-int process_merge(int argc, char *argv[]);
-int process_filter(int argc, char *argv[]);
-int process_extract(int argc, char *argv[]);
-int process_extract_object(int argc, char *argv[]);
-int process_sign(int argc, char *argv[]);
-int process_sign_custom(int argc, char *argv[]);
-int process_encrypt(int argc, char* argv[]);
-int process_decrypt(int argc, char *argv[]);
-int process_write_custom(int argc, char *argv[]);
-int process_read(int argc, char *argv[]);
-int process_resave(int argc, char *argv[]);
-int process_remove_page(int argc, char *argv[]);
-int process_verify(int argc, char *argv[]);
-int process_validate(int argc, char *argv[]);
-int process_generate(int argc, char *argv[]);
+// Each command registers its CLI11 subcommand with the application. The
+// subcommand callback runs the command and stores its result in exit_code,
+// which main returns once parsing has finished.
+void register_merge(CLI::App& app, int& exit_code);
+void register_filter(CLI::App& app, int& exit_code);
+void register_extract(CLI::App& app, int& exit_code);
+void register_extract_object(CLI::App& app, int& exit_code);
+void register_sign(CLI::App& app, int& exit_code);
+void register_sign_custom(CLI::App& app, int& exit_code);
+void register_encrypt(CLI::App& app, int& exit_code);
+void register_decrypt(CLI::App& app, int& exit_code);
+void register_write_custom(CLI::App& app, int& exit_code);
+void register_read(CLI::App& app, int& exit_code);
+void register_resave(CLI::App& app, int& exit_code);
+void register_remove_page(CLI::App& app, int& exit_code);
+void register_verify(CLI::App& app, int& exit_code);
+void register_validate(CLI::App& app, int& exit_code);
+void register_generate(CLI::App& app, int& exit_code);
 
 // Some parameters to functions are unused
 #define UNUSED(x) (void)(x)
 
+// Every handle is owned by a HandleGuard, so returning early here releases
+// everything acquired so far - no cleanup block is needed at the call site
 #define RETURN_ERROR_IF_NOT_SUCCESS(fn) \
 do { \
     error_type __result__ = (fn); \
@@ -47,29 +58,5 @@ do { \
         return VANILLAPDF_TOOLS_ERROR_FAILURE; \
     } \
 } while(0)
-
-#define RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(eval, call, release) \
-do { \
-    error_type __result__ = (eval); \
-    if (VANILLAPDF_ERROR_SUCCESS == __result__) \
-    { \
-        RETURN_ERROR_IF_NOT_SUCCESS(call); \
-        RETURN_ERROR_IF_NOT_SUCCESS(release); \
-    } \
-    else if (VANILLAPDF_ERROR_OBJECT_MISSING == __result__) \
-    { \
-        /* Do nothing */ \
-    } \
-    else \
-    { \
-        printf("Function call \"%s\" has failed with result %u { %s:%d }\n", \
-        #eval, __result__, __FILE__, __LINE__); \
-        assert(!"Operation failed"); \
-        return VANILLAPDF_TOOLS_ERROR_FAILURE; \
-    } \
-} while(0)
-
-#define RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(eval, call) \
-RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(eval, call, VANILLAPDF_TOOLS_ERROR_SUCCESS)
 
 #endif /* _VANILLAPDF_TOOLS_H */

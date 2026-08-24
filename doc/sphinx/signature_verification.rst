@@ -3,7 +3,7 @@ Signature Verification Guide
 
 This guide explains how to verify digital signatures in PDF documents using the Vanilla.PDF C API.
 
-For a complete working example, see ``verify.c``.
+For a complete working example, see ``verify.cpp``.
 
 Overview
 --------
@@ -100,8 +100,8 @@ Creating a Trust Store
 
 Create a trusted certificate store and load certificates:
 
-.. literalinclude:: ../../src/vanillapdf.tools/verify.c
-   :language: c
+.. literalinclude:: ../../src/vanillapdf.tools/verify.cpp
+   :language: cpp
    :start-after: //! [Create trust store]
    :end-before: //! [Create trust store]
    :dedent:
@@ -111,8 +111,8 @@ Configuring Verification Settings
 
 Configure verification behavior with custom settings:
 
-.. literalinclude:: ../../src/vanillapdf.tools/verify.c
-   :language: c
+.. literalinclude:: ../../src/vanillapdf.tools/verify.cpp
+   :language: cpp
    :start-after: //! [Configure verification settings]
    :end-before: //! [Configure verification settings]
    :dedent:
@@ -128,8 +128,8 @@ Verifying a Signature
 
 Call the verification API and inspect the results:
 
-.. literalinclude:: ../../src/vanillapdf.tools/verify.c
-   :language: c
+.. literalinclude:: ../../src/vanillapdf.tools/verify.cpp
+   :language: cpp
    :start-after: //! [Verify signature]
    :end-before: //! [Verify signature]
    :dedent:

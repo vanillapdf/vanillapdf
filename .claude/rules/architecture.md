@@ -3,7 +3,7 @@
 ## Core Structure
 
 - **src/vanillapdf/** - Main library (C++17): `syntax/`, `semantics/`, `contents/`, `utils/`, `implementation/` (C bridge)
-- **src/vanillapdf.tools/** - CLI utility (C)
+- **src/vanillapdf.tools/** - CLI validation utility (C++, CLI11; handles wrapped in `HandleGuard` RAII)
 - **src/vanillapdf.test/** - Integration tests (C, one test per PDF)
 - **src/vanillapdf.unittest/** - Unit tests (GoogleTest, C++)
 - **src/vanillapdf.benchmark/** - Benchmarks (Google Benchmark, C++)

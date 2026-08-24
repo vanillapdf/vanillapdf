@@ -3,7 +3,7 @@
 
 This guide explains how to verify digital signatures in PDF documents using the Vanilla.PDF C API.
 
-For a complete working example, see \ref verify.c.
+For a complete working example, see \ref verify.cpp.
 
 \section sig_verify_overview Overview
 
@@ -50,13 +50,13 @@ The verifier detects the following weak algorithms:
 
 Create a trusted certificate store and load certificates:
 
-\snippet verify.c Create trust store
+\snippet verify.cpp Create trust store
 
 \section sig_verify_settings Configuring Verification Settings
 
 Configure verification behavior with custom settings:
 
-\snippet verify.c Configure verification settings
+\snippet verify.cpp Configure verification settings
 
 Available settings:
 - `SetSkipCertificateValidation` - Skip X509 chain validation (testing only)
@@ -67,7 +67,7 @@ Available settings:
 
 Call the verification API and inspect the results:
 
-\snippet verify.c Verify signature
+\snippet verify.cpp Verify signature
 
 \section sig_verify_cli Command Line Usage
 
@@ -103,7 +103,7 @@ vanillapdf.tools verify -f document.pdf \
 4. **Use `--check-signing-time`** - For old documents where certificates may have expired
 5. **Keep certificates updated** - Ensure your system's certificate store is current
 
-\see \ref verify.c
+\see \ref verify.cpp
 \see \ref TrustedCertificateStoreHandle::TrustedCertificateStore_Create "TrustedCertificateStore_Create"
 \see \ref SignatureVerificationSettingsHandle::SignatureVerificationSettings_Create "SignatureVerificationSettings_Create"
 \see \ref SignatureVerifier::SignatureVerifier_Verify "SignatureVerifier_Verify"

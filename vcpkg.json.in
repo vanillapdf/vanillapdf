@@ -45,6 +45,12 @@
         "nlohmann-json"
       ]
     },
+    "tools": {
+      "description": "Command line parsing for the vanillapdf.tools validation utility",
+      "dependencies": [
+        "cli11"
+      ]
+    },
     "tests": {
       "description": "Enable unit and integration tests",
       "dependencies": [

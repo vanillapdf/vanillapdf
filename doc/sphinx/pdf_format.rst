@@ -186,7 +186,7 @@ Digital signatures are fully supported:
 - Sign documents using ``Document_Sign`` function with ``PKCS12KeyHandle``
 - Verify signatures using ``DigitalSignatureExtensions_Verify`` with ``TrustedCertificateStoreHandle``
 
-Complete examples are available at ``sign.c`` (signing) and ``verify.c`` (verification).
+Complete examples are available at ``sign.cpp`` (signing) and ``verify.cpp`` (verification).
 See also :doc:`signature_verification` for comprehensive verification guide.
 
 Common data structures

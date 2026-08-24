@@ -4,15 +4,15 @@ Examples
 API Usage Examples
 ------------------
 
-- `merge.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/merge.c>`_ — File merge
-- `extract.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/extract.c>`_ — Image extraction
-- `filter.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/filter.c>`_ — Compression filters
-- `sign.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign.c>`_ — Digital signature
-- `sign_custom.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign_custom.c>`_ — Custom digital signature using interface callbacks
-- `verify.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/verify.c>`_ — Signature verification
-- `validate.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/validate.c>`_ — File structure validation
-- `decrypt.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/decrypt.c>`_ — File decryption
-- `write_custom.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/write_custom.c>`_ — Custom file writer callbacks
+- `merge.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/merge.cpp>`_ — File merge
+- `extract.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/extract.cpp>`_ — Image extraction
+- `filter.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/filter.cpp>`_ — Compression filters
+- `sign.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign.cpp>`_ — Digital signature
+- `sign_custom.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign_custom.cpp>`_ — Custom digital signature using interface callbacks
+- `verify.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/verify.cpp>`_ — Signature verification
+- `validate.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/validate.cpp>`_ — File structure validation
+- `decrypt.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/decrypt.cpp>`_ — File decryption
+- `write_custom.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/write_custom.cpp>`_ — Custom file writer callbacks
 
 Utilities
 ---------
@@ -65,8 +65,8 @@ Print date
 Validate file structure
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../src/vanillapdf.tools/validate.c
-   :language: c
+.. literalinclude:: ../../src/vanillapdf.tools/validate.cpp
+   :language: cpp
    :start-after: //! [Validate file structure]
    :end-before: //! [Validate file structure]
    :dedent:
@@ -83,5 +83,6 @@ Enumerate xref
 Additional Resources
 --------------------
 
-- `main.c <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/main.c>`_ -- Main file for command-line application vanillapdf.tools
+- `main.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/main.cpp>`_ -- Main file for command-line application vanillapdf.tools
 - `tools.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/tools.h>`_ -- Tools project header file including macro definitions
+- `handle_guard.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/handle_guard.h>`_ -- RAII wrapper releasing C API handles at scope exit

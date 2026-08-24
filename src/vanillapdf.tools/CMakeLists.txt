@@ -1,4 +1,4 @@
-project(vanillapdf.tools LANGUAGES C)
+project(vanillapdf.tools LANGUAGES CXX)
 
 # Solution root folder
 include("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/files.cmake")
@@ -10,26 +10,27 @@ include_directories("${VANILLAPDF_SOLUTION_SOURCE_DIR}/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(VANILLAPDF_TOOLS_SOURCES
-    main.c
-    extract.c
-    extract_object.c
-    filter.c
-    merge.c
-    read.c
-    resave.c
-    remove_page.c
-    sign.c
-    sign_custom.c
-    verify.c
-    validate.c
-    encrypt.c
-    decrypt.c
-    write_custom.c
-    generate.c
+    main.cpp
+    extract.cpp
+    extract_object.cpp
+    filter.cpp
+    merge.cpp
+    read.cpp
+    resave.cpp
+    remove_page.cpp
+    sign.cpp
+    sign_custom.cpp
+    verify.cpp
+    validate.cpp
+    encrypt.cpp
+    decrypt.cpp
+    write_custom.cpp
+    generate.cpp
 )
 
 set(VANILLAPDF_TOOLS_HEADERS
     tools.h
+    handle_guard.h
 )
 
 set(VANILLAPDF_TOOLS_RESOURCE_FILES
@@ -92,17 +93,15 @@ if(WIN32)
     )
 endif(WIN32)
 
+# CLI11 parses the command line. It comes from the "tools" vcpkg feature in
+# the standalone build (see cmake/vcpkg_init.cmake); any other build that
+# enables VANILLAPDF_ENABLE_TOOLS has to provide it through find_package.
+find_package(CLI11 CONFIG REQUIRED)
+
 set(VANILLAPDF_TOOLS_LIBS
     vanillapdf
+    CLI11::CLI11
 )
-
-if (CMAKE_COMPILER_IS_GNUCC)
-
-    # C executables does not have access to c++ standard library by default
-    # We need to explicitly pull dependencies
-    set(VANILLAPDF_TOOLS_LIBS ${VANILLAPDF_TOOLS_LIBS} -lstdc++)
-
-endif (CMAKE_COMPILER_IS_GNUCC)
 
 target_link_libraries(vanillapdf.tools PRIVATE ${VANILLAPDF_TOOLS_LIBS})
 

@@ -17,7 +17,7 @@ Common patterns: `windows-x64-msvc-17`, `windows-x64-msvc-17-static` (static CRT
 | Target | Type | Language | Enabled By |
 |--------|------|----------|------------|
 | `vanillapdf` | STATIC/SHARED lib | C++17 | Always |
-| `vanillapdf.tools` | Executable | C | Always |
+| `vanillapdf.tools` | Executable | C++ | `VANILLAPDF_ENABLE_TOOLS=ON` (defaults to `VANILLAPDF_INTERNAL_VCPKG`; needs CLI11) |
 | `vanillapdf.unittest` | Executable | C++ | `VANILLAPDF_ENABLE_TESTS=ON` |
 | `vanillapdf.test` | Executable | C | `VANILLAPDF_ENABLE_TESTS=ON` |
 | `vanillapdf.benchmark` | Executable | C++ | `VANILLAPDF_ENABLE_BENCHMARK=ON` |

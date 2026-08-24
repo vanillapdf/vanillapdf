@@ -32,6 +32,13 @@ option(VANILLAPDF_ENABLE_LICENSING "Enable licensing and JSON metadata support" 
 # TODO: Will be enhanced with smart detection in https://github.com/vanillapdf/vanillapdf/issues/138
 option(VANILLAPDF_INTERNAL_VCPKG "Enable internal vcpkg dependency management" ON)
 
+# vanillapdf.tools is a repository-local validation utility that depends on
+# CLI11. It is built by default only in the standalone configuration, where the
+# internal vcpkg manifest provides CLI11; package-manager builds (vcpkg port,
+# Conan, Homebrew, system packages) set VANILLAPDF_INTERNAL_VCPKG=OFF and must
+# not pick up the tool or its dependency.
+option(VANILLAPDF_ENABLE_TOOLS "Build the vanillapdf.tools validation utility" ${VANILLAPDF_INTERNAL_VCPKG})
+
 # Allow linking selected dependencies from the system instead of vcpkg,
 # or provided externally
 option(VANILLAPDF_EXTERNAL_OPENSSL "Use OpenSSL from the system or a package manager" OFF)
@@ -150,7 +157,10 @@ endif()
 
 # Include source directories
 add_subdirectory(src/vanillapdf)
-add_subdirectory(src/vanillapdf.tools)
+
+if(VANILLAPDF_ENABLE_TOOLS)
+  add_subdirectory(src/vanillapdf.tools)
+endif()
 
 if(VANILLAPDF_ENABLE_TESTS)
   add_subdirectory(src/vanillapdf.test)

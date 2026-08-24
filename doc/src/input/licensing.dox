@@ -39,15 +39,15 @@ This is a list of most common features that are easily usable and documented wit
 
 Free features:
 <ul>
-<li>Document merge and split (\ref merge.c)</li>
-<li>PDF filter compression/decompression (\ref filter.c)</li>
-<li>Extracting strings and images (\ref extract.c)</li>
+<li>Document merge and split (\ref merge.cpp)</li>
+<li>PDF filter compression/decompression (\ref filter.cpp)</li>
+<li>Extracting strings and images (\ref extract.cpp)</li>
 </ul>
 
 Premium features:
 <ul>
-<li>Document signing (\ref sign.c)</li>
-<li>Decrypting documents (\ref decrypt.c)</li>
+<li>Document signing (\ref sign.cpp)</li>
+<li>Decrypting documents (\ref decrypt.cpp)</li>
 </ul>
 
 \section license_use Using the license

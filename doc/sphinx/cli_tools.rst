@@ -172,8 +172,8 @@ Encode or decode PDF content streams using various compression filters:
 
 .. code-block:: bash
 
-   vanillapdf-tools filter -f flate encode -s input.bin -d compressed.bin
-   vanillapdf-tools filter -f flate decode -s compressed.bin -d output.bin
+   vanillapdf-tools filter -f flate -o encode -s input.bin -d compressed.bin
+   vanillapdf-tools filter -f flate -o decode -s compressed.bin -d output.bin
 
 .. list-table::
    :header-rows: 1
@@ -182,7 +182,9 @@ Encode or decode PDF content streams using various compression filters:
    * - Option
      - Description
    * - ``-f``
-     - Filter type and operation: ``<type> <encode|decode>``
+     - Filter type
+   * - ``-o``
+     - Operation: ``encode`` or ``decode``
    * - ``-s``
      - Source file
    * - ``-d``
@@ -198,7 +200,7 @@ Encrypt a PDF document with password protection:
 
 .. code-block:: bash
 
-   vanillapdf-tools encrypt -s input.pdf -d encrypted.pdf -op owner123 -up user123
+   vanillapdf-tools encrypt -s input.pdf -d encrypted.pdf --owner-password owner123 --user-password user123
 
 .. list-table::
    :header-rows: 1
@@ -210,13 +212,13 @@ Encrypt a PDF document with password protection:
      - Source PDF file
    * - ``-d``
      - Destination (encrypted) PDF file
-   * - ``-op``
+   * - ``--owner-password``
      - Owner password
-   * - ``-up``
+   * - ``--user-password``
      - User password
-   * - ``-ka``
+   * - ``-a``, ``--algorithm``
      - Encryption algorithm: ``None``, ``RC4``, or ``AES`` (default: ``RC4``)
-   * - ``-kl``
+   * - ``-k``, ``--key-length``
      - Key length in bits (default: 40)
 
 decrypt
@@ -264,6 +266,6 @@ Write a PDF to a new file with custom observer callbacks:
      - Destination PDF file
 
 This command demonstrates the ``FileWriterObserverHandle`` callback interface.
-See `write_custom.c
-<https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/write_custom.c>`_
+See `write_custom.cpp
+<https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/write_custom.cpp>`_
 for the implementation.
