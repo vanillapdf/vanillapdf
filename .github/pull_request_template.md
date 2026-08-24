@@ -46,7 +46,7 @@ Brief description of what this PR does and why.
 - [ ] Self-review completed
 - [ ] No unnecessary debug code or comments left
 - [ ] Branch is up to date with target branch
-- [ ] First-time contributor: sign the [CLA](../CLA.md) when the bot asks (one comment per CLA version)
+- [ ] First-time contributor: sign the [CLA](https://github.com/vanillapdf/vanillapdf/blob/main/CLA.md) when the bot asks (one comment per CLA version)
 - [ ] PR title follows conventional commit format (if applicable)
 
 ## Related Issues

@@ -69,7 +69,7 @@ Before your first pull request can be merged, you must sign our [Contributor Lic
 
 > I have read the CLA Document and I hereby sign the CLA
 
-The check then turns green automatically (comment `recheck` if it needs a nudge). Your signature is recorded privately — what is recorded, why, and for how long is set out in Section 15 of the [CLA](CLA.md).
+The check then turns green automatically (comment `recheck` if it needs a nudge). The check identifies you by the email address on your commits, so make sure it is linked to your GitHub account — otherwise the bot cannot match your signature to your commits and reports you as an unknown committer. Your signature is recorded privately — what is recorded, why, and for how long is set out in Section 15 of the [CLA](CLA.md).
 
 **What your signature covers.** A signature applies to every contribution you submit while that version of the agreement is in effect, and also to anything you contributed before signing. It is not per pull request.
 
