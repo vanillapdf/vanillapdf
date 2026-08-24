@@ -550,6 +550,46 @@ extern "C"
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_RGB;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_G;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_CMYK;
+
+    /**
+    * \brief Inline image abbreviation for \ref NameConstant_DecodeParms
+    */
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_DP;
+
+    /**
+    * \brief Inline image abbreviation for \ref NameConstant_ASCIIHexDecode
+    */
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_AHx;
+
+    /**
+    * \brief Inline image abbreviation for \ref NameConstant_ASCII85Decode
+    */
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_A85;
+
+    /**
+    * \brief Inline image abbreviation for \ref NameConstant_LZWDecode
+    */
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_LZW;
+
+    /**
+    * \brief Inline image abbreviation for \ref NameConstant_FlateDecode
+    */
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_Fl;
+
+    /**
+    * \brief Inline image abbreviation for the RunLengthDecode filter
+    */
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_RL;
+
+    /**
+    * \brief Inline image abbreviation for the CCITTFaxDecode filter
+    */
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_CCF;
+
+    /**
+    * \brief Inline image abbreviation for \ref NameConstant_DCTDecode
+    */
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_DCT;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_DeviceRGB;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_DeviceGray;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_DeviceCMYK;
