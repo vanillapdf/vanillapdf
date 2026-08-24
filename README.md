@@ -94,8 +94,6 @@ int main(void) {
 | **Content streams** | `ContentStream_*` | Parse and encode PostScript-style page content |
 | **Low-level parsing** | `File_Open` | XRef tables, indirect objects, cross-reference streams |
 
-> A `vanillapdf-tools` command-line utility is built from source (not yet distributed as a standalone app) and exposes `sign`, `verify`, `merge`, `extract`, `encrypt`/`decrypt`, and more — see [CLI Tools](https://vanillapdf.readthedocs.io/en/latest/cli_tools.html) on Read the Docs.
-
 ## Architecture
 
 The library is organized into three layers:
@@ -138,7 +136,6 @@ Full documentation is hosted on **[Read the Docs](https://vanillapdf.readthedocs
 | [Installation](https://vanillapdf.readthedocs.io/en/latest/installation.html) | vcpkg, FetchContent, Conan, Homebrew, NuGet |
 | [C API Guide](https://vanillapdf.readthedocs.io/en/latest/c_api.html) | Handles, memory management, error handling |
 | [Architecture](https://vanillapdf.readthedocs.io/en/latest/architecture.html) | Three-layer design, object model, memory model, thread safety |
-| [CLI Tools](https://vanillapdf.readthedocs.io/en/latest/cli_tools.html) | sign, verify, merge, extract, encrypt, decrypt |
 | [Signature Verification](https://vanillapdf.readthedocs.io/en/latest/signature_verification.html) | Trust stores, chain validation, weak-algorithm detection |
 | [Building](https://vanillapdf.readthedocs.io/en/latest/building.html) | Build from source with CMake presets |
 | [Examples](https://vanillapdf.readthedocs.io/en/latest/examples.html) | Code samples for signing, merging, encryption |
