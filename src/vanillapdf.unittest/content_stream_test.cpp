@@ -47,8 +47,8 @@ TEST(ContentOperationEndText, Conversion) {
 namespace {
 
 // Parse a content stream containing a single inline image
-// and return its raw and decoded data as strings
-void ParseInlineImageData(const std::string& content, std::string& image_data, std::string& decoded_image_data) {
+// and return its raw data and sample data as strings
+void ParseInlineImageData(const std::string& content, std::string& image_data, std::string& image_samples) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io;
     ASSERT_EQ(InputOutputStream_CreateFromMemory(io.out()), VANILLAPDF_ERROR_SUCCESS);
 
@@ -93,14 +93,14 @@ void ParseInlineImageData(const std::string& content, std::string& image_data, s
 
     image_data.assign(image_data_bytes, image_data_size);
 
-    HandleGuard<BufferHandle, Buffer_Release> decoded_image_data_buffer;
-    ASSERT_EQ(ContentObjectInlineImage_GetDecodedData(image, decoded_image_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<BufferHandle, Buffer_Release> image_samples_buffer;
+    ASSERT_EQ(ContentObjectInlineImage_GetSamples(image, image_samples_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    size_type decoded_image_data_size = 0;
-    string_type decoded_image_data_bytes = nullptr;
-    ASSERT_EQ(Buffer_GetData(decoded_image_data_buffer, &decoded_image_data_bytes, &decoded_image_data_size), VANILLAPDF_ERROR_SUCCESS);
+    size_type image_samples_size = 0;
+    string_type image_samples_bytes = nullptr;
+    ASSERT_EQ(Buffer_GetData(image_samples_buffer, &image_samples_bytes, &image_samples_size), VANILLAPDF_ERROR_SUCCESS);
 
-    decoded_image_data.assign(decoded_image_data_bytes, decoded_image_data_size);
+    image_samples.assign(image_samples_bytes, image_samples_size);
 }
 
 } // namespace
@@ -168,60 +168,60 @@ TEST(ContentObjectInlineImage, Conversion) {
 // which shall not be included in the data themselves.
 TEST(ContentObjectInlineImage, DataDelimiters) {
     std::string image_data;
-    std::string decoded_image_data;
+    std::string image_samples;
 
     // "EI" without surrounding white-space is a part of the image data
-    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID aEIb EI ", image_data, decoded_image_data));
+    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID aEIb EI ", image_data, image_samples));
     ASSERT_EQ(image_data, "aEIb");
 
     // White-space inside the image data is preserved
-    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID a E b EI ", image_data, decoded_image_data));
+    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID a E b EI ", image_data, image_samples));
     ASSERT_EQ(image_data, "a E b");
 
     // "EI" followed by a regular character is a part of the image data
-    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID abc EIx EI ", image_data, decoded_image_data));
+    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID abc EIx EI ", image_data, image_samples));
     ASSERT_EQ(image_data, "abc EIx");
 
     // The image data may be empty
-    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID EI ", image_data, decoded_image_data));
+    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID EI ", image_data, image_samples));
     ASSERT_EQ(image_data, "");
 
     // The end of the stream terminates the image data as well
-    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID abc EI", image_data, decoded_image_data));
+    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID abc EI", image_data, image_samples));
     ASSERT_EQ(image_data, "abc");
 
     // Only the single delimiter after "ID" is consumed,
     // additional white-space belongs to the image data
-    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID  abc EI ", image_data, decoded_image_data));
+    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID  abc EI ", image_data, image_samples));
     ASSERT_EQ(image_data, " abc");
 
     // A missing delimiter after "ID" is tolerated with a warning,
     // the image data begin immediately after the operator
-    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID(a) EI ", image_data, decoded_image_data));
+    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI ID(a) EI ", image_data, image_samples));
     ASSERT_EQ(image_data, "(a)");
 }
 
-// The decoded image data have all the filters from the image dictionary applied,
+// The image samples have all the filters from the image dictionary applied,
 // recognizing both the abbreviated and the full names.
-TEST(ContentObjectInlineImage, DecodedData) {
+TEST(ContentObjectInlineImage, Samples) {
     std::string image_data;
-    std::string decoded_image_data;
+    std::string image_samples;
 
     // Abbreviated filter name
-    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI /W 2 /H 1 /BPC 8 /CS /G /F /AHx ID 6162> EI ", image_data, decoded_image_data));
+    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI /W 2 /H 1 /BPC 8 /CS /G /F /AHx ID 6162> EI ", image_data, image_samples));
     ASSERT_EQ(image_data, "6162>");
-    ASSERT_EQ(decoded_image_data, "ab");
+    ASSERT_EQ(image_samples, "ab");
 
     // Full filter name
-    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI /Filter /ASCIIHexDecode ID 6162> EI ", image_data, decoded_image_data));
-    ASSERT_EQ(decoded_image_data, "ab");
+    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI /Filter /ASCIIHexDecode ID 6162> EI ", image_data, image_samples));
+    ASSERT_EQ(image_samples, "ab");
 
     // Array of filter names
-    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI /F [/AHx] ID 6162> EI ", image_data, decoded_image_data));
-    ASSERT_EQ(decoded_image_data, "ab");
+    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI /F [/AHx] ID 6162> EI ", image_data, image_samples));
+    ASSERT_EQ(image_samples, "ab");
 
-    // Without any filter the decoded data equal the raw data
-    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI /W 1 /H 1 ID abc EI ", image_data, decoded_image_data));
+    // Without any filter the samples equal the raw data
+    ASSERT_NO_FATAL_FAILURE(ParseInlineImageData("BI /W 1 /H 1 ID abc EI ", image_data, image_samples));
     ASSERT_EQ(image_data, "abc");
-    ASSERT_EQ(decoded_image_data, "abc");
+    ASSERT_EQ(image_samples, "abc");
 }
