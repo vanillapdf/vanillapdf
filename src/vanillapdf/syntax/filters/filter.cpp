@@ -31,5 +31,21 @@ FilterBasePtr FilterBase::GetFilterByName(const NameObject& name) {
     LOG_ERROR_AND_THROW(NotSupportedException, "Unknown filter type: {}", name.GetValue()->ToString());
 }
 
+const NameObject& FilterBase::GetFullFilterName(const NameObject& filter_name) {
+    if (filter_name.Equals(constant::Name::AHx)) {
+        return constant::Name::ASCIIHexDecode;
+    } else if (filter_name.Equals(constant::Name::A85)) {
+        return constant::Name::ASCII85Decode;
+    } else if (filter_name.Equals(constant::Name::LZW)) {
+        return constant::Name::LZWDecode;
+    } else if (filter_name.Equals(constant::Name::Fl)) {
+        return constant::Name::FlateDecode;
+    } else if (filter_name.Equals(constant::Name::DCT)) {
+        return constant::Name::DCTDecode;
+    }
+
+    return filter_name;
+}
+
 } // syntax
 } // vanillapdf
