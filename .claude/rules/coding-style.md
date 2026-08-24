@@ -78,6 +78,7 @@ Detailed coding style preferences for C++ code in this project. This file is con
 
 - `Xxx_FindYyy` returns `VANILLAPDF_ERROR_OBJECT_MISSING` when the entry is absent — no boolean out param at the C level, even when the C++ side uses the `TryFind` + `bool` convention (`InteractiveForm_FindField` precedent)
 - `Xxx_RemoveYyy` takes a `boolean_type* result` out param mirroring the C++ `bool` return — absence is reported through the flag, not an error code
+- Semantic objects that get attached by **indirect reference** (form XObjects via `/AP`, widgets via `/Annots` and the field tree, pages, fields) are created with `Xxx_CreateFromDocument(DocumentHandle*, ...)` — the C++ `Create(DocumentPtr)` allocates an xref entry up front (`FormXObject::Create`, `WidgetAnnotation::Create`, `PageObject::Create` precedent), so a later attaching setter can never produce a dangling reference. Do not add new detached `CreateFromRect`-style constructors — the existing ones on the markup annotations predate this rule and their deprecation is tracked in #537
 
 ## Memory Allocation
 

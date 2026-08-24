@@ -986,11 +986,18 @@ extern "C"
     */
 
     /**
-    * \brief Create a new widget annotation with the specified rectangle
-    * \param rect the bounding rectangle for the annotation in default user space units
+    * \brief Create a new widget annotation registered within the document
+    *
+    * Widget annotations are attached by indirect reference - from the page
+    * \c Annots array and, when merged with a form field, from the field tree
+    * (see \ref InteractiveForm_AddField) - so the annotation dictionary is
+    * allocated as an indirect object of the document up front.
+    *
+    * The new widget carries an empty rectangle; set it with \ref Annotation_SetRect.
+    * \param handle the document that owns the new annotation
     * \param result a pointer to variable that will contain the new annotation upon success
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_CreateFromRect(RectangleHandle* rect, WidgetAnnotationHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_CreateFromDocument(DocumentHandle* handle, WidgetAnnotationHandle** result);
 
     /**
     * \brief Get the normal appearance stream (N entry of the AP dictionary)

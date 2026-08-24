@@ -1,5 +1,7 @@
 #include "precompiled.h"
 
+#include "syntax/files/file.h"
+
 #include "semantics/objects/annotations.h"
 #include "semantics/objects/actions.h"
 #include "semantics/objects/color.h"
@@ -880,8 +882,20 @@ void InkAnnotation::SetCreationDate(DatePtr date) {
 
 // WidgetAnnotation methods
 
-WidgetAnnotationPtr WidgetAnnotation::CreateFromRect(RectanglePtr rect) {
+WidgetAnnotationPtr WidgetAnnotation::Create(DocumentPtr document) {
+    auto file = document->GetFile();
+
+    RectanglePtr rect;
     auto dict = CreateBaseDictionary(constant::Name::Widget.Clone(), rect);
+
+    syntax::XrefUsedEntryBasePtr new_entry = file->AllocateNewEntry();
+    new_entry->SetReference(dict);
+    new_entry->SetFile(file);
+    new_entry->SetInitialized();
+
+    dict->SetFile(file);
+    dict->SetInitialized();
+
     return make_deferred<WidgetAnnotation>(dict);
 }
 

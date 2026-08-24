@@ -154,16 +154,14 @@ TEST(FormXObject, ResourcesRoundtrip) {
     ASSERT_EQ(FormXObject_GetResources(form, retrieved_resources.out()), VANILLAPDF_ERROR_SUCCESS);
 }
 
-TEST(WidgetAnnotation, CreateFromRect) {
-    HandleGuard<RectangleHandle, Rectangle_Release> rect;
-    ASSERT_EQ(Rectangle_Create(rect.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+TEST(WidgetAnnotation, CreateFromDocument) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
 
     HandleGuard<WidgetAnnotationHandle, WidgetAnnotation_Release> widget;
-    ASSERT_EQ(WidgetAnnotation_CreateFromRect(rect, widget.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(WidgetAnnotation_CreateFromDocument(document, widget.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_TRUE(widget);
 
     HandleGuard<AnnotationHandle, Annotation_Release> base_annotation;
@@ -172,6 +170,42 @@ TEST(WidgetAnnotation, CreateFromRect) {
     AnnotationType annotation_type = AnnotationType_Undefined;
     ASSERT_EQ(Annotation_GetAnnotationType(base_annotation, &annotation_type), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(annotation_type, AnnotationType_Widget);
+
+    // The new widget carries the default zero rectangle
+    HandleGuard<RectangleHandle, Rectangle_Release> default_rect;
+    ASSERT_EQ(Annotation_GetRect(base_annotation, default_rect.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    real_type upper_right_x = -1;
+    ASSERT_EQ(Rectangle_GetUpperRightXReal(default_rect, &upper_right_x), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(upper_right_x, 0);
+
+    // The rectangle is set through the base annotation accessor
+    HandleGuard<RectangleHandle, Rectangle_Release> rect;
+    ASSERT_EQ(Rectangle_Create(rect.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Annotation_SetRect(base_annotation, rect), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<RectangleHandle, Rectangle_Release> retrieved_rect;
+    ASSERT_EQ(Annotation_GetRect(base_annotation, retrieved_rect.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    real_type lower_left_y = 0;
+    ASSERT_EQ(Rectangle_GetLowerLeftYReal(retrieved_rect, &lower_left_y), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(lower_left_y, 700);
+}
+
+TEST(WidgetAnnotation, CreateFromDocumentNullParameters) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    WidgetAnnotationHandle* widget = nullptr;
+    EXPECT_EQ(WidgetAnnotation_CreateFromDocument(nullptr, &widget), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(WidgetAnnotation_CreateFromDocument(document, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(widget, nullptr);
 }
 
 TEST(WidgetAnnotation, NormalAppearanceRoundtrip) {
@@ -180,13 +214,8 @@ TEST(WidgetAnnotation, NormalAppearanceRoundtrip) {
     HandleGuard<DocumentHandle, Document_Release> document;
     CreateMemoryDocument(io_stream, file, document);
 
-    HandleGuard<RectangleHandle, Rectangle_Release> rect;
-    ASSERT_EQ(Rectangle_Create(rect.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 50), VANILLAPDF_ERROR_SUCCESS);
-
     HandleGuard<WidgetAnnotationHandle, WidgetAnnotation_Release> widget;
-    ASSERT_EQ(WidgetAnnotation_CreateFromRect(rect, widget.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(WidgetAnnotation_CreateFromDocument(document, widget.out()), VANILLAPDF_ERROR_SUCCESS);
 
     // Appearance is missing on a new widget
     HandleGuard<FormXObjectHandle, FormXObject_Release> missing_appearance;
@@ -205,11 +234,13 @@ TEST(WidgetAnnotation, NormalAppearanceRoundtrip) {
 }
 
 TEST(WidgetAnnotation, AppearanceCharacteristicsRoundtrip) {
-    HandleGuard<RectangleHandle, Rectangle_Release> rect;
-    ASSERT_EQ(Rectangle_Create(rect.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
 
     HandleGuard<WidgetAnnotationHandle, WidgetAnnotation_Release> widget;
-    ASSERT_EQ(WidgetAnnotation_CreateFromRect(rect, widget.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(WidgetAnnotation_CreateFromDocument(document, widget.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> missing_characteristics;
     ASSERT_EQ(WidgetAnnotation_GetAppearanceCharacteristics(widget, missing_characteristics.out()), VANILLAPDF_ERROR_OBJECT_MISSING);

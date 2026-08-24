@@ -3,6 +3,7 @@
 #include "semantics/objects/actions.h"
 #include "semantics/objects/color.h"
 #include "semantics/objects/date.h"
+#include "semantics/objects/document.h"
 #include "semantics/objects/xobject.h"
 #include "semantics/objects/rectangle.h"
 
@@ -1552,15 +1553,15 @@ VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_Release(InkAnnotation
 
 // WidgetAnnotation
 
-VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_CreateFromRect(RectangleHandle* rect, WidgetAnnotationHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_CreateFromDocument(DocumentHandle* handle, WidgetAnnotationHandle** result)
 {
-    Rectangle* rect_obj = reinterpret_cast<Rectangle*>(rect);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(rect_obj);
+    Document* document = reinterpret_cast<Document*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
     try
     {
-        auto annot = WidgetAnnotation::CreateFromRect(rect_obj);
+        auto annot = WidgetAnnotation::Create(document);
         auto ptr = annot.AddRefGet();
         *result = reinterpret_cast<WidgetAnnotationHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

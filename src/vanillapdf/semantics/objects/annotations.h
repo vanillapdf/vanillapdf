@@ -294,7 +294,10 @@ public:
     explicit WidgetAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
 
-    static WidgetAnnotationPtr CreateFromRect(RectanglePtr rect);
+    // Widgets are attached by indirect reference from the page /Annots array
+    // and, when merged with a field, from the field tree - so the dictionary
+    // is registered in the document on creation, same as FormXObject::Create
+    static WidgetAnnotationPtr Create(DocumentPtr document);
 
     // Appearance dictionary (Table 168) - normal appearance stream (/AP /N)
     bool GetNormalAppearance(OutputFormXObjectPtr& result) const;
