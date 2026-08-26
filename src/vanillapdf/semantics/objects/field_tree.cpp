@@ -413,23 +413,21 @@ void FieldTree::BuildFieldCacheInternal(
 
 // Helpers
 
-bool FieldTree::IsMember(const syntax::DictionaryObjectPtr& dictionary) const {
-    EnsureIndexBuilt();
-    return m_nodes.find(dictionary) != m_nodes.end();
-}
-
-std::string FieldTree::GetMemberQualifiedName(const syntax::DictionaryObjectPtr& dictionary) const {
-    auto node = m_nodes.find(dictionary);
-    assert(node != m_nodes.end() && "The caller checks membership first");
+std::string FieldTree::GetMemberQualifiedName(NodeMap::const_iterator node) const {
 
     // The chain of traversal parents ends at the root level, which has no
     // name; it cannot cycle, since the walk visits every node once
     std::string parent_name;
     if (!node->second.empty()) {
-        parent_name = GetMemberQualifiedName(*node->second);
+        auto parent_node = m_nodes.find(*node->second);
+        if (parent_node == m_nodes.end()) {
+            LOG_ERROR_AND_THROW(InvalidParameterException, "The traversal parent of field {} {} R is missing from the node index", node->first->GetObjectNumber(), node->first->GetGenerationNumber());
+        }
+
+        parent_name = GetMemberQualifiedName(parent_node);
     }
 
-    return QualifiedNameOf(parent_name, dictionary);
+    return QualifiedNameOf(parent_name, node->first);
 }
 
 syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> FieldTree::CreateKids(syntax::DictionaryObjectPtr parent) {
@@ -467,7 +465,8 @@ void FieldTree::ValidateInsertion(
 
         // Nothing but the node index tells a parent of this tree from a
         // field of another document - a field is a plain dictionary view
-        if (!IsMember(parent_dictionary)) {
+        auto parent_node = m_nodes.find(parent_dictionary);
+        if (parent_node == m_nodes.end()) {
             LOG_ERROR_AND_THROW(InvalidParameterException, "The parent field does not belong to this field hierarchy");
         }
 
@@ -487,7 +486,7 @@ void FieldTree::ValidateInsertion(
             LOG_ERROR_AND_THROW(InvalidParameterException, "A field merged with its widget annotation cannot take child fields");
         }
 
-        parent_name = GetMemberQualifiedName(parent_dictionary);
+        parent_name = GetMemberQualifiedName(parent_node);
     }
 
     // The child may bring a subtree of its own - every node of it becomes

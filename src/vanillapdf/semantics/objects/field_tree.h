@@ -178,12 +178,11 @@ private:
         const std::string& parent_name,
         std::map<syntax::IndirectReferenceId, bool>& visited) const;
 
-    bool IsMember(const syntax::DictionaryObjectPtr& dictionary) const;
-
     // The walk's fully qualified name of a member node, derived from the
     // chain of traversal parents in the node index - the same chain the
-    // mutators navigate by, not /Parent
-    std::string GetMemberQualifiedName(const syntax::DictionaryObjectPtr& dictionary) const;
+    // mutators navigate by, not /Parent. Takes the index entry the caller
+    // looked up, so membership is established by construction.
+    std::string GetMemberQualifiedName(NodeMap::const_iterator node) const;
 
     // The /Kids array of a node, created when the node has none yet
     static syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> CreateKids(syntax::DictionaryObjectPtr parent);
