@@ -712,6 +712,73 @@ TEST(FieldTree, AddChildRefusals) {
     EXPECT_EQ(GetFieldQualifiedName(sample.tree, 5), "merged");
 }
 
+// A child that brings a subtree is judged as a whole - the names its
+// nodes will take and their membership - not by its own /T alone
+TEST(FieldTree, AddChildValidatesTheWholeSubtree) {
+    SampleHierarchy sample;
+    BuildSampleHierarchy(sample);
+
+    // A nameless group whose kid would be named "email" at the root level
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> nameless;
+    ASSERT_EQ(DictionaryObject_Create(nameless.out()), VANILLAPDF_ERROR_SUCCESS);
+    RegisterIndirectObject(sample.file, nameless);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> nested_email_dictionary;
+    HandleGuard<FieldHandle, Field_Release> nested_email;
+    CreateTextFieldDictionary(sample.file, "email", nested_email_dictionary, nested_email);
+    InsertParentEntry(nested_email_dictionary, nameless);
+    InsertReferenceArrayEntry(nameless, "Kids", { nested_email_dictionary.get() });
+
+    HandleGuard<FieldHandle, Field_Release> nameless_field;
+    ASSERT_EQ(Field_CreateFromDictionary(nameless, nameless_field.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(FieldTree_AddRootChild(sample.tree, nameless_field), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    // Under a group the same subtree is named "address.email" and is free
+    HandleGuard<FieldHandle, Field_Release> address;
+    ASSERT_EQ(FieldTree_GetRootChild(sample.tree, 0, address.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(FieldTree_AddChild(sample.tree, address, nameless_field), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FieldHandle, Field_Release> found;
+    EXPECT_EQ(FindFieldByName(sample.tree, "address.email", found.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    // A group whose kid is already a member of the hierarchy
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> thief;
+    ASSERT_EQ(DictionaryObject_Create(thief.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(thief, "T", "thief");
+    RegisterIndirectObject(sample.file, thief);
+    InsertReferenceArrayEntry(thief, "Kids", { sample.street.get() });
+
+    HandleGuard<FieldHandle, Field_Release> thief_field;
+    ASSERT_EQ(Field_CreateFromDictionary(thief, thief_field.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(FieldTree_AddRootChild(sample.tree, thief_field), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    // A group whose two kids would take the same name
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> twins;
+    ASSERT_EQ(DictionaryObject_Create(twins.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(twins, "T", "twins");
+    RegisterIndirectObject(sample.file, twins);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> first_twin_dictionary;
+    HandleGuard<FieldHandle, Field_Release> first_twin;
+    CreateTextFieldDictionary(sample.file, "twin", first_twin_dictionary, first_twin);
+    InsertParentEntry(first_twin_dictionary, twins);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> second_twin_dictionary;
+    HandleGuard<FieldHandle, Field_Release> second_twin;
+    CreateTextFieldDictionary(sample.file, "twin", second_twin_dictionary, second_twin);
+    InsertParentEntry(second_twin_dictionary, twins);
+    InsertReferenceArrayEntry(twins, "Kids", { first_twin_dictionary.get(), second_twin_dictionary.get() });
+
+    HandleGuard<FieldHandle, Field_Release> twins_field;
+    ASSERT_EQ(Field_CreateFromDictionary(twins, twins_field.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(FieldTree_AddRootChild(sample.tree, twins_field), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    // Nothing but the accepted addition made it in
+    ASSERT_EQ(GetRootChildCount(sample.tree), 2u);
+    ASSERT_EQ(GetFieldCount(sample.tree), 4u);
+    EXPECT_EQ(GetFieldQualifiedName(sample.tree, 2), "address.email");
+}
+
 // --- InsertChild ---
 
 // The index is a position among the container's entries; the end appends

@@ -423,11 +423,9 @@ void FieldTree::ValidateInsertion(const syntax::OutputDictionaryObjectPtr& paren
         LOG_ERROR_AND_THROW(InvalidParameterException, "The field dictionary shall be an indirect object - allocate a cross-reference entry for it first");
     }
 
-    if (IsMember(child_dictionary)) {
-        LOG_ERROR_AND_THROW(InvalidParameterException, "The field already belongs to this field hierarchy");
-    }
+    EnsureCacheBuilt();
 
-    std::string qualified_name;
+    std::string parent_name;
 
     if (!parent.empty()) {
         auto parent_dictionary = *parent;
@@ -454,19 +452,59 @@ void FieldTree::ValidateInsertion(const syntax::OutputDictionaryObjectPtr& paren
             LOG_ERROR_AND_THROW(InvalidParameterException, "A field merged with its widget annotation cannot take child fields");
         }
 
-        qualified_name = GetMemberQualifiedName(parent_dictionary);
+        parent_name = GetMemberQualifiedName(parent_dictionary);
     }
 
-    // Fully qualified names shall be unique (12.7.3.2). The name the child
-    // would take is the parent's name extended by the child's partial name
-    // - the same way the walk will name it once it is in place; a child
-    // without a /T has no name of its own to collide with.
-    if (child_dictionary->Contains(constant::Name::T)) {
-        qualified_name = QualifiedNameOf(qualified_name, child_dictionary);
+    // The child may bring a subtree of its own - every node of it becomes
+    // a node of this tree and is held to the same rules, under the name
+    // the walk will give it once the child is in place
+    std::set<std::string> subtree_names;
+    std::unordered_set<syntax::DictionaryObjectPtr, DeferredIdentityHash<syntax::DictionaryObject>, DeferredIdentityEqual<syntax::DictionaryObject>> subtree_nodes;
+    ValidateSubtree(child_dictionary, parent_name, subtree_names, subtree_nodes);
+}
 
+void FieldTree::ValidateSubtree(
+    const syntax::DictionaryObjectPtr& node,
+    const std::string& parent_name,
+    std::set<std::string>& subtree_names,
+    std::unordered_set<syntax::DictionaryObjectPtr, DeferredIdentityHash<syntax::DictionaryObject>, DeferredIdentityEqual<syntax::DictionaryObject>>& subtree_nodes) const {
+
+    // A node reached twice within the subtree is enumerated once by the
+    // walk, so it is judged once here
+    if (!subtree_nodes.insert(node).second) {
+        return;
+    }
+
+    if (m_nodes.find(node) != m_nodes.end()) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The field {} {} R already belongs to this field hierarchy", node->GetObjectNumber(), node->GetGenerationNumber());
+    }
+
+    // Fully qualified names shall be unique (12.7.3.2) - within this tree
+    // and within the subtree itself; a node without a /T has no name of its
+    // own to collide with
+    auto qualified_name = QualifiedNameOf(parent_name, node);
+    if (node->Contains(constant::Name::T)) {
         if (m_names.find(qualified_name) != m_names.end()) {
             LOG_ERROR_AND_THROW(InvalidParameterException, "A field with the fully qualified name \"{}\" already exists in this field hierarchy", qualified_name);
         }
+
+        if (!subtree_names.insert(qualified_name).second) {
+            LOG_ERROR_AND_THROW(InvalidParameterException, "The fully qualified name \"{}\" is taken by more than one field of the subtree being added", qualified_name);
+        }
+    }
+
+    if (Field::IsTerminalDictionary(node)) {
+        return;
+    }
+
+    auto kids = node->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+    for (auto entry : kids) {
+        syntax::OutputDictionaryObjectPtr kid;
+        if (Field::ClassifyChildEntry(entry, kid) != Field::ChildEntryType::Field) {
+            continue;
+        }
+
+        ValidateSubtree(*kid, qualified_name, subtree_names, subtree_nodes);
     }
 }
 

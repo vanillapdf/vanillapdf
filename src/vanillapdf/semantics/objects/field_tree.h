@@ -12,6 +12,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace vanillapdf {
@@ -76,10 +77,15 @@ public:
     // index equal to the count appends, a larger one is an
     // ObjectMissingException.
     //
+    // The child may bring a subtree of its own; every node of it is held
+    // to the same rules as the child, under the names the walk will give
+    // them once the child is in place.
+    //
     // InvalidParameterException when: the child dictionary is a direct
     // object (the arrays hold indirect references, Table 218 and Table 220),
-    // the child is already in this tree, or the resulting fully qualified
-    // name is already taken.
+    // the child or a node of its subtree is already in this tree, or a
+    // fully qualified name the subtree would take is already taken - by
+    // this tree or by another node of the same subtree.
     void AddRootChild(FieldPtr child);
     void InsertRootChild(types::size_type index, FieldPtr child);
 
@@ -166,6 +172,16 @@ private:
     // The insertion rules shared by every level; an empty parent stands for
     // the root level
     void ValidateInsertion(const syntax::OutputDictionaryObjectPtr& parent, const FieldPtr& child) const;
+
+    // The rules every node of an inserted subtree is held to, under the
+    // name the walk will give it: not a member yet, and its name - when it
+    // has a /T - taken neither by this tree nor by another node of the
+    // subtree. Recurses through the /Kids fields the way the walk does.
+    void ValidateSubtree(
+        const syntax::DictionaryObjectPtr& node,
+        const std::string& parent_name,
+        std::set<std::string>& subtree_names,
+        std::unordered_set<syntax::DictionaryObjectPtr, DeferredIdentityHash<syntax::DictionaryObject>, DeferredIdentityEqual<syntax::DictionaryObject>>& subtree_nodes) const;
     void LinkChild(const syntax::OutputDictionaryObjectPtr& parent, syntax::DictionaryObjectPtr child) const;
 };
 

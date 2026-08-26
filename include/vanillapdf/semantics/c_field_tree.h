@@ -186,10 +186,16 @@ extern "C"
     * as an indirect object within the document, for example through
     * \ref File_AllocateNewEntry.
     *
+    * The child may bring a subtree of its own - a group with its /Kids
+    * already in place. Every node of that subtree is held to the same
+    * rules as the child, under the fully qualified names the hierarchy
+    * will give them once the child is in place.
+    *
     * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the child's
-    * dictionary is a direct object, the child already belongs to this
-    * hierarchy, or a field with the resulting fully qualified name already
-    * exists.
+    * dictionary is a direct object, the child or a node of its subtree
+    * already belongs to this hierarchy, or a fully qualified name the
+    * subtree would take already exists - in this hierarchy or twice within
+    * the subtree itself.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_AddRootChild(FieldTreeHandle* handle, FieldHandle* child);
 
