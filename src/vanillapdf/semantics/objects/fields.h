@@ -40,6 +40,13 @@ public:
 
 public:
     explicit Field(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
+
+    // The typed view over a dictionary, chosen by /FT resolved through the
+    // /Parent chain - it is inheritable, and a field merged with its widget
+    // annotation usually carries it on the parent only. The type says
+    // nothing about the position in the hierarchy: a group under a typed
+    // ancestor is a TextField / ButtonField / ... too, and IsTerminal is
+    // the question to ask about the position.
     static FieldPtr Create(syntax::DictionaryObjectPtr root);
 
     virtual Field::Type GetFieldType() const noexcept = 0;

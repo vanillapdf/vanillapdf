@@ -236,6 +236,15 @@ extern "C"
     * The /FT entry is inheritable and is resolved through the /Parent chain.
     * A non-terminal field without a resolvable type reports
     * \ref FieldType_NonTerminal.
+    *
+    * The type and the position in the hierarchy are independent: a group
+    * whose /FT is set, or inherited from an ancestor, reports that type
+    * and converts to the matching handle - \ref TextField_FromField on a
+    * text group succeeds, and \ref TextField_GetValue then returns the /V
+    * the group carries or inherits. This is what lets a field merged with
+    * its widget annotation, which usually carries /FT on the parent only,
+    * report its type. Ask \ref Field_IsTerminal whether a field is a
+    * logical field or a group; the type does not answer that.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle* handle, FieldType* result);
 
@@ -290,6 +299,10 @@ extern "C"
     * child field when it carries /T, /Kids or /FT, and a widget annotation
     * otherwise; a field merged with its widget annotation carries both /T
     * and /Subtype /Widget and is a child field.
+    *
+    * This is independent of \ref Field_GetType: a group can report a
+    * typed field type through its own or an inherited /FT, and a terminal
+    * field without any resolvable /FT reports \ref FieldType_NonTerminal.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_IsTerminal(FieldHandle* handle, boolean_type* result);
 
