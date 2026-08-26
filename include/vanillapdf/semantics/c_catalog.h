@@ -164,10 +164,10 @@ extern "C"
     *
     * The catalog stores an indirect reference, so the form has to be
     * registered within the document - use
-    * \ref InteractiveForm_CreateFromDocument to obtain one. The instance
-    * to work with afterwards is the one \ref Catalog_GetAcroForm hands
-    * out, which is resolved over the installed dictionary; the handle
-    * passed here is not the one shared through the catalog.
+    * \ref InteractiveForm_CreateFromDocument to obtain one. The attached
+    * instance becomes the one \ref Catalog_GetAcroForm returns, so the
+    * caller's handle and everyone reaching the form through the catalog
+    * share a single form and a single field hierarchy.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Catalog_SetAcroForm(CatalogHandle* handle, InteractiveFormHandle* value);
 

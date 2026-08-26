@@ -58,12 +58,10 @@ public:
     bool Destinations(OutputNamedDestinationsPtr& result) const;
     bool Names(OutputNameDictionaryPtr& result) const;
     void SetNames(NameDictionaryPtr value);
-    // The interactive form over the /AcroForm entry. Resolved once and then
-    // handed out unchanged, so that the field tree the form owns is shared
-    // by everyone reaching the form through the catalog - Document::Sign
-    // included. SetAcroForm installs the form's dictionary and drops the
-    // resolved instance; the instance to work with afterwards is the one
-    // AcroForm hands out, not the argument.
+    // The interactive form over the /AcroForm entry. One instance per
+    // catalog, so that the field tree the form owns is shared by everyone
+    // reaching the form through the catalog - Document::Sign included; the
+    // instance installed by SetAcroForm is the one handed out.
     bool AcroForm(OuputInteractiveFormPtr& result) const;
     void SetAcroForm(InteractiveFormPtr value);
 
@@ -76,10 +74,10 @@ private:
 
     CachedValue<OutputPageTreePtr> m_pages;
 
-    // The form instance is resolved once from /AcroForm by the getter and
-    // then handed out unchanged; the setter drops it. A value that can be
-    // dropped is outside the compute-once contract of CachedValue, whose
-    // lock-free fast path would race the reset.
+    // The form instance is resolved once from /AcroForm and then handed out
+    // unchanged, or installed by SetAcroForm. The setter can replace it, so
+    // the lock-free fast path of CachedValue does not apply - the same
+    // arrangement InteractiveForm keeps for its field tree.
     mutable std::unique_ptr<std::recursive_mutex> m_access_lock;
     mutable OuputInteractiveFormPtr m_acro_form;
 };

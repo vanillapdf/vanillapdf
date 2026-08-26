@@ -212,10 +212,11 @@ void Catalog::SetAcroForm(InteractiveFormPtr value) {
 
     _obj->Insert(constant::Name::AcroForm, reference, true);
 
-    // The instance handed out is resolved by the getter alone - dropping
-    // the resolved one makes the next AcroForm() pick up the installed
-    // dictionary
-    m_acro_form = OuputInteractiveFormPtr();
+    // The installed instance is the one handed out from now on, so that the
+    // caller's handle and everyone reaching the form through the catalog -
+    // Document::Sign included - share a single form, and with it a single
+    // field tree
+    m_acro_form = value;
 }
 
 bool Catalog::GetOpenAction(syntax::ObjectPtr& result) const {

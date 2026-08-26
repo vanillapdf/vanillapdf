@@ -319,13 +319,7 @@ NameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
 InteractiveFormPtr Document::CreateAcroForm(CatalogPtr catalog) {
     auto created_form = InteractiveForm::Create(m_holder);
     catalog->SetAcroForm(created_form);
-
-    // The catalog hands out one form instance to everyone, so the one to
-    // return is the one it resolves over the installed dictionary
-    OuputInteractiveFormPtr installed_form;
-    catalog->AcroForm(installed_form);
-
-    return installed_form;
+    return created_form;
 }
 
 NameTreePtr<DestinationPtr> Document::CreateStringDestinations(NameDictionaryPtr dictionary) {

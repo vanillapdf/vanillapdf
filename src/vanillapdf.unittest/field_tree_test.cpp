@@ -1208,18 +1208,18 @@ TEST(FieldTree, SignSkipsNameTakenByGroup) {
     HandleGuard<DocumentHandle, Document_Release> document;
     CreateMemoryDocument(io_stream, file, document);
 
-    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> created_form;
-    ASSERT_EQ(InteractiveForm_CreateFromDocument(document, created_form.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
+    ASSERT_EQ(InteractiveForm_CreateFromDocument(document, form.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<CatalogHandle, Catalog_Release> catalog;
     ASSERT_EQ(Document_GetCatalog(document, catalog.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Catalog_SetAcroForm(catalog, created_form), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_SetAcroForm(catalog, form), VANILLAPDF_ERROR_SUCCESS);
 
-    // The catalog resolves the form once and hands out that instance to
-    // everyone, the signer included - so the hierarchy is attached to the
-    // instance the catalog hands out, not to the one that was installed
-    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
-    ASSERT_EQ(Catalog_GetAcroForm(catalog, form.out()), VANILLAPDF_ERROR_SUCCESS);
+    // The attached instance is the one the catalog hands out to everyone,
+    // the signer included
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> catalog_form;
+    ASSERT_EQ(Catalog_GetAcroForm(catalog, catalog_form.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(catalog_form.get(), form.get());
 
     HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
     ASSERT_EQ(FieldTree_CreateFromDocument(document, tree.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -1267,8 +1267,8 @@ TEST(FieldTree, SignSkipsNameTakenByGroup) {
 
     // The signature went in next to the group, under the next free name,
     // and the tree held here shows it right away: the signer reached the
-    // form through the catalog, which hands out the very form instance
-    // attached above, and that form hands out this very tree
+    // form through the catalog, which hands out the very instance attached
+    // above, and that form hands out this very tree
     ASSERT_EQ(GetRootChildCount(tree), 2u);
     EXPECT_EQ(GetRootChildQualifiedName(tree, 1), "Signature2");
 
