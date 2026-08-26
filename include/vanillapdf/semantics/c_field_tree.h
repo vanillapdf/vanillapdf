@@ -97,6 +97,13 @@ extern "C"
     * A group without any child field yet is indistinguishable from a field
     * without widgets and is enumerated as a terminal field until it receives
     * a child.
+    *
+    * Both views classify the /Fields and /Kids entries the same way, so
+    * this is exactly the set of terminals the structural walk reaches. The
+    * arrays shall hold indirect references (Table 218, Table 220); an entry
+    * that is not one - a direct dictionary, say - does occur in existing
+    * files and is skipped with a warning rather than failing the
+    * enumeration, the same as a cyclic /Kids link.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_GetFieldCount(FieldTreeHandle* handle, size_type* result);
 

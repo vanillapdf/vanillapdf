@@ -75,6 +75,21 @@ static void InsertParentEntry(DictionaryObjectHandle* child, DictionaryObjectHan
     ASSERT_EQ(DictionaryObject_Insert(child, key, reference_object, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
 }
 
+// The array a dictionary entry holds, for editing it in place behind the
+// tree's back
+static void FindArrayEntry(
+    DictionaryObjectHandle* dict,
+    const char* key_name,
+    HandleGuard<ArrayObjectHandle, ArrayObject_Release>& array
+) {
+    HandleGuard<NameObjectHandle, NameObject_Release> key;
+    ASSERT_EQ(NameObject_CreateFromDecodedString(key_name, key.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ObjectHandle, Object_Release> array_object;
+    ASSERT_EQ(DictionaryObject_Find(dict, key, array_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_FromObject(array_object, array.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
 static void RemoveEntry(DictionaryObjectHandle* dict, const char* key_name) {
     HandleGuard<NameObjectHandle, NameObject_Release> key;
     ASSERT_EQ(NameObject_CreateFromDecodedString(key_name, key.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -372,6 +387,47 @@ TEST(FieldTree, StrayRootEntryIsSkipped) {
 
     ASSERT_EQ(GetFieldCount(sample.tree), 3u);
     EXPECT_EQ(GetFieldQualifiedName(sample.tree, 2), "email");
+}
+
+// Both arrays shall hold indirect references - a direct dictionary in
+// either is malformed but occurs, and both views skip it the same way
+// instead of the flat view failing where the child walk works
+TEST(FieldTree, DirectDictionaryEntriesAreSkippedByBothViews) {
+    SampleHierarchy sample;
+    BuildSampleHierarchy(sample);
+
+    // A field-looking dictionary embedded directly, once in the root array
+    // and once among the group's kids
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> embedded;
+    ASSERT_EQ(DictionaryObject_Create(embedded.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(embedded, "T", "embedded");
+    InsertNameEntry(embedded, "FT", "Tx");
+
+    HandleGuard<ObjectHandle, Object_Release> embedded_object;
+    ASSERT_EQ(DictionaryObject_ToObject(embedded, embedded_object.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ArrayObjectHandle, ArrayObject_Release> fields_array;
+    FindArrayEntry(sample.form_dictionary, "Fields", fields_array);
+    ASSERT_EQ(ArrayObject_Insert(fields_array, 0, embedded_object), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ArrayObjectHandle, ArrayObject_Release> kids_array;
+    FindArrayEntry(sample.address, "Kids", kids_array);
+    ASSERT_EQ(ArrayObject_Insert(kids_array, 1, embedded_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_Invalidate(sample.tree), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(GetRootChildCount(sample.tree), 2u);
+    EXPECT_EQ(GetRootChildQualifiedName(sample.tree, 0), "address");
+
+    HandleGuard<FieldHandle, Field_Release> address;
+    ASSERT_EQ(FieldTree_GetRootChild(sample.tree, 0, address.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(GetChildCount(address), 2u);
+    EXPECT_EQ(GetChildQualifiedName(address, 1), "address.city");
+
+    ASSERT_EQ(GetFieldCount(sample.tree), 3u);
+    EXPECT_EQ(GetFieldQualifiedName(sample.tree, 1), "address.city");
+
+    HandleGuard<FieldHandle, Field_Release> not_found;
+    EXPECT_EQ(FindFieldByName(sample.tree, "embedded", not_found.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 }
 
 // --- Walking up ---

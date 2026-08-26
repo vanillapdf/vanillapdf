@@ -84,16 +84,30 @@ bool Field::IsFieldDictionary(const syntax::DictionaryObjectPtr& dictionary) {
         || dictionary->Contains(constant::Name::FT);
 }
 
+Field::ChildEntryType Field::ClassifyChildEntry(const syntax::ObjectPtr& entry, syntax::OutputDictionaryObjectPtr& dictionary) {
+
+    // The reference is required, not just the dictionary behind it: a
+    // direct dictionary has no object number for its kids to name in
+    // /Parent, and the mutators could never address it
+    if (!syntax::ObjectUtils::IsType<syntax::IndirectReferenceObjectPtr>(entry)
+        || !syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(entry)) {
+        spdlog::warn("Field hierarchy entry of type {} is not an indirect reference to a dictionary and is skipped", static_cast<int32_t>(entry->GetObjectType()));
+        return ChildEntryType::Malformed;
+    }
+
+    dictionary = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(entry);
+    return IsFieldDictionary(dictionary) ? ChildEntryType::Field : ChildEntryType::Widget;
+}
+
 bool Field::IsTerminalDictionary(const syntax::DictionaryObjectPtr& dictionary) {
     if (!dictionary->Contains(constant::Name::Kids)) {
         return true;
     }
 
-    auto kids = dictionary->FindAs<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>>(constant::Name::Kids);
-    auto kids_size = kids->GetSize();
-    for (decltype(kids_size) i = 0; i < kids_size; ++i) {
-        auto kid = kids->GetValue(i);
-        if (IsFieldDictionary(kid)) {
+    auto kids = dictionary->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+    for (auto entry : kids) {
+        syntax::OutputDictionaryObjectPtr kid;
+        if (ClassifyChildEntry(entry, kid) == ChildEntryType::Field) {
             return false;
         }
     }
@@ -112,11 +126,10 @@ types::size_type Field::GetChildCount() const {
 
     types::size_type count = 0;
 
-    auto kids = _obj->FindAs<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>>(constant::Name::Kids);
-    auto kids_size = kids->GetSize();
-    for (decltype(kids_size) i = 0; i < kids_size; ++i) {
-        auto kid = kids->GetValue(i);
-        if (IsFieldDictionary(kid)) {
+    auto kids = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+    for (auto entry : kids) {
+        syntax::OutputDictionaryObjectPtr kid;
+        if (ClassifyChildEntry(entry, kid) == ChildEntryType::Field) {
             count += 1;
         }
     }
@@ -128,11 +141,10 @@ FieldPtr Field::GetChild(types::size_type index) const {
     if (_obj->Contains(constant::Name::Kids)) {
         types::size_type current = 0;
 
-        auto kids = _obj->FindAs<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>>(constant::Name::Kids);
-        auto kids_size = kids->GetSize();
-        for (decltype(kids_size) i = 0; i < kids_size; ++i) {
-            auto kid = kids->GetValue(i);
-            if (!IsFieldDictionary(kid)) {
+        auto kids = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+        for (auto entry : kids) {
+            syntax::OutputDictionaryObjectPtr kid;
+            if (ClassifyChildEntry(entry, kid) != ChildEntryType::Field) {
                 continue;
             }
 

@@ -174,15 +174,22 @@ void FieldTree::RemoveChild(FieldPtr field) {
     // field to the root array, a wrong one to another node's /Kids.
     auto traversal_parent = node->second;
 
-    syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> container = _obj;
+    syntax::MixedArrayObjectPtr container = _obj->Data();
     if (!traversal_parent.empty()) {
-        container = traversal_parent->FindAs<syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr>>(constant::Name::Kids);
+        container = traversal_parent->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
     }
 
+    // Only a reference can be this node - the walk skips every other kind
+    // of entry, so none of them ever became a member
     bool removed = false;
     auto container_size = container->GetSize();
     for (decltype(container_size) i = 0; i < container_size; ++i) {
-        auto entry_reference = container->GetValue(i);
+        syntax::ObjectPtr entry = container->GetValue(i);
+        if (!syntax::ObjectUtils::IsType<syntax::IndirectReferenceObjectPtr>(entry)) {
+            continue;
+        }
+
+        auto entry_reference = syntax::ObjectUtils::ConvertTo<syntax::IndirectReferenceObjectPtr>(entry);
         if (!entry_reference->GetReferencedObject()->Identity(field_dictionary)) {
             continue;
         }
@@ -228,9 +235,11 @@ void FieldTree::EnsureCacheBuilt() const {
 void FieldTree::BuildFieldCache() const {
 
     // Both /Fields and /Kids shall contain indirect references (Table 218,
-    // Table 220), so the tree is walked as references and every node is
-    // dereferenced only after the cycle check - the same way PageTree types
-    // its kids array.
+    // Table 220). The arrays are walked untyped and every entry classified
+    // by Field::ClassifyChildEntry - the same classification the field's
+    // own child walk applies - so a malformed entry is skipped with a
+    // warning here exactly where it is skipped there, and every node is
+    // dereferenced only after the cycle check.
     //
     // Malformed documents can link /Kids in a cycle. Visited nodes are
     // tracked by their object identity, the same way Field guards its
@@ -238,14 +247,19 @@ void FieldTree::BuildFieldCache() const {
     std::map<syntax::IndirectReferenceId, bool> visited;
     syntax::OutputDictionaryObjectPtr root_level;
 
-    for (auto field_reference : _obj) {
-        auto root_child = field_reference->GetReferencedObjectAs<syntax::DictionaryObjectPtr>();
+    for (auto entry : _obj->Data()) {
+        syntax::OutputDictionaryObjectPtr root_child;
+        auto entry_type = Field::ClassifyChildEntry(entry, root_child);
+        if (entry_type == Field::ChildEntryType::Malformed) {
+            continue;
+        }
+
+        auto field_reference = syntax::ObjectUtils::ConvertTo<syntax::IndirectReferenceObjectPtr>(entry);
 
         // The root array holds fields only (Table 218) - widget
         // annotations belong to a field's /Kids. A dictionary here that is
-        // not a field is a stray entry, classified the same way a /Kids
-        // entry is and skipped the same way
-        if (!Field::IsFieldDictionary(root_child)) {
+        // not a field is a stray entry, skipped the same way
+        if (entry_type != Field::ChildEntryType::Field) {
             spdlog::warn("Root /Fields entry {} {} R is not a field dictionary and is skipped", field_reference->GetReferencedObjectNumber(), field_reference->GetReferencedGenerationNumber());
             continue;
         }
@@ -253,12 +267,12 @@ void FieldTree::BuildFieldCache() const {
         // A node listed twice - or already reached through some /Kids - is
         // enumerated where it was first reached; the root view shows what
         // the walk shows
-        if (m_nodes.find(root_child) != m_nodes.end()) {
+        if (m_nodes.find(*root_child) != m_nodes.end()) {
             spdlog::warn("Root /Fields entry {} {} R was already reached - only the first path is enumerated", field_reference->GetReferencedObjectNumber(), field_reference->GetReferencedGenerationNumber());
             continue;
         }
 
-        m_root_children.push_back(root_child);
+        m_root_children.push_back(*root_child);
         BuildFieldCacheInternal(field_reference, root_level, visited);
     }
 
@@ -333,13 +347,14 @@ void FieldTree::BuildFieldCacheInternal(
 
     // Only field dictionaries are hierarchy nodes - widget annotations stay
     // attached to their field (12.7.3.2)
-    auto kids = node->FindAs<syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr>>(constant::Name::Kids);
-    for (auto kid_reference : kids) {
-        auto kid = kid_reference->GetReferencedObjectAs<syntax::DictionaryObjectPtr>();
-        if (!Field::IsFieldDictionary(kid)) {
+    auto kids = node->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+    for (auto entry : kids) {
+        syntax::OutputDictionaryObjectPtr kid;
+        if (Field::ClassifyChildEntry(entry, kid) != Field::ChildEntryType::Field) {
             continue;
         }
 
+        auto kid_reference = syntax::ObjectUtils::ConvertTo<syntax::IndirectReferenceObjectPtr>(entry);
         BuildFieldCacheInternal(kid_reference, syntax::OutputDictionaryObjectPtr(node), visited);
     }
 }

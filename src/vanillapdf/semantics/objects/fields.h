@@ -51,13 +51,35 @@ public:
     // /Kids, the same way QPDF classifies the entries.
     static bool IsFieldDictionary(const syntax::DictionaryObjectPtr& dictionary);
 
+    // The kinds of entry a /Fields or /Kids array holds. Both arrays shall
+    // hold indirect references (Table 218, Table 220): a reference to a
+    // field dictionary is a child field, a reference to any other
+    // dictionary is a widget annotation. Anything else - a direct
+    // dictionary, a reference to something other than a dictionary - is
+    // malformed. It does occur in existing files and is skipped with a
+    // warning rather than failing the enumeration, the same policy every
+    // hierarchy walker applies to a cyclic /Kids link.
+    enum class ChildEntryType {
+        Undefined = 0,
+        Field,
+        Widget,
+        Malformed
+    };
+
+    // Classifies one entry of a /Fields or /Kids array, resolving the
+    // dictionary for a field or a widget. The tree and the field's own
+    // child walk share this one classification, so the flat view stays a
+    // projection of the structural one.
+    static ChildEntryType ClassifyChildEntry(const syntax::ObjectPtr& entry, syntax::OutputDictionaryObjectPtr& dictionary);
+
     // A terminal field has no children other than widget annotations (12.7.3.2).
     static bool IsTerminalDictionary(const syntax::DictionaryObjectPtr& dictionary);
     bool IsTerminal() const;
 
-    // Child fields in /Kids order - widget annotations are not children.
-    // Zero for a terminal field. The level above the root-level fields is
-    // the /Fields array, enumerated by FieldTree::GetRootChild.
+    // Child fields in /Kids order - widget annotations are not children,
+    // malformed entries are skipped as ClassifyChildEntry describes. Zero
+    // for a terminal field. The level above the root-level fields is the
+    // /Fields array, enumerated by FieldTree::GetRootChild.
     types::size_type GetChildCount() const;
     FieldPtr GetChild(types::size_type index) const;
 

@@ -298,8 +298,11 @@ extern "C"
     * Get the number of child fields.
     *
     * Child fields are the /Kids entries that are fields - widget annotations
-    * are not children and are not counted. Zero for a terminal field. The
-    * top-level fields are enumerated by \ref FieldTree_GetRootChildCount.
+    * are not children and are not counted, and an entry that is not an
+    * indirect reference to a dictionary (Table 220) is skipped with a
+    * warning, as \ref FieldTree_GetFieldCount describes. Zero for a
+    * terminal field. The top-level fields are enumerated by
+    * \ref FieldTree_GetRootChildCount.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetChildCount(FieldHandle* handle, size_type* result);
 
