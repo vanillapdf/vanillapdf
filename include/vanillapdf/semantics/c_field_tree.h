@@ -55,6 +55,18 @@ extern "C"
     * empty one with \ref FieldTree_CreateFromDocument and
     * \ref InteractiveForm_SetFieldTree.
     *
+    * Thread safety: every FieldTree_* call on one tree handle is
+    * serialized on the tree's own lock, so the flat view, the top level
+    * and the mutators may be used concurrently on the same tree - a
+    * mutation is atomic and a concurrent enumeration observes it entirely
+    * or not at all. The Field_* calls are not part of that: a field is a
+    * plain view over its dictionary, so \ref Field_GetChild,
+    * \ref Field_GetParent and the field getters and setters run outside
+    * the tree's lock, as does any edit through the dictionary API. Walking
+    * the structure through Field_GetChild while another thread mutates the
+    * tree is a data race on the /Kids arrays, the same as any other
+    * unsynchronized dictionary access.
+    *
     * For more details please visit [section 12.7.3 - Field Dictionaries](PDF32000_2008.pdf#G11.2110737).
     */
 
@@ -188,10 +200,14 @@ extern "C"
     * The child's /Parent entry is set to the parent, and the parent's /Kids
     * array is created when the parent has none yet. Adding a child to a
     * field that is currently a terminal turns it into a group; the child's
-    * fully qualified name is then prefixed with the parent's. The parent
-    * of a nested field, as reported by \ref Field_GetParent, is always a
-    * valid argument here; a top-level field has no parent and is added
-    * next to with \ref FieldTree_AddRootChild.
+    * fully qualified name is then prefixed with the parent's. Any field of
+    * this hierarchy is a valid parent, whether it came from
+    * \ref FieldTree_GetRootChild, \ref Field_GetChild, \ref FieldTree_GetField
+    * or \ref Field_GetParent - with the caveat that Field_GetParent reports
+    * the /Parent entry as written, which a damaged file may point outside
+    * the hierarchy (refused here) or at the wrong node of it (accepted, and
+    * the child lands under that node). A top-level field has no parent and
+    * a sibling of it is added with \ref FieldTree_AddRootChild.
     *
     * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE as for
     * \ref FieldTree_AddRootChild, and when the parent does not belong to
@@ -230,10 +246,14 @@ extern "C"
     * The widget annotations of the removed fields are not touched - they
     * stay in the page /Annots arrays. Remove them through
     * \ref PageAnnotations_Remove, otherwise the page keeps drawing widgets
-    * of fields that no longer exist.
+    * of fields that no longer exist. A container that lists the same node
+    * twice - which the enumeration reports once - loses the first entry
+    * only.
     *
     * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the field does not
-    * belong to this hierarchy.
+    * belong to this hierarchy, or when its container no longer holds it
+    * because the hierarchy was edited underneath the tree without
+    * \ref FieldTree_Invalidate.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_RemoveChild(FieldTreeHandle* handle, FieldHandle* field);
 

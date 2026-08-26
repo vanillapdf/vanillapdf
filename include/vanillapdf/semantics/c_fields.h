@@ -318,11 +318,15 @@ extern "C"
     * \brief
     * Get the parent field.
     *
-    * A nested field reports its /Parent, which is a valid parent for
-    * \ref FieldTree_AddChild.
-    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING for a top-level field,
-    * which has no /Parent (Table 220 requires it for /Kids entries only) -
-    * a sibling of it is added with \ref FieldTree_AddRootChild.
+    * This reports the /Parent entry as written in the field dictionary. In
+    * a well-formed file that is the node whose /Kids holds the field; a
+    * damaged file may have it missing, pointing at another node of the
+    * hierarchy, or outside it. The tree walks /Kids and does not consult
+    * /Parent, so on such a file the parent reported here and the container
+    * the field is actually removed from can differ.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when there is no /Parent
+    * entry - the case of a top-level field (Table 220 requires it for /Kids
+    * entries only), whose sibling is added with \ref FieldTree_AddRootChild.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetParent(FieldHandle* handle, FieldHandle** result);
 

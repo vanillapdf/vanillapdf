@@ -156,7 +156,8 @@ extern "C"
     * \ref Field_GetDefaultAppearance stops at the field hierarchy; the form
     * owns the last step because it owns the entry. /DA is required for
     * variable text fields but has no further default, so it can be missing
-    * everywhere.
+    * everywhere. The field is taken as given - it is not checked to belong
+    * to this form's hierarchy.
     * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is present on
     * neither the field, any of its ancestors, nor the form.
     */
@@ -189,7 +190,8 @@ extern "C"
     * \ref QuaddingType_LeftJustified (Table 222) - so it always resolves.
     *
     * \ref Field_GetQuadding stops at the field hierarchy; the form owns the
-    * last step because it owns the entry.
+    * last step because it owns the entry. The field is taken as given - it
+    * is not checked to belong to this form's hierarchy.
     * \see QuaddingType
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_ResolveQuadding(InteractiveFormHandle* handle, FieldHandle* field, QuaddingType* result);

@@ -814,6 +814,9 @@ TEST(FieldTree, InvalidateAfterRawEdit) {
 
     ASSERT_EQ(GetFieldCount(sample.tree), 3u);
 
+    HandleGuard<FieldHandle, Field_Release> email;
+    ASSERT_EQ(FindFieldByName(sample.tree, "email", email.out()), VANILLAPDF_ERROR_SUCCESS);
+
     // Drop the /Fields entry for the email field behind the tree's back,
     // through the form dictionary itself
     HandleGuard<NameObjectHandle, NameObject_Release> fields_key;
@@ -826,12 +829,17 @@ TEST(FieldTree, InvalidateAfterRawEdit) {
     ASSERT_EQ(ArrayObject_FromObject(fields_object, fields_array.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(ArrayObject_Remove(fields_array, 1), VANILLAPDF_ERROR_SUCCESS);
 
-    // Stale until told otherwise
+    // Stale until told otherwise - the flat view still lists the field, and
+    // a removal finds the container no longer holding it
     EXPECT_EQ(GetFieldCount(sample.tree), 3u);
+    EXPECT_EQ(FieldTree_RemoveChild(sample.tree, email), VANILLAPDF_ERROR_PARAMETER_VALUE);
 
     ASSERT_EQ(FieldTree_Invalidate(sample.tree), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(GetFieldCount(sample.tree), 2u);
     EXPECT_EQ(GetFieldQualifiedName(sample.tree, 1), "address.city");
+
+    // Rebuilt, the field is simply not a member
+    EXPECT_EQ(FieldTree_RemoveChild(sample.tree, email), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 // --- Attachment ---

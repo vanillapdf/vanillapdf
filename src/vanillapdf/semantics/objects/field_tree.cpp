@@ -186,8 +186,11 @@ void FieldTree::RemoveChild(FieldPtr field) {
         break;
     }
 
+    // The index knows the field but the container does not hold it: the
+    // hierarchy was edited underneath the tree, and the index describes a
+    // structure that no longer exists
     if (!removed) {
-        LOG_ERROR_AND_THROW_GENERAL("Could not remove the field from its container array");
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The field is no longer held by the container the hierarchy walk reached it through - the hierarchy was edited underneath the tree, call Invalidate first");
     }
 
     if (field_dictionary->Contains(constant::Name::Parent)) {
@@ -245,9 +248,12 @@ void FieldTree::BuildFieldCacheInternal(
     auto generation_number = node_reference->GetReferencedGenerationNumber();
     syntax::IndirectReferenceId node_id(object_number, generation_number);
 
+    // A node reached a second time is a cycle when it is an ancestor and a
+    // node shared by two parents otherwise; either way it is one node and
+    // is enumerated where it was first reached
     auto found = visited.find(node_id);
     if (found != visited.end() && found->second) {
-        spdlog::warn("Cyclic /Kids entry while enumerating form fields");
+        spdlog::warn("Field {} {} R is reached by more than one /Fields or /Kids entry - a cycle or a node shared by two parents; only the first path is enumerated", object_number, generation_number);
         return;
     }
 

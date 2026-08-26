@@ -92,8 +92,12 @@ public:
     // Removes a field of this tree - root-level or nested, subtree included
     // - from the container the hierarchy walk reached it through, and clears
     // its /Parent. Emptied groups are left in place, and widget annotations
-    // stay in the page /Annots. A field that does not belong to this tree
-    // is an InvalidParameterException.
+    // stay in the page /Annots. A container listing the same node twice
+    // loses the first entry only.
+    //
+    // InvalidParameterException when the field does not belong to this
+    // tree, or when the container no longer holds it - the hierarchy was
+    // edited underneath the tree without Invalidate.
     void RemoveChild(FieldPtr field);
 
     // Drops the cached flat view, so the next access rebuilds it from the
