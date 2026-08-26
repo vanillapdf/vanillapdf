@@ -22,16 +22,25 @@ extern "C"
     * \brief Collection of \ref FieldHandle
     * \deprecated
     * The raw /Fields array models dictionary nodes rather than logical
-    * fields. Enumerate the resolved terminal fields with
-    * \ref InteractiveForm_GetFieldCount and \ref InteractiveForm_GetField,
-    * and append new fields with \ref InteractiveForm_AddField.
+    * fields. Use the field hierarchy from \ref InteractiveForm_GetFieldTree
+    * instead - \ref FieldTree_GetFieldCount and \ref FieldTree_GetField
+    * for the resolved terminal fields, \ref FieldTree_GetRootChild with
+    * \ref Field_GetChild for the structure.
     */
 
     /**
     * \class FieldHandle
     * \extends IUnknownHandle
     * \ingroup group_fields
-    * \brief Base class for all fields
+    * \brief
+    * Base class for all fields.
+    *
+    * Fields form a hierarchy (12.7.3): the root /Fields array holds the
+    * top-level fields, non-terminal fields group other fields through /Kids
+    * for naming and attribute inheritance, and terminal fields are the
+    * logical fields a user interacts with. A field is a view over its own
+    * dictionary; the level above the top-level fields is the
+    * \ref FieldTreeHandle.
     */
 
     /**
@@ -183,26 +192,15 @@ extern "C"
     */
 
     /**
-    * \brief
-    * Create an empty field collection.
-    *
-    * Attach it to an interactive form with \ref InteractiveForm_SetFields.
-    * \deprecated
-    * Append fields directly with \ref InteractiveForm_AddField, which
-    * creates the /Fields array on demand.
-    */
-    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Create(FieldCollectionHandle** result);
-
-    /**
     * \brief Get size of field collection
-    * \deprecated Use \ref InteractiveForm_GetFieldCount instead
+    * \deprecated Use \ref FieldTree_GetFieldCount instead
     */
     VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_GetSize(FieldCollectionHandle* handle, size_type* result);
 
     /**
     * \brief
     * Get single field from array at specific position
-    * \deprecated Use \ref InteractiveForm_GetField instead
+    * \deprecated Use \ref FieldTree_GetField instead
     */
     VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_At(FieldCollectionHandle* handle, size_type at, FieldHandle** result);
 
@@ -225,7 +223,8 @@ extern "C"
     /**
     * \brief
     * Create a field from a dictionary object.
-    * The field type is determined by the /FT entry in the dictionary.
+    * The field type is determined by the /FT entry in the dictionary,
+    * resolved through the /Parent chain.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_CreateFromDictionary(DictionaryObjectHandle* dictionary, FieldHandle** result);
 
@@ -233,6 +232,10 @@ extern "C"
     * \brief
     * Return type of field.
     * Result can be used to convert to derived type.
+    *
+    * The /FT entry is inheritable and is resolved through the /Parent chain.
+    * A non-terminal field without a resolvable type reports
+    * \ref FieldType_NonTerminal.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle* handle, FieldType* result);
 
@@ -264,14 +267,15 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Field_SetAlternateName(FieldHandle* handle, StringObjectHandle* value);
 
     /**
-    * \brief Get the field flags (/Ff entry).
-    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
+    * \brief Get the field flags (/Ff entry), resolved through the /Parent chain.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is present on
+    * neither the field nor any ancestor.
     * \see FieldFlags
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetFieldFlags(FieldHandle* handle, FieldFlags* result);
 
     /**
-    * \brief Set the field flags (/Ff entry).
+    * \brief Set the field flags (/Ff entry) in this field's own dictionary.
     * \see FieldFlags
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_SetFieldFlags(FieldHandle* handle, FieldFlags value);
@@ -282,9 +286,45 @@ extern "C"
     *
     * A terminal field has no children other than widget annotations - it is
     * a logical field the user interacts with. A non-terminal field groups
-    * other fields for naming and attribute inheritance.
+    * other fields for naming and attribute inheritance. A /Kids entry is a
+    * child field when it carries /T, /Kids or /FT, and a widget annotation
+    * otherwise; a field merged with its widget annotation carries both /T
+    * and /Subtype /Widget and is a child field.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_IsTerminal(FieldHandle* handle, boolean_type* result);
+
+    /**
+    * \brief
+    * Get the number of child fields.
+    *
+    * Child fields are the /Kids entries that are fields - widget annotations
+    * are not children and are not counted. Zero for a terminal field. The
+    * top-level fields are enumerated by \ref FieldTree_GetRootChildCount.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetChildCount(FieldHandle* handle, size_type* result);
+
+    /**
+    * \brief
+    * Get the child field at the given zero-based index, in /Kids order.
+    *
+    * Together with \ref Field_GetChildCount this walks the hierarchy down
+    * from the top-level fields of \ref FieldTree_GetRootChild.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when the index is out
+    * of range.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetChild(FieldHandle* handle, size_type index, FieldHandle** result);
+
+    /**
+    * \brief
+    * Get the parent field.
+    *
+    * A nested field reports its /Parent, which is a valid parent for
+    * \ref FieldTree_AddChild.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING for a top-level field,
+    * which has no /Parent (Table 220 requires it for /Kids entries only) -
+    * a sibling of it is added with \ref FieldTree_AddRootChild.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetParent(FieldHandle* handle, FieldHandle** result);
 
     /**
     * \brief
@@ -294,25 +334,55 @@ extern "C"
     * field hierarchy down to this field. Levels without a /T entry do not
     * contribute a segment. Each partial name is a text string and is
     * normalized to UTF-8, so the result is UTF-8 encoded regardless of how
-    * the names are stored in the document.
+    * the names are stored in the document. This is the form
+    * \ref FieldTree_FindField accepts.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetQualifiedName(FieldHandle* handle, BufferHandle** result);
+
+    /**
+    * \brief
+    * Get the field value (/V entry) as a raw object, resolved through the
+    * /Parent chain.
+    *
+    * The object type depends on the field type: a name for button fields,
+    * a text string for text fields, a text string or an array of text
+    * strings for choice fields, a signature dictionary for signature
+    * fields. The typed accessors such as \ref TextField_GetValue expose the
+    * same entry with its type.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is present on
+    * neither the field nor any ancestor.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetValue(FieldHandle* handle, ObjectHandle** result);
+
+    /**
+    * \brief
+    * Get the default field value (/DV entry) as a raw object, resolved
+    * through the /Parent chain.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is present on
+    * neither the field nor any ancestor.
+    * \see \ref Field_GetValue
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetDefaultValue(FieldHandle* handle, ObjectHandle** result);
 
     /**
     * \brief
     * Get the default appearance string (/DA entry) for variable text fields,
     * resolved through the /Parent chain.
     *
-    * The document-wide default lives in the interactive form dictionary -
-    * when this function reports \ref VANILLAPDF_ERROR_OBJECT_MISSING, fall
-    * back to \ref InteractiveForm_GetDefaultAppearance.
+    * This is the field's own entry and its ancestors' only. The
+    * document-wide default lives in the interactive form dictionary;
+    * \ref InteractiveForm_ResolveDefaultAppearance performs the full lookup,
+    * form default included.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is present on
+    * neither the field nor any ancestor.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetDefaultAppearance(FieldHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief
     * Set the default appearance string (/DA entry) in this field's own
-    * dictionary, overriding any inherited value.
+    * dictionary, overriding any inherited value. The document default is
+    * set with \ref InteractiveForm_SetDefaultAppearance.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_SetDefaultAppearance(FieldHandle* handle, StringObjectHandle* value);
 
@@ -321,9 +391,12 @@ extern "C"
     * Get the quadding (/Q entry) - the text justification of variable text
     * fields - resolved through the /Parent chain.
     *
-    * The document-wide default lives in the interactive form dictionary -
-    * when this function reports \ref VANILLAPDF_ERROR_OBJECT_MISSING, fall
-    * back to \ref InteractiveForm_GetQuadding.
+    * This is the field's own entry and its ancestors' only. The
+    * document-wide default lives in the interactive form dictionary;
+    * \ref InteractiveForm_ResolveQuadding performs the full lookup, form
+    * default and specification default included.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is present on
+    * neither the field nor any ancestor.
     * \see QuaddingType
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetQuadding(FieldHandle* handle, QuaddingType* result);
@@ -331,7 +404,8 @@ extern "C"
     /**
     * \brief
     * Set the quadding (/Q entry) in this field's own dictionary, overriding
-    * any inherited value.
+    * any inherited value. The document default is set with
+    * \ref InteractiveForm_SetQuadding.
     * \see QuaddingType
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_SetQuadding(FieldHandle* handle, QuaddingType value);
@@ -343,6 +417,10 @@ extern "C"
     * This is the escape hatch for anything the field API does not model -
     * the raw hierarchy is reachable through the dictionary's /Parent and
     * /Kids entries.
+    *
+    * The field hierarchy caches its flat view and cannot observe edits made
+    * through the dictionary - call \ref FieldTree_Invalidate after changing
+    * /Fields, /Kids or /Parent this way.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetBaseObject(FieldHandle* handle, DictionaryObjectHandle** result);
 

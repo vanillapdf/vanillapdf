@@ -1160,11 +1160,14 @@ TEST(DigitalSignatureExtensions, SignAndVerifyDocument) {
     ASSERT_EQ(Catalog_GetAcroForm(catalog, acro_form.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(acro_form.get(), nullptr);
 
+    HandleGuard<FieldTreeHandle, FieldTree_Release> field_tree;
+    ASSERT_EQ(InteractiveForm_GetFieldTree(acro_form, field_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+
     size_type field_count = 0;
-    ASSERT_EQ(InteractiveForm_GetFieldCount(acro_form, &field_count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetFieldCount(field_tree, &field_count), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_GT(field_count, 0);
 
-    ASSERT_EQ(InteractiveForm_GetField(acro_form, 0, field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetField(field_tree, 0, field.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(field.get(), nullptr);
 
     ASSERT_EQ(SignatureField_FromField(field, sig_field.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -1426,7 +1429,10 @@ TEST(FieldAndDigitalSignature, ToUnknown_FromUnknown) {
 
     ASSERT_EQ(Document_GetCatalog(signed_document, catalog.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Catalog_GetAcroForm(catalog, acro_form.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InteractiveForm_GetField(acro_form, 0, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FieldTreeHandle, FieldTree_Release> reloaded_field_tree;
+    ASSERT_EQ(InteractiveForm_GetFieldTree(acro_form, reloaded_field_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetField(reloaded_field_tree, 0, field.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(field.get(), nullptr);
 
     ASSERT_EQ(SignatureField_FromField(field, sig_field.out()), VANILLAPDF_ERROR_SUCCESS);

@@ -1793,8 +1793,7 @@ error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
     boolean_type need_appearances = VANILLAPDF_RV_FALSE;
     StringObjectHandle* default_appearance = NULL;
     QuaddingType quadding = QuaddingType_LeftJustified;
-    size_type field_count = 0;
-    size_type i = 0;
+    FieldTreeHandle* field_tree = NULL;
 
     print_spaces(nested);
     print_text("Interactive form begin\n");
@@ -1819,8 +1818,27 @@ error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
         process_signature_flags(signature_flags, nested + 1),
         SignatureFlags_Release(signature_flags));
 
+    // The field hierarchy - a form without a /Fields entry has none
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(InteractiveForm_GetFieldTree(obj, &field_tree),
+        process_field_tree(field_tree, nested + 1),
+        FieldTree_Release(field_tree));
+
+    print_spaces(nested);
+    print_text("Interactive form end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_field_tree(FieldTreeHandle* obj, int nested) {
+    size_type field_count = 0;
+    size_type root_child_count = 0;
+    size_type i = 0;
+
+    print_spaces(nested);
+    print_text("Field tree begin\n");
+
     // Flat enumeration of resolved terminal fields
-    RETURN_ERROR_IF_NOT_SUCCESS(InteractiveForm_GetFieldCount(obj, &field_count));
+    RETURN_ERROR_IF_NOT_SUCCESS(FieldTree_GetFieldCount(obj, &field_count));
 
     print_spaces(nested + 1);
 
@@ -1830,13 +1848,68 @@ error_type process_interactive_form(InteractiveFormHandle* obj, int nested) {
     for (i = 0; i < field_count; ++i) {
         FieldHandle* terminal_field = NULL;
 
-        RETURN_ERROR_IF_NOT_SUCCESS(InteractiveForm_GetField(obj, i, &terminal_field));
+        RETURN_ERROR_IF_NOT_SUCCESS(FieldTree_GetField(obj, i, &terminal_field));
         RETURN_ERROR_IF_NOT_SUCCESS(process_field(terminal_field, nested + 1));
         RETURN_ERROR_IF_NOT_SUCCESS(Field_Release(terminal_field));
     }
 
+    // Structural walk from the top level down, exercising the same code
+    // path over every node of the hierarchy - groups included
+    RETURN_ERROR_IF_NOT_SUCCESS(FieldTree_GetRootChildCount(obj, &root_child_count));
+
+    print_spaces(nested + 1);
+
+    unsigned long long converted_root_child_count = root_child_count;
+    print_text("Root child count: %llu\n", converted_root_child_count);
+
+    for (i = 0; i < root_child_count; ++i) {
+        FieldHandle* root_child = NULL;
+        FieldHandle* parent = NULL;
+
+        RETURN_ERROR_IF_NOT_SUCCESS(FieldTree_GetRootChild(obj, i, &root_child));
+
+        // A top-level field has no /Parent - one that carries a stale entry
+        // anyway is a dirty file the tree tolerates, so it is only released
+        RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Field_GetParent(root_child, &parent),
+            VANILLAPDF_TEST_ERROR_SUCCESS,
+            Field_Release(parent));
+
+        RETURN_ERROR_IF_NOT_SUCCESS(process_field(root_child, nested + 1));
+        RETURN_ERROR_IF_NOT_SUCCESS(process_field_subtree(root_child, nested + 1));
+        RETURN_ERROR_IF_NOT_SUCCESS(Field_Release(root_child));
+    }
+
     print_spaces(nested);
-    print_text("Interactive form end\n");
+    print_text("Field tree end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_field_subtree(FieldHandle* obj, int nested) {
+    size_type child_count = 0;
+    size_type i = 0;
+
+    RETURN_ERROR_IF_NOT_SUCCESS(Field_GetChildCount(obj, &child_count));
+
+    print_spaces(nested);
+
+    unsigned long long converted_child_count = child_count;
+    print_text("Child field count: %llu\n", converted_child_count);
+
+    for (i = 0; i < child_count; ++i) {
+        FieldHandle* child = NULL;
+        FieldHandle* parent = NULL;
+
+        RETURN_ERROR_IF_NOT_SUCCESS(Field_GetChild(obj, i, &child));
+
+        // Every child reached from a node reports that node as its parent
+        RETURN_ERROR_IF_NOT_SUCCESS(Field_GetParent(child, &parent));
+        RETURN_ERROR_IF_NOT_SUCCESS(Field_Release(parent));
+
+        RETURN_ERROR_IF_NOT_SUCCESS(process_field(child, nested + 1));
+        RETURN_ERROR_IF_NOT_SUCCESS(process_field_subtree(child, nested + 1));
+        RETURN_ERROR_IF_NOT_SUCCESS(Field_Release(child));
+    }
 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
@@ -1892,9 +1965,9 @@ error_type process_field(FieldHandle* obj, int nested) {
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(Field_GetFieldFlags(obj, &flags),
         VANILLAPDF_TEST_ERROR_SUCCESS);
 
-    RETURN_ERROR_IF_NOT_SUCCESS(Field_GetQualifiedName(obj, &qualified_name));
-    RETURN_ERROR_IF_NOT_SUCCESS(process_buffer(qualified_name, nested + 1));
-    RETURN_ERROR_IF_NOT_SUCCESS(Buffer_Release(qualified_name));
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Field_GetQualifiedName(obj, &qualified_name),
+        process_buffer(qualified_name, nested + 1),
+        Buffer_Release(qualified_name));
 
     RETURN_ERROR_IF_NOT_SUCCESS(Field_IsTerminal(obj, &is_terminal));
 

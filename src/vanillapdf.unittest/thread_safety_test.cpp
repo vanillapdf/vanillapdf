@@ -5,6 +5,7 @@
 #include <thread>
 #include <vector>
 #include <atomic>
+#include <string>
 
 namespace thread_safety {
 
@@ -632,11 +633,11 @@ TEST(CatalogThreadSafety, ConcurrentLazyInitReturnsSameInstance) {
         << "Document::GetDocumentCatalog returned multiple Catalog instances under concurrency";
 }
 
-// InteractiveForm::AddField holds the field-cache lock across the whole
-// mutation, so concurrent appends on the same form must never lose a field or
-// throw on the create-if-missing /Fields insert, and concurrent readers must
-// never observe the append-only enumeration shrinking.
-TEST(InteractiveFormThreadSafety, ConcurrentAddFieldKeepsEnumerationConsistent) {
+// FieldTree::AddRootChild holds the field-cache lock across the whole mutation,
+// so concurrent appends on the same tree must never lose a field, and
+// concurrent readers must never observe the append-only enumeration
+// shrinking.
+TEST(FieldTreeThreadSafety, ConcurrentAddRootChildKeepsEnumerationConsistent) {
     constexpr int NUM_WRITER_THREADS = 8;
     constexpr int FIELDS_PER_THREAD = 100;
     constexpr int NUM_READER_THREADS = 4;
@@ -653,14 +654,31 @@ TEST(InteractiveFormThreadSafety, ConcurrentAddFieldKeepsEnumerationConsistent) 
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
     ASSERT_EQ(InteractiveForm_CreateFromDocument(doc, form.out()), VANILLAPDF_ERROR_SUCCESS);
 
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    ASSERT_EQ(FieldTree_CreateFromDocument(doc, tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_SetFieldTree(form, tree), VANILLAPDF_ERROR_SUCCESS);
+
     // Registering the field dictionaries allocates cross-reference entries,
     // which is not the subject here - prepare every field up front so the
-    // threads race purely on AddField against a form without a /Fields array
+    // threads race purely on AddRootChild against an empty hierarchy. Each field
+    // needs a distinct name, since duplicates are rejected on write.
     std::vector<FieldHandle*> fields(TOTAL_FIELDS, nullptr);
 
     for (int i = 0; i < TOTAL_FIELDS; ++i) {
         HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> field_dictionary;
         ASSERT_EQ(DictionaryObject_Create(field_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
+
+        std::string partial_name = "field" + std::to_string(i);
+
+        HandleGuard<NameObjectHandle, NameObject_Release> name_key;
+        HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> name_literal;
+        HandleGuard<StringObjectHandle, StringObject_Release> name_string;
+        HandleGuard<ObjectHandle, Object_Release> name_object;
+        ASSERT_EQ(NameObject_CreateFromDecodedString("T", name_key.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(LiteralStringObject_CreateFromDecodedString(partial_name.c_str(), name_literal.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(LiteralStringObject_ToStringObject(name_literal, name_string.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(StringObject_ToObject(name_string, name_object.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(DictionaryObject_Insert(field_dictionary, name_key, name_object, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
 
         HandleGuard<ObjectHandle, Object_Release> dictionary_object;
         ASSERT_EQ(DictionaryObject_ToObject(field_dictionary, dictionary_object.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -672,7 +690,7 @@ TEST(InteractiveFormThreadSafety, ConcurrentAddFieldKeepsEnumerationConsistent) 
         ASSERT_EQ(Field_CreateFromDictionary(field_dictionary, &fields[i]), VANILLAPDF_ERROR_SUCCESS);
     }
 
-    // Spin barrier so the writers race the cold create-if-missing path
+    // Spin barrier so the writers race the cold cache-build path
     std::atomic<int> ready{0};
     std::atomic<bool> go{false};
     std::atomic<int> writers_remaining{NUM_WRITER_THREADS};
@@ -688,7 +706,7 @@ TEST(InteractiveFormThreadSafety, ConcurrentAddFieldKeepsEnumerationConsistent) 
             while (!go.load()) { std::this_thread::yield(); }
 
             for (int i = 0; i < FIELDS_PER_THREAD; ++i) {
-                if (InteractiveForm_AddField(form, fields[t * FIELDS_PER_THREAD + i]) != VANILLAPDF_ERROR_SUCCESS) {
+                if (FieldTree_AddRootChild(tree, fields[t * FIELDS_PER_THREAD + i]) != VANILLAPDF_ERROR_SUCCESS) {
                     error_count.fetch_add(1);
                 }
             }
@@ -705,7 +723,7 @@ TEST(InteractiveFormThreadSafety, ConcurrentAddFieldKeepsEnumerationConsistent) 
             size_type last_count = 0;
             while (writers_remaining.load() > 0) {
                 size_type count = 0;
-                if (InteractiveForm_GetFieldCount(form, &count) != VANILLAPDF_ERROR_SUCCESS) {
+                if (FieldTree_GetFieldCount(tree, &count) != VANILLAPDF_ERROR_SUCCESS) {
                     error_count.fetch_add(1);
                     continue;
                 }
@@ -719,7 +737,7 @@ TEST(InteractiveFormThreadSafety, ConcurrentAddFieldKeepsEnumerationConsistent) 
                 // The observed count only grows, so the last index stays valid
                 if (count > 0) {
                     FieldHandle* observed_field = nullptr;
-                    if (InteractiveForm_GetField(form, count - 1, &observed_field) != VANILLAPDF_ERROR_SUCCESS) {
+                    if (FieldTree_GetField(tree, count - 1, &observed_field) != VANILLAPDF_ERROR_SUCCESS) {
                         error_count.fetch_add(1);
                     } else {
                         Field_Release(observed_field);
@@ -741,9 +759,9 @@ TEST(InteractiveFormThreadSafety, ConcurrentAddFieldKeepsEnumerationConsistent) 
         << "A concurrent reader observed the append-only field enumeration shrinking";
 
     size_type final_count = 0;
-    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &final_count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetFieldCount(tree, &final_count), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(final_count, static_cast<size_type>(TOTAL_FIELDS))
-        << "Concurrent AddField calls lost fields";
+        << "Concurrent AddRootChild calls lost fields";
 
     for (auto* prepared_field : fields) {
         if (prepared_field != nullptr) {
@@ -1003,6 +1021,7 @@ TEST(GetByteRangeThreadSafety, ConcurrentSignatureValidationKeepsDocumentIntact)
     DocumentHandle* signed_document = nullptr;
     CatalogHandle* catalog = nullptr;
     InteractiveFormHandle* acro_form = nullptr;
+    FieldTreeHandle* field_tree = nullptr;
     FieldHandle* field = nullptr;
     SignatureFieldHandle* sig_field = nullptr;
     DigitalSignatureHandle* digital_signature = nullptr;
@@ -1043,11 +1062,13 @@ TEST(GetByteRangeThreadSafety, ConcurrentSignatureValidationKeepsDocumentIntact)
     ASSERT_EQ(Document_GetCatalog(signed_document, &catalog), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Catalog_GetAcroForm(catalog, &acro_form), VANILLAPDF_ERROR_SUCCESS);
 
+    ASSERT_EQ(InteractiveForm_GetFieldTree(acro_form, &field_tree), VANILLAPDF_ERROR_SUCCESS);
+
     size_type field_count = 0;
-    ASSERT_EQ(InteractiveForm_GetFieldCount(acro_form, &field_count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetFieldCount(field_tree, &field_count), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_GT(field_count, 0);
 
-    ASSERT_EQ(InteractiveForm_GetField(acro_form, 0, &field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetField(field_tree, 0, &field), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(SignatureField_FromField(field, &sig_field), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(SignatureField_GetValue(sig_field, &digital_signature), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(digital_signature, nullptr);
@@ -1124,6 +1145,7 @@ TEST(GetByteRangeThreadSafety, ConcurrentSignatureValidationKeepsDocumentIntact)
     if (digital_signature) DigitalSignature_Release(digital_signature);
     if (sig_field) SignatureField_Release(sig_field);
     if (field) Field_Release(field);
+    if (field_tree) FieldTree_Release(field_tree);
     if (acro_form) InteractiveForm_Release(acro_form);
     if (catalog) Catalog_Release(catalog);
     if (trust_store) TrustedCertificateStore_Release(trust_store);

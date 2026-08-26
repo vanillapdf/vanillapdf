@@ -1,0 +1,275 @@
+#ifndef _C_FIELD_TREE_H
+#define _C_FIELD_TREE_H
+
+#include "vanillapdf/c_export.h"
+#include "vanillapdf/c_handles.h"
+#include "vanillapdf/c_values.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+    /**
+    * \file c_field_tree.h
+    * \brief This file contains class definitions for \ref FieldTreeHandle
+    */
+
+    /**
+    * \class FieldTreeHandle
+    * \extends IUnknownHandle
+    * \ingroup group_fields
+    * \brief
+    * The field hierarchy of an interactive form (PDF 1.2, section 12.7.3).
+    *
+    * The hierarchy is a tree whose top is the root /Fields array: its
+    * entries are the top-level fields, and a non-terminal field groups
+    * other fields through /Kids for naming and attribute inheritance. The
+    * tree is the view over that array, the same way \ref PageTreeHandle is
+    * the view over the page tree root.
+    *
+    * The tree offers two views over the hierarchy, told apart by their
+    * vocabulary - *Field* is the flat view, *Child* the structure:
+    *
+    * - The flat view - \ref FieldTree_GetFieldCount, \ref FieldTree_GetField
+    *   and \ref FieldTree_FindField - enumerates the resolved terminal
+    *   fields in document order. Terminal fields are the logical fields a
+    *   user interacts with; the grouping nodes are hidden, the same way the
+    *   page tree hides its interior nodes. This is the default path for
+    *   form filling.
+    * - The structural view starts at the top level with
+    *   \ref FieldTree_GetRootChildCount and \ref FieldTree_GetRootChild and
+    *   continues down through \ref Field_GetChildCount and
+    *   \ref Field_GetChild; \ref Field_GetParent walks back up and stops at
+    *   a top-level field, which has no /Parent.
+    *
+    * Every field mutation goes through the tree, because the tree owns the
+    * cache behind the flat view: \ref FieldTree_AddRootChild and
+    * \ref FieldTree_InsertRootChild at the top level, \ref FieldTree_AddChild
+    * and \ref FieldTree_InsertChild below it, \ref FieldTree_RemoveChild at
+    * either. Editing /Fields, /Kids or /Parent through the dictionary API
+    * underneath is possible; call \ref FieldTree_Invalidate afterwards.
+    *
+    * Obtain the tree of an existing form from
+    * \ref InteractiveForm_GetFieldTree; give a form that has none yet an
+    * empty one with \ref FieldTree_CreateFromDocument and
+    * \ref InteractiveForm_SetFieldTree.
+    *
+    * For more details please visit [section 12.7.3 - Field Dictionaries](PDF32000_2008.pdf#G11.2110737).
+    */
+
+    /**
+    * \memberof FieldTreeHandle
+    * @{
+    */
+
+    /**
+    * \brief
+    * Create an empty field hierarchy belonging to the document.
+    *
+    * The hierarchy is fully usable right away - fields can be added to it
+    * before it is attached - but it does not take effect until it is
+    * attached to a form with \ref InteractiveForm_SetFieldTree, which
+    * installs this very array as the form's /Fields entry. Creating and
+    * attaching are deliberately separate steps, so that reading a document
+    * never modifies it.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_CreateFromDocument(DocumentHandle* handle, FieldTreeHandle** result);
+
+    /**
+    * \brief
+    * Get the number of resolved terminal fields in the hierarchy.
+    *
+    * A radio button group is a single terminal field with one value,
+    * regardless of how many widget annotations represent it on the page.
+    * A group without any child field yet is indistinguishable from a field
+    * without widgets and is enumerated as a terminal field until it receives
+    * a child.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_GetFieldCount(FieldTreeHandle* handle, size_type* result);
+
+    /**
+    * \brief
+    * Get the resolved terminal field at the given zero-based index, in
+    * document order.
+    *
+    * Indices are stable until the hierarchy is mutated. This index space is
+    * the flat view's own - it is not a position for the structural
+    * mutators.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when the index is out
+    * of range.
+    * \see \ref FieldTree_GetFieldCount
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_GetField(FieldTreeHandle* handle, size_type index, FieldHandle** result);
+
+    /**
+    * \brief
+    * Find a terminal field by its fully qualified name - the partial field
+    * names (/T entries) joined with '.', UTF-8 encoded - the same form
+    * \ref Field_GetQualifiedName produces, so its data can be passed back
+    * here unchanged. The name is given with an explicit size rather than
+    * as a NUL-terminated string because a partial name is a text string
+    * that may legitimately contain U+0000, which UTF-8 encodes as a NUL
+    * byte.
+    *
+    * Fully qualified names shall be unique (12.7.3.2), but existing documents
+    * do not always honor that. Duplicates are tolerated when reading - a
+    * warning is logged when the hierarchy is first enumerated, and the lookup
+    * resolves to the first terminal field in document order - and rejected
+    * when writing through the structural mutators.
+    *
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when no terminal field has
+    * that name.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_FindField(FieldTreeHandle* handle, string_type qualified_name, size_type size, FieldHandle** result);
+
+    /**
+    * \brief
+    * Get the number of top-level fields - the entries of the root /Fields
+    * array, groups included.
+    *
+    * This is the first level of the structural view; \ref Field_GetChildCount
+    * continues below it.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_GetRootChildCount(FieldTreeHandle* handle, size_type* result);
+
+    /**
+    * \brief
+    * Get the top-level field at the given zero-based index, in /Fields
+    * order.
+    *
+    * Together with \ref Field_GetChild this walks the whole hierarchy: the
+    * top-level fields from here, every level below through the field.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when the index is out
+    * of range.
+    * \see \ref FieldTree_GetRootChildCount
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_GetRootChild(FieldTreeHandle* handle, size_type index, FieldHandle** result);
+
+    /**
+    * \brief
+    * Append a top-level field to the root /Fields array.
+    *
+    * Any /Parent entry the child carries is removed - Table 220 requires
+    * /Parent for /Kids entries only. The container arrays hold indirect
+    * references, so the child's underlying dictionary shall be registered
+    * as an indirect object within the document, for example through
+    * \ref File_AllocateNewEntry.
+    *
+    * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the child's
+    * dictionary is a direct object, the child already belongs to this
+    * hierarchy, or a field with the resulting fully qualified name already
+    * exists.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_AddRootChild(FieldTreeHandle* handle, FieldHandle* child);
+
+    /**
+    * \brief
+    * Insert a top-level field at the given zero-based position among the
+    * root /Fields entries.
+    *
+    * The index counts the /Fields entries - the same space as
+    * \ref FieldTree_GetRootChild, not the flat view - and an index equal to
+    * \ref FieldTree_GetRootChildCount appends. The order of the container
+    * arrays affects the enumeration order of the hierarchy only; the tab
+    * order of a page comes from its /Annots array. Otherwise identical to
+    * \ref FieldTree_AddRootChild.
+    *
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when the index is out of
+    * range, \ref VANILLAPDF_ERROR_PARAMETER_VALUE as for
+    * \ref FieldTree_AddRootChild.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_InsertRootChild(FieldTreeHandle* handle, size_type index, FieldHandle* child);
+
+    /**
+    * \brief
+    * Append a child field to a parent field of this hierarchy.
+    *
+    * The child's /Parent entry is set to the parent, and the parent's /Kids
+    * array is created when the parent has none yet. Adding a child to a
+    * field that is currently a terminal turns it into a group; the child's
+    * fully qualified name is then prefixed with the parent's. The parent
+    * of a nested field, as reported by \ref Field_GetParent, is always a
+    * valid argument here; a top-level field has no parent and is added
+    * next to with \ref FieldTree_AddRootChild.
+    *
+    * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE as for
+    * \ref FieldTree_AddRootChild, and when the parent does not belong to
+    * this hierarchy, is a terminal field carrying widget annotations, or is
+    * merged with its own widget annotation.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_AddChild(FieldTreeHandle* handle, FieldHandle* parent, FieldHandle* child);
+
+    /**
+    * \brief
+    * Insert a child field at the given zero-based position among the
+    * parent's /Kids entries.
+    *
+    * The index counts the parent's /Kids entries and an index equal to
+    * \ref Field_GetChildCount appends. Otherwise identical to
+    * \ref FieldTree_AddChild.
+    *
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when the index is out of
+    * range, \ref VANILLAPDF_ERROR_PARAMETER_VALUE as for
+    * \ref FieldTree_AddChild.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_InsertChild(FieldTreeHandle* handle, FieldHandle* parent, size_type index, FieldHandle* child);
+
+    /**
+    * \brief
+    * Remove a field - top-level or nested - from the hierarchy.
+    *
+    * The field's reference is removed from the container the hierarchy
+    * walk reached it through - the root /Fields array or its group's
+    * /Kids - and its /Parent entry is cleared. The walk is the authority,
+    * not the field's /Parent entry: a field whose /Parent is missing or
+    * points elsewhere is still removed from where it actually is. A group
+    * is removed together with its whole subtree. A group emptied by the
+    * removal stays in place; remove it explicitly if it is no longer wanted.
+    *
+    * The widget annotations of the removed fields are not touched - they
+    * stay in the page /Annots arrays. Remove them through
+    * \ref PageAnnotations_Remove, otherwise the page keeps drawing widgets
+    * of fields that no longer exist.
+    *
+    * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the field does not
+    * belong to this hierarchy.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_RemoveChild(FieldTreeHandle* handle, FieldHandle* field);
+
+    /**
+    * \brief
+    * Discard the cached flat view, so the next access rebuilds it from the
+    * dictionaries.
+    *
+    * The tree caches the resolved terminal fields and keeps that cache
+    * valid across its own mutators. It cannot observe edits made underneath
+    * it through the dictionary API - via \ref Field_GetBaseObject or any
+    * other path to the /Fields, /Kids and /Parent entries. Call this after
+    * such edits and before the next enumeration or lookup.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_Invalidate(FieldTreeHandle* handle);
+
+    /**
+    * \brief Reinterpret current object as \ref IUnknownHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_ToUnknown(FieldTreeHandle* handle, IUnknownHandle** result);
+
+    /**
+    * \brief Convert \ref IUnknownHandle to \ref FieldTreeHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_FromUnknown(IUnknownHandle* handle, FieldTreeHandle** result);
+
+    /**
+    * \copydoc IUnknown_Release
+    * \see \ref IUnknown_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_Release(FieldTreeHandle* handle);
+
+    /** @} */
+
+#ifdef __cplusplus
+};
+#endif
+
+#endif /* _C_FIELD_TREE_H */

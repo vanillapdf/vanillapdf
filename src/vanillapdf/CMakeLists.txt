@@ -76,6 +76,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_document_info.cpp
     implementation/semantics/c_document_signature_settings.cpp
     implementation/semantics/c_fields.cpp
+    implementation/semantics/c_field_tree.cpp
     implementation/semantics/c_font.cpp
     implementation/semantics/c_font_map.cpp
     implementation/semantics/c_interactive_forms.cpp
@@ -135,6 +136,7 @@ set(VANILLAPDF_SEMANTICS_SOURCES
     semantics/objects/tree.cpp
     semantics/objects/name_dictionary.cpp
     semantics/objects/fields.cpp
+    semantics/objects/field_tree.cpp
     semantics/objects/interactive_forms.cpp
     semantics/objects/viewer_preferences.cpp
     semantics/objects/page_node_base.cpp
@@ -265,6 +267,7 @@ set(VANILLAPDF_SEMANTICS_HEADERS
     semantics/objects/digital_signature.h
     semantics/objects/document_info.h
     semantics/objects/fields.h
+    semantics/objects/field_tree.h
     semantics/objects/font.h
     semantics/objects/interactive_forms.h
     semantics/objects/high_level_object.h

@@ -1,6 +1,8 @@
 #include "precompiled.h"
 
 #include "semantics/objects/fields.h"
+
+#include "utils/buffer.h"
 #include "syntax/objects/dictionary_object.h"
 
 #include "vanillapdf/semantics/c_fields.h"
@@ -178,6 +180,75 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetQualifiedName(FieldHandle*
         auto qualified_name = obj->GetQualifiedName();
         auto ptr = qualified_name.AddRefGet();
         *result = reinterpret_cast<BufferHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetChildCount(FieldHandle* handle, size_type* result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        *result = obj->GetChildCount();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetChild(FieldHandle* handle, size_type index, FieldHandle** result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto child = obj->GetChild(index);
+        auto ptr = child.AddRefGet();
+        *result = reinterpret_cast<FieldHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetParent(FieldHandle* handle, FieldHandle** result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OuputFieldPtr parent;
+        bool contains = obj->GetParent(parent);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = parent.AddRefGet();
+        *result = reinterpret_cast<FieldHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetValue(FieldHandle* handle, ObjectHandle** result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputObjectPtr value;
+        bool contains = obj->GetValueObject(value);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = value.AddRefGet();
+        *result = reinterpret_cast<ObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetDefaultValue(FieldHandle* handle, ObjectHandle** result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputObjectPtr value;
+        bool contains = obj->GetDefaultValueObject(value);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = value.AddRefGet();
+        *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -371,17 +442,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionAt(ChoiceField
         if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_Create(FieldCollectionHandle** result) {
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        auto collection = FieldCollection::Create();
-        auto ptr = collection.AddRefGet();
-        *result = reinterpret_cast<FieldCollectionHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

@@ -1,0 +1,416 @@
+#include "precompiled.h"
+
+#include "semantics/objects/field_tree.h"
+#include "semantics/objects/fields.h"
+#include "semantics/objects/document.h"
+
+#include "syntax/exceptions/syntax_exceptions.h"
+#include "syntax/objects/array_object.h"
+#include "syntax/utils/name_constants.h"
+
+#include "utils/buffer.h"
+#include "utils/text_string_encoding.h"
+
+namespace vanillapdf {
+namespace semantics {
+
+FieldTree::FieldTree(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> fields) : HighLevelObject(fields) {
+    m_cache_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+}
+
+FieldTreePtr FieldTree::Create(DocumentPtr document) {
+    auto file = document->GetFile();
+
+    // The array itself is a direct object of the form dictionary, but it
+    // belongs to the file, so that the references it will hold resolve
+    syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> fields;
+    auto fields_data = fields->Data();
+    fields_data->SetFile(file);
+    fields_data->SetInitialized();
+
+    return make_deferred<FieldTree>(fields);
+}
+
+// Flat view
+
+types::size_type FieldTree::GetFieldCount() const {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    EnsureCacheBuilt();
+    return m_field_cache.size();
+}
+
+FieldPtr FieldTree::GetField(types::size_type index) const {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    EnsureCacheBuilt();
+
+    if (index >= m_field_cache.size()) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Field index out of range: {}", index);
+    }
+
+    return Field::Create(m_field_cache[index]);
+}
+
+bool FieldTree::TryFindField(std::string_view qualified_name, OuputFieldPtr& result) const {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    EnsureCacheBuilt();
+
+    auto found = m_terminal_index.find(std::string(qualified_name));
+    if (found == m_terminal_index.end()) {
+        return false;
+    }
+
+    result = Field::Create(found->second);
+    return true;
+}
+
+// Structure
+
+types::size_type FieldTree::GetRootChildCount() const {
+    return _obj->GetSize();
+}
+
+FieldPtr FieldTree::GetRootChild(types::size_type index) const {
+    if (index >= _obj->GetSize()) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Root child index out of range: {}", index);
+    }
+
+    auto child_reference = _obj->GetValue(index);
+    auto child = child_reference->GetReferencedObjectAs<syntax::DictionaryObjectPtr>();
+    return Field::Create(child);
+}
+
+void FieldTree::AddRootChild(FieldPtr child) {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    syntax::OutputDictionaryObjectPtr root_level;
+    ValidateInsertion(root_level, child);
+
+    auto child_dictionary = child->GetObject();
+    auto child_reference = make_deferred<syntax::IndirectReferenceObject>(child_dictionary);
+    _obj->Append(child_reference);
+
+    LinkChild(root_level, child_dictionary);
+    Invalidate();
+}
+
+void FieldTree::InsertRootChild(types::size_type index, FieldPtr child) {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    syntax::OutputDictionaryObjectPtr root_level;
+    ValidateInsertion(root_level, child);
+
+    // An index equal to the size appends, the array refuses anything beyond
+    if (index > _obj->GetSize()) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Root child index out of range: {}", index);
+    }
+
+    auto child_dictionary = child->GetObject();
+    auto child_reference = make_deferred<syntax::IndirectReferenceObject>(child_dictionary);
+    _obj->Insert(index, child_reference);
+
+    LinkChild(root_level, child_dictionary);
+    Invalidate();
+}
+
+void FieldTree::AddChild(FieldPtr parent, FieldPtr child) {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    syntax::OutputDictionaryObjectPtr parent_dictionary(parent->GetObject());
+    ValidateInsertion(parent_dictionary, child);
+
+    auto child_dictionary = child->GetObject();
+    auto child_reference = make_deferred<syntax::IndirectReferenceObject>(child_dictionary);
+
+    auto kids = CreateKids(*parent_dictionary);
+    kids->Append(child_reference);
+
+    LinkChild(parent_dictionary, child_dictionary);
+    Invalidate();
+}
+
+void FieldTree::InsertChild(FieldPtr parent, types::size_type index, FieldPtr child) {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    syntax::OutputDictionaryObjectPtr parent_dictionary(parent->GetObject());
+    ValidateInsertion(parent_dictionary, child);
+
+    auto kids = CreateKids(*parent_dictionary);
+
+    // An index equal to the size appends, the array refuses anything beyond
+    if (index > kids->GetSize()) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Child index out of range: {}", index);
+    }
+
+    auto child_dictionary = child->GetObject();
+    auto child_reference = make_deferred<syntax::IndirectReferenceObject>(child_dictionary);
+    kids->Insert(index, child_reference);
+
+    LinkChild(parent_dictionary, child_dictionary);
+    Invalidate();
+}
+
+void FieldTree::RemoveChild(FieldPtr field) {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    EnsureCacheBuilt();
+
+    auto field_dictionary = field->GetObject();
+    auto node = m_nodes.find(field_dictionary);
+    if (node == m_nodes.end()) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The field does not belong to this field hierarchy");
+    }
+
+    // The container is the one the hierarchy walk reached the field
+    // through - the root /Fields array, or the /Kids of the traversal
+    // parent. /Parent is not consulted: a missing one would send a nested
+    // field to the root array, a wrong one to another node's /Kids.
+    auto traversal_parent = node->second;
+
+    syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> container = _obj;
+    if (!traversal_parent.empty()) {
+        container = traversal_parent->FindAs<syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr>>(constant::Name::Kids);
+    }
+
+    bool removed = false;
+    auto container_size = container->GetSize();
+    for (decltype(container_size) i = 0; i < container_size; ++i) {
+        auto entry_reference = container->GetValue(i);
+        if (!entry_reference->GetReferencedObject()->Identity(field_dictionary)) {
+            continue;
+        }
+
+        removed = container->Remove(i);
+        break;
+    }
+
+    if (!removed) {
+        LOG_ERROR_AND_THROW_GENERAL("Could not remove the field from its container array");
+    }
+
+    if (field_dictionary->Contains(constant::Name::Parent)) {
+        bool parent_removed = field_dictionary->Remove(constant::Name::Parent);
+        assert(parent_removed && "Unable to remove existing item"); UNUSED(parent_removed);
+    }
+
+    Invalidate();
+}
+
+void FieldTree::Invalidate() {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    m_field_cache.clear();
+    m_nodes.clear();
+    m_terminal_index.clear();
+    m_names.clear();
+    m_cache_built = false;
+}
+
+// Cache
+
+void FieldTree::EnsureCacheBuilt() const {
+    if (!m_cache_built) {
+        BuildFieldCache();
+    }
+}
+
+void FieldTree::BuildFieldCache() const {
+
+    // Both /Fields and /Kids shall contain indirect references (Table 218,
+    // Table 220), so the tree is walked as references and every node is
+    // dereferenced only after the cycle check - the same way PageTree types
+    // its kids array.
+    //
+    // Malformed documents can link /Kids in a cycle. Visited nodes are
+    // tracked by their object identity, the same way Field guards its
+    // /Parent chain walk.
+    std::map<syntax::IndirectReferenceId, bool> visited;
+    syntax::OutputDictionaryObjectPtr root_level;
+
+    for (auto field_reference : _obj) {
+        BuildFieldCacheInternal(field_reference, root_level, visited);
+    }
+
+    m_cache_built = true;
+}
+
+void FieldTree::BuildFieldCacheInternal(
+    syntax::IndirectReferenceObjectPtr node_reference,
+    const syntax::OutputDictionaryObjectPtr& traversal_parent,
+    std::map<syntax::IndirectReferenceId, bool>& visited) const {
+
+    auto object_number = node_reference->GetReferencedObjectNumber();
+    auto generation_number = node_reference->GetReferencedGenerationNumber();
+    syntax::IndirectReferenceId node_id(object_number, generation_number);
+
+    auto found = visited.find(node_id);
+    if (found != visited.end() && found->second) {
+        spdlog::warn("Cyclic /Kids entry while enumerating form fields");
+        return;
+    }
+
+    visited[node_id] = true;
+
+    auto node = node_reference->GetReferencedObjectAs<syntax::DictionaryObjectPtr>();
+    m_nodes.emplace(node, traversal_parent);
+
+    // A /Parent that disagrees with the /Kids entry that reached the node
+    // is the other common way a file is already dirty - the fully qualified
+    // name follows /Parent, the enumeration follows /Kids, and the two
+    // diverge from here on. Reported, not repaired.
+    bool parent_is_root = traversal_parent.empty();
+    if (node->Contains(constant::Name::Parent)) {
+        auto parent_obj = node->Find(constant::Name::Parent);
+        bool parent_matches = false;
+        if (!parent_is_root && syntax::ObjectUtils::IsType<syntax::IndirectReferenceObjectPtr>(parent_obj)) {
+            auto parent_reference = syntax::ObjectUtils::ConvertTo<syntax::IndirectReferenceObjectPtr>(parent_obj);
+            parent_matches = traversal_parent->Identity(parent_reference->GetReferencedObject());
+        }
+
+        if (!parent_matches) {
+            spdlog::warn("Field {} {} R has a /Parent entry that does not reference the node whose /Kids contains it", object_number, generation_number);
+        }
+    } else if (!parent_is_root) {
+        spdlog::warn("Field {} {} R is a /Kids entry without the /Parent entry required by Table 220", object_number, generation_number);
+    }
+
+    // Names are indexed for the nodes that carry a /T of their own - a node
+    // without one shares its parent's fully qualified name (12.7.3.2) and
+    // would only ever report a false duplicate
+    bool terminal = Field::IsTerminalDictionary(node);
+    if (node->Contains(constant::Name::T)) {
+        auto field = Field::Create(node);
+        auto name = field->GetQualifiedName()->ToString();
+
+        auto inserted = m_names.insert(name);
+        if (!inserted.second) {
+            spdlog::warn("Duplicate fully qualified field name \"{}\" - lookups resolve to the first field in document order", name);
+        }
+
+        if (terminal) {
+            m_terminal_index.emplace(name, node);
+        }
+    }
+
+    if (terminal) {
+        m_field_cache.push_back(node);
+        return;
+    }
+
+    // Only field dictionaries are hierarchy nodes - widget annotations stay
+    // attached to their field (12.7.3.2)
+    auto kids = node->FindAs<syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr>>(constant::Name::Kids);
+    for (auto kid_reference : kids) {
+        auto kid = kid_reference->GetReferencedObjectAs<syntax::DictionaryObjectPtr>();
+        if (!Field::IsFieldDictionary(kid)) {
+            continue;
+        }
+
+        BuildFieldCacheInternal(kid_reference, syntax::OutputDictionaryObjectPtr(node), visited);
+    }
+}
+
+// Helpers
+
+bool FieldTree::IsMember(const syntax::DictionaryObjectPtr& dictionary) const {
+    EnsureCacheBuilt();
+    return m_nodes.find(dictionary) != m_nodes.end();
+}
+
+syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> FieldTree::CreateKids(syntax::DictionaryObjectPtr parent) {
+    if (!parent->Contains(constant::Name::Kids)) {
+        syntax::MixedArrayObjectPtr mixed_array;
+        mixed_array->SetFile(parent->GetFile());
+        mixed_array->SetInitialized();
+
+        parent->Insert(constant::Name::Kids, mixed_array);
+    }
+
+    return parent->FindAs<syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr>>(constant::Name::Kids);
+}
+
+void FieldTree::ValidateInsertion(const syntax::OutputDictionaryObjectPtr& parent, const FieldPtr& child) const {
+    auto child_dictionary = child->GetObject();
+
+    // The container arrays hold indirect references (Table 218, Table 220)
+    // - a direct dictionary cannot be referenced and would serialize as a
+    // dangling 0 0 R
+    if (!child_dictionary->IsIndirect()) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The field dictionary shall be an indirect object - allocate a cross-reference entry for it first");
+    }
+
+    if (IsMember(child_dictionary)) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The field already belongs to this field hierarchy");
+    }
+
+    std::string qualified_name;
+
+    if (!parent.empty()) {
+        auto parent_dictionary = *parent;
+
+        // Nothing but the node index tells a parent of this tree from a
+        // field of another document - a field is a plain dictionary view
+        if (!IsMember(parent_dictionary)) {
+            LOG_ERROR_AND_THROW(InvalidParameterException, "The parent field does not belong to this field hierarchy");
+        }
+
+        // A field's /Kids holds either child fields or widget annotations,
+        // never both (12.7.3.1)
+        if (parent_dictionary->Contains(constant::Name::Kids) && Field::IsTerminalDictionary(parent_dictionary)) {
+            auto parent_kids = parent_dictionary->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+            if (parent_kids->GetSize() > 0) {
+                LOG_ERROR_AND_THROW(InvalidParameterException, "A terminal field carrying widget annotations cannot take child fields");
+            }
+        }
+
+        // A field merged with its widget annotation is a leaf of the page
+        // as well as of the hierarchy - giving it children would make the
+        // widget dictionary a grouping node
+        if (parent_dictionary->Contains(constant::Name::Subtype)) {
+            LOG_ERROR_AND_THROW(InvalidParameterException, "A field merged with its widget annotation cannot take child fields");
+        }
+
+        auto parent_field = Field::Create(parent_dictionary);
+        qualified_name = parent_field->GetQualifiedName()->ToString();
+    }
+
+    // Fully qualified names shall be unique (12.7.3.2). The name the child
+    // would take is the parent's name extended by the child's partial name;
+    // a child without a /T has no name of its own to collide with.
+    if (child_dictionary->Contains(constant::Name::T)) {
+        auto child_partial_name = child_dictionary->FindAs<syntax::StringObjectPtr>(constant::Name::T);
+        auto child_partial_name_utf8 = TextStringEncoding::ToUtf8(child_partial_name->GetValue()->ToStringView());
+
+        if (!qualified_name.empty()) {
+            qualified_name += ".";
+        }
+
+        qualified_name += child_partial_name_utf8;
+
+        if (m_names.find(qualified_name) != m_names.end()) {
+            LOG_ERROR_AND_THROW(InvalidParameterException, "A field with the fully qualified name \"{}\" already exists in this field hierarchy", qualified_name);
+        }
+    }
+}
+
+void FieldTree::LinkChild(const syntax::OutputDictionaryObjectPtr& parent, syntax::DictionaryObjectPtr child) const {
+
+    // Root-level fields have no /Parent (Table 220 requires it for kids
+    // only); anything below the root references its parent
+    if (parent.empty()) {
+        if (child->Contains(constant::Name::Parent)) {
+            bool removed = child->Remove(constant::Name::Parent);
+            assert(removed && "Unable to remove existing item"); UNUSED(removed);
+        }
+
+        return;
+    }
+
+    auto parent_reference = make_deferred<syntax::IndirectReferenceObject>(*parent);
+    child->Insert(constant::Name::Parent, parent_reference, true);
+}
+
+} // semantics
+} // vanillapdf

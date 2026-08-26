@@ -1,6 +1,8 @@
 #include "unittest.h"
 #include "handle_guard.h"
 
+#include <cstring>
+
 namespace interactive_forms {
 
 // Creates an in-memory document together with an attached interactive form.
@@ -425,10 +427,15 @@ static std::string BufferToString(BufferHandle* buffer) {
     return std::string(data, size);
 }
 
-// Reads the qualified name of the terminal field at the given index
-static std::string GetFieldQualifiedName(InteractiveFormHandle* form, size_type index) {
+// Looks a terminal field up by its fully qualified name given as a literal
+static error_type FindFieldByName(FieldTreeHandle* tree, const char* qualified_name, FieldHandle** result) {
+    return FieldTree_FindField(tree, qualified_name, static_cast<size_type>(strlen(qualified_name)), result);
+}
+
+// Reads the fully qualified name of the terminal field at the given index
+static std::string GetFieldQualifiedName(FieldTreeHandle* tree, size_type index) {
     HandleGuard<FieldHandle, Field_Release> field;
-    EXPECT_EQ(InteractiveForm_GetField(form, index, field.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(FieldTree_GetField(tree, index, field.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<BufferHandle, Buffer_Release> qualified_name;
     EXPECT_EQ(Field_GetQualifiedName(field, qualified_name.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -444,6 +451,40 @@ static void CreateStringObject(
     HandleGuard<LiteralStringObjectHandle, LiteralStringObject_Release> literal;
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString(value, literal.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(LiteralStringObject_ToStringObject(literal, result.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
+// Wraps a form dictionary and obtains its field hierarchy
+static void CreateFormWithTree(
+    DictionaryObjectHandle* form_dictionary,
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release>& form,
+    HandleGuard<FieldTreeHandle, FieldTree_Release>& tree
+) {
+    ASSERT_EQ(InteractiveForm_CreateFromDictionary(form_dictionary, form.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_GetFieldTree(form, tree.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
+// Gives a blank form an empty hierarchy, the way a document author starts
+static void AttachEmptyTree(
+    DocumentHandle* document,
+    InteractiveFormHandle* form,
+    HandleGuard<FieldTreeHandle, FieldTree_Release>& tree
+) {
+    ASSERT_EQ(FieldTree_CreateFromDocument(document, tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_SetFieldTree(form, tree), VANILLAPDF_ERROR_SUCCESS);
+}
+
+// Creates a registered terminal text field dictionary with the given name
+static void CreateTextFieldDictionary(
+    FileHandle* file,
+    const char* partial_name,
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release>& dictionary,
+    HandleGuard<FieldHandle, Field_Release>& field
+) {
+    ASSERT_EQ(DictionaryObject_Create(dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(dictionary, "T", partial_name);
+    InsertNameEntry(dictionary, "FT", "Tx");
+    RegisterIndirectObject(file, dictionary);
+    ASSERT_EQ(Field_CreateFromDictionary(dictionary, field.out()), VANILLAPDF_ERROR_SUCCESS);
 }
 
 // Document-wide defaults for /DA and /Q roundtrip through the form setters
@@ -471,21 +512,38 @@ TEST(InteractiveForm, SetAndGetDocumentDefaults) {
     EXPECT_EQ(quadding, QuaddingType_Centered);
 }
 
-// A blank form has no fields to enumerate
-TEST(InteractiveForm, FieldCountZeroWithoutFields) {
+// A blank form has no /Fields entry - reading it never creates one, so
+// there is no hierarchy to hand out until one is attached
+TEST(InteractiveForm, FieldTreeMissingOnBlankForm) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
     HandleGuard<FileHandle, File_Release> file;
     HandleGuard<DocumentHandle, Document_Release> document;
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
     CreateMemoryDocumentWithForm(io_stream, file, document, form);
 
+    FieldTreeHandle* missing_tree = nullptr;
+    EXPECT_EQ(InteractiveForm_GetFieldTree(form, &missing_tree), VANILLAPDF_ERROR_OBJECT_MISSING);
+    EXPECT_EQ(missing_tree, nullptr);
+
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    AttachEmptyTree(document, form, tree);
+
     size_type count = 1;
-    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetFieldCount(tree, &count), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(count, 0u);
+
+    ASSERT_EQ(FieldTree_GetRootChildCount(tree, &count), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(count, 0u);
 
     HandleGuard<FieldHandle, Field_Release> field;
-    EXPECT_EQ(InteractiveForm_GetField(form, 0, field.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
-    EXPECT_EQ(InteractiveForm_FindField(form, "missing", field.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+    EXPECT_EQ(FieldTree_GetField(tree, 0, field.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+    EXPECT_EQ(FieldTree_GetRootChild(tree, 0, field.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+    EXPECT_EQ(FindFieldByName(tree, "missing", field.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+
+    // The attached instance is the one the form hands out from now on
+    HandleGuard<FieldTreeHandle, FieldTree_Release> found_tree;
+    ASSERT_EQ(InteractiveForm_GetFieldTree(form, found_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(found_tree.get(), tree.get());
 }
 
 // The enumeration hides grouping nodes and yields the logical terminal
@@ -528,19 +586,20 @@ TEST(InteractiveForm, FlatEnumerationSkipsNonTerminals) {
     InsertReferenceArrayEntry(form_dictionary, "Fields", { group.get(), standalone.get() });
 
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
-    ASSERT_EQ(InteractiveForm_CreateFromDictionary(form_dictionary, form.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    CreateFormWithTree(form_dictionary, form, tree);
 
     size_type count = 0;
-    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetFieldCount(tree, &count), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(count, 3u);
 
-    EXPECT_EQ(GetFieldQualifiedName(form, 0), "group.first");
-    EXPECT_EQ(GetFieldQualifiedName(form, 1), "group.second");
-    EXPECT_EQ(GetFieldQualifiedName(form, 2), "email");
+    EXPECT_EQ(GetFieldQualifiedName(tree, 0), "group.first");
+    EXPECT_EQ(GetFieldQualifiedName(tree, 1), "group.second");
+    EXPECT_EQ(GetFieldQualifiedName(tree, 2), "email");
 
     // Children carry no /FT of their own - the type resolves from the group
     HandleGuard<FieldHandle, Field_Release> first_field;
-    ASSERT_EQ(InteractiveForm_GetField(form, 0, first_field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetField(tree, 0, first_field.out()), VANILLAPDF_ERROR_SUCCESS);
 
     FieldType first_field_type = FieldType_Undefined;
     ASSERT_EQ(Field_GetType(first_field, &first_field_type), VANILLAPDF_ERROR_SUCCESS);
@@ -584,14 +643,15 @@ TEST(InteractiveForm, RadioGroupIsSingleField) {
     InsertReferenceArrayEntry(form_dictionary, "Fields", { radio_group.get() });
 
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
-    ASSERT_EQ(InteractiveForm_CreateFromDictionary(form_dictionary, form.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    CreateFormWithTree(form_dictionary, form, tree);
 
     size_type count = 0;
-    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetFieldCount(tree, &count), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(count, 1u);
 
     HandleGuard<FieldHandle, Field_Release> field;
-    ASSERT_EQ(InteractiveForm_GetField(form, 0, field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetField(tree, 0, field.out()), VANILLAPDF_ERROR_SUCCESS);
 
     FieldType field_type = FieldType_Undefined;
     ASSERT_EQ(Field_GetType(field, &field_type), VANILLAPDF_ERROR_SUCCESS);
@@ -600,6 +660,11 @@ TEST(InteractiveForm, RadioGroupIsSingleField) {
     boolean_type terminal = VANILLAPDF_RV_FALSE;
     ASSERT_EQ(Field_IsTerminal(field, &terminal), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(terminal, VANILLAPDF_RV_TRUE);
+
+    // The widgets are not children of the field
+    size_type child_count = 1;
+    ASSERT_EQ(Field_GetChildCount(field, &child_count), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(child_count, 0u);
 }
 
 TEST(InteractiveForm, FindFieldByQualifiedName) {
@@ -627,10 +692,11 @@ TEST(InteractiveForm, FindFieldByQualifiedName) {
     InsertReferenceArrayEntry(form_dictionary, "Fields", { group.get() });
 
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
-    ASSERT_EQ(InteractiveForm_CreateFromDictionary(form_dictionary, form.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    CreateFormWithTree(form_dictionary, form, tree);
 
     HandleGuard<FieldHandle, Field_Release> found;
-    ASSERT_EQ(InteractiveForm_FindField(form, "group.first", found.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FindFieldByName(tree, "group.first", found.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<StringObjectHandle, StringObject_Release> partial_name;
     ASSERT_EQ(Field_GetName(found, partial_name.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -641,15 +707,15 @@ TEST(InteractiveForm, FindFieldByQualifiedName) {
 
     // The grouping node is not part of the enumeration
     HandleGuard<FieldHandle, Field_Release> group_lookup;
-    EXPECT_EQ(InteractiveForm_FindField(form, "group", group_lookup.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+    EXPECT_EQ(FindFieldByName(tree, "group", group_lookup.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 
     HandleGuard<FieldHandle, Field_Release> missing;
-    EXPECT_EQ(InteractiveForm_FindField(form, "group.missing", missing.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+    EXPECT_EQ(FindFieldByName(tree, "group.missing", missing.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 }
 
-// Appending a field through AddField must be reflected by the enumeration
+// Appending a field through AddChild must be reflected by the enumeration
 // built before the change
-TEST(InteractiveForm, FieldCacheInvalidatedOnAddField) {
+TEST(InteractiveForm, FieldCacheInvalidatedOnAddChild) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
     HandleGuard<FileHandle, File_Release> file;
     HandleGuard<DocumentHandle, Document_Release> document;
@@ -666,67 +732,62 @@ TEST(InteractiveForm, FieldCacheInvalidatedOnAddField) {
     InsertReferenceArrayEntry(form_dictionary, "Fields", { standalone.get() });
 
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
-    ASSERT_EQ(InteractiveForm_CreateFromDictionary(form_dictionary, form.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    CreateFormWithTree(form_dictionary, form, tree);
 
     size_type count = 0;
-    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetFieldCount(tree, &count), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(count, 1u);
 
     HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> appended;
-    ASSERT_EQ(DictionaryObject_Create(appended.out()), VANILLAPDF_ERROR_SUCCESS);
-    InsertStringEntry(appended, "T", "phone");
-    InsertNameEntry(appended, "FT", "Tx");
-    RegisterIndirectObject(file, appended);
-
     HandleGuard<FieldHandle, Field_Release> appended_field;
-    ASSERT_EQ(Field_CreateFromDictionary(appended, appended_field.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InteractiveForm_AddField(form, appended_field), VANILLAPDF_ERROR_SUCCESS);
+    CreateTextFieldDictionary(file, "phone", appended, appended_field);
 
-    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_AddRootChild(tree, appended_field), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(FieldTree_GetFieldCount(tree, &count), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(count, 2u);
 
     // Appending preserves document order
-    EXPECT_EQ(GetFieldQualifiedName(form, 0), "email");
-    EXPECT_EQ(GetFieldQualifiedName(form, 1), "phone");
+    EXPECT_EQ(GetFieldQualifiedName(tree, 0), "email");
+    EXPECT_EQ(GetFieldQualifiedName(tree, 1), "phone");
 }
 
-// AddField creates the /Fields array on a form that does not have one yet
-TEST(InteractiveForm, AddFieldCreatesFieldsArray) {
+// An empty hierarchy attached to a blank form accepts fields
+TEST(InteractiveForm, AttachedTreeAcceptsFields) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
     HandleGuard<FileHandle, File_Release> file;
     HandleGuard<DocumentHandle, Document_Release> document;
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
     CreateMemoryDocumentWithForm(io_stream, file, document, form);
 
-    size_type count = 1;
-    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(count, 0u);
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    AttachEmptyTree(document, form, tree);
 
     HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> field_dictionary;
-    ASSERT_EQ(DictionaryObject_Create(field_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
-    InsertStringEntry(field_dictionary, "T", "email");
-    InsertNameEntry(field_dictionary, "FT", "Tx");
-    RegisterIndirectObject(file, field_dictionary);
-
     HandleGuard<FieldHandle, Field_Release> field;
-    ASSERT_EQ(Field_CreateFromDictionary(field_dictionary, field.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InteractiveForm_AddField(form, field), VANILLAPDF_ERROR_SUCCESS);
+    CreateTextFieldDictionary(file, "email", field_dictionary, field);
+    ASSERT_EQ(FieldTree_AddRootChild(tree, field), VANILLAPDF_ERROR_SUCCESS);
 
-    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
+    size_type count = 0;
+    ASSERT_EQ(FieldTree_GetFieldCount(tree, &count), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(count, 1u);
 
     HandleGuard<FieldHandle, Field_Release> found;
-    EXPECT_EQ(InteractiveForm_FindField(form, "email", found.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(FindFieldByName(tree, "email", found.out()), VANILLAPDF_ERROR_SUCCESS);
 }
 
-// The /Fields array holds indirect references, so a field backed by a direct
-// dictionary is refused instead of serializing a dangling reference
-TEST(InteractiveForm, AddFieldRejectsDirectDictionary) {
+// The container arrays hold indirect references, so a field backed by a
+// direct dictionary is refused instead of serializing a dangling reference
+TEST(InteractiveForm, AddRootChildRejectsDirectDictionary) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
     HandleGuard<FileHandle, File_Release> file;
     HandleGuard<DocumentHandle, Document_Release> document;
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
     CreateMemoryDocumentWithForm(io_stream, file, document, form);
+
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    AttachEmptyTree(document, form, tree);
 
     HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> field_dictionary;
     ASSERT_EQ(DictionaryObject_Create(field_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -735,26 +796,65 @@ TEST(InteractiveForm, AddFieldRejectsDirectDictionary) {
 
     HandleGuard<FieldHandle, Field_Release> field;
     ASSERT_EQ(Field_CreateFromDictionary(field_dictionary, field.out()), VANILLAPDF_ERROR_SUCCESS);
-    EXPECT_EQ(InteractiveForm_AddField(form, field), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_AddRootChild(tree, field), VANILLAPDF_ERROR_PARAMETER_VALUE);
 
-    // The refused append must not leave a half-created /Fields array behind
     size_type count = 1;
-    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetFieldCount(tree, &count), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(count, 0u);
 }
 
-TEST(InteractiveForm, AddFieldRejectsNullParameters) {
+TEST(InteractiveForm, FieldTreeRejectsNullParameters) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
     HandleGuard<FileHandle, File_Release> file;
     HandleGuard<DocumentHandle, Document_Release> document;
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
     CreateMemoryDocumentWithForm(io_stream, file, document, form);
 
-    EXPECT_EQ(InteractiveForm_AddField(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
-    EXPECT_EQ(InteractiveForm_AddField(form, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    AttachEmptyTree(document, form, tree);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> field_dictionary;
+    HandleGuard<FieldHandle, Field_Release> field;
+    CreateTextFieldDictionary(file, "email", field_dictionary, field);
+
+    EXPECT_EQ(InteractiveForm_GetFieldTree(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(InteractiveForm_SetFieldTree(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(InteractiveForm_SetFieldTree(form, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(InteractiveForm_ResolveDefaultAppearance(nullptr, field, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(InteractiveForm_ResolveDefaultAppearance(form, nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(InteractiveForm_ResolveQuadding(nullptr, field, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(InteractiveForm_ResolveQuadding(form, nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_CreateFromDocument(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_GetFieldCount(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_GetField(nullptr, 0, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_FindField(tree, nullptr, 0, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_FindField(tree, "email", 5, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_GetRootChildCount(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_GetRootChild(nullptr, 0, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_AddRootChild(nullptr, field), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_AddRootChild(tree, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_InsertRootChild(tree, 0, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_AddChild(nullptr, nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_AddChild(tree, field, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_AddChild(tree, nullptr, field), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_InsertChild(tree, field, 0, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_RemoveChild(tree, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FieldTree_Invalidate(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Field_GetChildCount(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Field_GetChild(nullptr, 0, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Field_GetParent(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Field_GetQualifiedName(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Field_GetValue(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Field_GetDefaultValue(nullptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    // Nothing above reached the hierarchy
+    size_type count = 1;
+    ASSERT_EQ(FieldTree_GetFieldCount(tree, &count), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(count, 0u);
 }
 
-// The appended reference has to survive a save and reopen cycle
+// The attached hierarchy and the appended reference have to survive a save
+// and reopen cycle
 TEST(InteractiveForm, AddedFieldPersistsAcrossSave) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
     HandleGuard<FileHandle, File_Release> file;
@@ -762,15 +862,13 @@ TEST(InteractiveForm, AddedFieldPersistsAcrossSave) {
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
     CreateMemoryDocumentWithForm(io_stream, file, document, form);
 
-    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> field_dictionary;
-    ASSERT_EQ(DictionaryObject_Create(field_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
-    InsertStringEntry(field_dictionary, "T", "email");
-    InsertNameEntry(field_dictionary, "FT", "Tx");
-    RegisterIndirectObject(file, field_dictionary);
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    AttachEmptyTree(document, form, tree);
 
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> field_dictionary;
     HandleGuard<FieldHandle, Field_Release> field;
-    ASSERT_EQ(Field_CreateFromDictionary(field_dictionary, field.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(InteractiveForm_AddField(form, field), VANILLAPDF_ERROR_SUCCESS);
+    CreateTextFieldDictionary(file, "email", field_dictionary, field);
+    ASSERT_EQ(FieldTree_AddRootChild(tree, field), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> destination_stream;
     HandleGuard<FileHandle, File_Release> destination_file;
@@ -789,10 +887,13 @@ TEST(InteractiveForm, AddedFieldPersistsAcrossSave) {
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> reloaded_form;
     ASSERT_EQ(Catalog_GetAcroForm(reloaded_catalog, reloaded_form.out()), VANILLAPDF_ERROR_SUCCESS);
 
+    HandleGuard<FieldTreeHandle, FieldTree_Release> reloaded_tree;
+    ASSERT_EQ(InteractiveForm_GetFieldTree(reloaded_form, reloaded_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+
     size_type count = 0;
-    ASSERT_EQ(InteractiveForm_GetFieldCount(reloaded_form, &count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetFieldCount(reloaded_tree, &count), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(count, 1u);
-    EXPECT_EQ(GetFieldQualifiedName(reloaded_form, 0), "email");
+    EXPECT_EQ(GetFieldQualifiedName(reloaded_tree, 0), "email");
 }
 
 // Malformed documents can link /Kids in a cycle; the enumeration has to
@@ -820,17 +921,18 @@ TEST(InteractiveForm, CyclicKidsTerminates) {
     InsertReferenceArrayEntry(form_dictionary, "Fields", { first_group.get() });
 
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
-    ASSERT_EQ(InteractiveForm_CreateFromDictionary(form_dictionary, form.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    CreateFormWithTree(form_dictionary, form, tree);
 
     // Both nodes are non-terminal grouping nodes, so nothing is enumerated -
     // the point is that the call returns instead of looping forever
     size_type count = 1;
-    ASSERT_EQ(InteractiveForm_GetFieldCount(form, &count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetFieldCount(tree, &count), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(count, 0u);
 }
 
-// Fields resolve /DA and /Q through the /Parent chain only - the document
-// default in the form dictionary is applied by the caller
+// Fields resolve /DA and /Q through the /Parent chain only; the form owns
+// the document default and performs the full lookup on request
 TEST(InteractiveForm, DefaultAppearanceAndQuaddingFallback) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
     HandleGuard<FileHandle, File_Release> file;
@@ -858,11 +960,12 @@ TEST(InteractiveForm, DefaultAppearanceAndQuaddingFallback) {
     InsertReferenceArrayEntry(form_dictionary, "Fields", { plain_field.get(), styled_field.get() });
 
     HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
-    ASSERT_EQ(InteractiveForm_CreateFromDictionary(form_dictionary, form.out()), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    CreateFormWithTree(form_dictionary, form, tree);
 
     // The plain field carries no /DA or /Q - the caller falls back to the form
     HandleGuard<FieldHandle, Field_Release> plain;
-    ASSERT_EQ(InteractiveForm_GetField(form, 0, plain.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetField(tree, 0, plain.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<StringObjectHandle, StringObject_Release> plain_appearance;
     EXPECT_EQ(Field_GetDefaultAppearance(plain, plain_appearance.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
@@ -881,9 +984,21 @@ TEST(InteractiveForm, DefaultAppearanceAndQuaddingFallback) {
     ASSERT_EQ(InteractiveForm_GetQuadding(form, &form_quadding), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(form_quadding, QuaddingType_Centered);
 
-    // The styled field carries its own /DA and /Q
+    // The form performs that fallback itself on request
+    HandleGuard<StringObjectHandle, StringObject_Release> plain_resolved_appearance;
+    ASSERT_EQ(InteractiveForm_ResolveDefaultAppearance(form, plain, plain_resolved_appearance.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> plain_resolved_appearance_value;
+    ASSERT_EQ(StringObject_GetValue(plain_resolved_appearance, plain_resolved_appearance_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(plain_resolved_appearance_value), "/Helv 0 Tf 0 g");
+
+    QuaddingType plain_resolved_quadding = QuaddingType_LeftJustified;
+    ASSERT_EQ(InteractiveForm_ResolveQuadding(form, plain, &plain_resolved_quadding), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(plain_resolved_quadding, QuaddingType_Centered);
+
+    // The styled field carries its own /DA and /Q, which win over the form
     HandleGuard<FieldHandle, Field_Release> styled;
-    ASSERT_EQ(InteractiveForm_GetField(form, 1, styled.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_GetField(tree, 1, styled.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<StringObjectHandle, StringObject_Release> styled_appearance;
     ASSERT_EQ(Field_GetDefaultAppearance(styled, styled_appearance.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -895,6 +1010,42 @@ TEST(InteractiveForm, DefaultAppearanceAndQuaddingFallback) {
     QuaddingType styled_quadding = QuaddingType_LeftJustified;
     ASSERT_EQ(Field_GetQuadding(styled, &styled_quadding), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(styled_quadding, QuaddingType_RightJustified);
+
+    HandleGuard<StringObjectHandle, StringObject_Release> styled_resolved_appearance;
+    ASSERT_EQ(InteractiveForm_ResolveDefaultAppearance(form, styled, styled_resolved_appearance.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> styled_resolved_appearance_value;
+    ASSERT_EQ(StringObject_GetValue(styled_resolved_appearance, styled_resolved_appearance_value.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(BufferToString(styled_resolved_appearance_value), "/TiRo 12 Tf 0 g");
+
+    QuaddingType styled_resolved_quadding = QuaddingType_LeftJustified;
+    ASSERT_EQ(InteractiveForm_ResolveQuadding(form, styled, &styled_resolved_quadding), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(styled_resolved_quadding, QuaddingType_RightJustified);
+}
+
+// With no /DA anywhere the lookup is honestly empty; /Q has a specification
+// default (Table 222) and always resolves
+TEST(InteractiveForm, ResolveWithoutDocumentDefaults) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
+    CreateMemoryDocumentWithForm(io_stream, file, document, form);
+
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    AttachEmptyTree(document, form, tree);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> field_dictionary;
+    HandleGuard<FieldHandle, Field_Release> field;
+    CreateTextFieldDictionary(file, "notes", field_dictionary, field);
+    ASSERT_EQ(FieldTree_AddRootChild(tree, field), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<StringObjectHandle, StringObject_Release> appearance;
+    EXPECT_EQ(InteractiveForm_ResolveDefaultAppearance(form, field, appearance.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+
+    QuaddingType quadding = QuaddingType_RightJustified;
+    ASSERT_EQ(InteractiveForm_ResolveQuadding(form, field, &quadding), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(quadding, QuaddingType_LeftJustified);
 }
 
 } // namespace interactive_forms
