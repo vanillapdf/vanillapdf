@@ -14,6 +14,27 @@
 namespace vanillapdf {
 namespace semantics {
 
+// The walk's fully qualified name of a node: the traversal parent's name
+// extended by the node's own /T. A node without a /T contributes no
+// segment and shares its parent's name (12.7.3.2).
+static std::string QualifiedNameOf(const std::string& parent_name, const syntax::DictionaryObjectPtr& node) {
+    if (!node->Contains(constant::Name::T)) {
+        return parent_name;
+    }
+
+    auto partial_name = node->FindAs<syntax::StringObjectPtr>(constant::Name::T);
+
+    // /T is a text string (7.9.2.2) - normalizing every segment to UTF-8
+    // lets PDFDocEncoding and UTF-16BE partial names join into a single
+    // coherent name
+    auto partial_name_utf8 = TextStringEncoding::ToUtf8(partial_name->GetValue()->ToStringView());
+    if (parent_name.empty()) {
+        return partial_name_utf8;
+    }
+
+    return parent_name + "." + partial_name_utf8;
+}
+
 FieldTree::FieldTree(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> fields) : HighLevelObject(fields) {
     m_cache_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
@@ -273,7 +294,7 @@ void FieldTree::BuildFieldCache() const {
         }
 
         m_root_children.push_back(*root_child);
-        BuildFieldCacheInternal(field_reference, root_level, visited);
+        BuildFieldCacheInternal(field_reference, root_level, std::string(), visited);
     }
 
     m_cache_built = true;
@@ -282,6 +303,7 @@ void FieldTree::BuildFieldCache() const {
 void FieldTree::BuildFieldCacheInternal(
     syntax::IndirectReferenceObjectPtr node_reference,
     const syntax::OutputDictionaryObjectPtr& traversal_parent,
+    const std::string& parent_name,
     std::map<syntax::IndirectReferenceId, bool>& visited) const {
 
     auto object_number = node_reference->GetReferencedObjectNumber();
@@ -303,9 +325,10 @@ void FieldTree::BuildFieldCacheInternal(
     m_nodes.emplace(node, traversal_parent);
 
     // A /Parent that disagrees with the /Kids entry that reached the node
-    // is the other common way a file is already dirty - the fully qualified
-    // name follows /Parent, the enumeration follows /Kids, and the two
-    // diverge from here on. Reported, not repaired.
+    // is the other common way a file is already dirty. Reported, not
+    // repaired: the walk is the authority for the name and the container,
+    // and Field::GetQualifiedName, which follows /Parent, diverges from
+    // here on.
     bool parent_is_root = traversal_parent.empty();
     if (node->Contains(constant::Name::Parent)) {
         auto parent_obj = node->Find(constant::Name::Parent);
@@ -326,10 +349,8 @@ void FieldTree::BuildFieldCacheInternal(
     // without one shares its parent's fully qualified name (12.7.3.2) and
     // would only ever report a false duplicate
     bool terminal = Field::IsTerminalDictionary(node);
+    auto name = QualifiedNameOf(parent_name, node);
     if (node->Contains(constant::Name::T)) {
-        auto field = Field::Create(node);
-        auto name = field->GetQualifiedName()->ToString();
-
         auto inserted = m_names.insert(name);
         if (!inserted.second) {
             spdlog::warn("Duplicate fully qualified field name \"{}\" - lookups resolve to the first field in document order", name);
@@ -355,7 +376,7 @@ void FieldTree::BuildFieldCacheInternal(
         }
 
         auto kid_reference = syntax::ObjectUtils::ConvertTo<syntax::IndirectReferenceObjectPtr>(entry);
-        BuildFieldCacheInternal(kid_reference, syntax::OutputDictionaryObjectPtr(node), visited);
+        BuildFieldCacheInternal(kid_reference, syntax::OutputDictionaryObjectPtr(node), name, visited);
     }
 }
 
@@ -364,6 +385,20 @@ void FieldTree::BuildFieldCacheInternal(
 bool FieldTree::IsMember(const syntax::DictionaryObjectPtr& dictionary) const {
     EnsureCacheBuilt();
     return m_nodes.find(dictionary) != m_nodes.end();
+}
+
+std::string FieldTree::GetMemberQualifiedName(const syntax::DictionaryObjectPtr& dictionary) const {
+    auto node = m_nodes.find(dictionary);
+    assert(node != m_nodes.end() && "The caller checks membership first");
+
+    // The chain of traversal parents ends at the root level, which has no
+    // name; it cannot cycle, since the walk visits every node once
+    std::string parent_name;
+    if (!node->second.empty()) {
+        parent_name = GetMemberQualifiedName(*node->second);
+    }
+
+    return QualifiedNameOf(parent_name, dictionary);
 }
 
 syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> FieldTree::CreateKids(syntax::DictionaryObjectPtr parent) {
@@ -419,22 +454,15 @@ void FieldTree::ValidateInsertion(const syntax::OutputDictionaryObjectPtr& paren
             LOG_ERROR_AND_THROW(InvalidParameterException, "A field merged with its widget annotation cannot take child fields");
         }
 
-        auto parent_field = Field::Create(parent_dictionary);
-        qualified_name = parent_field->GetQualifiedName()->ToString();
+        qualified_name = GetMemberQualifiedName(parent_dictionary);
     }
 
     // Fully qualified names shall be unique (12.7.3.2). The name the child
-    // would take is the parent's name extended by the child's partial name;
-    // a child without a /T has no name of its own to collide with.
+    // would take is the parent's name extended by the child's partial name
+    // - the same way the walk will name it once it is in place; a child
+    // without a /T has no name of its own to collide with.
     if (child_dictionary->Contains(constant::Name::T)) {
-        auto child_partial_name = child_dictionary->FindAs<syntax::StringObjectPtr>(constant::Name::T);
-        auto child_partial_name_utf8 = TextStringEncoding::ToUtf8(child_partial_name->GetValue()->ToStringView());
-
-        if (!qualified_name.empty()) {
-            qualified_name += ".";
-        }
-
-        qualified_name += child_partial_name_utf8;
+        qualified_name = QualifiedNameOf(qualified_name, child_dictionary);
 
         if (m_names.find(qualified_name) != m_names.end()) {
             LOG_ERROR_AND_THROW(InvalidParameterException, "A field with the fully qualified name \"{}\" already exists in this field hierarchy", qualified_name);

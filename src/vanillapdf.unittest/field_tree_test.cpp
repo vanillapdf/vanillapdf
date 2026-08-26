@@ -897,6 +897,59 @@ TEST(FieldTree, RemoveChildNavigatesByTheWalkNotByParent) {
     EXPECT_EQ(Field_GetParent(city, city_parent.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 }
 
+// The names the tree indexes follow the walk, not /Parent - on a file
+// whose /Parent entries are missing or wrong, the lookup still finds a
+// field at the path the structure shows, and the write path judges a new
+// name against the same names
+TEST(FieldTree, NamesFollowTheWalkNotParent) {
+    SampleHierarchy sample;
+    BuildSampleHierarchy(sample);
+
+    // street loses its /Parent, city's /Parent points at the wrong node
+    RemoveEntry(sample.street, "Parent");
+    RemoveEntry(sample.city, "Parent");
+    InsertParentEntry(sample.city, sample.email);
+    ASSERT_EQ(FieldTree_Invalidate(sample.tree), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FieldHandle, Field_Release> street;
+    EXPECT_EQ(FindFieldByName(sample.tree, "address.street", street.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FieldHandle, Field_Release> city;
+    EXPECT_EQ(FindFieldByName(sample.tree, "address.city", city.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FieldHandle, Field_Release> not_found;
+    EXPECT_EQ(FindFieldByName(sample.tree, "street", not_found.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+    EXPECT_EQ(FindFieldByName(sample.tree, "email.city", not_found.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+
+    // The field itself can only follow its /Parent, and reports the
+    // damaged file's view
+    EXPECT_EQ(GetQualifiedName(street), "street");
+    EXPECT_EQ(GetQualifiedName(city), "email.city");
+
+    // Uniqueness is judged against the walk's names: "address.city" is
+    // taken, "email.city" and "street" are free
+    HandleGuard<FieldHandle, Field_Release> address;
+    ASSERT_EQ(FieldTree_GetRootChild(sample.tree, 0, address.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> duplicate_city_dictionary;
+    HandleGuard<FieldHandle, Field_Release> duplicate_city;
+    CreateTextFieldDictionary(sample.file, "city", duplicate_city_dictionary, duplicate_city);
+    EXPECT_EQ(FieldTree_AddChild(sample.tree, address, duplicate_city), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    HandleGuard<FieldHandle, Field_Release> email;
+    ASSERT_EQ(FieldTree_GetRootChild(sample.tree, 1, email.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(FieldTree_AddChild(sample.tree, email, duplicate_city), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> root_street_dictionary;
+    HandleGuard<FieldHandle, Field_Release> root_street;
+    CreateTextFieldDictionary(sample.file, "street", root_street_dictionary, root_street);
+    EXPECT_EQ(FieldTree_AddRootChild(sample.tree, root_street), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FieldHandle, Field_Release> found;
+    EXPECT_EQ(FindFieldByName(sample.tree, "email.city", found.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(FindFieldByName(sample.tree, "street", found.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
 // --- Invalidate ---
 
 // The tree cannot observe edits made underneath it through the dictionary

@@ -53,8 +53,13 @@ public:
     FieldPtr GetField(types::size_type index) const;
 
     // Finds a terminal field by its fully qualified name - the /T partial
-    // names joined with '.' (12.7.3.2), UTF-8 encoded. Duplicate names
-    // resolve to the first terminal field in document order.
+    // names joined with '.' (12.7.3.2), UTF-8 encoded - as the hierarchy
+    // walk produces it: the traversal parent's name extended by the node's
+    // own /T, so the name index agrees with the enumeration by
+    // construction. Field::GetQualifiedName has nothing but /Parent to
+    // follow and can disagree on a file whose /Parent entries are wrong.
+    // Duplicate names resolve to the first terminal field in document
+    // order.
     bool TryFindField(std::string_view qualified_name, OuputFieldPtr& result) const;
 
     // Structural view, level 0 - the root /Fields entries that are field
@@ -111,11 +116,13 @@ public:
 private:
     // The root children and the flat cache in document order, plus the node
     // index over every node the walk visited - root children, groups and
-    // terminals - keyed by object identity. Each node maps to its traversal parent: the node whose /Kids
-    // reached it, empty for a root-level entry. That is what the mutators
-    // navigate by; /Parent is validated and warned about during the walk,
-    // never trusted, since a missing or mismatched entry is the common way
-    // a file is already dirty. The index holds the nodes alive, so an
+    // terminals - keyed by object identity. Each node maps to its traversal
+    // parent: the node whose /Kids reached it, empty for a root-level entry.
+    // That is what the mutators navigate and name by; /Parent is validated
+    // and warned about during the walk, never trusted, since a missing or
+    // mismatched entry is the common way a file is already dirty. The walk
+    // threads the name prefix down with it, so the name index agrees with
+    // the enumeration by construction. The index holds the nodes alive, so an
     // address can never be recycled by an unrelated dictionary while it is
     // a key. Built in full on first access and cleared by every mutator, so
     // structural changes are reflected on the next access.
@@ -138,13 +145,20 @@ private:
     void BuildFieldCache() const;
 
     // The traversal parent is the node whose /Kids reached this one; empty
-    // for a root entry, which the /Fields array reached
+    // for a root entry, which the /Fields array reached. Its qualified name
+    // is the prefix of every name below it - the root level has none.
     void BuildFieldCacheInternal(
         syntax::IndirectReferenceObjectPtr node_reference,
         const syntax::OutputDictionaryObjectPtr& traversal_parent,
+        const std::string& parent_name,
         std::map<syntax::IndirectReferenceId, bool>& visited) const;
 
     bool IsMember(const syntax::DictionaryObjectPtr& dictionary) const;
+
+    // The walk's fully qualified name of a member node, derived from the
+    // chain of traversal parents in the node index - the same chain the
+    // mutators navigate by, not /Parent
+    std::string GetMemberQualifiedName(const syntax::DictionaryObjectPtr& dictionary) const;
 
     // The /Kids array of a node, created when the node has none yet
     static syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> CreateKids(syntax::DictionaryObjectPtr parent);

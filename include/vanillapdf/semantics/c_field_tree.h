@@ -131,6 +131,14 @@ extern "C"
     * that may legitimately contain U+0000, which UTF-8 encodes as a NUL
     * byte.
     *
+    * The names are the ones the hierarchy walk produces - each field's
+    * partial name appended to the name of the node whose /Kids reached it
+    * - so they agree with the enumeration by construction.
+    * Field_GetQualifiedName has nothing but the field's /Parent entries to
+    * follow; in a well-formed file the two are the same, in a file whose
+    * /Parent entries are missing or wrong they differ, and the walk's name
+    * is the one to look up.
+    *
     * Fully qualified names shall be unique (12.7.3.2), but existing documents
     * do not always honor that. Duplicates are tolerated when reading - a
     * warning is logged when the hierarchy is first enumerated, and the lookup
