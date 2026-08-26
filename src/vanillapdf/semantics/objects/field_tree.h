@@ -12,7 +12,6 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
 namespace vanillapdf {
@@ -117,24 +116,30 @@ public:
     // edited underneath the tree without Invalidate.
     void RemoveChild(FieldPtr field);
 
-    // Drops the cached flat view, so the next access rebuilds it from the
+    // Drops the cache, so the next access rebuilds it from the
     // dictionaries. Required after editing /Fields, /Kids or /Parent through
-    // the raw dictionary API; the tree's own mutators invalidate themselves.
+    // the raw dictionary API; the tree's own mutators maintain themselves.
     void Invalidate();
 
 private:
-    // The root children and the flat cache in document order, plus the node
-    // index over every node the walk visited - root children, groups and
-    // terminals - keyed by object identity. Each node maps to its traversal
-    // parent: the node whose /Kids reached it, empty for a root-level entry.
-    // That is what the mutators navigate and name by; /Parent is validated
-    // and warned about during the walk, never trusted, since a missing or
-    // mismatched entry is the common way a file is already dirty. The walk
-    // threads the name prefix down with it, so the name index agrees with
-    // the enumeration by construction. The index holds the nodes alive, so an
-    // address can never be recycled by an unrelated dictionary while it is
-    // a key. Built in full on first access and cleared by every mutator, so
-    // structural changes are reflected on the next access.
+    // The cache has two tiers, so that authoring many fields stays linear:
+    //  - the index - every node the walk visited, keyed by object identity
+    //    and mapped to its traversal parent (the node whose /Kids reached
+    //    it, empty for a root-level entry), plus the qualified names of the
+    //    nodes carrying a /T - answers membership and uniqueness. The insert
+    //    mutators extend it with the subtree they validated, no rebuild.
+    //  - the views - the root children, the terminal fields in document
+    //    order and the name lookup - are ordered, so an insert only marks
+    //    them stale; the next read rebuilds everything in one walk.
+    // Removal and Invalidate drop both tiers.
+    //
+    // The traversal parent is what the mutators navigate and name by;
+    // /Parent is validated and warned about during the walk, never trusted,
+    // since a missing or mismatched entry is the common way a file is
+    // already dirty. The walk threads the name prefix down with it, so the
+    // name index agrees with the enumeration by construction. The index
+    // holds the nodes alive, so an address can never be recycled by an
+    // unrelated dictionary while it is a key.
     //
     // The mutators hold the cache lock across the whole mutation, so the
     // membership check, the create-if-missing /Kids insert and the
@@ -142,15 +147,20 @@ private:
     // cache builds on this tree instance. Distinct FieldTree wrappers over
     // the same array each carry their own cache and lock (canonicalization
     // is issue #524).
+    using NodeMap = std::unordered_map<syntax::DictionaryObjectPtr, syntax::OutputDictionaryObjectPtr, DeferredIdentityHash<syntax::DictionaryObject>, DeferredIdentityEqual<syntax::DictionaryObject>>;
+
     mutable std::unique_ptr<std::recursive_mutex> m_cache_lock;
+    mutable NodeMap m_nodes;
+    mutable std::set<std::string> m_names;
+    mutable bool m_index_built = false;
+
     mutable std::vector<syntax::DictionaryObjectPtr> m_root_children;
     mutable std::vector<syntax::DictionaryObjectPtr> m_field_cache;
-    mutable std::unordered_map<syntax::DictionaryObjectPtr, syntax::OutputDictionaryObjectPtr, DeferredIdentityHash<syntax::DictionaryObject>, DeferredIdentityEqual<syntax::DictionaryObject>> m_nodes;
     mutable std::map<std::string, syntax::DictionaryObjectPtr> m_terminal_index;
-    mutable std::set<std::string> m_names;
-    mutable bool m_cache_built = false;
+    mutable bool m_views_built = false;
 
-    void EnsureCacheBuilt() const;
+    void EnsureIndexBuilt() const;
+    void EnsureViewsBuilt() const;
     void BuildFieldCache() const;
 
     // The traversal parent is the node whose /Kids reached this one; empty
@@ -173,8 +183,15 @@ private:
     static syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> CreateKids(syntax::DictionaryObjectPtr parent);
 
     // The insertion rules shared by every level; an empty parent stands for
-    // the root level
-    void ValidateInsertion(const syntax::OutputDictionaryObjectPtr& parent, const FieldPtr& child) const;
+    // the root level. Collects the child's subtree as the walk will see it
+    // under that parent - the nodes with their traversal parents and the
+    // names they take - ready to extend the index once the child is in
+    // place.
+    void ValidateInsertion(
+        const syntax::OutputDictionaryObjectPtr& parent,
+        const FieldPtr& child,
+        NodeMap& subtree_nodes,
+        std::set<std::string>& subtree_names) const;
 
     // The rules every node of an inserted subtree is held to, under the
     // name the walk will give it: not a member yet, and its name - when it
@@ -182,9 +199,13 @@ private:
     // subtree. Recurses through the /Kids fields the way the walk does.
     void ValidateSubtree(
         const syntax::DictionaryObjectPtr& node,
+        const syntax::OutputDictionaryObjectPtr& traversal_parent,
         const std::string& parent_name,
-        std::set<std::string>& subtree_names,
-        std::unordered_set<syntax::DictionaryObjectPtr, DeferredIdentityHash<syntax::DictionaryObject>, DeferredIdentityEqual<syntax::DictionaryObject>>& subtree_nodes) const;
+        NodeMap& subtree_nodes,
+        std::set<std::string>& subtree_names) const;
+
+    // Adds a validated subtree to the index and marks the views stale
+    void ExtendIndex(const NodeMap& subtree_nodes, const std::set<std::string>& subtree_names) const;
     void LinkChild(const syntax::OutputDictionaryObjectPtr& parent, syntax::DictionaryObjectPtr child) const;
 };
 

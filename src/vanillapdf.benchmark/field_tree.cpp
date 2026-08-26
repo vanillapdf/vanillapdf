@@ -2,9 +2,10 @@
 //
 // Covers the path a form author takes: attach an empty hierarchy, append
 // N root-level fields through FieldTree_AddRootChild, then read the flat
-// view once. Every mutator drops the cache, and the validation of the
-// next insert (membership, name uniqueness) forces a full rebuild before
-// it, so appending N fields walks O(1+2+...+N) = O(N²) nodes.
+// view once. Originally every mutator dropped the cache, and the
+// validation of the next insert (membership, name uniqueness) forced a
+// full rebuild before it, so appending N fields walked O(1+2+...+N) =
+// O(N²) nodes.
 //
 // Environment: Windows 11 x64, MSVC 18, Release, L3 16 MiB,
 // Google Benchmark, 3 repetitions, mean reported
@@ -19,6 +20,21 @@
 //
 // 100→1000 fields (10×): time grows 100× (O(N²) confirmed).
 // 1000→5000 fields (5×): time grows 28.6× (also O(N²)).
+//
+// After the two-tier cache (this branch - the insert mutators extend the
+// membership and name index with the subtree they validated and only mark
+// the ordered views stale; the read at the end rebuilds them once):
+//
+// | Benchmark                           | Time      | CPU       |
+// |-------------------------------------|-----------|-----------|
+// | AppendRootChildren/100_mean         |   1.64 ms |   1.73 ms |
+// | AppendRootChildren/1000_mean        |   16.3 ms |   16.7 ms |
+// | AppendRootChildren/5000_mean        |   93.2 ms |   94.6 ms |
+//
+// 100→1000 fields (10×): time grows 9.9× (linear).
+// 1000→5000 fields (5×): time grows 5.7× (linear).
+// Improvement: 1000 fields 5192 ms → 16.3 ms (~320×),
+// 5000 fields 148490 ms → 93.2 ms (~1600×).
 
 #include "benchmark.h"
 #include "handle_guard.h"

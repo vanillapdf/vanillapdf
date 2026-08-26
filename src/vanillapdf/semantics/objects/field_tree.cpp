@@ -60,14 +60,14 @@ FieldTreePtr FieldTree::Create(syntax::FilePtr file) {
 types::size_type FieldTree::GetFieldCount() const {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
-    EnsureCacheBuilt();
+    EnsureViewsBuilt();
     return m_field_cache.size();
 }
 
 FieldPtr FieldTree::GetField(types::size_type index) const {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
-    EnsureCacheBuilt();
+    EnsureViewsBuilt();
 
     if (index >= m_field_cache.size()) {
         LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Field index out of range: {}", index);
@@ -79,7 +79,7 @@ FieldPtr FieldTree::GetField(types::size_type index) const {
 bool FieldTree::TryFindField(std::string_view qualified_name, OuputFieldPtr& result) const {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
-    EnsureCacheBuilt();
+    EnsureViewsBuilt();
 
     auto found = m_terminal_index.find(std::string(qualified_name));
     if (found == m_terminal_index.end()) {
@@ -95,14 +95,14 @@ bool FieldTree::TryFindField(std::string_view qualified_name, OuputFieldPtr& res
 types::size_type FieldTree::GetRootChildCount() const {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
-    EnsureCacheBuilt();
+    EnsureViewsBuilt();
     return m_root_children.size();
 }
 
 FieldPtr FieldTree::GetRootChild(types::size_type index) const {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
-    EnsureCacheBuilt();
+    EnsureViewsBuilt();
 
     if (index >= m_root_children.size()) {
         LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Root child index out of range: {}", index);
@@ -115,21 +115,25 @@ void FieldTree::AddRootChild(FieldPtr child) {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
     syntax::OutputDictionaryObjectPtr root_level;
-    ValidateInsertion(root_level, child);
+    NodeMap subtree_nodes;
+    std::set<std::string> subtree_names;
+    ValidateInsertion(root_level, child, subtree_nodes, subtree_names);
 
     auto child_dictionary = child->GetObject();
     auto child_reference = make_deferred<syntax::IndirectReferenceObject>(child_dictionary);
     _obj->Append(child_reference);
 
     LinkChild(root_level, child_dictionary);
-    Invalidate();
+    ExtendIndex(subtree_nodes, subtree_names);
 }
 
 void FieldTree::InsertRootChild(types::size_type index, FieldPtr child) {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
     syntax::OutputDictionaryObjectPtr root_level;
-    ValidateInsertion(root_level, child);
+    NodeMap subtree_nodes;
+    std::set<std::string> subtree_names;
+    ValidateInsertion(root_level, child, subtree_nodes, subtree_names);
 
     // An index equal to the size appends, the array refuses anything beyond
     if (index > _obj->GetSize()) {
@@ -141,14 +145,16 @@ void FieldTree::InsertRootChild(types::size_type index, FieldPtr child) {
     _obj->Insert(index, child_reference);
 
     LinkChild(root_level, child_dictionary);
-    Invalidate();
+    ExtendIndex(subtree_nodes, subtree_names);
 }
 
 void FieldTree::AddChild(FieldPtr parent, FieldPtr child) {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
     syntax::OutputDictionaryObjectPtr parent_dictionary(parent->GetObject());
-    ValidateInsertion(parent_dictionary, child);
+    NodeMap subtree_nodes;
+    std::set<std::string> subtree_names;
+    ValidateInsertion(parent_dictionary, child, subtree_nodes, subtree_names);
 
     auto child_dictionary = child->GetObject();
     auto child_reference = make_deferred<syntax::IndirectReferenceObject>(child_dictionary);
@@ -157,14 +163,16 @@ void FieldTree::AddChild(FieldPtr parent, FieldPtr child) {
     kids->Append(child_reference);
 
     LinkChild(parent_dictionary, child_dictionary);
-    Invalidate();
+    ExtendIndex(subtree_nodes, subtree_names);
 }
 
 void FieldTree::InsertChild(FieldPtr parent, types::size_type index, FieldPtr child) {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
     syntax::OutputDictionaryObjectPtr parent_dictionary(parent->GetObject());
-    ValidateInsertion(parent_dictionary, child);
+    NodeMap subtree_nodes;
+    std::set<std::string> subtree_names;
+    ValidateInsertion(parent_dictionary, child, subtree_nodes, subtree_names);
 
     auto kids = CreateKids(*parent_dictionary);
 
@@ -178,13 +186,13 @@ void FieldTree::InsertChild(FieldPtr parent, types::size_type index, FieldPtr ch
     kids->Insert(index, child_reference);
 
     LinkChild(parent_dictionary, child_dictionary);
-    Invalidate();
+    ExtendIndex(subtree_nodes, subtree_names);
 }
 
 void FieldTree::RemoveChild(FieldPtr field) {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
-    EnsureCacheBuilt();
+    EnsureIndexBuilt();
 
     auto field_dictionary = field->GetObject();
     auto node = m_nodes.find(field_dictionary);
@@ -245,18 +253,30 @@ void FieldTree::Invalidate() {
     m_nodes.clear();
     m_terminal_index.clear();
     m_names.clear();
-    m_cache_built = false;
+    m_index_built = false;
+    m_views_built = false;
 }
 
 // Cache
 
-void FieldTree::EnsureCacheBuilt() const {
-    if (!m_cache_built) {
+void FieldTree::EnsureIndexBuilt() const {
+    if (!m_index_built) {
+        BuildFieldCache();
+    }
+}
+
+void FieldTree::EnsureViewsBuilt() const {
+    if (!m_views_built) {
         BuildFieldCache();
     }
 }
 
 void FieldTree::BuildFieldCache() const {
+    m_nodes.clear();
+    m_names.clear();
+    m_root_children.clear();
+    m_field_cache.clear();
+    m_terminal_index.clear();
 
     // Both /Fields and /Kids shall contain indirect references (Table 218,
     // Table 220). The arrays are walked untyped and every entry classified
@@ -300,7 +320,8 @@ void FieldTree::BuildFieldCache() const {
         BuildFieldCacheInternal(field_reference, root_level, std::string(), visited);
     }
 
-    m_cache_built = true;
+    m_index_built = true;
+    m_views_built = true;
 }
 
 void FieldTree::BuildFieldCacheInternal(
@@ -386,7 +407,7 @@ void FieldTree::BuildFieldCacheInternal(
 // Helpers
 
 bool FieldTree::IsMember(const syntax::DictionaryObjectPtr& dictionary) const {
-    EnsureCacheBuilt();
+    EnsureIndexBuilt();
     return m_nodes.find(dictionary) != m_nodes.end();
 }
 
@@ -416,7 +437,11 @@ syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> FieldTree::CreateKids
     return parent->FindAs<syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr>>(constant::Name::Kids);
 }
 
-void FieldTree::ValidateInsertion(const syntax::OutputDictionaryObjectPtr& parent, const FieldPtr& child) const {
+void FieldTree::ValidateInsertion(
+    const syntax::OutputDictionaryObjectPtr& parent,
+    const FieldPtr& child,
+    NodeMap& subtree_nodes,
+    std::set<std::string>& subtree_names) const {
     auto child_dictionary = child->GetObject();
 
     // The container arrays hold indirect references (Table 218, Table 220)
@@ -426,7 +451,7 @@ void FieldTree::ValidateInsertion(const syntax::OutputDictionaryObjectPtr& paren
         LOG_ERROR_AND_THROW(InvalidParameterException, "The field dictionary shall be an indirect object - allocate a cross-reference entry for it first");
     }
 
-    EnsureCacheBuilt();
+    EnsureIndexBuilt();
 
     std::string parent_name;
 
@@ -460,21 +485,21 @@ void FieldTree::ValidateInsertion(const syntax::OutputDictionaryObjectPtr& paren
 
     // The child may bring a subtree of its own - every node of it becomes
     // a node of this tree and is held to the same rules, under the name
-    // the walk will give it once the child is in place
-    std::set<std::string> subtree_names;
-    std::unordered_set<syntax::DictionaryObjectPtr, DeferredIdentityHash<syntax::DictionaryObject>, DeferredIdentityEqual<syntax::DictionaryObject>> subtree_nodes;
-    ValidateSubtree(child_dictionary, parent_name, subtree_names, subtree_nodes);
+    // the walk will give it once the child is in place. What the walk
+    // collects is exactly what the index needs once the child is in place.
+    ValidateSubtree(child_dictionary, parent, parent_name, subtree_nodes, subtree_names);
 }
 
 void FieldTree::ValidateSubtree(
     const syntax::DictionaryObjectPtr& node,
+    const syntax::OutputDictionaryObjectPtr& traversal_parent,
     const std::string& parent_name,
-    std::set<std::string>& subtree_names,
-    std::unordered_set<syntax::DictionaryObjectPtr, DeferredIdentityHash<syntax::DictionaryObject>, DeferredIdentityEqual<syntax::DictionaryObject>>& subtree_nodes) const {
+    NodeMap& subtree_nodes,
+    std::set<std::string>& subtree_names) const {
 
     // A node reached twice within the subtree is enumerated once by the
     // walk, so it is judged once here
-    if (!subtree_nodes.insert(node).second) {
+    if (!subtree_nodes.emplace(node, traversal_parent).second) {
         return;
     }
 
@@ -507,8 +532,20 @@ void FieldTree::ValidateSubtree(
             continue;
         }
 
-        ValidateSubtree(*kid, qualified_name, subtree_names, subtree_nodes);
+        ValidateSubtree(*kid, syntax::OutputDictionaryObjectPtr(node), qualified_name, subtree_nodes, subtree_names);
     }
+}
+
+void FieldTree::ExtendIndex(const NodeMap& subtree_nodes, const std::set<std::string>& subtree_names) const {
+    m_nodes.insert(subtree_nodes.begin(), subtree_nodes.end());
+    m_names.insert(subtree_names.begin(), subtree_names.end());
+
+    // The ordered views are rebuilt by the next read - one walk for a whole
+    // batch of insertions instead of one per insertion
+    m_root_children.clear();
+    m_field_cache.clear();
+    m_terminal_index.clear();
+    m_views_built = false;
 }
 
 void FieldTree::LinkChild(const syntax::OutputDictionaryObjectPtr& parent, syntax::DictionaryObjectPtr child) const {
