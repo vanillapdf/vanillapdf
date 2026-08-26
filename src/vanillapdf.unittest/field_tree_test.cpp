@@ -867,6 +867,36 @@ TEST(FieldTree, CreatedTreeIsUsableBeforeAttachment) {
     EXPECT_EQ(GetFieldCount(form_tree), 1u);
 }
 
+// A hierarchy holds references into the document it was created for -
+// attached to a form of another document, they would serialize as dangling
+// object numbers, so the attachment is refused and the form is left as it was
+TEST(FieldTree, AttachingTreeOfAnotherDocumentIsRefused) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> other_io_stream;
+    HandleGuard<FileHandle, File_Release> other_file;
+    HandleGuard<DocumentHandle, Document_Release> other_document;
+    CreateMemoryDocument(other_io_stream, other_file, other_document);
+
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
+    ASSERT_EQ(InteractiveForm_CreateFromDocument(document, form.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FieldTreeHandle, FieldTree_Release> other_tree;
+    ASSERT_EQ(FieldTree_CreateFromDocument(other_document, other_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(InteractiveForm_SetFieldTree(form, other_tree), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    HandleGuard<FieldTreeHandle, FieldTree_Release> missing_tree;
+    EXPECT_EQ(InteractiveForm_GetFieldTree(form, missing_tree.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+
+    // The document's own hierarchy is accepted as before
+    HandleGuard<FieldTreeHandle, FieldTree_Release> own_tree;
+    ASSERT_EQ(FieldTree_CreateFromDocument(document, own_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(InteractiveForm_SetFieldTree(form, own_tree), VANILLAPDF_ERROR_SUCCESS);
+}
+
 // --- Persistence ---
 
 // A hierarchy authored through the tree survives a save and reopen cycle

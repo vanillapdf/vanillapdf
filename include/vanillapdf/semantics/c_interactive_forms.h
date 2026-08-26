@@ -81,6 +81,10 @@ extern "C"
     * a form that does not have any fields yet. The attached instance
     * becomes the one \ref InteractiveForm_GetFieldTree returns, so the
     * caller's handle and the form share a single cache.
+    *
+    * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the hierarchy was
+    * created for a different document than the form belongs to - its
+    * references would serialize as dangling object numbers here.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetFieldTree(InteractiveFormHandle* handle, FieldTreeHandle* value);
 

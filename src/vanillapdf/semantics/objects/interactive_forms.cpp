@@ -56,6 +56,19 @@ void InteractiveForm::SetFieldTree(FieldTreePtr value) {
     ACCESS_LOCK_GUARD(m_access_lock);
 
     auto fields = value->GetObject();
+
+    // The array carries the file it was created for (FieldTree::Create,
+    // or the parser), and Insert sets the owner only. A hierarchy of
+    // another document holds references to that document's objects;
+    // installed here they would serialize as this document's object
+    // numbers, dangling. A detached form dictionary has no file to compare
+    // against.
+    auto tree_file = fields->Data()->GetFile();
+    auto form_file = _obj->GetFile();
+    if (!tree_file.IsEmpty() && !form_file.IsEmpty() && !tree_file.Identity(form_file)) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The field hierarchy belongs to a different document than the form");
+    }
+
     _obj->Insert(constant::Name::Fields, fields->Data(), true);
 
     // The installed instance is the one handed out from now on, so that the
