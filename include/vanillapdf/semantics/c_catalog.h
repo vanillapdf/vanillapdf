@@ -150,6 +150,11 @@ extern "C"
     * \brief
     * The document's interactive form
     * (see 12.7, "Interactive Forms").
+    *
+    * The same form instance is returned for the lifetime of this catalog
+    * handle, so the field hierarchy it owns - and the cache behind it - is
+    * shared by everyone reaching the form this way, \ref Document_Sign
+    * included.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle* handle, InteractiveFormHandle** result);
 
@@ -159,7 +164,10 @@ extern "C"
     *
     * The catalog stores an indirect reference, so the form has to be
     * registered within the document - use
-    * \ref InteractiveForm_CreateFromDocument to obtain one.
+    * \ref InteractiveForm_CreateFromDocument to obtain one. The instance
+    * to work with afterwards is the one \ref Catalog_GetAcroForm hands
+    * out, which is resolved over the installed dictionary; the handle
+    * passed here is not the one shared through the catalog.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Catalog_SetAcroForm(CatalogHandle* handle, InteractiveFormHandle* value);
 

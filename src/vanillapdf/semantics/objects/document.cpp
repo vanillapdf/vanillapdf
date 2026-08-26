@@ -317,20 +317,15 @@ NameDictionaryPtr Document::CreateNameDictionary(CatalogPtr catalog) {
 }
 
 InteractiveFormPtr Document::CreateAcroForm(CatalogPtr catalog) {
-    auto entry = m_holder->AllocateNewEntry();
+    auto created_form = InteractiveForm::Create(m_holder);
+    catalog->SetAcroForm(created_form);
 
-    DictionaryObjectPtr raw_dictionary;
-    raw_dictionary->SetFile(m_holder);
-    raw_dictionary->SetInitialized();
-    entry->SetReference(raw_dictionary);
-    entry->SetInitialized();
+    // The catalog hands out one form instance to everyone, so the one to
+    // return is the one it resolves over the installed dictionary
+    OuputInteractiveFormPtr installed_form;
+    catalog->AcroForm(installed_form);
 
-    auto raw_catalog = catalog->GetObject();
-
-    IndirectReferenceObjectPtr ref = make_deferred<IndirectReferenceObject>(raw_dictionary);
-    raw_catalog->Insert(constant::Name::AcroForm, ref);
-
-    return make_deferred<InteractiveForm>(raw_dictionary);
+    return installed_form;
 }
 
 NameTreePtr<DestinationPtr> Document::CreateStringDestinations(NameDictionaryPtr dictionary) {
@@ -803,10 +798,8 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     signature_annotation->Insert(constant::Name::V, signature_dictionary_reference);
 
     OuputInteractiveFormPtr interactive_form;
-    bool has_interactive_form = catalog->AcroForm(interactive_form);
-    if (!has_interactive_form) {
+    if (!catalog->AcroForm(interactive_form)) {
         interactive_form = CreateAcroForm(catalog);
-        assert(!interactive_form.empty() && "CreateAcroForm returned empty result");
     }
 
     // Update signature flags
@@ -823,14 +816,13 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     }
 
     // Fully qualified names shall be unique (12.7.3.2) and the tree
-    // refuses a duplicate, so a document signed before gets the next
-    // number
+    // refuses a duplicate - carried by a terminal or a group alike - so a
+    // document signed before, or one with a group of that name, gets the
+    // next number. The probe asks the same authority the refusal uses.
     std::string signature_field_name;
     for (types::size_type ordinal = 1;; ++ordinal) {
         signature_field_name = fmt::format("Signature{}", ordinal);
-
-        OuputFieldPtr existing_field;
-        if (!field_tree->TryFindField(signature_field_name, existing_field)) {
+        if (!field_tree->ContainsName(signature_field_name)) {
             break;
         }
     }

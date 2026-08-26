@@ -65,6 +65,12 @@ public:
     // order.
     bool TryFindField(std::string_view qualified_name, OuputFieldPtr& result) const;
 
+    // Whether any node of the hierarchy - terminal or group - carries this
+    // fully qualified name. This is the authority the mutators reject
+    // duplicates against, so a name absent here is one they accept;
+    // TryFindField sees terminals only.
+    bool ContainsName(std::string_view qualified_name) const;
+
     // Structural view, level 0 - the root /Fields entries that are field
     // dictionaries, in array order, groups included; a stray dictionary is
     // skipped with a warning, the same way a widget among /Kids is. Served

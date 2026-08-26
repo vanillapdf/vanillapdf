@@ -90,6 +90,13 @@ bool FieldTree::TryFindField(std::string_view qualified_name, OuputFieldPtr& res
     return true;
 }
 
+bool FieldTree::ContainsName(std::string_view qualified_name) const {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    EnsureIndexBuilt();
+    return m_names.find(std::string(qualified_name)) != m_names.end();
+}
+
 // Structure
 
 types::size_type FieldTree::GetRootChildCount() const {

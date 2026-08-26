@@ -18,8 +18,11 @@ public:
     explicit InteractiveForm(syntax::DictionaryObjectPtr root);
 
     // Creates an empty form registered as an indirect object within the
-    // document. Attach it through Catalog::SetAcroForm to take effect.
+    // document. Attach it through Catalog::SetAcroForm to take effect. The
+    // document is the public form, mirrored by the C API; the file overload
+    // is for the library's own use, where Document holds its file directly.
     static InteractiveFormPtr Create(DocumentPtr document);
+    static InteractiveFormPtr Create(syntax::FilePtr file);
 
     // The field hierarchy over the /Fields entry - the flat terminal
     // enumeration, the structural walk and every field mutation live there.

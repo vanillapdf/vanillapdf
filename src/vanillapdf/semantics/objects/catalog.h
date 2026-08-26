@@ -16,6 +16,8 @@
 #include "utils/pdf_version.h"
 #include "utils/cached_value.h"
 
+#include <mutex>
+
 namespace vanillapdf {
 namespace semantics {
 
@@ -56,6 +58,12 @@ public:
     bool Destinations(OutputNamedDestinationsPtr& result) const;
     bool Names(OutputNameDictionaryPtr& result) const;
     void SetNames(NameDictionaryPtr value);
+    // The interactive form over the /AcroForm entry. Resolved once and then
+    // handed out unchanged, so that the field tree the form owns is shared
+    // by everyone reaching the form through the catalog - Document::Sign
+    // included. SetAcroForm installs the form's dictionary and drops the
+    // resolved instance; the instance to work with afterwards is the one
+    // AcroForm hands out, not the argument.
     bool AcroForm(OuputInteractiveFormPtr& result) const;
     void SetAcroForm(InteractiveFormPtr value);
 
@@ -67,6 +75,13 @@ private:
     bool ResolvePages(OutputPageTreePtr& result) const;
 
     CachedValue<OutputPageTreePtr> m_pages;
+
+    // The form instance is resolved once from /AcroForm by the getter and
+    // then handed out unchanged; the setter drops it. A value that can be
+    // dropped is outside the compute-once contract of CachedValue, whose
+    // lock-free fast path would race the reset.
+    mutable std::unique_ptr<std::recursive_mutex> m_access_lock;
+    mutable OuputInteractiveFormPtr m_acro_form;
 };
 
 } // semantics

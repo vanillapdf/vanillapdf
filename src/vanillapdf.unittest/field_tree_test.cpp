@@ -1,5 +1,6 @@
 #include "unittest.h"
 #include "handle_guard.h"
+#include "test_data.h"
 
 #include <cstring>
 
@@ -1193,6 +1194,106 @@ TEST(FieldTree, AuthoredHierarchyPersistsAcrossSave) {
     HandleGuard<FieldHandle, Field_Release> reloaded_street_parent;
     ASSERT_EQ(Field_GetParent(reloaded_street, reloaded_street_parent.out()), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(GetQualifiedName(reloaded_street_parent), "address");
+}
+
+// --- Signing ---
+
+// Document_Sign adds its signature field through the tree and picks a
+// name the tree accepts: a group named Signature1 takes that name just as
+// a terminal would, so the signature lands at Signature2 - it must not
+// probe with the terminal lookup and then be refused by the group
+TEST(FieldTree, SignSkipsNameTakenByGroup) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> created_form;
+    ASSERT_EQ(InteractiveForm_CreateFromDocument(document, created_form.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<CatalogHandle, Catalog_Release> catalog;
+    ASSERT_EQ(Document_GetCatalog(document, catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_SetAcroForm(catalog, created_form), VANILLAPDF_ERROR_SUCCESS);
+
+    // The catalog resolves the form once and hands out that instance to
+    // everyone, the signer included - so the hierarchy is attached to the
+    // instance the catalog hands out, not to the one that was installed
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
+    ASSERT_EQ(Catalog_GetAcroForm(catalog, form.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FieldTreeHandle, FieldTree_Release> tree;
+    ASSERT_EQ(FieldTree_CreateFromDocument(document, tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_SetFieldTree(form, tree), VANILLAPDF_ERROR_SUCCESS);
+
+    // A group carrying the name the signer would pick first
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> group_dictionary;
+    ASSERT_EQ(DictionaryObject_Create(group_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertStringEntry(group_dictionary, "T", "Signature1");
+    RegisterIndirectObject(file, group_dictionary);
+
+    HandleGuard<FieldHandle, Field_Release> group;
+    ASSERT_EQ(Field_CreateFromDictionary(group_dictionary, group.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_AddRootChild(tree, group), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> child_dictionary;
+    HandleGuard<FieldHandle, Field_Release> child;
+    CreateTextFieldDictionary(file, "child", child_dictionary, child);
+    ASSERT_EQ(FieldTree_AddChild(tree, group, child), VANILLAPDF_ERROR_SUCCESS);
+
+    // The terminal lookup does not see the group; the signer must not
+    // rely on it
+    HandleGuard<FieldHandle, Field_Release> not_a_terminal;
+    ASSERT_EQ(FindFieldByName(tree, "Signature1", not_a_terminal.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
+
+    HandleGuard<BufferHandle, Buffer_Release> signing_key_data;
+    HandleGuard<PKCS12KeyHandle, PKCS12Key_Release> pkcs12_key;
+    HandleGuard<SigningKeyHandle, SigningKey_Release> signing_key;
+    HandleGuard<DateHandle, Date_Release> signing_time;
+    HandleGuard<DocumentSignatureSettingsHandle, DocumentSignatureSettings_Release> signature_settings;
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(SIGNING_CERTIFICATE), sizeof(SIGNING_CERTIFICATE), signing_key_data.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(signing_key_data, nullptr, pkcs12_key.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, signing_key.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Date_CreateCurrent(signing_time.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentSignatureSettings_Create(signature_settings.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentSignatureSettings_SetSigningKey(signature_settings, signing_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentSignatureSettings_SetDigest(signature_settings, MessageDigestAlgorithmType_SHA256), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentSignatureSettings_SetSigningTime(signature_settings, signing_time), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> signed_stream;
+    HandleGuard<FileHandle, File_Release> signed_file;
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(signed_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(signed_stream, "temp_signed", signed_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_Sign(document, signed_file, signature_settings), VANILLAPDF_ERROR_SUCCESS);
+
+    // The signature went in next to the group, under the next free name,
+    // and the tree held here shows it right away: the signer reached the
+    // form through the catalog, which hands out the very form instance
+    // attached above, and that form hands out this very tree
+    ASSERT_EQ(GetRootChildCount(tree), 2u);
+    EXPECT_EQ(GetRootChildQualifiedName(tree, 1), "Signature2");
+
+    HandleGuard<FileHandle, File_Release> reloaded_file;
+    HandleGuard<DocumentHandle, Document_Release> reloaded_document;
+    HandleGuard<CatalogHandle, Catalog_Release> reloaded_catalog;
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> reloaded_form;
+    HandleGuard<FieldTreeHandle, FieldTree_Release> reloaded_tree;
+    ASSERT_EQ(File_OpenStream(signed_stream, "temp_signed", reloaded_file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_Initialize(reloaded_file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_OpenFile(reloaded_file, reloaded_document.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_GetCatalog(reloaded_document, reloaded_catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_GetAcroForm(reloaded_catalog, reloaded_form.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_GetFieldTree(reloaded_form, reloaded_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(GetFieldCount(reloaded_tree), 2u);
+    EXPECT_EQ(GetFieldQualifiedName(reloaded_tree, 0), "Signature1.child");
+    EXPECT_EQ(GetFieldQualifiedName(reloaded_tree, 1), "Signature2");
+
+    HandleGuard<FieldHandle, Field_Release> signature;
+    ASSERT_EQ(FindFieldByName(reloaded_tree, "Signature2", signature.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    FieldType type = FieldType_Undefined;
+    ASSERT_EQ(Field_GetType(signature, &type), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(type, FieldType_Signature);
 }
 
 } // namespace field_tree

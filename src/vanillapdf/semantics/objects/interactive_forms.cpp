@@ -18,8 +18,10 @@ InteractiveForm::InteractiveForm(syntax::DictionaryObjectPtr root) : HighLevelOb
 }
 
 InteractiveFormPtr InteractiveForm::Create(DocumentPtr document) {
-    auto file = document->GetFile();
+    return Create(document->GetFile());
+}
 
+InteractiveFormPtr InteractiveForm::Create(syntax::FilePtr file) {
     syntax::DictionaryObjectPtr raw_dictionary;
 
     auto new_entry = file->AllocateNewEntry();
