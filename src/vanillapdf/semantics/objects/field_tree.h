@@ -57,8 +57,11 @@ public:
     // resolve to the first terminal field in document order.
     bool TryFindField(std::string_view qualified_name, OuputFieldPtr& result) const;
 
-    // Structural view, level 0 - the root /Fields entries in array order,
-    // groups included. Field::GetChildCount / GetChild continue below.
+    // Structural view, level 0 - the root /Fields entries that are field
+    // dictionaries, in array order, groups included; a stray dictionary is
+    // skipped with a warning, the same way a widget among /Kids is. Served
+    // from the cache under the lock, like the flat view.
+    // Field::GetChildCount / GetChild continue below.
     types::size_type GetRootChildCount() const;
     FieldPtr GetRootChild(types::size_type index) const;
 
@@ -106,9 +109,9 @@ public:
     void Invalidate();
 
 private:
-    // Flat cache in document order plus the node index over every node the
-    // walk visited - root children, groups and terminals - keyed by object
-    // identity. Each node maps to its traversal parent: the node whose /Kids
+    // The root children and the flat cache in document order, plus the node
+    // index over every node the walk visited - root children, groups and
+    // terminals - keyed by object identity. Each node maps to its traversal parent: the node whose /Kids
     // reached it, empty for a root-level entry. That is what the mutators
     // navigate by; /Parent is validated and warned about during the walk,
     // never trusted, since a missing or mismatched entry is the common way
@@ -124,6 +127,7 @@ private:
     // the same array each carry their own cache and lock (canonicalization
     // is issue #524).
     mutable std::unique_ptr<std::recursive_mutex> m_cache_lock;
+    mutable std::vector<syntax::DictionaryObjectPtr> m_root_children;
     mutable std::vector<syntax::DictionaryObjectPtr> m_field_cache;
     mutable std::unordered_map<syntax::DictionaryObjectPtr, syntax::OutputDictionaryObjectPtr, DeferredIdentityHash<syntax::DictionaryObject>, DeferredIdentityEqual<syntax::DictionaryObject>> m_nodes;
     mutable std::map<std::string, syntax::DictionaryObjectPtr> m_terminal_index;

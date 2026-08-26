@@ -69,17 +69,22 @@ bool FieldTree::TryFindField(std::string_view qualified_name, OuputFieldPtr& res
 // Structure
 
 types::size_type FieldTree::GetRootChildCount() const {
-    return _obj->GetSize();
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    EnsureCacheBuilt();
+    return m_root_children.size();
 }
 
 FieldPtr FieldTree::GetRootChild(types::size_type index) const {
-    if (index >= _obj->GetSize()) {
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
+    EnsureCacheBuilt();
+
+    if (index >= m_root_children.size()) {
         LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Root child index out of range: {}", index);
     }
 
-    auto child_reference = _obj->GetValue(index);
-    auto child = child_reference->GetReferencedObjectAs<syntax::DictionaryObjectPtr>();
-    return Field::Create(child);
+    return Field::Create(m_root_children[index]);
 }
 
 void FieldTree::AddRootChild(FieldPtr child) {
@@ -204,6 +209,7 @@ void FieldTree::RemoveChild(FieldPtr field) {
 void FieldTree::Invalidate() {
     ACCESS_LOCK_GUARD(m_cache_lock);
 
+    m_root_children.clear();
     m_field_cache.clear();
     m_nodes.clear();
     m_terminal_index.clear();
@@ -233,6 +239,26 @@ void FieldTree::BuildFieldCache() const {
     syntax::OutputDictionaryObjectPtr root_level;
 
     for (auto field_reference : _obj) {
+        auto root_child = field_reference->GetReferencedObjectAs<syntax::DictionaryObjectPtr>();
+
+        // The root array holds fields only (Table 218) - widget
+        // annotations belong to a field's /Kids. A dictionary here that is
+        // not a field is a stray entry, classified the same way a /Kids
+        // entry is and skipped the same way
+        if (!Field::IsFieldDictionary(root_child)) {
+            spdlog::warn("Root /Fields entry {} {} R is not a field dictionary and is skipped", field_reference->GetReferencedObjectNumber(), field_reference->GetReferencedGenerationNumber());
+            continue;
+        }
+
+        // A node listed twice - or already reached through some /Kids - is
+        // enumerated where it was first reached; the root view shows what
+        // the walk shows
+        if (m_nodes.find(root_child) != m_nodes.end()) {
+            spdlog::warn("Root /Fields entry {} {} R was already reached - only the first path is enumerated", field_reference->GetReferencedObjectNumber(), field_reference->GetReferencedGenerationNumber());
+            continue;
+        }
+
+        m_root_children.push_back(root_child);
         BuildFieldCacheInternal(field_reference, root_level, visited);
     }
 

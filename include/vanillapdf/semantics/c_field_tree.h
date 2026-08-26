@@ -138,10 +138,13 @@ extern "C"
     /**
     * \brief
     * Get the number of top-level fields - the entries of the root /Fields
-    * array, groups included.
+    * array that are field dictionaries, groups included.
     *
-    * This is the first level of the structural view; \ref Field_GetChildCount
-    * continues below it.
+    * The root array holds fields only (Table 218); a stray dictionary in it
+    * - a widget annotation, say - is not a field and is skipped with a
+    * warning, the same way a widget among a field's /Kids is skipped by
+    * \ref Field_GetChildCount. This is the first level of the structural
+    * view; Field_GetChildCount continues below it.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_GetRootChildCount(FieldTreeHandle* handle, size_type* result);
 
@@ -180,9 +183,9 @@ extern "C"
     * Insert a top-level field at the given zero-based position among the
     * root /Fields entries.
     *
-    * The index counts the /Fields entries - the same space as
-    * \ref FieldTree_GetRootChild, not the flat view - and an index equal to
-    * \ref FieldTree_GetRootChildCount appends. The order of the container
+    * The index is a position in the /Fields array itself - the same space
+    * as \ref FieldTree_GetRootChild as long as every entry is a field, not
+    * the flat view - and an index equal to the array size appends. The order of the container
     * arrays affects the enumeration order of the hierarchy only; the tab
     * order of a page comes from its /Annots array. Otherwise identical to
     * \ref FieldTree_AddRootChild.

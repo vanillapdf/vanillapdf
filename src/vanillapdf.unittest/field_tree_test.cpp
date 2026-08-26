@@ -337,6 +337,43 @@ TEST(FieldTree, NamelessIntermediateNodeIsWalked) {
     EXPECT_EQ(FindFieldByName(tree, "group.leaf", found.out()), VANILLAPDF_ERROR_SUCCESS);
 }
 
+// The root array holds fields only - a stray dictionary in it is skipped
+// by both views, the same way a widget among /Kids is
+TEST(FieldTree, StrayRootEntryIsSkipped) {
+    SampleHierarchy sample;
+    BuildSampleHierarchy(sample);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> widget;
+    ASSERT_EQ(DictionaryObject_Create(widget.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertNameEntry(widget, "Subtype", "Widget");
+    RegisterIndirectObject(sample.file, widget);
+
+    // Slip it between the two fields of the array the tree is a view over
+    HandleGuard<NameObjectHandle, NameObject_Release> fields_key;
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Fields", fields_key.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ObjectHandle, Object_Release> fields_object;
+    ASSERT_EQ(DictionaryObject_Find(sample.form_dictionary, fields_key, fields_object.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ArrayObjectHandle, ArrayObject_Release> fields_array;
+    ASSERT_EQ(ArrayObject_FromObject(fields_object, fields_array.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<IndirectReferenceObjectHandle, IndirectReferenceObject_Release> widget_reference;
+    CreateReferenceTo(widget, widget_reference);
+
+    HandleGuard<ObjectHandle, Object_Release> widget_reference_object;
+    ASSERT_EQ(IndirectReferenceObject_ToObject(widget_reference, widget_reference_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Insert(fields_array, 1, widget_reference_object), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_Invalidate(sample.tree), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(GetRootChildCount(sample.tree), 2u);
+    EXPECT_EQ(GetRootChildQualifiedName(sample.tree, 0), "address");
+    EXPECT_EQ(GetRootChildQualifiedName(sample.tree, 1), "email");
+
+    ASSERT_EQ(GetFieldCount(sample.tree), 3u);
+    EXPECT_EQ(GetFieldQualifiedName(sample.tree, 2), "email");
+}
+
 // --- Walking up ---
 
 // A nested field reports its group, a top-level field has no /Parent and
