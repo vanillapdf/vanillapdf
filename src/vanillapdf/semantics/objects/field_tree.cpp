@@ -40,7 +40,10 @@ FieldTree::FieldTree(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> 
 }
 
 FieldTreePtr FieldTree::Create(DocumentPtr document) {
-    auto file = document->GetFile();
+    return Create(document->GetFile());
+}
+
+FieldTreePtr FieldTree::Create(syntax::FilePtr file) {
 
     // The array itself is a direct object of the form dictionary, but it
     // belongs to the file, so that the references it will hold resolve

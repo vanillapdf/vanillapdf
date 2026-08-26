@@ -56,9 +56,10 @@ public:
     bool ResolveDefaultAppearance(const FieldPtr& field, syntax::OutputStringObjectPtr& result) const;
     Field::Quadding ResolveQuadding(const FieldPtr& field) const;
 
-    // Create-if-missing helpers retained for Document::Sign, which builds the
-    // signature field on a form it may have just created itself
-    FieldCollectionPtr CreateFields();
+    // Create-if-missing helper retained for Document::Sign, which sets the
+    // flags on a form it may have just created itself. Fields have no such
+    // path: Document::Sign attaches a FieldTree like any other caller, so
+    // the tree's cache is never bypassed from inside the library.
     SignatureFlagsPtr CreateSignatureFlags();
 
 private:

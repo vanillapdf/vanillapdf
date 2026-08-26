@@ -44,8 +44,11 @@ public:
     explicit FieldTree(syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr> fields);
 
     // Creates an empty hierarchy belonging to the document. It takes effect
-    // once attached to a form with InteractiveForm::SetFieldTree.
+    // once attached to a form with InteractiveForm::SetFieldTree. The
+    // document is the public form, mirrored by the C API; the file overload
+    // is for the library's own use, where Document holds its file directly.
     static FieldTreePtr Create(DocumentPtr document);
+    static FieldTreePtr Create(syntax::FilePtr file);
 
     // Flat view - terminal fields in document order, grouping nodes hidden.
     // A radio button group is a single terminal field with one value,

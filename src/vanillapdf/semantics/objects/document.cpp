@@ -10,6 +10,8 @@
 #include "syntax/utils/serialization_override_object_attribute.h"
 
 #include "semantics/objects/document.h"
+#include "semantics/objects/field_tree.h"
+#include "semantics/objects/fields.h"
 #include "semantics/objects/page_contents.h"
 #include "semantics/objects/annotations.h"
 #include "semantics/objects/name_dictionary.h"
@@ -796,7 +798,6 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
 
     // Create new signature field
     signature_annotation->Insert(constant::Name::FT, NameObject::CreateFromDecoded("Sig"));
-    signature_annotation->Insert(constant::Name::T, LiteralStringObject::CreateFromDecoded("Signature1"));
 
     auto signature_dictionary_reference = make_deferred<syntax::IndirectReferenceObject>(signature_dictionary);
     signature_annotation->Insert(constant::Name::V, signature_dictionary_reference);
@@ -813,13 +814,31 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     signature_flags->SetSignaturesExist(true);
     signature_flags->SetAppendOnly(true);
 
-    // Create signature field dictionary within AcroForm
-    auto fields = interactive_form->CreateFields();
-    auto fields_obj = fields->GetObject();
-    auto fields_array = fields_obj->Data();
+    // The signature field joins the hierarchy the way any field does -
+    // through the tree, so that a tree the caller already holds sees it
+    OutputFieldTreePtr field_tree;
+    if (!interactive_form->GetFieldTree(field_tree)) {
+        field_tree = FieldTree::Create(m_holder);
+        interactive_form->SetFieldTree(field_tree);
+    }
 
-    auto signature_fields_reference = make_deferred<syntax::IndirectReferenceObject>(signature_annotation);
-    fields_array->Append(signature_fields_reference);
+    // Fully qualified names shall be unique (12.7.3.2) and the tree
+    // refuses a duplicate, so a document signed before gets the next
+    // number
+    std::string signature_field_name;
+    for (types::size_type ordinal = 1;; ++ordinal) {
+        signature_field_name = fmt::format("Signature{}", ordinal);
+
+        OuputFieldPtr existing_field;
+        if (!field_tree->TryFindField(signature_field_name, existing_field)) {
+            break;
+        }
+    }
+
+    signature_annotation->Insert(constant::Name::T, LiteralStringObject::CreateFromDecoded(signature_field_name));
+
+    auto signature_field = Field::Create(signature_annotation);
+    field_tree->AddRootChild(signature_field);
 
     // TODO:
     // Move the signature creation logic to new callback IFileWriterObserver::OnAfterXrefClone

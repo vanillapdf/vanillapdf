@@ -178,21 +178,6 @@ void InteractiveForm::SetNeedAppearances(bool value) {
     _obj->Insert(constant::Name::NeedAppearances, bool_obj);
 }
 
-FieldCollectionPtr InteractiveForm::CreateFields() {
-    ACCESS_LOCK_GUARD(m_access_lock);
-
-    if (!_obj->Contains(constant::Name::Fields)) {
-        syntax::MixedArrayObjectPtr mixed_array;
-        mixed_array->SetFile(_obj->GetFile());
-        mixed_array->SetInitialized();
-
-        _obj->Insert(constant::Name::Fields, mixed_array);
-    }
-
-    auto fields = _obj->FindAs<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>>(constant::Name::Fields);
-    return make_deferred<FieldCollection>(fields);
-}
-
 SignatureFlagsPtr InteractiveForm::CreateSignatureFlags() {
     ACCESS_LOCK_GUARD(m_access_lock);
 
