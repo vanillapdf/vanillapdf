@@ -80,6 +80,17 @@ extern "C"
     */
 
     /**
+    * \class RunLengthDecodeFilterHandle
+    * \extends FilterBaseHandle
+    * \ingroup group_files
+    * \brief
+    * The RunLengthDecode filter decodes data that has been encoded in a simple byte-oriented format
+    * based on run length. The encoded data shall be a sequence of runs, where each run shall consist
+    * of a length byte followed by 1 to 128 bytes of data.
+    * \details For more information please visit [section 7.4.5 - RunLengthDecode Filter](PDF32000_2008.pdf#G6.1639139)
+    */
+
+    /**
     * \memberof FilterBaseHandle
     * @{
     */
@@ -335,6 +346,41 @@ extern "C"
     * \copydoc FilterBase_Release
     */
     VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_Release(JPXDecodeFilterHandle* handle);
+
+    /** @} */
+
+    /**
+    * \memberof RunLengthDecodeFilterHandle
+    * @{
+    */
+
+    /**
+    * \brief Creates a new filter instance
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION RunLengthDecodeFilter_Create(RunLengthDecodeFilterHandle** result);
+
+    /**
+    * \copydoc FilterBase_Encode
+    * \see \ref FilterBase_Encode
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION RunLengthDecodeFilter_Encode(RunLengthDecodeFilterHandle* handle, BufferHandle* data, BufferHandle** result);
+
+    /**
+    * \copydoc FilterBase_Encode
+    * \see \ref FilterBase_EncodeParams
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION RunLengthDecodeFilter_EncodeParams(RunLengthDecodeFilterHandle* handle, BufferHandle* data, DictionaryObjectHandle* parameters, BufferHandle** result);
+
+    /**
+    * \copydoc FilterBase_Decode
+    * \see \ref FilterBase_Decode
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION RunLengthDecodeFilter_Decode(RunLengthDecodeFilterHandle* handle, BufferHandle* data, BufferHandle** result);
+
+    /**
+    * \copydoc FilterBase_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION RunLengthDecodeFilter_Release(RunLengthDecodeFilterHandle* handle);
 
     /** @} */
 

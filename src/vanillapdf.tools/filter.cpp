@@ -73,6 +73,11 @@ int process_filter(const FilterOptions& options) {
             ASCIIHexDecodeFilter_Create, ASCIIHexDecodeFilter_Encode, ASCIIHexDecodeFilter_Decode>(is_encode, input_data, output_stream)));
     }
 
+    if (options.filter_type == "runlength") {
+        RETURN_ERROR_IF_NOT_SUCCESS((apply_filter<RunLengthDecodeFilterHandle, RunLengthDecodeFilter_Release,
+            RunLengthDecodeFilter_Create, RunLengthDecodeFilter_Encode, RunLengthDecodeFilter_Decode>(is_encode, input_data, output_stream)));
+    }
+
     return VANILLAPDF_TOOLS_ERROR_SUCCESS;
 }
 
@@ -84,7 +89,7 @@ void register_filter(CLI::App& app, int& exit_code) {
 
     command->add_option("-f,--filter", options->filter_type, "Filter type")
         ->required()
-        ->check(CLI::IsMember({"flate", "dct", "jpx", "ascii85", "ascii_hex"}));
+        ->check(CLI::IsMember({"flate", "dct", "jpx", "ascii85", "ascii_hex", "runlength"}));
     command->add_option("-o,--operation", options->operation, "Operation")
         ->required()
         ->check(CLI::IsMember({"encode", "decode"}));

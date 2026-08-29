@@ -166,6 +166,7 @@ extern const syntax::NameObject False;
 extern const syntax::NameObject NeedsRendering;
 extern const syntax::NameObject DCTDecode;
 extern const syntax::NameObject LZWDecode;
+extern const syntax::NameObject RunLengthDecode;
 extern const syntax::NameObject JS;
 extern const syntax::NameObject JPXDecode;
 extern const syntax::NameObject JavaScript;

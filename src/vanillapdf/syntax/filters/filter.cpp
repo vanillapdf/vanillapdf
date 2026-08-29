@@ -7,6 +7,7 @@
 #include "syntax/filters/dct_decode_filter.h"
 #include "syntax/filters/lzw_decode_filter.h"
 #include "syntax/filters/jpx_decode_filter.h"
+#include "syntax/filters/run_length_decode_filter.h"
 
 #include "syntax/utils/name_constants.h"
 
@@ -26,6 +27,8 @@ FilterBasePtr FilterBase::GetFilterByName(const NameObject& name) {
         return LZWDecodeFilterPtr();
     } else if (name.Equals(constant::Name::JPXDecode)) {
         return JPXDecodeFilterPtr();
+    } else if (name.Equals(constant::Name::RunLengthDecode)) {
+        return RunLengthDecodeFilterPtr();
     }
 
     LOG_ERROR_AND_THROW(NotSupportedException, "Unknown filter type: {}", name.GetValue()->ToString());
@@ -42,6 +45,8 @@ const NameObject& FilterBase::GetFullFilterName(const NameObject& filter_name) {
         return constant::Name::FlateDecode;
     } else if (filter_name.Equals(constant::Name::DCT)) {
         return constant::Name::DCTDecode;
+    } else if (filter_name.Equals(constant::Name::RL)) {
+        return constant::Name::RunLengthDecode;
     }
 
     return filter_name;

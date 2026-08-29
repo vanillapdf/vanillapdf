@@ -169,6 +169,7 @@ set(VANILLAPDF_SYNTAX_SOURCES
     syntax/filters/filter.cpp
     syntax/filters/flate_decode_filter.cpp
     syntax/filters/lzw_decode_filter.cpp
+    syntax/filters/run_length_decode_filter.cpp
     syntax/filters/jpx_decode_filter.cpp
 
     syntax/objects/boolean_object.cpp
@@ -309,6 +310,7 @@ set(VANILLAPDF_SYNTAX_HEADERS
     syntax/filters/filter.h
     syntax/filters/flate_decode_filter.h
     syntax/filters/lzw_decode_filter.h
+    syntax/filters/run_length_decode_filter.h
     syntax/filters/jpx_decode_filter.h
 
     syntax/objects/array_object.h
