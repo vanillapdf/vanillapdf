@@ -2,28 +2,26 @@
 
 #include "semantics/objects/signature_flags.h"
 #include "semantics/objects/interactive_forms.h"
+#include "semantics/objects/field_tree.h"
 #include "semantics/objects/fields.h"
 #include "semantics/objects/document.h"
 
-#include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/files/file.h"
 #include "syntax/objects/array_object.h"
 #include "syntax/utils/name_constants.h"
-
-#include "utils/buffer.h"
-
-#include <map>
 
 namespace vanillapdf {
 namespace semantics {
 
 InteractiveForm::InteractiveForm(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {
-    m_cache_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+    m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
 }
 
 InteractiveFormPtr InteractiveForm::Create(DocumentPtr document) {
-    auto file = document->GetFile();
+    return Create(document->GetFile());
+}
 
+InteractiveFormPtr InteractiveForm::Create(syntax::FilePtr file) {
     syntax::DictionaryObjectPtr raw_dictionary;
 
     auto new_entry = file->AllocateNewEntry();
@@ -37,126 +35,58 @@ InteractiveFormPtr InteractiveForm::Create(DocumentPtr document) {
     return make_deferred<InteractiveForm>(raw_dictionary);
 }
 
-void InteractiveForm::SetFields(FieldCollectionPtr value) {
-    _obj->Insert(constant::Name::Fields, value->GetObject(), true);
-    InvalidateFieldCache();
-}
+bool InteractiveForm::GetFieldTree(OutputFieldTreePtr& result) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
 
-void InteractiveForm::BuildFieldCache() const {
+    if (!m_field_tree.empty()) {
+        result = m_field_tree;
+        return true;
+    }
+
     if (!_obj->Contains(constant::Name::Fields)) {
-        m_cache_built = true;
-        return;
+        return false;
     }
 
-    // Both /Fields and /Kids shall contain indirect references (Table 218,
-    // Table 220), so the tree is walked as references and every node is
-    // dereferenced only after the cycle check - the same way PageTree types
-    // its kids array.
-    auto root_fields = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr>>(constant::Name::Fields);
+    auto fields = _obj->FindAs<syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr>>(constant::Name::Fields);
+    m_field_tree = make_deferred<FieldTree>(fields);
 
-    // Malformed documents can link /Kids in a cycle. Visited nodes are
-    // tracked by their object identity, the same way Field guards its
-    // /Parent chain walk.
-    std::map<syntax::IndirectReferenceId, bool> visited;
-
-    for (auto field_reference : root_fields) {
-        BuildFieldCacheInternal(field_reference, visited);
-    }
-
-    m_cache_built = true;
+    result = m_field_tree;
+    return true;
 }
 
-void InteractiveForm::BuildFieldCacheInternal(
-    syntax::IndirectReferenceObjectPtr node_reference,
-    std::map<syntax::IndirectReferenceId, bool>& visited) const {
+void InteractiveForm::SetFieldTree(FieldTreePtr value) {
+    ACCESS_LOCK_GUARD(m_access_lock);
 
-    auto object_number = node_reference->GetReferencedObjectNumber();
-    auto generation_number = node_reference->GetReferencedGenerationNumber();
-    syntax::IndirectReferenceId node_id(object_number, generation_number);
+    auto fields = value->GetObject();
 
-    auto found = visited.find(node_id);
-    if (found != visited.end() && found->second) {
-        spdlog::warn("Cyclic /Kids entry while enumerating form fields");
-        return;
+    // The array carries the file it was created for (FieldTree::Create,
+    // or the parser), and Insert sets the owner only. A hierarchy of
+    // another document holds references to that document's objects;
+    // installed here they would serialize as this document's object
+    // numbers, dangling. A detached form dictionary has no file to compare
+    // against.
+    auto tree_file = fields->Data()->GetFile();
+    auto form_file = _obj->GetFile();
+    if (!tree_file.IsEmpty() && !form_file.IsEmpty() && !tree_file.Identity(form_file)) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The field hierarchy belongs to a different document than the form");
     }
 
-    visited[node_id] = true;
+    _obj->Insert(constant::Name::Fields, fields->Data(), true);
 
-    auto node = node_reference->GetReferencedObjectAs<syntax::DictionaryObjectPtr>();
-
-    if (Field::IsTerminalDictionary(node)) {
-        m_field_cache.push_back(node);
-        return;
-    }
-
-    // Only field dictionaries are hierarchy nodes - sibling widget
-    // annotations stay attached to their field (12.7.3.2)
-    auto kids = node->FindAs<syntax::ArrayObjectPtr<syntax::IndirectReferenceObjectPtr>>(constant::Name::Kids);
-    for (auto kid_reference : kids) {
-        auto kid = kid_reference->GetReferencedObjectAs<syntax::DictionaryObjectPtr>();
-        if (!kid->Contains(constant::Name::T)) {
-            continue;
-        }
-
-        BuildFieldCacheInternal(kid_reference, visited);
-    }
-}
-
-void InteractiveForm::InvalidateFieldCache() {
-    ACCESS_LOCK_GUARD(m_cache_lock);
-
-    m_field_cache.clear();
-    m_cache_built = false;
-}
-
-types::size_type InteractiveForm::GetFieldCount() const {
-    ACCESS_LOCK_GUARD(m_cache_lock);
-
-    if (!m_cache_built) {
-        BuildFieldCache();
-    }
-
-    return m_field_cache.size();
-}
-
-FieldPtr InteractiveForm::GetField(types::size_type index) const {
-    ACCESS_LOCK_GUARD(m_cache_lock);
-
-    if (!m_cache_built) {
-        BuildFieldCache();
-    }
-
-    if (index >= m_field_cache.size()) {
-        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Field index out of range: {}", index);
-    }
-
-    return Field::Create(m_field_cache[index]);
-}
-
-bool InteractiveForm::TryFindField(std::string_view qualified_name, OuputFieldPtr& result) const {
-    ACCESS_LOCK_GUARD(m_cache_lock);
-
-    if (!m_cache_built) {
-        BuildFieldCache();
-    }
-
-    for (const auto& field_dictionary : m_field_cache) {
-        auto field = Field::Create(field_dictionary);
-        auto field_qualified_name = field->GetQualifiedName();
-        if (field_qualified_name->ToString() == qualified_name) {
-            result = field;
-            return true;
-        }
-    }
-
-    return false;
+    // The installed instance is the one handed out from now on, so that the
+    // caller's handle and the form share a single cache
+    m_field_tree = value;
 }
 
 void InteractiveForm::SetSignatureFlags(SignatureFlagsPtr value) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     _obj->Insert(constant::Name::SigFlags, value->GetObject(), true);
 }
 
 bool InteractiveForm::GetFields(OuputFieldCollectionPtr& result) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     if (!_obj->Contains(constant::Name::Fields)) {
         return false;
     }
@@ -167,6 +97,8 @@ bool InteractiveForm::GetFields(OuputFieldCollectionPtr& result) const {
 }
 
 bool InteractiveForm::GetSignatureFlags(OutputSignatureFlagsPtr& result) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     if (!_obj->Contains(constant::Name::SigFlags)) {
         return false;
     }
@@ -177,6 +109,8 @@ bool InteractiveForm::GetSignatureFlags(OutputSignatureFlagsPtr& result) const {
 }
 
 bool InteractiveForm::GetNeedAppearances(bool& result) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     if (!_obj->Contains(constant::Name::NeedAppearances)) {
         return false;
     }
@@ -187,6 +121,8 @@ bool InteractiveForm::GetNeedAppearances(bool& result) const {
 }
 
 bool InteractiveForm::GetDefaultAppearance(syntax::OutputStringObjectPtr& result) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     if (!_obj->Contains(constant::Name::DA)) {
         return false;
     }
@@ -196,10 +132,14 @@ bool InteractiveForm::GetDefaultAppearance(syntax::OutputStringObjectPtr& result
 }
 
 void InteractiveForm::SetDefaultAppearance(syntax::StringObjectPtr value) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     _obj->Insert(constant::Name::DA, value, true);
 }
 
 bool InteractiveForm::GetQuadding(Field::Quadding& result) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     if (!_obj->Contains(constant::Name::Q)) {
         return false;
     }
@@ -210,11 +150,28 @@ bool InteractiveForm::GetQuadding(Field::Quadding& result) const {
 }
 
 void InteractiveForm::SetQuadding(Field::Quadding value) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     auto quadding = make_deferred<syntax::IntegerObject>(Field::ConvertQuadding(value));
     _obj->Insert(constant::Name::Q, quadding, true);
 }
 
+bool InteractiveForm::ResolveDefaultAppearance(const FieldPtr& field, syntax::OutputStringObjectPtr& result) const {
+    return field->GetDefaultAppearance(result) || GetDefaultAppearance(result);
+}
+
+Field::Quadding InteractiveForm::ResolveQuadding(const FieldPtr& field) const {
+    Field::Quadding quadding = Field::Quadding::LeftJustified;
+    if (field->GetQuadding(quadding) || GetQuadding(quadding)) {
+        return quadding;
+    }
+
+    return Field::Quadding::LeftJustified;
+}
+
 void InteractiveForm::SetNeedAppearances(bool value) {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     if (_obj->Contains(constant::Name::NeedAppearances)) {
         bool removed = _obj->Remove(constant::Name::NeedAppearances);
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
@@ -223,20 +180,9 @@ void InteractiveForm::SetNeedAppearances(bool value) {
     _obj->Insert(constant::Name::NeedAppearances, bool_obj);
 }
 
-FieldCollectionPtr InteractiveForm::CreateFields() {
-    if (!_obj->Contains(constant::Name::Fields)) {
-        syntax::MixedArrayObjectPtr mixed_array;
-        mixed_array->SetFile(_obj->GetFile());
-        mixed_array->SetInitialized();
-
-        _obj->Insert(constant::Name::Fields, mixed_array);
-    }
-
-    auto fields = _obj->FindAs<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>>(constant::Name::Fields);
-    return make_deferred<FieldCollection>(fields);
-}
-
 SignatureFlagsPtr InteractiveForm::CreateSignatureFlags() {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
     if (!_obj->Contains(constant::Name::SigFlags)) {
         syntax::IntegerObjectPtr signature_flags;
         signature_flags->SetFile(_obj->GetFile());

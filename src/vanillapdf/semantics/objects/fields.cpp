@@ -78,16 +78,36 @@ bool Field::GetInheritedEntry(const syntax::NameObject& key, syntax::OutputObjec
     return FindInheritedEntry(_obj, key, result);
 }
 
+bool Field::IsFieldDictionary(const syntax::DictionaryObjectPtr& dictionary) {
+    return dictionary->Contains(constant::Name::T)
+        || dictionary->Contains(constant::Name::Kids)
+        || dictionary->Contains(constant::Name::FT);
+}
+
+Field::ChildEntryType Field::ClassifyChildEntry(const syntax::ObjectPtr& entry, syntax::OutputDictionaryObjectPtr& dictionary) {
+
+    // The reference is required, not just the dictionary behind it: a
+    // direct dictionary has no object number for its kids to name in
+    // /Parent, and the mutators could never address it
+    if (!syntax::ObjectUtils::IsType<syntax::IndirectReferenceObjectPtr>(entry)
+        || !syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(entry)) {
+        spdlog::warn("Field hierarchy entry of type {} is not an indirect reference to a dictionary and is skipped", static_cast<int32_t>(entry->GetObjectType()));
+        return ChildEntryType::Malformed;
+    }
+
+    dictionary = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(entry);
+    return IsFieldDictionary(dictionary) ? ChildEntryType::Field : ChildEntryType::Widget;
+}
+
 bool Field::IsTerminalDictionary(const syntax::DictionaryObjectPtr& dictionary) {
     if (!dictionary->Contains(constant::Name::Kids)) {
         return true;
     }
 
-    auto kids = dictionary->FindAs<syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr>>(constant::Name::Kids);
-    auto kids_size = kids->GetSize();
-    for (decltype(kids_size) i = 0; i < kids_size; ++i) {
-        auto kid = kids->GetValue(i);
-        if (kid->Contains(constant::Name::T)) {
+    auto kids = dictionary->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+    for (auto entry : kids) {
+        syntax::OutputDictionaryObjectPtr kid;
+        if (ClassifyChildEntry(entry, kid) == ChildEntryType::Field) {
             return false;
         }
     }
@@ -97,6 +117,58 @@ bool Field::IsTerminalDictionary(const syntax::DictionaryObjectPtr& dictionary) 
 
 bool Field::IsTerminal() const {
     return IsTerminalDictionary(_obj);
+}
+
+types::size_type Field::GetChildCount() const {
+    if (!_obj->Contains(constant::Name::Kids)) {
+        return 0;
+    }
+
+    types::size_type count = 0;
+
+    auto kids = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+    for (auto entry : kids) {
+        syntax::OutputDictionaryObjectPtr kid;
+        if (ClassifyChildEntry(entry, kid) == ChildEntryType::Field) {
+            count += 1;
+        }
+    }
+
+    return count;
+}
+
+FieldPtr Field::GetChild(types::size_type index) const {
+    if (_obj->Contains(constant::Name::Kids)) {
+        types::size_type current = 0;
+
+        auto kids = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+        for (auto entry : kids) {
+            syntax::OutputDictionaryObjectPtr kid;
+            if (ClassifyChildEntry(entry, kid) != ChildEntryType::Field) {
+                continue;
+            }
+
+            if (current == index) {
+                return Create(kid);
+            }
+
+            current += 1;
+        }
+    }
+
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Child field index out of range: {}", index);
+}
+
+bool Field::GetParent(OuputFieldPtr& result) const {
+    std::map<syntax::IndirectReferenceId, bool> visited;
+
+    syntax::DictionaryObjectPtr parent_dictionary;
+    if (!TryGetParentDictionary(_obj, visited, parent_dictionary)) {
+        return false;
+    }
+
+    result = Create(parent_dictionary);
+    return true;
 }
 
 BufferPtr Field::GetQualifiedName() const {
@@ -225,6 +297,18 @@ void Field::SetFieldFlags(types::big_int value) {
     }
     auto flags = make_deferred<syntax::IntegerObject>(value);
     _obj->Insert(constant::Name::Ff, flags);
+}
+
+bool Field::GetValueObject(syntax::OutputObjectPtr& result) const {
+
+    // /V is inheritable (Table 220)
+    return GetInheritedEntry(constant::Name::V, result);
+}
+
+bool Field::GetDefaultValueObject(syntax::OutputObjectPtr& result) const {
+
+    // /DV is inheritable (Table 220)
+    return GetInheritedEntry(constant::Name::DV, result);
 }
 
 bool Field::GetDefaultAppearance(syntax::OutputStringObjectPtr& result) const {
@@ -417,11 +501,6 @@ bool SignatureField::Value(OuputDigitalSignaturePtr& result) const {
     auto digital_signature = make_deferred<DigitalSignature>(value_dictionary);
     result = digital_signature;
     return true;
-}
-
-FieldCollectionPtr FieldCollection::Create() {
-    syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> fields;
-    return make_deferred<FieldCollection>(fields);
 }
 
 types::size_type FieldCollection::GetSize() const {

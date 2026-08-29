@@ -34,6 +34,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     destinations_test.cpp
     fields_test.cpp
     interactive_forms_test.cpp
+    field_tree_test.cpp
     filter_test.cpp
     text_string_encoding_test.cpp
     file_structure_validator_test.cpp

@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "semantics/objects/interactive_forms.h"
+#include "semantics/objects/field_tree.h"
 #include "semantics/objects/signature_flags.h"
 #include "semantics/objects/fields.h"
 #include "semantics/objects/document.h"
@@ -40,6 +41,33 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_CreateFromDocument(
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFieldTree(InteractiveFormHandle* handle, FieldTreeHandle** result) {
+    InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputFieldTreePtr tree;
+        bool contains = form->GetFieldTree(tree);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = tree.AddRefGet();
+        *result = reinterpret_cast<FieldTreeHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetFieldTree(InteractiveFormHandle* handle, FieldTreeHandle* value) {
+    InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
+    FieldTree* tree = reinterpret_cast<FieldTree*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(tree);
+
+    try {
+        form->SetFieldTree(tree);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(InteractiveFormHandle* handle, FieldCollectionHandle** result) {
     InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
@@ -54,18 +82,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(Interacti
 
         auto ptr = fields.AddRefGet();
         *result = reinterpret_cast<FieldCollectionHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetFields(InteractiveFormHandle* handle, FieldCollectionHandle* value) {
-    InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
-    FieldCollection* fields = reinterpret_cast<FieldCollection*>(value);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(fields);
-
-    try {
-        form->SetFields(fields);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -120,49 +136,6 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetNeedAppearances(
 
     try {
         form->SetNeedAppearances(value == VANILLAPDF_RV_TRUE);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFieldCount(InteractiveFormHandle* handle, size_type* result) {
-    InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        *result = form->GetFieldCount();
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetField(InteractiveFormHandle* handle, size_type index, FieldHandle** result) {
-    InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        auto field = form->GetField(index);
-        auto ptr = field.AddRefGet();
-        *result = reinterpret_cast<FieldHandle*>(ptr);
-        return VANILLAPDF_ERROR_SUCCESS;
-    } CATCH_VANILLAPDF_EXCEPTIONS
-}
-
-VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_FindField(InteractiveFormHandle* handle, string_type qualified_name, FieldHandle** result) {
-    InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(qualified_name);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
-
-    try {
-        OuputFieldPtr field;
-        bool found = form->TryFindField(qualified_name, field);
-        if (!found) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
-        }
-
-        auto ptr = field.AddRefGet();
-        *result = reinterpret_cast<FieldHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -230,6 +203,51 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetQuadding(Interac
         if (!contains) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
+
+        switch (quadding) {
+            case Field::Quadding::LeftJustified:
+                *result = QuaddingType_LeftJustified; break;
+            case Field::Quadding::Centered:
+                *result = QuaddingType_Centered; break;
+            case Field::Quadding::RightJustified:
+                *result = QuaddingType_RightJustified; break;
+            default:
+                return VANILLAPDF_ERROR_GENERAL;
+        }
+
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_ResolveDefaultAppearance(InteractiveFormHandle* handle, FieldHandle* field, StringObjectHandle** result) {
+    InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
+    Field* resolved_field = reinterpret_cast<Field*>(field);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(resolved_field);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputStringObjectPtr appearance;
+        bool contains = form->ResolveDefaultAppearance(resolved_field, appearance);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = appearance.AddRefGet();
+        *result = reinterpret_cast<StringObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_ResolveQuadding(InteractiveFormHandle* handle, FieldHandle* field, QuaddingType* result) {
+    InteractiveForm* form = reinterpret_cast<InteractiveForm*>(handle);
+    Field* resolved_field = reinterpret_cast<Field*>(field);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(form);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(resolved_field);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        Field::Quadding quadding = form->ResolveQuadding(resolved_field);
 
         switch (quadding) {
             case Field::Quadding::LeftJustified:

@@ -22,6 +22,8 @@ namespace semantics {
 using namespace syntax;
 
 Catalog::Catalog(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {
+    m_access_lock = std::unique_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+
     if (root->Contains(constant::Name::Type)) {
         auto type = root->FindAs<syntax::NameObjectPtr>(constant::Name::Type);
         if (type != constant::Name::Catalog) {
@@ -183,23 +185,38 @@ bool Catalog::Outlines(OutputOutlinePtr& result) const {
 }
 
 bool Catalog::AcroForm(OuputInteractiveFormPtr& result) const {
+    ACCESS_LOCK_GUARD(m_access_lock);
+
+    if (!m_acro_form.empty()) {
+        result = m_acro_form;
+        return true;
+    }
+
     if (!_obj->Contains(constant::Name::AcroForm)) {
         return false;
     }
 
     auto form_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::AcroForm);
-    auto interactive_form = make_deferred<InteractiveForm>(form_obj);
-    result = interactive_form;
+    m_acro_form = make_deferred<InteractiveForm>(form_obj);
+
+    result = m_acro_form;
     return true;
 }
 
 void Catalog::SetAcroForm(InteractiveFormPtr value) {
+    ACCESS_LOCK_GUARD(m_access_lock);
 
     // The form is an indirect object, so the catalog stores a reference to it
     auto form_object = value->GetObject();
     IndirectReferenceObjectPtr reference = make_deferred<syntax::IndirectReferenceObject>(form_object);
 
     _obj->Insert(constant::Name::AcroForm, reference, true);
+
+    // The installed instance is the one handed out from now on, so that the
+    // caller's handle and everyone reaching the form through the catalog -
+    // Document::Sign included - share a single form, and with it a single
+    // field tree
+    m_acro_form = value;
 }
 
 bool Catalog::GetOpenAction(syntax::ObjectPtr& result) const {

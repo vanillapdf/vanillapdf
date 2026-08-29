@@ -31,7 +31,7 @@ int process_verify(int argc, char *argv[]) {
     FileHandle* file = NULL;
     CatalogHandle* catalog = NULL;
     InteractiveFormHandle* acro_form = NULL;
-    FieldCollectionHandle* fields = NULL;
+    FieldTreeHandle* field_tree = NULL;
     FieldHandle* field = NULL;
     SignatureFieldHandle* sig_field = NULL;
     DigitalSignatureHandle* digital_signature = NULL;
@@ -113,23 +113,19 @@ int process_verify(int argc, char *argv[]) {
         return VANILLAPDF_TOOLS_ERROR_FAILURE;
     }
 
-    // Get fields
-    error_type fields_result = InteractiveForm_GetFields(acro_form, &fields);
-    if (fields_result != VANILLAPDF_ERROR_SUCCESS) {
-        printf("Error: Failed to get form fields\n");
-        InteractiveForm_Release(acro_form);
-        Catalog_Release(catalog);
-        Document_Release(document);
-        File_Release(file);
+    // Enumerate the resolved terminal fields of the field hierarchy
+    size_type field_count = 0;
+    error_type field_tree_result = InteractiveForm_GetFieldTree(acro_form, &field_tree);
+    if (field_tree_result == VANILLAPDF_ERROR_SUCCESS) {
+        RETURN_ERROR_IF_NOT_SUCCESS(FieldTree_GetFieldCount(field_tree, &field_count));
+    } else if (field_tree_result != VANILLAPDF_ERROR_OBJECT_MISSING) {
+        printf("Error: Failed to get the field hierarchy\n");
         return VANILLAPDF_TOOLS_ERROR_FAILURE;
     }
 
-    size_type field_count = 0;
-    RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_GetSize(fields, &field_count));
-
     if (field_count == 0) {
         printf("Error: No form fields found in PDF\n");
-        FieldCollection_Release(fields);
+        if (field_tree) FieldTree_Release(field_tree);
         InteractiveForm_Release(acro_form);
         Catalog_Release(catalog);
         Document_Release(document);
@@ -190,7 +186,7 @@ int process_verify(int argc, char *argv[]) {
         result = NULL;
 
         // Get field at index
-        error_type field_result = FieldCollection_At(fields, i, &field);
+        error_type field_result = FieldTree_GetField(field_tree, i, &field);
         if (field_result != VANILLAPDF_ERROR_SUCCESS) {
             printf("Warning: Failed to get field at index %llu\n", (unsigned long long) i);
             continue;
@@ -320,7 +316,7 @@ int process_verify(int argc, char *argv[]) {
     // Cleanup (iteration resources already cleaned up in loop)
     if (settings) SignatureVerificationSettings_Release(settings);
     if (trust_store) TrustedCertificateStore_Release(trust_store);
-    if (fields) FieldCollection_Release(fields);
+    if (field_tree) FieldTree_Release(field_tree);
     if (acro_form) InteractiveForm_Release(acro_form);
     if (catalog) Catalog_Release(catalog);
     if (document) Document_Release(document);
