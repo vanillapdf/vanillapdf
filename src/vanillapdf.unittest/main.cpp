@@ -186,18 +186,66 @@ TEST(Rectangle, NullCheck) {
 
 TEST(Rectangle, GetSet) {
 
-    const bigint_type CHECK_VALUE = 123456;
+    const real_type CHECK_VALUE = 123456.789;
 
-    bigint_type int_value = 0;
+    real_type real_value = 0;
     HandleGuard<RectangleHandle, Rectangle_Release> rectangle_ptr;
 
     ASSERT_EQ(Rectangle_Create(rectangle_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(rectangle_ptr.get(), nullptr);
 
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rectangle_ptr, CHECK_VALUE), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_GetLowerLeftX(rectangle_ptr, &int_value), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rectangle_ptr, CHECK_VALUE), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_GetLowerLeftXReal(rectangle_ptr, &real_value), VANILLAPDF_ERROR_SUCCESS);
 
-    EXPECT_EQ(int_value, CHECK_VALUE);
+    EXPECT_EQ(real_value, CHECK_VALUE);
+}
+
+TEST(Rectangle, GetSetAllCoordinates) {
+
+    real_type real_value = 0;
+    HandleGuard<RectangleHandle, Rectangle_Release> rectangle_ptr;
+
+    ASSERT_EQ(Rectangle_Create(rectangle_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rectangle_ptr, 10.5), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rectangle_ptr, 20.5), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rectangle_ptr, 30.5), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rectangle_ptr, 40.5), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Rectangle_GetLowerLeftXReal(rectangle_ptr, &real_value), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(real_value, 10.5);
+
+    ASSERT_EQ(Rectangle_GetLowerLeftYReal(rectangle_ptr, &real_value), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(real_value, 20.5);
+
+    ASSERT_EQ(Rectangle_GetUpperRightXReal(rectangle_ptr, &real_value), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(real_value, 30.5);
+
+    ASSERT_EQ(Rectangle_GetUpperRightYReal(rectangle_ptr, &real_value), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(real_value, 40.5);
+}
+
+TEST(Rectangle, RealAccessorNullChecks) {
+
+    real_type real_value = 0;
+    HandleGuard<RectangleHandle, Rectangle_Release> rectangle_ptr;
+
+    ASSERT_EQ(Rectangle_Create(rectangle_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_EQ(Rectangle_GetLowerLeftXReal(nullptr, &real_value), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Rectangle_GetLowerLeftYReal(nullptr, &real_value), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Rectangle_GetUpperRightXReal(nullptr, &real_value), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Rectangle_GetUpperRightYReal(nullptr, &real_value), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    EXPECT_EQ(Rectangle_GetLowerLeftXReal(rectangle_ptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Rectangle_GetLowerLeftYReal(rectangle_ptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Rectangle_GetUpperRightXReal(rectangle_ptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Rectangle_GetUpperRightYReal(rectangle_ptr, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    EXPECT_EQ(Rectangle_SetLowerLeftXReal(nullptr, 0), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Rectangle_SetLowerLeftYReal(nullptr, 0), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Rectangle_SetUpperRightXReal(nullptr, 0), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Rectangle_SetUpperRightYReal(nullptr, 0), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 TEST(File, LoadEmptyError) {

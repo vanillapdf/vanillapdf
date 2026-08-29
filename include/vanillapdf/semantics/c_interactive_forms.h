@@ -5,6 +5,7 @@
 #include "vanillapdf/c_handles.h"
 #include "vanillapdf/c_values.h"
 #include "vanillapdf/semantics/c_fields.h"
+#include "vanillapdf/semantics/c_field_tree.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -23,6 +24,10 @@ extern "C"
     * \brief
     * An interactive form (PDF 1.2) - sometimes referred to as an AcroForm - is
     * a collection of fields for gathering information interactively from the user.
+    *
+    * The form exposes its document-level attributes; the fields themselves
+    * live in the field hierarchy obtained from
+    * \ref InteractiveForm_GetFieldTree.
     *
     * For more details please visit [section 12.7 - Interactive Forms](PDF32000_2008.pdf#G11.2110737).
     */
@@ -56,18 +61,44 @@ extern "C"
 
     /**
     * \brief
-    * An array of references to the document's root fields.
+    * Get the field hierarchy of the form - its /Fields entry.
+    *
+    * Reading never creates the entry. The same hierarchy instance is
+    * returned for the lifetime of this form handle, so the flat view cache
+    * it owns is shared by everyone holding the form.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when the form has no
+    * /Fields entry - attach one with \ref InteractiveForm_SetFieldTree.
+    * \see \ref FieldTreeHandle
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(InteractiveFormHandle* handle, FieldCollectionHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFieldTree(InteractiveFormHandle* handle, FieldTreeHandle** result);
 
     /**
     * \brief
-    * Set the array of references to the document's root fields.
+    * Attach a field hierarchy to the form as its /Fields entry, replacing
+    * any existing one.
     *
-    * Obtain an empty collection from \ref FieldCollection_Create for a form
-    * that does not have any fields yet.
+    * Obtain an empty hierarchy from \ref FieldTree_CreateFromDocument for
+    * a form that does not have any fields yet. The attached instance
+    * becomes the one \ref InteractiveForm_GetFieldTree returns, so the
+    * caller's handle and the form share a single cache.
+    *
+    * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the hierarchy was
+    * created for a different document than the form belongs to - its
+    * references would serialize as dangling object numbers here.
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetFields(InteractiveFormHandle* handle, FieldCollectionHandle* value);
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetFieldTree(InteractiveFormHandle* handle, FieldTreeHandle* value);
+
+    /**
+    * \brief
+    * An array of references to the document's root fields.
+    * \deprecated
+    * The raw /Fields array models dictionary nodes rather than logical
+    * fields. Use the field hierarchy from \ref InteractiveForm_GetFieldTree
+    * instead - \ref FieldTree_GetFieldCount and \ref FieldTree_GetField
+    * for the resolved terminal fields, \ref FieldTree_GetRootChild with
+    * \ref Field_GetChild for the structure.
+    */
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(InteractiveFormHandle* handle, FieldCollectionHandle** result);
 
     /**
     * \brief
@@ -102,45 +133,12 @@ extern "C"
 
     /**
     * \brief
-    * Get the number of resolved terminal fields in the document.
-    *
-    * Terminal fields are the logical fields a user interacts with. The field
-    * hierarchy's grouping nodes exist only for naming and attribute
-    * inheritance and are not included - the same way the page tree hides its
-    * interior nodes. A radio button group is a single terminal field with one
-    * value, regardless of how many widget annotations represent it on the
-    * page.
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFieldCount(InteractiveFormHandle* handle, size_type* result);
-
-    /**
-    * \brief
-    * Get the resolved terminal field at the given zero-based index, in
-    * document order.
-    *
-    * \see \ref InteractiveForm_GetFieldCount
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetField(InteractiveFormHandle* handle, size_type index, FieldHandle** result);
-
-    /**
-    * \brief
-    * Find a terminal field by its fully qualified name - the partial field
-    * names (/T entries) joined with '.', UTF-8 encoded.
-    *
-    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when no terminal field has
-    * that name.
-    * \see \ref Field_GetQualifiedName
-    */
-    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_FindField(InteractiveFormHandle* handle, string_type qualified_name, FieldHandle** result);
-
-    /**
-    * \brief
     * Get the document-wide default appearance string (/DA entry).
     *
-    * Fields resolve /DA through their /Parent chain only - when
-    * \ref Field_GetDefaultAppearance reports
-    * \ref VANILLAPDF_ERROR_OBJECT_MISSING, fall back to this document
-    * default.
+    * This is the form's own entry. Fields resolve /DA through their /Parent
+    * chain only; \ref InteractiveForm_ResolveDefaultAppearance performs the
+    * full lookup for a field, this default included.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetDefaultAppearance(InteractiveFormHandle* handle, StringObjectHandle** result);
 
@@ -151,13 +149,29 @@ extern "C"
 
     /**
     * \brief
+    * Get the default appearance string (/DA entry) a field is rendered
+    * with: the field's own entry, then its ancestors through /Parent, then
+    * this form's document default (12.7.3.3).
+    *
+    * \ref Field_GetDefaultAppearance stops at the field hierarchy; the form
+    * owns the last step because it owns the entry. /DA is required for
+    * variable text fields but has no further default, so it can be missing
+    * everywhere. The field is taken as given - it is not checked to belong
+    * to this form's hierarchy.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is present on
+    * neither the field, any of its ancestors, nor the form.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_ResolveDefaultAppearance(InteractiveFormHandle* handle, FieldHandle* field, StringObjectHandle** result);
+
+    /**
+    * \brief
     * Get the document-wide default quadding (/Q entry) - the text
     * justification of variable text fields.
     *
-    * Fields resolve /Q through their /Parent chain only - when
-    * \ref Field_GetQuadding reports \ref VANILLAPDF_ERROR_OBJECT_MISSING,
-    * fall back to this document default. When this entry is missing as well,
-    * the specification default is \ref QuaddingType_LeftJustified.
+    * This is the form's own entry. Fields resolve /Q through their /Parent
+    * chain only; \ref InteractiveForm_ResolveQuadding performs the full
+    * lookup for a field, this default included.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the entry is not present.
     * \see QuaddingType
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetQuadding(InteractiveFormHandle* handle, QuaddingType* result);
@@ -167,6 +181,20 @@ extern "C"
     * \see QuaddingType
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetQuadding(InteractiveFormHandle* handle, QuaddingType value);
+
+    /**
+    * \brief
+    * Get the quadding (/Q entry) a field is rendered with: the field's own
+    * entry, then its ancestors through /Parent, then this form's document
+    * default, and finally the specification default
+    * \ref QuaddingType_LeftJustified (Table 222) - so it always resolves.
+    *
+    * \ref Field_GetQuadding stops at the field hierarchy; the form owns the
+    * last step because it owns the entry. The field is taken as given - it
+    * is not checked to belong to this form's hierarchy.
+    * \see QuaddingType
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_ResolveQuadding(InteractiveFormHandle* handle, FieldHandle* field, QuaddingType* result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle

@@ -12,14 +12,14 @@ class FieldCollection : public HighLevelObject<syntax::ArrayObjectPtr<syntax::Di
 public:
     explicit FieldCollection(syntax::ArrayObjectPtr<syntax::DictionaryObjectPtr> root) : HighLevelObject(root) {}
 
-    // Creates an empty field collection. The array is attached as a direct
-    // object through InteractiveForm::SetFields.
-    static FieldCollectionPtr Create();
-
     types::size_type GetSize() const;
     FieldPtr At(types::size_type index) const;
 };
 
+// A view over one field dictionary (12.7.3.1). The hierarchy it belongs to
+// is the concern of FieldTree: the root /Fields array is the top of the
+// hierarchy and the tree enumerates that level, a field enumerates its own
+// /Kids below it. A field knows its ancestors through /Parent only.
 class Field : public HighLevelObject<syntax::DictionaryObjectPtr> {
 public:
     enum Type {
@@ -40,15 +40,59 @@ public:
 
 public:
     explicit Field(syntax::DictionaryObjectPtr root) : HighLevelObject(root) {}
+
+    // The typed view over a dictionary, chosen by /FT resolved through the
+    // /Parent chain - it is inheritable, and a field merged with its widget
+    // annotation usually carries it on the parent only. The type says
+    // nothing about the position in the hierarchy: a group under a typed
+    // ancestor is a TextField / ButtonField / ... too, and IsTerminal is
+    // the question to ask about the position.
     static FieldPtr Create(syntax::DictionaryObjectPtr root);
 
     virtual Field::Type GetFieldType() const noexcept = 0;
 
+    // A /Kids entry is a child field when it carries /T, /Kids or /FT;
+    // otherwise it is a widget annotation. A merged field carries both /T
+    // and /Subtype /Widget and is a child field. Widgets never have /T; a
+    // nameless intermediate node is legal (12.7.3.2) and recognized by its
+    // /Kids, the same way QPDF classifies the entries.
+    static bool IsFieldDictionary(const syntax::DictionaryObjectPtr& dictionary);
+
+    // The kinds of entry a /Fields or /Kids array holds. Both arrays shall
+    // hold indirect references (Table 218, Table 220): a reference to a
+    // field dictionary is a child field, a reference to any other
+    // dictionary is a widget annotation. Anything else - a direct
+    // dictionary, a reference to something other than a dictionary - is
+    // malformed. It does occur in existing files and is skipped with a
+    // warning rather than failing the enumeration, the same policy every
+    // hierarchy walker applies to a cyclic /Kids link.
+    enum class ChildEntryType {
+        Undefined = 0,
+        Field,
+        Widget,
+        Malformed
+    };
+
+    // Classifies one entry of a /Fields or /Kids array, resolving the
+    // dictionary for a field or a widget. The tree and the field's own
+    // child walk share this one classification, so the flat view stays a
+    // projection of the structural one.
+    static ChildEntryType ClassifyChildEntry(const syntax::ObjectPtr& entry, syntax::OutputDictionaryObjectPtr& dictionary);
+
     // A terminal field has no children other than widget annotations (12.7.3.2).
-    // Child fields are recognized by their /T partial name, which widget
-    // annotations do not carry.
     static bool IsTerminalDictionary(const syntax::DictionaryObjectPtr& dictionary);
     bool IsTerminal() const;
+
+    // Child fields in /Kids order - widget annotations are not children,
+    // malformed entries are skipped as ClassifyChildEntry describes. Zero
+    // for a terminal field. The level above the root-level fields is the
+    // /Fields array, enumerated by FieldTree::GetRootChild.
+    types::size_type GetChildCount() const;
+    FieldPtr GetChild(types::size_type index) const;
+
+    // The parent field through /Parent. A root-level field has none -
+    // Table 220 requires /Parent for kids only - and reports false.
+    bool GetParent(OuputFieldPtr& result) const;
 
     // Fully qualified field name: the /T partial names joined with '.' from
     // the root of the hierarchy down to this field (12.7.3.2). Levels without
@@ -70,12 +114,21 @@ public:
     bool GetFieldFlags(types::big_int& result) const;
     void SetFieldFlags(types::big_int value);
 
+    // The field value (/V) and default value (/DV) as raw objects, resolved
+    // through the /Parent chain (Table 220). Their type depends on the
+    // field type - a name for buttons, a text string for text fields, a
+    // text string or an array for choice fields, a dictionary for signature
+    // fields - which the typed subclasses expose directly.
+    bool GetValueObject(syntax::OutputObjectPtr& result) const;
+    bool GetDefaultValueObject(syntax::OutputObjectPtr& result) const;
+
     // Default appearance string (/DA) and quadding (/Q) for variable text
-    // fields, resolved through the /Parent chain. The document-wide default
-    // lives in the AcroForm dictionary (12.7.3.3) and is exposed by
-    // InteractiveForm::GetDefaultAppearance / GetQuadding - when the entry is
-    // missing here, the caller applies that fallback. The setters write this
-    // field's own dictionary, overriding any inherited value.
+    // fields, resolved through the /Parent chain - this field and its
+    // ancestors, nothing else. The document-wide default lives in the
+    // AcroForm dictionary (12.7.3.3), which owns the last step of the
+    // lookup: InteractiveForm::ResolveDefaultAppearance / ResolveQuadding.
+    // The setters write this field's own dictionary, overriding any
+    // inherited value.
     bool GetDefaultAppearance(syntax::OutputStringObjectPtr& result) const;
     void SetDefaultAppearance(syntax::StringObjectPtr value);
     bool GetQuadding(Quadding& result) const;

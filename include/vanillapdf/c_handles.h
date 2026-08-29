@@ -204,6 +204,7 @@ extern "C"
 
     DECLARE_OBJECT_HANDLE(Field);
     DECLARE_OBJECT_HANDLE(FieldCollection);
+    DECLARE_OBJECT_HANDLE(FieldTree);
     DECLARE_OBJECT_HANDLE(ButtonField);
     DECLARE_OBJECT_HANDLE(TextField);
     DECLARE_OBJECT_HANDLE(ChoiceField);

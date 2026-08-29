@@ -18,7 +18,7 @@ int process_verify(const VerifyOptions& options) {
     FileGuard file;
     CatalogGuard catalog;
     InteractiveFormGuard acro_form;
-    FieldCollectionGuard fields;
+    FieldTreeGuard field_tree;
     TrustedCertificateStoreGuard trust_store;
     SignatureVerificationSettingsGuard settings;
 
@@ -49,15 +49,15 @@ int process_verify(const VerifyOptions& options) {
         return VANILLAPDF_TOOLS_ERROR_FAILURE;
     }
 
-    // Get fields
-    error_type fields_result = InteractiveForm_GetFields(acro_form, fields.out());
-    if (fields_result != VANILLAPDF_ERROR_SUCCESS) {
-        printf("Error: Failed to get form fields\n");
+    // Enumerate the resolved terminal fields of the field hierarchy
+    size_type field_count = 0;
+    error_type field_tree_result = InteractiveForm_GetFieldTree(acro_form, field_tree.out());
+    if (field_tree_result == VANILLAPDF_ERROR_SUCCESS) {
+        RETURN_ERROR_IF_NOT_SUCCESS(FieldTree_GetFieldCount(field_tree, &field_count));
+    } else if (field_tree_result != VANILLAPDF_ERROR_OBJECT_MISSING) {
+        printf("Error: Failed to get the field hierarchy\n");
         return VANILLAPDF_TOOLS_ERROR_FAILURE;
     }
-
-    size_type field_count = 0;
-    RETURN_ERROR_IF_NOT_SUCCESS(FieldCollection_GetSize(fields, &field_count));
 
     if (field_count == 0) {
         printf("Error: No form fields found in PDF\n");
@@ -117,7 +117,7 @@ int process_verify(const VerifyOptions& options) {
         SignatureVerificationResultGuard result;
 
         // Get field at index
-        error_type field_result = FieldCollection_At(fields, i, field.out());
+        error_type field_result = FieldTree_GetField(field_tree, i, field.out());
         if (field_result != VANILLAPDF_ERROR_SUCCESS) {
             printf("Warning: Failed to get field at index %llu\n", (unsigned long long) i);
             continue;

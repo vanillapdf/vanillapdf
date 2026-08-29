@@ -13,6 +13,7 @@ set(VANILLAPDF_BENCHMARK_SOURCES
     buffer_hash.cpp
     character_map.cpp
     content_stream.cpp
+    field_tree.cpp
     filters.cpp
     io_strategy.cpp
     objects.cpp

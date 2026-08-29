@@ -130,7 +130,7 @@ using ASCIIHexDecodeFilterGuard = HandleGuard<ASCIIHexDecodeFilterHandle, ASCIIH
 
 // Interactive forms and signatures
 using InteractiveFormGuard = HandleGuard<InteractiveFormHandle, InteractiveForm_Release>;
-using FieldCollectionGuard = HandleGuard<FieldCollectionHandle, FieldCollection_Release>;
+using FieldTreeGuard = HandleGuard<FieldTreeHandle, FieldTree_Release>;
 using FieldGuard = HandleGuard<FieldHandle, Field_Release>;
 using SignatureFieldGuard = HandleGuard<SignatureFieldHandle, SignatureField_Release>;
 using DigitalSignatureGuard = HandleGuard<DigitalSignatureHandle, DigitalSignature_Release>;

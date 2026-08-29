@@ -12,10 +12,10 @@ TEST(TextAnnotation, CreateBasic) {
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(rect, nullptr);
 
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create text annotation
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
@@ -45,10 +45,10 @@ TEST(TextAnnotation, CreateWithContents) {
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(rect, nullptr);
 
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create contents string
     const char* text = "This is a test comment";
@@ -85,10 +85,10 @@ TEST(HighlightAnnotation, CreateWithQuadPoints) {
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(rect, nullptr);
 
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array (8 numbers for one quadrilateral)
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -138,10 +138,10 @@ TEST(FreeTextAnnotation, CreateWithDefaultAppearance) {
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(rect, nullptr);
 
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 300), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 300), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create contents and default appearance strings
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Free text content", &contents), VANILLAPDF_ERROR_SUCCESS);
@@ -211,10 +211,10 @@ TEST(PageAnnotations, AppendAnnotation) {
     // Set media box
     RectangleHandle* media_box = nullptr;
     ASSERT_EQ(Rectangle_Create(&media_box), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(PageObject_SetMediaBox(page, media_box), VANILLAPDF_ERROR_SUCCESS);
 
     // Append page to tree
@@ -227,10 +227,10 @@ TEST(PageAnnotations, AppendAnnotation) {
 
     // Create rectangle for annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create text annotation
     ASSERT_EQ(TextAnnotation_Create(rect, &text_annot), VANILLAPDF_ERROR_SUCCESS);
@@ -311,10 +311,10 @@ TEST(AnnotationIntegration, CreateAndSave) {
     // Set media box
     RectangleHandle* media_box = nullptr;
     ASSERT_EQ(Rectangle_Create(&media_box), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(PageObject_SetMediaBox(page, media_box), VANILLAPDF_ERROR_SUCCESS);
 
     // Append page to tree
@@ -327,10 +327,10 @@ TEST(AnnotationIntegration, CreateAndSave) {
 
     // Create rectangle for annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create contents string
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Test annotation", &contents), VANILLAPDF_ERROR_SUCCESS);
@@ -446,10 +446,10 @@ TEST(AnnotationIntegration, CreateAndSaveToSeparateStream) {
     // Set media box
     RectangleHandle* media_box = nullptr;
     ASSERT_EQ(Rectangle_Create(&media_box), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(PageObject_SetMediaBox(page, media_box), VANILLAPDF_ERROR_SUCCESS);
 
     // Append page to tree
@@ -462,10 +462,10 @@ TEST(AnnotationIntegration, CreateAndSaveToSeparateStream) {
 
     // Create rectangle for annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create contents string
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Test annotation", &contents), VANILLAPDF_ERROR_SUCCESS);
@@ -550,14 +550,14 @@ TEST(Annotation, GetAndSetRect) {
     AnnotationHandle* base_annot = nullptr;
     RectangleHandle* retrieved_rect = nullptr;
     RectangleHandle* new_rect = nullptr;
-    bigint_type value = 0;
+    real_type value = 0;
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 300), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 400), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 300), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 400), VANILLAPDF_ERROR_SUCCESS);
 
     // Create annotation
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
@@ -567,15 +567,15 @@ TEST(Annotation, GetAndSetRect) {
     ASSERT_EQ(Annotation_GetRect(base_annot, &retrieved_rect), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_NE(retrieved_rect, nullptr);
 
-    ASSERT_EQ(Rectangle_GetLowerLeftX(retrieved_rect, &value), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_GetLowerLeftXReal(retrieved_rect, &value), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(value, 100);
 
     // Set new rect
     ASSERT_EQ(Rectangle_Create(&new_rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(new_rect, 50), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(new_rect, 60), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(new_rect, 150), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(new_rect, 160), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(new_rect, 50), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(new_rect, 60), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(new_rect, 150), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(new_rect, 160), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(Annotation_SetRect(base_annot, new_rect), VANILLAPDF_ERROR_SUCCESS);
 
@@ -596,10 +596,10 @@ TEST(Annotation, SetContents) {
 
     // Create rectangle and annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
@@ -630,10 +630,10 @@ TEST(Annotation, GetAndSetColor) {
 
     // Create rectangle and annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
@@ -666,10 +666,10 @@ TEST(TextAnnotation, GetAndSetAuthor) {
 
     // Create rectangle and annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
@@ -699,10 +699,10 @@ TEST(TextAnnotation, GetAndSetModificationDate) {
 
     // Create rectangle and annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
@@ -734,10 +734,10 @@ TEST(TextAnnotation, GetAndSetCreationDate) {
 
     // Create rectangle and annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
 
@@ -768,10 +768,10 @@ TEST(Annotation, GetAndSetFlags) {
 
     // Create rectangle and annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
@@ -801,10 +801,10 @@ TEST(Annotation, ToAndFromUnknown) {
 
     // Create rectangle and annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
@@ -837,10 +837,10 @@ TEST(TextAnnotation, FromBaseAnnotation) {
 
     // Create rectangle and annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(TextAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
@@ -866,10 +866,10 @@ TEST(HighlightAnnotation, GetAndSetQuadPoints) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -930,10 +930,10 @@ TEST(HighlightAnnotation, FromBaseAnnotation) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -975,10 +975,10 @@ TEST(FreeTextAnnotation, SetDefaultAppearance) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 300), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 300), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create strings
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Free text content", &contents), VANILLAPDF_ERROR_SUCCESS);
@@ -1014,10 +1014,10 @@ TEST(FreeTextAnnotation, FromBaseAnnotation) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 300), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 300), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create strings
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Free text content", &contents), VANILLAPDF_ERROR_SUCCESS);
@@ -1064,10 +1064,10 @@ TEST(PageAnnotations, ToAndFromUnknown) {
     // Set media box
     RectangleHandle* media_box = nullptr;
     ASSERT_EQ(Rectangle_Create(&media_box), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(PageObject_SetMediaBox(page, media_box), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
@@ -1106,10 +1106,10 @@ TEST(UnderlineAnnotation, CreateWithQuadPoints) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -1164,10 +1164,10 @@ TEST(StrikeOutAnnotation, CreateWithQuadPoints) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -1210,10 +1210,10 @@ TEST(SquigglyAnnotation, CreateWithQuadPoints) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -1257,10 +1257,10 @@ TEST(InkAnnotation, CreateWithInkList) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create ink list (array of stroke arrays)
     ASSERT_EQ(ArrayObject_Create(&ink_list), VANILLAPDF_ERROR_SUCCESS);
@@ -1342,10 +1342,10 @@ TEST(PageAnnotations, RemoveAnnotation) {
     ASSERT_EQ(PageObject_CreateFromDocument(doc, &page), VANILLAPDF_ERROR_SUCCESS);
     RectangleHandle* media_box = nullptr;
     ASSERT_EQ(Rectangle_Create(&media_box), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(PageObject_SetMediaBox(page, media_box), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
 
@@ -1355,10 +1355,10 @@ TEST(PageAnnotations, RemoveAnnotation) {
 
     // Create rectangle for annotations
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Add two annotations
     ASSERT_EQ(TextAnnotation_Create(rect, &text_annot1), VANILLAPDF_ERROR_SUCCESS);
@@ -1406,10 +1406,10 @@ TEST(HighlightAnnotation, GetAndSetAuthor) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -1456,10 +1456,10 @@ TEST(HighlightAnnotation, GetAndSetModificationDate) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -1508,10 +1508,10 @@ TEST(HighlightAnnotation, GetAndSetCreationDate) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -1561,10 +1561,10 @@ TEST(FreeTextAnnotation, GetAndSetAuthor) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 300), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 300), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create strings
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Free text content", &contents), VANILLAPDF_ERROR_SUCCESS);
@@ -1603,10 +1603,10 @@ TEST(FreeTextAnnotation, GetAndSetModificationDate) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 300), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 300), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create strings
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Free text content", &contents), VANILLAPDF_ERROR_SUCCESS);
@@ -1647,10 +1647,10 @@ TEST(FreeTextAnnotation, GetAndSetCreationDate) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 300), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 300), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create strings
     ASSERT_EQ(LiteralStringObject_CreateFromDecodedString("Free text content", &contents), VANILLAPDF_ERROR_SUCCESS);
@@ -1690,10 +1690,10 @@ TEST(UnderlineAnnotation, GetAndSetAuthor) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -1740,10 +1740,10 @@ TEST(UnderlineAnnotation, GetAndSetModificationDate) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -1792,10 +1792,10 @@ TEST(UnderlineAnnotation, GetAndSetCreationDate) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -1843,10 +1843,10 @@ TEST(UnderlineAnnotation, FromBaseAnnotation) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -1888,10 +1888,10 @@ TEST(StrikeOutAnnotation, GetAndSetAuthor) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -1938,10 +1938,10 @@ TEST(StrikeOutAnnotation, GetAndSetModificationDate) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -1990,10 +1990,10 @@ TEST(StrikeOutAnnotation, GetAndSetCreationDate) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -2041,10 +2041,10 @@ TEST(StrikeOutAnnotation, FromBaseAnnotation) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -2086,10 +2086,10 @@ TEST(StrikeOutAnnotation, GetAndSetQuadPoints) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -2150,10 +2150,10 @@ TEST(SquigglyAnnotation, GetAndSetAuthor) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -2200,10 +2200,10 @@ TEST(SquigglyAnnotation, GetAndSetModificationDate) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -2252,10 +2252,10 @@ TEST(SquigglyAnnotation, GetAndSetCreationDate) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -2303,10 +2303,10 @@ TEST(SquigglyAnnotation, FromBaseAnnotation) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -2348,10 +2348,10 @@ TEST(SquigglyAnnotation, GetAndSetQuadPoints) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -2413,10 +2413,10 @@ TEST(InkAnnotation, GetAndSetAuthor) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create ink list
     ASSERT_EQ(ArrayObject_Create(&ink_list), VANILLAPDF_ERROR_SUCCESS);
@@ -2470,10 +2470,10 @@ TEST(InkAnnotation, GetAndSetModificationDate) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create ink list
     ASSERT_EQ(ArrayObject_Create(&ink_list), VANILLAPDF_ERROR_SUCCESS);
@@ -2529,10 +2529,10 @@ TEST(InkAnnotation, GetAndSetCreationDate) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create ink list
     ASSERT_EQ(ArrayObject_Create(&ink_list), VANILLAPDF_ERROR_SUCCESS);
@@ -2589,10 +2589,10 @@ TEST(InkAnnotation, SetInkList) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create initial ink list with one stroke
     ASSERT_EQ(ArrayObject_Create(&ink_list), VANILLAPDF_ERROR_SUCCESS);
@@ -2665,10 +2665,10 @@ TEST(InkAnnotation, FromBaseAnnotation) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create ink list
     ASSERT_EQ(ArrayObject_Create(&ink_list), VANILLAPDF_ERROR_SUCCESS);
@@ -2732,10 +2732,10 @@ TEST(PageAnnotations, AtAnnotation) {
     ASSERT_EQ(PageObject_CreateFromDocument(doc, &page), VANILLAPDF_ERROR_SUCCESS);
     RectangleHandle* media_box = nullptr;
     ASSERT_EQ(Rectangle_Create(&media_box), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(media_box, 0), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(PageObject_SetMediaBox(page, media_box), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
 
@@ -2745,10 +2745,10 @@ TEST(PageAnnotations, AtAnnotation) {
 
     // Create rectangle for annotation
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Add annotation
     ASSERT_EQ(TextAnnotation_Create(rect, &text_annot), VANILLAPDF_ERROR_SUCCESS);
@@ -2792,10 +2792,10 @@ TEST(UnderlineAnnotation, SetQuadPoints) {
 
     // Create rectangle
     ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftX(rect, 100), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetLowerLeftY(rect, 700), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightX(rect, 200), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(Rectangle_SetUpperRightY(rect, 750), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750), VANILLAPDF_ERROR_SUCCESS);
 
     // Create quad points array
     ASSERT_EQ(ArrayObject_Create(&quad_points), VANILLAPDF_ERROR_SUCCESS);
@@ -2841,6 +2841,126 @@ TEST(UnderlineAnnotation, SetQuadPoints) {
     ASSERT_EQ(UnderlineAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(ArrayObject_Release(quad_points), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(Annotation, RealValuedRect) {
+    RectangleHandle* rect = nullptr;
+    TextAnnotationHandle* annot = nullptr;
+    AnnotationHandle* base_annot = nullptr;
+    RectangleHandle* retrieved_rect = nullptr;
+    real_type value = 0;
+
+    // Create rectangle with fractional coordinates
+    ASSERT_EQ(Rectangle_Create(&rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftXReal(rect, 100.25), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetLowerLeftYReal(rect, 700.5), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(rect, 200.75), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(rect, 750.125), VANILLAPDF_ERROR_SUCCESS);
+
+    // Create annotation and read the rectangle back
+    ASSERT_EQ(TextAnnotation_Create(rect, &annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextAnnotation_ToBaseAnnotation(annot, &base_annot), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Annotation_GetRect(base_annot, &retrieved_rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(retrieved_rect, nullptr);
+
+    ASSERT_EQ(Rectangle_GetLowerLeftXReal(retrieved_rect, &value), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(value, 100.25);
+
+    ASSERT_EQ(Rectangle_GetLowerLeftYReal(retrieved_rect, &value), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(value, 700.5);
+
+    ASSERT_EQ(Rectangle_GetUpperRightXReal(retrieved_rect, &value), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(value, 200.75);
+
+    ASSERT_EQ(Rectangle_GetUpperRightYReal(retrieved_rect, &value), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(value, 750.125);
+
+    // Cleanup
+    ASSERT_EQ(Rectangle_Release(retrieved_rect), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Annotation_Release(base_annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TextAnnotation_Release(annot), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_Release(rect), VANILLAPDF_ERROR_SUCCESS);
+}
+
+TEST(PageObject, MediaBoxRealCoordinates) {
+    FileHandle* file = nullptr;
+    DocumentHandle* doc = nullptr;
+    InputOutputStreamHandle* io_stream = nullptr;
+    PageObjectHandle* page = nullptr;
+    DictionaryObjectHandle* page_dict = nullptr;
+    ArrayObjectHandle* media_box_array = nullptr;
+    NameObjectHandle* media_box_key = nullptr;
+    RectangleHandle* media_box = nullptr;
+    real_type value = 0;
+
+    // Create in-memory document with a single page
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(&io_stream), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(io_stream, "temp", &file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_CreateFile(file, &doc), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_CreateFromDocument(doc, &page), VANILLAPDF_ERROR_SUCCESS);
+
+    // Build an A4 media box with mixed integer and real elements,
+    // mirroring the object layout produced by parsing [ 0 0 595.276 841.89 ]
+    ASSERT_EQ(ArrayObject_Create(&media_box_array), VANILLAPDF_ERROR_SUCCESS);
+
+    for (int i = 0; i < 2; i++) {
+        IntegerObjectHandle* integer_value = nullptr;
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(IntegerObject_Create(&integer_value), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(IntegerObject_SetIntegerValue(integer_value, 0), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(IntegerObject_ToObject(integer_value, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(media_box_array, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(IntegerObject_Release(integer_value), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    double real_values[] = {595.276, 841.89};
+    for (int i = 0; i < 2; i++) {
+        RealObjectHandle* real_value = nullptr;
+        ObjectHandle* obj = nullptr;
+        ASSERT_EQ(RealObject_Create(&real_value), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_SetValue(real_value, real_values[i]), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_ToObject(real_value, &obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(ArrayObject_Append(media_box_array, obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Object_Release(obj), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(RealObject_Release(real_value), VANILLAPDF_ERROR_SUCCESS);
+    }
+
+    // Insert the media box into the page dictionary directly
+    ASSERT_EQ(PageObject_GetBaseObject(page, &page_dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_CreateFromDecodedString("MediaBox", &media_box_key), VANILLAPDF_ERROR_SUCCESS);
+
+    ObjectHandle* media_box_obj = nullptr;
+    ASSERT_EQ(ArrayObject_ToObject(media_box_array, &media_box_obj), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Insert(page_dict, media_box_key, media_box_obj, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Object_Release(media_box_obj), VANILLAPDF_ERROR_SUCCESS);
+
+    // Reading the media box has to preserve the fractional coordinates
+    ASSERT_EQ(PageObject_GetMediaBox(page, &media_box), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(media_box, nullptr);
+
+    ASSERT_EQ(Rectangle_GetLowerLeftXReal(media_box, &value), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(value, 0);
+
+    ASSERT_EQ(Rectangle_GetLowerLeftYReal(media_box, &value), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(value, 0);
+
+    ASSERT_EQ(Rectangle_GetUpperRightXReal(media_box, &value), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(value, 595.276);
+
+    ASSERT_EQ(Rectangle_GetUpperRightYReal(media_box, &value), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(value, 841.89);
+
+    // Cleanup
+    ASSERT_EQ(Rectangle_Release(media_box), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(NameObject_Release(media_box_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Release(page_dict), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(ArrayObject_Release(media_box_array), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_Release(page), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_Release(doc), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_Release(file), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InputOutputStream_Release(io_stream), VANILLAPDF_ERROR_SUCCESS);
 }
 
 } // namespace annotations

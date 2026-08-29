@@ -113,6 +113,7 @@ class UnicodeCharacterMap; using UnicodeCharacterMapPtr = Deferred<UnicodeCharac
 // Fields
 class Field; using FieldPtr = Deferred<Field>; using OuputFieldPtr = OutputPointer<FieldPtr>;
 class FieldCollection; using FieldCollectionPtr = Deferred<FieldCollection>; using OuputFieldCollectionPtr = OutputPointer<FieldCollectionPtr>;
+class FieldTree; using FieldTreePtr = Deferred<FieldTree>; using OutputFieldTreePtr = OutputPointer<FieldTreePtr>;
 class ButtonField; using ButtonFieldPtr = Deferred<ButtonField>;
 class TextField; using TextFieldPtr = Deferred<TextField>;
 class ChoiceField; using ChoiceFieldPtr = Deferred<ChoiceField>;
