@@ -64,9 +64,11 @@
 #include "vanillapdf/semantics/c_character_map.h"
 #include "vanillapdf/semantics/c_date.h"
 #include "vanillapdf/semantics/c_rectangle.h"
+#include "vanillapdf/semantics/c_matrix.h"
 #include "vanillapdf/semantics/c_color.h"
 #include "vanillapdf/semantics/c_page_contents.h"
 #include "vanillapdf/semantics/c_xobject.h"
+#include "vanillapdf/semantics/c_appearance_characteristics.h"
 
 /* contents */
 #include "vanillapdf/contents/c_base_font_range.h"

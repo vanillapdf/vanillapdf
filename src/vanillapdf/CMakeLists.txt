@@ -61,6 +61,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SYNTAX_SOURCES
 set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_actions.cpp
     implementation/semantics/c_annotations.cpp
+    implementation/semantics/c_appearance_characteristics.cpp
     implementation/semantics/c_byte_range.cpp
     implementation/semantics/c_catalog.cpp
     implementation/semantics/c_character_map.cpp
@@ -80,6 +81,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_font.cpp
     implementation/semantics/c_font_map.cpp
     implementation/semantics/c_interactive_forms.cpp
+    implementation/semantics/c_matrix.cpp
     implementation/semantics/c_name_dictionary.cpp
     implementation/semantics/c_outline.cpp
     implementation/semantics/c_page_contents.cpp
@@ -123,6 +125,7 @@ set(VANILLAPDF_SEMANTICS_SOURCES
 
     semantics/objects/actions.cpp
     semantics/objects/annotations.cpp
+    semantics/objects/appearance_characteristics.cpp
     semantics/objects/character_map.cpp
     semantics/objects/color.cpp
     semantics/objects/date.cpp
@@ -133,6 +136,7 @@ set(VANILLAPDF_SEMANTICS_SOURCES
     semantics/objects/font.cpp
     semantics/objects/outline.cpp
     semantics/objects/page_labels.cpp
+    semantics/objects/matrix.cpp
     semantics/objects/rectangle.cpp
     semantics/objects/tree.cpp
     semantics/objects/xobject.cpp
@@ -261,6 +265,7 @@ set(VANILLAPDF_SEMANTICS_HEADERS
 
     semantics/objects/actions.h
     semantics/objects/annotations.h
+    semantics/objects/appearance_characteristics.h
     semantics/objects/character_map.h
     semantics/objects/color.h
     semantics/objects/date.h
@@ -276,6 +281,7 @@ set(VANILLAPDF_SEMANTICS_HEADERS
     semantics/objects/name_dictionary.h
     semantics/objects/outline.h
     semantics/objects/page_labels.h
+    semantics/objects/matrix.h
     semantics/objects/rectangle.h
     semantics/objects/tree.h
     semantics/objects/xobject.h

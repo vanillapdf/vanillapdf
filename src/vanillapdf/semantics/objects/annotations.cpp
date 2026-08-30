@@ -4,6 +4,7 @@
 
 #include "semantics/objects/annotations.h"
 #include "semantics/objects/actions.h"
+#include "semantics/objects/appearance_characteristics.h"
 #include "semantics/objects/color.h"
 #include "semantics/objects/date.h"
 #include "semantics/objects/destinations.h"
@@ -261,6 +262,99 @@ void AnnotationBase::SetContents(syntax::LiteralStringObjectPtr contents) {
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
     }
     _obj->Insert(constant::Name::Contents, contents);
+}
+
+const syntax::NameObject& AnnotationBase::GetAppearanceEntryName(AppearanceType type) {
+    switch (type) {
+        case AppearanceType::Normal:
+            return constant::Name::N;
+        case AppearanceType::Rollover:
+            return constant::Name::R;
+        case AppearanceType::Down:
+            return constant::Name::D;
+        case AppearanceType::Undefined:
+        default:
+            LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown appearance type: {}", static_cast<int32_t>(type));
+    }
+}
+
+bool AnnotationBase::GetAppearance(AppearanceType type, OutputFormXObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::AP)) {
+        return false;
+    }
+
+    auto appearance_dictionary = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::AP);
+
+    const syntax::NameObject& entry_name = GetAppearanceEntryName(type);
+    if (!appearance_dictionary->Contains(entry_name)) {
+        return false;
+    }
+
+    // The slot holds a single stream when the annotation has no appearance
+    // states (Table 168)
+    auto appearance_entry = appearance_dictionary->Find(entry_name);
+    if (syntax::ObjectUtils::IsType<syntax::StreamObjectPtr>(appearance_entry)) {
+        auto appearance_stream = syntax::ObjectUtils::ConvertTo<syntax::StreamObjectPtr>(appearance_entry);
+        result = make_deferred<FormXObject>(appearance_stream);
+        return true;
+    }
+
+    // Otherwise it is a subdictionary keyed by appearance state, out of which
+    // /AS selects the one currently in effect
+    syntax::OutputNameObjectPtr state;
+    if (!GetAppearanceState(state)) {
+        return false;
+    }
+
+    syntax::NameObjectPtr state_name = state;
+    auto appearance_states = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(appearance_entry);
+    if (!appearance_states->Contains(state_name)) {
+        return false;
+    }
+
+    auto appearance_stream = appearance_states->FindAs<syntax::StreamObjectPtr>(state_name);
+    result = make_deferred<FormXObject>(appearance_stream);
+    return true;
+}
+
+void AnnotationBase::SetAppearance(AppearanceType type, FormXObjectPtr appearance) {
+    const syntax::NameObject& entry_name = GetAppearanceEntryName(type);
+
+    if (!_obj->Contains(constant::Name::AP)) {
+        syntax::DictionaryObjectPtr new_appearance_dictionary;
+        _obj->Insert(constant::Name::AP, new_appearance_dictionary);
+    }
+
+    auto appearance_dictionary = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::AP);
+
+    // Replacing a state subdictionary with a single stream would silently drop
+    // every other state, so it is rejected until a state-aware setter exists
+    if (appearance_dictionary->Contains(entry_name)) {
+        auto existing_entry = appearance_dictionary->Find(entry_name);
+        if (!syntax::ObjectUtils::IsType<syntax::StreamObjectPtr>(existing_entry)) {
+            LOG_ERROR_AND_THROW(NotSupportedException,
+                "Appearance entry {} holds appearance states, overwriting it with a single stream is not supported",
+                entry_name.ToString());
+        }
+    }
+
+    // The appearance stream is an indirect object,
+    // so the appearance dictionary stores a reference to it
+    syntax::IndirectReferenceObjectPtr reference = make_deferred<syntax::IndirectReferenceObject>(appearance->GetObject());
+    appearance_dictionary->Insert(entry_name, reference, true);
+}
+
+bool AnnotationBase::GetAppearanceState(syntax::OutputNameObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::AS)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::AS);
+    return true;
+}
+
+void AnnotationBase::SetAppearanceState(syntax::NameObjectPtr value) {
+    _obj->Insert(constant::Name::AS, value, true);
 }
 
 bool AnnotationBase::GetColor(OutputColorPtr& result) const {
@@ -899,46 +993,18 @@ WidgetAnnotationPtr WidgetAnnotation::Create(DocumentPtr document) {
     return make_deferred<WidgetAnnotation>(dict);
 }
 
-bool WidgetAnnotation::GetNormalAppearance(OutputFormXObjectPtr& result) const {
-    if (!_obj->Contains(constant::Name::AP)) {
-        return false;
-    }
-
-    auto appearance_dictionary = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::AP);
-    if (!appearance_dictionary->Contains(constant::Name::N)) {
-        return false;
-    }
-
-    auto appearance_stream = appearance_dictionary->FindAs<syntax::StreamObjectPtr>(constant::Name::N);
-    result = make_deferred<FormXObject>(appearance_stream);
-    return true;
-}
-
-void WidgetAnnotation::SetNormalAppearance(FormXObjectPtr appearance) {
-    if (!_obj->Contains(constant::Name::AP)) {
-        syntax::DictionaryObjectPtr new_appearance_dictionary;
-        _obj->Insert(constant::Name::AP, new_appearance_dictionary);
-    }
-
-    auto appearance_dictionary = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::AP);
-
-    // The appearance stream is an indirect object,
-    // so the appearance dictionary stores a reference to it
-    syntax::IndirectReferenceObjectPtr reference = make_deferred<syntax::IndirectReferenceObject>(appearance->GetObject());
-    appearance_dictionary->Insert(constant::Name::N, reference, true);
-}
-
-bool WidgetAnnotation::GetAppearanceCharacteristics(syntax::OutputDictionaryObjectPtr& result) const {
+bool WidgetAnnotation::GetAppearanceCharacteristics(OutputAppearanceCharacteristicsPtr& result) const {
     if (!_obj->Contains(constant::Name::MK)) {
         return false;
     }
 
-    result = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::MK);
+    auto characteristics_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::MK);
+    result = make_deferred<AppearanceCharacteristics>(characteristics_obj);
     return true;
 }
 
-void WidgetAnnotation::SetAppearanceCharacteristics(syntax::DictionaryObjectPtr value) {
-    _obj->Insert(constant::Name::MK, value, true);
+void WidgetAnnotation::SetAppearanceCharacteristics(AppearanceCharacteristicsPtr value) {
+    _obj->Insert(constant::Name::MK, value->GetObject(), true);
 }
 
 // PageAnnotations methods

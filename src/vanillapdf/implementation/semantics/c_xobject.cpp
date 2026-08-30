@@ -1,6 +1,7 @@
 #include "precompiled.h"
 #include "semantics/objects/xobject.h"
 #include "semantics/objects/document.h"
+#include "semantics/objects/matrix.h"
 #include "semantics/objects/rectangle.h"
 #include "semantics/objects/resource_dictionary.h"
 
@@ -107,7 +108,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetBoundingBox(FormXObj
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_GetMatrix(FormXObjectHandle* handle, ArrayObjectHandle** result)
+VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_GetMatrix(FormXObjectHandle* handle, MatrixHandle** result)
 {
     FormXObject* obj = reinterpret_cast<FormXObject*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -115,22 +116,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_GetMatrix(FormXObjectHa
 
     try
     {
-        MixedArrayObjectPtr matrix;
+        OutputMatrixPtr matrix;
         bool contains = obj->GetMatrix(matrix);
         if (!contains) {
             return VANILLAPDF_ERROR_OBJECT_MISSING;
         }
 
         auto ptr = matrix.AddRefGet();
-        *result = reinterpret_cast<ArrayObjectHandle*>(ptr);
+        *result = reinterpret_cast<MatrixHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetMatrix(FormXObjectHandle* handle, ArrayObjectHandle* value)
+VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetMatrix(FormXObjectHandle* handle, MatrixHandle* value)
 {
     FormXObject* obj = reinterpret_cast<FormXObject*>(handle);
-    MixedArrayObject* matrix = reinterpret_cast<MixedArrayObject*>(value);
+    Matrix* matrix = reinterpret_cast<Matrix*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(matrix);
 
@@ -161,10 +162,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_GetResources(FormXObjec
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
-VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetResources(FormXObjectHandle* handle, DictionaryObjectHandle* value)
+VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetResources(FormXObjectHandle* handle, ResourceDictionaryHandle* value)
 {
     FormXObject* obj = reinterpret_cast<FormXObject*>(handle);
-    DictionaryObject* resources = reinterpret_cast<DictionaryObject*>(value);
+    ResourceDictionary* resources = reinterpret_cast<ResourceDictionary*>(value);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(resources);
 

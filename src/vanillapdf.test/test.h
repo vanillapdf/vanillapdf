@@ -100,7 +100,11 @@ error_type process_named_destinations(NamedDestinationsHandle* obj, int nested);
 error_type process_destination(DestinationHandle* obj, int nested);
 error_type process_page_annotations(PageAnnotationsHandle* obj, int nested);
 error_type process_annotation(AnnotationHandle* obj, int nested);
+error_type process_annotation_appearance(AnnotationHandle* obj, AppearanceType type, int nested);
 error_type process_link_annotation(LinkAnnotationHandle* obj, int nested);
+error_type process_widget_annotation(WidgetAnnotationHandle* obj, int nested);
+error_type process_appearance_characteristics(AppearanceCharacteristicsHandle* obj, int nested);
+error_type process_form_xobject(FormXObjectHandle* obj, int nested);
 error_type process_resource_dictionary(ResourceDictionaryHandle* obj, int nested);
 error_type process_font_map(FontMapHandle* obj, int nested);
 error_type process_interactive_form(InteractiveFormHandle* obj, int nested);
@@ -118,6 +122,8 @@ error_type process_byte_range(ByteRangeHandle* obj, int nested);
 
 /* Common data structures */
 error_type process_rectangle(RectangleHandle* obj, int nested);
+error_type process_matrix(MatrixHandle* obj, int nested);
+error_type process_color(ColorHandle* obj, int nested);
 error_type process_date(DateHandle* obj, int nested);
 
 /* Test document save */

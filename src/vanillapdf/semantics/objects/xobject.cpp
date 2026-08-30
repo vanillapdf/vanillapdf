@@ -4,6 +4,7 @@
 
 #include "semantics/objects/xobject.h"
 #include "semantics/objects/document.h"
+#include "semantics/objects/matrix.h"
 #include "semantics/objects/rectangle.h"
 #include "semantics/objects/resource_dictionary.h"
 
@@ -94,19 +95,20 @@ void FormXObject::SetBoundingBox(RectanglePtr value) {
     header->Insert(constant::Name::BBox, value->GetObject(), true);
 }
 
-bool FormXObject::GetMatrix(MixedArrayObjectPtr& result) const {
+bool FormXObject::GetMatrix(OutputMatrixPtr& result) const {
     auto header = _obj->GetHeader();
     if (!header->Contains(constant::Name::Matrix)) {
         return false;
     }
 
-    result = header->FindAs<MixedArrayObjectPtr>(constant::Name::Matrix);
+    auto matrix_obj = header->FindAs<ArrayObjectPtr<RealObjectPtr>>(constant::Name::Matrix);
+    result = make_deferred<Matrix>(matrix_obj);
     return true;
 }
 
-void FormXObject::SetMatrix(MixedArrayObjectPtr value) {
+void FormXObject::SetMatrix(MatrixPtr value) {
     auto header = _obj->GetHeader();
-    header->Insert(constant::Name::Matrix, value, true);
+    header->Insert(constant::Name::Matrix, value->GetObject(), true);
 }
 
 bool FormXObject::GetResources(OutputResourceDictionaryPtr& result) const {
@@ -120,9 +122,9 @@ bool FormXObject::GetResources(OutputResourceDictionaryPtr& result) const {
     return true;
 }
 
-void FormXObject::SetResources(DictionaryObjectPtr value) {
+void FormXObject::SetResources(ResourceDictionaryPtr value) {
     auto header = _obj->GetHeader();
-    header->Insert(constant::Name::Resources, value, true);
+    header->Insert(constant::Name::Resources, value->GetObject(), true);
 }
 
 } // semantics

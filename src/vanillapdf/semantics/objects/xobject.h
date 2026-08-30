@@ -41,10 +41,10 @@ public:
     void SetBoundingBox(RectanglePtr value);
 
     // Optional
-    bool GetMatrix(syntax::MixedArrayObjectPtr& result) const;
-    void SetMatrix(syntax::MixedArrayObjectPtr value);
+    bool GetMatrix(OutputMatrixPtr& result) const;
+    void SetMatrix(MatrixPtr value);
     bool GetResources(OutputResourceDictionaryPtr& result) const;
-    void SetResources(syntax::DictionaryObjectPtr value);
+    void SetResources(ResourceDictionaryPtr value);
 };
 
 class ImageXObject : public XObjectBase {

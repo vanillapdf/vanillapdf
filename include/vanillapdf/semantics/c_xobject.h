@@ -136,12 +136,12 @@ extern "C"
     /**
     * \brief Get the transformation matrix (Matrix entry) mapping form space into user space
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_GetMatrix(FormXObjectHandle* handle, ArrayObjectHandle** result);
+    VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_GetMatrix(FormXObjectHandle* handle, MatrixHandle** result);
 
     /**
     * \brief Set the transformation matrix (Matrix entry) mapping form space into user space
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetMatrix(FormXObjectHandle* handle, ArrayObjectHandle* value);
+    VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetMatrix(FormXObjectHandle* handle, MatrixHandle* value);
 
     /**
     * \brief Get the resource dictionary (Resources entry) of the form
@@ -151,7 +151,7 @@ extern "C"
     /**
     * \brief Set the resource dictionary (Resources entry) of the form
     */
-    VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetResources(FormXObjectHandle* handle, DictionaryObjectHandle* value);
+    VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetResources(FormXObjectHandle* handle, ResourceDictionaryHandle* value);
 
     /**
     * \brief Reinterpret current object as \ref XObjectHandle

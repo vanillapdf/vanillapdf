@@ -60,6 +60,7 @@ set(VANILLAPDF_INCLUDE_SYNTAX_HEADERS
 set(VANILLAPDF_INCLUDE_SEMANTICS_HEADERS
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_actions.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_annotations.h"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_appearance_characteristics.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_byte_range.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_catalog.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_character_map.h"
@@ -79,6 +80,7 @@ set(VANILLAPDF_INCLUDE_SEMANTICS_HEADERS
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_font.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_font_map.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_interactive_forms.h"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_matrix.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_name_dictionary.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_outline.h"
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/semantics/c_page_contents.h"
