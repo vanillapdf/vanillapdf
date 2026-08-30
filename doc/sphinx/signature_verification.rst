@@ -3,7 +3,7 @@ Signature Verification Guide
 
 This guide explains how to verify digital signatures in PDF documents using the Vanilla.PDF C API.
 
-For a complete working example, see ``verify.c``.
+For a complete working example, see ``verify.cpp``.
 
 Overview
 --------
@@ -100,8 +100,8 @@ Creating a Trust Store
 
 Create a trusted certificate store and load certificates:
 
-.. literalinclude:: ../../src/vanillapdf.tools/verify.c
-   :language: c
+.. literalinclude:: ../../src/vanillapdf.tools/verify.cpp
+   :language: cpp
    :start-after: //! [Create trust store]
    :end-before: //! [Create trust store]
    :dedent:
@@ -111,8 +111,8 @@ Configuring Verification Settings
 
 Configure verification behavior with custom settings:
 
-.. literalinclude:: ../../src/vanillapdf.tools/verify.c
-   :language: c
+.. literalinclude:: ../../src/vanillapdf.tools/verify.cpp
+   :language: cpp
    :start-after: //! [Configure verification settings]
    :end-before: //! [Configure verification settings]
    :dedent:
@@ -128,44 +128,17 @@ Verifying a Signature
 
 Call the verification API and inspect the results:
 
-.. literalinclude:: ../../src/vanillapdf.tools/verify.c
-   :language: c
+.. literalinclude:: ../../src/vanillapdf.tools/verify.cpp
+   :language: cpp
    :start-after: //! [Verify signature]
    :end-before: //! [Verify signature]
    :dedent:
 
-Command Line Usage
-------------------
-
-The vanillapdf.tools CLI provides signature verification:
-
-.. code-block:: bash
-
-   # Basic verification (uses system trust store)
-   vanillapdf.tools verify -f document.pdf
-
-   # Skip certificate validation (for self-signed certificates)
-   vanillapdf.tools verify -f document.pdf --skip-certificate-validation
-
-   # Allow weak algorithms (for legacy documents)
-   vanillapdf.tools verify -f document.pdf --allow-weak-algorithms
-
-   # Check certificate at signing time
-   vanillapdf.tools verify -f document.pdf --check-signing-time
-
-   # Use custom certificate directory
-   vanillapdf.tools verify -f document.pdf -c /path/to/trusted/certs
-
-   # Combine options
-   vanillapdf.tools verify -f document.pdf \
-       --allow-weak-algorithms \
-       --check-signing-time
-
 Security Recommendations
 ------------------------
 
-1. **Always use system trust store** — Let the OS manage trusted root certificates
-2. **Avoid** ``--skip-certificate-validation`` — Only use for testing self-signed certificates
-3. **Avoid** ``--allow-weak-algorithms`` — Only enable when absolutely necessary for legacy documents
-4. **Use** ``--check-signing-time`` — For old documents where certificates may have expired
+1. **Always use system trust store** — Let the OS manage trusted root certificates (``TrustedCertificateStore_LoadSystemDefaults``)
+2. **Avoid** ``SetSkipCertificateValidation`` — Only use for testing self-signed certificates
+3. **Avoid** ``SetAllowWeakAlgorithmsFlag`` — Only enable when absolutely necessary for legacy documents
+4. **Use** ``SetCheckSigningTimeFlag`` — For old documents where certificates may have expired
 5. **Keep certificates updated** — Ensure your system's certificate store is current

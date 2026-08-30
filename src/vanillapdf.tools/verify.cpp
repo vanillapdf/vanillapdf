@@ -1,111 +1,47 @@
 #include "tools.h"
 
-void print_verify_help() {
-    printf("Usage: verify -f [signed PDF file] [options]\n");
-    printf("Options:\n");
-    printf("  -f [file]                     Signed PDF file to verify (required)\n");
-    printf("  -c [certs]                    Trusted certificate store directory (optional, uses system defaults if not specified)\n");
-    printf("  -l [license]                  License file (optional)\n");
-    printf("  --skip-certificate-validation Skip X509 certificate chain validation (insecure, for testing only)\n");
-    printf("  --allow-weak-algorithms       Allow weak cryptographic algorithms (MD5, SHA-1, RSA < 2048 bits)\n");
-    printf("  --check-signing-time          Validate certificate at signing time instead of current time\n");
-    /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
-    printf("  --check-revocation            Check certificate revocation (CRL/OCSP)\n");
-    */
-}
+namespace {
 
-int process_verify(int argc, char *argv[]) {
-
-    int arg_counter = 0;
-    string_type license_file = NULL;
-    string_type pdf_file = NULL;
-    string_type certs_path = NULL;
-
-    boolean_type skip_certificate_validation = VANILLAPDF_RV_FALSE;
-    boolean_type allow_weak_algorithms = VANILLAPDF_RV_FALSE;
-    boolean_type check_signing_time = VANILLAPDF_RV_FALSE;
+struct VerifyOptions {
+    std::string file;
+    std::string certificates_path;
+    std::string license_file;
+    bool skip_certificate_validation = false;
+    bool allow_weak_algorithms = false;
+    bool check_signing_time = false;
     /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157) */
-    /* boolean_type check_revocation = VANILLAPDF_RV_FALSE; */
+    /* bool check_revocation = false; */
+};
 
-    DocumentHandle* document = NULL;
-    FileHandle* file = NULL;
-    CatalogHandle* catalog = NULL;
-    InteractiveFormHandle* acro_form = NULL;
-    FieldTreeHandle* field_tree = NULL;
-    FieldHandle* field = NULL;
-    SignatureFieldHandle* sig_field = NULL;
-    DigitalSignatureHandle* digital_signature = NULL;
-    TrustedCertificateStoreHandle* trust_store = NULL;
-    SignatureVerificationSettingsHandle* settings = NULL;
-    SignatureVerificationResultHandle* result = NULL;
+int process_verify(const VerifyOptions& options) {
+    DocumentGuard document;
+    FileGuard file;
+    CatalogGuard catalog;
+    InteractiveFormGuard acro_form;
+    FieldTreeGuard field_tree;
+    TrustedCertificateStoreGuard trust_store;
+    SignatureVerificationSettingsGuard settings;
 
-    for (arg_counter = 0; arg_counter < argc; ++arg_counter) {
-
-        // PDF file
-        if (strcmp(argv[arg_counter], "-f") == 0 && (arg_counter + 1 < argc)) {
-            pdf_file = argv[arg_counter + 1];
-            arg_counter++;
-
-        // Certificates path
-        } else if (strcmp(argv[arg_counter], "-c") == 0 && (arg_counter + 1 < argc)) {
-            certs_path = argv[arg_counter + 1];
-            arg_counter++;
-
-        // License
-        } else if (strcmp(argv[arg_counter], "-l") == 0 && (arg_counter + 1 < argc)) {
-            license_file = argv[arg_counter + 1];
-            arg_counter++;
-
-        // Flags
-        } else if (strcmp(argv[arg_counter], "--skip-certificate-validation") == 0) {
-            skip_certificate_validation = VANILLAPDF_RV_TRUE;
-
-        } else if (strcmp(argv[arg_counter], "--allow-weak-algorithms") == 0) {
-            allow_weak_algorithms = VANILLAPDF_RV_TRUE;
-
-        } else if (strcmp(argv[arg_counter], "--check-signing-time") == 0) {
-            check_signing_time = VANILLAPDF_RV_TRUE;
-
-        /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
-        } else if (strcmp(argv[arg_counter], "--check-revocation") == 0) {
-            check_revocation = VANILLAPDF_RV_TRUE;
-        */
-
-        } else {
-            print_verify_help();
-            return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-        }
-    }
-
-    if (pdf_file == NULL) {
-        printf("Error: PDF file is required\n");
-        print_verify_help();
-        return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
-    }
-
-    if (license_file != NULL) {
-        RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_SetLicenseFile(license_file));
+    if (!options.license_file.empty()) {
+        RETURN_ERROR_IF_NOT_SUCCESS(LicenseInfo_SetLicenseFile(options.license_file.c_str()));
     }
 
     // Open PDF document
-    printf("Opening PDF file: %s\n", pdf_file);
-    RETURN_ERROR_IF_NOT_SUCCESS(File_Open(pdf_file, &file));
-    RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenFile(file, &document));
+    printf("Opening PDF file: %s\n", options.file.c_str());
+    RETURN_ERROR_IF_NOT_SUCCESS(File_Open(options.file.c_str(), file.out()));
+    RETURN_ERROR_IF_NOT_SUCCESS(Document_OpenFile(file, document.out()));
 
     // Get catalog
-    error_type catalog_result = Document_GetCatalog(document, &catalog);
+    error_type catalog_result = Document_GetCatalog(document, catalog.out());
     if (catalog_result != VANILLAPDF_ERROR_SUCCESS) {
         printf("Error: Failed to get document catalog (not a valid PDF?)\n");
         return VANILLAPDF_TOOLS_ERROR_FAILURE;
     }
 
     // Get AcroForm
-    error_type acroform_result = Catalog_GetAcroForm(catalog, &acro_form);
+    error_type acroform_result = Catalog_GetAcroForm(catalog, acro_form.out());
     if (acroform_result == VANILLAPDF_ERROR_OBJECT_MISSING) {
         printf("Error: No AcroForm found in PDF (document has no form fields)\n");
-        Catalog_Release(catalog);
-        Document_Release(document);
-        File_Release(file);
         return VANILLAPDF_TOOLS_ERROR_FAILURE;
     }
     if (acroform_result != VANILLAPDF_ERROR_SUCCESS) {
@@ -115,7 +51,7 @@ int process_verify(int argc, char *argv[]) {
 
     // Enumerate the resolved terminal fields of the field hierarchy
     size_type field_count = 0;
-    error_type field_tree_result = InteractiveForm_GetFieldTree(acro_form, &field_tree);
+    error_type field_tree_result = InteractiveForm_GetFieldTree(acro_form, field_tree.out());
     if (field_tree_result == VANILLAPDF_ERROR_SUCCESS) {
         RETURN_ERROR_IF_NOT_SUCCESS(FieldTree_GetFieldCount(field_tree, &field_count));
     } else if (field_tree_result != VANILLAPDF_ERROR_OBJECT_MISSING) {
@@ -125,11 +61,6 @@ int process_verify(int argc, char *argv[]) {
 
     if (field_count == 0) {
         printf("Error: No form fields found in PDF\n");
-        if (field_tree) FieldTree_Release(field_tree);
-        InteractiveForm_Release(acro_form);
-        Catalog_Release(catalog);
-        Document_Release(document);
-        File_Release(file);
         return VANILLAPDF_TOOLS_ERROR_FAILURE;
     }
 
@@ -137,11 +68,11 @@ int process_verify(int argc, char *argv[]) {
 
     //! [Create trust store]
     // Create or load trusted certificate store
-    RETURN_ERROR_IF_NOT_SUCCESS(TrustedCertificateStore_Create(&trust_store));
+    RETURN_ERROR_IF_NOT_SUCCESS(TrustedCertificateStore_Create(trust_store.out()));
 
-    if (certs_path != NULL) {
-        printf("Loading trusted certificates from: %s\n", certs_path);
-        RETURN_ERROR_IF_NOT_SUCCESS(TrustedCertificateStore_LoadFromDirectory(trust_store, certs_path));
+    if (!options.certificates_path.empty()) {
+        printf("Loading trusted certificates from: %s\n", options.certificates_path.c_str());
+        RETURN_ERROR_IF_NOT_SUCCESS(TrustedCertificateStore_LoadFromDirectory(trust_store, options.certificates_path.c_str()));
     } else {
         printf("Loading system default trusted certificates\n");
         RETURN_ERROR_IF_NOT_SUCCESS(TrustedCertificateStore_LoadSystemDefaults(trust_store));
@@ -150,25 +81,25 @@ int process_verify(int argc, char *argv[]) {
 
     //! [Configure verification settings]
     // Configure verification settings
-    RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_Create(&settings));
+    RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_Create(settings.out()));
 
-    if (skip_certificate_validation) {
+    if (options.skip_certificate_validation) {
         printf("WARNING: Skipping certificate chain validation (insecure)\n");
         RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetSkipCertificateValidation(settings, VANILLAPDF_RV_TRUE));
     }
 
-    if (allow_weak_algorithms) {
+    if (options.allow_weak_algorithms) {
         printf("Allowing weak cryptographic algorithms\n");
         RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetAllowWeakAlgorithmsFlag(settings, VANILLAPDF_RV_TRUE));
     }
 
-    if (check_signing_time) {
+    if (options.check_signing_time) {
         printf("Checking certificate validity at signing time\n");
         RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetCheckSigningTimeFlag(settings, VANILLAPDF_RV_TRUE));
     }
 
     /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
-    if (check_revocation) {
+    if (options.check_revocation) {
         printf("Checking certificate revocation status\n");
         RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetCheckRevocationFlag(settings, VANILLAPDF_RV_TRUE));
     }
@@ -180,41 +111,38 @@ int process_verify(int argc, char *argv[]) {
     int overall_result = VANILLAPDF_TOOLS_ERROR_SUCCESS;
 
     for (size_type i = 0; i < field_count; i++) {
-        field = NULL;
-        sig_field = NULL;
-        digital_signature = NULL;
-        result = NULL;
+        FieldGuard field;
+        SignatureFieldGuard sig_field;
+        DigitalSignatureGuard digital_signature;
+        SignatureVerificationResultGuard result;
 
         // Get field at index
-        error_type field_result = FieldTree_GetField(field_tree, i, &field);
+        error_type field_result = FieldTree_GetField(field_tree, i, field.out());
         if (field_result != VANILLAPDF_ERROR_SUCCESS) {
             printf("Warning: Failed to get field at index %llu\n", (unsigned long long) i);
             continue;
         }
 
         // Try to convert to signature field
-        error_type sig_result = SignatureField_FromField(field, &sig_field);
+        error_type sig_result = SignatureField_FromField(field, sig_field.out());
         if (sig_result != VANILLAPDF_ERROR_SUCCESS) {
             // Not a signature field, skip
-            Field_Release(field);
             continue;
         }
 
         // Get digital signature value
-        error_type value_result = SignatureField_GetValue(sig_field, &digital_signature);
+        error_type value_result = SignatureField_GetValue(sig_field, digital_signature.out());
         if (value_result != VANILLAPDF_ERROR_SUCCESS) {
             printf("Warning: Signature field at index %llu has no value\n", (unsigned long long) i);
-            SignatureField_Release(sig_field);
-            Field_Release(field);
             continue;
         }
 
-        signature_count++;
+        signature_count += 1;
         printf("\n=== Verifying Signature #%llu ===\n", (unsigned long long) signature_count);
 
         //! [Verify signature]
         // Verify signature using DigitalSignatureExtensions
-        RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignatureExtensions_Verify(digital_signature, document, trust_store, settings, &result));
+        RETURN_ERROR_IF_NOT_SUCCESS(DigitalSignatureExtensions_Verify(digital_signature, document, trust_store, settings, result.out()));
 
         // Get verification status
         SignatureVerificationStatusType status;
@@ -230,12 +158,12 @@ int process_verify(int argc, char *argv[]) {
         RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationResult_IsCertificateTrusted(result, &is_cert_trusted));
 
         // Get signer common name
-        BufferHandle* signer_name = NULL;
-        RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationResult_GetSignerCommonName(result, &signer_name));
+        BufferGuard signer_name;
+        RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationResult_GetSignerCommonName(result, signer_name.out()));
 
         // Get verification message
-        BufferHandle* message_buffer = NULL;
-        RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationResult_GetMessage(result, &message_buffer));
+        BufferGuard message_buffer;
+        RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationResult_GetMessage(result, message_buffer.out()));
         //! [Verify signature]
 
         // Print results
@@ -271,18 +199,18 @@ int process_verify(int argc, char *argv[]) {
         printf("Document Intact: %s\n", is_document_intact ? "Yes" : "No");
         printf("Certificate Trusted: %s\n", is_cert_trusted ? "Yes" : "No");
 
-        if (signer_name != NULL) {
+        if (signer_name) {
             size_type name_size = 0;
-            string_type name_data = NULL;
+            string_type name_data = nullptr;
             RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(signer_name, &name_data, &name_size));
             if (name_size > 0) {
                 printf("Signer: %s\n", name_data);
             }
         }
 
-        if (message_buffer != NULL) {
+        if (message_buffer) {
             size_type message_size = 0;
-            string_type message_data = NULL;
+            string_type message_data = nullptr;
             RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(message_buffer, &message_data, &message_size));
             if (message_size > 0) {
                 printf("Message: %s\n", message_data);
@@ -293,14 +221,6 @@ int process_verify(int argc, char *argv[]) {
         if (status != SignatureStatus_Valid) {
             overall_result = VANILLAPDF_TOOLS_ERROR_FAILURE;
         }
-
-        // Cleanup iteration resources
-        if (message_buffer) Buffer_Release(message_buffer);
-        if (signer_name) Buffer_Release(signer_name);
-        if (result) SignatureVerificationResult_Release(result);
-        if (digital_signature) DigitalSignature_Release(digital_signature);
-        if (sig_field) SignatureField_Release(sig_field);
-        if (field) Field_Release(field);
     }
 
     // Print summary
@@ -313,15 +233,27 @@ int process_verify(int argc, char *argv[]) {
     }
     printf("============================\n\n");
 
-    // Cleanup (iteration resources already cleaned up in loop)
-    if (settings) SignatureVerificationSettings_Release(settings);
-    if (trust_store) TrustedCertificateStore_Release(trust_store);
-    if (field_tree) FieldTree_Release(field_tree);
-    if (acro_form) InteractiveForm_Release(acro_form);
-    if (catalog) Catalog_Release(catalog);
-    if (document) Document_Release(document);
-    if (file) File_Release(file);
-
     // Return overall result
     return overall_result;
+}
+
+} // namespace
+
+void register_verify(CLI::App& app, int& exit_code) {
+    auto options = std::make_shared<VerifyOptions>();
+    auto* command = app.add_subcommand("verify", "Verify PDF signatures");
+
+    command->add_option("-f,--file", options->file, "Signed PDF file to verify")->required();
+    command->add_option("-c,--certificates", options->certificates_path, "Trusted certificate store directory (uses system defaults if not specified)");
+    command->add_option("-l,--license", options->license_file, "License file");
+    command->add_flag("--skip-certificate-validation", options->skip_certificate_validation, "Skip X509 certificate chain validation (insecure, for testing only)");
+    command->add_flag("--allow-weak-algorithms", options->allow_weak_algorithms, "Allow weak cryptographic algorithms (MD5, SHA-1, RSA < 2048 bits)");
+    command->add_flag("--check-signing-time", options->check_signing_time, "Validate certificate at signing time instead of current time");
+    /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
+    command->add_flag("--check-revocation", options->check_revocation, "Check certificate revocation (CRL/OCSP)");
+    */
+
+    command->callback([options, &exit_code]() {
+        exit_code = process_verify(*options);
+    });
 }

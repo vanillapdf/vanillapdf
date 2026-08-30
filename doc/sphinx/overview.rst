@@ -26,7 +26,6 @@ Where to go next
 - :doc:`c_api` -- Handle system, memory management, error handling
 - :doc:`architecture` -- Three-layer design, object model, memory model
 - :doc:`signature_verification` -- Trust stores, chain validation, weak-algorithm detection
-- :doc:`cli_tools` -- sign, verify, merge, extract, encrypt, decrypt
 
 **Learning** -- understand the PDF format and see examples:
 

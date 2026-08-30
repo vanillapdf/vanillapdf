@@ -100,17 +100,11 @@ Build:
 Sign the document
 -----------------
 
-Use the CLI tool to add a digital signature:
-
-.. code-block:: bash
-
-   vanillapdf-tools sign -s output.pdf -d signed.pdf -k private_key.p12 -p password
-
-Verify it:
-
-.. code-block:: bash
-
-   vanillapdf-tools verify -f signed.pdf
+Digital signatures are applied through the same C API: load a PKCS#12 key
+with ``PKCS12Key_CreateFromFile``, configure ``DocumentSignatureSettings``
+and call ``Document_Sign``. Signatures are checked with
+``DigitalSignatureExtensions_Verify``; see :doc:`signature_verification`
+for a complete walkthrough of trust stores, settings and result handling.
 
 Query library version
 ---------------------
@@ -138,5 +132,4 @@ Next steps
 - :doc:`c_api` -- Handle system, memory management, error handling, debugging
 - :doc:`examples` -- Signing, merging, encryption, content stream processing
 - :doc:`signature_verification` -- Verify digital signatures with trust stores
-- :doc:`cli_tools` -- All CLI commands: sign, verify, merge, extract, encrypt, decrypt
 - :doc:`pdf_format` -- Understand PDF syntax: objects, XRef tables, trailers

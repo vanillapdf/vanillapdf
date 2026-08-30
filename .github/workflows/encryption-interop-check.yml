@@ -57,7 +57,7 @@ jobs:
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
       - name: Configure
-        run: cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+        run: cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release
 
       - name: Build vanillapdf.tools
         run: cmake --build --preset linux-x64-gcc --target vanillapdf.tools
@@ -108,7 +108,7 @@ jobs:
         run: ./external/vcpkg/bootstrap-vcpkg.sh
 
       - name: Configure
-        run: cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release -DVANILLAPDF_ENABLE_TESTS=OFF -DVANILLAPDF_ENABLE_BENCHMARK=OFF
+        run: cmake --preset linux-x64-gcc -DCMAKE_BUILD_TYPE=Release
 
       - name: Build vanillapdf.tools
         run: cmake --build --preset linux-x64-gcc --target vanillapdf.tools

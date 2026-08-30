@@ -95,7 +95,8 @@ jobs:
             -DVANILLAPDF_EXTERNAL_JPEG=ON \
             -DVANILLAPDF_EXTERNAL_ZLIB=ON \
             -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
-            -DVANILLAPDF_ENABLE_TESTS=OFF
+            -DVANILLAPDF_ENABLE_TESTS=OFF \
+            -DVANILLAPDF_ENABLE_TOOLS=OFF
 
       - name: Build
         run: cmake --build --preset ${{ env.BUILD_PRESET }} --target ${{ matrix.target }}

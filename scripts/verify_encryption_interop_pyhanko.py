@@ -99,13 +99,13 @@ def main():
         tools_exe, "encrypt",
         "-s", source_pdf,
         "-d", destination,
-        "-op", OWNER_PASSWORD,
-        "-up", USER_PASSWORD,
-        "-ka", algorithm,
-        "-kl", key_length,
+        "--owner-password", OWNER_PASSWORD,
+        "--user-password", USER_PASSWORD,
+        "--algorithm", algorithm,
+        "--key-length", key_length,
     ]
 
-    # Do not print the command: it carries the -op/-up passwords.
+    # Do not print the command: it carries the owner/user passwords.
     print("Encrypting {} as {} {}".format(source_pdf, algorithm, key_length))
     result = subprocess.run(command)
     if result.returncode != 0:

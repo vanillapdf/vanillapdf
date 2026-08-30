@@ -10,14 +10,14 @@
 \section examples_api API Usage Examples
 
 <ul>
-<li>\ref merge.c - File merge
-<li>\ref extract.c - Image extraction
-<li>\ref filter.c - Compression filters
-<li>\ref sign.c - Digital signature
-<li>\ref sign_custom.c - Custom digital signature using interface callbacks
-<li>\ref verify.c - Signature verification
-<li>\ref decrypt.c - File decryption
-<li>\ref write_custom.c - Custom file writer callbacks
+<li>\ref merge.cpp - File merge
+<li>\ref extract.cpp - Image extraction
+<li>\ref filter.cpp - Compression filters
+<li>\ref sign.cpp - Digital signature
+<li>\ref sign_custom.cpp - Custom digital signature using interface callbacks
+<li>\ref verify.cpp - Signature verification
+<li>\ref decrypt.cpp - File decryption
+<li>\ref write_custom.cpp - Custom file writer callbacks
 </ul>
 
 Utilities:
@@ -34,7 +34,7 @@ Utilities:
 Additional resources:
 
 <ul>
-<li>\ref main.c - Main file for command-line application vanillapdf.tools.
+<li>\ref main.cpp - Main file for command-line application vanillapdf.tools.
 <li>\ref tools.h - Tools project header file including macro definitions.
 </ul>
 
@@ -81,48 +81,48 @@ Additional resources:
 */
 
 /**
-* \example main.c
+* \example main.cpp
 * Main file for command-line application vanillapdf.tools.
 * Print help and forwards parameters to the separate handlers.
 */
 
 /**
-* \example merge.c
+* \example merge.cpp
 * File merge full example.
 */
 
 /**
-* \example extract.c
+* \example extract.cpp
 * File image extaction full example.
 */
 
 /**
-* \example filter.c
+* \example filter.cpp
 * Example use of compression filters.
 */
 
 /**
-* \example sign.c
+* \example sign.cpp
 * Example use of digital signature with PKCS#12 key.
 */
 
 /**
-* \example sign_custom.c
+* \example sign_custom.cpp
 * Example use of custom interface callbacks for document signing.
 */
 
 /**
-* \example decrypt.c
+* \example decrypt.cpp
 * Example use of encrypted files, protected with password or certificate.
 */
 
 /**
-* \example write_custom.c
+* \example write_custom.cpp
 * Example use of custom file writer callbacks
 */
 
 /**
-* \example verify.c
+* \example verify.cpp
 * Example use of digital signature verification with certificate chain validation.
 */
 

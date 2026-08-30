@@ -20,7 +20,6 @@ Cross-platform toolkit for creating and modifying PDF documents.
    c_api
    architecture
    signature_verification
-   cli_tools
    packaging
 
 .. toctree::

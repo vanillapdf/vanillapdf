@@ -15,7 +15,7 @@ paths:
 
 ## Running Tests
 
-Enable tests with `-DVANILLAPDF_ENABLE_TESTS=ON` (enabled by default) and run:
+`VANILLAPDF_ENABLE_TESTS` defaults to OFF (package/consumer builds get the library alone); every CMake preset sets it ON, as it does `VANILLAPDF_ENABLE_TOOLS`. Run:
 ```bash
 ctest --preset windows-x64-msvc-18
 ```
