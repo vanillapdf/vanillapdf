@@ -376,6 +376,184 @@ error_type process_rectangle(RectangleHandle* obj, int nested) {
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+error_type process_matrix(MatrixHandle* obj, int nested) {
+    real_type a = 0;
+    real_type b = 0;
+    real_type c = 0;
+    real_type d = 0;
+    real_type e = 0;
+    real_type f = 0;
+
+    print_spaces(nested);
+    print_text("Matrix begin\n");
+
+    RETURN_ERROR_IF_NOT_SUCCESS(Matrix_GetA(obj, &a));
+    RETURN_ERROR_IF_NOT_SUCCESS(Matrix_GetB(obj, &b));
+    RETURN_ERROR_IF_NOT_SUCCESS(Matrix_GetC(obj, &c));
+    RETURN_ERROR_IF_NOT_SUCCESS(Matrix_GetD(obj, &d));
+    RETURN_ERROR_IF_NOT_SUCCESS(Matrix_GetE(obj, &e));
+    RETURN_ERROR_IF_NOT_SUCCESS(Matrix_GetF(obj, &f));
+
+    print_spaces(nested + 1); print_text("A: %g\n", a);
+    print_spaces(nested + 1); print_text("B: %g\n", b);
+    print_spaces(nested + 1); print_text("C: %g\n", c);
+    print_spaces(nested + 1); print_text("D: %g\n", d);
+    print_spaces(nested + 1); print_text("E: %g\n", e);
+    print_spaces(nested + 1); print_text("F: %g\n", f);
+
+    print_spaces(nested);
+    print_text("Matrix end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_color(ColorHandle* obj, int nested) {
+    ColorSpaceType color_space = ColorSpace_Transparent;
+    real_type gray = 0;
+    real_type red = 0;
+    real_type green = 0;
+    real_type blue = 0;
+    real_type cyan = 0;
+    real_type magenta = 0;
+    real_type yellow = 0;
+    real_type black = 0;
+
+    print_spaces(nested);
+    print_text("Color begin\n");
+
+    RETURN_ERROR_IF_NOT_SUCCESS(Color_GetColorSpace(obj, &color_space));
+
+    switch (color_space) {
+        case ColorSpace_Transparent:
+            print_spaces(nested + 1);
+            print_text("Transparent\n");
+            break;
+
+        case ColorSpace_DeviceGray:
+            RETURN_ERROR_IF_NOT_SUCCESS(Color_GetGray(obj, &gray));
+            print_spaces(nested + 1); print_text("Gray: %g\n", gray);
+            break;
+
+        case ColorSpace_DeviceRGB:
+            RETURN_ERROR_IF_NOT_SUCCESS(Color_GetRed(obj, &red));
+            RETURN_ERROR_IF_NOT_SUCCESS(Color_GetGreen(obj, &green));
+            RETURN_ERROR_IF_NOT_SUCCESS(Color_GetBlue(obj, &blue));
+            print_spaces(nested + 1); print_text("Red: %g\n", red);
+            print_spaces(nested + 1); print_text("Green: %g\n", green);
+            print_spaces(nested + 1); print_text("Blue: %g\n", blue);
+            break;
+
+        case ColorSpace_DeviceCMYK:
+            RETURN_ERROR_IF_NOT_SUCCESS(Color_GetCyan(obj, &cyan));
+            RETURN_ERROR_IF_NOT_SUCCESS(Color_GetMagenta(obj, &magenta));
+            RETURN_ERROR_IF_NOT_SUCCESS(Color_GetYellow(obj, &yellow));
+            RETURN_ERROR_IF_NOT_SUCCESS(Color_GetBlack(obj, &black));
+            print_spaces(nested + 1); print_text("Cyan: %g\n", cyan);
+            print_spaces(nested + 1); print_text("Magenta: %g\n", magenta);
+            print_spaces(nested + 1); print_text("Yellow: %g\n", yellow);
+            print_spaces(nested + 1); print_text("Black: %g\n", black);
+            break;
+
+        default:
+            print_spaces(nested + 1);
+            print_text("Unrecognized color space\n");
+            return VANILLAPDF_TEST_ERROR_FAILURE;
+    }
+
+    print_spaces(nested);
+    print_text("Color end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_form_xobject(FormXObjectHandle* obj, int nested) {
+    RectangleHandle* bounding_box = NULL;
+    MatrixHandle* matrix = NULL;
+    ResourceDictionaryHandle* resources = NULL;
+
+    print_spaces(nested);
+    print_text("Form XObject begin\n");
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FormXObject_GetBoundingBox(obj, &bounding_box),
+        process_rectangle(bounding_box, nested + 1),
+        Rectangle_Release(bounding_box));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FormXObject_GetMatrix(obj, &matrix),
+        process_matrix(matrix, nested + 1),
+        Matrix_Release(matrix));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FormXObject_GetResources(obj, &resources),
+        process_resource_dictionary(resources, nested + 1),
+        ResourceDictionary_Release(resources));
+
+    print_spaces(nested);
+    print_text("Form XObject end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_appearance_characteristics(AppearanceCharacteristicsHandle* obj, int nested) {
+    /* Rotation defaults to 0 degrees when the entry is absent (Table 189) */
+    bigint_type rotation = 0;
+    long long converted_rotation = 0;
+    ColorHandle* border_color = NULL;
+    ColorHandle* background_color = NULL;
+    StringObjectHandle* normal_caption = NULL;
+    StringObjectHandle* rollover_caption = NULL;
+    StringObjectHandle* down_caption = NULL;
+
+    print_spaces(nested);
+    print_text("Appearance characteristics begin\n");
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(AppearanceCharacteristics_GetRotation(obj, &rotation),
+        VANILLAPDF_TEST_ERROR_SUCCESS);
+
+    converted_rotation = rotation;
+    print_spaces(nested + 1);
+    print_text("Rotation: %lld\n", converted_rotation);
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(AppearanceCharacteristics_GetBorderColor(obj, &border_color),
+        process_color(border_color, nested + 1),
+        Color_Release(border_color));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(AppearanceCharacteristics_GetBackgroundColor(obj, &background_color),
+        process_color(background_color, nested + 1),
+        Color_Release(background_color));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(AppearanceCharacteristics_GetNormalCaption(obj, &normal_caption),
+        process_string(normal_caption, nested + 1),
+        StringObject_Release(normal_caption));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(AppearanceCharacteristics_GetRolloverCaption(obj, &rollover_caption),
+        process_string(rollover_caption, nested + 1),
+        StringObject_Release(rollover_caption));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(AppearanceCharacteristics_GetDownCaption(obj, &down_caption),
+        process_string(down_caption, nested + 1),
+        StringObject_Release(down_caption));
+
+    print_spaces(nested);
+    print_text("Appearance characteristics end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_widget_annotation(WidgetAnnotationHandle* obj, int nested) {
+    AppearanceCharacteristicsHandle* characteristics = NULL;
+
+    print_spaces(nested);
+    print_text("Widget annotation begin\n");
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(WidgetAnnotation_GetAppearanceCharacteristics(obj, &characteristics),
+        process_appearance_characteristics(characteristics, nested + 1),
+        AppearanceCharacteristics_Release(characteristics));
+
+    print_spaces(nested);
+    print_text("Widget annotation end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
 error_type process_link_annotation(LinkAnnotationHandle* obj, int nested) {
     DestinationHandle* destination = NULL;
 
@@ -392,20 +570,48 @@ error_type process_link_annotation(LinkAnnotationHandle* obj, int nested) {
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+error_type process_annotation_appearance(AnnotationHandle* obj, AppearanceType type, int nested) {
+    FormXObjectHandle* appearance = NULL;
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Annotation_GetAppearance(obj, type, &appearance),
+        process_form_xobject(appearance, nested),
+        FormXObject_Release(appearance));
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
 error_type process_annotation(AnnotationHandle* obj, int nested) {
     AnnotationType type;
     LinkAnnotationHandle* link_annotation = NULL;
+    WidgetAnnotationHandle* widget_annotation = NULL;
+    NameObjectHandle* appearance_state = NULL;
 
     print_spaces(nested);
     print_text("Annotation begin\n");
 
     RETURN_ERROR_IF_NOT_SUCCESS(Annotation_GetAnnotationType(obj, &type));
 
+    /* The appearance dictionary is a common annotation entry (Table 164).
+       A state-keyed slot resolves through /AS, so print it as well. */
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(Annotation_GetAppearanceState(obj, &appearance_state),
+        process_name(appearance_state, nested + 1),
+        NameObject_Release(appearance_state));
+
+    RETURN_ERROR_IF_NOT_SUCCESS(process_annotation_appearance(obj, AppearanceType_Normal, nested + 1));
+    RETURN_ERROR_IF_NOT_SUCCESS(process_annotation_appearance(obj, AppearanceType_Rollover, nested + 1));
+    RETURN_ERROR_IF_NOT_SUCCESS(process_annotation_appearance(obj, AppearanceType_Down, nested + 1));
+
     switch (type) {
         case AnnotationType_Link:
             RETURN_ERROR_IF_NOT_SUCCESS(LinkAnnotation_FromBaseAnnotation(obj, &link_annotation));
             RETURN_ERROR_IF_NOT_SUCCESS(process_link_annotation(link_annotation, nested + 1));
             RETURN_ERROR_IF_NOT_SUCCESS(LinkAnnotation_Release(link_annotation));
+            break;
+
+        case AnnotationType_Widget:
+            RETURN_ERROR_IF_NOT_SUCCESS(WidgetAnnotation_FromBaseAnnotation(obj, &widget_annotation));
+            RETURN_ERROR_IF_NOT_SUCCESS(process_widget_annotation(widget_annotation, nested + 1));
+            RETURN_ERROR_IF_NOT_SUCCESS(WidgetAnnotation_Release(widget_annotation));
             break;
 
         case AnnotationType_Text:
@@ -426,7 +632,6 @@ error_type process_annotation(AnnotationHandle* obj, int nested) {
         case AnnotationType_FileAttachment:
         case AnnotationType_Sound:
         case AnnotationType_Movie:
-        case AnnotationType_Widget:
         case AnnotationType_Screen:
         case AnnotationType_PrinterMark:
         case AnnotationType_TrapNetwork:

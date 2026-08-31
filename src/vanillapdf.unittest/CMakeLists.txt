@@ -51,6 +51,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     io_strategy_test.cpp
     license_info_test.cpp
     content_stream_test.cpp
+    xobject_test.cpp
 )
 
 # Tests are gradually being moved out of the flat list above

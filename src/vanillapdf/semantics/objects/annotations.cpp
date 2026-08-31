@@ -1,11 +1,15 @@
 #include "precompiled.h"
 
+#include "syntax/files/file.h"
+
 #include "semantics/objects/annotations.h"
 #include "semantics/objects/actions.h"
+#include "semantics/objects/appearance_characteristics.h"
 #include "semantics/objects/color.h"
 #include "semantics/objects/date.h"
 #include "semantics/objects/destinations.h"
 #include "semantics/objects/document.h"
+#include "semantics/objects/xobject.h"
 #include "semantics/objects/name_dictionary.h"
 #include "semantics/objects/rectangle.h"
 
@@ -258,6 +262,99 @@ void AnnotationBase::SetContents(syntax::LiteralStringObjectPtr contents) {
         assert(removed && "Unable to remove existing item"); UNUSED(removed);
     }
     _obj->Insert(constant::Name::Contents, contents);
+}
+
+const syntax::NameObject& AnnotationBase::GetAppearanceEntryName(AppearanceType type) {
+    switch (type) {
+        case AppearanceType::Normal:
+            return constant::Name::N;
+        case AppearanceType::Rollover:
+            return constant::Name::R;
+        case AppearanceType::Down:
+            return constant::Name::D;
+        case AppearanceType::Undefined:
+        default:
+            LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown appearance type: {}", static_cast<int32_t>(type));
+    }
+}
+
+bool AnnotationBase::GetAppearance(AppearanceType type, OutputFormXObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::AP)) {
+        return false;
+    }
+
+    auto appearance_dictionary = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::AP);
+
+    const syntax::NameObject& entry_name = GetAppearanceEntryName(type);
+    if (!appearance_dictionary->Contains(entry_name)) {
+        return false;
+    }
+
+    // The slot holds a single stream when the annotation has no appearance
+    // states (Table 168)
+    auto appearance_entry = appearance_dictionary->Find(entry_name);
+    if (syntax::ObjectUtils::IsType<syntax::StreamObjectPtr>(appearance_entry)) {
+        auto appearance_stream = syntax::ObjectUtils::ConvertTo<syntax::StreamObjectPtr>(appearance_entry);
+        result = make_deferred<FormXObject>(appearance_stream);
+        return true;
+    }
+
+    // Otherwise it is a subdictionary keyed by appearance state, out of which
+    // /AS selects the one currently in effect
+    syntax::OutputNameObjectPtr state;
+    if (!GetAppearanceState(state)) {
+        return false;
+    }
+
+    syntax::NameObjectPtr state_name = state;
+    auto appearance_states = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(appearance_entry);
+    if (!appearance_states->Contains(state_name)) {
+        return false;
+    }
+
+    auto appearance_stream = appearance_states->FindAs<syntax::StreamObjectPtr>(state_name);
+    result = make_deferred<FormXObject>(appearance_stream);
+    return true;
+}
+
+void AnnotationBase::SetAppearance(AppearanceType type, FormXObjectPtr appearance) {
+    const syntax::NameObject& entry_name = GetAppearanceEntryName(type);
+
+    if (!_obj->Contains(constant::Name::AP)) {
+        syntax::DictionaryObjectPtr new_appearance_dictionary;
+        _obj->Insert(constant::Name::AP, new_appearance_dictionary);
+    }
+
+    auto appearance_dictionary = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::AP);
+
+    // Replacing a state subdictionary with a single stream would silently drop
+    // every other state, so it is rejected until a state-aware setter exists
+    if (appearance_dictionary->Contains(entry_name)) {
+        auto existing_entry = appearance_dictionary->Find(entry_name);
+        if (!syntax::ObjectUtils::IsType<syntax::StreamObjectPtr>(existing_entry)) {
+            LOG_ERROR_AND_THROW(NotSupportedException,
+                "Appearance entry {} holds appearance states, overwriting it with a single stream is not supported",
+                entry_name.ToString());
+        }
+    }
+
+    // The appearance stream is an indirect object,
+    // so the appearance dictionary stores a reference to it
+    syntax::IndirectReferenceObjectPtr reference = make_deferred<syntax::IndirectReferenceObject>(appearance->GetObject());
+    appearance_dictionary->Insert(entry_name, reference, true);
+}
+
+bool AnnotationBase::GetAppearanceState(syntax::OutputNameObjectPtr& result) const {
+    if (!_obj->Contains(constant::Name::AS)) {
+        return false;
+    }
+
+    result = _obj->FindAs<syntax::NameObjectPtr>(constant::Name::AS);
+    return true;
+}
+
+void AnnotationBase::SetAppearanceState(syntax::NameObjectPtr value) {
+    _obj->Insert(constant::Name::AS, value, true);
 }
 
 bool AnnotationBase::GetColor(OutputColorPtr& result) const {
@@ -877,6 +974,39 @@ void InkAnnotation::SetCreationDate(DatePtr date) {
     _obj->Insert(constant::Name::CreationDate, date->GetObject());
 }
 
+// WidgetAnnotation methods
+
+WidgetAnnotationPtr WidgetAnnotation::Create(DocumentPtr document) {
+    auto file = document->GetFile();
+
+    RectanglePtr rect;
+    auto dict = CreateBaseDictionary(constant::Name::Widget.Clone(), rect);
+
+    syntax::XrefUsedEntryBasePtr new_entry = file->AllocateNewEntry();
+    new_entry->SetReference(dict);
+    new_entry->SetFile(file);
+    new_entry->SetInitialized();
+
+    dict->SetFile(file);
+    dict->SetInitialized();
+
+    return make_deferred<WidgetAnnotation>(dict);
+}
+
+bool WidgetAnnotation::GetAppearanceCharacteristics(OutputAppearanceCharacteristicsPtr& result) const {
+    if (!_obj->Contains(constant::Name::MK)) {
+        return false;
+    }
+
+    auto characteristics_obj = _obj->FindAs<syntax::DictionaryObjectPtr>(constant::Name::MK);
+    result = make_deferred<AppearanceCharacteristics>(characteristics_obj);
+    return true;
+}
+
+void WidgetAnnotation::SetAppearanceCharacteristics(AppearanceCharacteristicsPtr value) {
+    _obj->Insert(constant::Name::MK, value->GetObject(), true);
+}
+
 // PageAnnotations methods
 
 PageAnnotations::PageAnnotations() {
@@ -884,7 +1014,24 @@ PageAnnotations::PageAnnotations() {
 }
 
 void PageAnnotations::Append(AnnotationPtr annotation) {
-    _obj->Append(annotation->GetObject());
+    auto annotation_dictionary = annotation->GetObject();
+
+    // An annotation that owns a cross-reference entry is stored as a reference
+    // rather than inlined. The same dictionary may also be reached from the
+    // field tree - a widget merged with its form field (12.5.6.19) - and an
+    // object cannot be both indirect and owned by a container, which is what
+    // inlining it would make it (see the assertions in Object::GetObjectNumber).
+    //
+    // Containers accept a raw indirect object at every insertion point today
+    // and inline it, so the substitution is done by every caller by hand. That
+    // belongs in the container instead - https://github.com/vanillapdf/vanillapdf/issues/543
+    if (annotation_dictionary->IsIndirect()) {
+        syntax::IndirectReferenceObjectPtr reference = make_deferred<syntax::IndirectReferenceObject>(annotation_dictionary);
+        _obj->Data()->Append(reference);
+        return;
+    }
+
+    _obj->Append(annotation_dictionary);
 }
 
 bool PageAnnotations::Remove(types::size_type index) {

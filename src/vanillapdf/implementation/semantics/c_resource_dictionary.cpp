@@ -1,5 +1,6 @@
 #include "precompiled.h"
 #include "semantics/objects/resource_dictionary.h"
+#include "semantics/objects/xobject.h"
 
 #include "syntax/objects/dictionary_object.h"
 
@@ -52,6 +53,107 @@ VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(Resou
         if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
         auto ptr = font.AddRefGet();
         *result = reinterpret_cast<FontMapHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetXObjectCount(ResourceDictionaryHandle* handle, size_type* result)
+{
+    ResourceDictionary* obj = reinterpret_cast<ResourceDictionary*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        *result = obj->GetXObjectCount();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetXObjectName(ResourceDictionaryHandle* handle, size_type at, NameObjectHandle** result)
+{
+    ResourceDictionary* obj = reinterpret_cast<ResourceDictionary*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto name = obj->GetXObjectName(at);
+        auto ptr = name.AddRefGet();
+        *result = reinterpret_cast<NameObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_FindXObject(ResourceDictionaryHandle* handle, const NameObjectHandle* name, XObjectHandle** result)
+{
+    ResourceDictionary* obj = reinterpret_cast<ResourceDictionary*>(handle);
+    const NameObject* name_object = reinterpret_cast<const NameObject*>(name);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(name_object);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputXObjectPtr xobject;
+        bool found = obj->TryFindXObject(*name_object, xobject);
+        if (!found) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = xobject.AddRefGet();
+        *result = reinterpret_cast<XObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_AddXObject(ResourceDictionaryHandle* handle, const NameObjectHandle* name, XObjectHandle* value)
+{
+    ResourceDictionary* obj = reinterpret_cast<ResourceDictionary*>(handle);
+    const NameObject* name_object = reinterpret_cast<const NameObject*>(name);
+    XObjectBase* xobject = reinterpret_cast<XObjectBase*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(name_object);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(xobject);
+
+    try
+    {
+        obj->AddXObject(*name_object, xobject);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_RemoveXObject(ResourceDictionaryHandle* handle, const NameObjectHandle* name, boolean_type* result)
+{
+    ResourceDictionary* obj = reinterpret_cast<ResourceDictionary*>(handle);
+    const NameObject* name_object = reinterpret_cast<const NameObject*>(name);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(name_object);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        if (obj->RemoveXObject(*name_object)) {
+            *result = VANILLAPDF_RV_TRUE;
+        } else {
+            *result = VANILLAPDF_RV_FALSE;
+        }
+
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetBaseObject(ResourceDictionaryHandle* handle, ObjectHandle** result)
+{
+    ResourceDictionary* obj = reinterpret_cast<ResourceDictionary*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto base_object = obj->GetObject();
+        auto ptr = base_object.AddRefGet();
+        *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

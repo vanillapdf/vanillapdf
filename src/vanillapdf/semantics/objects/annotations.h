@@ -41,6 +41,14 @@ public:
         Redaction
     };
 
+    // Slots of the appearance dictionary (Table 168)
+    enum class AppearanceType {
+        Undefined = 0,
+        Normal,
+        Rollover,
+        Down
+    };
+
     enum Flags : int32_t {
         None = 0,
         Invisible = 1,
@@ -71,7 +79,28 @@ public:
     Flags GetFlags() const;
     void SetFlags(Flags flags);
 
+    // Appearance dictionary (/AP, Table 168). A slot holds either a single
+    // appearance stream, or - for annotations with appearance states, such as
+    // check box and radio button widgets - a subdictionary of streams keyed by
+    // state. GetAppearance returns the appearance currently in effect,
+    // resolving the latter through /AS.
+    bool GetAppearance(AppearanceType type, OutputFormXObjectPtr& result) const;
+
+    // Writes a single appearance stream into the slot. Throws
+    // NotSupportedException when the slot already holds appearance states, as
+    // overwriting it would drop them - the state-aware setter is tracked
+    // separately.
+    void SetAppearance(AppearanceType type, FormXObjectPtr appearance);
+
+    // Appearance state (/AS) - the key selecting the current stream from a
+    // state subdictionary
+    bool GetAppearanceState(syntax::OutputNameObjectPtr& result) const;
+    void SetAppearanceState(syntax::NameObjectPtr value);
+
 protected:
+    // Maps an appearance slot to its entry name within the /AP dictionary
+    static const syntax::NameObject& GetAppearanceEntryName(AppearanceType type);
+
     static syntax::DictionaryObjectPtr CreateBaseDictionary(
         const syntax::NameObjectPtr& subtype, RectanglePtr rect);
 };
@@ -293,6 +322,15 @@ class WidgetAnnotation : public AnnotationBase {
 public:
     explicit WidgetAnnotation(syntax::DictionaryObjectPtr root);
     virtual AnnotationBase::Type GetAnnotationType() const noexcept override;
+
+    // Widgets are attached by indirect reference from the page /Annots array
+    // and, when merged with a field, from the field tree - so the dictionary
+    // is registered in the document on creation, same as FormXObject::Create
+    static WidgetAnnotationPtr Create(DocumentPtr document);
+
+    // Appearance characteristics dictionary (Table 189)
+    bool GetAppearanceCharacteristics(OutputAppearanceCharacteristicsPtr& result) const;
+    void SetAppearanceCharacteristics(AppearanceCharacteristicsPtr value);
 };
 
 class ScreenAnnotation : public AnnotationBase {

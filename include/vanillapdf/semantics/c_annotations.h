@@ -252,6 +252,35 @@ extern "C"
     } AnnotationType;
 
     /**
+    * \brief Slots of the appearance dictionary
+    * \ingroup group_annotations
+    *
+    * For more details please visit [Table 168 - Entries in an appearance dictionary](PDF32000_2008.pdf#G11.2093142).
+    */
+    typedef enum {
+        AppearanceType_Undefined = 0,
+
+        /**
+        * \brief The annotation's normal appearance (N entry)
+        */
+        AppearanceType_Normal,
+
+        /**
+        * \brief
+        * The annotation's appearance while the cursor is held over
+        * its active area (R entry).
+        */
+        AppearanceType_Rollover,
+
+        /**
+        * \brief
+        * The annotation's appearance while the mouse button is pressed
+        * within its active area (D entry).
+        */
+        AppearanceType_Down
+    } AppearanceType;
+
+    /**
     * \brief Annotation flags controlling visibility and behavior
     * \ingroup group_annotations
     *
@@ -386,6 +415,68 @@ extern "C"
     * \param value the flags to set (can be combined with bitwise OR)
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetFlags(AnnotationHandle* handle, AnnotationFlags value);
+
+    /**
+    * \brief
+    * Get the appearance currently in effect for the specified slot of the
+    * appearance dictionary (AP entry).
+    *
+    * A slot holds either a single appearance stream, or - for annotations
+    * with appearance states, such as check box and radio button widgets - a
+    * subdictionary of streams keyed by state. In the latter case the stream
+    * named by the appearance state (see \ref Annotation_GetAppearanceState)
+    * is returned.
+    *
+    * Fails with \ref VANILLAPDF_ERROR_OBJECT_MISSING when the annotation has
+    * no appearance dictionary, the slot is absent, or the slot holds
+    * appearance states and none of them is currently selected.
+    * \param handle a handle to the annotation class
+    * \param type the appearance slot to read
+    * \param result a pointer to variable that will contain the appearance stream upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAppearance(AnnotationHandle* handle, AppearanceType type, FormXObjectHandle** result);
+
+    /**
+    * \brief
+    * Set a single appearance stream for the specified slot of the appearance
+    * dictionary (AP entry).
+    *
+    * The appearance dictionary stores an indirect reference to the appearance
+    * stream, so the form XObject has to be registered within the document -
+    * see \ref FormXObject_CreateFromDocument.
+    *
+    * Fails with \ref VANILLAPDF_ERROR_NOT_SUPPORTED when the slot already
+    * holds appearance states, because replacing them with a single stream
+    * would discard every state but this one.
+    * \param handle a handle to the annotation class
+    * \param type the appearance slot to write
+    * \param value the form XObject defining the annotation's visual presentation
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetAppearance(AnnotationHandle* handle, AppearanceType type, FormXObjectHandle* value);
+
+    /**
+    * \brief
+    * Get the appearance state (AS entry) - the key selecting the current
+    * stream out of an appearance slot's state subdictionary.
+    * \param handle a handle to the annotation class
+    * \param result a pointer to variable that will contain the state name upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAppearanceState(AnnotationHandle* handle, NameObjectHandle** result);
+
+    /**
+    * \brief Set the appearance state (AS entry)
+    * \param handle a handle to the annotation class
+    * \param value the name of the state to select
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetAppearanceState(AnnotationHandle* handle, NameObjectHandle* value);
+
+    /**
+    * \brief
+    * Switch object to low-level syntax API
+    *
+    * Useful for cases, where semantic API is not sufficient.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetBaseObject(AnnotationHandle* handle, DictionaryObjectHandle** result);
 
     /**
     * \copydoc IUnknown_Release
@@ -966,6 +1057,63 @@ extern "C"
     * \copydoc Annotation_Release
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_Release(InkAnnotationHandle* handle);
+
+    /** @} */
+
+    /**
+    * \class WidgetAnnotationHandle
+    * \extends AnnotationHandle
+    * \ingroup group_annotations
+    * \brief
+    * Interactive forms use widget annotations (PDF 1.2) to represent
+    * the appearance of fields and to manage user interactions.
+    *
+    * For more details please visit [section 12.5.6.19 - Widget Annotations](PDF32000_2008.pdf#G11.2093142).
+    */
+
+    /**
+    * \memberof WidgetAnnotationHandle
+    * @{
+    */
+
+    /**
+    * \brief Create a new widget annotation registered within the document
+    *
+    * Widget annotations are attached by indirect reference - from the page
+    * \c Annots array and, when merged with a form field, from the field tree
+    * (see \ref InteractiveForm_AddField) - so the annotation dictionary is
+    * allocated as an indirect object of the document up front.
+    *
+    * The new widget carries an empty rectangle; set it with \ref Annotation_SetRect.
+    * \param handle the document that owns the new annotation
+    * \param result a pointer to variable that will contain the new annotation upon success
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_CreateFromDocument(DocumentHandle* handle, WidgetAnnotationHandle** result);
+
+    /**
+    * \brief Get the appearance characteristics dictionary (MK entry)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_GetAppearanceCharacteristics(WidgetAnnotationHandle* handle, AppearanceCharacteristicsHandle** result);
+
+    /**
+    * \brief Set the appearance characteristics dictionary (MK entry)
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_SetAppearanceCharacteristics(WidgetAnnotationHandle* handle, AppearanceCharacteristicsHandle* value);
+
+    /**
+    * \brief Reinterpret current object as \ref AnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_ToBaseAnnotation(WidgetAnnotationHandle* handle, AnnotationHandle** result);
+
+    /**
+    * \brief Convert \ref AnnotationHandle to \ref WidgetAnnotationHandle
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_FromBaseAnnotation(AnnotationHandle* handle, WidgetAnnotationHandle** result);
+
+    /**
+    * \copydoc Annotation_Release
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_Release(WidgetAnnotationHandle* handle);
 
     /** @} */
 

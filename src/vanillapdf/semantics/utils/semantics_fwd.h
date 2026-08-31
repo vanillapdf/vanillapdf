@@ -47,6 +47,7 @@ class PageObject; using PageObjectPtr = Deferred<PageObject>; using OutputPageOb
 class ResourceDictionary; using ResourceDictionaryPtr = Deferred<ResourceDictionary>; using OutputResourceDictionaryPtr = OutputPointer<ResourceDictionaryPtr>;
 
 class Rectangle; using RectanglePtr = Deferred<Rectangle>; using OutputRectanglePtr = OutputPointer<RectanglePtr>;
+class Matrix; using MatrixPtr = Deferred<Matrix>; using OutputMatrixPtr = OutputPointer<MatrixPtr>;
 class Date; using DatePtr = Deferred<Date>; using OutputDatePtr = OutputPointer<DatePtr>;
 class Color; using ColorPtr = Deferred<Color>; using OutputColorPtr = OutputPointer<ColorPtr>;
 class Tree;
@@ -98,7 +99,15 @@ class UnderlineAnnotation; using UnderlineAnnotationPtr = Deferred<UnderlineAnno
 class StrikeOutAnnotation; using StrikeOutAnnotationPtr = Deferred<StrikeOutAnnotation>;
 class SquigglyAnnotation; using SquigglyAnnotationPtr = Deferred<SquigglyAnnotation>;
 class InkAnnotation; using InkAnnotationPtr = Deferred<InkAnnotation>;
+class WidgetAnnotation; using WidgetAnnotationPtr = Deferred<WidgetAnnotation>;
+class AppearanceCharacteristics; using AppearanceCharacteristicsPtr = Deferred<AppearanceCharacteristics>; using OutputAppearanceCharacteristicsPtr = OutputPointer<AppearanceCharacteristicsPtr>;
 class PageAnnotations; using PageAnnotationsPtr = Deferred<PageAnnotations>; using OutputPageAnnotationsPtr = OutputPointer<PageAnnotationsPtr>;
+
+// XObjects
+class XObjectBase; using XObjectPtr = Deferred<XObjectBase>; using OutputXObjectPtr = OutputPointer<XObjectPtr>;
+class FormXObject; using FormXObjectPtr = Deferred<FormXObject>; using OutputFormXObjectPtr = OutputPointer<FormXObjectPtr>;
+class ImageXObject; using ImageXObjectPtr = Deferred<ImageXObject>;
+class PostScriptXObject; using PostScriptXObjectPtr = Deferred<PostScriptXObject>;
 
 // Fonts
 class FontMap; using FontMapPtr = Deferred<FontMap>; using OutputFontMapPtr = OutputPointer<FontMapPtr>;

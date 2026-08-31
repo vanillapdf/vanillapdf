@@ -280,6 +280,20 @@ extern const syntax::NameObject Q;
 extern const syntax::NameObject Open;
 extern const syntax::NameObject IC;
 extern const syntax::NameObject InkList;
+extern const syntax::NameObject Form;
+extern const syntax::NameObject FormType;
+extern const syntax::NameObject PS;
+extern const syntax::NameObject BBox;
+extern const syntax::NameObject Matrix;
+extern const syntax::NameObject MK;
+extern const syntax::NameObject DR;
+
+// Appearance characteristics dictionary entries, see Table 189
+extern const syntax::NameObject BC;
+extern const syntax::NameObject BG;
+extern const syntax::NameObject CA;
+extern const syntax::NameObject RC;
+extern const syntax::NameObject AC;
 
 } // Constant
 } // Name

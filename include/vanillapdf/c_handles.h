@@ -195,6 +195,11 @@ extern "C"
     DECLARE_OBJECT_HANDLE(StrikeOutAnnotation);
     DECLARE_OBJECT_HANDLE(SquigglyAnnotation);
     DECLARE_OBJECT_HANDLE(InkAnnotation);
+    DECLARE_OBJECT_HANDLE(WidgetAnnotation);
+    DECLARE_OBJECT_HANDLE(AppearanceCharacteristics);
+
+    DECLARE_OBJECT_HANDLE(XObject);
+    DECLARE_OBJECT_HANDLE(FormXObject);
 
     DECLARE_OBJECT_HANDLE(InteractiveForm);
     DECLARE_OBJECT_HANDLE(SignatureFlags);
@@ -231,6 +236,7 @@ extern "C"
 
     DECLARE_OBJECT_HANDLE(Date);
     DECLARE_OBJECT_HANDLE(Rectangle);
+    DECLARE_OBJECT_HANDLE(Matrix);
     DECLARE_OBJECT_HANDLE(Color);
 
     #pragma endregion

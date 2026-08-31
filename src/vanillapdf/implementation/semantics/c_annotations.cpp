@@ -1,8 +1,11 @@
 #include "precompiled.h"
 #include "semantics/objects/annotations.h"
 #include "semantics/objects/actions.h"
+#include "semantics/objects/appearance_characteristics.h"
 #include "semantics/objects/color.h"
 #include "semantics/objects/date.h"
+#include "semantics/objects/document.h"
+#include "semantics/objects/xobject.h"
 #include "semantics/objects/rectangle.h"
 
 #include "vanillapdf/semantics/c_annotations.h"
@@ -338,6 +341,113 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetFlags(AnnotationHandl
     try
     {
         obj->SetFlags(static_cast<AnnotationBase::Flags>(value));
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAppearance(AnnotationHandle* handle, AppearanceType type, FormXObjectHandle** result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        AnnotationBase::AppearanceType appearance_type = AnnotationBase::AppearanceType::Normal;
+        switch (type) {
+            case AppearanceType_Normal:
+                appearance_type = AnnotationBase::AppearanceType::Normal; break;
+            case AppearanceType_Rollover:
+                appearance_type = AnnotationBase::AppearanceType::Rollover; break;
+            case AppearanceType_Down:
+                appearance_type = AnnotationBase::AppearanceType::Down; break;
+            default:
+                return VANILLAPDF_ERROR_PARAMETER_VALUE;
+        }
+
+        OutputFormXObjectPtr appearance;
+        bool contains = obj->GetAppearance(appearance_type, appearance);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = appearance.AddRefGet();
+        *result = reinterpret_cast<FormXObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetAppearance(AnnotationHandle* handle, AppearanceType type, FormXObjectHandle* value)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    FormXObject* appearance = reinterpret_cast<FormXObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(appearance);
+
+    try
+    {
+        AnnotationBase::AppearanceType appearance_type = AnnotationBase::AppearanceType::Normal;
+        switch (type) {
+            case AppearanceType_Normal:
+                appearance_type = AnnotationBase::AppearanceType::Normal; break;
+            case AppearanceType_Rollover:
+                appearance_type = AnnotationBase::AppearanceType::Rollover; break;
+            case AppearanceType_Down:
+                appearance_type = AnnotationBase::AppearanceType::Down; break;
+            default:
+                return VANILLAPDF_ERROR_PARAMETER_VALUE;
+        }
+
+        obj->SetAppearance(appearance_type, appearance);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAppearanceState(AnnotationHandle* handle, NameObjectHandle** result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputNameObjectPtr state;
+        bool contains = obj->GetAppearanceState(state);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = state.AddRefGet();
+        *result = reinterpret_cast<NameObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetAppearanceState(AnnotationHandle* handle, NameObjectHandle* value)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    NameObject* state = reinterpret_cast<NameObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(state);
+
+    try
+    {
+        obj->SetAppearanceState(state);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetBaseObject(AnnotationHandle* handle, DictionaryObjectHandle** result)
+{
+    AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto base_object = obj->GetObject();
+        auto ptr = base_object.AddRefGet();
+        *result = reinterpret_cast<DictionaryObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -1547,6 +1657,69 @@ VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_FromBaseAnnotation(An
 
 VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_Release(InkAnnotationHandle* handle) {
     return ObjectRelease<InkAnnotation, InkAnnotationHandle>(handle);
+}
+
+// WidgetAnnotation
+
+VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_CreateFromDocument(DocumentHandle* handle, WidgetAnnotationHandle** result)
+{
+    Document* document = reinterpret_cast<Document*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        auto annot = WidgetAnnotation::Create(document);
+        auto ptr = annot.AddRefGet();
+        *result = reinterpret_cast<WidgetAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_GetAppearanceCharacteristics(WidgetAnnotationHandle* handle, AppearanceCharacteristicsHandle** result)
+{
+    WidgetAnnotation* obj = reinterpret_cast<WidgetAnnotation*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputAppearanceCharacteristicsPtr characteristics;
+        bool contains = obj->GetAppearanceCharacteristics(characteristics);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = characteristics.AddRefGet();
+        *result = reinterpret_cast<AppearanceCharacteristicsHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_SetAppearanceCharacteristics(WidgetAnnotationHandle* handle, AppearanceCharacteristicsHandle* value)
+{
+    WidgetAnnotation* obj = reinterpret_cast<WidgetAnnotation*>(handle);
+    AppearanceCharacteristics* characteristics = reinterpret_cast<AppearanceCharacteristics*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(characteristics);
+
+    try
+    {
+        obj->SetAppearanceCharacteristics(characteristics);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_ToBaseAnnotation(WidgetAnnotationHandle* handle, AnnotationHandle** result) {
+    return SafeObjectConvert<WidgetAnnotation, AnnotationBase, WidgetAnnotationHandle, AnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_FromBaseAnnotation(AnnotationHandle* handle, WidgetAnnotationHandle** result) {
+    return SafeObjectConvert<AnnotationBase, WidgetAnnotation, AnnotationHandle, WidgetAnnotationHandle>(handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_Release(WidgetAnnotationHandle* handle) {
+    return ObjectRelease<WidgetAnnotation, WidgetAnnotationHandle>(handle);
 }
 
 // PageAnnotations_Remove
