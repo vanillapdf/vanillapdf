@@ -326,6 +326,58 @@ TEST(FlateDecodeFilter, DecodesEmptyPredictedStream) {
     EXPECT_EQ(decoded_len, 0u);
 }
 
+// The PNG predictor geometry comes straight out of /DecodeParms, so a
+// malformed document can set it to anything. /Columns 0 in particular sized
+// both scanline buffers to nothing while leaving a non-zero pixel stride, and
+// the PNG filters then indexed an empty vector - an assertion failure in a
+// debug build and an access violation in a release one.
+struct PngPredictorGeometryCase {
+    std::string_view name;
+    bigint_type colors;
+    bigint_type bits_per_component;
+    bigint_type columns;
+};
+
+class PngPredictorGeometryTest : public ::testing::TestWithParam<PngPredictorGeometryCase> {};
+
+TEST_P(PngPredictorGeometryTest, RejectsInvalidGeometry) {
+    const auto& param = GetParam();
+
+    HandleGuard<FlateDecodeFilterHandle, FlateDecodeFilter_Release> filter;
+    HandleGuard<BufferHandle, Buffer_Release> input_buffer;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> params;
+    HandleGuard<BufferHandle, Buffer_Release> decoded;
+
+    ASSERT_EQ(FlateDecodeFilter_Create(filter.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_AVERAGE), sizeof(INPUT_AVERAGE), input_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Create(params.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    InsertIntegerEntry(params, "Predictor", 15);
+    InsertIntegerEntry(params, "Colors", param.colors);
+    InsertIntegerEntry(params, "BitsPerComponent", param.bits_per_component);
+    InsertIntegerEntry(params, "Columns", param.columns);
+
+    EXPECT_NE(FlateDecodeFilter_DecodeParams(filter, input_buffer, params, decoded.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(decoded.get(), nullptr);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    FlateDecodeFilter,
+    PngPredictorGeometryTest,
+    ::testing::Values(
+        PngPredictorGeometryCase{ "ZeroColumns",           1, 8, 0 },
+        PngPredictorGeometryCase{ "NegativeColumns",       1, 8, -1 },
+        PngPredictorGeometryCase{ "ZeroColors",            0, 8, 4 },
+        PngPredictorGeometryCase{ "NegativeColors",       -1, 8, 4 },
+        PngPredictorGeometryCase{ "ZeroBitsPerComponent",  1, 0, 4 },
+        PngPredictorGeometryCase{ "OddBitsPerComponent",   1, 3, 4 },
+        PngPredictorGeometryCase{ "LargeBitsPerComponent", 1, 32, 4 }
+    ),
+    [](const ::testing::TestParamInfo<PngPredictorGeometryCase>& info) {
+        return std::string(info.param.name);
+    }
+);
+
 TEST(DCTDecodeFilter, Decode) {
 
     const unsigned char INPUT_DATA[] = {
