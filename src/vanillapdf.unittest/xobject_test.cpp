@@ -307,6 +307,160 @@ TEST(WidgetAnnotation, CreateFromDocumentNullParameters) {
     EXPECT_EQ(widget, nullptr);
 }
 
+// A widget merged with its form field is reached from both the page /Annots
+// array and the field tree (12.5.6.19). Appending it has to store a reference:
+// inlining the dictionary would make it both indirect and owned, which trips
+// the invariant in Object::GetObjectNumber and drops its cross-reference entry
+// on save, leaving the /Fields reference dangling. Asserting on the return
+// codes alone would not catch that - the inlining path reports success and
+// produces a damaged file - so the stored entry is inspected directly.
+TEST(WidgetAnnotation, MergedFieldWidgetIsAppendedByReference) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<CatalogHandle, Catalog_Release> catalog;
+    ASSERT_EQ(Document_GetCatalog(document, catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<PageTreeHandle, PageTree_Release> page_tree;
+    ASSERT_EQ(Catalog_GetPages(catalog, page_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<PageObjectHandle, PageObject_Release> page;
+    ASSERT_EQ(PageObject_CreateFromDocument(document, page.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<RectangleHandle, Rectangle_Release> media_box;
+    ASSERT_EQ(Rectangle_Create(media_box.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightXReal(media_box, 612), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Rectangle_SetUpperRightYReal(media_box, 792), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_SetMediaBox(page, media_box), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<PageAnnotationsHandle, PageAnnotations_Release> annotations;
+    ASSERT_EQ(PageAnnotations_Create(annotations.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_SetAnnotations(page, annotations), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<WidgetAnnotationHandle, WidgetAnnotation_Release> widget;
+    ASSERT_EQ(WidgetAnnotation_CreateFromDocument(document, widget.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<AnnotationHandle, Annotation_Release> base_annotation;
+    ASSERT_EQ(WidgetAnnotation_ToBaseAnnotation(widget, base_annotation.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    // Merge the widget with a button field - one dictionary, two containers
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> widget_dictionary;
+    ASSERT_EQ(Annotation_GetBaseObject(base_annotation, widget_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> field_type_key;
+    ASSERT_EQ(NameObject_CreateFromEncodedString("FT", field_type_key.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> field_type_value;
+    ASSERT_EQ(NameObject_CreateFromEncodedString("Btn", field_type_value.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ObjectHandle, Object_Release> field_type_object;
+    ASSERT_EQ(NameObject_ToObject(field_type_value, field_type_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Insert(widget_dictionary, field_type_key, field_type_object, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(widget_dictionary, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
+    ASSERT_EQ(InteractiveForm_CreateFromDocument(document, form.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FieldTreeHandle, FieldTree_Release> field_tree;
+    ASSERT_EQ(FieldTree_CreateFromDocument(document, field_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_AddRootChild(field_tree, field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_SetFieldTree(form, field_tree), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_SetAcroForm(catalog, form), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(PageAnnotations_Append(annotations, base_annotation), VANILLAPDF_ERROR_SUCCESS);
+
+    size_type annotation_count = 0;
+    ASSERT_EQ(PageAnnotations_GetSize(annotations, &annotation_count), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(annotation_count, 1u);
+
+    // Reach the raw /Annots array through the page dictionary - neither
+    // DictionaryObject_Find nor ArrayObject_GetValue resolves references, so
+    // the stored representation is what is inspected
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> page_dictionary;
+    ASSERT_EQ(PageObject_GetBaseObject(page, page_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> annots_key;
+    ASSERT_EQ(NameObject_CreateFromEncodedString("Annots", annots_key.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ObjectHandle, Object_Release> annots_object;
+    ASSERT_EQ(DictionaryObject_Find(page_dictionary, annots_key, annots_object.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ArrayObjectHandle, ArrayObject_Release> annots_array;
+    ASSERT_EQ(ArrayObject_FromObject(annots_object, annots_array.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ObjectHandle, Object_Release> stored_entry;
+    ASSERT_EQ(ArrayObject_GetValue(annots_array, 0, stored_entry.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ObjectType stored_type = ObjectType_Undefined;
+    ASSERT_EQ(Object_GetObjectType(stored_entry, &stored_type), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(stored_type, ObjectType_IndirectReference);
+
+    // Reading it back still resolves through the reference
+    HandleGuard<AnnotationHandle, Annotation_Release> retrieved_annotation;
+    ASSERT_EQ(PageAnnotations_At(annotations, 0, retrieved_annotation.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    AnnotationType retrieved_type = AnnotationType_Undefined;
+    ASSERT_EQ(Annotation_GetAnnotationType(retrieved_annotation, &retrieved_type), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(retrieved_type, AnnotationType_Widget);
+}
+
+// A detached annotation has no cross-reference entry, so it keeps being stored
+// inline - the behaviour every markup annotation constructor relies on
+TEST(Annotation, DetachedAnnotationIsAppendedInline) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<CatalogHandle, Catalog_Release> catalog;
+    ASSERT_EQ(Document_GetCatalog(document, catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<PageTreeHandle, PageTree_Release> page_tree;
+    ASSERT_EQ(Catalog_GetPages(catalog, page_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<PageObjectHandle, PageObject_Release> page;
+    ASSERT_EQ(PageObject_CreateFromDocument(document, page.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageTree_AppendPage(page_tree, page), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<PageAnnotationsHandle, PageAnnotations_Release> annotations;
+    ASSERT_EQ(PageAnnotations_Create(annotations.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageObject_SetAnnotations(page, annotations), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<RectangleHandle, Rectangle_Release> rect;
+    ASSERT_EQ(Rectangle_Create(rect.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<TextAnnotationHandle, TextAnnotation_Release> text_annotation;
+    ASSERT_EQ(TextAnnotation_Create(rect, text_annotation.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<AnnotationHandle, Annotation_Release> base_annotation;
+    ASSERT_EQ(TextAnnotation_ToBaseAnnotation(text_annotation, base_annotation.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PageAnnotations_Append(annotations, base_annotation), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> page_dictionary;
+    ASSERT_EQ(PageObject_GetBaseObject(page, page_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> annots_key;
+    ASSERT_EQ(NameObject_CreateFromEncodedString("Annots", annots_key.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ObjectHandle, Object_Release> annots_object;
+    ASSERT_EQ(DictionaryObject_Find(page_dictionary, annots_key, annots_object.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ArrayObjectHandle, ArrayObject_Release> annots_array;
+    ASSERT_EQ(ArrayObject_FromObject(annots_object, annots_array.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ObjectHandle, Object_Release> stored_entry;
+    ASSERT_EQ(ArrayObject_GetValue(annots_array, 0, stored_entry.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ObjectType stored_type = ObjectType_Undefined;
+    ASSERT_EQ(Object_GetObjectType(stored_entry, &stored_type), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(stored_type, ObjectType_Dictionary);
+}
+
 TEST(Annotation, AppearanceRoundtrip) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
     HandleGuard<FileHandle, File_Release> file;

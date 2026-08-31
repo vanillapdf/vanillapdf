@@ -1014,7 +1014,24 @@ PageAnnotations::PageAnnotations() {
 }
 
 void PageAnnotations::Append(AnnotationPtr annotation) {
-    _obj->Append(annotation->GetObject());
+    auto annotation_dictionary = annotation->GetObject();
+
+    // An annotation that owns a cross-reference entry is stored as a reference
+    // rather than inlined. The same dictionary may also be reached from the
+    // field tree - a widget merged with its form field (12.5.6.19) - and an
+    // object cannot be both indirect and owned by a container, which is what
+    // inlining it would make it (see the assertions in Object::GetObjectNumber).
+    //
+    // Containers accept a raw indirect object at every insertion point today
+    // and inline it, so the substitution is done by every caller by hand. That
+    // belongs in the container instead - https://github.com/vanillapdf/vanillapdf/issues/543
+    if (annotation_dictionary->IsIndirect()) {
+        syntax::IndirectReferenceObjectPtr reference = make_deferred<syntax::IndirectReferenceObject>(annotation_dictionary);
+        _obj->Data()->Append(reference);
+        return;
+    }
+
+    _obj->Append(annotation_dictionary);
 }
 
 bool PageAnnotations::Remove(types::size_type index) {
