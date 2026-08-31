@@ -243,7 +243,7 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
 
         assert(is_stream && "Object stream has incorrect type");
         if (!is_stream) {
-            LOG_ERROR_AND_THROW(ParseException, "Object stream has incorrect type");
+            LOG_ERROR_AND_THROW(ParseException, "Object stream shall be a Stream, but is {}", Object::TypeName(object_stream_object->GetObjectType()));
         }
 
         auto object_stream = ObjectUtils::ConvertTo<StreamObjectPtr>(object_stream_object);

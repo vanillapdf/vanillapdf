@@ -779,7 +779,8 @@ XrefStreamPtr Parser::ParseXrefStream(
 
         if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry)) {
             assert(false && "How could this be entry of different type");
-            LOG_ERROR_AND_THROW(ParseException, "Xref entry has incorrect type");
+            LOG_ERROR_AND_THROW(ParseException, "Xref entry {} {} shall be a used entry, but has usage {}",
+            stream_obj_number, stream_gen_number, static_cast<int>(entry->GetUsage()));
         }
 
         auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
