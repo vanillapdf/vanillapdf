@@ -39,7 +39,7 @@ FontBase* FontBase::Create(syntax::DictionaryObjectPtr root) {
     if (root->Contains(constant::Name::Type)) {
         syntax::ObjectPtr type_obj = root->Find(constant::Name::Type);
         if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
-            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid font type object");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Font /Type entry shall be a Name, but found {}", syntax::Object::TypeName(type_obj->GetObjectType()));
         }
 
         syntax::NameObjectPtr font_type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
@@ -56,7 +56,7 @@ FontBase* FontBase::Create(syntax::DictionaryObjectPtr root) {
     syntax::ObjectPtr subtype_obj = root->Find(constant::Name::Subtype);
 
     if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(subtype_obj)) {
-        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid font subtype object");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Font /Subtype entry shall be a Name, but found {}", syntax::Object::TypeName(subtype_obj->GetObjectType()));
     }
 
     syntax::NameObjectPtr subtype = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(subtype_obj);

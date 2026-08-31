@@ -140,7 +140,7 @@ BufferPtr MiscUtils::CalculateHash(const Buffer& data, MessageDigestAlgorithm di
     auto data_size = ValueConvertUtils::SafeConvert<int>(data.size());
     auto bytes_written = BIO_write(memory_bio, data.data(), data_size);
     if (bytes_written <= 0) {
-        LOG_ERROR_AND_THROW(IOErrorException, "");
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not write data into the digest buffer: {}", bytes_written);
     }
 
     auto flushed = BIO_flush(memory_bio);

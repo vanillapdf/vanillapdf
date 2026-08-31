@@ -346,7 +346,7 @@ void FileWriter::CloneHybridStreams(FilePtr source, FilePtr destination) {
     assert(source_chain->GetSize() == destination_chain->GetSize() && "Error in xref cloning");
 
     if (source_chain->GetSize() != destination_chain->GetSize()) {
-        LOG_ERROR_AND_THROW(ParseException, "Invalid xref size");
+        LOG_ERROR_AND_THROW(ParseException, "Cloned xref chain has {} xrefs, but the source has {}", destination_chain->GetSize(), source_chain->GetSize());
     }
 
     for (; dest_iterator != destination_chain->end(); ++dest_iterator, ++source_iterator) {
@@ -404,7 +404,7 @@ void FileWriter::FixStreamReferences(XrefChainPtr source, XrefChainPtr destinati
     assert(source->GetSize() == destination->GetSize() && "Error in xref cloning");
 
     if (source->GetSize() != destination->GetSize()) {
-        LOG_ERROR_AND_THROW(ParseException, "Invalid xref size");
+        LOG_ERROR_AND_THROW(ParseException, "Cloned xref chain has {} xrefs, but the source has {}", destination->GetSize(), source->GetSize());
     }
 
     for (; dest_iterator != destination->end(); ++dest_iterator, ++source_iterator) {

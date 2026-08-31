@@ -26,7 +26,8 @@ public:
 
     void OnWriteCheck(Version file_version) {
         if (static_cast<unsigned char>(ver) > static_cast<unsigned char>(file_version)) {
-            LOG_ERROR_AND_THROW(InvalidParameterException, "Expected file version does not match");
+            LOG_ERROR_AND_THROW(InvalidParameterException, "The entry requires PDF version {}, but the file declares {}",
+                static_cast<int>(ver), static_cast<int>(file_version));
         }
     }
 };

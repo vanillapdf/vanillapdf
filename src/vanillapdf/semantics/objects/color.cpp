@@ -47,14 +47,14 @@ void Color::SetComponent(types::size_type index, double value) {
 
 double Color::GetGray() const {
     if (GetColorSpace() != ColorSpace::DeviceGray) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Gray component is only available in DeviceGray colors, but this color has {} component(s)", _obj->GetSize());
     }
     return GetComponent(0);
 }
 
 void Color::SetGray(double value) {
     if (GetColorSpace() != ColorSpace::DeviceGray) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Gray component is only available in DeviceGray colors, but this color has {} component(s)", _obj->GetSize());
     }
     SetComponent(0, value);
 }
@@ -63,42 +63,42 @@ void Color::SetGray(double value) {
 
 double Color::GetRed() const {
     if (GetColorSpace() != ColorSpace::DeviceRGB) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Red component is only available in DeviceRGB colors, but this color has {} component(s)", _obj->GetSize());
     }
     return GetComponent(0);
 }
 
 void Color::SetRed(double value) {
     if (GetColorSpace() != ColorSpace::DeviceRGB) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Red component is only available in DeviceRGB colors, but this color has {} component(s)", _obj->GetSize());
     }
     SetComponent(0, value);
 }
 
 double Color::GetGreen() const {
     if (GetColorSpace() != ColorSpace::DeviceRGB) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Green component is only available in DeviceRGB colors, but this color has {} component(s)", _obj->GetSize());
     }
     return GetComponent(1);
 }
 
 void Color::SetGreen(double value) {
     if (GetColorSpace() != ColorSpace::DeviceRGB) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Green component is only available in DeviceRGB colors, but this color has {} component(s)", _obj->GetSize());
     }
     SetComponent(1, value);
 }
 
 double Color::GetBlue() const {
     if (GetColorSpace() != ColorSpace::DeviceRGB) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Blue component is only available in DeviceRGB colors, but this color has {} component(s)", _obj->GetSize());
     }
     return GetComponent(2);
 }
 
 void Color::SetBlue(double value) {
     if (GetColorSpace() != ColorSpace::DeviceRGB) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Blue component is only available in DeviceRGB colors, but this color has {} component(s)", _obj->GetSize());
     }
     SetComponent(2, value);
 }
@@ -107,56 +107,56 @@ void Color::SetBlue(double value) {
 
 double Color::GetCyan() const {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Cyan component is only available in DeviceCMYK colors, but this color has {} component(s)", _obj->GetSize());
     }
     return GetComponent(0);
 }
 
 void Color::SetCyan(double value) {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Cyan component is only available in DeviceCMYK colors, but this color has {} component(s)", _obj->GetSize());
     }
     SetComponent(0, value);
 }
 
 double Color::GetMagenta() const {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Magenta component is only available in DeviceCMYK colors, but this color has {} component(s)", _obj->GetSize());
     }
     return GetComponent(1);
 }
 
 void Color::SetMagenta(double value) {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Magenta component is only available in DeviceCMYK colors, but this color has {} component(s)", _obj->GetSize());
     }
     SetComponent(1, value);
 }
 
 double Color::GetYellow() const {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Yellow component is only available in DeviceCMYK colors, but this color has {} component(s)", _obj->GetSize());
     }
     return GetComponent(2);
 }
 
 void Color::SetYellow(double value) {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Yellow component is only available in DeviceCMYK colors, but this color has {} component(s)", _obj->GetSize());
     }
     SetComponent(2, value);
 }
 
 double Color::GetBlack() const {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Black component is only available in DeviceCMYK colors, but this color has {} component(s)", _obj->GetSize());
     }
     return GetComponent(3);
 }
 
 void Color::SetBlack(double value) {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "The Black component is only available in DeviceCMYK colors, but this color has {} component(s)", _obj->GetSize());
     }
     SetComponent(3, value);
 }

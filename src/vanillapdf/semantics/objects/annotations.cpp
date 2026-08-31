@@ -66,13 +66,13 @@ std::unique_ptr<AnnotationBase> AnnotationBase::Create(syntax::DictionaryObjectP
     if (root->Contains(constant::Name::Type)) {
         syntax::ObjectPtr type_obj = root->Find(constant::Name::Type);
         if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
-            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid annotation type");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Annotation /Type entry shall be a Name, but found {}", syntax::Object::TypeName(type_obj->GetObjectType()));
         }
 
         syntax::NameObjectPtr type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
 
         if (type != constant::Name::Annot) {
-            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid annotation type");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Annotation /Type entry shall be /Annot, but found {}", type->ToString());
         }
     }
 
@@ -83,7 +83,7 @@ std::unique_ptr<AnnotationBase> AnnotationBase::Create(syntax::DictionaryObjectP
     syntax::ObjectPtr subtype_obj = root->Find(constant::Name::Subtype);
 
     if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(subtype_obj)) {
-        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid annotation subtype");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Annotation /Subtype entry shall be a Name, but found {}", syntax::Object::TypeName(subtype_obj->GetObjectType()));
     }
 
     syntax::NameObjectPtr subtype = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(subtype_obj);
@@ -191,7 +191,7 @@ std::unique_ptr<AnnotationBase> AnnotationBase::Create(syntax::DictionaryObjectP
         return make_unique<RedactionAnnotation>(root);
     }
 
-    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown annotation subtype");
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown annotation subtype: {}", subtype->ToString());
 }
 
 bool LinkAnnotation::Destination(OutputDestinationPtr& result) const {

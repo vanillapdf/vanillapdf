@@ -105,7 +105,7 @@ DatePtr Date::GetCurrentDate() {
             local_time.GetHour(), local_time.GetMinute(), local_time.GetSecond(),
             local_time.GetHourOffset(), local_time.GetMinuteOffset());
     } else {
-        LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown timezone type");
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown timezone type: {}", static_cast<int>(timezone));
     }
 
     auto string_object = syntax::LiteralStringObject::CreateFromDecoded(formatted_time);
@@ -127,7 +127,7 @@ void Date::UpdateObject() {
             m_year, m_month, m_day, m_hour, m_minute, m_second,
             m_hour_offset, m_minute_offset);
     } else {
-        LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown timezone type");
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown timezone type: {}", static_cast<int>(m_timezone));
     }
 
     SetObject(syntax::LiteralStringObject::CreateFromDecoded(formatted_time));

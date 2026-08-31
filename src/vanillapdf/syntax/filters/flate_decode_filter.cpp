@@ -105,7 +105,7 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
     if (*predictor == 2) {
         LOG_ERROR_AND_THROW(NotSupportedException, "TIFF predictor is currently not supported");
     } else if (*predictor < 10) {
-        LOG_ERROR_AND_THROW(DataCorruptionException, "Unknown predictor type");
+        LOG_ERROR_AND_THROW(DataCorruptionException, "Unknown predictor type: {}", predictor->GetIntegerValue());
     }
 
     uint32_t colors_int = colors->SafeConvert<uint32_t>();

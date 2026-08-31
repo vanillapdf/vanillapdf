@@ -110,7 +110,7 @@ void NumericObjectBackend::ToggleBit(int pos, bool value) {
     }
 
     assert(false && "Unknown numeric type");
-    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type: {}", static_cast<int>(m_type));
 }
 
 void NumericObjectBackend::SetBit(int pos) {
@@ -137,7 +137,7 @@ bool NumericObjectBackend::IsBitSet(int pos) const {
     }
 
     assert(false && "Unknown numeric type");
-    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type: {}", static_cast<int>(m_type));
 }
 
 types::big_int NumericObjectBackend::GetIntegerValue(void) const {
@@ -154,7 +154,7 @@ types::big_int NumericObjectBackend::GetIntegerValue(void) const {
     }
 
     assert(false && "Unknown numeric type");
-    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type: {}", static_cast<int>(m_type));
 }
 
 types::big_uint NumericObjectBackend::GetUnsignedIntegerValue(void) const {
@@ -172,7 +172,7 @@ types::big_uint NumericObjectBackend::GetUnsignedIntegerValue(void) const {
     }
 
     assert(false && "Unknown numeric type");
-    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type: {}", static_cast<int>(m_type));
 }
 
 types::real NumericObjectBackend::GetRealValue(void) const {
@@ -190,7 +190,7 @@ types::real NumericObjectBackend::GetRealValue(void) const {
     }
 
     assert(false && "Unknown numeric type");
-    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type: {}", static_cast<int>(m_type));
 }
 
 std::string NumericObjectBackend::IntegerString(void) const {
@@ -241,7 +241,7 @@ std::string NumericObjectBackend::ToString(void) const {
     }
 
     assert(false && "Unknown numeric type");
-    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type: {}", static_cast<int>(m_type));
 }
 
 size_t NumericObjectBackend::Hash() const {
@@ -261,7 +261,7 @@ size_t NumericObjectBackend::Hash() const {
     }
 
     assert(false && "Unknown numeric type");
-    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type: {}", static_cast<int>(m_type));
 }
 
 size_t NumericObject::Hash() const {

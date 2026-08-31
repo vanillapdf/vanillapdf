@@ -30,7 +30,7 @@ void XrefStream::RecalculateContent() {
 
     assert(fields->GetSize() == 3);
     if (fields->GetSize() != 3) {
-        LOG_ERROR_AND_THROW(ObjectMissingException, "Xref stream width does not contain three integers");
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Xref stream /W shall contain three integers, but contains {}", fields->GetSize());
     }
 
     auto field1_size = fields->GetValue(0);
@@ -199,7 +199,7 @@ void XrefStream::WriteValue(IOutputStream& dest, types::big_uint value, int64_t 
     // This means, that the operation would overflow
     assert(shifted_value == 0 && "Xref stream value overflow");
     if (shifted_value != 0) {
-        LOG_ERROR_AND_THROW(ObjectMissingException, "Xref stream width is too small");
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Xref stream field width of {} byte(s) is too small for value {}", width, value);
     }
 
     // Writes <value> as a sequence of <width> bytes into <dest>

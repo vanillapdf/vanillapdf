@@ -94,7 +94,7 @@ const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
         return EVP_whirlpool();
     }
 
-    LOG_ERROR_AND_THROW(CryptoErrorException, "Unknown message digest algorithm");
+    LOG_ERROR_AND_THROW(CryptoErrorException, "Unknown message digest algorithm: {}", static_cast<int>(algorithm));
 }
 
 std::string CryptoUtils::GetLastOpensslError() {

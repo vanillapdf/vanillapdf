@@ -561,7 +561,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 
     assert(fields->GetSize() == 3);
     if (fields->GetSize() != 3) {
-        LOG_ERROR_AND_THROW(ParseException, "Xref stream width does not contain three integers");
+        LOG_ERROR_AND_THROW(ParseException, "Xref stream /W shall contain three integers, but contains {}", fields->GetSize());
     }
 
     auto size = header->FindAs<IntegerObjectPtr>(constant::Name::Size);

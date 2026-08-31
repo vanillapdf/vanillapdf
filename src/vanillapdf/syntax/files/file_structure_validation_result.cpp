@@ -18,7 +18,7 @@ void FileStructureValidationResult::AddIssue(FileStructureIssuePtr issue) {
 
 FileStructureIssuePtr FileStructureValidationResult::GetIssueAt(types::size_type index) const {
     if (index >= m_issues.size()) {
-        LOG_ERROR_AND_THROW(InvalidParameterException, "Issue index out of range");
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Issue index {} is out of range, the result holds {} issue(s)", index, m_issues.size());
     }
 
     return m_issues[index];

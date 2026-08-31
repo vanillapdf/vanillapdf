@@ -25,7 +25,7 @@ ActionPtr ActionBase::Create(syntax::DictionaryObjectPtr root) {
     syntax::ObjectPtr s_obj = root->Find(constant::Name::S);
 
     if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(s_obj)) {
-        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid action type");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Action /S entry shall be a Name, but found {}", syntax::Object::TypeName(s_obj->GetObjectType()));
     }
 
     syntax::NameObjectPtr s = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(s_obj);

@@ -208,7 +208,7 @@ void DocumentInfo::SetTrapped(DocumentTrapped value) {
             name = syntax::ObjectUtils::Clone<syntax::NameObjectPtr>(constant::Name::False);
             break;
         default:
-            LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown trapped type");
+            LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown trapped type: {}", static_cast<int>(value));
     }
 
     _obj->Insert(constant::Name::Trapped, name, true);

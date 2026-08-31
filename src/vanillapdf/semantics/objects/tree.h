@@ -377,7 +377,7 @@ syntax::ContainableObjectPtr TreeBase<KeyT, ValueT>::Find(const KeyT& key) const
 
     auto found = m_map.find(key);
     if (found == m_map.end()) {
-        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Item was not found");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Item {} was not found in the tree", key->ToString());
     }
 
     return found->second;
@@ -462,7 +462,7 @@ std::map<KeyT, syntax::ContainableObjectPtr> TreeBase<KeyT, ValueT>::GetAllKeys(
         return result_map;
     }
 
-    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown node type");
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown tree node type: {}", static_cast<int>(node_type));
 }
 
 template <typename KeyT, typename ValueT>
@@ -497,7 +497,7 @@ bool TreeBase<KeyT, ValueT>::ContainsInternal(const TreeNodeBasePtr node, const 
             return ContainsInternal(root->Values(), key);
         }
 
-        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown tree root type");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree root node has neither kids nor values");
     }
 
     if (node_type == TreeNodeBase::TreeNodeType::Intermediate) {
@@ -518,7 +518,7 @@ bool TreeBase<KeyT, ValueT>::ContainsInternal(const TreeNodeBasePtr node, const 
         return ContainsInternal(leaf->Values(), key);
     }
 
-    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown node type");
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown tree node type: {}", static_cast<int>(node_type));
 }
 
 template <typename KeyT, typename ValueT>
@@ -530,7 +530,7 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const syntax::MixedArrayObjectPtr va
         }
     }
 
-    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node does not contain required item");
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node does not contain item {}", key->ToString());
 }
 
 template <typename KeyT, typename ValueT>
@@ -546,14 +546,14 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
                 }
             }
 
-            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node does not contain required item");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node does not contain item {}", key->ToString());
         }
 
         if (root->HasValues()) {
             return FindInternal(root->Values(), key);
         }
 
-        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown tree root type");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree root node has neither kids nor values");
     }
 
     if (node_type == TreeNodeBase::TreeNodeType::Intermediate) {
@@ -564,7 +564,7 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
             }
         }
 
-        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node does not contain required item");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node does not contain item {}", key->ToString());
     }
 
     if (node_type == TreeNodeBase::TreeNodeType::Leaf) {
@@ -572,17 +572,17 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
         auto limits = leaf->Limits();
         assert(limits->GetSize() == 2);
         if (limits->GetSize() != 2) {
-            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node has incorrect size");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node limits shall contain two values, but contain {}", limits->GetSize());
         }
 
         if (key < limits->GetValue(0) || limits->GetValue(1) < key) {
-            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node does not contain required item");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node does not contain item {}", key->ToString());
         }
 
         return FindInternal(leaf->Values(), key);
     }
 
-    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown node type");
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown tree node type: {}", static_cast<int>(node_type));
 }
 
 #pragma endregion

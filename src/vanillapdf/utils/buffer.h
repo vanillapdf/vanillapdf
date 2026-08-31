@@ -96,7 +96,7 @@ public:
                 result |= static_cast<T>(static_cast<uint8_t>(m_data[i])) << (i * 8);
             }
         } else {
-            LOG_ERROR_AND_THROW_GENERAL("Unsupported byte order");
+            LOG_ERROR_AND_THROW_GENERAL("Unsupported byte order: {}", static_cast<int>(order));
         }
 
         return result;
@@ -118,7 +118,7 @@ public:
                 buf->push_back(static_cast<char>((value >> (i * 8)) & 0xFF));
             }
         } else {
-            LOG_ERROR_AND_THROW_GENERAL("Unsupported byte order");
+            LOG_ERROR_AND_THROW_GENERAL("Unsupported byte order: {}", static_cast<int>(order));
         }
 
         return buf;

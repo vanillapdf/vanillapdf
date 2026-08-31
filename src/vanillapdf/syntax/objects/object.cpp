@@ -172,7 +172,7 @@ types::big_uint Object::GetObjectNumber() const {
     }
 
     if (has_owner) {
-        LOG_ERROR_AND_THROW(InvalidParameterException, "Object does not an indirect object, but is a composite of another object");
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Object is not an indirect object, but is a composite of another object");
     }
 
     LOG_ERROR_AND_THROW(InvalidParameterException, "Object does not have assigned object number");
@@ -192,7 +192,7 @@ types::ushort Object::GetGenerationNumber() const {
     }
 
     if (has_owner) {
-        LOG_ERROR_AND_THROW(InvalidParameterException, "Object does not an indirect object, but a composite of another object");
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Object is not an indirect object, but is a composite of another object");
     }
 
     LOG_ERROR_AND_THROW(InvalidParameterException, "Object does not have assigned generation number");
@@ -278,7 +278,11 @@ const char* Object::TypeName(Type type) {
         case Type::IndirectReference:
             return "IndirectReference";
         default:
-            return nullptr;
+
+            // The name is used in log and exception messages, so it has to stay
+            // a printable string even for values outside of the enumeration.
+
+            return "Undefined";
     }
 }
 

@@ -444,7 +444,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
     }
 
     if (evp_cipher == nullptr) {
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Unknown AES key length: " + std::to_string(key_length));
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Unknown AES key length: {}", key_length);
     }
 
     auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
@@ -545,7 +545,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
     }
 
     if (evp_cipher == nullptr) {
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Unknown AES key length: " + std::to_string(key_length));
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Unknown AES key length: {}", key_length);
     }
 
     auto evp_cipher_ctx = EVP_CIPHER_CTX_new();

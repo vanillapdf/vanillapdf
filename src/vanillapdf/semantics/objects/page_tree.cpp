@@ -283,7 +283,7 @@ types::size_type PageTree::UpdateKidsCount(PageNodeBasePtr node) {
         return kid_count;
     }
 
-    LOG_ERROR_AND_THROW(syntax::ParseException, "Unknown page object type");
+    LOG_ERROR_AND_THROW(syntax::ParseException, "Unknown page node type: {}", static_cast<int>(node->GetNodeType()));
 }
 
 ArrayObjectPtr<IndirectReferenceObjectPtr> PageTree::GetKidsInternal(DictionaryObjectPtr node_dictionary) {
