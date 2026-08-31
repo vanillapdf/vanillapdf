@@ -18,7 +18,6 @@ BooleanObjectPtr ParserUtils::CreateBoolean(TokenPtr token) {
         return make_deferred<BooleanObject>(false);
     }
 
-    assert(!"Expected boolean token type");
     LOG_ERROR_AND_THROW(ParseException, "Expected boolean token type");
 }
 

@@ -293,7 +293,6 @@ DestinationPtr DestinationBase::ResolveDestination(syntax::ObjectPtr dest_obj) {
 
         auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(dest_obj);
 
-        assert(destinations->Contains(destination_name) && "Referenced destination does not exist");
         if (!destinations->Contains(destination_name)) {
             LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Referenced destination does not exist");
         }
@@ -326,7 +325,6 @@ DestinationPtr DestinationBase::ResolveDestination(syntax::ObjectPtr dest_obj) {
 
         auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(dest_obj);
 
-        assert(destinations->Contains(destination_name) && "Referenced destination does not exist");
         if (!destinations->Contains(destination_name)) {
             LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Referenced destination does not exist");
         }
@@ -411,10 +409,7 @@ DestinationPtr NamedDestinations::Find(const syntax::NameObject& name) const {
 }
 
 void NamedDestinations::Insert(const syntax::NameObject& name, DestinationPtr value) {
-    if (_obj->Contains(name)) {
-        bool removed = _obj->Remove(name);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(name);
 
     auto raw_obj = value->GetObject();
     if (raw_obj->IsIndirect()) {

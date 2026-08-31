@@ -12,7 +12,6 @@ ByteRangeCollection::ByteRangeCollection() {
 }
 
 ByteRangeCollection::ByteRangeCollection(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj) : HighLevelObject(obj) {
-    assert(obj->GetSize() % 2 == 0);
     if (obj->GetSize() % 2 != 0) {
         throw SemanticContextExceptionFactory::Construct<syntax::ArrayObject<syntax::IntegerObjectPtr>, ByteRangeCollection>(obj);
     }

@@ -28,7 +28,6 @@ void XrefStream::RecalculateContent() {
 
     auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
 
-    assert(fields->GetSize() == 3);
     if (fields->GetSize() != 3) {
         LOG_ERROR_AND_THROW(ObjectMissingException, "Xref stream /W shall contain three integers, but contains {}", fields->GetSize());
     }

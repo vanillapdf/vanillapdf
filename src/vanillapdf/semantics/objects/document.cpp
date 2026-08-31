@@ -530,7 +530,6 @@ void Document::AppendStringDestination(StringObjectPtr key, DestinationPtr value
     }
 
     // Check for name conflicts
-    assert(!original_string_destinations->Contains(key) && "Name conflict");
     if (original_string_destinations->Contains(key)) {
         LOG_ERROR_AND_THROW(NotSupportedException, "Merge of conflicting names is not yet supported");
     }
@@ -570,7 +569,6 @@ void Document::AppendNameDestination(NameObjectPtr key, DestinationPtr value, Pa
     }
 
     // Check for name conflicts
-    assert(!original_destinations->Contains(key) && "Name conflict");
     if (original_destinations->Contains(key)) {
         LOG_ERROR_AND_THROW(NotSupportedException, "Merge of conflicting names is not yet supported");
     }

@@ -221,7 +221,6 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
         // 7.5.7 Object Streams: "The generation number of an object stream and of any compressed object shall be zero."
         bool object_stream_found = chain->Contains(object_stream_number, 0);
 
-        assert(object_stream_found && "Object stream was not found");
         if (!object_stream_found) {
             LOG_ERROR_AND_THROW(ParseException, "Object stream was not found");
         }
@@ -229,7 +228,6 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
         auto object_stream_entry = chain->GetXrefEntry(object_stream_number, 0);
         bool object_stream_entry_used = ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(object_stream_entry);
 
-        assert(object_stream_entry_used && "Object stream is not in use");
         if (!object_stream_entry_used) {
             LOG_ERROR_AND_THROW(ParseException, "Object stream is not in use");
         }
@@ -241,7 +239,6 @@ void FileWriter::RecalculateObjectStreamContent(XrefChainPtr chain, XrefBasePtr 
         // Let me know, if you find a document with this condition
         bool is_stream = ObjectUtils::IsType<StreamObjectPtr>(object_stream_object);
 
-        assert(is_stream && "Object stream has incorrect type");
         if (!is_stream) {
             LOG_ERROR_AND_THROW(ParseException, "Object stream shall be a Stream, but is {}", Object::TypeName(object_stream_object->GetObjectType()));
         }
@@ -735,7 +732,6 @@ void FileWriter::RecalculateStreamsLength(XrefBasePtr source) {
             auto new_obj = compressed_entry->GetReference();
 
             // 7.5.7 The following objects shall not be stored in an object stream: Stream objects
-            assert(!ObjectUtils::IsType<StreamObjectPtr>(new_obj));
 
             if (ObjectUtils::IsType<StreamObjectPtr>(new_obj)) {
                 LOG_ERROR_AND_THROW(ParseException, "Stream object should not be inside object stream");

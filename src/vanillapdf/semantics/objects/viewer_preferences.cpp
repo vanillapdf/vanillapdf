@@ -15,7 +15,6 @@ PageRange::SubRange::SubRange(syntax::IntegerObjectPtr first, syntax::IntegerObj
 }
 
 PageRange::PageRange(syntax::ArrayObjectPtr<syntax::IntegerObjectPtr> obj) : HighLevelObject(obj) {
-    assert(obj->GetSize() % 2 == 0);
     if (obj->GetSize() % 2 != 0) {
         throw SemanticContextExceptionFactory::Construct<syntax::ArrayObject<syntax::IntegerObjectPtr>, PageRange>(obj);
     }

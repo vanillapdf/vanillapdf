@@ -120,7 +120,6 @@ BufferPtr MemoryBufferInputStream::Readline(void) {
 
     auto buffer_size = static_cast<types::stream_size>(m_buffer->size());
 
-    assert(m_position < buffer_size && "Stream reached eof");
     if (m_position >= buffer_size) {
         LOG_ERROR_AND_THROW_GENERAL("Stream reached eof");
     }

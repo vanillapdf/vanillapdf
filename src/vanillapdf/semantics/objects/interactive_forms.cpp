@@ -172,10 +172,7 @@ Field::Quadding InteractiveForm::ResolveQuadding(const FieldPtr& field) const {
 void InteractiveForm::SetNeedAppearances(bool value) {
     ACCESS_LOCK_GUARD(m_access_lock);
 
-    if (_obj->Contains(constant::Name::NeedAppearances)) {
-        bool removed = _obj->Remove(constant::Name::NeedAppearances);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::NeedAppearances);
     auto bool_obj = make_deferred<syntax::BooleanObject>(value);
     _obj->Insert(constant::Name::NeedAppearances, bool_obj);
 }
