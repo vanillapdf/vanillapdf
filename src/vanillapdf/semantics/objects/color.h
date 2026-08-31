@@ -21,6 +21,8 @@ public:
         DeviceCMYK    // 4 components
     };
 
+    static const char* ColorSpaceName(ColorSpace color_space);
+
 public:
     Color() = default;
     explicit Color(syntax::MixedArrayObjectPtr root);
