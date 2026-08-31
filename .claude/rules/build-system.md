@@ -45,6 +45,8 @@ External deps (all OFF): `VANILLAPDF_EXTERNAL_{OPENSSL,JPEG,OPENJPEG,ZLIB,SPDLOG
 
 Runtime options: `VANILLAPDF_OPENSSL_MODULES_DIR` — path to OpenSSL provider modules (`legacy.dll`). Auto-set to vcpkg bin dir on Windows shared builds with internal vcpkg. Override with `-DVANILLAPDF_OPENSSL_MODULES_DIR=<path>`.
 
+Limits: `VANILLAPDF_MAX_IMAGE_SIZE` (`0x40000000`, 1 GiB) — largest single decoded image, in bytes, that `DCTDecode` and `JPXDecode` will allocate. Image dimensions come from the document and are independent of how much data backs them, so a few hundred bytes of image stream can otherwise ask for gigabytes. It is a build time constant rather than a runtime property, so callers are protected without having to know it exists; raise it with `-DVANILLAPDF_MAX_IMAGE_SIZE=<bytes>` for documents that legitimately carry larger images.
+
 ## vcpkg
 
 vcpkg.json generated from `vcpkg.json.in` at configure time by `cmake/vcpkg_manifest.cmake`. Always included: spdlog, nlohmann-json. Feature-based: encryption→openssl, jpeg→libjpeg-turbo, jpeg2000→openjpeg, zlib→zlib, tests→gtest, benchmarks→benchmark.
