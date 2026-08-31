@@ -38,7 +38,7 @@ public:
 
         // Document signature is a licensed feature
         if (!LicenseInfo::IsValid()) {
-            throw LicenseRequiredException("Custom signing key is a licensed feature");
+            LOG_ERROR_AND_THROW(LicenseRequiredException, "Custom signing key is a licensed feature");
         }
     }
 
@@ -78,8 +78,7 @@ public:
 
         error_type rv = m_init(m_user_data, algorithm_type);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
-            throw UserCancelledException(
-                fmt::format("Custom key sign init operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "Custom key sign init operation returned: {}", rv);
         }
     }
 
@@ -87,8 +86,7 @@ public:
         auto input_handle = reinterpret_cast<const BufferHandle*>(&data);
         error_type rv = m_update(m_user_data, input_handle);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
-            throw UserCancelledException(
-                fmt::format("Custom key sign update operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "Custom key sign update operation returned: {}", rv);
         }
     }
 
@@ -103,13 +101,11 @@ public:
 
         error_type rv = m_final(m_user_data, &output_ptr);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
-            throw UserCancelledException(
-                fmt::format("Custom key sign final operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "Custom key sign final operation returned: {}", rv);
         }
 
         if (output_ptr == nullptr) {
-            throw UserCancelledException(
-                "Custom key sign final operation succeeded, but did not fill the signed data pointer");
+            LOG_ERROR_AND_THROW(UserCancelledException, "Custom key sign final operation succeeded, but did not fill the signed data pointer");
         }
 
         auto result = reinterpret_cast<Buffer*>(output_ptr);
@@ -119,8 +115,7 @@ public:
     void SignCleanup() override {
         error_type rv = m_cleanup(m_user_data);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
-            throw UserCancelledException(
-                fmt::format("Custom key sign cleanup operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "Custom key sign cleanup operation returned: {}", rv);
         }
     }
 

@@ -61,7 +61,7 @@ static OPJ_BOOL memory_stream_seek(OPJ_OFF_T p_nb_bytes, void* p_user_data) {
 }
 
 BufferPtr JPXDecodeFilter::Encode(IInputStreamPtr src, types::stream_size, DictionaryObjectPtr /* = DictionaryObjectPtr() */, AttributeListPtr /* = AttributeListPtr() */) const {
-    throw NotSupportedException("JPXDecodeFilter encoding is not supported");
+    LOG_ERROR_AND_THROW(NotSupportedException, "JPXDecodeFilter encoding is not supported");
 }
 
 BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr /* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
@@ -73,7 +73,7 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     // Initialize the JPEG2000 decoder
     auto codec = opj_create_decompress(OPJ_CODEC_JP2);
     if (codec == nullptr) {
-        throw ImageCodecErrorException("Failed to create JPEG2000 decoder");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Failed to create JPEG2000 decoder");
     }
 
     SCOPE_GUARD([codec]() { opj_destroy_codec(codec); });
@@ -88,7 +88,7 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     // Set up the stream
     opj_stream_t* stream = opj_stream_create(length_converted, OPJ_TRUE);
     if (stream == nullptr) {
-        throw ImageCodecErrorException("Failed to create JPEG2000 stream");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Failed to create JPEG2000 stream");
     }
 
     SCOPE_GUARD([stream]() { opj_stream_destroy(stream); });
@@ -102,7 +102,7 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     // Setup the decoder
     bool decoder_setup_result = opj_setup_decoder(codec, &parameters);
     if (!decoder_setup_result) {
-        throw ImageCodecErrorException("Failed to setup JPEG2000 decoder");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Failed to setup JPEG2000 decoder");
     }
 
     opj_image_t* image = nullptr;
@@ -116,16 +116,16 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     SCOPE_GUARD([image]() { opj_image_destroy(image); });
 
     if (!read_header_result) {
-        throw ImageCodecErrorException("Failed to read JPEG2000 header");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Failed to read JPEG2000 header");
     }
 
     if (!opj_set_decode_area(codec, image, parameters.DA_x0, parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)) {
-        throw ImageCodecErrorException("Failed to decode JPEG2000 area");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Failed to decode JPEG2000 area");
     }
 
     // Decode the image
     if (!opj_decode(codec, stream, image)) {
-        throw ImageCodecErrorException("Failed to decode JPEG2000 image");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Failed to decode JPEG2000 image");
     }
 
     // TODO: This code hangs the application in the unit tests
@@ -135,7 +135,7 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
     // JPEG decompression returned empty results
     if (image->comps == nullptr) {
-        throw ImageCodecErrorException("Received empty image components in JPEG2000 decompression");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Received empty image components in JPEG2000 decompression");
     }
 
     if (image->color_space == OPJ_CLRSPC_SRGB ||
@@ -231,7 +231,7 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
         return make_deferred_container<Buffer>(result.begin(), result.end());
     }
 
-    throw ImageCodecErrorException("Unknown JPEG2000 color space: " + std::to_string(image->color_space));
+    LOG_ERROR_AND_THROW(ImageCodecErrorException, "Unknown JPEG2000 color space: {}", static_cast<int>(image->color_space));
 }
 
 BufferPtr JPXDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {

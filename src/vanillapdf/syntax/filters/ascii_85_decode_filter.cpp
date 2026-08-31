@@ -7,7 +7,7 @@ namespace vanillapdf {
 namespace syntax {
 
 BufferPtr ASCII85DecodeFilter::Encode(IInputStreamPtr, types::stream_size, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */, AttributeListPtr /* = AttributeListPtr() */) const {
-    throw NotSupportedException("ASCII85DecodeFilter encoding is not supported");
+    LOG_ERROR_AND_THROW(NotSupportedException, "ASCII85DecodeFilter encoding is not supported");
 }
 
 BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters /* = DictionaryObjectPtr() */, AttributeListPtr /* = AttributeListPtr() */) const {
@@ -21,7 +21,7 @@ BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size le
         auto meta = src->Get();
 
         if (meta == std::char_traits<char>::eof()) {
-            throw ParseException("Unexpected end of file inside stream");
+            LOG_ERROR_AND_THROW(ParseException, "Unexpected end of file inside stream");
         }
 
         auto ch = ValueConvertUtils::SafeConvert<unsigned char>(meta);
@@ -47,7 +47,7 @@ BufferPtr ASCII85DecodeFilter::Decode(IInputStreamPtr src, types::stream_size le
 
         // Character outside of base 85 range
         if (ch < '!' || ch > 'u') {
-            throw ParseException("Illegal character in ascii 85 filter: " + std::to_string(ch));
+            LOG_ERROR_AND_THROW(ParseException, "Illegal character in ascii 85 filter: {}", ch);
         }
 
         // Insert to our sequence

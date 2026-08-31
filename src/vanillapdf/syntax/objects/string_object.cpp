@@ -368,7 +368,7 @@ BufferPtr LiteralStringObject::GetRawValueDecoded() const {
     }
 
     if (nested_count != 0) {
-        throw ParseException("Improperly terminated literal string sequence: " + result->ToString());
+        LOG_ERROR_AND_THROW(ParseException, "Improperly terminated literal string sequence: {}", result->ToString());
     }
 
     return result;

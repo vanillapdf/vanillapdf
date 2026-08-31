@@ -84,7 +84,7 @@ bool PageContents::RecalculateStreamData() {
 
         assert(0 != stream_array_size && "Content stream array is empty");
         if (0 == stream_array_size) {
-            throw syntax::ObjectMissingException("Content stream array is empty");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Content stream array is empty");
         }
 
         for (decltype(stream_array_size) j = 0; j < stream_array_size; ++j) {
@@ -123,7 +123,7 @@ BaseInstructionCollectionPtr PageContents::Instructions(void) const {
             contents.push_back(content_stream);
         }
     } else {
-        throw syntax::ObjectMissingException("Contents was constructed from unrecognized element: " + _obj->ToString());
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Contents was constructed from unrecognized element: {}", _obj->ToString());
     }
 
     // We are not using contents.Instructions, because objects can be separated

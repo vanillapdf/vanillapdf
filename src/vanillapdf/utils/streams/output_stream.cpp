@@ -9,7 +9,7 @@ namespace vanillapdf {
 
 OutputStream::OutputStream(std::shared_ptr<std::ostream> stream) : m_stream(stream) {
     if (m_stream == nullptr) {
-        throw IOErrorException("Could not create output stream");
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not create output stream");
     }
 
     m_output_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());

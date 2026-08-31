@@ -19,13 +19,13 @@ LaunchAction::LaunchAction(syntax::DictionaryObjectPtr root) : ActionBase(root) 
 
 ActionPtr ActionBase::Create(syntax::DictionaryObjectPtr root) {
     if (!root->Contains(constant::Name::S)) {
-        throw syntax::ObjectMissingException("Action dictionary does not contain /S entry");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Action dictionary does not contain /S entry");
     }
 
     syntax::ObjectPtr s_obj = root->Find(constant::Name::S);
 
     if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(s_obj)) {
-        throw syntax::ObjectMissingException("Invalid action type");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid action type");
     }
 
     syntax::NameObjectPtr s = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(s_obj);
@@ -54,7 +54,7 @@ ActionPtr ActionBase::Create(syntax::DictionaryObjectPtr root) {
         return make_deferred<JavaScriptAction>(root);
     }
 
-    throw syntax::ObjectMissingException("Unknown action type: " + s->ToString());
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown action type: {}", s->ToString());
 }
 
 bool GoToAction::Destination(OutputDestinationPtr& result) const {

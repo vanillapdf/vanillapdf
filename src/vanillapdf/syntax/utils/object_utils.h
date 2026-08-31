@@ -3,6 +3,7 @@
 
 #include "utils/deferred.h"
 #include "utils/exceptions.h"
+#include "utils/log.h"
 #include "utils/conversion_utils.h"
 
 #include "syntax/objects/object.h"
@@ -151,8 +152,7 @@ public:
 
         auto found = visited.find(id);
         if (found != visited.end() && found->second) {
-            throw ConversionException(
-                fmt::format("Cyclic reference was found for {} {} R", obj_number, gen_number));
+            LOG_ERROR_AND_THROW(ConversionException, "Cyclic reference was found for {} {} R", obj_number, gen_number);
         }
 
         visited[id] = true;

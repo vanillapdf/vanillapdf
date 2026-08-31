@@ -106,11 +106,11 @@ void NumericObjectBackend::ToggleBit(int pos, bool value) {
     }
 
     if (m_type == Type::Real) {
-        throw NotSupportedException("Cannot toggle bits on floating point numbers");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Cannot toggle bits on floating point numbers");
     }
 
     assert(false && "Unknown numeric type");
-    throw InvalidParameterException("Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
 }
 
 void NumericObjectBackend::SetBit(int pos) {
@@ -133,11 +133,11 @@ bool NumericObjectBackend::IsBitSet(int pos) const {
     }
 
     if (m_type == Type::Real) {
-        throw NotSupportedException("Cannot read bits on floating point numbers");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Cannot read bits on floating point numbers");
     }
 
     assert(false && "Unknown numeric type");
-    throw InvalidParameterException("Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
 }
 
 types::big_int NumericObjectBackend::GetIntegerValue(void) const {
@@ -154,7 +154,7 @@ types::big_int NumericObjectBackend::GetIntegerValue(void) const {
     }
 
     assert(false && "Unknown numeric type");
-    throw InvalidParameterException("Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
 }
 
 types::big_uint NumericObjectBackend::GetUnsignedIntegerValue(void) const {
@@ -172,7 +172,7 @@ types::big_uint NumericObjectBackend::GetUnsignedIntegerValue(void) const {
     }
 
     assert(false && "Unknown numeric type");
-    throw InvalidParameterException("Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
 }
 
 types::real NumericObjectBackend::GetRealValue(void) const {
@@ -190,7 +190,7 @@ types::real NumericObjectBackend::GetRealValue(void) const {
     }
 
     assert(false && "Unknown numeric type");
-    throw InvalidParameterException("Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
 }
 
 std::string NumericObjectBackend::IntegerString(void) const {
@@ -241,7 +241,7 @@ std::string NumericObjectBackend::ToString(void) const {
     }
 
     assert(false && "Unknown numeric type");
-    throw InvalidParameterException("Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
 }
 
 size_t NumericObjectBackend::Hash() const {
@@ -261,7 +261,7 @@ size_t NumericObjectBackend::Hash() const {
     }
 
     assert(false && "Unknown numeric type");
-    throw InvalidParameterException("Unknown numeric type");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Unknown numeric type");
 }
 
 size_t NumericObject::Hash() const {

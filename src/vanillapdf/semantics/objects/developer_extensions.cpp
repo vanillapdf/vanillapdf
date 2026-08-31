@@ -13,7 +13,7 @@ namespace semantics {
 DeveloperExtensionPtr DeveloperExtensions::Iterator::Second() const {
     auto containable = BaseIterator<syntax::DictionaryObject::const_iterator>::m_current->second;
     if (!syntax::ObjectUtils::IsType<syntax::DictionaryObjectPtr>(containable)) {
-        throw syntax::ParseException("Developer extension value is not dictionary");
+        LOG_ERROR_AND_THROW(syntax::ParseException, "Developer extension value is not dictionary");
     }
 
     auto converted = syntax::ObjectUtils::ConvertTo<syntax::DictionaryObjectPtr>(containable);

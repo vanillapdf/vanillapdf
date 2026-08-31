@@ -70,15 +70,15 @@ FilePtr File::CreateStream(IInputOutputStreamPtr stream, const std::string& name
 IInputOutputStreamPtr File::CreateIOStream(const std::string& path, std::ios_base::openmode mode, IOStrategy strategy) {
     switch (strategy) {
         case IOStrategy::Undefined:
-            throw InvalidParameterException("IOStrategy::Undefined is not a valid strategy, caller must pick a concrete strategy");
+            LOG_ERROR_AND_THROW(InvalidParameterException, "IOStrategy::Undefined is not a valid strategy, caller must pick a concrete strategy");
         case IOStrategy::FileStream:
             return StreamUtils::CreateFileStream(path, mode);
         case IOStrategy::Memory:
             return StreamUtils::CreateMemoryBufferStream(path, mode);
         case IOStrategy::MemoryMapped:
-            throw NotSupportedException("IOStrategy::MemoryMapped is not yet supported");
+            LOG_ERROR_AND_THROW(NotSupportedException, "IOStrategy::MemoryMapped is not yet supported");
         default:
-            throw GeneralException("Unknown IOStrategy: " + std::to_string(static_cast<int>(strategy)));
+            LOG_ERROR_AND_THROW_GENERAL("Unknown IOStrategy: {}", static_cast<int>(strategy));
     }
 }
 
@@ -581,7 +581,7 @@ BufferPtr File::DecryptData(const Buffer& data,
         // Encrypted documents shall be opened with default empty password
         bool passed = SetEncryptionPassword("");
         if (!passed) {
-            throw InvalidPasswordException("Could not decrypt file using default password");
+            LOG_ERROR_AND_THROW(InvalidPasswordException, "Could not decrypt file using default password");
         }
     }
 
@@ -666,7 +666,7 @@ BufferPtr File::EncryptData(const Buffer& data,
         // Encrypted documents shall be opened with default empty password
         bool passed = SetEncryptionPassword("");
         if (!passed) {
-            throw InvalidPasswordException("Could not decrypt file using default password");
+            LOG_ERROR_AND_THROW(InvalidPasswordException, "Could not decrypt file using default password");
         }
     }
 
@@ -774,7 +774,7 @@ void File::ReadXref(types::stream_offset offset) {
             auto hybrid_xref = stream.ReadXref(stm_offset);
 
             if (!ConvertUtils<XrefBasePtr>::IsType<XrefStreamPtr>(hybrid_xref)) {
-                throw ParseException("Hybrid xref is not a stream");
+                LOG_ERROR_AND_THROW(ParseException, "Hybrid xref is not a stream");
             }
 
             auto hybrid_xref_stream = ConvertUtils<XrefBasePtr>::ConvertTo<XrefStreamPtr>(hybrid_xref);
@@ -813,13 +813,13 @@ types::stream_offset File::GetLastXrefOffset(types::stream_size file_size) {
 
     _input->SetInputPosition(-to_read, SeekDirection::End);
     if (_input->IsFail()) {
-        throw IOErrorException("Failed to seek for reading the file trailer");
+        LOG_ERROR_AND_THROW(IOErrorException, "Failed to seek for reading the file trailer");
     }
 
     BufferPtr file_trailer(make_deferred_container<Buffer>(to_read));
     auto bytes_read = _input->Read(file_trailer, to_read);
     if (bytes_read != to_read) {
-        throw IOErrorException("Failed to read file trailer");
+        LOG_ERROR_AND_THROW(IOErrorException, "Failed to read file trailer");
     }
 
     std::reverse(file_trailer.begin(), file_trailer.end());
@@ -935,7 +935,7 @@ ObjectPtr File::GetIndirectObjectInternal(
         case XrefEntryBase::Usage::Free:
             return NullObject::GetInstance();
         default:
-            throw ParseException("Unknown xref entry type: " + std::to_string(static_cast<int>(item->GetUsage())));
+            LOG_ERROR_AND_THROW(ParseException, "Unknown xref entry type: {}", static_cast<int>(item->GetUsage()));
     }
 }
 
@@ -1037,7 +1037,7 @@ XrefUsedEntryBasePtr File::AllocateNewEntry() {
         return new_entry;
     }
 
-    throw IOErrorException("Unable to allocate new entry");
+    LOG_ERROR_AND_THROW(IOErrorException, "Unable to allocate new entry");
 }
 
 void File::FixObjectReferences(const std::map<ObjectPtr, ObjectPtr>& map, std::map<ObjectPtr, bool>& visited, ObjectPtr copied) {

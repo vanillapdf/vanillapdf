@@ -35,7 +35,7 @@ static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length, types
     strm.next_in = Z_NULL;
     rv = inflateInit(&strm);
     if (rv != Z_OK) {
-        throw DataCorruptionException("Zlib initialization failed");
+        LOG_ERROR_AND_THROW(DataCorruptionException, "Zlib initialization failed");
     }
 
     /* clean up */
@@ -84,10 +84,10 @@ static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length, types
 
             if (rv == Z_NEED_DICT || rv == Z_MEM_ERROR) {
                 if (nullptr != strm.msg) {
-                    throw DataCorruptionException("Could not decompress data: " + std::string(strm.msg));
+                    LOG_ERROR_AND_THROW(DataCorruptionException, "Could not decompress data: {}", strm.msg);
                 }
 
-                throw DataCorruptionException("Could not decompress data");
+                LOG_ERROR_AND_THROW(DataCorruptionException, "Could not decompress data");
             }
 
             unsigned int have = constant::BUFFER_SIZE - strm.avail_out;
@@ -101,7 +101,7 @@ static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length, types
 
 #else
     (void) input; (void) length; (void) errors_after;
-    throw NotSupportedException("This library is compiled without zlib support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library is compiled without zlib support");
 #endif
 
 }
@@ -127,7 +127,7 @@ static BufferPtr Deflate(IInputStreamPtr input, types::stream_size length) {
     strm.opaque = Z_NULL;
     rv = deflateInit(&strm, Z_DEFAULT_COMPRESSION);
     if (rv != Z_OK) {
-        throw DataCorruptionException("Zlib initialization failed: " + std::to_string(rv));
+        LOG_ERROR_AND_THROW(DataCorruptionException, "Zlib initialization failed: {}", rv);
     }
 
     /* clean up */
@@ -163,7 +163,7 @@ static BufferPtr Deflate(IInputStreamPtr input, types::stream_size length) {
 
 #else
     (void) input; (void) length;
-    throw NotSupportedException("This library is compiled without zlib support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library is compiled without zlib support");
 #endif
 
 }

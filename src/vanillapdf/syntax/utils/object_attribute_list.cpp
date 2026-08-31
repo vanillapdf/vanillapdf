@@ -51,7 +51,7 @@ bool AttributeList::Remove(BaseAttribute::Type type) {
 BaseAttributePtr AttributeList::Get(BaseAttribute::Type type) const {
     auto found = GetAttributes()->find(type);
     if (found == GetAttributes()->end()) {
-        throw ObjectMissingException("Attribute with key " + std::to_string(static_cast<int>(type)) + " was not found in the list");
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Attribute with key {} was not found in the list", static_cast<int>(type));
     }
 
     return found->second;

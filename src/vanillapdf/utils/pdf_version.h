@@ -2,6 +2,7 @@
 #define _PDF_VERSION_H
 
 #include "utils/exceptions.h"
+#include "utils/log.h"
 
 namespace vanillapdf {
 
@@ -24,8 +25,9 @@ public:
     RequireVersion() = default;
 
     void OnWriteCheck(Version file_version) {
-        if (static_cast<unsigned char>(ver) > static_cast<unsigned char>(file_version))
-            throw InvalidParameterException("Expected file version does not match");
+        if (static_cast<unsigned char>(ver) > static_cast<unsigned char>(file_version)) {
+            LOG_ERROR_AND_THROW(InvalidParameterException, "Expected file version does not match");
+        }
     }
 };
 

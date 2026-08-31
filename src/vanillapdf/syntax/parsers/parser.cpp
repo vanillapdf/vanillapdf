@@ -561,7 +561,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 
     assert(fields->GetSize() == 3);
     if (fields->GetSize() != 3) {
-        throw ParseException("Xref stream width does not contain three integers");
+        LOG_ERROR_AND_THROW(ParseException, "Xref stream width does not contain three integers");
     }
 
     auto size = header->FindAs<IntegerObjectPtr>(constant::Name::Size);
@@ -779,7 +779,7 @@ XrefStreamPtr Parser::ParseXrefStream(
 
         if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry)) {
             assert(false && "How could this be entry of different type");
-            throw ParseException("Xref entry has incorrect type");
+            LOG_ERROR_AND_THROW(ParseException, "Xref entry has incorrect type");
         }
 
         auto used_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefUsedEntryPtr>(entry);
@@ -857,7 +857,7 @@ HeaderPtr Parser::ReadHeader(void) {
                 case 7:
                     result->SetVersion(Version::PDF17); break;
                 default:
-                    throw NotSupportedException("Invalid PDF version: " + line);
+                    LOG_ERROR_AND_THROW(NotSupportedException, "Invalid PDF version: {}", line);
             }
 
             return result;
@@ -868,7 +868,7 @@ HeaderPtr Parser::ReadHeader(void) {
                 case 0:
                     result->SetVersion(Version::PDF20); break;
                 default:
-                    throw NotSupportedException("Invalid PDF version: " + line);
+                    LOG_ERROR_AND_THROW(NotSupportedException, "Invalid PDF version: {}", line);
             }
 
             return result;

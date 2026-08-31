@@ -34,7 +34,7 @@ TreeNodeBasePtr TreeNodeBase::Create(
         return make_deferred<TreeNodeLeaf>(parent, obj);
     }
 
-    throw syntax::ObjectMissingException("Unknown tree node: " + obj->ToString());
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown tree node: {}", obj->ToString());
 }
 
 #pragma endregion

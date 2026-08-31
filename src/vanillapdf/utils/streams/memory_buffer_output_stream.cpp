@@ -14,7 +14,7 @@ MemoryBufferOutputStream::MemoryBufferOutputStream()
 MemoryBufferOutputStream::MemoryBufferOutputStream(std::shared_ptr<fmt::memory_buffer> buffer)
     : m_buffer(std::move(buffer)) {
     if (m_buffer == nullptr) {
-        throw GeneralException("Could not create memory buffer output stream with null buffer");
+        LOG_ERROR_AND_THROW_GENERAL("Could not create memory buffer output stream with null buffer");
     }
 }
 

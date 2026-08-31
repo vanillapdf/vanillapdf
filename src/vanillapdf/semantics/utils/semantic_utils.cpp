@@ -17,7 +17,7 @@ Version SemanticUtils::GetVersionFromName(const syntax::NameObjectPtr& name) {
     std::smatch sm;
     std::regex header_regex("([0-9])\\.([0-9])");
     if (!std::regex_match(ver_str, sm, header_regex)) {
-        throw NotSupportedException("Unsupported pdf version: " + ver_str);
+        LOG_ERROR_AND_THROW(NotSupportedException, "Unsupported pdf version: {}", ver_str);
     }
 
     assert(sm.size() == 3);
@@ -32,18 +32,18 @@ Version SemanticUtils::GetVersionFromName(const syntax::NameObjectPtr& name) {
             case 5: return Version::PDF15;
             case 6: return Version::PDF16;
             case 7: return Version::PDF17;
-            default: throw NotSupportedException("Unsupported pdf version: " + ver_str);
+            default: LOG_ERROR_AND_THROW(NotSupportedException, "Unsupported pdf version: {}", ver_str);
         }
     }
 
     if (stoi(sm[1]) == 2) {
         switch (stoi(sm[2])) {
             case 0: return Version::PDF20;
-            default: throw NotSupportedException("Unsupported pdf version: " + ver_str);
+            default: LOG_ERROR_AND_THROW(NotSupportedException, "Unsupported pdf version: {}", ver_str);
         }
     }
 
-    throw NotSupportedException("Unsupported pdf version: " + ver_str);
+    LOG_ERROR_AND_THROW(NotSupportedException, "Unsupported pdf version: {}", ver_str);
 }
 
 using document_map_type = std::unordered_map<syntax::File*, WeakReference<Document>>;

@@ -39,24 +39,24 @@ FontBase* FontBase::Create(syntax::DictionaryObjectPtr root) {
     if (root->Contains(constant::Name::Type)) {
         syntax::ObjectPtr type_obj = root->Find(constant::Name::Type);
         if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
-            throw syntax::ObjectMissingException("Invalid font type object");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid font type object");
         }
 
         syntax::NameObjectPtr font_type = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(type_obj);
 
         if (font_type != constant::Name::Font) {
-            throw syntax::ObjectMissingException("Invalid font type: " + font_type->ToString());
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid font type: {}", font_type->ToString());
         }
     }
 
     if (!root->Contains(constant::Name::Subtype)) {
-        throw syntax::ObjectMissingException("Dictionary does not contain subtype");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Dictionary does not contain subtype");
     }
 
     syntax::ObjectPtr subtype_obj = root->Find(constant::Name::Subtype);
 
     if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(subtype_obj)) {
-        throw syntax::ObjectMissingException("Invalid font subtype object");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid font subtype object");
     }
 
     syntax::NameObjectPtr subtype = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(subtype_obj);
@@ -96,7 +96,7 @@ FontBase* FontBase::Create(syntax::DictionaryObjectPtr root) {
         return result.release();
     }
 
-    throw syntax::ObjectMissingException("Unknown font subtype: " + subtype->ToString());
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown font subtype: {}", subtype->ToString());
 }
 
 bool FontBase::ToUnicode(OuputUnicodeCharacterMapPtr& result) const {

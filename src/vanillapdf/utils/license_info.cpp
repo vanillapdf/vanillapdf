@@ -35,7 +35,7 @@ static const char CERTIFICATES_NODE[] =			"certificates";
 static X509* LoadCertificate(const std::string& certificate) {
     auto signing_certificate_bio = BIO_new(BIO_s_mem());
     if (signing_certificate_bio == nullptr) {
-        throw IOErrorException("Could not create memory buffer");
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not create memory buffer");
     }
 
     SCOPE_GUARD([signing_certificate_bio]() { BIO_free(signing_certificate_bio); });
@@ -43,12 +43,12 @@ static X509* LoadCertificate(const std::string& certificate) {
     auto signing_certificate_size = vanillapdf::ValueConvertUtils::SafeConvert<int>(certificate.size());
     auto bytes_written = BIO_write(signing_certificate_bio, certificate.data(), signing_certificate_size);
     if (bytes_written <= 0) {
-        throw IOErrorException("Could not write certificate data");
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not write certificate data");
     }
 
     auto certificate_x509 = PEM_read_bio_X509(signing_certificate_bio, nullptr, nullptr, nullptr);
     if (certificate_x509 == nullptr) {
-        throw IOErrorException("Could not read PEM certificate");
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not read PEM certificate");
     }
 
     return certificate_x509;
@@ -72,7 +72,7 @@ void LicenseInfo::SetLicense(IInputStreamPtr stream, types::stream_size length) 
     Buffer buffer(length);
     auto read = stream->Read(buffer, length);
     if (read != length) {
-        throw IOErrorException("Could not read license file");
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not read license file");
     }
 
     // Forward content
@@ -90,14 +90,14 @@ void LicenseInfo::SetLicense([[maybe_unused]] const Buffer& data) {
     // Check license version
     auto version_node = json_data[VERSION_NODE];
     if (!version_node.is_string()) {
-        throw InvalidLicenseException("Missing license version");
+        LOG_ERROR_AND_THROW(InvalidLicenseException, "Missing license version");
     }
 
     // Check license version format
     auto version_string = version_node.get<std::string>();
     auto delimiter_offset = version_string.find('.');
     if (delimiter_offset == std::string::npos) {
-        throw InvalidLicenseException("Invalid license version format");
+        LOG_ERROR_AND_THROW(InvalidLicenseException, "Invalid license version format");
     }
 
     // Obtain version details
@@ -123,23 +123,21 @@ void LicenseInfo::SetLicense([[maybe_unused]] const Buffer& data) {
             !note_node.is_string() ||
             !serial_node.is_string() ||
             !updates_expiration_node.is_string()) {
-            throw InvalidLicenseException("Invalid license data format");
+            LOG_ERROR_AND_THROW(InvalidLicenseException, "Invalid license data format");
         }
 
         // Check serial on blacklist
         auto serial_string = serial_node.get<std::string>();
         bool blacklisted = CheckBlacklist(serial_string);
         if (blacklisted) {
-            throw InvalidLicenseException(
-                fmt::format("Your license with serial {} is blacklisted", serial_string));
+            LOG_ERROR_AND_THROW(InvalidLicenseException, "Your license with serial {} is blacklisted", serial_string);
         }
 
         // Check updates expiration
         auto updates_expiration_string = updates_expiration_node.get<std::string>();
         bool updates_expired = CheckUpdateExpiration(updates_expiration_string);
         if (updates_expired) {
-            throw InvalidLicenseException(
-                fmt::format("Your license updates expired on {}", updates_expiration_string));
+            LOG_ERROR_AND_THROW(InvalidLicenseException, "Your license updates expired on {}", updates_expiration_string);
         }
 
         // Check signature
@@ -149,7 +147,7 @@ void LicenseInfo::SetLicense([[maybe_unused]] const Buffer& data) {
         if (!signature_node.is_string() ||
             !certificates_node.is_array() ||
             certificates_node.size() == 0) {
-            throw InvalidLicenseException("Invalid license signature format");
+            LOG_ERROR_AND_THROW(InvalidLicenseException, "Invalid license signature format");
         }
 
         std::stringstream signed_content;
@@ -168,7 +166,7 @@ void LicenseInfo::SetLicense([[maybe_unused]] const Buffer& data) {
 
         // Could not verify license signature
         if (!signature_valid) {
-            throw InvalidLicenseException("Invalid license signature");
+            LOG_ERROR_AND_THROW(InvalidLicenseException, "Invalid license signature");
         }
 
         // Verify certificate
@@ -177,7 +175,7 @@ void LicenseInfo::SetLicense([[maybe_unused]] const Buffer& data) {
 
         // Invalid certificate chain
         if (!chain_valid) {
-            throw InvalidLicenseException("Invalid certificate chain");
+            LOG_ERROR_AND_THROW(InvalidLicenseException, "Invalid certificate chain");
         }
 
         m_temporary_expiration.clear();
@@ -191,7 +189,7 @@ void LicenseInfo::SetLicense([[maybe_unused]] const Buffer& data) {
     }
 
     // None of the known license format matches
-    throw IOErrorException("Unknown license version: " + version_string);
+    LOG_ERROR_AND_THROW(IOErrorException, "Unknown license version: {}", version_string);
 
 #else
     spdlog::debug("SetLicense called but licensing support is not compiled in");
@@ -204,7 +202,7 @@ void LicenseInfo::SetLicense([[maybe_unused]] const char * filename) {
     // Determine file size
     auto file = std::make_shared<std::ifstream>(filename, std::ios::binary | std::ios::ate);
     if (!file || !file->good()) {
-        throw IOErrorException("Could not open license file " + std::string(filename));
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not open license file {}", filename);
     }
 
     auto length = file->tellg();
@@ -323,7 +321,7 @@ bool LicenseInfo::CheckTemporaryExpiration(const std::string& expiration) {
 
     auto expiration_since_epoch = std::mktime(&expiration_tm);
     if (expiration_since_epoch == -1) {
-        throw IOErrorException("Could not interpret expiration time as valid date time");
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not interpret expiration time as valid date time");
     }
 
     auto expiration_time = std::chrono::system_clock::from_time_t(expiration_since_epoch);
@@ -343,7 +341,7 @@ bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
 
     auto expiration_since_epoch = std::mktime(&expiration_tm);
     if (expiration_since_epoch == -1) {
-        throw IOErrorException("Could not interpret expiration time as valid date time");
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not interpret expiration time as valid date time");
     }
 
     auto expiration_time = std::chrono::system_clock::from_time_t(expiration_since_epoch);
@@ -359,7 +357,7 @@ bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
 
     auto build_since_epoch = std::mktime(&build_tm);
     if (build_since_epoch == -1) {
-        throw IOErrorException("Could not interpret build time as valid date time");
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not interpret build time as valid date time");
     }
 
     auto build_time = std::chrono::system_clock::from_time_t(build_since_epoch);

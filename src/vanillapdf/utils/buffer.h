@@ -5,6 +5,7 @@
 #include "utils/character.h"
 #include "utils/conversion_utils.h"
 #include "utils/versionable.h"
+#include "utils/log.h"
 
 #include "utils/streams/input_stream_interface.h"
 
@@ -95,7 +96,7 @@ public:
                 result |= static_cast<T>(static_cast<uint8_t>(m_data[i])) << (i * 8);
             }
         } else {
-            throw GeneralException("Unsupported byte order");
+            LOG_ERROR_AND_THROW_GENERAL("Unsupported byte order");
         }
 
         return result;
@@ -117,7 +118,7 @@ public:
                 buf->push_back(static_cast<char>((value >> (i * 8)) & 0xFF));
             }
         } else {
-            throw GeneralException("Unsupported byte order");
+            LOG_ERROR_AND_THROW_GENERAL("Unsupported byte order");
         }
 
         return buf;

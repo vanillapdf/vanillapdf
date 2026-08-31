@@ -16,7 +16,7 @@ char HexPairToByte(const std::string& hex_pair) {
 }
 
 BufferPtr ASCIIHexDecodeFilter::Encode(IInputStreamPtr, types::stream_size, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
-    throw NotSupportedException("ASCIIHexDecodeFilter encoding is not supported");
+    LOG_ERROR_AND_THROW(NotSupportedException, "ASCIIHexDecodeFilter encoding is not supported");
 }
 
 BufferPtr ASCIIHexDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
@@ -26,7 +26,7 @@ BufferPtr ASCIIHexDecodeFilter::Decode(IInputStreamPtr src, types::stream_size l
     for (decltype(length) i = 0; i < length; ++i) {
         auto meta = src->Get();
         if (meta == std::char_traits<char>::eof()) {
-            throw ParseException("Unexpected end of file inside stream");
+            LOG_ERROR_AND_THROW(ParseException, "Unexpected end of file inside stream");
         }
 
         auto ch = ValueConvertUtils::SafeConvert<unsigned char>(meta);

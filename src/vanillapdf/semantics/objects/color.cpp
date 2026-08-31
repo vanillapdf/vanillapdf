@@ -15,7 +15,7 @@ Color::Color(syntax::MixedArrayObjectPtr root) : HighLevelObject(root) {
     case 4:
         break;
     default:
-        throw InvalidParameterException("Invalid color array size: " + std::to_string(size));
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Invalid color array size: {}", size);
     }
 }
 
@@ -28,7 +28,7 @@ Color::ColorSpace Color::GetColorSpace() const {
     case 3: return ColorSpace::DeviceRGB;
     case 4: return ColorSpace::DeviceCMYK;
     default:
-        throw InvalidParameterException("Invalid color array size: " + std::to_string(size));
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Invalid color array size: {}", size);
     }
 }
 
@@ -47,14 +47,14 @@ void Color::SetComponent(types::size_type index, double value) {
 
 double Color::GetGray() const {
     if (GetColorSpace() != ColorSpace::DeviceGray) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     return GetComponent(0);
 }
 
 void Color::SetGray(double value) {
     if (GetColorSpace() != ColorSpace::DeviceGray) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     SetComponent(0, value);
 }
@@ -63,42 +63,42 @@ void Color::SetGray(double value) {
 
 double Color::GetRed() const {
     if (GetColorSpace() != ColorSpace::DeviceRGB) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     return GetComponent(0);
 }
 
 void Color::SetRed(double value) {
     if (GetColorSpace() != ColorSpace::DeviceRGB) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     SetComponent(0, value);
 }
 
 double Color::GetGreen() const {
     if (GetColorSpace() != ColorSpace::DeviceRGB) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     return GetComponent(1);
 }
 
 void Color::SetGreen(double value) {
     if (GetColorSpace() != ColorSpace::DeviceRGB) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     SetComponent(1, value);
 }
 
 double Color::GetBlue() const {
     if (GetColorSpace() != ColorSpace::DeviceRGB) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     return GetComponent(2);
 }
 
 void Color::SetBlue(double value) {
     if (GetColorSpace() != ColorSpace::DeviceRGB) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     SetComponent(2, value);
 }
@@ -107,56 +107,56 @@ void Color::SetBlue(double value) {
 
 double Color::GetCyan() const {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     return GetComponent(0);
 }
 
 void Color::SetCyan(double value) {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     SetComponent(0, value);
 }
 
 double Color::GetMagenta() const {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     return GetComponent(1);
 }
 
 void Color::SetMagenta(double value) {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     SetComponent(1, value);
 }
 
 double Color::GetYellow() const {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     return GetComponent(2);
 }
 
 void Color::SetYellow(double value) {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     SetComponent(2, value);
 }
 
 double Color::GetBlack() const {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     return GetComponent(3);
 }
 
 void Color::SetBlack(double value) {
     if (GetColorSpace() != ColorSpace::DeviceCMYK) {
-        throw NotSupportedException("Component not available for current color space");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Component not available for current color space");
     }
     SetComponent(3, value);
 }

@@ -13,6 +13,7 @@
 #include "syntax/utils/name_constants.h"
 
 #include "utils/util.h"
+#include "utils/log.h"
 
 namespace vanillapdf {
 namespace semantics {
@@ -376,7 +377,7 @@ syntax::ContainableObjectPtr TreeBase<KeyT, ValueT>::Find(const KeyT& key) const
 
     auto found = m_map.find(key);
     if (found == m_map.end()) {
-        throw syntax::ObjectMissingException("Item was not found");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Item was not found");
     }
 
     return found->second;
@@ -461,7 +462,7 @@ std::map<KeyT, syntax::ContainableObjectPtr> TreeBase<KeyT, ValueT>::GetAllKeys(
         return result_map;
     }
 
-    throw syntax::ObjectMissingException("Unknown node type");
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown node type");
 }
 
 template <typename KeyT, typename ValueT>
@@ -496,7 +497,7 @@ bool TreeBase<KeyT, ValueT>::ContainsInternal(const TreeNodeBasePtr node, const 
             return ContainsInternal(root->Values(), key);
         }
 
-        throw syntax::ObjectMissingException("Unknown tree root type");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown tree root type");
     }
 
     if (node_type == TreeNodeBase::TreeNodeType::Intermediate) {
@@ -517,7 +518,7 @@ bool TreeBase<KeyT, ValueT>::ContainsInternal(const TreeNodeBasePtr node, const 
         return ContainsInternal(leaf->Values(), key);
     }
 
-    throw syntax::ObjectMissingException("Unknown node type");
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown node type");
 }
 
 template <typename KeyT, typename ValueT>
@@ -529,7 +530,7 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const syntax::MixedArrayObjectPtr va
         }
     }
 
-    throw syntax::ObjectMissingException("Tree node does not contain required item");
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node does not contain required item");
 }
 
 template <typename KeyT, typename ValueT>
@@ -545,14 +546,14 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
                 }
             }
 
-            throw syntax::ObjectMissingException("Tree node does not contain required item");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node does not contain required item");
         }
 
         if (root->HasValues()) {
             return FindInternal(root->Values(), key);
         }
 
-        throw syntax::ObjectMissingException("Unknown tree root type");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown tree root type");
     }
 
     if (node_type == TreeNodeBase::TreeNodeType::Intermediate) {
@@ -563,23 +564,25 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
             }
         }
 
-        throw syntax::ObjectMissingException("Tree node does not contain required item");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node does not contain required item");
     }
 
     if (node_type == TreeNodeBase::TreeNodeType::Leaf) {
         auto leaf = ConvertUtils<TreeNodeBasePtr>::ConvertTo<TreeNodeLeafPtr>(node);
         auto limits = leaf->Limits();
         assert(limits->GetSize() == 2);
-        if (limits->GetSize() != 2)
-            throw syntax::ObjectMissingException("Tree node has incorrect size");
+        if (limits->GetSize() != 2) {
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node has incorrect size");
+        }
 
-        if (key < limits->GetValue(0) || limits->GetValue(1) < key)
-            throw syntax::ObjectMissingException("Tree node does not contain required item");
+        if (key < limits->GetValue(0) || limits->GetValue(1) < key) {
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node does not contain required item");
+        }
 
         return FindInternal(leaf->Values(), key);
     }
 
-    throw syntax::ObjectMissingException("Unknown node type");
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Unknown node type");
 }
 
 #pragma endregion
