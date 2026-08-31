@@ -210,7 +210,7 @@ void DictionaryObject::InsertInternal(NameObjectPtr name, ContainableObjectPtr v
     auto found = _list.find(name);
     if (found != _list.end()) {
         if (!overwrite) {
-            throw DuplicateKeyException("The key " + name->ToString() + " was already present in the dictionary");
+            LOG_ERROR_AND_THROW(DuplicateKeyException, "The key {} was already present in the dictionary", name->ToString());
         }
 
         // Only a genuine, dirtying overwrite is worth flagging.
