@@ -26,9 +26,7 @@ public:
     explicit HandleGuard(Handle* h) : handle_(h) {}
 
     ~HandleGuard() {
-        if (handle_) {
-            ReleaseFn(handle_);
-        }
+        reset();
     }
 
     // Move-only semantics to prevent double-release
@@ -38,9 +36,7 @@ public:
 
     HandleGuard& operator=(HandleGuard&& other) noexcept {
         if (this != &other) {
-            if (handle_) {
-                ReleaseFn(handle_);
-            }
+            reset();
             handle_ = other.handle_;
             other.handle_ = nullptr;
         }
@@ -52,9 +48,14 @@ public:
 
     /**
      * Returns a pointer to the internal handle pointer.
-     * Used with C API Create functions: Create(guard.out())
+     * Used with C API Create/Get functions: Create(guard.out()).
+     * A handle already owned by the guard is released first, so a guard can be
+     * reused for a second lookup without leaking the first result.
      */
-    Handle** out() { return &handle_; }
+    Handle** out() {
+        reset();
+        return &handle_;
+    }
 
     /**
      * Returns the raw handle pointer.
@@ -72,6 +73,17 @@ public:
      * Explicit bool conversion for null checks.
      */
     explicit operator bool() const { return handle_ != nullptr; }
+
+    /**
+     * Releases the owned handle now. The release result is deliberately
+     * ignored, matching the cleanup blocks it replaces.
+     */
+    void reset() {
+        if (handle_) {
+            ReleaseFn(handle_);
+            handle_ = nullptr;
+        }
+    }
 };
 
 #endif /* _VANILLAPDF_UNITTEST_HANDLE_GUARD_H */

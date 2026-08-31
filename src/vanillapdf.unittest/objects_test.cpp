@@ -511,7 +511,6 @@ TEST(NameObject, Equals) {
     ASSERT_EQ(NameObject_Equals(first_ptr, second_ptr, &are_equal), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(are_equal, VANILLAPDF_RV_TRUE);
 
-    second_ptr = HandleGuard<NameObjectHandle, NameObject_Release>();
     ASSERT_EQ(NameObject_CreateFromDecodedString("Other", second_ptr.out()), VANILLAPDF_ERROR_SUCCESS);
 
     ASSERT_EQ(NameObject_Equals(first_ptr, second_ptr, &are_equal), VANILLAPDF_ERROR_SUCCESS);
