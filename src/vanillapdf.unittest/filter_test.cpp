@@ -482,6 +482,210 @@ TEST(JPXDecodeFilter, Decode) {
     ASSERT_NE(decoded_data_buffer.get(), nullptr);
 }
 
+// --- RunLengthDecode -----------------------------------------------------
+//
+// Encoded data is a sequence of runs introduced by a single length byte
+// (PDF 32000-1:2008, 7.4.5): 0-127 copies the following length + 1 bytes
+// literally, 128 ends the data, and 129-255 repeats the following byte
+// 257 - length times.
+
+static void RunLengthDecodeAndCompare(
+    const std::vector<uint8_t>& encoded, const std::vector<uint8_t>& expected) {
+
+    HandleGuard<RunLengthDecodeFilterHandle, RunLengthDecodeFilter_Release> filter;
+    HandleGuard<BufferHandle, Buffer_Release> input_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> decoded_buffer;
+
+    ASSERT_EQ(RunLengthDecodeFilter_Create(filter.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(filter.get(), nullptr);
+
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(encoded.data()), static_cast<size_type>(encoded.size()), input_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(RunLengthDecodeFilter_Decode(filter, input_buffer, decoded_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(decoded_buffer.get(), nullptr);
+
+    string_type decoded_data = nullptr;
+    size_type decoded_len = 0;
+    ASSERT_EQ(Buffer_GetData(decoded_buffer, &decoded_data, &decoded_len), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(decoded_len, expected.size());
+    for (size_type i = 0; i < decoded_len; ++i) {
+        EXPECT_EQ(static_cast<unsigned char>(decoded_data[i]), expected[i]);
+    }
+}
+
+struct RunLengthDecodeCase {
+    std::string_view name;
+    std::vector<uint8_t> encoded;
+    std::vector<uint8_t> expected;
+};
+
+class RunLengthDecodeTest : public ::testing::TestWithParam<RunLengthDecodeCase> {};
+
+TEST_P(RunLengthDecodeTest, DecodesExpectedData) {
+    const auto& param = GetParam();
+    RunLengthDecodeAndCompare(param.encoded, param.expected);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    RunLengthDecodeFilter,
+    RunLengthDecodeTest,
+    ::testing::Values(
+        // A single literal sequence of three bytes
+        RunLengthDecodeCase{ "Literal", { 0x02, 0x41, 0x42, 0x43, 0x80 }, { 0x41, 0x42, 0x43 } },
+
+        // 257 - 253 = 4 repetitions of a single byte
+        RunLengthDecodeCase{ "Run", { 0xFD, 0x5A, 0x80 }, { 0x5A, 0x5A, 0x5A, 0x5A } },
+
+        // 257 - 255 = 2 repetitions, the shortest run that can be encoded
+        RunLengthDecodeCase{ "ShortestRun", { 0xFF, 0x5A, 0x80 }, { 0x5A, 0x5A } },
+
+        // 257 - 129 = 128 repetitions, the longest run that can be encoded
+        RunLengthDecodeCase{ "LongestRun", { 0x81, 0x5A, 0x80 }, std::vector<uint8_t>(128, 0x5A) },
+
+        // Literal and repeated runs mixed within a single stream
+        RunLengthDecodeCase{ "MixedRuns", { 0x01, 0x41, 0x42, 0xFE, 0x5A, 0x00, 0x43, 0x80 }, { 0x41, 0x42, 0x5A, 0x5A, 0x5A, 0x43 } },
+
+        // Nothing but the end of data marker
+        RunLengthDecodeCase{ "EmptyData", { 0x80 }, {} },
+
+        // Data following the end of data marker is discarded
+        RunLengthDecodeCase{ "TrailingDataIgnored", { 0x00, 0x41, 0x80, 0x00, 0x42 }, { 0x41 } },
+
+        // A missing end of data marker is tolerated, the input simply runs out
+        RunLengthDecodeCase{ "MissingEndOfData", { 0x00, 0x41 }, { 0x41 } }
+    ),
+    [](const ::testing::TestParamInfo<RunLengthDecodeCase>& info) {
+        return std::string(info.param.name);
+    }
+);
+
+TEST(RunLengthDecodeFilter, RejectsTruncatedLiteral) {
+
+    // The length byte announces three literal bytes, but only two follow
+    const unsigned char INPUT_DATA[] = { 0x02, 0x41, 0x42 };
+
+    HandleGuard<RunLengthDecodeFilterHandle, RunLengthDecodeFilter_Release> filter;
+    HandleGuard<BufferHandle, Buffer_Release> input_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> decoded_buffer;
+
+    ASSERT_EQ(RunLengthDecodeFilter_Create(filter.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), input_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_NE(RunLengthDecodeFilter_Decode(filter, input_buffer, decoded_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(decoded_buffer.get(), nullptr);
+}
+
+TEST(RunLengthDecodeFilter, RejectsTruncatedRun) {
+
+    // The length byte announces a repeated byte that never follows
+    const unsigned char INPUT_DATA[] = { 0xFD };
+
+    HandleGuard<RunLengthDecodeFilterHandle, RunLengthDecodeFilter_Release> filter;
+    HandleGuard<BufferHandle, Buffer_Release> input_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> decoded_buffer;
+
+    ASSERT_EQ(RunLengthDecodeFilter_Create(filter.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), input_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_NE(RunLengthDecodeFilter_Decode(filter, input_buffer, decoded_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(decoded_buffer.get(), nullptr);
+}
+
+// Round-trips data through the encoder and back, and additionally verifies the
+// encoder output when the caller pins the expected encoding.
+static void RunLengthEncodeDecodeAndCompare(
+    const std::vector<uint8_t>& input, const std::vector<uint8_t>* expected_encoded) {
+
+    HandleGuard<RunLengthDecodeFilterHandle, RunLengthDecodeFilter_Release> filter;
+    HandleGuard<BufferHandle, Buffer_Release> input_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> encoded_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> decoded_buffer;
+
+    ASSERT_EQ(RunLengthDecodeFilter_Create(filter.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(input.data()), static_cast<size_type>(input.size()), input_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(RunLengthDecodeFilter_Encode(filter, input_buffer, encoded_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(encoded_buffer.get(), nullptr);
+
+    string_type encoded_data = nullptr;
+    size_type encoded_len = 0;
+    ASSERT_EQ(Buffer_GetData(encoded_buffer, &encoded_data, &encoded_len), VANILLAPDF_ERROR_SUCCESS);
+
+    // The encoded data always ends with the end of data marker
+    ASSERT_GT(encoded_len, 0u);
+    EXPECT_EQ(static_cast<unsigned char>(encoded_data[encoded_len - 1]), 0x80);
+
+    if (expected_encoded != nullptr) {
+        ASSERT_EQ(encoded_len, expected_encoded->size());
+        for (size_type i = 0; i < encoded_len; ++i) {
+            EXPECT_EQ(static_cast<unsigned char>(encoded_data[i]), (*expected_encoded)[i]);
+        }
+    }
+
+    ASSERT_EQ(RunLengthDecodeFilter_Decode(filter, encoded_buffer, decoded_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(decoded_buffer.get(), nullptr);
+
+    string_type decoded_data = nullptr;
+    size_type decoded_len = 0;
+    ASSERT_EQ(Buffer_GetData(decoded_buffer, &decoded_data, &decoded_len), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(decoded_len, input.size());
+    for (size_type i = 0; i < decoded_len; ++i) {
+        EXPECT_EQ(static_cast<unsigned char>(decoded_data[i]), input[i]);
+    }
+}
+
+struct RunLengthEncodeCase {
+    std::string_view name;
+    std::vector<uint8_t> input;
+    std::vector<uint8_t> expected_encoded;
+};
+
+class RunLengthEncodeTest : public ::testing::TestWithParam<RunLengthEncodeCase> {};
+
+TEST_P(RunLengthEncodeTest, EncodeDecodeCheck) {
+    const auto& param = GetParam();
+    RunLengthEncodeDecodeAndCompare(param.input, &param.expected_encoded);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    RunLengthDecodeFilter,
+    RunLengthEncodeTest,
+    ::testing::Values(
+        // An empty input produces nothing but the end of data marker
+        RunLengthEncodeCase{ "Empty", {}, { 0x80 } },
+
+        // Data without repetitions becomes a single literal sequence
+        RunLengthEncodeCase{ "NoRepetitions", { 0x41, 0x42, 0x43 }, { 0x02, 0x41, 0x42, 0x43, 0x80 } },
+
+        // Three repetitions are the shortest run that is worth encoding as a run
+        RunLengthEncodeCase{ "ShortestWorthwhileRun", { 0x5A, 0x5A, 0x5A }, { 0xFE, 0x5A, 0x80 } },
+
+        // Two repetitions cost less inside the surrounding literal sequence
+        RunLengthEncodeCase{ "PairStaysLiteral", { 0x41, 0x5A, 0x5A, 0x42 }, { 0x03, 0x41, 0x5A, 0x5A, 0x42, 0x80 } },
+
+        // A run in the middle terminates the literal sequence before it
+        RunLengthEncodeCase{ "LiteralThenRun", { 0x41, 0x42, 0x5A, 0x5A, 0x5A, 0x5A }, { 0x01, 0x41, 0x42, 0xFD, 0x5A, 0x80 } }
+    ),
+    [](const ::testing::TestParamInfo<RunLengthEncodeCase>& info) {
+        return std::string(info.param.name);
+    }
+);
+
+TEST(RunLengthDecodeFilter, EncodeDecodeMaximumLengths) {
+
+    // 128 bytes is the longest run and the longest literal sequence a single
+    // length byte can express, so both have to spill into a second run here
+    std::vector<uint8_t> input(200, 0x5A);
+    for (size_t i = 0; i < 200; ++i) {
+        input.push_back(static_cast<uint8_t>(i));
+    }
+
+    RunLengthEncodeDecodeAndCompare(input, nullptr);
+}
+
 TEST(FilterBase, ToUnknown_NullChecks) {
     IUnknownHandle* unknown = nullptr;
 

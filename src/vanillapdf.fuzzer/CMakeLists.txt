@@ -46,6 +46,7 @@ endfunction()
 add_fuzz_target(vanillapdf.fuzz.flate_decode      fuzz_flate_decode.cpp)
 add_fuzz_target(vanillapdf.fuzz.ascii85_decode     fuzz_ascii85_decode.cpp)
 add_fuzz_target(vanillapdf.fuzz.asciihex_decode    fuzz_asciihex_decode.cpp)
+add_fuzz_target(vanillapdf.fuzz.runlength_decode   fuzz_runlength_decode.cpp)
 add_fuzz_target(vanillapdf.fuzz.file_parse         fuzz_file_parse.cpp)
 add_fuzz_target(vanillapdf.fuzz.content_stream     fuzz_content_stream.cpp)
 

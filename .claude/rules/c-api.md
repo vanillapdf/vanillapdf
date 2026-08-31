@@ -93,7 +93,7 @@ All handles are opaque pointers via `DECLARE_OBJECT_HANDLE(X)` → creates `XHan
 **Syntax - Filters:**
 - `FilterBaseHandle`, `FlateDecodeFilterHandle`, `DCTDecodeFilterHandle`
 - `ASCII85DecodeFilterHandle`, `ASCIIHexDecodeFilterHandle`
-- `LZWDecodeFilterHandle`, `JPXDecodeFilterHandle`
+- `LZWDecodeFilterHandle`, `JPXDecodeFilterHandle`, `RunLengthDecodeFilterHandle`
 
 **Contents - Instructions:**
 - `ContentObjectHandle`, `ContentOperationHandle`, `ContentInstructionHandle`

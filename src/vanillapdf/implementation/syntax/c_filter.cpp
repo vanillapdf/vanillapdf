@@ -7,6 +7,7 @@
 #include "syntax/filters/flate_decode_filter.h"
 #include "syntax/filters/ascii_85_decode_filter.h"
 #include "syntax/filters/ascii_hex_decode_filter.h"
+#include "syntax/filters/run_length_decode_filter.h"
 
 #include "vanillapdf/syntax/c_filter.h"
 #include "implementation/c_helper.h"
@@ -354,4 +355,46 @@ VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_Decode(JPXDecodeFil
 
 VANILLAPDF_API error_type CALLING_CONVENTION JPXDecodeFilter_Release(JPXDecodeFilterHandle* handle) {
     return ObjectRelease<JPXDecodeFilter, JPXDecodeFilterHandle>(handle);
+}
+
+// RunLengthDecodeFilter
+
+VANILLAPDF_API error_type CALLING_CONVENTION RunLengthDecodeFilter_Create(RunLengthDecodeFilterHandle** result) {
+
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto filter = make_deferred<RunLengthDecodeFilter>();
+        auto ptr = filter.AddRefGet();
+        *result = reinterpret_cast<RunLengthDecodeFilterHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION RunLengthDecodeFilter_Encode(RunLengthDecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
+    RunLengthDecodeFilter* filter = reinterpret_cast<RunLengthDecodeFilter*>(handle);
+    FilterBase* base_filter = static_cast<FilterBase*>(filter);
+    FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+    return FilterBase_Encode(base_filter_handle, data_handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION RunLengthDecodeFilter_EncodeParams(RunLengthDecodeFilterHandle* handle, BufferHandle* data_handle, DictionaryObjectHandle* parameters_handle, BufferHandle** result) {
+    RunLengthDecodeFilter* filter = reinterpret_cast<RunLengthDecodeFilter*>(handle);
+    FilterBase* base_filter = static_cast<FilterBase*>(filter);
+    FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+    return FilterBase_EncodeParams(base_filter_handle, data_handle, parameters_handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION RunLengthDecodeFilter_Decode(RunLengthDecodeFilterHandle* handle, BufferHandle* data_handle, BufferHandle** result) {
+    RunLengthDecodeFilter* filter = reinterpret_cast<RunLengthDecodeFilter*>(handle);
+    FilterBase* base_filter = static_cast<FilterBase*>(filter);
+    FilterBaseHandle* base_filter_handle = reinterpret_cast<FilterBaseHandle*>(base_filter);
+
+    return FilterBase_Decode(base_filter_handle, data_handle, result);
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION RunLengthDecodeFilter_Release(RunLengthDecodeFilterHandle* handle) {
+    return ObjectRelease<RunLengthDecodeFilter, RunLengthDecodeFilterHandle>(handle);
 }
