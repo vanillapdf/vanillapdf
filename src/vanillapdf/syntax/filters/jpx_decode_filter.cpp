@@ -29,10 +29,15 @@ static OPJ_SIZE_T memory_stream_read(void* p_buffer, OPJ_SIZE_T p_nb_bytes, void
     IInputStream* input_stream = static_cast<IInputStream*>(p_user_data);
     auto result = input_stream->Read(static_cast<char*>(p_buffer), p_nb_bytes);
 
-    // We should return (OPJ_SIZE_T) -1 instead of exception according to examples.
     // https://github.com/uclouvain/openjpeg/blob/master/src/lib/openjp2/openjpeg.c
-    // Unfortunately it's not mentioned anywhere and I do not have a sample to test,
-    // so let's keep the exception behavior as default for SafeConvert.
+    // opj_stream_read_data calls this function until it has the requested amount of
+    // data or the source reports the end through (OPJ_SIZE_T) -1. A zero is not that
+    // report, it only says this attempt made no progress, so returning it at the end
+    // of the data spins the loop forever. A truncated JP2 carrying nothing beyond its
+    // twelve byte signature box was enough to hang the decoder.
+    if (result <= 0) {
+        return static_cast<OPJ_SIZE_T>(-1);
+    }
 
     return ValueConvertUtils::SafeConvert<OPJ_SIZE_T>(result);
 }
@@ -101,7 +106,16 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     }
 
     opj_image_t* image = nullptr;
-    if (!opj_read_header(stream, codec, &image)) {
+    auto read_header_result = opj_read_header(stream, codec, &image);
+
+    // The image belongs to the caller from the moment opj_read_header returns, and
+    // every step below it can still fail on a malformed codestream. The guard is
+    // therefore installed on the returned pointer rather than on a decoded image,
+    // otherwise each rejected input leaks one image. opj_read_header leaves a null
+    // pointer behind when it fails, which opj_image_destroy accepts.
+    SCOPE_GUARD([image]() { opj_image_destroy(image); });
+
+    if (!read_header_result) {
         throw ImageCodecErrorException("Failed to read JPEG2000 header");
     }
 
@@ -113,8 +127,6 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     if (!opj_decode(codec, stream, image)) {
         throw ImageCodecErrorException("Failed to decode JPEG2000 image");
     }
-
-    SCOPE_GUARD([image]() { opj_image_destroy(image); });
 
     // TODO: This code hangs the application in the unit tests
     //if (!opj_end_decompress(codec, stream)) {
@@ -132,20 +144,57 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
         // Use 8 bits per components in the result
 
+        // ISO/IEC 15444-1, B.2 Image and tile size
+        // The image sits on a reference grid between two corners, so its dimensions
+        // are the distance between them rather than the far corner on its own.
+        if (image->x1 <= image->x0 || image->y1 <= image->y0) {
+            LOG_ERROR_AND_THROW(ImageCodecErrorException, "JPEG2000 image covers an empty region [{}, {}] - [{}, {}]",
+                image->x0, image->y0, image->x1, image->y1);
+        }
+
+        OPJ_UINT32 width = image->x1 - image->x0;
+        OPJ_UINT32 height = image->y1 - image->y0;
+
+        // ISO/IEC 15444-1, Table A.11
+        // Every component declares its own subsampling, so its sample grid can be
+        // smaller than the image grid. Addressing such a component through the image
+        // dimensions reads past the end of its samples, therefore only components
+        // covering the whole grid are decoded.
+        for (OPJ_UINT32 comp = 0; comp < image->numcomps; ++comp) {
+            const opj_image_comp_t& component = image->comps[comp];
+
+            if (component.data == nullptr) {
+                LOG_ERROR_AND_THROW(ImageCodecErrorException, "JPEG2000 component {} carries no decoded samples", comp);
+            }
+
+            if (component.w != width || component.h != height) {
+                LOG_ERROR_AND_THROW(NotSupportedException, "Subsampled JPEG2000 component {} of size {}x{} in a {}x{} image is not supported",
+                    comp, component.w, component.h, width, height);
+            }
+        }
+
         // Safely multiply rowsize first, to avoid any overflows
-        auto row_size = SafeMultiply<OPJ_UINT32, OPJ_UINT32>(image->x1, image->numcomps);
+        auto row_size = SafeMultiply<size_t, OPJ_UINT32>(width, image->numcomps);
 
         // Rowsize multiplied number of rows is the size of the image data
-        auto image_size = SafeMultiply<size_t, OPJ_UINT32>(row_size, image->y1);
+        auto image_size = SafeMultiply<size_t, size_t>(row_size, height);
 
         std::vector<uint8_t> result;
         result.resize(image_size);
 
-        for (OPJ_UINT32 y = 0; y < image->y1; ++y) {
-            for (OPJ_UINT32 x = 0; x < image->x1; ++x) {
+        // Both offsets are products of the image dimensions, which no longer fit the
+        // type those dimensions are declared in, so the arithmetic is checked rather
+        // than silently truncated. The row and the pixel are computed once per turn
+        // of their own loop, the innermost step only adds the component index.
+        for (OPJ_UINT32 y = 0; y < height; ++y) {
+            auto row_offset = SafeMultiply<size_t, OPJ_UINT32>(y, width);
+
+            for (OPJ_UINT32 x = 0; x < width; ++x) {
+                auto data_offset = SafeAddition<size_t, size_t, OPJ_UINT32>(row_offset, x);
+                auto component_base = SafeMultiply<size_t, size_t>(data_offset, image->numcomps);
+
                 for (OPJ_UINT32 comp = 0; comp < image->numcomps; ++comp) {
-                    auto data_offset = (y * image->x1) + x;
-                    auto result_offset = (y * image->x1 + x) * image->numcomps + comp;
+                    auto result_offset = SafeAddition<size_t, size_t, OPJ_UINT32>(component_base, comp);
 
                     auto current_value = image->comps[comp].data[data_offset];
                     result[result_offset] = ValueConvertUtils::SafeConvert<uint8_t>(current_value);
