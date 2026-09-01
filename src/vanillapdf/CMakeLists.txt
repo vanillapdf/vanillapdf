@@ -637,6 +637,9 @@ if(BUILD_SHARED_LIBS)
 
 endif()
 
+# Specify the limit on the size of a single decoded image
+target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_MAX_IMAGE_SIZE=${VANILLAPDF_MAX_IMAGE_SIZE})
+
 # Specify version identificators
 target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_VERSION_MAJOR=${VANILLAPDF_VERSION_MAJOR})
 target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_VERSION_MINOR=${VANILLAPDF_VERSION_MINOR})

@@ -30,6 +30,15 @@ option(VANILLAPDF_ENABLE_JPEG2000 "Enable JPEG2000 image support" ON)
 option(VANILLAPDF_ENABLE_ZLIB "Enable zlib compression support" ON)
 option(VANILLAPDF_ENABLE_LICENSING "Enable licensing and JSON metadata support" OFF)
 
+# A decoded image is held in memory as a whole, and its size comes from the
+# dimensions the document declares rather than from the amount of data behind them,
+# so a few hundred bytes of image stream can ask for gigabytes. The limit is a build
+# time constant rather than a runtime property, so that no caller has to understand
+# it in order to be protected by it. Raise it for documents that legitimately carry
+# larger images.
+set(VANILLAPDF_MAX_IMAGE_SIZE "0x40000000" CACHE STRING
+    "Maximum size in bytes of a single decoded image, 1 GiB by default")
+
 # Option to control internal vcpkg dependency management
 # Disable when dependencies are managed by parent project (e.g., vcpkg ports, system packages)
 # TODO: Will be enhanced with smart detection in https://github.com/vanillapdf/vanillapdf/issues/138

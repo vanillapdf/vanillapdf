@@ -313,6 +313,15 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     // Pre-allocate output buffer for the entire decoded image
     JDIMENSION row_bytes = SafeMultiply<JDIMENSION, JDIMENSION>(jpeg.output_width, jpeg.output_components);
     auto total_size = SafeMultiply<size_t, JDIMENSION>(row_bytes, jpeg.output_height);
+
+    // The frame header states the dimensions, the compressed data does not have to be
+    // able to fill them, and libjpeg pads whatever is missing. The allocation is
+    // therefore decided by the document alone and is checked before it is made.
+    if (total_size > constant::MAX_IMAGE_SIZE) {
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Decoded JPEG of {} bytes ({}x{}, {} components) exceeds the {} byte limit",
+            total_size, jpeg.output_width, jpeg.output_height, jpeg.output_components, constant::MAX_IMAGE_SIZE);
+    }
+
     BufferPtr result = make_deferred_container<Buffer>(total_size);
 
     while (jpeg.output_scanline < jpeg.output_height) {
