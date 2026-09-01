@@ -365,8 +365,19 @@ jobs:
         include:
           - runner: macos-26
             preset: macos-arm64-release
-          - runner: macos-26-intel
-            preset: macos-x64-release
+
+          # Intel is deliberately absent. Homebrew moved macOS x86_64 to tier 3
+          # in September 2026 - CI support stopped and no further bottles are
+          # built - and stops running on Intel altogether in September 2027.
+          # macOS 27 requires Apple Silicon, so homebrew-core will not bottle
+          # vanillapdf for Intel either, and this job would be validating a
+          # formula no Homebrew user can install.
+          # https://docs.brew.sh/Support-Tiers
+          # https://www.macrumors.com/2026/04/18/macos-27-compatibility-change/
+          #
+          # Only Homebrew coverage is dropped. Intel is still built and tested
+          # through vcpkg and CMake in sanity-check, nightly-check and
+          # build-nuget, none of which depend on bottles.
 
     steps:
       - name: Checkout
