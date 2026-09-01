@@ -5,6 +5,11 @@
 # - Sets pass/fail status checks for project and patch coverage
 # - Helps enforce or improve test coverage over time
 #
+# The reported numbers exclude gcov's throw and unreachable branch edges (see
+# the gcovr call in .github/workflows/coverage.yml), so they reflect branches a
+# test could actually take. Expect them to sit above the figure quoted below;
+# the targets are worth revisiting once the first report on that basis lands.
+#
 # Current coverage is around 58%, so the thresholds are tightened modestly:
 # - Holds overall project coverage near its current level (with a small buffer)
 # - Enforces testing of new code with only a small tolerance for gaps
