@@ -559,7 +559,6 @@ XrefStreamPtr Parser::ParseXrefStream(
 
     auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
 
-    assert(fields->GetSize() == 3);
     if (fields->GetSize() != 3) {
         LOG_ERROR_AND_THROW(ParseException, "Xref stream /W shall contain three integers, but contains {}", fields->GetSize());
     }
@@ -778,7 +777,6 @@ XrefStreamPtr Parser::ParseXrefStream(
         auto entry = chain->GetXrefEntry(stream_obj_number, stream_gen_number);
 
         if (!ConvertUtils<XrefEntryBasePtr>::IsType<XrefUsedEntryPtr>(entry)) {
-            assert(false && "How could this be entry of different type");
             LOG_ERROR_AND_THROW(ParseException, "Xref entry {} {} shall be a used entry, but has usage {}",
             stream_obj_number, stream_gen_number, static_cast<int>(entry->GetUsage()));
         }

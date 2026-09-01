@@ -570,7 +570,6 @@ ValueT TreeBase<KeyT, ValueT>::FindInternal(const TreeNodeBasePtr node, const Ke
     if (node_type == TreeNodeBase::TreeNodeType::Leaf) {
         auto leaf = ConvertUtils<TreeNodeBasePtr>::ConvertTo<TreeNodeLeafPtr>(node);
         auto limits = leaf->Limits();
-        assert(limits->GetSize() == 2);
         if (limits->GetSize() != 2) {
             LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Tree node limits shall contain two values, but contain {}", limits->GetSize());
         }

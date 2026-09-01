@@ -72,14 +72,12 @@ InlineImageObjectPtr ContentStreamParser::ReadInlineImageObject(void) {
             break;
         }
 
-        assert(!"Unknown data in inline image dictionary");
         LOG_ERROR_AND_THROW(ParseException, "Unexpected token type {} in inline image dictionary", static_cast<int>(token_type));
     }
 
     // read operation begin image data
     auto inline_image_data_op = ReadOperation();
     if (inline_image_data_op->GetOperationType() != OperationBase::Type::BeginInlineImageData) {
-        assert(!"Invalid operation after inline image dictionary");
         LOG_ERROR_AND_THROW(ParseException, "Inline image dictionary shall be followed by the ID operator, but operation type {} was found",
             static_cast<int>(inline_image_data_op->GetOperationType()));
     }

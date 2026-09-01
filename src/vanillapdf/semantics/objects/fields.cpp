@@ -291,10 +291,7 @@ bool Field::GetFieldFlags(types::big_int& result) const {
 }
 
 void Field::SetFieldFlags(types::big_int value) {
-    if (_obj->Contains(constant::Name::Ff)) {
-        bool removed = _obj->Remove(constant::Name::Ff);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::Ff);
     auto flags = make_deferred<syntax::IntegerObject>(value);
     _obj->Insert(constant::Name::Ff, flags);
 }
@@ -391,10 +388,7 @@ bool ButtonField::GetValue(syntax::OutputNameObjectPtr& result) const {
 }
 
 void ButtonField::SetValue(syntax::NameObjectPtr value) {
-    if (_obj->Contains(constant::Name::V)) {
-        bool removed = _obj->Remove(constant::Name::V);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::V);
     _obj->Insert(constant::Name::V, value);
 }
 
@@ -414,10 +408,7 @@ bool TextField::GetValue(syntax::OutputStringObjectPtr& result) const {
 }
 
 void TextField::SetValue(syntax::StringObjectPtr value) {
-    if (_obj->Contains(constant::Name::V)) {
-        bool removed = _obj->Remove(constant::Name::V);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::V);
     _obj->Insert(constant::Name::V, value);
 }
 
@@ -459,10 +450,7 @@ bool ChoiceField::GetValue(syntax::OutputStringObjectPtr& result) const {
 }
 
 void ChoiceField::SetValue(syntax::StringObjectPtr value) {
-    if (_obj->Contains(constant::Name::V)) {
-        bool removed = _obj->Remove(constant::Name::V);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::V);
     _obj->Insert(constant::Name::V, value);
 }
 

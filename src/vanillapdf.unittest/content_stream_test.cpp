@@ -225,3 +225,58 @@ TEST(ContentObjectInlineImage, Samples) {
     ASSERT_EQ(image_data, "abc");
     ASSERT_EQ(image_samples, "abc");
 }
+
+// A content stream is untrusted input, so a malformed operator has to come back
+// as an error. These used to be asserted as well as thrown, which aborted a
+// debug build on a document a caller could legitimately hand us - parsing
+// "1 2 3 Tf" tripped assert(operands.size() == 2) before the ParseException on
+// the following line ever ran.
+//
+// Only the operators the parser builds a dedicated operation for are covered.
+// Everything else (cm, q, Q, RG, rg, Td, ...) becomes an OperationGeneric,
+// which does not check its operands at all.
+struct MalformedOperationCase {
+    std::string_view name;
+    std::string_view content;
+};
+
+class MalformedContentStreamTest : public ::testing::TestWithParam<MalformedOperationCase> {};
+
+TEST_P(MalformedContentStreamTest, ReportsErrorInsteadOfAborting) {
+    const auto& param = GetParam();
+
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io;
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(io.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FileHandle, File_Release> file;
+    ASSERT_EQ(File_CreateStream(io, "malformed_content_stream_test", file.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> buffer;
+    ASSERT_EQ(Buffer_CreateFromData(param.content.data(), static_cast<size_type>(param.content.size()), buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<InputStreamHandle, InputStream_Release> stream;
+    ASSERT_EQ(InputStream_CreateFromBuffer(buffer, stream.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ContentParserHandle, ContentParser_Release> parser;
+    ASSERT_EQ(ContentParser_Create(file, stream, parser.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<ContentInstructionCollectionHandle, ContentInstructionCollection_Release> instructions;
+    EXPECT_NE(ContentParser_ReadInstructionCollection(parser, instructions.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    ContentStream,
+    MalformedContentStreamTest,
+    ::testing::Values(
+        MalformedOperationCase{ "TooManyTextFontOperands",  "1 2 3 Tf " },
+        MalformedOperationCase{ "TooFewTextFontOperands",   "1 Tf " },
+        MalformedOperationCase{ "TextFontOperandTypes",     "(a) (b) Tf " },
+        MalformedOperationCase{ "BeginTextWithOperands",    "1 2 BT " },
+        MalformedOperationCase{ "EndTextWithOperands",      "1 ET " },
+        MalformedOperationCase{ "TextShowOperandType",      "1 Tj " },
+        MalformedOperationCase{ "TextShowArrayOperandType", "1 TJ " }
+    ),
+    [](const ::testing::TestParamInfo<MalformedOperationCase>& info) {
+        return std::string(info.param.name);
+    }
+);

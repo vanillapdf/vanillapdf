@@ -417,7 +417,6 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    assert(data.size() >= static_cast<size_t>(AES_CBC_IV_LENGTH));
     if (data.size() < static_cast<size_t>(AES_CBC_IV_LENGTH)) {
         LOG_ERROR_AND_THROW(CryptoErrorException, "Cannot find IV for encrypted data");
     }

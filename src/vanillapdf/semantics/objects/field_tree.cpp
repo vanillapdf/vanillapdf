@@ -244,10 +244,7 @@ void FieldTree::RemoveChild(FieldPtr field) {
         LOG_ERROR_AND_THROW(InvalidParameterException, "The field is no longer held by the container the hierarchy walk reached it through - the hierarchy was edited underneath the tree, call Invalidate first");
     }
 
-    if (field_dictionary->Contains(constant::Name::Parent)) {
-        bool parent_removed = field_dictionary->Remove(constant::Name::Parent);
-        assert(parent_removed && "Unable to remove existing item"); UNUSED(parent_removed);
-    }
+    field_dictionary->Remove(constant::Name::Parent);
 
     Invalidate();
 }
@@ -559,10 +556,7 @@ void FieldTree::LinkChild(const syntax::OutputDictionaryObjectPtr& parent, synta
     // Root-level fields have no /Parent (Table 220 requires it for kids
     // only); anything below the root references its parent
     if (parent.empty()) {
-        if (child->Contains(constant::Name::Parent)) {
-            bool removed = child->Remove(constant::Name::Parent);
-            assert(removed && "Unable to remove existing item"); UNUSED(removed);
-        }
+        child->Remove(constant::Name::Parent);
 
         return;
     }

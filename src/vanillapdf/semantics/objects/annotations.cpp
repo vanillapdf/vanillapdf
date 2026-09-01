@@ -240,10 +240,7 @@ bool AnnotationBase::GetRect(OutputRectanglePtr& result) const {
 }
 
 void AnnotationBase::SetRect(RectanglePtr rect) {
-    if (_obj->Contains(constant::Name::Rect)) {
-        bool removed = _obj->Remove(constant::Name::Rect);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::Rect);
     _obj->Insert(constant::Name::Rect, rect->GetObject());
 }
 
@@ -257,10 +254,7 @@ bool AnnotationBase::GetContents(syntax::OutputLiteralStringObjectPtr& result) c
 }
 
 void AnnotationBase::SetContents(syntax::LiteralStringObjectPtr contents) {
-    if (_obj->Contains(constant::Name::Contents)) {
-        bool removed = _obj->Remove(constant::Name::Contents);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::Contents);
     _obj->Insert(constant::Name::Contents, contents);
 }
 
@@ -368,10 +362,7 @@ bool AnnotationBase::GetColor(OutputColorPtr& result) const {
 }
 
 void AnnotationBase::SetColor(ColorPtr color) {
-    if (_obj->Contains(constant::Name::C)) {
-        bool removed = _obj->Remove(constant::Name::C);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::C);
     _obj->Insert(constant::Name::C, color->GetObject());
 }
 
@@ -387,10 +378,7 @@ bool TextAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
 }
 
 void TextAnnotation::SetAuthor(syntax::StringObjectPtr author) {
-    if (_obj->Contains(constant::Name::T)) {
-        bool removed = _obj->Remove(constant::Name::T);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::T);
     _obj->Insert(constant::Name::T, author);
 }
 
@@ -405,10 +393,7 @@ bool TextAnnotation::GetModificationDate(OutputDatePtr& result) const {
 }
 
 void TextAnnotation::SetModificationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::M)) {
-        bool removed = _obj->Remove(constant::Name::M);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::M);
     _obj->Insert(constant::Name::M, date->GetObject());
 }
 
@@ -423,10 +408,7 @@ bool TextAnnotation::GetCreationDate(OutputDatePtr& result) const {
 }
 
 void TextAnnotation::SetCreationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::CreationDate)) {
-        bool removed = _obj->Remove(constant::Name::CreationDate);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::CreationDate);
     _obj->Insert(constant::Name::CreationDate, date->GetObject());
 }
 
@@ -442,10 +424,7 @@ bool HighlightAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const
 }
 
 void HighlightAnnotation::SetAuthor(syntax::StringObjectPtr author) {
-    if (_obj->Contains(constant::Name::T)) {
-        bool removed = _obj->Remove(constant::Name::T);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::T);
     _obj->Insert(constant::Name::T, author);
 }
 
@@ -460,10 +439,7 @@ bool HighlightAnnotation::GetModificationDate(OutputDatePtr& result) const {
 }
 
 void HighlightAnnotation::SetModificationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::M)) {
-        bool removed = _obj->Remove(constant::Name::M);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::M);
     _obj->Insert(constant::Name::M, date->GetObject());
 }
 
@@ -478,10 +454,7 @@ bool HighlightAnnotation::GetCreationDate(OutputDatePtr& result) const {
 }
 
 void HighlightAnnotation::SetCreationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::CreationDate)) {
-        bool removed = _obj->Remove(constant::Name::CreationDate);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::CreationDate);
     _obj->Insert(constant::Name::CreationDate, date->GetObject());
 }
 
@@ -497,10 +470,7 @@ bool FreeTextAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const 
 }
 
 void FreeTextAnnotation::SetAuthor(syntax::StringObjectPtr author) {
-    if (_obj->Contains(constant::Name::T)) {
-        bool removed = _obj->Remove(constant::Name::T);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::T);
     _obj->Insert(constant::Name::T, author);
 }
 
@@ -515,10 +485,7 @@ bool FreeTextAnnotation::GetModificationDate(OutputDatePtr& result) const {
 }
 
 void FreeTextAnnotation::SetModificationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::M)) {
-        bool removed = _obj->Remove(constant::Name::M);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::M);
     _obj->Insert(constant::Name::M, date->GetObject());
 }
 
@@ -533,10 +500,7 @@ bool FreeTextAnnotation::GetCreationDate(OutputDatePtr& result) const {
 }
 
 void FreeTextAnnotation::SetCreationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::CreationDate)) {
-        bool removed = _obj->Remove(constant::Name::CreationDate);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::CreationDate);
     _obj->Insert(constant::Name::CreationDate, date->GetObject());
 }
 
@@ -550,10 +514,7 @@ AnnotationBase::Flags AnnotationBase::GetFlags() const {
 }
 
 void AnnotationBase::SetFlags(Flags flags) {
-    if (_obj->Contains(constant::Name::F)) {
-        bool removed = _obj->Remove(constant::Name::F);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::F);
     auto flags_obj = make_deferred<syntax::IntegerObject>(static_cast<int32_t>(flags));
     _obj->Insert(constant::Name::F, flags_obj);
 }
@@ -595,10 +556,7 @@ bool HighlightAnnotation::GetQuadPoints(syntax::MixedArrayObjectPtr& result) con
 }
 
 void HighlightAnnotation::SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints) {
-    if (_obj->Contains(constant::Name::QuadPoints)) {
-        bool removed = _obj->Remove(constant::Name::QuadPoints);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::QuadPoints);
     _obj->Insert(constant::Name::QuadPoints, quadPoints);
 }
 
@@ -623,10 +581,7 @@ bool FreeTextAnnotation::GetDefaultAppearance(syntax::LiteralStringObjectPtr& re
 }
 
 void FreeTextAnnotation::SetDefaultAppearance(syntax::LiteralStringObjectPtr da) {
-    if (_obj->Contains(constant::Name::DA)) {
-        bool removed = _obj->Remove(constant::Name::DA);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::DA);
     _obj->Insert(constant::Name::DA, da);
 }
 
@@ -654,10 +609,7 @@ bool UnderlineAnnotation::GetQuadPoints(syntax::MixedArrayObjectPtr& result) con
 }
 
 void UnderlineAnnotation::SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints) {
-    if (_obj->Contains(constant::Name::QuadPoints)) {
-        bool removed = _obj->Remove(constant::Name::QuadPoints);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::QuadPoints);
     _obj->Insert(constant::Name::QuadPoints, quadPoints);
 }
 
@@ -673,10 +625,7 @@ bool UnderlineAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const
 }
 
 void UnderlineAnnotation::SetAuthor(syntax::StringObjectPtr author) {
-    if (_obj->Contains(constant::Name::T)) {
-        bool removed = _obj->Remove(constant::Name::T);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::T);
     _obj->Insert(constant::Name::T, author);
 }
 
@@ -691,10 +640,7 @@ bool UnderlineAnnotation::GetModificationDate(OutputDatePtr& result) const {
 }
 
 void UnderlineAnnotation::SetModificationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::M)) {
-        bool removed = _obj->Remove(constant::Name::M);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::M);
     _obj->Insert(constant::Name::M, date->GetObject());
 }
 
@@ -709,10 +655,7 @@ bool UnderlineAnnotation::GetCreationDate(OutputDatePtr& result) const {
 }
 
 void UnderlineAnnotation::SetCreationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::CreationDate)) {
-        bool removed = _obj->Remove(constant::Name::CreationDate);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::CreationDate);
     _obj->Insert(constant::Name::CreationDate, date->GetObject());
 }
 
@@ -740,10 +683,7 @@ bool SquigglyAnnotation::GetQuadPoints(syntax::MixedArrayObjectPtr& result) cons
 }
 
 void SquigglyAnnotation::SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints) {
-    if (_obj->Contains(constant::Name::QuadPoints)) {
-        bool removed = _obj->Remove(constant::Name::QuadPoints);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::QuadPoints);
     _obj->Insert(constant::Name::QuadPoints, quadPoints);
 }
 
@@ -759,10 +699,7 @@ bool SquigglyAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const 
 }
 
 void SquigglyAnnotation::SetAuthor(syntax::StringObjectPtr author) {
-    if (_obj->Contains(constant::Name::T)) {
-        bool removed = _obj->Remove(constant::Name::T);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::T);
     _obj->Insert(constant::Name::T, author);
 }
 
@@ -777,10 +714,7 @@ bool SquigglyAnnotation::GetModificationDate(OutputDatePtr& result) const {
 }
 
 void SquigglyAnnotation::SetModificationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::M)) {
-        bool removed = _obj->Remove(constant::Name::M);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::M);
     _obj->Insert(constant::Name::M, date->GetObject());
 }
 
@@ -795,10 +729,7 @@ bool SquigglyAnnotation::GetCreationDate(OutputDatePtr& result) const {
 }
 
 void SquigglyAnnotation::SetCreationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::CreationDate)) {
-        bool removed = _obj->Remove(constant::Name::CreationDate);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::CreationDate);
     _obj->Insert(constant::Name::CreationDate, date->GetObject());
 }
 
@@ -826,10 +757,7 @@ bool StrikeOutAnnotation::GetQuadPoints(syntax::MixedArrayObjectPtr& result) con
 }
 
 void StrikeOutAnnotation::SetQuadPoints(syntax::MixedArrayObjectPtr quadPoints) {
-    if (_obj->Contains(constant::Name::QuadPoints)) {
-        bool removed = _obj->Remove(constant::Name::QuadPoints);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::QuadPoints);
     _obj->Insert(constant::Name::QuadPoints, quadPoints);
 }
 
@@ -845,10 +773,7 @@ bool StrikeOutAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const
 }
 
 void StrikeOutAnnotation::SetAuthor(syntax::StringObjectPtr author) {
-    if (_obj->Contains(constant::Name::T)) {
-        bool removed = _obj->Remove(constant::Name::T);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::T);
     _obj->Insert(constant::Name::T, author);
 }
 
@@ -863,10 +788,7 @@ bool StrikeOutAnnotation::GetModificationDate(OutputDatePtr& result) const {
 }
 
 void StrikeOutAnnotation::SetModificationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::M)) {
-        bool removed = _obj->Remove(constant::Name::M);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::M);
     _obj->Insert(constant::Name::M, date->GetObject());
 }
 
@@ -881,10 +803,7 @@ bool StrikeOutAnnotation::GetCreationDate(OutputDatePtr& result) const {
 }
 
 void StrikeOutAnnotation::SetCreationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::CreationDate)) {
-        bool removed = _obj->Remove(constant::Name::CreationDate);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::CreationDate);
     _obj->Insert(constant::Name::CreationDate, date->GetObject());
 }
 
@@ -912,10 +831,7 @@ bool InkAnnotation::GetInkList(syntax::MixedArrayObjectPtr& result) const {
 }
 
 void InkAnnotation::SetInkList(syntax::MixedArrayObjectPtr inkList) {
-    if (_obj->Contains(constant::Name::InkList)) {
-        bool removed = _obj->Remove(constant::Name::InkList);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::InkList);
     _obj->Insert(constant::Name::InkList, inkList);
 }
 
@@ -931,10 +847,7 @@ bool InkAnnotation::GetAuthor(syntax::OutputStringObjectPtr& result) const {
 }
 
 void InkAnnotation::SetAuthor(syntax::StringObjectPtr author) {
-    if (_obj->Contains(constant::Name::T)) {
-        bool removed = _obj->Remove(constant::Name::T);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::T);
     _obj->Insert(constant::Name::T, author);
 }
 
@@ -949,10 +862,7 @@ bool InkAnnotation::GetModificationDate(OutputDatePtr& result) const {
 }
 
 void InkAnnotation::SetModificationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::M)) {
-        bool removed = _obj->Remove(constant::Name::M);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::M);
     _obj->Insert(constant::Name::M, date->GetObject());
 }
 
@@ -967,10 +877,7 @@ bool InkAnnotation::GetCreationDate(OutputDatePtr& result) const {
 }
 
 void InkAnnotation::SetCreationDate(DatePtr date) {
-    if (_obj->Contains(constant::Name::CreationDate)) {
-        bool removed = _obj->Remove(constant::Name::CreationDate);
-        assert(removed && "Unable to remove existing item"); UNUSED(removed);
-    }
+    _obj->Remove(constant::Name::CreationDate);
     _obj->Insert(constant::Name::CreationDate, date->GetObject());
 }
 

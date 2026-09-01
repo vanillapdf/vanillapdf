@@ -104,13 +104,11 @@ BufferPtr InputStream::Readline(void) {
     BufferPtr result;
 
     bool stream_failed = m_stream->fail();
-    assert(!stream_failed && "Stream is in failed state");
     if (stream_failed) {
         LOG_ERROR_AND_THROW(IOErrorException, "Stream is in failed state");
     }
 
     bool stream_eof = m_stream->eof();
-    assert(!stream_eof && "Stream reached eof");
     if (stream_eof) {
         LOG_ERROR_AND_THROW(IOErrorException, "Stream reached eof");
     }
