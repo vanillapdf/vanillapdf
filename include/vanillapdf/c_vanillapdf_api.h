@@ -68,6 +68,7 @@
 #include "vanillapdf/semantics/c_color.h"
 #include "vanillapdf/semantics/c_page_contents.h"
 #include "vanillapdf/semantics/c_xobject.h"
+#include "vanillapdf/semantics/c_transparency_group.h"
 #include "vanillapdf/semantics/c_appearance_characteristics.h"
 
 /* contents */

@@ -91,6 +91,7 @@ set(VANILLAPDF_C_IMPLEMENTATION_SEMANTICS_SOURCES
     implementation/semantics/c_rectangle.cpp
     implementation/semantics/c_resource_dictionary.cpp
     implementation/semantics/c_signature_flags.cpp
+    implementation/semantics/c_transparency_group.cpp
     implementation/semantics/c_viewer_preferences.cpp
     implementation/semantics/c_xobject.cpp
 )
@@ -138,6 +139,7 @@ set(VANILLAPDF_SEMANTICS_SOURCES
     semantics/objects/page_labels.cpp
     semantics/objects/matrix.cpp
     semantics/objects/rectangle.cpp
+    semantics/objects/transparency_group.cpp
     semantics/objects/tree.cpp
     semantics/objects/xobject.cpp
     semantics/objects/name_dictionary.cpp
@@ -284,6 +286,7 @@ set(VANILLAPDF_SEMANTICS_HEADERS
     semantics/objects/page_labels.h
     semantics/objects/matrix.h
     semantics/objects/rectangle.h
+    semantics/objects/transparency_group.h
     semantics/objects/tree.h
     semantics/objects/xobject.h
     semantics/objects/viewer_preferences.h

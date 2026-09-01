@@ -8,12 +8,15 @@
 #include "semantics/utils/semantic_exceptions.h"
 #include "semantics/objects/document.h"
 #include "semantics/objects/annotations.h"
+#include "semantics/objects/transparency_group.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/objects/name_object.h"
 #include "syntax/objects/integer_object.h"
 
 #include "syntax/utils/name_constants.h"
+
+#include <cmath>
 
 namespace vanillapdf {
 namespace semantics {
@@ -44,21 +47,112 @@ void PageObject::SetResources(ResourceDictionaryPtr resources) {
     _obj->Insert(Name::Resources, resources->GetObject());
 }
 
-bool PageObject::GetMediaBox(OutputRectanglePtr& result) const {
-    if (!_obj->Contains(Name::MediaBox)) {
+bool PageObject::GetRectangle(const NameObject& name, OutputRectanglePtr& result) const {
+    if (!_obj->Contains(name)) {
         return false;
     }
 
-    auto box_obj = _obj->FindAs<syntax::ArrayObjectPtr<syntax::RealObjectPtr>>(Name::MediaBox);
-    auto box = make_deferred<Rectangle>(box_obj);
-    result = box;
+    auto box_obj = _obj->FindAs<ArrayObjectPtr<RealObjectPtr>>(name);
+    result = make_deferred<Rectangle>(box_obj);
     return true;
 }
 
-void PageObject::SetMediaBox(RectanglePtr media_box) {
-    _obj->Remove(Name::MediaBox);
+void PageObject::SetRectangle(const NameObject& name, RectanglePtr value) {
+    _obj->Insert(name, value->GetObject(), true);
+}
 
-    _obj->Insert(Name::MediaBox, media_box->GetObject());
+bool PageObject::GetMediaBox(OutputRectanglePtr& result) const {
+    return GetRectangle(Name::MediaBox, result);
+}
+
+void PageObject::SetMediaBox(RectanglePtr media_box) {
+    SetRectangle(Name::MediaBox, media_box);
+}
+
+bool PageObject::GetCropBox(OutputRectanglePtr& result) const {
+    return GetRectangle(Name::CropBox, result);
+}
+
+void PageObject::SetCropBox(RectanglePtr value) {
+    SetRectangle(Name::CropBox, value);
+}
+
+bool PageObject::GetBleedBox(OutputRectanglePtr& result) const {
+    return GetRectangle(Name::BleedBox, result);
+}
+
+void PageObject::SetBleedBox(RectanglePtr value) {
+    SetRectangle(Name::BleedBox, value);
+}
+
+bool PageObject::GetTrimBox(OutputRectanglePtr& result) const {
+    return GetRectangle(Name::TrimBox, result);
+}
+
+void PageObject::SetTrimBox(RectanglePtr value) {
+    SetRectangle(Name::TrimBox, value);
+}
+
+bool PageObject::GetArtBox(OutputRectanglePtr& result) const {
+    return GetRectangle(Name::ArtBox, result);
+}
+
+void PageObject::SetArtBox(RectanglePtr value) {
+    SetRectangle(Name::ArtBox, value);
+}
+
+bool PageObject::GetRotate(types::big_int& result) const {
+    if (!_obj->Contains(Name::Rotate)) {
+        return false;
+    }
+
+    auto rotate = _obj->FindAs<IntegerObjectPtr>(Name::Rotate);
+    result = rotate->GetIntegerValue();
+    return true;
+}
+
+void PageObject::SetRotate(types::big_int value) {
+    if (value % 90 != 0) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Page rotation has to be a multiple of 90: {}", value);
+    }
+
+    IntegerObjectPtr rotate = make_deferred<IntegerObject>(value);
+    _obj->Insert(Name::Rotate, rotate, true);
+}
+
+bool PageObject::GetUserUnit(types::real& result) const {
+    if (!_obj->Contains(Name::UserUnit)) {
+        return false;
+    }
+
+    auto user_unit = _obj->FindAs<RealObjectPtr>(Name::UserUnit);
+    result = user_unit->GetValue();
+    return true;
+}
+
+void PageObject::SetUserUnit(types::real value) {
+    // NaN compares false against everything and infinity has no PDF
+    // representation, so both have to be rejected separately
+    if (!std::isfinite(value) || value <= 0) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Page user unit has to be positive: {}", value);
+    }
+
+    RealObjectPtr user_unit = make_deferred<RealObject>(value);
+    _obj->Insert(Name::UserUnit, user_unit, true);
+}
+
+bool PageObject::GetGroup(OutputTransparencyGroupPtr& result) const {
+    if (!_obj->Contains(Name::Group)) {
+        return false;
+    }
+
+    auto group_obj = _obj->FindAs<DictionaryObjectPtr>(Name::Group);
+    result = make_deferred<TransparencyGroup>(group_obj);
+    return true;
+}
+
+void PageObject::SetGroup(TransparencyGroupPtr value) {
+    _obj->Insert(Name::Group, value->GetObject(), true);
 }
 
 bool PageObject::GetAnnotations(OutputPageAnnotationsPtr& result) const {

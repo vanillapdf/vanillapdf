@@ -2,6 +2,7 @@
 
 #include "semantics/objects/page_object.h"
 #include "semantics/objects/page_contents.h"
+#include "semantics/objects/transparency_group.h"
 #include "semantics/objects/document.h"
 
 #include "vanillapdf/semantics/c_page_object.h"
@@ -184,6 +185,238 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetMediaBox(PageObjectHa
     try
     {
         obj->SetMediaBox(media_box);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetCropBox(PageObjectHandle* handle, RectangleHandle** result)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputRectanglePtr crop_box;
+        bool contains = obj->GetCropBox(crop_box);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = crop_box.AddRefGet();
+        *result = reinterpret_cast<RectangleHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetCropBox(PageObjectHandle* handle, RectangleHandle* value)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    Rectangle* crop_box = reinterpret_cast<Rectangle*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(crop_box);
+
+    try
+    {
+        obj->SetCropBox(crop_box);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetBleedBox(PageObjectHandle* handle, RectangleHandle** result)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputRectanglePtr bleed_box;
+        bool contains = obj->GetBleedBox(bleed_box);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = bleed_box.AddRefGet();
+        *result = reinterpret_cast<RectangleHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetBleedBox(PageObjectHandle* handle, RectangleHandle* value)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    Rectangle* bleed_box = reinterpret_cast<Rectangle*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(bleed_box);
+
+    try
+    {
+        obj->SetBleedBox(bleed_box);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetTrimBox(PageObjectHandle* handle, RectangleHandle** result)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputRectanglePtr trim_box;
+        bool contains = obj->GetTrimBox(trim_box);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = trim_box.AddRefGet();
+        *result = reinterpret_cast<RectangleHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetTrimBox(PageObjectHandle* handle, RectangleHandle* value)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    Rectangle* trim_box = reinterpret_cast<Rectangle*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(trim_box);
+
+    try
+    {
+        obj->SetTrimBox(trim_box);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetArtBox(PageObjectHandle* handle, RectangleHandle** result)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputRectanglePtr art_box;
+        bool contains = obj->GetArtBox(art_box);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = art_box.AddRefGet();
+        *result = reinterpret_cast<RectangleHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetArtBox(PageObjectHandle* handle, RectangleHandle* value)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    Rectangle* art_box = reinterpret_cast<Rectangle*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(art_box);
+
+    try
+    {
+        obj->SetArtBox(art_box);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetRotate(PageObjectHandle* handle, bigint_type* result)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        types::big_int rotate = 0;
+        bool contains = obj->GetRotate(rotate);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        *result = rotate;
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetRotate(PageObjectHandle* handle, bigint_type data)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try
+    {
+        obj->SetRotate(data);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetUserUnit(PageObjectHandle* handle, real_type* result)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        types::real user_unit = 0;
+        bool contains = obj->GetUserUnit(user_unit);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        *result = user_unit;
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetUserUnit(PageObjectHandle* handle, real_type data)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try
+    {
+        obj->SetUserUnit(data);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetGroup(PageObjectHandle* handle, TransparencyGroupHandle** result)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputTransparencyGroupPtr group;
+        bool contains = obj->GetGroup(group);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = group.AddRefGet();
+        *result = reinterpret_cast<TransparencyGroupHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetGroup(PageObjectHandle* handle, TransparencyGroupHandle* value)
+{
+    PageObject* obj = reinterpret_cast<PageObject*>(handle);
+    TransparencyGroup* group = reinterpret_cast<TransparencyGroup*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(group);
+
+    try
+    {
+        obj->SetGroup(group);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

@@ -734,4 +734,35 @@ TEST(ResourceDictionary, XObjectEnumeration) {
     EXPECT_EQ(removed, VANILLAPDF_RV_FALSE);
 }
 
+TEST(FormXObject, GroupRoundtrip) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<FormXObjectHandle, FormXObject_Release> form;
+    ASSERT_EQ(FormXObject_CreateFromDocument(document, form.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    // A fresh form is not a transparency group
+    TransparencyGroupHandle* missing = nullptr;
+    EXPECT_EQ(FormXObject_GetGroup(form, &missing), VANILLAPDF_ERROR_OBJECT_MISSING);
+    EXPECT_EQ(missing, nullptr);
+
+    HandleGuard<TransparencyGroupHandle, TransparencyGroup_Release> group;
+    ASSERT_EQ(TransparencyGroup_Create(group.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TransparencyGroup_SetKnockout(group, VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FormXObject_SetGroup(form, group), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<TransparencyGroupHandle, TransparencyGroup_Release> found;
+    ASSERT_EQ(FormXObject_GetGroup(form, found.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type knockout = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(TransparencyGroup_GetKnockout(found, &knockout), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(knockout, VANILLAPDF_RV_TRUE);
+
+    EXPECT_EQ(FormXObject_SetGroup(form, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FormXObject_SetGroup(nullptr, group), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(FormXObject_GetGroup(form, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
 } // namespace xobjects

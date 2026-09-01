@@ -1,5 +1,6 @@
 #include "precompiled.h"
 #include "semantics/objects/xobject.h"
+#include "semantics/objects/transparency_group.h"
 #include "semantics/objects/document.h"
 #include "semantics/objects/matrix.h"
 #include "semantics/objects/rectangle.h"
@@ -172,6 +173,40 @@ VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetResources(FormXObjec
     try
     {
         obj->SetResources(resources);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_GetGroup(FormXObjectHandle* handle, TransparencyGroupHandle** result)
+{
+    FormXObject* obj = reinterpret_cast<FormXObject*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try
+    {
+        OutputTransparencyGroupPtr group;
+        bool contains = obj->GetGroup(group);
+        if (!contains) {
+            return VANILLAPDF_ERROR_OBJECT_MISSING;
+        }
+
+        auto ptr = group.AddRefGet();
+        *result = reinterpret_cast<TransparencyGroupHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetGroup(FormXObjectHandle* handle, TransparencyGroupHandle* value)
+{
+    FormXObject* obj = reinterpret_cast<FormXObject*>(handle);
+    TransparencyGroup* group = reinterpret_cast<TransparencyGroup*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(group);
+
+    try
+    {
+        obj->SetGroup(group);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

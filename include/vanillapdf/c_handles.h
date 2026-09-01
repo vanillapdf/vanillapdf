@@ -200,6 +200,7 @@ extern "C"
 
     DECLARE_OBJECT_HANDLE(XObject);
     DECLARE_OBJECT_HANDLE(FormXObject);
+    DECLARE_OBJECT_HANDLE(TransparencyGroup);
 
     DECLARE_OBJECT_HANDLE(InteractiveForm);
     DECLARE_OBJECT_HANDLE(SignatureFlags);

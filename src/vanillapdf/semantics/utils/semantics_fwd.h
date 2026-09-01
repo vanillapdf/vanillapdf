@@ -101,6 +101,7 @@ class SquigglyAnnotation; using SquigglyAnnotationPtr = Deferred<SquigglyAnnotat
 class InkAnnotation; using InkAnnotationPtr = Deferred<InkAnnotation>;
 class WidgetAnnotation; using WidgetAnnotationPtr = Deferred<WidgetAnnotation>;
 class AppearanceCharacteristics; using AppearanceCharacteristicsPtr = Deferred<AppearanceCharacteristics>; using OutputAppearanceCharacteristicsPtr = OutputPointer<AppearanceCharacteristicsPtr>;
+class TransparencyGroup; using TransparencyGroupPtr = Deferred<TransparencyGroup>; using OutputTransparencyGroupPtr = OutputPointer<TransparencyGroupPtr>;
 class PageAnnotations; using PageAnnotationsPtr = Deferred<PageAnnotations>; using OutputPageAnnotationsPtr = OutputPointer<PageAnnotationsPtr>;
 
 // XObjects

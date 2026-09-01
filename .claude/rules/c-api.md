@@ -153,7 +153,7 @@ All handles are opaque pointers via `DECLARE_OBJECT_HANDLE(X)` → creates `XHan
 - `BaseFontRangeHandle`
 
 **Semantics - Other:**
-- `ViewerPreferencesHandle`, `PageRangeHandle`, `PageSubRangeHandle`
+- `ViewerPreferencesHandle`, `PageRangeHandle`, `PageSubRangeHandle`, `TransparencyGroupHandle`
 - `DateHandle`, `RectangleHandle`
 
 **Utilities:**

@@ -295,6 +295,21 @@ extern const syntax::NameObject CA;
 extern const syntax::NameObject RC;
 extern const syntax::NameObject AC;
 
+// Page object entries, see Table 30
+extern const syntax::NameObject CropBox;
+extern const syntax::NameObject BleedBox;
+extern const syntax::NameObject TrimBox;
+extern const syntax::NameObject ArtBox;
+extern const syntax::NameObject Rotate;
+extern const syntax::NameObject UserUnit;
+extern const syntax::NameObject Group;
+
+// Transparency group attributes, see Table 147
+extern const syntax::NameObject Transparency;
+extern const syntax::NameObject CS;
+extern const syntax::NameObject I;
+extern const syntax::NameObject K;
+
 } // Constant
 } // Name
 } // vanillapdf

@@ -104,13 +104,138 @@ extern "C"
     * that shall define the boundaries of the
     * physical medium on which the page shall
     * be displayed or printed (see 14.11.2, "Page Boundaries").
+    *
+    * Only the page's own entry is read. The entry is inheritable,
+    * but a value inherited from the page tree is not resolved.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHandle* handle, RectangleHandle** result);
 
     /**
     * \copydoc PageObject_GetMediaBox
+    *
+    * The setter always writes the entry on the page itself.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetMediaBox(PageObjectHandle* handle, RectangleHandle* value);
+
+    /**
+    * \brief
+    * A rectangle expressed in default user space units,
+    * that shall define the visible region of default user space.
+    * When the page is displayed or printed, its contents shall be clipped
+    * to this rectangle (see 14.11.2, "Page Boundaries").
+    *
+    * Only the page's own entry is read. The entry is inheritable,
+    * but a value inherited from the page tree is not resolved.
+    * When absent from the page and its ancestors, the media box applies.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetCropBox(PageObjectHandle* handle, RectangleHandle** result);
+
+    /**
+    * \copydoc PageObject_GetCropBox
+    *
+    * The setter always writes the entry on the page itself.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetCropBox(PageObjectHandle* handle, RectangleHandle* value);
+
+    /**
+    * \brief
+    * A rectangle expressed in default user space units,
+    * that shall define the region to which the contents of the page
+    * shall be clipped when output in a production environment
+    * (see 14.11.2, "Page Boundaries").
+    *
+    * When absent, the crop box applies.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetBleedBox(PageObjectHandle* handle, RectangleHandle** result);
+
+    /**
+    * \copydoc PageObject_GetBleedBox
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetBleedBox(PageObjectHandle* handle, RectangleHandle* value);
+
+    /**
+    * \brief
+    * A rectangle expressed in default user space units,
+    * that shall define the intended dimensions of the finished page
+    * after trimming (see 14.11.2, "Page Boundaries").
+    *
+    * When absent, the crop box applies.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetTrimBox(PageObjectHandle* handle, RectangleHandle** result);
+
+    /**
+    * \copydoc PageObject_GetTrimBox
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetTrimBox(PageObjectHandle* handle, RectangleHandle* value);
+
+    /**
+    * \brief
+    * A rectangle expressed in default user space units,
+    * that shall define the extent of the page's meaningful content
+    * as intended by the page's creator (see 14.11.2, "Page Boundaries").
+    *
+    * When absent, the crop box applies.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetArtBox(PageObjectHandle* handle, RectangleHandle** result);
+
+    /**
+    * \copydoc PageObject_GetArtBox
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetArtBox(PageObjectHandle* handle, RectangleHandle* value);
+
+    /**
+    * \brief
+    * The number of degrees by which the page shall be rotated
+    * clockwise when displayed or printed.
+    *
+    * The stored value is returned unmodified. The specification requires
+    * a multiple of 90, but a file may contain a negative value, a value
+    * of 360 or more, or a malformed one - interpreting it is left to the caller.
+    *
+    * Only the page's own entry is read. The entry is inheritable,
+    * but a value inherited from the page tree is not resolved.
+    * When absent from the page and its ancestors, the page is not rotated.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetRotate(PageObjectHandle* handle, bigint_type* result);
+
+    /**
+    * \copydoc PageObject_GetRotate
+    *
+    * The setter always writes the entry on the page itself and stores
+    * the value as given. A value that is not a multiple of 90 is rejected.
+    * \param handle a handle to the page object
+    * \param data the rotation, which shall be a multiple of 90
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetRotate(PageObjectHandle* handle, bigint_type data);
+
+    /**
+    * \brief
+    * A positive number that shall give the size of default user space units,
+    * in multiples of 1/72 inch (see 14.11.6, "User Space").
+    *
+    * When absent, one unit is 1/72 inch.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetUserUnit(PageObjectHandle* handle, real_type* result);
+
+    /**
+    * \copydoc PageObject_GetUserUnit
+    * \param handle a handle to the page object
+    * \param data the unit size, which shall be positive
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetUserUnit(PageObjectHandle* handle, real_type data);
+
+    /**
+    * \brief
+    * A group attributes dictionary that shall specify the attributes
+    * of the page's page group for use in the transparent imaging model
+    * (see 11.6.6, "Transparency Group XObjects").
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetGroup(PageObjectHandle* handle, TransparencyGroupHandle** result);
+
+    /**
+    * \copydoc PageObject_GetGroup
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION PageObject_SetGroup(PageObjectHandle* handle, TransparencyGroupHandle* value);
 
     /**
     * \brief

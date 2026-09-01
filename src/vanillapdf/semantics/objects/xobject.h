@@ -45,6 +45,10 @@ public:
     void SetMatrix(MatrixPtr value);
     bool GetResources(OutputResourceDictionaryPtr& result) const;
     void SetResources(ResourceDictionaryPtr value);
+
+    // Transparency group attributes (11.6.6) making the form a transparency group XObject
+    bool GetGroup(OutputTransparencyGroupPtr& result) const;
+    void SetGroup(TransparencyGroupPtr value);
 };
 
 class ImageXObject : public XObjectBase {
