@@ -19,7 +19,7 @@ BooleanObjectPtr ParserUtils::CreateBoolean(TokenPtr token) {
     }
 
     assert(!"Expected boolean token type");
-    throw ParseException("Expected boolean token type");
+    LOG_ERROR_AND_THROW(ParseException, "Expected boolean token type");
 }
 
 types::big_int ParserUtils::GetIntegerValue(TokenPtr token) {

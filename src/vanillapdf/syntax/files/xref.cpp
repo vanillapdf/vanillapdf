@@ -23,14 +23,14 @@ void XrefStream::RecalculateContent() {
 
     auto header = _stream->GetHeader();
     if (!header->Contains(constant::Name::W)) {
-        throw ObjectMissingException("Stream header does not contain width");
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Stream header does not contain width");
     }
 
     auto fields = header->FindAs<ArrayObjectPtr<IntegerObjectPtr>>(constant::Name::W);
 
     assert(fields->GetSize() == 3);
     if (fields->GetSize() != 3) {
-        throw ObjectMissingException("Xref stream width does not contain three integers");
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Xref stream /W shall contain three integers, but contains {}", fields->GetSize());
     }
 
     auto field1_size = fields->GetValue(0);
@@ -199,7 +199,7 @@ void XrefStream::WriteValue(IOutputStream& dest, types::big_uint value, int64_t 
     // This means, that the operation would overflow
     assert(shifted_value == 0 && "Xref stream value overflow");
     if (shifted_value != 0) {
-        throw ObjectMissingException("Xref stream width is too small");
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Xref stream field width of {} byte(s) is too small for value {}", width, value);
     }
 
     // Writes <value> as a sequence of <width> bytes into <dest>
@@ -217,7 +217,7 @@ void XrefTable::Add(XrefEntryBasePtr entry) {
     // Xref table can only stored free and used entries
     assert((is_free || is_used) && "Adding unsupported entry type into the xref table");
     if (!is_free && !is_used) {
-        throw ObjectMissingException("Adding unsupported entry type into the xref table");
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Adding unsupported entry type into the xref table");
     }
 
     // Perform the addition
@@ -365,7 +365,7 @@ XrefStreamPtr XrefTable::GetHybridStream(void) const {
     assert(has_stream && "Trying to access hybrid stream, that was not set");
 
     if (!has_stream) {
-        throw ObjectMissingException("Trying to access hybrid stream, that was not set");
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Trying to access hybrid stream, that was not set");
     }
 
     return m_xref_stm;
@@ -421,7 +421,7 @@ StreamObjectPtr XrefStream::GetStreamObject(void) const {
     assert(has_stream && "Trying to access stream object, that was not set");
 
     if (!has_stream) {
-        throw ObjectMissingException("Trying to access stream object, that was not set");
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Trying to access stream object, that was not set");
     }
 
     return _stream;

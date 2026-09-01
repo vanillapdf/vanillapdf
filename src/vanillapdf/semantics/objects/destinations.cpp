@@ -161,7 +161,7 @@ NamedDestinations::NamedDestinations(syntax::DictionaryObjectPtr root) : HighLev
 
 syntax::NameObjectPtr DestinationBase::ValidateAndGetDestinationType(syntax::MixedArrayObjectPtr array) {
     if (array->GetSize() < 2) {
-        throw syntax::ObjectMissingException("Invalid destination array");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid destination array");
     }
 
     syntax::ObjectPtr page_number_obj = array->GetValue(0);
@@ -276,26 +276,26 @@ DestinationPtr DestinationBase::ResolveDestination(syntax::ObjectPtr dest_obj) {
         OutputCatalogPtr catalog_ptr;
         bool has_catalog = document->GetDocumentCatalog(catalog_ptr);
         if (!has_catalog) {
-            throw syntax::ObjectMissingException("Document does not have a catalog");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Document does not have a catalog");
         }
 
         OutputNameDictionaryPtr name_dictionary;
         bool has_dictionary = catalog_ptr->Names(name_dictionary);
         if (!has_dictionary) {
-            throw syntax::ObjectMissingException("Document does not have a name dictionary");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Document does not have a name dictionary");
         }
 
         OutputNameTreePtr<DestinationPtr> destinations;
         bool contains = name_dictionary->Dests(destinations);
         if (!contains) {
-            throw syntax::ObjectMissingException("Document does not have destinations in name dictionary");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Document does not have destinations in name dictionary");
         }
 
         auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::StringObjectPtr>(dest_obj);
 
         assert(destinations->Contains(destination_name) && "Referenced destination does not exist");
         if (!destinations->Contains(destination_name)) {
-            throw syntax::ObjectMissingException("Referenced destination does not exist");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Referenced destination does not exist");
         }
 
         auto found_dest = destinations->Find(destination_name);
@@ -315,20 +315,20 @@ DestinationPtr DestinationBase::ResolveDestination(syntax::ObjectPtr dest_obj) {
         OutputCatalogPtr catalog;
         bool has_catalog = document->GetDocumentCatalog(catalog);
         if (!has_catalog) {
-            throw syntax::ObjectMissingException("Document does not have a catalog");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Document does not have a catalog");
         }
 
         OutputNamedDestinationsPtr destinations;
         bool has_destinations = catalog->Destinations(destinations);
         if (!has_destinations) {
-            throw syntax::ObjectMissingException("Document does not have named destinations");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Document does not have named destinations");
         }
 
         auto destination_name = syntax::ObjectUtils::ConvertTo<syntax::NameObjectPtr>(dest_obj);
 
         assert(destinations->Contains(destination_name) && "Referenced destination does not exist");
         if (!destinations->Contains(destination_name)) {
-            throw syntax::ObjectMissingException("Referenced destination does not exist");
+            LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Referenced destination does not exist");
         }
 
         return destinations->Find(destination_name);
@@ -339,7 +339,7 @@ DestinationPtr DestinationBase::ResolveDestination(syntax::ObjectPtr dest_obj) {
 
 DestinationPtr DestinationBase::CreateFromDictionary(syntax::DictionaryObjectPtr root) {
     if (!root->Contains(constant::Name::D)) {
-        throw syntax::ObjectMissingException("Invalid destination dictionary");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid destination dictionary");
     }
 
     auto destination_array = root->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::D);
@@ -393,7 +393,7 @@ syntax::MixedArrayObjectPtr DestinationBase::GetDestinationArray() const {
     }
 
     assert(false && "Destination was created but object is neither array nor dictionary");
-    throw syntax::ObjectMissingException("Destination was created but object is neither array nor dictionary");
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Destination was created but object is neither array nor dictionary");
 }
 
 syntax::ObjectPtr DestinationBase::GetPage() const {

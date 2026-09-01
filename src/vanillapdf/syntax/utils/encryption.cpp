@@ -124,7 +124,7 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
 
 #else
     (void) key; (void) objNumber; (void) genNumber; (void) alg;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -222,7 +222,7 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_le
 
 #else
     (void) key; (void) key_length; (void) data;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -273,7 +273,7 @@ BufferPtr EncryptionUtils::ComputeMD5(const Buffer& data, types::size_type lengt
     return key_digest;
 
 #else
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -316,7 +316,7 @@ BufferPtr EncryptionUtils::ComputeSHA256(const Buffer& data) {
     return digest;
 
 #else
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -361,7 +361,7 @@ BufferPtr EncryptionUtils::ComputeSHA384(const Buffer& data) {
     return digest;
 
 #else
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -404,7 +404,7 @@ BufferPtr EncryptionUtils::ComputeSHA512(const Buffer& data) {
     return digest;
 
 #else
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -444,7 +444,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
     }
 
     if (evp_cipher == nullptr) {
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Unknown AES key length: " + std::to_string(key_length));
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Unknown AES key length: {}", key_length);
     }
 
     auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
@@ -506,7 +506,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_le
 
 #else
     (void) key; (void) key_length; (void) data;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -545,7 +545,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
     }
 
     if (evp_cipher == nullptr) {
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Unknown AES key length: " + std::to_string(key_length));
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Unknown AES key length: {}", key_length);
     }
 
     auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
@@ -610,7 +610,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
 #else
     (void) key; (void) key_length; (void) data;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -664,7 +664,7 @@ BufferPtr EncryptionUtils::AESEncryptCBC_ZeroIV(const Buffer& key, const Buffer&
 
 #else
     (void) key; (void) data;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -718,7 +718,7 @@ BufferPtr EncryptionUtils::AESDecryptCBC_ZeroIV(const Buffer& key, const Buffer&
 
 #else
     (void) key; (void) data;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -770,7 +770,7 @@ BufferPtr EncryptionUtils::AESEncryptECB(const Buffer& key, const Buffer& data) 
 
 #else
     (void) key; (void) data;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -822,7 +822,7 @@ BufferPtr EncryptionUtils::AESDecryptECB(const Buffer& key, const Buffer& data) 
 
 #else
     (void) key; (void) data;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -1001,11 +1001,11 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
     CryptoUtils::InitializeOpenSSL();
 
     if (algorithm == EncryptionAlgorithm::Undefined) {
-        throw CryptoErrorException("Could not generate encryption key for Undefined encryption algorithm");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not generate encryption key for Undefined encryption algorithm");
     }
 
     if (algorithm == EncryptionAlgorithm::None) {
-        throw CryptoErrorException("Could not generate encryption key for None encryption algorithm");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not generate encryption key for None encryption algorithm");
     }
 
     if (algorithm == EncryptionAlgorithm::RC4 ||
@@ -1072,10 +1072,10 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
         return stepg;
     }
 
-    throw NotSupportedException("Unknown encryption algorithm: " + std::to_string(static_cast<int>(algorithm)));
+    LOG_ERROR_AND_THROW(NotSupportedException, "Unknown encryption algorithm: {}", static_cast<int>(algorithm));
 
 #else
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 }
 
@@ -1094,11 +1094,11 @@ BufferPtr EncryptionUtils::GenerateUserEncryptionKey(
     CryptoUtils::InitializeOpenSSL();
 
     if (algorithm == EncryptionAlgorithm::Undefined) {
-        throw CryptoErrorException("Could not generate encryption key for Undefined encryption algorithm");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not generate encryption key for Undefined encryption algorithm");
     }
 
     if (algorithm == EncryptionAlgorithm::None) {
-        throw CryptoErrorException("Could not generate encryption key for None encryption algorithm");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not generate encryption key for None encryption algorithm");
     }
 
     if (algorithm == EncryptionAlgorithm::RC4 ||
@@ -1114,10 +1114,10 @@ BufferPtr EncryptionUtils::GenerateUserEncryptionKey(
         return EncryptionUtils::ComputeRC4(decryption_key_digest, 5, hardcoded_pad);
     }
 
-    throw NotSupportedException("Unknown encryption algorithm: " + std::to_string(static_cast<int>(algorithm)));
+    LOG_ERROR_AND_THROW(NotSupportedException, "Unknown encryption algorithm: {}", static_cast<int>(algorithm));
 
 #else
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 }
 
@@ -1158,7 +1158,7 @@ bool EncryptionUtils::CheckKey(
     (void) input; (void) document_id; (void) owner_data;
     (void) user_data; (void) permissions; (void) revision;
     (void) key_length; (void) decryption_key;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -1271,7 +1271,7 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
     return compare_data;
 
 #else
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 }
 
@@ -1339,7 +1339,7 @@ BufferPtr EncryptionUtils::CalculateDecryptionKeyDigest(
     return decryption_key_digest;
 
 #else
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -1419,7 +1419,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 
 #else
     (void) enveloped_data; (void) length_bits; (void) algorithm; (void) key;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -1550,11 +1550,11 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
         }
     }
 
-    throw CryptoErrorException("Could not find matching certificate");
+    LOG_ERROR_AND_THROW(CryptoErrorException, "Could not find matching certificate");
 
 #else
     (void) enveloped_data; (void) key;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -1672,7 +1672,7 @@ BufferPtr EncryptionUtils::ComputeAuthenticationOwnerData(const Buffer& pad_pass
 
 #else
     (void) pad_password; (void) encryption_dictionary;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -1696,7 +1696,7 @@ BufferPtr EncryptionUtils::GenerateRandomData(int length) {
 
 #else
     (void)length;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -1810,7 +1810,7 @@ BufferPtr EncryptionUtils::ComputeHashR6(
 
 #else
     (void) password; (void) salt; (void) u_value;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -1893,7 +1893,7 @@ EncryptionUtils::EncryptionDataR6 EncryptionUtils::GenerateEncryptionDataR6(
 
 #else
     (void) user_password; (void) owner_password; (void) permissions;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }
@@ -1973,7 +1973,7 @@ bool EncryptionUtils::CheckKeyR6(
     (void) password; (void) u_value; (void) ue_value;
     (void) o_value; (void) oe_value; (void) perms_value;
     (void) decryption_key;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 #endif
 
 }

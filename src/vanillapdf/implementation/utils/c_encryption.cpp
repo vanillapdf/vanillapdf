@@ -37,7 +37,7 @@ public:
 
         // Decryption is a licensed feature
         if (!LicenseInfo::IsValid()) {
-            throw LicenseRequiredException("Custom file encryption is a licensed feature");
+            LOG_ERROR_AND_THROW(LicenseRequiredException, "Custom file encryption is a licensed feature");
         }
 
         m_init();
@@ -50,13 +50,11 @@ public:
 
         error_type rv = m_decrypt(input_ptr, &output_ptr);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
-            throw UserCancelledException(
-                fmt::format("Custom key decrypt operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "Custom key decrypt operation returned: {}", rv);
         }
 
         if (output_ptr == nullptr) {
-            throw UserCancelledException(
-                "Custom key decrypt operation succeeded, but did not fill the decrypted data pointer");
+            LOG_ERROR_AND_THROW(UserCancelledException, "Custom key decrypt operation succeeded, but did not fill the decrypted data pointer");
         }
 
         return reinterpret_cast<Buffer*>(output_ptr);
@@ -70,8 +68,7 @@ public:
 
         error_type rv = m_contains(input_issuer, input_serial, &result);
         if (VANILLAPDF_ERROR_SUCCESS != rv) {
-            throw UserCancelledException(
-                fmt::format("Custom key equals operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "Custom key equals operation returned: {}", rv);
         }
 
         return (result == VANILLAPDF_RV_TRUE);

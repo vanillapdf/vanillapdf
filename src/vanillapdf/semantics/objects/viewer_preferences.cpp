@@ -106,7 +106,7 @@ bool ViewerPreferences::NonFullScreenPageMode(NonFullScreenPageModeType& result)
     } else if (name == constant::Name::UseOC) {
         result = NonFullScreenPageModeType::UseOC;
     } else {
-        throw syntax::ParseException("Unknown page mode type: " + name->ToString());
+        LOG_ERROR_AND_THROW(syntax::ParseException, "Unknown page mode type: {}", name->ToString());
     }
 
     return true;
@@ -123,7 +123,7 @@ bool ViewerPreferences::Direction(ReadingOrderType& result) const {
     } else if (name == constant::Name::R2L) {
         result = ReadingOrderType::RightToLeft;
     } else {
-        throw syntax::ParseException("Unknown reading order: " + name->ToString());
+        LOG_ERROR_AND_THROW(syntax::ParseException, "Unknown reading order: {}", name->ToString());
     }
 
     return true;
@@ -176,7 +176,7 @@ bool ViewerPreferences::PrintScaling(PrintScalingType& result) const {
     } else if (name == constant::Name::None) {
         result = PrintScalingType::None;
     } else {
-        throw syntax::ParseException("Unknown print scaling: " + name->ToString());
+        LOG_ERROR_AND_THROW(syntax::ParseException, "Unknown print scaling: {}", name->ToString());
     }
 
     return true;
@@ -203,7 +203,7 @@ bool ViewerPreferences::Duplex(DuplexType& result) const {
         return true;
     }
 
-    throw syntax::ParseException("Unknown duplex: " + name->ToString());
+    LOG_ERROR_AND_THROW(syntax::ParseException, "Unknown duplex: {}", name->ToString());
 }
 
 bool ViewerPreferences::PickTrayByPDFSize(syntax::BooleanObjectPtr& result) const {

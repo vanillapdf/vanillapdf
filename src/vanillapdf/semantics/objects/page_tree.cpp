@@ -56,7 +56,7 @@ void PageTree::BuildPageCache() const {
 
 PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
     if (page_number < 1) {
-        throw InvalidParameterException(fmt::format("Invalid page number: {}", page_number));
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Invalid page number: {}", page_number);
     }
 
     ACCESS_LOCK_GUARD(m_cache_lock);
@@ -66,7 +66,7 @@ PageObjectPtr PageTree::GetCachedPage(types::size_type page_number) const {
     }
 
     if (page_number > m_page_cache.size()) {
-        throw ObjectMissingException("Page number was not found: " + std::to_string(page_number));
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Page number was not found: {}", page_number);
     }
 
     spdlog::debug("Searching for page {}", page_number);
@@ -167,7 +167,7 @@ bool PageTree::FindPageParentInternal(PageTreeNodePtr node, types::size_type pag
 
 void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
     if (page_index < 1) {
-        throw InvalidParameterException(fmt::format("Invalid page index: {}. Page indices are 1-based", page_index));
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Invalid page index: {}. Page indices are 1-based", page_index);
     }
 
     // Inserting after the current last page is an append
@@ -210,7 +210,7 @@ void PageTree::Append(PageObjectPtr object) {
 
 void PageTree::Remove(types::size_type page_index) {
     if (page_index < 1) {
-        throw InvalidParameterException(fmt::format("Invalid page index: {}. Page indices are 1-based", page_index));
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Invalid page index: {}. Page indices are 1-based", page_index);
     }
 
     types::size_type kid_index = 0;
@@ -283,7 +283,7 @@ types::size_type PageTree::UpdateKidsCount(PageNodeBasePtr node) {
         return kid_count;
     }
 
-    throw syntax::ParseException("Unknown page object type");
+    LOG_ERROR_AND_THROW(syntax::ParseException, "Unknown page node type: {}", static_cast<int>(node->GetNodeType()));
 }
 
 ArrayObjectPtr<IndirectReferenceObjectPtr> PageTree::GetKidsInternal(DictionaryObjectPtr node_dictionary) {

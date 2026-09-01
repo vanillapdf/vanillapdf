@@ -35,7 +35,7 @@ static OSSL_PROVIDER* g_default_provider = nullptr;
 const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
 
     if (algorithm == MessageDigestAlgorithm::Undefined) {
-        throw CryptoErrorException("No message digest algorithm was selected");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "No message digest algorithm was selected");
     }
 
     if (algorithm == MessageDigestAlgorithm::MDNULL) {
@@ -46,7 +46,7 @@ const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
     #ifndef OPENSSL_NO_MD2
         return EVP_md2();
     #else
-        throw NotSupportedException("OpenSSL was compiled without MD2 message digest support");
+        LOG_ERROR_AND_THROW(NotSupportedException, "OpenSSL was compiled without MD2 message digest support");
     #endif
     }
 
@@ -82,7 +82,7 @@ const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
     #ifndef OPENSSL_NO_MDC2
         return EVP_mdc2();
     #else
-        throw NotSupportedException("OpenSSL was compiled without MDC2 message digest support");
+        LOG_ERROR_AND_THROW(NotSupportedException, "OpenSSL was compiled without MDC2 message digest support");
     #endif
     }
 
@@ -94,7 +94,7 @@ const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
         return EVP_whirlpool();
     }
 
-    throw CryptoErrorException("Unknown message digest algorithm");
+    LOG_ERROR_AND_THROW(CryptoErrorException, "Unknown message digest algorithm: {}", static_cast<int>(algorithm));
 }
 
 std::string CryptoUtils::GetLastOpensslError() {
@@ -139,12 +139,12 @@ void CryptoUtils::InitializeOpenSSL() {
 
     g_legacy_provider = OSSL_PROVIDER_load(nullptr, "legacy");
     if (g_legacy_provider == nullptr) {
-        throw CryptoErrorException("Failed to initialize legacy OSSL provider, " + GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to initialize legacy OSSL provider, {}", GetLastOpensslError());
     }
 
     g_default_provider = OSSL_PROVIDER_load(nullptr, "default");
     if (g_default_provider == nullptr) {
-        throw CryptoErrorException("Failed to initialize default OSSL provider, " + GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to initialize default OSSL provider, {}", GetLastOpensslError());
     }
 
     OpenSSL_add_all_algorithms();
@@ -190,16 +190,16 @@ void CryptoUtils::CleanupOpenSSL() {
 // Stub implementations when OpenSSL is not available
 
 const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm) {
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 }
 
 std::string CryptoUtils::GetLastOpensslError() {
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 }
 
 
 void CryptoUtils::InitializeOpenSSL() {
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 }
 
 void CryptoUtils::CleanupOpenSSL() {

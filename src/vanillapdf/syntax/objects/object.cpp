@@ -172,10 +172,10 @@ types::big_uint Object::GetObjectNumber() const {
     }
 
     if (has_owner) {
-        throw InvalidParameterException("Object does not an indirect object, but is a composite of another object");
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Object is not an indirect object, but is a composite of another object");
     }
 
-    throw InvalidParameterException("Object does not have assigned object number");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Object does not have assigned object number");
 }
 
 types::ushort Object::GetGenerationNumber() const {
@@ -192,10 +192,10 @@ types::ushort Object::GetGenerationNumber() const {
     }
 
     if (has_owner) {
-        throw InvalidParameterException("Object does not an indirect object, but a composite of another object");
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Object is not an indirect object, but is a composite of another object");
     }
 
-    throw InvalidParameterException("Object does not have assigned generation number");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Object does not have assigned generation number");
 }
 
 types::big_uint Object::GetRootObjectNumber() const {
@@ -216,7 +216,7 @@ types::big_uint Object::GetRootObjectNumber() const {
         return owner->GetRootObjectNumber();
     }
 
-    throw InvalidParameterException("Object does not have assigned object number");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Object does not have assigned object number");
 }
 
 types::ushort Object::GetRootGenerationNumber() const {
@@ -237,7 +237,7 @@ types::ushort Object::GetRootGenerationNumber() const {
         return owner->GetRootGenerationNumber();
     }
 
-    throw InvalidParameterException("Object does not have assigned generation number");
+    LOG_ERROR_AND_THROW(InvalidParameterException, "Object does not have assigned generation number");
 }
 
 bool Object::IsEncryptionExempted() const {
@@ -278,14 +278,18 @@ const char* Object::TypeName(Type type) {
         case Type::IndirectReference:
             return "IndirectReference";
         default:
-            return nullptr;
+
+            // The name is used in log and exception messages, so it has to stay
+            // a printable string even for values outside of the enumeration.
+
+            return "Undefined";
     }
 }
 
 void Object::CloneBaseProperties(Object* other) const {
     assert(other != nullptr && "Invalid clone object parameter");
     if (other == nullptr) {
-        throw InvalidParameterException("Invalid clone object parameter");
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Invalid clone object parameter");
     }
 
     other->SetFile(m_file);

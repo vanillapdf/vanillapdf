@@ -3,6 +3,7 @@
 
 #include "utils/deferred.h"
 #include "utils/unknown_interface.h"
+#include "utils/log.h"
 
 #include "syntax/objects/object.h"
 #include "syntax/objects/array_object.h"
@@ -40,7 +41,7 @@ public:
 
     T* GetValue() const {
         if (m_value == nullptr) {
-            throw InvalidParameterException("Uninitialized pointer");
+            LOG_ERROR_AND_THROW(InvalidParameterException, "Uninitialized pointer");
         }
 
         return m_value.get();

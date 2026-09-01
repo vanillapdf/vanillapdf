@@ -9,7 +9,7 @@ namespace vanillapdf {
 
 InputStream::InputStream(std::shared_ptr<std::istream> stream) : m_stream(stream) {
     if (m_stream == nullptr) {
-        throw IOErrorException("Could not create input stream");
+        LOG_ERROR_AND_THROW(IOErrorException, "Could not create input stream");
     }
 
     m_input_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
@@ -106,13 +106,13 @@ BufferPtr InputStream::Readline(void) {
     bool stream_failed = m_stream->fail();
     assert(!stream_failed && "Stream is in failed state");
     if (stream_failed) {
-        throw IOErrorException("Stream is in failed state");
+        LOG_ERROR_AND_THROW(IOErrorException, "Stream is in failed state");
     }
 
     bool stream_eof = m_stream->eof();
     assert(!stream_eof && "Stream reached eof");
     if (stream_eof) {
-        throw IOErrorException("Stream reached eof");
+        LOG_ERROR_AND_THROW(IOErrorException, "Stream reached eof");
     }
 
     for (;;) {

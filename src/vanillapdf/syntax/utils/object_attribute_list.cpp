@@ -29,7 +29,7 @@ void AttributeList::Add(BaseAttributePtr attribute, bool overwrite /*= false*/) 
 
     auto attribute_type = attribute->GetType();
     if (!overwrite && Contains(attribute_type)) {
-        throw DuplicateKeyException("The key " + std::to_string(static_cast<int>(attribute_type)) + " was already present in the dictionary");
+        LOG_ERROR_AND_THROW(DuplicateKeyException, "An attribute of type {} was already present in the attribute list", static_cast<int>(attribute_type));
     }
 
     GetAttributes()->insert({ attribute_type , attribute });
@@ -51,7 +51,7 @@ bool AttributeList::Remove(BaseAttribute::Type type) {
 BaseAttributePtr AttributeList::Get(BaseAttribute::Type type) const {
     auto found = GetAttributes()->find(type);
     if (found == GetAttributes()->end()) {
-        throw ObjectMissingException("Attribute with key " + std::to_string(static_cast<int>(type)) + " was not found in the list");
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Attribute with key {} was not found in the list", static_cast<int>(type));
     }
 
     return found->second;

@@ -34,7 +34,7 @@ public:
 
         // File writer events are licensed feature
         if (!LicenseInfo::IsValid()) {
-            throw LicenseRequiredException("Custom file writer observer is a licensed feature");
+            LOG_ERROR_AND_THROW(LicenseRequiredException, "Custom file writer observer is a licensed feature");
         }
     }
 
@@ -47,8 +47,7 @@ public:
 
         error_type rv = m_on_initializing(m_user_data, output_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            throw UserCancelledException(
-                fmt::format("OnInitializing operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "OnInitializing operation returned: {}", rv);
         }
     }
 
@@ -61,8 +60,7 @@ public:
 
         error_type rv = m_on_finalizing(m_user_data, output_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            throw UserCancelledException(
-                fmt::format("OnFinalizing operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "OnFinalizing operation returned: {}", rv);
         }
     }
 
@@ -75,8 +73,7 @@ public:
 
         error_type rv = m_on_before_object_write(m_user_data, object_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            throw UserCancelledException(
-                fmt::format("OnBeforeObjectWrite operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "OnBeforeObjectWrite operation returned: {}", rv);
         }
     }
 
@@ -89,8 +86,7 @@ public:
 
         error_type rv = m_on_after_object_write(m_user_data, object_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            throw UserCancelledException(
-                fmt::format("OnAfterObjectWrite operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "OnAfterObjectWrite operation returned: {}", rv);
         }
     }
 
@@ -103,8 +99,7 @@ public:
 
         error_type rv = m_on_before_object_offset_recalculation(m_user_data, object_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            throw UserCancelledException(
-                fmt::format("OnBeforeObjectOffsetRecalculation operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "OnBeforeObjectOffsetRecalculation operation returned: {}", rv);
         }
     }
 
@@ -117,8 +112,7 @@ public:
 
         error_type rv = m_on_after_object_offset_recalculation(m_user_data, object_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            throw UserCancelledException(
-                fmt::format("OnAfterObjectOffsetRecalculation operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "OnAfterObjectOffsetRecalculation operation returned: {}", rv);
         }
     }
 
@@ -131,8 +125,7 @@ public:
 
         error_type rv = m_on_before_entry_offset_recalculation(m_user_data, entry_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            throw UserCancelledException(
-                fmt::format("OnBeforeEntryOffsetRecalculation operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "OnBeforeEntryOffsetRecalculation operation returned: {}", rv);
         }
     }
 
@@ -145,8 +138,7 @@ public:
 
         error_type rv = m_on_after_entry_offset_recalculation(m_user_data, entry_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            throw UserCancelledException(
-                fmt::format("OnAfterEntryOffsetRecalculation operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "OnAfterEntryOffsetRecalculation operation returned: {}", rv);
         }
     }
 
@@ -159,8 +151,7 @@ public:
 
         error_type rv = m_on_before_output_flush(m_user_data, output_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            throw UserCancelledException(
-                fmt::format("OnBeforeOutputFlush operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "OnBeforeOutputFlush operation returned: {}", rv);
         }
     }
 
@@ -173,8 +164,7 @@ public:
 
         error_type rv = m_on_after_output_flush(m_user_data, output_ptr);
         if (rv != VANILLAPDF_ERROR_SUCCESS) {
-            throw UserCancelledException(
-                fmt::format("OnAfterOutputFlush operation returned: {}", rv));
+            LOG_ERROR_AND_THROW(UserCancelledException, "OnAfterOutputFlush operation returned: {}", rv);
         }
     }
 

@@ -170,7 +170,7 @@ BufferPtr StreamObject::GetBodyRaw() const {
     }
 
     if (_raw_data_offset == constant::BAD_OFFSET) {
-        throw ParseException("Stream object data offset is not initialized");
+        LOG_ERROR_AND_THROW(ParseException, "Stream object data offset is not initialized");
     }
 
     auto offset = _raw_data_offset;
@@ -288,7 +288,7 @@ BufferPtr StreamObject::GetBody() const {
     }
 
     assert(is_filter_name ^ is_filter_array);
-    throw ParseException("Filter is neither name nor array of names");
+    LOG_ERROR_AND_THROW(ParseException, "Filter is neither name nor array of names");
 }
 
 BufferPtr StreamObject::GetBodyEncoded() const {
@@ -418,7 +418,7 @@ BufferPtr StreamObject::GetBodyEncoded() const {
     }
 
     assert(is_filter_name ^ is_filter_array);
-    throw ParseException("Filter is neither name nor array of names");
+    LOG_ERROR_AND_THROW(ParseException, "Filter is neither name nor array of names");
 }
 
 BufferPtr StreamObject::GetBodyDecrypted() const {

@@ -360,7 +360,7 @@ void Document::FixDestinationPage(ObjectPtr cloned_page, PageObjectPtr other_pag
         || ObjectUtils::IsType<IntegerObjectPtr>(cloned_page));
     if (!ObjectUtils::IsType<IndirectReferenceObjectPtr>(cloned_page)
         && !ObjectUtils::IsType<IntegerObjectPtr>(cloned_page)) {
-        throw InvalidParameterException("Unknown object type");
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Cloned page shall be an IndirectReference or an Integer, but is {}", Object::TypeName(cloned_page->GetObjectType()));
     }
 
     OutputCatalogPtr original_catalog;
@@ -440,7 +440,7 @@ bool Document::IsDestinationReferencingPage(DestinationPtr destination, PageObje
         || ObjectUtils::IsType<IntegerObjectPtr>(destination_page_object));
     if (!ObjectUtils::IsType<IndirectReferenceObjectPtr>(destination_page_object)
         && !ObjectUtils::IsType<IntegerObjectPtr>(destination_page_object)) {
-        throw InvalidParameterException("Unknown object type");
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Destination page shall be an IndirectReference or an Integer, but is {}", Object::TypeName(destination_page_object->GetObjectType()));
     }
 
     if (ObjectUtils::IsType<IndirectReferenceObjectPtr>(destination_page_object)) {
@@ -532,7 +532,7 @@ void Document::AppendStringDestination(StringObjectPtr key, DestinationPtr value
     // Check for name conflicts
     assert(!original_string_destinations->Contains(key) && "Name conflict");
     if (original_string_destinations->Contains(key)) {
-        throw NotSupportedException("Merge of conflicting names is not yet supported");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Merge of conflicting names is not yet supported");
     }
 
     // Derefence destination in case it is indirect reference
@@ -572,7 +572,7 @@ void Document::AppendNameDestination(NameObjectPtr key, DestinationPtr value, Pa
     // Check for name conflicts
     assert(!original_destinations->Contains(key) && "Name conflict");
     if (original_destinations->Contains(key)) {
-        throw NotSupportedException("Merge of conflicting names is not yet supported");
+        LOG_ERROR_AND_THROW(NotSupportedException, "Merge of conflicting names is not yet supported");
     }
 
     // Derefence destination in case it is indirect reference
@@ -623,7 +623,7 @@ void Document::AppendPage(DocumentPtr other, PageObjectPtr other_page) {
 
     assert(ObjectUtils::IsType<DictionaryObjectPtr>(new_page_object) && "Page object is not dictionary");
     if (!ObjectUtils::IsType<DictionaryObjectPtr>(new_page_object)) {
-        throw syntax::ObjectMissingException("Cloned page object is not dictionary");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Cloned page object is not dictionary");
     }
 
     DictionaryObjectPtr new_dictionary = ObjectUtils::ConvertTo<DictionaryObjectPtr>(new_page_object);
@@ -681,7 +681,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     auto digest = options->GetDigest();
 
     if (!has_key) {
-        throw InvalidParameterException("Signing key is not set");
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Signing key is not set");
     }
 
     // Create new signature dictionary
@@ -745,12 +745,12 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     OutputPageTreePtr page_tree;
     bool has_pages = catalog->Pages(page_tree);
     if (!has_pages) {
-        throw syntax::ObjectMissingException("Cannot sign document without pages");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Cannot sign document without pages");
     }
 
     auto page_count = page_tree->PageCount();
     if (page_count == 0) {
-        throw syntax::ObjectMissingException("Cannot sign document without pages");
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Cannot sign document without pages");
     }
 
     auto first_page = page_tree->Page(1);
@@ -847,12 +847,12 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
 
     // Document encryption is a licensed feature
     if (!LicenseInfo::IsValid()) {
-        throw LicenseRequiredException("Document encryption is a licensed feature");
+        LOG_ERROR_AND_THROW(LicenseRequiredException, "Document encryption is a licensed feature");
     }
 
     // Terminate in case the document is already encrypted
     if (m_holder->IsEncrypted()) {
-        throw CryptoErrorException("Cannot encrypt an encrypted document, please remove the encryption first");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Cannot encrypt an encrypted document, please remove the encryption first");
     }
 
     // Initialize all entries, to load them into cache
@@ -927,7 +927,7 @@ void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
     bool password_set = m_holder->SetEncryptionPassword(settings->GetUserPassword());
 
     if (!password_set) {
-        throw CryptoErrorException("Could not verify the encryption password");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not verify the encryption password");
     }
 }
 
@@ -935,7 +935,7 @@ void Document::RemoveEncryption() {
 
     // Document encryption is a licensed feature
     if (!LicenseInfo::IsValid()) {
-        throw LicenseRequiredException("Document encryption is a licensed feature");
+        LOG_ERROR_AND_THROW(LicenseRequiredException, "Document encryption is a licensed feature");
     }
 
     // Terminate in case the document is not encrypted, treat as success

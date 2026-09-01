@@ -129,7 +129,7 @@ PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const std::string& path, std::string_vie
     SCOPE_GUARD_CAPTURE_REFERENCES(file.close());
 
     if (!file || !file.good()) {
-        throw CryptoErrorException("Could not open file: " + path);
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not open file: {}", path);
     }
 
     Buffer data;
@@ -169,7 +169,7 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, std::string_view passwor
 
     PKCS12* p12_raw = d2i_PKCS12_bio(bio, nullptr);
     if (nullptr == p12_raw) {
-        throw CryptoErrorException("Could not parse der structure PKCS#12, " + CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not parse der structure PKCS#12, {}", CryptoUtils::GetLastOpensslError());
     }
     p12 = std::unique_ptr<PKCS12, PKCS12Deleter>(p12_raw);
 
@@ -178,7 +178,7 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, std::string_view passwor
     X509* cert_raw = nullptr;
     int parsed = PKCS12_parse(p12.get(), password.data(), &key_raw, &cert_raw, &additional_certs);
     if (1 != parsed) {
-        throw CryptoErrorException("Could not parse PKCS#12, " + CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not parse PKCS#12, {}", CryptoUtils::GetLastOpensslError());
     }
 
     key = std::unique_ptr<EVP_PKEY, EVPPKEYDeleter>(key_raw);
@@ -195,14 +195,14 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, std::string_view passwor
 
         int length = i2d_X509(additional_cert, nullptr);
         if (length < 0) {
-            throw CryptoErrorException("Could not get PKCS#7 size, " + CryptoUtils::GetLastOpensslError());
+            LOG_ERROR_AND_THROW(CryptoErrorException, "Could not get PKCS#7 size, {}", CryptoUtils::GetLastOpensslError());
         }
 
         BufferPtr additional_cert_data = make_deferred_container<Buffer>(length);
         auto data_pointer = (unsigned char *) additional_cert_data->data();
         int converted = i2d_X509(additional_cert, &data_pointer);
         if (converted < 0) {
-            throw CryptoErrorException("Could not convert PKCS#7, " + CryptoUtils::GetLastOpensslError());
+            LOG_ERROR_AND_THROW(CryptoErrorException, "Could not convert PKCS#7, {}", CryptoUtils::GetLastOpensslError());
         }
 
         m_certificates->Append(additional_cert_data);
@@ -244,7 +244,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 #else
 
     (void) data;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 
 #endif
 
@@ -274,7 +274,7 @@ bool PKCS12Key::PKCS12KeyImpl::ContainsPrivateKey(const Buffer& issuer, const Bu
 #else
 
     (void) issuer; (void) serial;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 
 #endif
 
@@ -313,7 +313,7 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
     CMS_ContentInfo* cms_raw = CMS_sign(nullptr, nullptr, nullptr, nullptr,
                                         CMS_PARTIAL | CMS_DETACHED | CMS_BINARY);
     if (cms_raw == nullptr) {
-        throw CryptoErrorException("Could not create CMS structure, " + CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not create CMS structure, {}", CryptoUtils::GetLastOpensslError());
     }
     m_cms = std::unique_ptr<CMS_ContentInfo, CMSDeleter>(cms_raw);
 
@@ -323,19 +323,19 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
     CMS_SignerInfo* si = CMS_add1_signer(m_cms.get(), cert.get(), key.get(), message_digest,
                                          CMS_PARTIAL | CMS_NOSMIMECAP);
     if (si == nullptr) {
-        throw CryptoErrorException("Could not add CMS signer, " + CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not add CMS signer, {}", CryptoUtils::GetLastOpensslError());
     }
 
     // Add signing time signed attribute
     ASN1_UTCTIME* signing_time = X509_gmtime_adj(nullptr, 0);
     if (signing_time == nullptr) {
-        throw CryptoErrorException("Could not create signing time, " + CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not create signing time, {}", CryptoUtils::GetLastOpensslError());
     }
     SCOPE_GUARD([signing_time]() { ASN1_UTCTIME_free(signing_time); });
 
     if (!CMS_signed_add1_attr_by_NID(si, NID_pkcs9_signingTime,
                                       V_ASN1_UTCTIME, signing_time, -1)) {
-        throw CryptoErrorException("Could not add signing time attribute, " + CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not add signing time attribute, {}", CryptoUtils::GetLastOpensslError());
     }
 
     // Embed certificate chain (intermediate CAs from the PKCS#12 bag).
@@ -348,12 +348,12 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
         auto raw_data_size = ValueConvertUtils::SafeConvert<long>(extra_certificate_data->size());
         auto extra_certificate = d2i_X509(nullptr, &raw_data, raw_data_size);
         if (extra_certificate == nullptr) {
-            throw CryptoErrorException("Extra certificate is invalid, " + CryptoUtils::GetLastOpensslError());
+            LOG_ERROR_AND_THROW(CryptoErrorException, "Extra certificate is invalid, {}", CryptoUtils::GetLastOpensslError());
         }
         SCOPE_GUARD([extra_certificate]() { X509_free(extra_certificate); });
 
         if (!CMS_add1_cert(m_cms.get(), extra_certificate)) {
-            throw CryptoErrorException("Could not add extra certificate, " + CryptoUtils::GetLastOpensslError());
+            LOG_ERROR_AND_THROW(CryptoErrorException, "Could not add extra certificate, {}", CryptoUtils::GetLastOpensslError());
         }
     }
 
@@ -361,14 +361,14 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
     // CMS_final() reads this BIO to compute the message digest and perform signing.
     BIO* bio_raw = BIO_new(BIO_s_mem());
     if (bio_raw == nullptr) {
-        throw CryptoErrorException("Could not create data BIO, " + CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not create data BIO, {}", CryptoUtils::GetLastOpensslError());
     }
     m_data_bio = std::unique_ptr<BIO, BIODeleter>(bio_raw);
 
 #else
 
     (void) algorithm;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 
 #endif
 
@@ -398,7 +398,7 @@ void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_si
 
         int written = BIO_write(m_data_bio.get(), buffer.data(), read_converted);
         if (written != read_converted) {
-            throw CryptoErrorException("Could not write data");
+            LOG_ERROR_AND_THROW(CryptoErrorException, "Could not write data");
         }
 
         read_total = read_total + read;
@@ -407,7 +407,7 @@ void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_si
 #else
 
     (void) data;
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 
 #endif
 
@@ -423,26 +423,26 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
     // of the accumulated data without needing a reset or a separate read BIO.
     int finalized = CMS_final(m_cms.get(), m_data_bio.get(), nullptr, CMS_DETACHED | CMS_BINARY);
     if (finalized != 1) {
-        throw CryptoErrorException("Could not finalize CMS, " + CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not finalize CMS, {}", CryptoUtils::GetLastOpensslError());
     }
 
     int length = i2d_CMS_ContentInfo(m_cms.get(), nullptr);
     if (length < 0) {
-        throw CryptoErrorException("Could not get CMS size, " + CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not get CMS size, {}", CryptoUtils::GetLastOpensslError());
     }
 
     BufferPtr result = make_deferred_container<Buffer>(length);
     auto data_pointer = (unsigned char*) result->data();
     int converted = i2d_CMS_ContentInfo(m_cms.get(), &data_pointer);
     if (converted < 0) {
-        throw CryptoErrorException("Could not convert CMS, " + CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not convert CMS, {}", CryptoUtils::GetLastOpensslError());
     }
 
     return result;
 
 #else
 
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 
 #endif
 
@@ -464,27 +464,27 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::GetCertificate() const {
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
     if (!cert) {
-        throw CryptoErrorException("No certificate available in PKCS12 key");
+        LOG_ERROR_AND_THROW(CryptoErrorException, "No certificate available in PKCS12 key");
     }
 
     // Convert X509* to DER format (same technique used for additional certs)
     int length = i2d_X509(cert.get(), nullptr);
     if (length < 0) {
-        throw CryptoErrorException("Could not get certificate size, " + CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not get certificate size, {}", CryptoUtils::GetLastOpensslError());
     }
 
     BufferPtr cert_data = make_deferred_container<Buffer>(length);
     auto data_pointer = (unsigned char *) cert_data->data();
     int converted = i2d_X509(cert.get(), &data_pointer);
     if (converted < 0) {
-        throw CryptoErrorException("Could not convert certificate to DER, " + CryptoUtils::GetLastOpensslError());
+        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not convert certificate to DER, {}", CryptoUtils::GetLastOpensslError());
     }
 
     return cert_data;
 
 #else
 
-    throw NotSupportedException("This library was compiled without OpenSSL support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 
 #endif
 

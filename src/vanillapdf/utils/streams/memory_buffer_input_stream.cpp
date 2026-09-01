@@ -12,7 +12,7 @@ namespace vanillapdf {
 MemoryBufferInputStream::MemoryBufferInputStream(std::shared_ptr<fmt::memory_buffer> buffer)
     : m_buffer(std::move(buffer)) {
     if (m_buffer == nullptr) {
-        throw GeneralException("Could not create memory buffer input stream with null buffer");
+        LOG_ERROR_AND_THROW_GENERAL("Could not create memory buffer input stream with null buffer");
     }
 
     m_input_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
@@ -102,7 +102,7 @@ void MemoryBufferInputStream::SetInputPosition(types::stream_size pos, SeekDirec
             m_position = buffer_size + pos;
             break;
         default:
-            throw GeneralException("Unknown seek direction: " + std::to_string(static_cast<int>(way)));
+            LOG_ERROR_AND_THROW_GENERAL("Unknown seek direction: {}", static_cast<int>(way));
     }
 
     if (m_position < 0) {
@@ -122,7 +122,7 @@ BufferPtr MemoryBufferInputStream::Readline(void) {
 
     assert(m_position < buffer_size && "Stream reached eof");
     if (m_position >= buffer_size) {
-        throw GeneralException("Stream reached eof");
+        LOG_ERROR_AND_THROW_GENERAL("Stream reached eof");
     }
 
     for (;;) {

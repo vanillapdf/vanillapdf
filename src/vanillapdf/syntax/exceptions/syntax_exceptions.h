@@ -38,7 +38,8 @@ public:
 
 class DuplicateKeyException : public ExceptionBase {
 public:
-    explicit DuplicateKeyException(const std::string& key);
+    explicit DuplicateKeyException(const char * const & msg);
+    explicit DuplicateKeyException(const std::string& msg);
     virtual Type code() const noexcept { return Type::DuplicateKey; }
 };
 

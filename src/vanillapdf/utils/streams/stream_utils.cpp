@@ -84,7 +84,7 @@ SeekDirection StreamUtils::ConvertToSeekDirection(std::ios_base::seekdir value) 
         return SeekDirection::End;
     }
 
-    throw IOErrorException("Unknown seek direction: " + std::to_string(value));
+    LOG_ERROR_AND_THROW(IOErrorException, "Unknown seek direction: {}", static_cast<int>(value));
 }
 
 std::ios_base::seekdir StreamUtils::ConvertFromSeekDirection(SeekDirection value) {
@@ -100,7 +100,7 @@ std::ios_base::seekdir StreamUtils::ConvertFromSeekDirection(SeekDirection value
         return std::ios_base::end;
     }
 
-    throw IOErrorException("Unknown seek direction: " + std::to_string(static_cast<int>(value)));
+    LOG_ERROR_AND_THROW(IOErrorException, "Unknown seek direction: {}", static_cast<int>(value));
 }
 
 IInputOutputStreamPtr StreamUtils::CreateFileStream(const std::string& path, std::ios_base::openmode mode) {

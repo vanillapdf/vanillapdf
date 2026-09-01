@@ -29,9 +29,8 @@ ObjectMissingException::ObjectMissingException(types::big_uint objNumber, types:
 ObjectMissingException::ObjectMissingException(const char * const & msg) : ExceptionBase(msg) {}
 ObjectMissingException::ObjectMissingException(const std::string& msg) : ExceptionBase(msg) {}
 
-DuplicateKeyException::DuplicateKeyException(const std::string& key)
-    : ExceptionBase("The key " + key + " was already present in the dictionary") {
-}
+DuplicateKeyException::DuplicateKeyException(const char * const & msg) : ExceptionBase(msg) {}
+DuplicateKeyException::DuplicateKeyException(const std::string& msg) : ExceptionBase(msg) {}
 
 } // syntax
 } // vanillapdf

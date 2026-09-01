@@ -168,7 +168,7 @@ void XrefUsedEntry::Initialize(void) {
     }
 
     if (_offset == constant::BAD_OFFSET) {
-        throw ObjectMissingException("Xref entry data offset is not initialized");
+        LOG_ERROR_AND_THROW(ObjectMissingException, "Xref entry data offset is not initialized");
     }
 
     ACCESS_LOCK_GUARD(m_access_lock);

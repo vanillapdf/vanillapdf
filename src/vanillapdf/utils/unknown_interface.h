@@ -2,6 +2,7 @@
 #define _UNKNOWN_INTERFACE_H
 
 #include "utils/exceptions.h"
+#include "utils/log.h"
 
 #include <memory>
 #include <atomic>
@@ -95,12 +96,12 @@ public:
 
     Deferred<T> GetReference() const {
         if (IsEmpty()) {
-            throw InvalidParameterException("Pointer object was not set");
+            LOG_ERROR_AND_THROW(InvalidParameterException, "Pointer object was not set");
         }
 
         auto acquired = TryGetReference();
         if (!acquired.has_value()) {
-            throw InvalidParameterException("Object has been already disposed");
+            LOG_ERROR_AND_THROW(InvalidParameterException, "Object has been already disposed");
         }
 
         return acquired.value();
@@ -258,7 +259,7 @@ public:
 
         T* converted = static_cast<U*>(this);
         if (converted == nullptr) {
-            throw InvalidParameterException("Pointer object was not set");
+            LOG_ERROR_AND_THROW(InvalidParameterException, "Pointer object was not set");
         }
 
         return WeakReference<T>(converted, m_weak_ref);

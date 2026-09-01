@@ -36,9 +36,7 @@ void error_exit(j_common_ptr cinfo) {
     char buffer[JMSG_LENGTH_MAX];
     (*cinfo->err->format_message) (cinfo, buffer);
 
-    spdlog::error("JPEG decompression exited with error: {}", buffer);
-
-    throw ImageCodecErrorException(buffer);
+    LOG_ERROR_AND_THROW(ImageCodecErrorException, "JPEG decompression exited with error: {}", buffer);
 }
 
 void output_message(j_common_ptr cinfo) {
@@ -51,11 +49,11 @@ void output_message(j_common_ptr cinfo) {
 void init_destination(j_compress_ptr cinfo) {
 
     if (cinfo == nullptr) {
-        throw ImageCodecErrorException("Invalid jpeg pointer");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Invalid jpeg pointer");
     }
 
     if (cinfo->dest == nullptr) {
-        throw ImageCodecErrorException("Missing jpeg dest manager");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Missing jpeg dest manager");
     }
 
     CustomDestinationManager* destination = reinterpret_cast<CustomDestinationManager*>(cinfo->dest);
@@ -68,11 +66,11 @@ void init_destination(j_compress_ptr cinfo) {
 boolean empty_output_buffer(j_compress_ptr cinfo) {
 
     if (cinfo == nullptr) {
-        throw ImageCodecErrorException("Invalid jpeg pointer");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Invalid jpeg pointer");
     }
 
     if (cinfo->dest == nullptr) {
-        throw ImageCodecErrorException("Missing jpeg dest manager");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Missing jpeg dest manager");
     }
 
     CustomDestinationManager* destination = reinterpret_cast<CustomDestinationManager*>(cinfo->dest);
@@ -87,11 +85,11 @@ boolean empty_output_buffer(j_compress_ptr cinfo) {
 void term_destination(j_compress_ptr cinfo) {
 
     if (cinfo == nullptr) {
-        throw ImageCodecErrorException("Invalid jpeg pointer");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Invalid jpeg pointer");
     }
 
     if (cinfo->dest == nullptr) {
-        throw ImageCodecErrorException("Missing jpeg dest manager");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Missing jpeg dest manager");
     }
 
     CustomDestinationManager* destination = reinterpret_cast<CustomDestinationManager*>(cinfo->dest);
@@ -152,7 +150,7 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
             spdlog::error("Non-standard color spaces {} are not supported", color_space_array->ToString());
 
             // TODO: ICCBased, Indexed, Lab, Separation, DeviceN
-            throw NotSupportedException("Non-standard colorspaces are not supported");
+            LOG_ERROR_AND_THROW(NotSupportedException, "Non-standard colorspaces are not supported");
         }
     }
 
@@ -178,15 +176,15 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
     // In case the input parameters are missing, terminate immediately
     if (width.empty()) {
-        throw ImageCodecErrorException("Missing parameter Width");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Missing parameter Width");
     }
 
     if (height.empty()) {
-        throw ImageCodecErrorException("Missing parameter Height");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Missing parameter Height");
     }
 
     if (color_space.empty()) {
-        throw ImageCodecErrorException("Missing parameter ColorSpace");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Missing parameter ColorSpace");
     }
 
     jpeg_compress_struct jpeg = { };
@@ -231,22 +229,12 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
         auto read_plus_row = SafeAddition<decltype(length)>(read_total, row_size);
         if (read_plus_row > length) {
-            throw ImageCodecErrorException(
-                "Insufficient source data, read_plus_row: " +
-                std::to_string(read_plus_row) +
-                ", length: " +
-                std::to_string(length)
-            );
+            LOG_ERROR_AND_THROW(ImageCodecErrorException, "Insufficient source data, read_plus_row: {}, length: {}", read_plus_row, length);
         }
 
         auto read = src->Read(buffer, row_size);
         if (read != row_size) {
-            throw ImageCodecErrorException(
-                "Insufficient source data, read: " +
-                std::to_string(read) +
-                ", row_size: " +
-                std::to_string(row_size)
-            );
+            LOG_ERROR_AND_THROW(ImageCodecErrorException, "Insufficient source data, read: {}, row_size: {}", read, row_size);
         }
 
         JSAMPROW row_pointer[1];
@@ -262,7 +250,7 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 
 #else
     (void) src; (void) length;
-    throw NotSupportedException("This library was compiled without JPEG support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without JPEG support");
 #endif
 }
 
@@ -314,12 +302,12 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
     int header = jpeg_read_header(&jpeg, TRUE);
     if (header != JPEG_HEADER_OK) {
-        throw ImageCodecErrorException("Could not read jpeg header");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Could not read jpeg header");
     }
 
     boolean started = jpeg_start_decompress(&jpeg);
     if (started != TRUE) {
-        throw ImageCodecErrorException("Could not start jpeg decompression");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Could not start jpeg decompression");
     }
 
     // Pre-allocate output buffer for the entire decoded image
@@ -337,7 +325,7 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
     boolean finished = jpeg_finish_decompress(&jpeg);
     if (finished != TRUE) {
-        throw ImageCodecErrorException("Could not finish jpeg decompression");
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Could not finish jpeg decompression");
     }
 
     ImageMetadataObjectAttribute::ColorSpaceType attribute_color_space = ImageMetadataObjectAttribute::ColorSpaceType::Undefined;
@@ -368,7 +356,7 @@ BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
 
 #else
     (void) src; (void) length;
-    throw NotSupportedException("This library was compiled without JPEG support");
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without JPEG support");
 #endif
 
 }
