@@ -55,7 +55,23 @@ public:
     void AppendDocument(DocumentPtr other);
     void AppendPage(DocumentPtr other, PageObjectPtr other_page);
 
+    // Signs the document, creating an invisible signature field of its own on
+    // the first page.
     void Sign(syntax::FilePtr destination, DocumentSignatureSettingsPtr options);
+
+    // Signs into a signature field the caller has already built and attached,
+    // which is how a signature gets a visible appearance - the field carries
+    // the widget annotation, its rectangle and its appearance stream.
+    //
+    // The field is named rather than passed, so that resolving it through this
+    // document's field hierarchy is what establishes that it belongs here and
+    // is reachable from the interactive form. The name is the fully qualified
+    // one, in the form FieldTree::TryFindField takes.
+    //
+    // ObjectMissingException when no field of that name exists, and
+    // InvalidParameterException when it is not a signature field or already
+    // carries a signature.
+    void SignField(syntax::FilePtr destination, std::string_view qualified_name, DocumentSignatureSettingsPtr options);
 
     void AddEncryption(DocumentEncryptionSettingsPtr settings);
     void RemoveEncryption();
@@ -69,6 +85,17 @@ private:
     NamedDestinationsPtr CreateNameDestinations(CatalogPtr catalog);
     NameDictionaryPtr CreateNameDictionary(CatalogPtr catalog);
     InteractiveFormPtr CreateAcroForm(CatalogPtr catalog);
+
+    // Builds the signature dictionary and registers it. /ByteRange and
+    // /Contents are left as placeholders that the signer overwrites while the
+    // document is being written.
+    syntax::DictionaryObjectPtr CreateSignatureDictionary(DocumentSignatureSettingsPtr options);
+
+    // Marks the interactive form as carrying signatures
+    void UpdateSignatureFlags(InteractiveFormPtr interactive_form);
+
+    // Writes the document out, the signer filling the placeholders in passing
+    void WriteSignedDocument(syntax::FilePtr destination, syntax::DictionaryObjectPtr signature_dictionary, DocumentSignatureSettingsPtr options);
     NameTreePtr<DestinationPtr> CreateStringDestinations(NameDictionaryPtr dictionary);
 
     void MergePageDestinations(DocumentPtr other, PageObjectPtr other_page, PageObjectPtr merged_page);

@@ -662,7 +662,7 @@ void Document::MergePageDestinations(DocumentPtr other, PageObjectPtr other_page
     }
 }
 
-void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
+syntax::DictionaryObjectPtr Document::CreateSignatureDictionary(DocumentSignatureSettingsPtr options) {
 
     OutputPointer<ISigningKeyPtr> key;
     OutputPointer<syntax::HexadecimalStringObjectPtr> certificate;
@@ -677,8 +677,6 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     bool has_name = options->GetName(name);
     bool has_location = options->GetLocation(location);
     bool has_reason = options->GetReason(reason);
-
-    auto digest = options->GetDigest();
 
     if (!has_key) {
         LOG_ERROR_AND_THROW(InvalidParameterException, "Signing key is not set");
@@ -739,6 +737,46 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     dictionary_entry->SetReference(signature_dictionary);
     dictionary_entry->SetFile(m_holder);
     dictionary_entry->SetInitialized();
+
+    return signature_dictionary;
+}
+
+void Document::UpdateSignatureFlags(InteractiveFormPtr interactive_form) {
+    auto signature_flags = interactive_form->CreateSignatureFlags();
+    signature_flags->SetSignaturesExist(true);
+    signature_flags->SetAppendOnly(true);
+}
+
+void Document::WriteSignedDocument(FilePtr destination, syntax::DictionaryObjectPtr signature_dictionary, DocumentSignatureSettingsPtr options) {
+
+    OutputPointer<ISigningKeyPtr> key;
+    bool has_key = options->GetSigningKey(key);
+    if (!has_key) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Signing key is not set");
+    }
+
+    auto digest = options->GetDigest();
+
+    // TODO:
+    // Move the signature creation logic to new callback IFileWriterObserver::OnAfterXrefClone
+    // The reason for this is to allow subsequent signing of the same document in case error occurs
+
+    DocumentSignerPtr signer = make_deferred<DocumentSigner>(key, digest, signature_dictionary);
+
+    FileWriter writer;
+    writer.Subscribe(signer);
+
+    // TODO:
+    // WriteIncremental is currently too complicated, let's switch to Write
+    // Incremental updates needs to be able to handle removed objects, object stream updates, etc.
+    // writer.WriteIncremental(m_holder, destination);
+
+    writer.Write(m_holder, destination);
+}
+
+void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
+
+    auto signature_dictionary = CreateSignatureDictionary(options);
 
     // Create signature annotation
     OutputCatalogPtr catalog;
@@ -802,10 +840,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
         interactive_form = CreateAcroForm(catalog);
     }
 
-    // Update signature flags
-    auto signature_flags = interactive_form->CreateSignatureFlags();
-    signature_flags->SetSignaturesExist(true);
-    signature_flags->SetAppendOnly(true);
+    UpdateSignatureFlags(interactive_form);
 
     // The signature field joins the hierarchy the way any field does -
     // through the tree, so that a tree the caller already holds sees it
@@ -832,21 +867,58 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     auto signature_field = Field::Create(signature_annotation);
     field_tree->AddRootChild(signature_field);
 
-    // TODO:
-    // Move the signature creation logic to new callback IFileWriterObserver::OnAfterXrefClone
-    // The reason for this is to allow subsequent signing of the same document in case error occurs
+    WriteSignedDocument(destination, signature_dictionary, options);
+}
 
-    DocumentSignerPtr signer = make_deferred<DocumentSigner>(key, digest, signature_dictionary);
+void Document::SignField(FilePtr destination, std::string_view qualified_name, DocumentSignatureSettingsPtr options) {
 
-    FileWriter writer;
-    writer.Subscribe(signer);
+    OutputCatalogPtr catalog;
+    if (!GetDocumentCatalog(catalog)) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Cannot sign a field in a document without a catalog");
+    }
 
-    // TODO:
-    // WriteIncremental is currently too complicated, let's switch to Write
-    // Incremental updates needs to be able to handle removed objects, object stream updates, etc.
-    // writer.WriteIncremental(m_holder, destination);
+    OuputInteractiveFormPtr interactive_form;
+    if (!catalog->AcroForm(interactive_form)) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "The document has no interactive form");
+    }
 
-    writer.Write(m_holder, destination);
+    OutputFieldTreePtr field_tree;
+    if (!interactive_form->GetFieldTree(field_tree)) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "The interactive form has no field hierarchy");
+    }
+
+    // Resolving the field here is what establishes that it belongs to this
+    // document and is reachable from the form - neither has to be checked
+    OuputFieldPtr field;
+    if (!field_tree->TryFindField(qualified_name, field)) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "The document has no field named \"{}\"", qualified_name);
+    }
+
+    FieldPtr found_field = field;
+    if (found_field->GetFieldType() != Field::Type::Signature) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The field \"{}\" is not a signature field", qualified_name);
+    }
+
+    // /V is inheritable (Table 220), but a signature belongs to the field that
+    // carries it, so only this dictionary counts. An entry present but null is
+    // an unsigned placeholder rather than a signature.
+    auto field_dictionary = found_field->GetObject();
+    if (field_dictionary->Contains(constant::Name::V)) {
+        auto existing_value = field_dictionary->Find(constant::Name::V);
+        if (!syntax::ObjectUtils::IsType<syntax::NullObjectPtr>(existing_value)) {
+            LOG_ERROR_AND_THROW(InvalidParameterException,
+                "The field \"{}\" already carries a signature - signing it again would destroy the existing one", qualified_name);
+        }
+    }
+
+    auto signature_dictionary = CreateSignatureDictionary(options);
+
+    auto signature_dictionary_reference = make_deferred<syntax::IndirectReferenceObject>(signature_dictionary);
+    field_dictionary->Insert(constant::Name::V, signature_dictionary_reference, true);
+
+    UpdateSignatureFlags(interactive_form);
+
+    WriteSignedDocument(destination, signature_dictionary, options);
 }
 
 void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
