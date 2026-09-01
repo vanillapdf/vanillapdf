@@ -79,8 +79,15 @@ jobs:
       - name: Test ${{ matrix.config.name }}
         run: ctest --preset linux-x64-gcc
 
+      # gcov emits a branch edge for every call that may unwind, and for
+      # compiler-generated code that cannot be reached. No test can ever take
+      # those edges, so a line is reported as a partially covered branch simply
+      # for calling something. That falls hardest on error handling: a
+      # validation branch that throws scores as half covered however it is
+      # tested. Both flags are gcovr's documented answer for C++.
+      # https://gcovr.com/en/stable/faq.html#why-does-c-code-have-so-many-uncovered-branches
       - name: Generate coverage report
-        run: gcovr -r . --xml-pretty -o coverage.xml
+        run: gcovr -r . --exclude-throw-branches --exclude-unreachable-branches --print-summary --xml-pretty -o coverage.xml
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f  # v7.0.0
