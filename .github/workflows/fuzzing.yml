@@ -41,6 +41,9 @@ jobs:
           - name: flate
             target: vanillapdf.fuzz.flate_decode
             corpus: flate_decode
+          - name: flate-predictor
+            target: vanillapdf.fuzz.flate_predictor
+            corpus: flate_predictor
           - name: ascii85
             target: vanillapdf.fuzz.ascii85_decode
             corpus: ascii85_decode
