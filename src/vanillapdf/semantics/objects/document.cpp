@@ -19,6 +19,8 @@
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include "semantics/utils/semantic_utils.h"
+
+#include "utils/math_utils.h"
 #include "semantics/utils/document_signer.h"
 #include "semantics/utils/document_encryption_settings.h"
 
@@ -718,8 +720,14 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     ArrayObjectPtr<IntegerObjectPtr> byte_ranges;
     byte_ranges->AddAttribute(byte_range_attribute);
 
-    // TODO hardcoded value
-    std::string contents_value(32768, ' ');
+    // The placeholder lies inside the signed range, so its size is fixed here
+    // rather than measured afterwards. The signature is serialized as a
+    // hexadecimal string, hence two characters per byte plus the delimiters.
+    auto reserved_signature_size = options->GetReservedSignatureSize();
+    auto reserved_hex_size = SafeAddition<types::size_type>(reserved_signature_size, reserved_signature_size);
+    auto contents_placeholder_size = SafeAddition<types::size_type>(reserved_hex_size, 2);
+
+    std::string contents_value(contents_placeholder_size, ' ');
     SerializationOverrideAttributePtr contents_attribute = make_deferred<SerializationOverrideAttribute>(contents_value);
     HexadecimalStringObjectPtr signature_contents = make_deferred<HexadecimalStringObject>();
     signature_contents->AddAttribute(contents_attribute);
