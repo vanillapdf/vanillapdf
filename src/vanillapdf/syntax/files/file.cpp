@@ -172,7 +172,28 @@ void File::InitializeObjectStream(types::big_uint object_stream_number) {
 
     ACCESS_LOCK_GUARD(m_object_stream_lock);
 
+    // Initializing this object stream already depends on itself. Leave the entries uninitialized,
+    // they are reported as NULL references by XrefUsedEntryBase::GetReference, the same way as the
+    // compressed entries that are missing from their object stream.
+    auto in_progress = m_object_streams_in_progress.find(object_stream_number);
+    if (in_progress != m_object_streams_in_progress.end()) {
+        spdlog::warn("Object stream {} is already being initialized, breaking the cyclic reference", object_stream_number);
+        return;
+    }
+
+    m_object_streams_in_progress.insert(object_stream_number);
+
+    SCOPE_GUARD_CAPTURE_REFERENCES( m_object_streams_in_progress.erase(object_stream_number) );
+
     auto stm = GetIndirectObject(object_stream_number, 0);
+
+    // The object stream does not have to be a stream at all, a broken or cyclic xref entry
+    // resolves to a null object. There is nothing to initialize in that case, the compressed
+    // entries are reported as NULL references.
+    if (!ObjectUtils::IsType<StreamObjectPtr>(stm)) {
+        spdlog::warn("Object {} is not a stream, its entries are treated as NULL references", object_stream_number);
+        return;
+    }
 
     // Mark the object stream with the attribute to prevent duplicit initialization
     if (stm->ContainsAttribute(BaseAttribute::Type::ObjectStreamMetadata)) {

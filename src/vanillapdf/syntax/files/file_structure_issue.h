@@ -34,6 +34,7 @@ enum class FileStructureIssueCode {
     XrefUsedEntryOffsetExceedsFileSize = 301,
     XrefCompressedEntryMissingObjectStream = 302,
     XrefFreeEntryInvalidNextFree = 303,
+    XrefCompressedEntryObjectStreamCompressed = 304,
 
     // Object reference checks (400s)
     TrailerRootReferenceNotInXref = 400,

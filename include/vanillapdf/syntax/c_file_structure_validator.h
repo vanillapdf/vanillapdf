@@ -62,6 +62,7 @@ extern "C"
         FileStructureIssueCode_XrefUsedEntryOffsetExceedsFileSize = 301,  /**< Used entry offset exceeds file size */
         FileStructureIssueCode_XrefCompressedEntryMissingObjectStream = 302, /**< Compressed entry references missing object stream */
         FileStructureIssueCode_XrefFreeEntryInvalidNextFree = 303,        /**< Free entry references invalid next free object */
+        FileStructureIssueCode_XrefCompressedEntryObjectStreamCompressed = 304, /**< Compressed entry references an object stream that is itself compressed */
 
         /* Object reference checks (400s) */
         FileStructureIssueCode_TrailerRootReferenceNotInXref = 400,       /**< /Root target not in xref */
