@@ -16,17 +16,17 @@
 include(FetchContent)
 
 FetchContent_Declare(vanillapdf_testdata
-    URL      https://github.com/vanillapdf/vanillapdf-testdata/releases/download/v1.1/corpus.tar.gz
-    URL_HASH SHA256=057970ac4d6757240476c8ebbce7b662857b78330c6912b5f6d64080ea7e2f81
+    URL      https://github.com/vanillapdf/vanillapdf-testdata/releases/download/v1.2/corpus.tar.gz
+    URL_HASH SHA256=3ff282e2b559d2913c47ad89181da5883f893a9460447b2201edea3e67937747
 )
 FetchContent_MakeAvailable(vanillapdf_testdata)
 
 # The manifest is downloaded next to the extracted corpus/ so it is co-located
 # with the fixtures (consumers can find it relative to the testdata root).
 file(DOWNLOAD
-    https://github.com/vanillapdf/vanillapdf-testdata/releases/download/v1.1/manifest.json
+    https://github.com/vanillapdf/vanillapdf-testdata/releases/download/v1.2/manifest.json
     "${vanillapdf_testdata_SOURCE_DIR}/manifest.json"
-    EXPECTED_HASH SHA256=ac7ffc5a4865b4f27da467599abd583e33c22945e55e109aaa6448510f3e4c12
+    EXPECTED_HASH SHA256=c20f4e2281c8f73ef48c1e19e724b6faa66ead51f329b45b9f856d834e7663c0
 )
 
 set(VANILLAPDF_TESTDATA_ROOT "${vanillapdf_testdata_SOURCE_DIR}"
