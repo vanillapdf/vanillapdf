@@ -6,11 +6,17 @@
 #include <spdlog/spdlog.h>
 
 #define LOG_ERROR_AND_THROW_GENERAL(...) \
-    spdlog::error(__VA_ARGS__); \
-    throw GeneralException(fmt::format(__VA_ARGS__))
+    do { \
+        auto log_error_and_throw_message = fmt::format(__VA_ARGS__); \
+        spdlog::error(log_error_and_throw_message); \
+        throw GeneralException(log_error_and_throw_message); \
+    } while (0)
 
 #define LOG_ERROR_AND_THROW(ExceptionType, ...) \
-    spdlog::error(__VA_ARGS__); \
-    throw ExceptionType(fmt::format(__VA_ARGS__))
+    do { \
+        auto log_error_and_throw_message = fmt::format(__VA_ARGS__); \
+        spdlog::error(log_error_and_throw_message); \
+        throw ExceptionType(log_error_and_throw_message); \
+    } while (0)
 
 #endif /* _LOG_H */
