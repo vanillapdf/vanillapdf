@@ -5,6 +5,10 @@
 #include <algorithm>
 #include <cassert>
 
+#if defined(VANILLAPDF_HAVE_MIMALLOC)
+    #include <mimalloc.h>
+#endif
+
 namespace vanillapdf {
 
 std::atomic<int64_t> IUnknown::s_active_object_count = 0;
@@ -25,6 +29,23 @@ void WeakReferenceCounter::Deactivate() noexcept {
 IUnknown::~IUnknown() {
     s_active_object_count -= 1;
 }
+
+#if defined(VANILLAPDF_HAVE_MIMALLOC)
+
+void* IUnknown::operator new(std::size_t size) {
+    auto address = mi_malloc(size);
+    if (address == nullptr) {
+        throw std::bad_alloc();
+    }
+
+    return address;
+}
+
+void IUnknown::operator delete(void* address) noexcept {
+    mi_free(address);
+}
+
+#endif /* VANILLAPDF_HAVE_MIMALLOC */
 
 IUnknown::IUnknown() noexcept : m_ref_counter(0) {
     auto current = ++s_active_object_count;

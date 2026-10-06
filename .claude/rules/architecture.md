@@ -85,4 +85,4 @@ Thread safety is validated by `thread_safety_test.cpp` (concurrent `Document::Op
 
 ## Feature Dependencies
 
-Optional via `VANILLAPDF_HAVE_*`: OpenSSL (encryption/signing), libjpeg-turbo, openjpeg, zlib, spdlog, nlohmann-json
+Optional via `VANILLAPDF_HAVE_*`: OpenSSL (encryption/signing), libjpeg-turbo, openjpeg, zlib, spdlog, nlohmann-json, mimalloc (allocator of the `IUnknown` hierarchy)

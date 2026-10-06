@@ -9,6 +9,7 @@ set(VANILLAPDF_WITH_ENCRYPTION @VANILLAPDF_ENABLE_ENCRYPTION@)
 set(VANILLAPDF_WITH_ZLIB @VANILLAPDF_ENABLE_ZLIB@)
 set(VANILLAPDF_WITH_JPEG @VANILLAPDF_ENABLE_JPEG@)
 set(VANILLAPDF_WITH_JPEG2000 @VANILLAPDF_ENABLE_JPEG2000@)
+set(VANILLAPDF_WITH_MIMALLOC @VANILLAPDF_ENABLE_MIMALLOC@)
 
 # Dependencies are linked PRIVATE. A shared library resolves them internally and
 # exports nothing, so a consumer needs none of them installed. A static library
@@ -30,6 +31,10 @@ if(NOT TARGET vanillapdf AND NOT VANILLAPDF_SHARED_BUILD)
 
   if(VANILLAPDF_WITH_JPEG2000)
     find_dependency(OpenJPEG REQUIRED)     # Required for JPXDecode (JPEG2000 codec)
+  endif()
+
+  if(VANILLAPDF_WITH_MIMALLOC)
+    find_dependency(mimalloc CONFIG REQUIRED)  # Serves the reference counted objects
   endif()
 
   find_dependency(fmt CONFIG REQUIRED)     # High-performance string formatting

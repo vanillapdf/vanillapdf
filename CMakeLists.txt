@@ -29,6 +29,7 @@ option(VANILLAPDF_ENABLE_JPEG "Enable JPEG image support" ON)
 option(VANILLAPDF_ENABLE_JPEG2000 "Enable JPEG2000 image support" ON)
 option(VANILLAPDF_ENABLE_ZLIB "Enable zlib compression support" ON)
 option(VANILLAPDF_ENABLE_LICENSING "Enable licensing and JSON metadata support" OFF)
+option(VANILLAPDF_ENABLE_MIMALLOC "Serve the library's C++ heap allocations from mimalloc" OFF)
 
 # A decoded image is held in memory as a whole, and its size comes from the
 # dimensions the document declares rather than from the amount of data behind them,
@@ -59,6 +60,7 @@ option(VANILLAPDF_EXTERNAL_ZLIB "Use zlib from the system or a package manager" 
 option(VANILLAPDF_EXTERNAL_SPDLOG "Use spdlog from the system or a package manager" OFF)
 option(VANILLAPDF_EXTERNAL_FMT "Use fmt from the system or a package manager" OFF)
 option(VANILLAPDF_EXTERNAL_NLOHMANN_JSON "Use nlohmann-json from the system or a package manager" OFF)
+option(VANILLAPDF_EXTERNAL_MIMALLOC "Use mimalloc from the system or a package manager" OFF)
 
 if(VANILLAPDF_ENABLE_TESTS)
   option(VANILLAPDF_EXTERNAL_GTEST "Use GoogleTest from the system or a package manager" OFF)

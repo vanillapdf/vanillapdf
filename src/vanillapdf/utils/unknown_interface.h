@@ -197,6 +197,19 @@ public:
     static int64_t TotalObjectsCreated() noexcept;
     static void ResetDiagnosticCounters() noexcept;
 
+#if defined(VANILLAPDF_HAVE_MIMALLOC)
+
+    // Every reference counted object is allocated through pdf_new and released
+    // through Release, both inside the library, so the allocator stays an
+    // internal detail of this hierarchy. Replacing the global operator new
+    // instead would also claim the allocations of the dependencies, and a
+    // dependency in its own shared library hands out memory that mimalloc
+    // does not own
+    static void* operator new(std::size_t size);
+    static void operator delete(void* address) noexcept;
+
+#endif /* VANILLAPDF_HAVE_MIMALLOC */
+
     // Since we moved IUnknown to virtual inheritance
     // we can no longer use:
     //T* converted = static_cast<T*>(this);

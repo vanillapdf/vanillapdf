@@ -365,6 +365,7 @@ set(VANILLAPDF_SYNTAX_HEADERS
 )
 
 set(VANILLAPDF_UTILS_HEADERS
+    utils/allocator.h
     utils/base_iterator.h
     utils/buffer.h
     utils/buffer_array.h
@@ -742,6 +743,14 @@ if (VANILLAPDF_ENABLE_LICENSING)
     endif()
 endif()
 
+if (VANILLAPDF_ENABLE_MIMALLOC)
+    if (VANILLAPDF_EXTERNAL_MIMALLOC)
+        find_package(mimalloc CONFIG REQUIRED)
+    else ()
+        find_package(mimalloc CONFIG REQUIRED)
+    endif()
+endif()
+
 if (COMPILE_SKIA)
     find_package(unofficial-skia CONFIG REQUIRED)
     target_link_libraries(vanillapdf PRIVATE unofficial::skia::skia)
@@ -814,6 +823,20 @@ if (VANILLAPDF_ENABLE_LICENSING)
     message(STATUS "Licensing support enabled (nlohmann-json)")
 else()
     message(STATUS "Licensing support disabled")
+endif()
+
+if (VANILLAPDF_ENABLE_MIMALLOC)
+    # Which of the two targets exists depends on the linkage mimalloc was built
+    # with, so the choice is made by the generator expression that the mimalloc
+    # usage documentation recommends. A static build of this library exports the
+    # expression, where it is evaluated again against the mimalloc that
+    # vanillapdfDependencies.cmake has found for the consumer.
+    target_link_libraries(vanillapdf PRIVATE $<IF:$<TARGET_EXISTS:mimalloc-static>,mimalloc-static,mimalloc>)
+    target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_MIMALLOC)
+
+    message(STATUS "mimalloc ${mimalloc_VERSION} was found, serving the reference counted objects")
+else()
+    message(STATUS "mimalloc support disabled. The default allocator will be used")
 endif()
 
 # This includes the public headers in the project as well as publishing them outside to be consumed

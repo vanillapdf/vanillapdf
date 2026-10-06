@@ -45,8 +45,13 @@
         #define _CRTDBG_MAP_ALLOC
         #include <crtdbg.h>
 
+        // IUnknown declares its own operator new, which hides the global ones
+        // for the whole hierarchy, so the tracking form no longer resolves
+        // there. It would allocate from the CRT debug heap anyway, which the
+        // mimalloc operator delete cannot release, so the allocation is
+        // tracked only when the default allocator is in use
         // This only works with VC++
-        #ifndef pdf_new
+        #if !defined(pdf_new) && !defined(VANILLAPDF_HAVE_MIMALLOC)
             #define pdf_new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
         #endif
     #endif /* COMPILER_MICROSOFT_VISUAL_STUDIO */
