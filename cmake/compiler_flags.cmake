@@ -39,9 +39,8 @@ endfunction()
 if(VANILLAPDF_ENABLE_CRTDBG)
 
     # The debug heap belongs to the Microsoft C runtime rather than to the
-    # compiler, so it is available to anything targeting the MSVC ABI,
-    # clang-cl included
-    if(NOT (MSVC OR CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
+    # compiler, so clang-cl qualifies as well
+    if(NOT MSVC)
         message(FATAL_ERROR
             "VANILLAPDF_ENABLE_CRTDBG requires a compiler targeting the Microsoft C runtime.")
     endif()
