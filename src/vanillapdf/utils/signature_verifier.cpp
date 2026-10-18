@@ -147,28 +147,8 @@ void SignatureVerifier::ExtractCertificateChain(CMS_ContentInfo* cms, SignatureV
             }
         }
 
-        // Extract common name from signing certificate
         // Note: Validity dates (not_before, not_after) will be exposed in a future phase
-        X509_NAME* subject = X509_get_subject_name(signer_cert);
-        if (!subject) {
-            spdlog::warn("Common name not found in signing certificate");
-        } else {
-            // First get the required buffer size, then allocate (+1 for null terminator)
-            int cn_len = X509_NAME_get_text_by_NID(subject, NID_commonName, nullptr, 0);
-            if (cn_len < 0) {
-                spdlog::warn("Failed to get subject name from signing certificate");
-            } else {
-                auto cn_buffer = make_deferred_container<Buffer>(cn_len + 1);
-                X509_NAME_get_text_by_NID(subject, NID_commonName, cn_buffer->data(), cn_len + 1);
-
-                // OpenSSL writes a terminating null, which is not part of the value.
-                // Trim it so the buffer size is the length of the common name, the
-                // same meaning it has for every other buffer the library hands out.
-                cn_buffer->resize(cn_len);
-
-                result->SetSignerCommonName(cn_buffer);
-            }
-        }
+        ExtractSignerCommonName(signer_cert, result);
     }
 
     // Add all embedded certificates (intermediate CAs) to the chain.
@@ -213,6 +193,33 @@ void SignatureVerifier::ExtractCertificateChain(CMS_ContentInfo* cms, SignatureV
     }
 }
 
+// Helper to extract common name from the subject of the signing certificate.
+// X509_NAME_get_text_by_NID is deprecated since OpenSSL 4.0, so the common name
+// is read from its name entry. The get0 accessors return pointers into the
+// certificate, which must not be freed.
+void SignatureVerifier::ExtractSignerCommonName(X509* signer_cert, SignatureVerificationResultPtr& result) {
+    const X509_NAME* subject = X509_get_subject_name(signer_cert);
+    if (!subject) {
+        spdlog::warn("Common name not found in signing certificate");
+        return;
+    }
+
+    int cn_index = X509_NAME_get_index_by_NID(subject, NID_commonName, -1);
+    if (cn_index < 0) {
+        spdlog::warn("Failed to get subject name from signing certificate");
+        return;
+    }
+
+    const X509_NAME_ENTRY* cn_entry = X509_NAME_get_entry(subject, cn_index);
+    const ASN1_STRING* cn_string = X509_NAME_ENTRY_get_data(cn_entry);
+
+    const unsigned char* cn_data = ASN1_STRING_get0_data(cn_string);
+    int cn_length = ASN1_STRING_length(cn_string);
+
+    auto cn_buffer = make_deferred_container<Buffer>(cn_data, cn_length);
+    result->SetSignerCommonName(cn_buffer);
+}
+
 // Helper to extract signing time from CMS authenticated attributes.
 // Returns true if signing time was found and extracted, false if not present (valid per spec).
 // Throws CryptoErrorException for logic errors (parsing failures, memory allocation, etc.)
@@ -246,7 +253,7 @@ bool SignatureVerifier::ExtractSigningTime(CMS_ContentInfo* cms, time_t* signing
     }
 
     // Get the ASN1_TYPE from the attribute
-    ASN1_TYPE* asn1_time = X509_ATTRIBUTE_get0_type(attr, 0);
+    const ASN1_TYPE* asn1_time = X509_ATTRIBUTE_get0_type(attr, 0);
     if (!asn1_time) {
         LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to get ASN1_TYPE from signing time attribute");
     }
