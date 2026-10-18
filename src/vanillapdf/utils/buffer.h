@@ -1,7 +1,7 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
-#include "utils/allocator.h"
+#include "utils/pdf_allocator.h"
 #include "utils/byte_order.h"
 #include "utils/character.h"
 #include "utils/conversion_utils.h"

@@ -365,7 +365,6 @@ set(VANILLAPDF_SYNTAX_HEADERS
 )
 
 set(VANILLAPDF_UTILS_HEADERS
-    utils/allocator.h
     utils/base_iterator.h
     utils/buffer.h
     utils/buffer_array.h
@@ -389,6 +388,7 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/observable_interface.h
     utils/versionable.h
     utils/misc_utils.h
+    utils/pdf_allocator.h
     utils/pdf_version.h
     utils/pkcs12_key.h
     utils/resource.h

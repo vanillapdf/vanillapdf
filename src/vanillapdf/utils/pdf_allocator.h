@@ -1,5 +1,5 @@
-#ifndef _ALLOCATOR_H
-#define _ALLOCATOR_H
+#ifndef _PDF_ALLOCATOR_H
+#define _PDF_ALLOCATOR_H
 
 #include <memory>
 
@@ -50,4 +50,4 @@ using pdf_allocator = std::allocator<T>;
 
 } // vanillapdf
 
-#endif /* _ALLOCATOR_H */
+#endif /* _PDF_ALLOCATOR_H */
