@@ -8,15 +8,16 @@
 #include <string.h>
 #include <assert.h>
 
-#if defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
+#if defined(VANILLAPDF_HAVE_CRTDBG)
     #define _CRTDBG_MAP_ALLOC
     #include <crtdbg.h>
-#endif /* DEBUG && COMPILER_MICROSOFT_VISUAL_STUDIO */
+#endif /* VANILLAPDF_HAVE_CRTDBG */
 
 extern const int VANILLAPDF_TEST_ERROR_SUCCESS;
 extern const int VANILLAPDF_TEST_ERROR_INVALID_PASSWORD;
 extern const int VANILLAPDF_TEST_ERROR_INVALID_PARAMETERS;
 extern const int VANILLAPDF_TEST_ERROR_LOGGING_ENABLED;
+extern const int VANILLAPDF_TEST_ERROR_HEAP_CORRUPTION;
 extern const int VANILLAPDF_TEST_ERROR_FAILURE;
 
 /* Support functions */

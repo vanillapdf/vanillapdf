@@ -2,10 +2,10 @@
 
 int main(int argc, char *argv[]) {
 
-#if (defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO))
+#if defined(VANILLAPDF_HAVE_CRTDBG)
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     //_CrtSetBreakAlloc(803506);
-#endif /* DEBUG && COMPILER_MICROSOFT_VISUAL_STUDIO */
+#endif /* VANILLAPDF_HAVE_CRTDBG */
 
     std::string version = "vanillapdf.tools "
         + std::to_string(VANILLAPDF_TOOLS_VERSION_MAJOR) + "."
@@ -44,6 +44,17 @@ int main(int argc, char *argv[]) {
         app.exit(e);
         return VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS;
     }
+
+#if defined(VANILLAPDF_HAVE_CRTDBG)
+    // The debug heap validates a block only when it is freed. Every block that
+    // is still allocated is validated here, so that an overrun of a long lived
+    // block fails the command as well.
+    int heap_valid = _CrtCheckMemory();
+    if (!heap_valid) {
+        printf("Function call \"_CrtCheckMemory()\" has detected a heap corruption { %s:%d }\n", __FILE__, __LINE__);
+        return VANILLAPDF_TOOLS_ERROR_HEAP_CORRUPTION;
+    }
+#endif /* VANILLAPDF_HAVE_CRTDBG */
 
     return exit_code;
 }

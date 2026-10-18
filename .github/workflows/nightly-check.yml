@@ -192,7 +192,7 @@ jobs:
 
 
   windows:
-    name: ${{ matrix.config.name }} - ${{ matrix.build_type }}
+    name: ${{ matrix.config.name }} - ${{ matrix.config.build_type || matrix.build_type }}
     runs-on: ${{ matrix.config.os }}
     timeout-minutes: 90
 
@@ -229,6 +229,12 @@ jobs:
           - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-18" }
           - { name: "win.11-arm64", os: windows-11-arm, preset: "windows-arm64-msvc-17" }
 
+          # The debug heap of the dynamic debug runtime (/MDd), which the library
+          # and the test executables share, so that _CrtCheckMemory in the test
+          # executables validates the blocks of the library as well. The debug
+          # heap exists only in the debug runtime, hence the Debug build.
+          - { name: "win.2022-x64-crtdbg", os: windows-2022, preset: "windows-x64-msvc-17", build_type: "Debug", extra_args: "-DVANILLAPDF_ENABLE_CRTDBG=ON" }
+
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
@@ -241,13 +247,13 @@ jobs:
         run: ${{ github.workspace }}\\external\\vcpkg\\bootstrap-vcpkg.bat
 
       - name: Configure ${{ matrix.config.preset }}
-        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DVANILLAPDF_ENABLE_TESTS=ON ${{ matrix.config.extra_args }}
+        run: cmake --preset ${{ matrix.config.preset }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type || matrix.build_type }} -DVANILLAPDF_ENABLE_TESTS=ON ${{ matrix.config.extra_args }}
 
       - name: Build ${{ matrix.config.preset }}
-        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.build_type }}
+        run: cmake --build --preset ${{ matrix.config.preset }} --config ${{ matrix.config.build_type || matrix.build_type }}
 
       - name: Test ${{ matrix.config.preset }}
-        run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.build_type }} --output-on-failure
+        run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.config.build_type || matrix.build_type }} --output-on-failure
 
 
   macos:

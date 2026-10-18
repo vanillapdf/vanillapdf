@@ -14,13 +14,14 @@
 #include <stdio.h>
 #include <assert.h>
 
-#if defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
+#if defined(VANILLAPDF_HAVE_CRTDBG)
     #define _CRTDBG_MAP_ALLOC
     #include <crtdbg.h>
-#endif /* DEBUG && COMPILER_MICROSOFT_VISUAL_STUDIO */
+#endif /* VANILLAPDF_HAVE_CRTDBG */
 
 constexpr int VANILLAPDF_TOOLS_ERROR_SUCCESS = 0;
 constexpr int VANILLAPDF_TOOLS_ERROR_INVALID_PARAMETERS = 1;
+constexpr int VANILLAPDF_TOOLS_ERROR_HEAP_CORRUPTION = 2;
 constexpr int VANILLAPDF_TOOLS_ERROR_FAILURE = 255;
 
 // Each command registers its CLI11 subcommand with the application. The

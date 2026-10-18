@@ -31,6 +31,12 @@ option(VANILLAPDF_ENABLE_ZLIB "Enable zlib compression support" ON)
 option(VANILLAPDF_ENABLE_LICENSING "Enable licensing and JSON metadata support" OFF)
 option(VANILLAPDF_ENABLE_MIMALLOC "Serve the library's C++ heap allocations from mimalloc" OFF)
 
+# Allocation tracking through the debug heap of the Microsoft C runtime, which
+# reports the blocks still allocated when the process exits together with the
+# file and line of every pdf_new that allocated them. It takes effect in the
+# Debug configuration only, as the debug heap is part of the debug runtime.
+option(VANILLAPDF_ENABLE_CRTDBG "Track allocations through the debug heap of the Microsoft C runtime" OFF)
+
 # A decoded image is held in memory as a whole, and its size comes from the
 # dimensions the document declares rather than from the amount of data behind them,
 # so a few hundred bytes of image stream can ask for gigabytes. The limit is a build

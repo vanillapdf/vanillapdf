@@ -38,36 +38,21 @@
 
 /*---------------------------------------------------*/
 
-// Memory leak tracking
-#if defined(DEBUG)
-
-    #if defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
-        #define _CRTDBG_MAP_ALLOC
-        #include <crtdbg.h>
-
-        // IUnknown declares its own operator new, which hides the global ones
-        // for the whole hierarchy, so the tracking form no longer resolves
-        // there. It would allocate from the CRT debug heap anyway, which the
-        // mimalloc operator delete cannot release, so the allocation is
-        // tracked only when the default allocator is in use
-        // This only works with VC++
-        #if !defined(pdf_new) && !defined(VANILLAPDF_HAVE_MIMALLOC)
-            #define pdf_new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-        #endif
-    #endif /* COMPILER_MICROSOFT_VISUAL_STUDIO */
-
-    // TODO create allocation tracking function for other platforms
-    #ifndef pdf_new
-        #define pdf_new new
-    #endif /* pdf_new */
-
-#else
-    // Ignore memory tracking in non-debug modes
+// Memory leak tracking through the debug heap of the Microsoft C runtime,
+// enabled by VANILLAPDF_ENABLE_CRTDBG in the Debug configuration. Every
+// allocation made through pdf_new records the file and line it came from.
+#if defined(VANILLAPDF_HAVE_CRTDBG)
+    #define _CRTDBG_MAP_ALLOC
+    #include <crtdbg.h>
 
     #ifndef pdf_new
-        #define pdf_new new
+        #define pdf_new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
     #endif /* pdf_new */
-#endif /* DEBUG */
+#endif /* VANILLAPDF_HAVE_CRTDBG */
+
+#ifndef pdf_new
+    #define pdf_new new
+#endif /* pdf_new */
 
 // Solution
 #include "utils/deferred.h"

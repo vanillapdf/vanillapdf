@@ -215,6 +215,7 @@ Feature enable/disable options
 - ``-DVANILLAPDF_ENABLE_JPEG=ON/OFF`` -- JPEG image support (default: ON)
 - ``-DVANILLAPDF_ENABLE_JPEG2000=ON/OFF`` -- JPEG2000 support (default: ON)
 - ``-DVANILLAPDF_ENABLE_MIMALLOC=ON/OFF`` -- Serve the reference counted objects from mimalloc instead of the default allocator (default: OFF)
+- ``-DVANILLAPDF_ENABLE_CRTDBG=ON/OFF`` -- Track allocations through the debug heap of the Microsoft C runtime in the Debug configuration; cannot be combined with mimalloc (default: OFF)
 
 Build configuration options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
