@@ -1472,13 +1472,21 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
                 continue;
             }
 
+            // ASN1_STRING is opaque since OpenSSL 4.0. The get0 accessor
+            // returns a pointer into the string, which must not be freed.
+            const unsigned char* serial_data = ASN1_STRING_get0_data(serial);
+            int serial_length = ASN1_STRING_length(serial);
+
             Buffer issuer_buffer(oneline);
-            Buffer serial_buffer(serial->data, serial->length);
+            Buffer serial_buffer(serial_data, serial_length);
             if (!key.ContainsPrivateKey(issuer_buffer, serial_buffer)) {
                 continue;
             }
 
-            Buffer encrypted_recipient_key(pkcs7_recipient->enc_key->data, pkcs7_recipient->enc_key->length);
+            const unsigned char* encrypted_key_data = ASN1_STRING_get0_data(pkcs7_recipient->enc_key);
+            int encrypted_key_length = ASN1_STRING_length(pkcs7_recipient->enc_key);
+
+            Buffer encrypted_recipient_key(encrypted_key_data, encrypted_key_length);
             Buffer decrypted_recipient_key = key.Decrypt(encrypted_recipient_key);
 
             BIO* etmp = BIO_new(BIO_f_cipher());
@@ -1522,7 +1530,10 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
                 continue;
             }
 
-            auto out = BIO_new_mem_buf(envelope->enc_data->enc_data->data, envelope->enc_data->enc_data->length);
+            const unsigned char* encrypted_content_data = ASN1_STRING_get0_data(envelope->enc_data->enc_data);
+            int encrypted_content_length = ASN1_STRING_length(envelope->enc_data->enc_data);
+
+            auto out = BIO_new_mem_buf(encrypted_content_data, encrypted_content_length);
             SCOPE_GUARD_CAPTURE_REFERENCES(BIO_free(out));
             if (nullptr == out) {
                 spdlog::error("Could not create BIO structure for decrypted data");
