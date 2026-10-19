@@ -39,9 +39,13 @@ Source files use **explicit lists** (NOT `file(GLOB)`):
 
 Features (all default ON): `VANILLAPDF_ENABLE_{ENCRYPTION,JPEG,JPEG2000,ZLIB}` → defines `VANILLAPDF_HAVE_*`
 
+`VANILLAPDF_ENABLE_MIMALLOC` (OFF) → defines `VANILLAPDF_HAVE_MIMALLOC`: `IUnknown` serves its own `operator new`/`delete` from mimalloc, so every reference counted object is allocated there while the containers and every other module stay on the default allocator. Worth roughly 10% on a corpus run. Deliberately *not* a global `operator new` replacement — that is only correct when every C++ dependency is linked into the same module, and it crashes with the dynamic `x64-windows` triplet, where `fmt::vformat` returns a string the CRT allocated. It cannot be combined with `VANILLAPDF_ENABLE_CRTDBG`: the tracking placement form of `pdf_new` no longer resolves once `IUnknown` declares `operator new`, and the debug heap would hand out blocks that the mimalloc `operator delete` cannot release.
+
+`VANILLAPDF_ENABLE_CRTDBG` (OFF) → defines `VANILLAPDF_HAVE_CRTDBG` in the Debug configuration only: `pdf_new` becomes the `new(_NORMAL_BLOCK, __FILE__, __LINE__)` form of the Microsoft debug heap, and `vanillapdf.test` / `vanillapdf.tools` call `_CrtCheckMemory()` before exiting and return `HEAP_CORRUPTION` when it fails. Requires a compiler targeting the Microsoft C runtime (MSVC or clang-cl) and is a configure error together with `VANILLAPDF_ENABLE_MIMALLOC`. Use a dynamic-CRT preset (`/MDd`): with the static CRT the library DLL has its own heap, which the executables cannot check. Covered by the `win.2022-x64-crtdbg` row of `nightly-check.yml`.
+
 Build options: `VANILLAPDF_INTERNAL_VCPKG` (ON), `VANILLAPDF_ENABLE_TESTS` (OFF), `VANILLAPDF_ENABLE_TOOLS` (OFF) — every CMake preset sets both of these ON, `VANILLAPDF_ENABLE_BENCHMARK` (OFF), `VANILLAPDF_USE_STATIC_CRT` (OFF), `BUILD_SHARED_LIBS` (ON), `VANILLAPDF_ENABLE_COVERAGE`, `VANILLAPDF_ENABLE_ASAN`, `VANILLAPDF_ENABLE_UBSAN`, `VANILLAPDF_ENABLE_TSAN`
 
-External deps (all OFF): `VANILLAPDF_EXTERNAL_{OPENSSL,JPEG,OPENJPEG,ZLIB,SPDLOG,NLOHMANN_JSON}` — use system instead of vcpkg.
+External deps (all OFF): `VANILLAPDF_EXTERNAL_{OPENSSL,JPEG,OPENJPEG,ZLIB,SPDLOG,NLOHMANN_JSON,MIMALLOC}` — use system instead of vcpkg.
 
 Runtime options: `VANILLAPDF_OPENSSL_MODULES_DIR` — path to OpenSSL provider modules (`legacy.dll`). Auto-set to vcpkg bin dir on Windows shared builds with internal vcpkg. Override with `-DVANILLAPDF_OPENSSL_MODULES_DIR=<path>`.
 
@@ -49,7 +53,7 @@ Limits: `VANILLAPDF_MAX_IMAGE_SIZE` (`0x40000000`, 1 GiB) — largest single dec
 
 ## vcpkg
 
-vcpkg.json generated from `vcpkg.json.in` at configure time by `cmake/vcpkg_manifest.cmake`. Always included: spdlog, nlohmann-json. Feature-based: encryption→openssl, jpeg→libjpeg-turbo, jpeg2000→openjpeg, zlib→zlib, tests→gtest, benchmarks→benchmark.
+vcpkg.json generated from `vcpkg.json.in` at configure time by `cmake/vcpkg_manifest.cmake`. Always included: spdlog, nlohmann-json. Feature-based: encryption→openssl, jpeg→libjpeg-turbo, jpeg2000→openjpeg, zlib→zlib, mimalloc→mimalloc, tests→gtest, benchmarks→benchmark.
 
 ## CMake Module Files
 

@@ -82,7 +82,7 @@ Detailed coding style preferences for C++ code in this project. This file is con
 
 ## Memory Allocation
 
-- Use `pdf_new` instead of `std::make_unique` or raw `new` for heap allocations — it enables debug memory tracking on MSVC (`_CRTDBG_MAP_ALLOC`)
+- Use `pdf_new` instead of `std::make_unique` or raw `new` for heap allocations — it records the file and line of every allocation in the Microsoft debug heap when `VANILLAPDF_ENABLE_CRTDBG` is on
   - Good: `auto obj = pdf_new IntegerObject(42);`
   - Avoid: `auto obj = std::make_unique<IntegerObject>(42);`
 
