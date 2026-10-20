@@ -167,6 +167,21 @@ if(VANILLAPDF_ENABLE_TESTS)
     )
     set_tests_properties("Tools.verify.Granizo-signed.without-flag" PROPERTIES WILL_FAIL TRUE)
 
+    # Signing with a key file protected with RC2, which only the OpenSSL legacy provider decrypts
+    if(VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER)
+        add_test(
+            NAME "Tools.sign.legacy-rc2-key"
+            COMMAND vanillapdf.tools sign -s "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/sample-document.pdf" -d "${CMAKE_CURRENT_BINARY_DIR}/sign-legacy-rc2-key.pdf" -k "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/certificates/Test_Legacy_RC2.pfx" -p test -l "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/VanillaPDF.lic"
+        )
+        set_tests_properties("Tools.sign.legacy-rc2-key" PROPERTIES FIXTURES_SETUP ToolsLegacySignature)
+
+        add_test(
+            NAME "Tools.verify.legacy-rc2-key"
+            COMMAND vanillapdf.tools verify -f "${CMAKE_CURRENT_BINARY_DIR}/sign-legacy-rc2-key.pdf" --skip-certificate-validation
+        )
+        set_tests_properties("Tools.verify.legacy-rc2-key" PROPERTIES FIXTURES_REQUIRED ToolsLegacySignature)
+    endif()
+
     # Validate tests (paths are relative to the fetched corpus)
     set(VALIDATE_TEST_FILES
         "example.pdf"
