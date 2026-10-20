@@ -17,6 +17,7 @@ corpus with per-file provenance instead.
 |------|--------|-------------------|
 | `minimalist.pdf` | vanillapdf-authored, a tiny valid PDF (catalog + empty page tree) | hand-authored |
 | `nested-pages.pdf` | vanillapdf-authored, a tiny valid PDF with a nested page tree (root → two intermediate nodes holding 3 + 2 pages), for page-tree tests where flat page numbers diverge from per-node Kids indices | hand-authored |
+| `objstm-self-contained.pdf` | vanillapdf-authored, a deliberately broken PDF whose cross-reference stream (ASCIIHex encoded, so the file stays readable) places object stream 3 inside itself, for the object stream cycle tests | hand-authored |
 | `flat-pages.pdf` | 1,450 empty pages in a flat `/Pages` tree, for the page-tree benchmark | `vanillapdf.tools generate -d fixtures/flat-pages.pdf -p 1450` |
 | `sample-document.pdf` | A feature-rich document: standard PDF fonts (not embedded), a procedurally drawn image, an underline, internal + external links, and a table | `python scripts/generate_sample_documents.py` |
 | `certificates/*.pfx` | Internal test signing certificates (DSA/RSA/EC/Ed25519/Ed448). Not real credentials — no trust path, password `test` | generated test fixtures |
@@ -26,7 +27,8 @@ corpus with per-file provenance instead.
 - `vanillapdf.benchmark` — `flat-pages.pdf` (page tree), `sample-document.pdf`
   (content stream), and all three PDFs for the IO-strategy size range.
 - `vanillapdf.unittest` — `certificates/*.pfx`, compiled into a header.
-- `vanillapdf.tools` ctests — all five PDFs for the `remove_page` sanity tests.
+- `vanillapdf.tools` ctests — all five PDFs for the `remove_page` sanity tests,
+  and `objstm-self-contained.pdf` for the `validate` structural error test.
 - `signature-interop-check` workflow — signs a fixture with `certificates/*.pfx`.
 
 ## Notes
