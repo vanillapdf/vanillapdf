@@ -36,7 +36,7 @@ class NumberTree;
 template <typename ValueT>
 using NumberTreePtr = DeferredContainer<NumberTree<ValueT>>;
 
-class Document; using DocumentPtr = Deferred<Document>;
+class Document; using DocumentPtr = Deferred<Document>; using OutputDocumentPtr = OutputPointer<DocumentPtr>;
 class Catalog; using CatalogPtr = Deferred<Catalog>; using OutputCatalogPtr = OutputPointer<CatalogPtr>;
 class DocumentInfo; using DocumentInfoPtr = Deferred<DocumentInfo>; using OutputDocumentInfoPtr = OutputPointer<DocumentInfoPtr>;
 class PageNodeBase; using PageNodeBasePtr = Deferred<PageNodeBase>;
