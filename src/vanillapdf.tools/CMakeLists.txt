@@ -148,13 +148,6 @@ target_compile_definitions(vanillapdf.tools PRIVATE -DVANILLAPDF_TOOLS_ICON="${V
 
 # Add tests for vanillapdf-tools CLI
 if(VANILLAPDF_ENABLE_TESTS)
-    # OpenSSL 3.x: set provider module search path (see vanillapdf/CMakeLists.txt)
-    set(VANILLAPDF_TOOLS_EXTRA_PROPERTIES "")
-    if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG AND NOT VANILLAPDF_EXTERNAL_OPENSSL
-            AND VANILLAPDF_OPENSSL_MODULES_DIR)
-        set(VANILLAPDF_TOOLS_EXTRA_PROPERTIES PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${VANILLAPDF_OPENSSL_MODULES_DIR}")
-    endif()
-
     # Tests reference the target by name (not $<TARGET_FILE:...>) so CMake
     # prepends CMAKE_CROSSCOMPILING_EMULATOR when cross-compiling — the adb
     # wrapper that runs the binary on an Android device (see the android
@@ -173,12 +166,6 @@ if(VANILLAPDF_ENABLE_TESTS)
         COMMAND vanillapdf.tools verify -f "${VANILLAPDF_CORPUS_DIR}/custom/Granizo-signed.PDF"
     )
     set_tests_properties("Tools.verify.Granizo-signed.without-flag" PROPERTIES WILL_FAIL TRUE)
-
-    # OpenSSL 3.x: set provider module search path on verify tests (see vanillapdf/CMakeLists.txt)
-    if(VANILLAPDF_TOOLS_EXTRA_PROPERTIES)
-        set_tests_properties("Tools.verify.Granizo-signed.with-flag" ${VANILLAPDF_TOOLS_EXTRA_PROPERTIES})
-        set_tests_properties("Tools.verify.Granizo-signed.without-flag" ${VANILLAPDF_TOOLS_EXTRA_PROPERTIES})
-    endif()
 
     # Validate tests (paths are relative to the fetched corpus)
     set(VALIDATE_TEST_FILES
@@ -324,4 +311,6 @@ if(VANILLAPDF_ENABLE_TESTS)
     set_tests_properties("Tools.remove_page.minimalist.out-of-range" PROPERTIES
         PASS_REGULAR_EXPRESSION "out of range, the document has 0 pages"
     )
+
+    vanillapdf_apply_test_environment()
 endif()

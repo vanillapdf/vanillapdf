@@ -31,6 +31,15 @@ option(VANILLAPDF_ENABLE_ZLIB "Enable zlib compression support" ON)
 option(VANILLAPDF_ENABLE_LICENSING "Enable licensing and JSON metadata support" OFF)
 option(VANILLAPDF_ENABLE_MIMALLOC "Serve the library's C++ heap allocations from mimalloc" OFF)
 
+# The OpenSSL 3 legacy provider supplies algorithms that only old documents and key
+# files use: RC2 envelopes of certificate encrypted documents, RC2 and RC4 protected
+# PKCS#12 key files, MD2 and MD4 signatures. The standard security handler does not
+# need it, RC4 and MD5 are implemented in-house. Intended for builds that link OpenSSL
+# statically, which compile the provider into libcrypto. A shared OpenSSL loads it as
+# a separate module from a directory fixed when OpenSSL was built, which does not
+# exist on most machines that run the library.
+option(VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER "Load the OpenSSL legacy provider for legacy key files, envelopes and signatures" OFF)
+
 # Allocation tracking through the debug heap of the Microsoft C runtime, which
 # reports the blocks still allocated when the process exits together with the
 # file and line of every pdf_new that allocated them. It takes effect in the
@@ -172,6 +181,9 @@ if(VANILLAPDF_ENABLE_TESTS)
 
   # Fetch the shared test corpus + manifest before any test target consumes it
   include(cmake/testdata.cmake)
+
+  # Environment the test executables run in (OpenSSL legacy provider module path)
+  include(cmake/test_environment.cmake)
 endif()
 
 # Include source directories

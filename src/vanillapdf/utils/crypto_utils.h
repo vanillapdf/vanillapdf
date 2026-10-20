@@ -72,7 +72,8 @@ public:
      * \brief Initialize OpenSSL library
      *
      * Thread-safe one-time initialization of OpenSSL.
-     * On OpenSSL 3.x, loads legacy and default providers.
+     * Loads the legacy and default providers when built with VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER,
+     * otherwise loads no provider explicitly, so the default provider and the process configuration apply.
      * Registers cleanup handler via atexit().
      *
      * \throws GeneralException if initialization fails
@@ -84,7 +85,7 @@ public:
      * \brief Cleanup OpenSSL library resources
      *
      * Called automatically via atexit() on OpenSSL 3.x.
-     * Unloads providers and cleans up OpenSSL state.
+     * Cleans up OpenSSL state.
      */
     static void CleanupOpenSSL();
 
@@ -94,6 +95,15 @@ public:
      * \throws NotSupportedException if compiled without OpenSSL
      */
     static std::string GetLastOpensslError();
+
+    /**
+     * rief Check whether the oldest queued OpenSSL error reports an unavailable algorithm
+     *
+     * OpenSSL 3 reports an algorithm no loaded provider implements, such as RC2 without
+     * the legacy provider, as unsupported. Leaves the error queue intact.
+     * eturn true if the algorithm is unavailable, false for any other error
+     */
+    static bool IsAlgorithmUnavailableError();
 
 private:
     CryptoUtils() = delete;

@@ -864,14 +864,19 @@ TEST_P(WeakAlgorithmTest, AllowWeakAlgorithmsFlag_Integration) {
 // Note: This tests weak digest algorithms (si->digest_alg). The signature algorithm
 // (si->digest_enc_alg) is determined by the key type + digest and is also checked.
 // MD2 is excluded because it's disabled in modern OpenSSL builds.
+static const MessageDigestAlgorithmType WEAK_DIGEST_ALGORITHMS[] = {
+#if defined(VANILLAPDF_TEST_OPENSSL_LEGACY)
+    // MD4 is provided only by the OpenSSL legacy provider
+    MessageDigestAlgorithmType_MD4,
+#endif
+    MessageDigestAlgorithmType_MD5,
+    MessageDigestAlgorithmType_SHA1
+};
+
 INSTANTIATE_TEST_SUITE_P(
     WeakAlgorithms,
     WeakAlgorithmTest,
-    ::testing::Values(
-        MessageDigestAlgorithmType_MD4,
-        MessageDigestAlgorithmType_MD5,
-        MessageDigestAlgorithmType_SHA1
-    ),
+    ::testing::ValuesIn(WEAK_DIGEST_ALGORITHMS),
     [](const ::testing::TestParamInfo<MessageDigestAlgorithmType>& info) {
         switch (info.param) {
             case MessageDigestAlgorithmType_MD4:  return "MD4";

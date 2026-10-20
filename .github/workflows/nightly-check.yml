@@ -229,6 +229,12 @@ jobs:
           - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-18" }
           - { name: "win.11-arm64", os: windows-11-arm, preset: "windows-arm64-msvc-18" }
 
+          # The OpenSSL legacy provider over a shared OpenSSL, where the provider is a
+          # separate module the tests locate through OPENSSL_MODULES (see
+          # cmake/test_environment.cmake). Builds with the option over a static
+          # OpenSSL are the NuGet builds, tested by the NuGet workflow.
+          - { name: "win.2025-x64-openssl-legacy", os: windows-2025, preset: "windows-x64-msvc-18", extra_args: "-DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=ON" }
+
           # The debug heap of the dynamic debug runtime (/MDd), which the library
           # and the test executables share, so that _CrtCheckMemory in the test
           # executables validates the blocks of the library as well. The debug

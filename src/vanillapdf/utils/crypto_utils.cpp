@@ -14,7 +14,7 @@
 #include <openssl/err.h>
 #include <openssl/evp.h>
 
-#if OPENSSL_VERSION_MAJOR >= 3
+#if OPENSSL_VERSION_MAJOR >= 3 && defined(VANILLAPDF_LOAD_OPENSSL_LEGACY_PROVIDER)
     #include <openssl/provider.h>
 #endif
 #endif
@@ -23,13 +23,15 @@ namespace vanillapdf {
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-// Static variables for OpenSSL 3.x provider management
+// Static variables for OpenSSL 3.x one-time initialization
 #if OPENSSL_VERSION_MAJOR >= 3
 static std::mutex g_openssl_lock;
 static bool g_openssl_initialized = false;
+
+#if defined(VANILLAPDF_LOAD_OPENSSL_LEGACY_PROVIDER)
 static OSSL_PROVIDER* g_legacy_provider = nullptr;
 static OSSL_PROVIDER* g_default_provider = nullptr;
-
+#endif
 #endif
 
 const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm algorithm) {
@@ -115,14 +117,27 @@ std::string CryptoUtils::GetLastOpensslError() {
     auto err_code = ERR_get_error_line_data(&err_file, &err_line, &err_data, &err_flags);
 #endif
 
+    // OpenSSL leaves the strings null when it has nothing to report, fmt refuses null pointers
+    auto to_string = [](const char* value) { return std::string_view(value != nullptr ? value : ""); };
+
 #if OPENSSL_VERSION_MAJOR >= 3
     return fmt::format(
         "Error: '{}'\nFile: '{}'\nLine: '{}'\nFunction: '{}'\nData: '{}'\nFlags: '{}'\n",
-        err_code, err_file, err_line, err_func, err_data, err_flags);
+        err_code, to_string(err_file), err_line, to_string(err_func), to_string(err_data), err_flags);
 #else
     return fmt::format(
         "Error: '{}'\nFile: '{}'\nLine: '{}'\nData: '{}'\nFlags: '{}'\n",
-        err_code, err_file, err_line, err_data, err_flags);
+        err_code, to_string(err_file), err_line, to_string(err_data), err_flags);
+#endif
+}
+
+bool CryptoUtils::IsAlgorithmUnavailableError() {
+
+#if OPENSSL_VERSION_MAJOR >= 3
+    return ERR_GET_REASON(ERR_peek_error()) == ERR_R_UNSUPPORTED;
+#else
+    // OpenSSL 1.x has no providers, every compiled-in algorithm is available
+    return false;
 #endif
 }
 
@@ -137,6 +152,11 @@ void CryptoUtils::InitializeOpenSSL() {
         return;
     }
 
+#if defined(VANILLAPDF_LOAD_OPENSSL_LEGACY_PROVIDER)
+
+    // Opted in at build time (VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER) for legacy key files,
+    // envelopes and signatures. Loading any provider explicitly stops OpenSSL from activating
+    // the default provider implicitly, so the default provider has to be loaded as well.
     g_legacy_provider = OSSL_PROVIDER_load(nullptr, "legacy");
     if (g_legacy_provider == nullptr) {
         LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to initialize legacy OSSL provider, {}", GetLastOpensslError());
@@ -147,6 +167,11 @@ void CryptoUtils::InitializeOpenSSL() {
         LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to initialize default OSSL provider, {}", GetLastOpensslError());
     }
 
+#endif
+
+    // Without the opt-in no provider is loaded explicitly. The default provider is activated
+    // implicitly, and anything else (legacy, FIPS) is left to the process configuration.
+    // The PDF algorithms the legacy provider used to supply (RC4, MD5) are implemented in-house.
     OpenSSL_add_all_algorithms();
 
     g_openssl_initialized = true;
@@ -169,6 +194,7 @@ void CryptoUtils::CleanupOpenSSL() {
         return;
     }
 
+#if defined(VANILLAPDF_LOAD_OPENSSL_LEGACY_PROVIDER)
     if (g_legacy_provider != nullptr) {
         OSSL_PROVIDER_unload(g_legacy_provider);
         g_legacy_provider = nullptr;
@@ -178,6 +204,7 @@ void CryptoUtils::CleanupOpenSSL() {
         OSSL_PROVIDER_unload(g_default_provider);
         g_default_provider = nullptr;
     }
+#endif
 
     OPENSSL_cleanup();
     g_openssl_initialized = false;
@@ -194,6 +221,10 @@ const EVP_MD* CryptoUtils::GetAlgorithm(MessageDigestAlgorithm) {
 }
 
 std::string CryptoUtils::GetLastOpensslError() {
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
+}
+
+bool CryptoUtils::IsAlgorithmUnavailableError() {
     LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 }
 

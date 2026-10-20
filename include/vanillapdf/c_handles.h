@@ -123,6 +123,9 @@ extern "C"
     DECLARE_OBJECT_HANDLE(SignatureVerificationResult);
     DECLARE_OBJECT_HANDLE(SignatureVerificationSettings);
 
+    DECLARE_OBJECT_HANDLE(MD5Digest);
+    DECLARE_OBJECT_HANDLE(RC4Cipher);
+
     DECLARE_OBJECT_HANDLE(InputStream);
     DECLARE_OBJECT_HANDLE(OutputStream);
     DECLARE_OBJECT_HANDLE(MemoryBufferOutputStream);

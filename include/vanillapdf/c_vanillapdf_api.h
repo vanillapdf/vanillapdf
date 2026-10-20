@@ -96,6 +96,8 @@
 #include "vanillapdf/utils/c_signature_verifier.h"
 #include "vanillapdf/utils/c_signature_verification_settings.h"
 #include "vanillapdf/utils/c_message_digest_algorithm.h"
+#include "vanillapdf/utils/c_md5_digest.h"
+#include "vanillapdf/utils/c_rc4_cipher.h"
 #include "vanillapdf/utils/c_name_constants.h"
 
 #include "vanillapdf/utils/c_io_strategy.h"
