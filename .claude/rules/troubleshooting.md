@@ -40,39 +40,27 @@ cmake --preset your-preset
 
 ## OpenSSL Crypto Policy (RHEL/Rocky/Fedora)
 
-PDF encryption relies on algorithms that restrictive OpenSSL crypto policies may block (MD5 for key derivation, RC4 for legacy PDFs, SHA-1 for older signatures). On RHEL-based distributions (Rocky Linux, Fedora, AlmaLinux) the `DEFAULT` policy restricts these algorithms.
-
-To enable PDF encryption support on these systems:
+Password protected PDFs do not depend on the crypto policy: RC4 and MD5 (standard security handler up to revision 4) are implemented in-house (`utils/rc4_cipher.*`, `utils/md5_digest.*`), and AES/SHA-2 come from the OpenSSL default provider. The policy still matters for SHA-1 signatures, which the RHEL `DEFAULT` policy rejects:
 ```bash
 # System-wide: switch to LEGACY crypto policy
 sudo update-crypto-policies --set LEGACY
 ```
-
-The library loads the OpenSSL `legacy` provider at startup (`OSSL_PROVIDER_load`) to make MD5, RC4, and other legacy algorithms available. However, the system crypto policy can still block their use at a higher level.
 
 For signature verification, the `SignatureVerificationSettings` API provides `AllowWeakAlgorithmsFlag` to control whether weak algorithms (MD5, SHA-1, RSA < 2048 bits) are accepted:
 ```c
 SignatureVerificationSettings_SetAllowWeakAlgorithmsFlag(settings, VANILLAPDF_RV_TRUE);
 ```
 
-## OpenSSL Legacy Provider Not Found (Windows)
+## OpenSSL Legacy Provider
 
-On Windows shared (dynamic) builds, OpenSSL 3.x may fail to load the legacy provider:
-```
-Failed to initialize legacy OSSL provider
-filename(C:\Program Files (x86)\OpenSSL\bin\legacy.dll)
-```
+The library does not load the OpenSSL 3 `legacy` provider unless built with `-DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=ON` (set by the NuGet workflow, which links OpenSSL statically). Without it these fail with `VANILLAPDF_ERROR_NOT_SUPPORTED`:
+- RC2 envelopes of certificate encrypted documents (PDFBox writes them)
+- PKCS#12 files protected with RC2/RC4 (OpenSSL 1.x export default) — re-export: `openssl pkcs12 -legacy -in old.pfx -nodes | openssl pkcs12 -export -out new.pfx`
+- MD2/MD4 signatures
 
-This happens because vcpkg builds OpenSSL without `--openssldir`, so the compiled-in module search path points to a system directory instead of the vcpkg installation.
+With a **shared** OpenSSL the provider is a separate module (`legacy.dll`/`legacy.so`) looked up in a directory fixed at OpenSSL build time, which is why the option is meant for static OpenSSL. To try the option against a shared vcpkg OpenSSL locally, point `OPENSSL_MODULES` at `<build>/vcpkg_installed/<triplet>/bin`. Applications can also activate `legacy` + `default` themselves via `OSSL_PROVIDER_load` or an `OPENSSL_CONF` file — loading any provider explicitly disables the implicit default provider, so always load both.
 
-**For tests**: The build system automatically sets the `OPENSSL_MODULES` environment variable on CTest targets when using internal vcpkg with shared builds. The path can be overridden with `-DVANILLAPDF_OPENSSL_MODULES_DIR=<path>`.
-
-**For applications**: Call `MiscUtils_SetOpenSSLModulesPath()` with the directory containing `legacy.dll` before any OpenSSL initialization, or set the `OPENSSL_MODULES` environment variable:
-```bash
-set OPENSSL_MODULES=path/to/bin
-```
-
-This is not needed for static builds — providers are compiled directly into the library.
+Tests needing the provider are gated on the option: unit tests use `VANILLAPDF_TEST_OPENSSL_LEGACY`, and the `Tools.sign/verify.legacy-rc2-key` tests are only registered with it ON. The testdata corpus holds no RC2 material, so every corpus test runs in the default build.
 
 ## Test Failures
 

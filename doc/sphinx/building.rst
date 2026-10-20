@@ -340,25 +340,64 @@ Troubleshooting
 - **macOS**: Install via Homebrew: ``brew install openssl@3 jpeg-turbo zlib openjpeg``
 - **Windows**: Use vcpkg presets or ensure Visual Studio 2022 or 2026 is properly installed
 
-**OpenSSL legacy provider on Windows:**
+**OpenSSL legacy algorithms:**
 
-Static linking is the recommended approach on Windows. Providers are compiled
-directly into the library and no additional configuration is needed.
+Password protected documents need no OpenSSL configuration. RC4 and MD5, which
+the standard security handler uses up to revision 4, are implemented in-house,
+so they work with a shared OpenSSL, in FIPS mode and under restrictive system
+crypto policies alike.
 
-When linking dynamically, OpenSSL 3.x loads provider modules (e.g.
-``legacy.dll``) at runtime from a compiled-in directory. If that directory does
-not match the actual installation, provider loading will fail:
+A few remaining algorithms are provided only by the OpenSSL 3 *legacy*
+provider, which the library does not load by default:
 
-.. code-block:: text
+- RC2 envelopes of certificate encrypted documents, as written by Apache PDFBox
+- PKCS#12 key files protected with RC2 or RC4, the OpenSSL 1.x export default
+- MD2 and MD4 signatures
 
-   Failed to initialize legacy OSSL provider
-   filename(C:\Program Files (x86)\OpenSSL\bin\legacy.dll)
-
-Set the ``OPENSSL_MODULES`` environment variable to the directory containing
-the provider DLLs before running the application:
+These operations fail with ``VANILLAPDF_ERROR_NOT_SUPPORTED``. A legacy key
+file can be re-exported with AES:
 
 .. code-block:: bash
 
-   set OPENSSL_MODULES=path/to/bin
+   openssl pkcs12 -legacy -in old.pfx -nodes | openssl pkcs12 -export -out new.pfx
 
-The build system handles this automatically for CTest targets.
+Who enables them depends on who owns the OpenSSL the library runs with:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Distribution
+     - OpenSSL
+     - Legacy algorithms
+   * - NuGet packages
+     - Static, private to the native library
+     - Enabled by the build (``VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=ON``),
+       applications cannot reach that OpenSSL
+   * - vcpkg port, Debian, RPM and Homebrew packages
+     - Shared with the application (or linked into the same binary)
+     - Disabled, the application loads the providers if it needs them
+
+**Applications sharing OpenSSL with the library** activate the providers once
+at startup, in code or through an OpenSSL configuration file (``OPENSSL_CONF``).
+Load ``default`` together with ``legacy``: once any provider is loaded
+explicitly, OpenSSL no longer activates the default provider on its own.
+
+.. code-block:: c
+
+   #include <openssl/provider.h>
+
+   OSSL_PROVIDER_load(NULL, "legacy");
+   OSSL_PROVIDER_load(NULL, "default");
+
+A shared OpenSSL loads the legacy provider as a separate module
+(``legacy.dll``, ``legacy.so``) from a directory fixed when OpenSSL was built.
+Linux distributions and Homebrew ship it there. The vcpkg OpenSSL does not have
+a usable directory compiled in, so applications using a dynamic vcpkg triplet
+ship the module from the triplet's ``bin`` directory and point the
+``OPENSSL_MODULES`` environment variable at it.
+
+**Building the library with** ``-DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=ON``
+makes it load the legacy and default providers at initialization. The option is
+meant for a statically linked OpenSSL, which compiles the provider into
+libcrypto. With a shared OpenSSL the module path above applies, and the library
+fails to initialize when the module cannot be found.
