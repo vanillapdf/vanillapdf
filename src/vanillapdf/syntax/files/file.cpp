@@ -195,7 +195,8 @@ void File::InitializeObjectStream(types::big_uint object_stream_number) {
         return;
     }
 
-    // Mark the object stream with the attribute to prevent duplicit initialization
+    // Skip the object stream that has already been initialized, it is marked
+    // with the attribute at the end of this function to prevent duplicit initialization
     if (stm->ContainsAttribute(BaseAttribute::Type::ObjectStreamMetadata)) {
         auto object_stream_attribute = stm->GetAttributeAs<ObjectStreamMetadataAttributePtr>(BaseAttribute::Type::ObjectStreamMetadata);
 
