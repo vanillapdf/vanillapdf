@@ -36,6 +36,25 @@ function(vanillapdf_configure_msvc_runtime TARGET)
     endif()
 endfunction()
 
+if(VANILLAPDF_ENABLE_CRTDBG)
+
+    # The debug heap belongs to the Microsoft C runtime rather than to the
+    # compiler, so clang-cl qualifies as well
+    if(NOT MSVC)
+        message(FATAL_ERROR
+            "VANILLAPDF_ENABLE_CRTDBG requires a compiler targeting the Microsoft C runtime.")
+    endif()
+
+    # IUnknown declares its own operator new with mimalloc, which hides the
+    # tracking form of pdf_new for the whole hierarchy, and the debug heap
+    # would hand out blocks that the mimalloc operator delete cannot release
+    if(VANILLAPDF_ENABLE_MIMALLOC)
+        message(FATAL_ERROR
+            "VANILLAPDF_ENABLE_CRTDBG and VANILLAPDF_ENABLE_MIMALLOC "
+            "cannot be enabled simultaneously.")
+    endif()
+endif()
+
 # Utility functions that change the options on per-targer basis
 
 function(vanillapdf_target_compile_defaults TARGET)
@@ -45,6 +64,14 @@ function(vanillapdf_target_compile_defaults TARGET)
         $<$<CONFIG:Debug>:DEBUG>
         $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>,$<CONFIG:MinSizeRel>>:RELEASE>
     )
+
+    # The debug heap exists only in the debug runtime, which the Debug
+    # configuration links
+    if(VANILLAPDF_ENABLE_CRTDBG)
+        target_compile_definitions(${TARGET} PRIVATE
+            $<$<CONFIG:Debug>:VANILLAPDF_HAVE_CRTDBG>
+        )
+    endif()
 
     # Warning level and warnings as errors for MSVC
     if(CMAKE_C_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_COMPILER_ID MATCHES "MSVC")

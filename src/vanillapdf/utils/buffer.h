@@ -1,6 +1,7 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
+#include "utils/pdf_allocator.h"
 #include "utils/byte_order.h"
 #include "utils/character.h"
 #include "utils/conversion_utils.h"
@@ -20,7 +21,10 @@ namespace vanillapdf {
 
 class Buffer : public Versionable {
 public:
-    using storage_type = std::vector<char>;
+    // The buffer is the hottest container of the library, it carries every
+    // stream, string and token. Its storage is private, it leaves the class
+    // only as a pointer or as a copy, so the allocator stays internal
+    using storage_type = std::vector<char, pdf_allocator<char>>;
 
 public:
     using value_type = storage_type::value_type;

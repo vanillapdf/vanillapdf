@@ -33,10 +33,10 @@ int main(int argc, char *argv[]) {
     boolean_type skip_edit = VANILLAPDF_RV_FALSE;
     boolean_type skip_incremental_save = VANILLAPDF_RV_FALSE;
 
-#if (defined(DEBUG) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO))
+#if defined(VANILLAPDF_HAVE_CRTDBG)
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     //_CrtSetBreakAlloc(803506);
-#endif /* DEBUG && COMPILER_MICROSOFT_VISUAL_STUDIO */
+#endif /* VANILLAPDF_HAVE_CRTDBG */
 
     if (argc < 2) {
         return VANILLAPDF_TEST_ERROR_INVALID_PARAMETERS;
@@ -172,6 +172,17 @@ int main(int argc, char *argv[]) {
 
     RETURN_ERROR_IF_NOT_SUCCESS(Document_Release(document));
     RETURN_ERROR_IF_NOT_SUCCESS(File_Release(file));
+
+#if defined(VANILLAPDF_HAVE_CRTDBG)
+    // The debug heap validates a block only when it is freed. Every block that
+    // is still allocated is validated here, so that an overrun of a long lived
+    // block fails the test as well.
+    int heap_valid = _CrtCheckMemory();
+    if (!heap_valid) {
+        printf("Function call \"_CrtCheckMemory()\" has detected a heap corruption { %s:%d }\n", __FILE__, __LINE__);
+        return VANILLAPDF_TEST_ERROR_HEAP_CORRUPTION;
+    }
+#endif /* VANILLAPDF_HAVE_CRTDBG */
 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }

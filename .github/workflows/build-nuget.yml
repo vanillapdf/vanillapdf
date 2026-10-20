@@ -145,7 +145,7 @@ jobs:
         run: dotnet pack nuget/vanillapdf.runtime.csproj --output .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
           path: '*.nupkg'
@@ -160,10 +160,10 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # Release artifacts must build on GA runner images with a single,
-          # uniform toolchain. windows-2025 dropped VS 2022 and the only GA
-          # arm64 image (windows-11-arm) still ships VS 2022, so all three
-          # release jobs use windows-2022 / windows-11-arm with msvc-17.
+          # Release artifacts must build on GA runner images. x86 and x64
+          # stay on windows-2022 with VS 2022, as windows-2025 dropped it. The
+          # only GA arm64 image (windows-11-arm) has moved to VS 2026 and no
+          # longer ships VS 2022, so the arm64 job uses msvc-18.
           - name: win.2022-x86-static
             os: windows-2022
             preset: windows-x86-msvc-17-static
@@ -176,7 +176,7 @@ jobs:
 
           - name: win.11-arm64-static
             os: windows-11-arm
-            preset: windows-arm64-msvc-17-static
+            preset: windows-arm64-msvc-18-static
             build_type: Release
 
     steps:
@@ -229,7 +229,7 @@ jobs:
         run: dotnet pack nuget/vanillapdf.runtime.csproj --output .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
           path: '*.nupkg'
@@ -315,7 +315,7 @@ jobs:
         run: dotnet pack nuget/vanillapdf.runtime.csproj --output .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
           path: '*.nupkg'
@@ -355,7 +355,7 @@ jobs:
           cmake $CMAKE_ARGS -P cmake/nuget.cmake
 
       - name: Download runtime packages
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
         with:
           pattern: vanillapdf.runtime.*
           path: nuget/local-packages
@@ -368,7 +368,7 @@ jobs:
         run: dotnet pack nuget/vanillapdf.csproj --no-build --output .
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: vanillapdf${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
           path: '*.nupkg'

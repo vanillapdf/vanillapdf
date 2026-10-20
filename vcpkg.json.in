@@ -45,6 +45,12 @@
         "nlohmann-json"
       ]
     },
+    "mimalloc": {
+      "description": "Serve the library's C++ heap allocations from mimalloc",
+      "dependencies": [
+        "mimalloc"
+      ]
+    },
     "tools": {
       "description": "Command line parsing for the vanillapdf.tools validation utility",
       "dependencies": [
