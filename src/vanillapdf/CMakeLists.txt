@@ -925,6 +925,26 @@ if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG)
         "Automatically copy vcpkg dependencies into install target directory" FORCE)
 endif()
 
+# The bundled shared OpenSSL is incomplete without its legacy provider module,
+# which is loaded at runtime rather than linked, so the dependency copy above
+# does not see it (see cmake/openssl_legacy_module.cmake). OpenSSL does not
+# search the library directory for providers: consumers of the installation
+# that load the legacy provider point OPENSSL_MODULES at the bin directory.
+if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG AND VANILLAPDF_OPENSSL_LEGACY_MODULE_DIR)
+    set(VANILLAPDF_OPENSSL_LEGACY_MODULE "${VANILLAPDF_OPENSSL_LEGACY_MODULE_DIR}/legacy.dll")
+
+    set(VANILLAPDF_OPENSSL_LEGACY_MODULE_DEBUG "${VANILLAPDF_OPENSSL_LEGACY_MODULE}")
+    if(VANILLAPDF_OPENSSL_LEGACY_MODULE_DEBUG_DIR)
+        set(VANILLAPDF_OPENSSL_LEGACY_MODULE_DEBUG "${VANILLAPDF_OPENSSL_LEGACY_MODULE_DEBUG_DIR}/legacy.dll")
+    endif()
+
+    install(FILES
+        "$<IF:$<CONFIG:Debug>,${VANILLAPDF_OPENSSL_LEGACY_MODULE_DEBUG},${VANILLAPDF_OPENSSL_LEGACY_MODULE}>"
+        DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        COMPONENT Runtime
+    )
+endif()
+
 # Add export verification test for shared library builds
 # Only add the test if testing is enabled and we're building shared libraries
 # TODO: Re-enable after fixing test infrastructure (https://github.com/vanillapdf/vanillapdf/issues/162)

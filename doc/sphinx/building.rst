@@ -394,7 +394,10 @@ A shared OpenSSL loads the legacy provider as a separate module
 Linux distributions and Homebrew ship it there. The vcpkg OpenSSL does not have
 a usable directory compiled in, so applications using a dynamic vcpkg triplet
 ship the module from the triplet's ``bin`` directory and point the
-``OPENSSL_MODULES`` environment variable at it.
+``OPENSSL_MODULES`` environment variable at it. A Windows installation of the
+library built against a dynamic vcpkg triplet (``cmake --install``) bundles
+OpenSSL together with the module in its ``bin`` directory, which is then the
+directory to point ``OPENSSL_MODULES`` at.
 
 **Building the library with** ``-DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=ON``
 makes it load the legacy and default providers at initialization. The option is

@@ -174,6 +174,9 @@ if(NOT CMAKE_BUILD_TYPE)
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
+# The OpenSSL legacy provider module, installed with the library and used by the tests
+include(cmake/openssl_legacy_module.cmake)
+
 # Enable testing infrastructure before including source directories
 if(VANILLAPDF_ENABLE_TESTS)
   include(cmake/build_name.cmake)
