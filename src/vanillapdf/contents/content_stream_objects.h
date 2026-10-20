@@ -50,7 +50,6 @@ public:
 
     syntax::DictionaryObjectPtr GetDictionary() const { return m_dictionary; }
     BufferPtr GetData() const { return m_data; }
-    BufferPtr GetSamples() const;
 
 private:
     syntax::DictionaryObjectPtr m_dictionary;
