@@ -58,22 +58,43 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
         return src->Read(length_converted);
     }
 
+    // The predictor parameters come straight out of the file, so a malformed
+    // document can set them to anything. They decide the size of the scanline
+    // buffers below and the stride the PNG filters walk them with, so they are
+    // validated rather than asserted - an assertion aborts a debug build on
+    // input a caller legitimately handed us, and is compiled out of a release
+    // build exactly where it was load bearing.
+
     IntegerObjectPtr colors = make_deferred<IntegerObject>(1);
     if (parameters->Contains(constant::Name::Colors)) {
         colors = parameters->FindAs<IntegerObjectPtr>(constant::Name::Colors);
-        assert(*colors >= 1);
+
+        if (colors->GetIntegerValue() < 1) {
+            LOG_ERROR_AND_THROW(DataCorruptionException, "Predictor /Colors shall be at least 1, but is {}", colors->GetIntegerValue());
+        }
     }
 
     syntax::IntegerObjectPtr bits = make_deferred<IntegerObject>(8);
     if (parameters->Contains(constant::Name::BitsPerComponent)) {
         bits = parameters->FindAs<IntegerObjectPtr>(constant::Name::BitsPerComponent);
+
         // PDF 32000-1 Table 8: valid values are 1, 2, 4, 8 and (PDF 1.5) 16
-        assert(*bits == 1 || *bits == 2 || *bits == 4 || *bits == 8 || *bits == 16);
+        auto bits_value = bits->GetIntegerValue();
+        if (bits_value != 1 && bits_value != 2 && bits_value != 4 && bits_value != 8 && bits_value != 16) {
+            LOG_ERROR_AND_THROW(DataCorruptionException, "Predictor /BitsPerComponent shall be 1, 2, 4, 8 or 16, but is {}", bits_value);
+        }
     }
 
     IntegerObjectPtr columns = make_deferred<IntegerObject>(1);
     if (parameters->Contains(constant::Name::Columns)) {
         columns = parameters->FindAs<IntegerObjectPtr>(constant::Name::Columns);
+
+        // A zero column count sizes both scanline buffers to nothing while the
+        // per-pixel stride stays non-zero, so the PNG filters below would index
+        // an empty vector.
+        if (columns->GetIntegerValue() < 1) {
+            LOG_ERROR_AND_THROW(DataCorruptionException, "Predictor /Columns shall be at least 1, but is {}", columns->GetIntegerValue());
+        }
     }
 
     IntegerObjectPtr change = make_deferred<IntegerObject>(1);
@@ -106,6 +127,12 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
     std::vector<uint8_t> current(bytes_per_row);
     std::vector<uint8_t> prior(bytes_per_row);
 
+    // With /Colors, /Columns and /BitsPerComponent validated above, a single
+    // pixel stride always fits inside a scanline. Every index in the PNG
+    // filters below is bounded by bytes_per_row, so this is what keeps them in
+    // bounds - if it ever fails the arithmetic above is wrong, not the file.
+    assert(bytes_per_pixel <= bytes_per_row);
+
     for (;;) {
         auto filter = src->Get();
         if (filter == std::char_traits<char>::eof()) {
@@ -124,29 +151,22 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
             case PNGFilterTypes::None:
                 break;
             case PNGFilterTypes::Sub:
-                assert(bytes_per_row <= current.size());
                 for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
                     current[bytes_per_pixel + i] += current[i];
                 }
 
                 break;
             case PNGFilterTypes::Up:
-                assert(bytes_per_row <= prior.size());
-                assert(bytes_per_row <= current.size());
                 for (uint32_t i = 0; i < bytes_per_row; i++) {
                     current[i] += prior[i];
                 }
 
                 break;
             case PNGFilterTypes::Average:
-                assert(bytes_per_pixel <= prior.size());
-                assert(bytes_per_pixel <= current.size());
                 for (uint32_t i = 0; i < bytes_per_pixel; i++) {
                     current[i] += (prior[i] / 2);
                 }
 
-                assert(bytes_per_row <= prior.size());
-                assert(bytes_per_row <= current.size());
                 for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
                     uint8_t current_byte = current[i] & 0xFF;
                     uint8_t prior_byte = prior[bytes_per_pixel + i] & 0xFF;
@@ -161,14 +181,10 @@ BufferPtr FlateDecodeFilter::ApplyPredictor(IInputStreamPtr src, types::stream_s
 
                 break;
             case PNGFilterTypes::Paeth:
-                assert(bytes_per_pixel <= prior.size());
-                assert(bytes_per_pixel <= current.size());
                 for (uint32_t i = 0; i < bytes_per_pixel; i++) {
                     current[i] += prior[i];
                 }
 
-                assert(bytes_per_row <= prior.size());
-                assert(bytes_per_row <= current.size());
                 for (uint32_t i = 0; (bytes_per_pixel + i) < bytes_per_row; i++) {
                     uint8_t a = current[i] & 0xFF;
                     uint8_t b = prior[bytes_per_pixel + i] & 0xFF;
