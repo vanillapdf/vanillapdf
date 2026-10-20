@@ -1315,6 +1315,24 @@ void File::ExemptEncryptionDictionary() {
             auto obj_number = reference->GetReferencedObjectNumber();
             auto gen_number = reference->GetReferencedGenerationNumber();
 
+            // ISO 32000-1:2008, 7.5.7 "Object Streams":
+            // "The following objects shall not be stored in an object stream:
+            //  - Stream objects
+            //  - Objects with a generation number other than zero
+            //  - A document's encryption dictionary (see 7.6, "Encryption")
+            //  - An object representing the value of the Length entry in an object stream dictionary"
+            //
+            // Such object stream has to be decrypted with this very dictionary, so resolving it is going to fail.
+            // Report the actual cause, as the failure itself only surfaces as a conversion error.
+            if (_xref->Contains(obj_number, gen_number)) {
+                auto encryption_entry = _xref->GetXrefEntry(obj_number, gen_number);
+                if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(encryption_entry)) {
+                    auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(encryption_entry);
+                    spdlog::warn("Encryption dictionary {} {} is stored inside object stream {}, which is not allowed",
+                        obj_number, gen_number, compressed_entry->GetObjectStreamNumber());
+                }
+            }
+
             _encryption_dictionary = GetIndirectObjectInternal(obj_number, gen_number);
         }
 
