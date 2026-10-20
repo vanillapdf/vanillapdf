@@ -123,7 +123,7 @@ using DictionaryObjectBasePtr = DeferredContainer<DictionaryObjectBase<KeyT, Val
 using DictionaryObjectPtr = DeferredContainer<DictionaryObject>; using OutputDictionaryObjectPtr = OutputPointer<DictionaryObjectPtr>;
 using MixedArrayObjectPtr = DeferredContainer<MixedArrayObject>; using OutputMixedArrayObjectPtr = OutputPointer<MixedArrayObjectPtr>;
 
-class ObjectPtr;
+class ObjectPtr; using OutputObjectPtr = OutputPointer<ObjectPtr>;
 class StringObjectPtr; using OutputStringObjectPtr = OutputPointer<StringObjectPtr>;
 //using ObjectPtr = Deferred<Object>;
 using ContainableObjectPtr = Deferred<ContainableObject>; using OutputContainableObjectPtr = OutputPointer<ContainableObjectPtr>;

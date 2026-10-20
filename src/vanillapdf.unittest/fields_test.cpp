@@ -54,6 +54,39 @@ static void InsertIntegerEntry(
     ASSERT_EQ(DictionaryObject_Insert(dict, key, reinterpret_cast<ObjectHandle*>(integer.get()), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
 }
 
+// Creates an in-memory document, needed to register parent fields as
+// indirect objects
+static void CreateMemoryDocument(
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release>& io_stream,
+    HandleGuard<FileHandle, File_Release>& file,
+    HandleGuard<DocumentHandle, Document_Release>& document
+) {
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(io_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(io_stream, "temp", file.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Document_CreateFile(file, document.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
+// Helper to link a child dictionary to its parent through the /Parent entry.
+// /Parent shall be an indirect reference (Table 220), so the parent is first
+// registered as an indirect object within the file.
+static void InsertParentEntry(
+    FileHandle* file,
+    DictionaryObjectHandle* child,
+    DictionaryObjectHandle* parent
+) {
+    HandleGuard<XrefUsedEntryHandle, XrefUsedEntry_Release> parent_entry;
+    ASSERT_EQ(File_AllocateNewEntry(file, parent_entry.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(XrefUsedEntry_SetReference(parent_entry, reinterpret_cast<ObjectHandle*>(parent)), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<IndirectReferenceObjectHandle, IndirectReferenceObject_Release> parent_reference;
+    ASSERT_EQ(IndirectReferenceObject_Create(parent_reference.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(IndirectReferenceObject_SetReferencedObject(parent_reference, reinterpret_cast<ObjectHandle*>(parent)), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> key;
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Parent", key.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Insert(child, key, reinterpret_cast<ObjectHandle*>(parent_reference.get()), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+}
+
 // --- Field base class tests ---
 
 TEST(Field, GetName) {
@@ -144,6 +177,144 @@ TEST(Field, SetFieldFlagsOverwrite) {
     ASSERT_EQ(Field_SetFieldFlags(field, FieldFlags_Multiline), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Field_GetFieldFlags(field, &flags), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(flags, FieldFlags_Multiline);
+}
+
+// --- Field type inheritance tests (Table 220 - /FT is inheritable) ---
+
+TEST(Field, TypeInheritedFromParent) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> parent;
+    CreateFieldDict(parent, "Tx");
+
+    // A terminal field merged into its widget annotation carries no /FT of its own
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> child;
+    ASSERT_EQ(DictionaryObject_Create(child.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertParentEntry(file, child, parent);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(child, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    FieldType type = FieldType_Undefined;
+    ASSERT_EQ(Field_GetType(field, &type), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(type, FieldType_Text);
+}
+
+TEST(Field, TypeInheritedFromGrandparent) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> grandparent;
+    CreateFieldDict(grandparent, "Btn");
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> parent;
+    ASSERT_EQ(DictionaryObject_Create(parent.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertParentEntry(file, parent, grandparent);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> child;
+    ASSERT_EQ(DictionaryObject_Create(child.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertParentEntry(file, child, parent);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(child, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    FieldType type = FieldType_Undefined;
+    ASSERT_EQ(Field_GetType(field, &type), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(type, FieldType_Button);
+}
+
+TEST(Field, OwnTypeTakesPrecedenceOverParent) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> parent;
+    CreateFieldDict(parent, "Tx");
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> child;
+    CreateFieldDict(child, "Ch");
+    InsertParentEntry(file, child, parent);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(child, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    FieldType type = FieldType_Undefined;
+    ASSERT_EQ(Field_GetType(field, &type), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(type, FieldType_Choice);
+}
+
+TEST(Field, TypeMissingThroughoutChainIsNonTerminal) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> parent;
+    ASSERT_EQ(DictionaryObject_Create(parent.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> child;
+    ASSERT_EQ(DictionaryObject_Create(child.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertParentEntry(file, child, parent);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(child, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    FieldType type = FieldType_Undefined;
+    ASSERT_EQ(Field_GetType(field, &type), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(type, FieldType_NonTerminal);
+}
+
+TEST(Field, CyclicParentChainTerminates) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> first;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> second;
+    ASSERT_EQ(DictionaryObject_Create(first.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Create(second.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    // Neither dictionary declares /FT, so the resolution has to recognize the
+    // cycle and give up instead of looping forever
+    InsertParentEntry(file, first, second);
+    InsertParentEntry(file, second, first);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(first, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    FieldType type = FieldType_Undefined;
+    ASSERT_EQ(Field_GetType(field, &type), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(type, FieldType_NonTerminal);
+}
+
+TEST(Field, DirectParentEndsResolution) {
+
+    // Table 220 requires /Parent to be an indirect reference. A direct
+    // dictionary in its place is an embedded copy rather than a link to the
+    // actual parent node, so the resolution refuses to follow it.
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> parent;
+    CreateFieldDict(parent, "Tx");
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> child;
+    ASSERT_EQ(DictionaryObject_Create(child.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> parent_key;
+    ASSERT_EQ(NameObject_CreateFromDecodedString("Parent", parent_key.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DictionaryObject_Insert(child, parent_key, reinterpret_cast<ObjectHandle*>(parent.get()), VANILLAPDF_RV_TRUE), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(child, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    FieldType type = FieldType_Undefined;
+    ASSERT_EQ(Field_GetType(field, &type), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(type, FieldType_NonTerminal);
 }
 
 // --- TextField tests ---

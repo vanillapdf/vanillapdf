@@ -8,12 +8,70 @@
 namespace vanillapdf {
 namespace semantics {
 
+bool Field::FindInheritedEntry(
+    const syntax::DictionaryObjectPtr& dictionary,
+    const syntax::NameObject& key,
+    syntax::OutputObjectPtr& result) {
+
+    // Every hop is an indirect reference (see below), so visited parents are
+    // tracked by their object identity, the same way DereferenceHelper guards
+    // a single dereference against cycles.
+    std::map<syntax::IndirectReferenceId, bool> visited;
+
+    syntax::DictionaryObjectPtr current = dictionary;
+
+    for (;;) {
+        if (current->Contains(key)) {
+            result = current->Find(key);
+            return true;
+        }
+
+        if (!current->Contains(constant::Name::Parent)) {
+            return false;
+        }
+
+        // Table 220: /Parent shall be an indirect reference. A direct object
+        // in its place is an embedded copy, not a link - the actual parent
+        // node is reachable from /Fields as an indirect object - so following
+        // it would inspect the wrong dictionary.
+        auto parent_obj = current->Find(constant::Name::Parent);
+        if (!syntax::ObjectUtils::IsType<syntax::IndirectReferenceObjectPtr>(parent_obj)) {
+            spdlog::warn("Field /Parent is not an indirect reference while resolving inherited entry {}", key.ToString());
+            return false;
+        }
+
+        auto parent_reference = syntax::ObjectUtils::ConvertTo<syntax::IndirectReferenceObjectPtr>(parent_obj);
+
+        auto object_number = parent_reference->GetReferencedObjectNumber();
+        auto generation_number = parent_reference->GetReferencedGenerationNumber();
+        syntax::IndirectReferenceId parent_id(object_number, generation_number);
+
+        auto found = visited.find(parent_id);
+        if (found != visited.end() && found->second) {
+            spdlog::warn("Cyclic /Parent chain while resolving inherited entry {}", key.ToString());
+            return false;
+        }
+
+        visited[parent_id] = true;
+
+        current = parent_reference->GetReferencedObjectAs<syntax::DictionaryObjectPtr>();
+    }
+}
+
+bool Field::GetInheritedEntry(const syntax::NameObject& key, syntax::OutputObjectPtr& result) const {
+    return FindInheritedEntry(_obj, key, result);
+}
+
 FieldPtr Field::Create(syntax::DictionaryObjectPtr root) {
-    if (!root->Contains(constant::Name::FT)) {
+
+    // /FT is inheritable - a terminal field merged into its widget annotation
+    // frequently carries the field type only on the parent field
+    syntax::OutputObjectPtr type_entry;
+    if (!FindInheritedEntry(root, constant::Name::FT, type_entry)) {
         return make_deferred<NonTerminalField>(root);
     }
 
-    syntax::ObjectPtr type_obj = root->Find(constant::Name::FT);
+    syntax::ObjectPtr type_obj = type_entry;
     if (!syntax::ObjectUtils::IsType<syntax::NameObjectPtr>(type_obj)) {
         LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Invalid field type: {}", static_cast<int32_t>(type_obj->GetObjectType()));
     }
