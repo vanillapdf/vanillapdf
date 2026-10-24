@@ -73,26 +73,56 @@ InlineImageObjectPtr ContentStreamParser::ReadInlineImageObject(void) {
         }
 
         assert(!"Unknown data in inline image dictionary");
+        LOG_ERROR_AND_THROW(ParseException, "Unexpected token in inline image dictionary");
     }
 
     // read operation begin image data
     auto inline_image_data_op = ReadOperation();
     if (inline_image_data_op->GetOperationType() != OperationBase::Type::BeginInlineImageData) {
         assert(!"Invalid operation after inline image dictionary");
+        LOG_ERROR_AND_THROW(ParseException, "Invalid operation after inline image dictionary");
     }
 
-    // read data
+    // The ID operator shall be followed by a single white-space character,
+    // which is a delimiter and not a part of the image data itself
+    auto delimiter_meta = m_stream->Peek();
+    if (IsWhiteSpace(delimiter_meta)) {
+        m_stream->Ignore();
+    } else {
+        // Keep the byte in the stream - the image data begins immediately after the ID operator
+        spdlog::warn("Missing white-space delimiter after the inline image ID operator");
+    }
+
+    // The image data is terminated by the EI operator, which is only recognized
+    // when it is delimited by white-space or stream boundaries on both sides
+
+    // stage 0 - inside image data
+    // stage 1 - at a potential data boundary (start of data or after white-space)
+    // stage 2 - boundary followed by 'E'
+    // stage 3 - boundary followed by "EI"
+    int stage = 1;
+    bool has_stored_whitespace = false;
+    unsigned char stored_whitespace = 0;
+
     BufferPtr image_data;
 
-    int stage = 0;
-    unsigned char stored_whitespace = 0;
     for (;;) {
         auto current_meta = m_stream->Get();
+
+        if (current_meta == std::char_traits<char>::eof()) {
+            if (stage == 3) {
+                break;
+            }
+
+            LOG_ERROR_AND_THROW(ParseException, "Unterminated inline image data");
+        }
+
         auto current = ValueConvertUtils::SafeConvert<unsigned char>(current_meta);
 
         if (stage == 0 && IsWhiteSpace(current)) {
             stage = 1;
             stored_whitespace = current;
+            has_stored_whitespace = true;
             continue;
         }
 
@@ -103,15 +133,24 @@ InlineImageObjectPtr ContentStreamParser::ReadInlineImageObject(void) {
             }
 
             if (IsWhiteSpace(current)) {
-                image_data->push_back(stored_whitespace);
+                if (has_stored_whitespace) {
+                    image_data->push_back(stored_whitespace);
+                }
+
                 stored_whitespace = current;
+                has_stored_whitespace = true;
                 continue;
             }
 
             // reset stage
             stage = 0;
 
-            image_data->push_back(stored_whitespace);
+            // pop stored data
+            if (has_stored_whitespace) {
+                image_data->push_back(stored_whitespace);
+                has_stored_whitespace = false;
+            }
+
             image_data->push_back(current);
             continue;
         }
@@ -122,29 +161,47 @@ InlineImageObjectPtr ContentStreamParser::ReadInlineImageObject(void) {
                 continue;
             }
 
+            // pop stored data
+            if (has_stored_whitespace) {
+                image_data->push_back(stored_whitespace);
+                has_stored_whitespace = false;
+            }
+
+            image_data->push_back('E');
+
+            // white-space after the mismatch may still delimit a following "EI"
+            if (IsWhiteSpace(current)) {
+                stage = 1;
+                stored_whitespace = current;
+                has_stored_whitespace = true;
+                continue;
+            }
+
             // reset stage
             stage = 0;
 
-            // pop stored data
-            image_data->push_back(stored_whitespace);
-            image_data->push_back('E');
             image_data->push_back(current);
             continue;
         }
 
         if (stage == 3) {
             if (IsWhiteSpace(current)) {
-                // verify data
+                // The terminating "EI" and its surrounding delimiters are not a part of the data
                 break;
             }
+
+            // pop stored data
+            if (has_stored_whitespace) {
+                image_data->push_back(stored_whitespace);
+                has_stored_whitespace = false;
+            }
+
+            image_data->push_back('E');
+            image_data->push_back('I');
 
             // reset stage
             stage = 0;
 
-            // pop stored data
-            image_data->push_back(stored_whitespace);
-            image_data->push_back('E');
-            image_data->push_back('I');
             image_data->push_back(current);
             continue;
         }
