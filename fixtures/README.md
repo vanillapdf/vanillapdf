@@ -21,6 +21,7 @@ corpus with per-file provenance instead.
 | `flat-pages.pdf` | 1,450 empty pages in a flat `/Pages` tree, for the page-tree benchmark | `vanillapdf.tools generate -d fixtures/flat-pages.pdf -p 1450` |
 | `sample-document.pdf` | A feature-rich document: standard PDF fonts (not embedded), a procedurally drawn image, an underline, internal + external links, and a table | `python scripts/generate_sample_documents.py` |
 | `certificates/*.pfx` | Internal test signing certificates (DSA/RSA/EC/Ed25519/Ed448). Not real credentials — no trust path, password `test` | generated test fixtures |
+| `certificate-encrypted/*.pdf` | vanillapdf-generated one page documents encrypted with the public-key security handler (`/Adobe.PubSec`), named `<subfilter>-<content encryption>-<envelope cipher>`. The envelopes are addressed to issuer `C=SK`, serial 4: the `TestUser3.pfx` certificate of the testdata corpus, which decrypts them | `python3 scripts/generate_certificate_encrypted_fixtures.py`, with OpenSSL 3 and its legacy provider; see the script for the recipient certificates |
 
 ## Consumers
 
@@ -28,7 +29,9 @@ corpus with per-file provenance instead.
   (content stream), and all three PDFs for the IO-strategy size range.
 - `vanillapdf.unittest` — `certificates/*.pfx`, compiled into a header.
 - `vanillapdf.tools` ctests — all five PDFs for the `remove_page` sanity tests,
-  and `objstm-self-contained.pdf` for the `validate` structural error test.
+  `objstm-self-contained.pdf` for the `validate` structural error test, and
+  `certificate-encrypted/*.pdf` for the `decrypt` tests (the RC2 envelopes only
+  with `VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER`).
 - `signature-interop-check` workflow — signs a fixture with `certificates/*.pfx`.
 
 ## Notes
