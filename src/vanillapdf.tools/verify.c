@@ -280,7 +280,7 @@ int process_verify(int argc, char *argv[]) {
             string_type name_data = NULL;
             RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(signer_name, &name_data, &name_size));
             if (name_size > 0) {
-                printf("Signer: %s\n", name_data);
+                printf("Signer: %.*s\n", (int)name_size, name_data);
             }
         }
 
@@ -289,7 +289,7 @@ int process_verify(int argc, char *argv[]) {
             string_type message_data = NULL;
             RETURN_ERROR_IF_NOT_SUCCESS(Buffer_GetData(message_buffer, &message_data, &message_size));
             if (message_size > 0) {
-                printf("Message: %s\n", message_data);
+                printf("Message: %.*s\n", (int)message_size, message_data);
             }
         }
 

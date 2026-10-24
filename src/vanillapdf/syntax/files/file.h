@@ -12,6 +12,7 @@
 #include "utils/streams/input_output_stream_interface.h"
 
 #include <ios>
+#include <set>
 #include <vector>
 #include <string>
 
@@ -150,6 +151,12 @@ private:
     types::big_uint m_next_allocation = 0;
 
     std::shared_ptr<std::recursive_mutex> m_object_stream_lock = std::shared_ptr<std::recursive_mutex>(pdf_new std::recursive_mutex());
+
+    // Object streams whose initialization is currently in progress, guarded by m_object_stream_lock.
+    // A damaged document can require an object stream to initialize itself - its own xref entry can
+    // place it inside itself or inside another object stream that is stored back in this one, and the
+    // encryption dictionary has to be dereferenced before the body can be decrypted.
+    std::set<types::big_uint> m_object_streams_in_progress;
 
 private:
     File(IInputOutputStreamPtr stream, const std::string& path);

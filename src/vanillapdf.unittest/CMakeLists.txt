@@ -33,6 +33,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     digital_signature_test.cpp
     signature_verifier_test.cpp
     thread_safety_test.cpp
+    object_stream_test.cpp
 )
 
 set(VANILLAPDF_UNITTEST_HEADERS
