@@ -466,13 +466,44 @@ error_type process_color(ColorHandle* obj, int nested) {
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+error_type process_transparency_group_flag(const char* label, boolean_type value, int nested) {
+    print_spaces(nested);
+    print_text("%s: %d\n", label, value);
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_transparency_group(TransparencyGroupHandle* obj, int nested) {
+    boolean_type isolated = VANILLAPDF_RV_FALSE;
+    boolean_type knockout = VANILLAPDF_RV_FALSE;
+
+    print_spaces(nested);
+    print_text("Transparency group begin\n");
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(TransparencyGroup_GetIsolated(obj, &isolated),
+        process_transparency_group_flag("Isolated", isolated, nested + 1));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(TransparencyGroup_GetKnockout(obj, &knockout),
+        process_transparency_group_flag("Knockout", knockout, nested + 1));
+
+    print_spaces(nested);
+    print_text("Transparency group end\n");
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
 error_type process_form_xobject(FormXObjectHandle* obj, int nested) {
     RectangleHandle* bounding_box = NULL;
     MatrixHandle* matrix = NULL;
     ResourceDictionaryHandle* resources = NULL;
+    TransparencyGroupHandle* group = NULL;
 
     print_spaces(nested);
     print_text("Form XObject begin\n");
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FormXObject_GetGroup(obj, &group),
+        process_transparency_group(group, nested + 1),
+        TransparencyGroup_Release(group));
 
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(FormXObject_GetBoundingBox(obj, &bounding_box),
         process_rectangle(bounding_box, nested + 1),
@@ -677,9 +708,30 @@ error_type process_page_annotations(PageAnnotationsHandle* obj, int nested) {
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 
+error_type process_page_rotate(bigint_type rotate, int nested) {
+    print_spaces(nested);
+    print_text("Rotate: %lld\n", (long long) rotate);
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
+error_type process_page_user_unit(real_type user_unit, int nested) {
+    print_spaces(nested);
+    print_text("User unit: %g\n", user_unit);
+
+    return VANILLAPDF_TEST_ERROR_SUCCESS;
+}
+
 error_type process_page(PageObjectHandle* obj, int nested) {
     PageContentsHandle* contents = NULL;
     RectangleHandle* media_box = NULL;
+    RectangleHandle* crop_box = NULL;
+    RectangleHandle* bleed_box = NULL;
+    RectangleHandle* trim_box = NULL;
+    RectangleHandle* art_box = NULL;
+    bigint_type rotate = 0;
+    real_type user_unit = 0;
+    TransparencyGroupHandle* group = NULL;
     PageAnnotationsHandle* annotations = NULL;
     ResourceDictionaryHandle* page_resources = NULL;
 
@@ -693,6 +745,32 @@ error_type process_page(PageObjectHandle* obj, int nested) {
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetMediaBox(obj, &media_box),
         process_rectangle(media_box, nested + 1),
         Rectangle_Release(media_box));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetCropBox(obj, &crop_box),
+        process_rectangle(crop_box, nested + 1),
+        Rectangle_Release(crop_box));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetBleedBox(obj, &bleed_box),
+        process_rectangle(bleed_box, nested + 1),
+        Rectangle_Release(bleed_box));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetTrimBox(obj, &trim_box),
+        process_rectangle(trim_box, nested + 1),
+        Rectangle_Release(trim_box));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetArtBox(obj, &art_box),
+        process_rectangle(art_box, nested + 1),
+        Rectangle_Release(art_box));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(PageObject_GetRotate(obj, &rotate),
+        process_page_rotate(rotate, nested + 1));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL(PageObject_GetUserUnit(obj, &user_unit),
+        process_page_user_unit(user_unit, nested + 1));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetGroup(obj, &group),
+        process_transparency_group(group, nested + 1),
+        TransparencyGroup_Release(group));
 
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(PageObject_GetAnnotations(obj, &annotations),
         process_page_annotations(annotations, nested + 1),

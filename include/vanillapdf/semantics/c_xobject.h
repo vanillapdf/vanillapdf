@@ -154,6 +154,18 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetResources(FormXObjectHandle* handle, ResourceDictionaryHandle* value);
 
     /**
+    * \brief
+    * Get the group attributes dictionary (Group entry) that makes the form
+    * a transparency group XObject (see 11.6.6, "Transparency Group XObjects")
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_GetGroup(FormXObjectHandle* handle, TransparencyGroupHandle** result);
+
+    /**
+    * \brief Set the group attributes dictionary (Group entry) of the form
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_SetGroup(FormXObjectHandle* handle, TransparencyGroupHandle* value);
+
+    /**
     * \brief Reinterpret current object as \ref XObjectHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_ToBaseXObject(FormXObjectHandle* handle, XObjectHandle** result);

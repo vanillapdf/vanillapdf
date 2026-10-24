@@ -3,6 +3,7 @@
 #include "syntax/files/file.h"
 
 #include "semantics/objects/xobject.h"
+#include "semantics/objects/transparency_group.h"
 #include "semantics/objects/document.h"
 #include "semantics/objects/matrix.h"
 #include "semantics/objects/rectangle.h"
@@ -109,6 +110,22 @@ bool FormXObject::GetMatrix(OutputMatrixPtr& result) const {
 void FormXObject::SetMatrix(MatrixPtr value) {
     auto header = _obj->GetHeader();
     header->Insert(constant::Name::Matrix, value->GetObject(), true);
+}
+
+bool FormXObject::GetGroup(OutputTransparencyGroupPtr& result) const {
+    auto header = _obj->GetHeader();
+    if (!header->Contains(constant::Name::Group)) {
+        return false;
+    }
+
+    auto group_obj = header->FindAs<DictionaryObjectPtr>(constant::Name::Group);
+    result = make_deferred<TransparencyGroup>(group_obj);
+    return true;
+}
+
+void FormXObject::SetGroup(TransparencyGroupPtr value) {
+    auto header = _obj->GetHeader();
+    header->Insert(constant::Name::Group, value->GetObject(), true);
 }
 
 bool FormXObject::GetResources(OutputResourceDictionaryPtr& result) const {
