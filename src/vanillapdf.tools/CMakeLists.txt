@@ -231,6 +231,16 @@ if(VANILLAPDF_ENABLE_TESTS)
         PASS_REGULAR_EXPRESSION "Issues: 1 \\(0 error\\(s\\), 1 warning"
     )
 
+    # objstm-self-contained.pdf: object stream 3 is stored inside itself, reported (code=304)
+    # for both compressed entries - the object stream itself and object 4 stored inside it
+    add_test(
+        NAME "Tools.validate.objstm-self-contained"
+        COMMAND vanillapdf.tools validate -f "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/objstm-self-contained.pdf"
+    )
+    set_tests_properties("Tools.validate.objstm-self-contained" PROPERTIES
+        PASS_REGULAR_EXPRESSION "Issues: 2 \\(2 error\\(s\\), 0 warning\\(s\\)\\)[\r\n]+\\[severity=3 code=304\\]"
+    )
+
     # Read tests using memory IO strategy (paths are relative to the fetched corpus)
     set(MEMORY_STRATEGY_TEST_FILES
         "example.pdf"

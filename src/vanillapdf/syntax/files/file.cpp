@@ -172,9 +172,31 @@ void File::InitializeObjectStream(types::big_uint object_stream_number) {
 
     ACCESS_LOCK_GUARD(m_object_stream_lock);
 
+    // Initializing this object stream already depends on itself. Leave the entries uninitialized,
+    // they are reported as NULL references by XrefUsedEntryBase::GetReference, the same way as the
+    // compressed entries that are missing from their object stream.
+    auto in_progress = m_object_streams_in_progress.find(object_stream_number);
+    if (in_progress != m_object_streams_in_progress.end()) {
+        spdlog::warn("Object stream {} is already being initialized, breaking the cyclic reference", object_stream_number);
+        return;
+    }
+
+    m_object_streams_in_progress.insert(object_stream_number);
+
+    SCOPE_GUARD_CAPTURE_REFERENCES( m_object_streams_in_progress.erase(object_stream_number) );
+
     auto stm = GetIndirectObject(object_stream_number, 0);
 
-    // Mark the object stream with the attribute to prevent duplicit initialization
+    // The object stream does not have to be a stream at all, a broken or cyclic xref entry
+    // resolves to a null object. There is nothing to initialize in that case, the compressed
+    // entries are reported as NULL references.
+    if (!ObjectUtils::IsType<StreamObjectPtr>(stm)) {
+        spdlog::warn("Object {} is not a stream, its entries are treated as NULL references", object_stream_number);
+        return;
+    }
+
+    // Skip the object stream that has already been initialized, it is marked
+    // with the attribute at the end of this function to prevent duplicit initialization
     if (stm->ContainsAttribute(BaseAttribute::Type::ObjectStreamMetadata)) {
         auto object_stream_attribute = stm->GetAttributeAs<ObjectStreamMetadataAttributePtr>(BaseAttribute::Type::ObjectStreamMetadata);
 
@@ -1293,6 +1315,24 @@ void File::ExemptEncryptionDictionary() {
             auto reference = ObjectUtils::ConvertTo<IndirectReferenceObjectPtr>(_encryption_dictionary);
             auto obj_number = reference->GetReferencedObjectNumber();
             auto gen_number = reference->GetReferencedGenerationNumber();
+
+            // ISO 32000-1:2008, 7.5.7 "Object Streams":
+            // "The following objects shall not be stored in an object stream:
+            //  - Stream objects
+            //  - Objects with a generation number other than zero
+            //  - A document's encryption dictionary (see 7.6, "Encryption")
+            //  - An object representing the value of the Length entry in an object stream dictionary"
+            //
+            // Such object stream has to be decrypted with this very dictionary, so resolving it is going to fail.
+            // Report the actual cause, as the failure itself only surfaces as a conversion error.
+            if (_xref->Contains(obj_number, gen_number)) {
+                auto encryption_entry = _xref->GetXrefEntry(obj_number, gen_number);
+                if (ConvertUtils<XrefEntryBasePtr>::IsType<XrefCompressedEntryPtr>(encryption_entry)) {
+                    auto compressed_entry = ConvertUtils<XrefEntryBasePtr>::ConvertTo<XrefCompressedEntryPtr>(encryption_entry);
+                    spdlog::warn("Encryption dictionary {} {} is stored inside object stream {}, which is not allowed",
+                        obj_number, gen_number, compressed_entry->GetObjectStreamNumber());
+                }
+            }
 
             _encryption_dictionary = GetIndirectObjectInternal(obj_number, gen_number);
         }

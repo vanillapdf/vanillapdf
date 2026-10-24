@@ -169,6 +169,19 @@ void FileStructureValidator::ValidateXrefEntries(FilePtr file, types::stream_siz
                             "Compressed xref entry references object stream " + std::to_string(stream_obj_num)
                             + " which does not exist in the xref chain",
                             obj_num, gen_num);
+                    } else {
+
+                        // An object stream shall be a regular indirect object. Storing it inside another
+                        // object stream would require that other stream to be decoded first, which forms
+                        // a cycle - either directly, or through a chain of streams containing each other.
+                        auto stream_entry = chain->GetXrefEntry(stream_obj_num, 0);
+                        if (stream_entry->GetUsage() == XrefEntryBase::Usage::Compressed) {
+                            AddIssue(result, FileStructureIssueSeverity::Error,
+                                FileStructureIssueCode::XrefCompressedEntryObjectStreamCompressed,
+                                "Compressed xref entry references object stream " + std::to_string(stream_obj_num)
+                                + " which is itself stored inside another object stream",
+                                obj_num, gen_num);
+                        }
                     }
                 }
             } else if (usage == XrefEntryBase::Usage::Free) {
