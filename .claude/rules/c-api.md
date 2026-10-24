@@ -161,6 +161,7 @@ All handles are opaque pointers via `DECLARE_OBJECT_HANDLE(X)` → creates `XHan
 - `SigningKeyHandle`, `EncryptionKeyHandle`, `PKCS12KeyHandle`
 - `TrustedCertificateStoreHandle`
 - `SignatureVerificationResultHandle`, `SignatureVerificationSettingsHandle`
+- `CryptoSettingsHandle` (applied by `CryptoUtils_Initialize`; `MiscUtils_*OpenSSL` are deprecated)
 - `MD5DigestHandle`, `RC4CipherHandle` (standard security handler primitives, PDF compatibility only)
 - `InputStreamHandle`, `OutputStreamHandle`
 - `MemoryBufferOutputStreamHandle`, `InputOutputStreamHandle`

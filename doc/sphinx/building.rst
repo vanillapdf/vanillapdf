@@ -348,48 +348,54 @@ so they work with a shared OpenSSL, in FIPS mode and under restrictive system
 crypto policies alike.
 
 A few remaining algorithms are provided only by the OpenSSL 3 *legacy*
-provider, which the library does not load by default:
+provider:
 
 - RC2 envelopes of certificate encrypted documents, as written by Apache PDFBox
+  and iText 5
 - PKCS#12 key files protected with RC2 or RC4, the OpenSSL 1.x export default
 - MD2 and MD4 signatures
 
-These operations fail with ``VANILLAPDF_ERROR_NOT_SUPPORTED``. A legacy key
-file can be re-exported with AES:
+The library loads the legacy provider by default. Two switches control it:
+
+- **At build time**, ``-DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=OFF`` leaves
+  the provider out entirely, when building the library from source.
+- **At runtime**, the legacy algorithms policy of ``CryptoSettings``, applied
+  with ``CryptoUtils_Initialize`` before any other call:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Policy
+     - Legacy provider
+     - When it cannot be loaded
+   * - ``LegacyAlgorithmsPolicy_Optional`` (default)
+     - Loaded
+     - A warning is logged and the library continues without it
+   * - ``LegacyAlgorithmsPolicy_Required``
+     - Loaded
+     - ``CryptoUtils_Initialize`` fails with ``VANILLAPDF_ERROR_NOT_SUPPORTED``
+   * - ``LegacyAlgorithmsPolicy_Disabled``
+     - Not loaded
+     - \-
+
+.. code-block:: c
+
+   CryptoSettingsHandle* settings = NULL;
+   CryptoSettings_Create(&settings);
+   CryptoSettings_SetLegacyAlgorithmsPolicy(settings, LegacyAlgorithmsPolicy_Required);
+   CryptoUtils_Initialize(settings);
+   CryptoSettings_Release(settings);
+
+Without the legacy provider RC2 envelopes and key files fail with
+``VANILLAPDF_ERROR_NOT_SUPPORTED``, while MD2 and MD4 signatures do not verify.
+``CryptoUtils_GetLegacyAlgorithmsAvailable`` reports whether it is loaded. A legacy key file can be re-exported with AES:
 
 .. code-block:: bash
 
    openssl pkcs12 -legacy -in old.pfx -nodes | openssl pkcs12 -export -out new.pfx
 
-Who enables them depends on who owns the OpenSSL the library runs with:
-
-.. list-table::
-   :header-rows: 1
-
-   * - Distribution
-     - OpenSSL
-     - Legacy algorithms
-   * - NuGet packages
-     - Static, private to the native library
-     - Enabled by the build (``VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=ON``),
-       applications cannot reach that OpenSSL
-   * - vcpkg port, Debian, RPM and Homebrew packages
-     - Shared with the application (or linked into the same binary)
-     - Disabled, the application loads the providers if it needs them
-
-**Applications sharing OpenSSL with the library** activate the providers once
-at startup, in code or through an OpenSSL configuration file (``OPENSSL_CONF``).
-Load ``default`` together with ``legacy``: once any provider is loaded
-explicitly, OpenSSL no longer activates the default provider on its own.
-
-.. code-block:: c
-
-   #include <openssl/provider.h>
-
-   OSSL_PROVIDER_load(NULL, "legacy");
-   OSSL_PROVIDER_load(NULL, "default");
-
-A shared OpenSSL loads the legacy provider as a separate module
+A static OpenSSL, as in the NuGet packages, compiles the provider into libcrypto,
+so it always loads. A shared OpenSSL loads it as a separate module
 (``legacy.dll``, ``legacy.so``) from a directory fixed when OpenSSL was built.
 Linux distributions and Homebrew ship it there. The vcpkg OpenSSL does not have
 a usable directory compiled in, so applications using a dynamic vcpkg triplet
@@ -399,8 +405,7 @@ library built against a dynamic vcpkg triplet (``cmake --install``) bundles
 OpenSSL together with the module in its ``bin`` directory, which is then the
 directory to point ``OPENSSL_MODULES`` at.
 
-**Building the library with** ``-DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=ON``
-makes it load the legacy and default providers at initialization. The option is
-meant for a statically linked OpenSSL, which compiles the provider into
-libcrypto. With a shared OpenSSL the module path above applies, and the library
-fails to initialize when the module cannot be found.
+The library loads its providers into OpenSSL's default library context, which
+the application shares when it links the same OpenSSL. Legacy algorithms the
+application enables itself, in code or through an OpenSSL configuration file
+(``OPENSSL_CONF``), are available to the library under every policy.

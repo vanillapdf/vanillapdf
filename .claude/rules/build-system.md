@@ -47,7 +47,7 @@ Build options: `VANILLAPDF_INTERNAL_VCPKG` (ON), `VANILLAPDF_ENABLE_TESTS` (OFF)
 
 External deps (all OFF): `VANILLAPDF_EXTERNAL_{OPENSSL,JPEG,OPENJPEG,ZLIB,SPDLOG,NLOHMANN_JSON,MIMALLOC}` — use system instead of vcpkg.
 
-OpenSSL: `VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER` (OFF) — load the OpenSSL 3 legacy provider at initialization for RC2 envelopes/key files and MD2/MD4 signatures. Intended for static OpenSSL (NuGet sets it); with a shared OpenSSL the provider module path must be supplied via `OPENSSL_MODULES`. RC4 and MD5 never need it (in-house).
+OpenSSL: `VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER` (ON) — compile in loading of the OpenSSL 3 legacy provider for RC2 envelopes/key files and MD2/MD4 signatures; OFF leaves it out entirely. Whether it is loaded, and whether a failed load is fatal, is the runtime `CryptoSettings` legacy algorithms policy (`Optional` default / `Required` / `Disabled`, applied with `CryptoUtils_Initialize`). With a shared OpenSSL the provider module path is supplied via `OPENSSL_MODULES`. RC4 and MD5 never need it (in-house). Source builds only: the vcpkg port and the Conan recipe keep the default.
 
 Limits: `VANILLAPDF_MAX_IMAGE_SIZE` (`0x40000000`, 1 GiB) — largest single decoded image, in bytes, that `DCTDecode` and `JPXDecode` will allocate. Image dimensions come from the document and are independent of how much data backs them, so a few hundred bytes of image stream can otherwise ask for gigabytes. It is a build time constant rather than a runtime property, so callers are protected without having to know it exists; raise it with `-DVANILLAPDF_MAX_IMAGE_SIZE=<bytes>` for documents that legitimately carry larger images.
 

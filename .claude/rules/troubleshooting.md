@@ -53,14 +53,16 @@ SignatureVerificationSettings_SetAllowWeakAlgorithmsFlag(settings, VANILLAPDF_RV
 
 ## OpenSSL Legacy Provider
 
-The library does not load the OpenSSL 3 `legacy` provider unless built with `-DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=ON` (set by the NuGet workflow, which links OpenSSL statically). Without it these fail with `VANILLAPDF_ERROR_NOT_SUPPORTED`:
-- RC2 envelopes of certificate encrypted documents (PDFBox writes them)
+The library loads the OpenSSL 3 `legacy` provider by default. It supplies:
+- RC2 envelopes of certificate encrypted documents (PDFBox, iText 5 write them)
 - PKCS#12 files protected with RC2/RC4 (OpenSSL 1.x export default) — re-export: `openssl pkcs12 -legacy -in old.pfx -nodes | openssl pkcs12 -export -out new.pfx`
 - MD2/MD4 signatures
 
-With a **shared** OpenSSL the provider is a separate module (`legacy.dll`/`legacy.so`) looked up in a directory fixed at OpenSSL build time, which is why the option is meant for static OpenSSL. To try the option against a shared vcpkg OpenSSL locally, point `OPENSSL_MODULES` at `<build>/vcpkg_installed/<triplet>/bin`. Applications can also activate `legacy` + `default` themselves via `OSSL_PROVIDER_load` or an `OPENSSL_CONF` file — loading any provider explicitly disables the implicit default provider, so always load both.
+Without it RC2 fails with `VANILLAPDF_ERROR_NOT_SUPPORTED`; MD2/MD4 signatures are still reported `SignatureStatus_Invalid` and MD4/MDC2/Whirlpool signing fails with a generic crypto error (#568). It is missing when the library is built with `-DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=OFF`, when the runtime policy is `LegacyAlgorithmsPolicy_Disabled`, or when OpenSSL cannot find the module: with the default `Optional` policy that only logs a warning, `Required` fails `CryptoUtils_Initialize` instead. `CryptoUtils_GetLegacyAlgorithmsAvailable` tells which.
 
-Tests needing the provider are gated on the option: unit tests use `VANILLAPDF_TEST_OPENSSL_LEGACY`, and the `Tools.sign/verify.legacy-rc2-key` tests are only registered with it ON. The testdata corpus holds no RC2 material, so every corpus test runs in the default build.
+With a **shared** OpenSSL the provider is a separate module (`legacy.dll`/`legacy.so`) looked up in a directory fixed at OpenSSL build time; the dynamic vcpkg triplets have no usable one, so point `OPENSSL_MODULES` at `<build>/vcpkg_installed/<triplet>/bin` (the test environment does this automatically). A static OpenSSL compiles the provider in. `CryptoUtils_Cleanup` unloads only the providers the library loaded — it never calls `OPENSSL_cleanup`, so the library can be initialized again with a different policy.
+
+Tests: `LegacyAlgorithmsPolicyTest` covers every policy in one binary; `VANILLAPDF_TEST_OPENSSL_LEGACY_PROVIDER` (defined when the option is ON) switches the expectations for builds without the provider, covered by the nightly `win.2025-x64-no-openssl-legacy` row. The `Tools.sign/verify.legacy-rc2-key` tests are only registered with the option ON. The testdata corpus holds no RC2 material.
 
 ## Test Failures
 

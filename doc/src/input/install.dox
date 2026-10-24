@@ -300,20 +300,28 @@ OpenSSL default provider.
 
 \subsection install_openssl_legacy Legacy Provider
 
-The library does not load the OpenSSL 3 \c legacy provider by default. It is
-needed only for RC2 envelopes of certificate encrypted documents, PKCS#12 key
-files protected with RC2 or RC4, and MD2 or MD4 signatures, which otherwise fail
-with \c VANILLAPDF_ERROR_NOT_SUPPORTED. Configure with
-\c -DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=ON to load it, which is intended
-for a statically linked OpenSSL, as in the NuGet packages. Applications that
-share OpenSSL with the library, such as vcpkg and distribution package users,
-load the providers themselves instead:
+The OpenSSL 3 \c legacy provider supplies RC2 envelopes of certificate encrypted
+documents and PKCS#12 key files protected with RC2 or RC4, which otherwise fail
+with \c VANILLAPDF_ERROR_NOT_SUPPORTED, and MD2 or MD4 signatures, which otherwise
+do not verify. The library loads it by default.
+
+Configure with \c -DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=OFF to leave it out
+entirely. At runtime the legacy algorithms policy of \ref CryptoSettingsHandle,
+applied with \ref CryptoUtils_Initialize before any other call, chooses between
+\ref LegacyAlgorithmsPolicy_Optional (the default: load it, continue without it
+when it cannot be loaded), \ref LegacyAlgorithmsPolicy_Required (fail the
+initialization instead) and \ref LegacyAlgorithmsPolicy_Disabled (do not load it):
 \code{.c}
-OSSL_PROVIDER_load(NULL, "legacy");
-OSSL_PROVIDER_load(NULL, "default");
+CryptoSettingsHandle* settings = NULL;
+CryptoSettings_Create(&settings);
+CryptoSettings_SetLegacyAlgorithmsPolicy(settings, LegacyAlgorithmsPolicy_Required);
+CryptoUtils_Initialize(settings);
+CryptoSettings_Release(settings);
 \endcode
-Both are needed, as loading any provider explicitly stops OpenSSL from
-activating the default provider on its own. A legacy key file can also be
+A shared OpenSSL loads the provider as a separate module from a directory fixed
+when OpenSSL was built. With a dynamic vcpkg triplet that directory does not
+exist on the target machine, so point the \c OPENSSL_MODULES environment variable
+at the directory holding \c legacy.dll. A legacy key file can also be
 re-exported with AES:
 \code{.bash}
 openssl pkcs12 -legacy -in old.pfx -nodes | openssl pkcs12 -export -out new.pfx
