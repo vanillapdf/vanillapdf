@@ -143,6 +143,13 @@ if(VANILLAPDF_ENABLE_LICENSING)
     target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_ENABLE_LICENSING)
 endif()
 
+# Mirror the library definition, which is private to the vanillapdf target.
+# The tests read OPENSSL_VERSION_NUMBER, so they also need the OpenSSL headers.
+if(VANILLAPDF_ENABLE_ENCRYPTION)
+    target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_HAVE_OPENSSL)
+    target_include_directories(vanillapdf.unittest PRIVATE ${OPENSSL_INCLUDE_DIR})
+endif()
+
 # We do not need unit test project to be shipped
 #install(TARGETS vanillapdf.unittest
 #	RUNTIME DESTINATION bin
