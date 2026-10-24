@@ -93,5 +93,17 @@ void DocumentSignatureSettings::SetSigningTime(DatePtr value) {
     m_time = value;
 }
 
+types::size_type DocumentSignatureSettings::GetReservedSignatureSize() const {
+    return m_reserved_signature_size;
+}
+
+void DocumentSignatureSettings::SetReservedSignatureSize(types::size_type value) {
+    if (value == 0) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The reserved signature size shall be greater than zero");
+    }
+
+    m_reserved_signature_size = value;
+}
+
 } // semantics
 } // vanillapdf

@@ -19,6 +19,8 @@
 #include "syntax/exceptions/syntax_exceptions.h"
 
 #include "semantics/utils/semantic_utils.h"
+
+#include "utils/math_utils.h"
 #include "semantics/utils/document_signer.h"
 #include "semantics/utils/document_encryption_settings.h"
 
@@ -660,7 +662,7 @@ void Document::MergePageDestinations(DocumentPtr other, PageObjectPtr other_page
     }
 }
 
-void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
+syntax::DictionaryObjectPtr Document::CreateSignatureDictionary(DocumentSignatureSettingsPtr options) {
 
     OutputPointer<ISigningKeyPtr> key;
     OutputPointer<syntax::HexadecimalStringObjectPtr> certificate;
@@ -675,8 +677,6 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     bool has_name = options->GetName(name);
     bool has_location = options->GetLocation(location);
     bool has_reason = options->GetReason(reason);
-
-    auto digest = options->GetDigest();
 
     if (!has_key) {
         LOG_ERROR_AND_THROW(InvalidParameterException, "Signing key is not set");
@@ -718,8 +718,14 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     ArrayObjectPtr<IntegerObjectPtr> byte_ranges;
     byte_ranges->AddAttribute(byte_range_attribute);
 
-    // TODO hardcoded value
-    std::string contents_value(32768, ' ');
+    // The placeholder lies inside the signed range, so its size is fixed here
+    // rather than measured afterwards. The signature is serialized as a
+    // hexadecimal string, hence two characters per byte plus the delimiters.
+    auto reserved_signature_size = options->GetReservedSignatureSize();
+    auto reserved_hex_size = SafeAddition<types::size_type>(reserved_signature_size, reserved_signature_size);
+    auto contents_placeholder_size = SafeAddition<types::size_type>(reserved_hex_size, 2);
+
+    std::string contents_value(contents_placeholder_size, ' ');
     SerializationOverrideAttributePtr contents_attribute = make_deferred<SerializationOverrideAttribute>(contents_value);
     HexadecimalStringObjectPtr signature_contents = make_deferred<HexadecimalStringObject>();
     signature_contents->AddAttribute(contents_attribute);
@@ -731,6 +737,46 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     dictionary_entry->SetReference(signature_dictionary);
     dictionary_entry->SetFile(m_holder);
     dictionary_entry->SetInitialized();
+
+    return signature_dictionary;
+}
+
+void Document::UpdateSignatureFlags(InteractiveFormPtr interactive_form) {
+    auto signature_flags = interactive_form->CreateSignatureFlags();
+    signature_flags->SetSignaturesExist(true);
+    signature_flags->SetAppendOnly(true);
+}
+
+void Document::WriteSignedDocument(FilePtr destination, syntax::DictionaryObjectPtr signature_dictionary, DocumentSignatureSettingsPtr options) {
+
+    OutputPointer<ISigningKeyPtr> key;
+    bool has_key = options->GetSigningKey(key);
+    if (!has_key) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Signing key is not set");
+    }
+
+    auto digest = options->GetDigest();
+
+    // TODO:
+    // Move the signature creation logic to new callback IFileWriterObserver::OnAfterXrefClone
+    // The reason for this is to allow subsequent signing of the same document in case error occurs
+
+    DocumentSignerPtr signer = make_deferred<DocumentSigner>(key, digest, signature_dictionary);
+
+    FileWriter writer;
+    writer.Subscribe(signer);
+
+    // TODO:
+    // WriteIncremental is currently too complicated, let's switch to Write
+    // Incremental updates needs to be able to handle removed objects, object stream updates, etc.
+    // writer.WriteIncremental(m_holder, destination);
+
+    writer.Write(m_holder, destination);
+}
+
+void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
+
+    auto signature_dictionary = CreateSignatureDictionary(options);
 
     // Create signature annotation
     OutputCatalogPtr catalog;
@@ -794,10 +840,7 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
         interactive_form = CreateAcroForm(catalog);
     }
 
-    // Update signature flags
-    auto signature_flags = interactive_form->CreateSignatureFlags();
-    signature_flags->SetSignaturesExist(true);
-    signature_flags->SetAppendOnly(true);
+    UpdateSignatureFlags(interactive_form);
 
     // The signature field joins the hierarchy the way any field does -
     // through the tree, so that a tree the caller already holds sees it
@@ -824,21 +867,61 @@ void Document::Sign(FilePtr destination, DocumentSignatureSettingsPtr options) {
     auto signature_field = Field::Create(signature_annotation);
     field_tree->AddRootChild(signature_field);
 
-    // TODO:
-    // Move the signature creation logic to new callback IFileWriterObserver::OnAfterXrefClone
-    // The reason for this is to allow subsequent signing of the same document in case error occurs
+    WriteSignedDocument(destination, signature_dictionary, options);
+}
 
-    DocumentSignerPtr signer = make_deferred<DocumentSigner>(key, digest, signature_dictionary);
+void Document::SignField(FilePtr destination, std::string_view qualified_name, DocumentSignatureSettingsPtr options) {
 
-    FileWriter writer;
-    writer.Subscribe(signer);
+    OutputCatalogPtr catalog;
+    if (!GetDocumentCatalog(catalog)) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Cannot sign a field in a document without a catalog");
+    }
 
-    // TODO:
-    // WriteIncremental is currently too complicated, let's switch to Write
-    // Incremental updates needs to be able to handle removed objects, object stream updates, etc.
-    // writer.WriteIncremental(m_holder, destination);
+    OuputInteractiveFormPtr interactive_form;
+    if (!catalog->AcroForm(interactive_form)) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "The document has no interactive form");
+    }
 
-    writer.Write(m_holder, destination);
+    OutputFieldTreePtr field_tree;
+    if (!interactive_form->GetFieldTree(field_tree)) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "The interactive form has no field hierarchy");
+    }
+
+    // The signed file is written whole, so an existing signature could not survive it
+    auto field_count = field_tree->GetFieldCount();
+    for (types::size_type index = 0; index < field_count; ++index) {
+        auto existing_field = field_tree->GetField(index);
+        if (existing_field->GetFieldType() != Field::Type::Signature) {
+            continue;
+        }
+
+        auto existing_dictionary = existing_field->GetObject();
+        if (existing_dictionary->Contains(constant::Name::V) && !syntax::ObjectUtils::IsType<syntax::NullObjectPtr>(existing_dictionary->Find(constant::Name::V))) {
+            LOG_ERROR_AND_THROW(NotSupportedException, "The document already carries a signature - signing as an incremental update is not supported yet");
+        }
+    }
+
+    // Resolving the field here is what establishes that it belongs to this
+    // document and is reachable from the form - neither has to be checked
+    OuputFieldPtr field;
+    if (!field_tree->TryFindField(qualified_name, field)) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "The document has no field named \"{}\"", qualified_name);
+    }
+
+    FieldPtr found_field = field;
+    if (found_field->GetFieldType() != Field::Type::Signature) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The field \"{}\" is not a signature field", qualified_name);
+    }
+
+    auto field_dictionary = found_field->GetObject();
+    auto signature_dictionary = CreateSignatureDictionary(options);
+
+    auto signature_dictionary_reference = make_deferred<syntax::IndirectReferenceObject>(signature_dictionary);
+    field_dictionary->Insert(constant::Name::V, signature_dictionary_reference, true);
+
+    UpdateSignatureFlags(interactive_form);
+
+    WriteSignedDocument(destination, signature_dictionary, options);
 }
 
 void Document::AddEncryption(DocumentEncryptionSettingsPtr settings) {
