@@ -579,10 +579,66 @@ XrefStreamPtr Parser::ParseXrefStream(
     auto field2_size = fields->GetValue(1);
     auto field3_size = fields->GetValue(2);
 
+    types::big_int field1_width = field1_size->GetIntegerValue();
+    types::big_int field2_width = field2_size->GetIntegerValue();
+    types::big_int field3_width = field3_size->GetIntegerValue();
+
+    // A field can never be wider than the value it is read into. The widths are
+    // stream-level constants declared in /W, so they are validated once here
+    // rather than on every entry, and each field is named so the error points at it.
+    const types::big_int MAXIMUM_FIELD_WIDTH = sizeof(types::big_uint);
+
+    if (field1_width < 0 || field1_width > MAXIMUM_FIELD_WIDTH) {
+        LOG_ERROR_AND_THROW(ParseException, "Unsupported cross-reference stream type field width {}", field1_width);
+    }
+
+    if (field2_width < 0 || field2_width > MAXIMUM_FIELD_WIDTH) {
+        LOG_ERROR_AND_THROW(ParseException, "Unsupported cross-reference stream offset field width {}", field2_width);
+    }
+
+    if (field3_width < 0 || field3_width > MAXIMUM_FIELD_WIDTH) {
+        LOG_ERROR_AND_THROW(ParseException, "Unsupported cross-reference stream generation field width {}", field3_width);
+    }
+
+    // 7.5.8.2 Cross-reference stream dictionary, Table 17
+    // The three widths are the byte lengths of the type, offset and generation
+    // fields, so their sum is the stride of a single entry. A zero stride would
+    // decouple the entry count from the body length: a stream of a few hundred
+    // bytes could then declare millions of entries and force that many
+    // allocations. Every entry occupies at least one byte.
+    if (field1_width + field2_width + field3_width == 0) {
+        LOG_ERROR_AND_THROW(ParseException, "Cross-reference stream declares zero-width entries in /W");
+    }
+
     bool contains_self = false;
 
     // Iterate over entries
     auto it = body.begin();
+
+    // Reads a single big-endian cross-reference field of the given width. A width
+    // of zero means the field is not present and takes its default value.
+    //
+    // The declared entry count and the decoded body length are independent values,
+    // both taken from the document, therefore every byte is bounds checked instead
+    // of letting the iterator run past the end of the buffer.
+    auto read_field = [&it, &body](types::big_int width, types::big_uint default_value) {
+        if (width == 0) {
+            return default_value;
+        }
+
+        types::big_uint result = 0;
+        for (types::big_int i = 0; i < width; ++i) {
+            if (it == body.end()) {
+                LOG_ERROR_AND_THROW(ParseException, "Cross-reference stream body is shorter than the declared entry count");
+            }
+
+            result = (result << 8) | static_cast<unsigned char>(*it);
+            it += 1;
+        }
+
+        return result;
+    };
+
     for (decltype(index_size) i = 0; i < index_size; i += 2) {
 
         auto subsection_index = index->GetValue(i);
@@ -590,43 +646,70 @@ XrefStreamPtr Parser::ParseXrefStream(
 
         for (auto idx = 0; idx < *subsection_size; idx++) {
 
-            IntegerObject field1;
-            for (int j = 0; j < *field1_size; ++j) {
-                unsigned char next_value = reinterpret_cast<unsigned char&>(*it);
-                field1 = (field1 << 8) + next_value;
-                it++;
-            }
-
-            assert(field1 == 0 || field1 == 1 || field1 == 2);
-
-            IntegerObject field2;
-            for (int j = 0; j < *field2_size; ++j) {
-                unsigned char next_value = reinterpret_cast<unsigned char&>(*it);
-                field2 = (field2 << 8) + next_value;
-                it++;
-            }
-
-            IntegerObject field3;
-            for (int j = 0; j < *field3_size; ++j) {
-                unsigned char next_value = reinterpret_cast<unsigned char&>(*it);
-                field3 = (field3 << 8) + next_value;
-                it++;
-            }
+            // 7.5.8.2 Cross-reference stream dictionary, Table 17
+            // "A value of zero for an element in the W array indicates that the corresponding
+            // field shall not be present in the stream, and the default value shall be used,
+            // if there is one. [...] If the first element is zero, the type field shall not be
+            // present, and shall default to Type 1."
+            auto field1 = read_field(field1_width, 1);
+            auto field2 = read_field(field2_width, 0);
+            auto field3 = read_field(field3_width, 0);
 
             types::big_uint obj_number = SafeAddition<types::big_uint, types::big_uint, int>(*subsection_index, idx);
 
-            if (0 == field1) {
-                XrefFreeEntryPtr entry = make_deferred<XrefFreeEntry>(obj_number, field3.SafeConvert<types::ushort>(), field2);
+            // 7.5.4 Cross-reference table
+            // "The first entry in the table (object number 0) shall always be free and shall have
+            // a generation number of 65,535" and "The maximum generation number is 65,535; when a
+            // cross-reference entry reaches this value, it shall never be reused."
+            //
+            // Producers declaring a generation field wider than two bytes in /W store that value
+            // with all bits set across the whole declared width, which no longer fits the 16-bit
+            // generation number and used to abort the parse of the whole document.
+            // Seen in the wild with /W [1 4 4], where the free list head carries 0xFFFFFFFF.
+            //
+            // Field 3 only holds a generation number for types 0 and 1,
+            // for type 2 it is an index within the object stream.
+            auto gen_number = field3;
+            if ((field1 == 0 || field1 == 1) && gen_number > constant::MAX_GENERATION_NUMBER) {
+                spdlog::warn("Invalid object generation number {}, converting", gen_number);
+                gen_number = constant::MAX_GENERATION_NUMBER;
+            }
+
+            if (field1 == 0) {
+                XrefFreeEntryPtr entry = make_deferred<XrefFreeEntry>(obj_number, ValueConvertUtils::SafeConvert<types::ushort>(gen_number), field2);
                 entry->SetFile(_file);
                 result->Add(entry);
                 continue;
             }
 
-            if (1 == field1) {
-                XrefUsedEntryPtr entry = make_deferred<XrefUsedEntry>(obj_number, field3.SafeConvert<types::ushort>(), field2);
+            if (field1 == 1) {
+
+                // 7.5.8.3 Cross-reference stream data, Table 18
+                // Field 2 of a type 1 entry is "The byte offset of the object,
+                // starting from the beginning of the PDF file".
+                //
+                // Annex C.1 states that the standard "does not restrict the size or quantity of
+                // things described in the PDF file format", while "a particular PDF processor
+                // running on a particular device and in a particular operating environment will
+                // always have practical limits". The declared width can therefore carry a value
+                // larger than the signed offset that addresses the whole document, and no seek
+                // could ever reach it. Such an entry is left out, so that reading the object
+                // reports it as missing.
+                //
+                // Reaching this limit takes a document larger than 8 exbibytes, roughly 9.2
+                // exabytes, which no storage in reach produces today. Should documents of that
+                // size ever become real, widening this branch is not enough on its own, the
+                // offset has to grow in the xref entries and in the whole seeking interface.
+                if (!ValueConvertUtils::IsInRange<types::stream_offset>(field2)) {
+                    spdlog::warn("Skipping cross-reference stream entry {}, the offset {} is beyond the addressable range", obj_number, field2);
+                    continue;
+                }
+
+                auto entry_gen_number = ValueConvertUtils::SafeConvert<types::ushort>(gen_number);
+                XrefUsedEntryPtr entry = make_deferred<XrefUsedEntry>(obj_number, entry_gen_number, ValueConvertUtils::SafeConvert<types::stream_offset>(field2));
 
                 // This case is when XrefStream contains reference to itself
-                if (obj_number == stream_obj_number && field3.SafeConvert<types::ushort>() == stream_gen_number) {
+                if (obj_number == stream_obj_number && entry_gen_number == stream_gen_number) {
                     entry->SetReference(stream);
                     entry->SetInitialized();
                     contains_self = true;
@@ -637,14 +720,18 @@ XrefStreamPtr Parser::ParseXrefStream(
                 continue;
             }
 
-            if (2 == field1) {
-                XrefCompressedEntryPtr entry = make_deferred<XrefCompressedEntry>(obj_number, static_cast<types::ushort>(0), field2, field3.SafeConvert<types::size_type>());
+            if (field1 == 2) {
+                XrefCompressedEntryPtr entry = make_deferred<XrefCompressedEntry>(obj_number, static_cast<types::ushort>(0), field2, ValueConvertUtils::SafeConvert<types::size_type>(field3));
                 entry->SetFile(_file);
                 result->Add(entry);
                 continue;
             }
 
-            throw ParseException("Unknown entry type");
+            // 7.5.8.3 Cross-reference stream data
+            // "In PDF 1.5 through PDF 2.0, only types 0, 1, and 2 are allowed. Any other value
+            // shall be interpreted as a reference to the null object, thus permitting new entry
+            // types to be defined in the future."
+            spdlog::warn("Skipping cross-reference stream entry {} of unknown type {}", obj_number, field1);
         }
     }
 
@@ -878,8 +965,17 @@ XrefChainPtr Parser::FindAllObjects(void) {
                 auto stream_type = stream_header->FindAs<NameObjectPtr>(constant::Name::Type);
 
                 if (constant::Name::XRef == stream_type) {
-                    auto xref_stream = ParseXrefStream(stream, obj_number, gen_number);
-                    result->Append(xref_stream);
+
+                    // This is already the recovery path, every object has been found by scanning
+                    // the whole document. Parsing the cross-reference stream only recovers the
+                    // additional entries for compressed objects, so a damaged one degrades the
+                    // result instead of failing the document that we were asked to repair.
+                    try {
+                        auto xref_stream = ParseXrefStream(stream, obj_number, gen_number);
+                        result->Append(xref_stream);
+                    } catch (ExceptionBase& e) {
+                        spdlog::warn("Could not parse cross-reference stream in object {} {}: {}", obj_number, gen_number, e.what());
+                    }
                 }
             }
         }
