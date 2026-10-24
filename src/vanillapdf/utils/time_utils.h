@@ -1,9 +1,7 @@
 #ifndef _TIME_UTILS_H
 #define _TIME_UTILS_H
 
-#include "utils/buffer.h"
-
-#include <string>
+#include <cstdint>
 
 namespace vanillapdf {
 
@@ -51,7 +49,6 @@ private:
 class TimeUtils {
 public:
     static TimeInfo GetCurrentTime();
-    static BufferPtr GetCurrentTimeString(const char * format);
 
 private:
     TimeUtils() = default;

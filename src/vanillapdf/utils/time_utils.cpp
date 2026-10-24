@@ -5,8 +5,6 @@
 #include <chrono>
 #include <ctime>
 #include <mutex>
-#include <iomanip>
-#include <sstream>
 
 namespace vanillapdf {
 
@@ -54,24 +52,6 @@ TimeInfo TimeUtils::GetCurrentTime() {
     //}
 
     return result;
-}
-
-BufferPtr TimeUtils::GetCurrentTimeString(const char * format) {
-    TimeInfo time = GetCurrentTime();
-
-    tm time_info;
-    time_info.tm_year = time.GetYear() - 1900;
-    time_info.tm_mon = time.GetMonth() - 1;
-    time_info.tm_mday = time.GetDay();
-    time_info.tm_hour = time.GetHour();
-    time_info.tm_min = time.GetMinute();
-    time_info.tm_sec = time.GetSecond();
-
-    std::ostringstream oss;
-    oss << std::put_time(&time_info, format);
-    auto str = oss.str();
-
-    return make_deferred_container<Buffer>(str);
 }
 
 } // vanillapdf

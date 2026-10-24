@@ -8,7 +8,6 @@
 #include "utils/util.h"
 
 #include <cassert>
-#include <iomanip>
 #include <algorithm>
 
 namespace vanillapdf {

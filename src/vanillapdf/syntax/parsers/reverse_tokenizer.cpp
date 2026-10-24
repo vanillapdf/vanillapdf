@@ -7,7 +7,6 @@
 
 #include <cassert>
 #include <algorithm>
-#include <iomanip>
 
 namespace vanillapdf {
 namespace syntax {
