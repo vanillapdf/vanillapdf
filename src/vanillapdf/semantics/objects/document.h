@@ -68,9 +68,9 @@ public:
     // is reachable from the interactive form. The name is the fully qualified
     // one, in the form FieldTree::TryFindField takes.
     //
-    // ObjectMissingException when no field of that name exists, and
-    // InvalidParameterException when it is not a signature field or already
-    // carries a signature.
+    // ObjectMissingException when no field of that name exists,
+    // InvalidParameterException when it is not a signature field, and
+    // NotSupportedException when the document already carries a signature.
     void SignField(syntax::FilePtr destination, std::string_view qualified_name, DocumentSignatureSettingsPtr options);
 
     void AddEncryption(DocumentEncryptionSettingsPtr settings);

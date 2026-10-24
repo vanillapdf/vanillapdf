@@ -133,13 +133,13 @@ extern "C"
     * because a partial name may legitimately contain U+0000. Resolving it
     * through the document's own field hierarchy is what establishes that the
     * field belongs to this document and is reachable from the interactive
-    * form.
+    * form. A name shared by several fields resolves to the first in document
+    * order, as with \ref FieldTree_FindField.
     *
     * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when the document has no
     * interactive form, no field hierarchy, or no field of that name.
     * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the field is not a
-    * signature field, or already carries a signature - signing it again would
-    * destroy the existing one, so it is refused rather than overwritten.
+    * signature field.
     * \returns \ref VANILLAPDF_ERROR_NOT_SUPPORTED when the document already
     * carries a signature anywhere - the signed file is written whole, which
     * would invalidate it, and incremental signing is not implemented yet.

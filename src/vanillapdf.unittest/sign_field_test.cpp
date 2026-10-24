@@ -233,6 +233,66 @@ TEST(SignField, SignatureVerifies) {
     EXPECT_EQ(status, SignatureStatus_Valid);
 }
 
+// The name is the fully qualified one, so a field below a group is reached
+// through the group's partial name
+TEST(SignField, SignsFieldBelowGroup) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateDocument(stream, file, document);
+
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> group_dictionary;
+    HandleGuard<ObjectHandle, Object_Release> group_object;
+    HandleGuard<XrefUsedEntryHandle, XrefUsedEntry_Release> group_entry;
+    ASSERT_EQ(DictionaryObject_Create(group_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertPartialName(group_dictionary, "Group");
+    ASSERT_EQ(DictionaryObject_ToObject(group_dictionary, group_object.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_AllocateNewEntry(file, group_entry.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(XrefUsedEntry_SetReference(group_entry, group_object), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FieldHandle, Field_Release> group;
+    ASSERT_EQ(Field_CreateFromDictionary(group_dictionary, group.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<WidgetAnnotationHandle, WidgetAnnotation_Release> widget;
+    HandleGuard<AnnotationHandle, Annotation_Release> annotation;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> field_dictionary;
+    ASSERT_EQ(WidgetAnnotation_CreateFromDocument(document, widget.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(WidgetAnnotation_ToBaseAnnotation(widget, annotation.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Annotation_GetBaseObject(annotation, field_dictionary.out()), VANILLAPDF_ERROR_SUCCESS);
+    InsertName(field_dictionary, "FT", "Sig");
+    InsertPartialName(field_dictionary, "Signature1");
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(Field_CreateFromDictionary(field_dictionary, field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<CatalogHandle, Catalog_Release> catalog;
+    HandleGuard<InteractiveFormHandle, InteractiveForm_Release> form;
+    HandleGuard<FieldTreeHandle, FieldTree_Release> field_tree;
+    ASSERT_EQ(Document_GetCatalog(document, catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_CreateFromDocument(document, form.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_CreateFromDocument(document, field_tree.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_AddRootChild(field_tree, group), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(FieldTree_AddChild(field_tree, group, field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(InteractiveForm_SetFieldTree(form, field_tree), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Catalog_SetAcroForm(catalog, form), VANILLAPDF_ERROR_SUCCESS);
+
+    const std::string name = "Group.Signature1";
+
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> signed_stream;
+    ASSERT_EQ(SignFieldInto(document, name, signed_stream), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FileHandle, File_Release> signed_file;
+    HandleGuard<DocumentHandle, Document_Release> signed_document;
+    HandleGuard<FieldHandle, Field_Release> signed_field;
+    OpenSignedField(signed_stream, name, signed_file, signed_document, signed_field);
+
+    HandleGuard<SignatureFieldHandle, SignatureField_Release> signature_field;
+    ASSERT_EQ(SignatureField_FromField(signed_field, signature_field.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<DigitalSignatureHandle, DigitalSignature_Release> signature;
+    EXPECT_EQ(SignatureField_GetValue(signature_field, signature.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
 TEST(SignField, UnknownNameIsRejected) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;
     HandleGuard<FileHandle, File_Release> file;

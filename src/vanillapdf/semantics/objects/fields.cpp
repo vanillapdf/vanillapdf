@@ -234,6 +234,11 @@ void Field::AddWidget(WidgetAnnotationPtr widget) {
         LOG_ERROR_AND_THROW(InvalidParameterException, "The field and the widget shall be indirect objects");
     }
 
+    // A widget of another document would serialize as a dangling reference
+    if (!_obj->GetFile().Identity(widget_dictionary->GetFile())) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The widget annotation belongs to a different document than the field");
+    }
+
     // /Kids holds either child fields or widgets (12.7.3.1), and a merged field is a widget itself
     if (!IsTerminal() || _obj->Contains(constant::Name::Subtype)) {
         LOG_ERROR_AND_THROW(InvalidParameterException, "The field cannot take widget annotations");

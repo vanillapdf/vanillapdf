@@ -371,7 +371,8 @@ extern "C"
     * indirect references.
     * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the field has
     * child fields or is merged with its widget annotation, when the widget
-    * already belongs to a field, or when either is not an indirect object.
+    * already belongs to a field or to another document, or when either is
+    * not an indirect object.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_AddWidget(FieldHandle* handle, WidgetAnnotationHandle* widget);
 

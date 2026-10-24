@@ -913,18 +913,7 @@ void Document::SignField(FilePtr destination, std::string_view qualified_name, D
         LOG_ERROR_AND_THROW(InvalidParameterException, "The field \"{}\" is not a signature field", qualified_name);
     }
 
-    // /V is inheritable (Table 220), but a signature belongs to the field that
-    // carries it, so only this dictionary counts. An entry present but null is
-    // an unsigned placeholder rather than a signature.
     auto field_dictionary = found_field->GetObject();
-    if (field_dictionary->Contains(constant::Name::V)) {
-        auto existing_value = field_dictionary->Find(constant::Name::V);
-        if (!syntax::ObjectUtils::IsType<syntax::NullObjectPtr>(existing_value)) {
-            LOG_ERROR_AND_THROW(InvalidParameterException,
-                "The field \"{}\" already carries a signature - signing it again would destroy the existing one", qualified_name);
-        }
-    }
-
     auto signature_dictionary = CreateSignatureDictionary(options);
 
     auto signature_dictionary_reference = make_deferred<syntax::IndirectReferenceObject>(signature_dictionary);
