@@ -541,6 +541,8 @@ TEST(DCTDecodeFilter, RejectsOversizedDimensions) {
     EXPECT_EQ(decoded_data_buffer.get(), nullptr);
 }
 
+#if defined(VANILLAPDF_HAVE_OPENJPEG)
+
 TEST(JPXDecodeFilter, Decode) {
 
     const unsigned char INPUT_DATA[] = {
@@ -698,6 +700,29 @@ TEST(JPXDecodeFilter, RejectsOversizedDimensions) {
     EXPECT_EQ(JPXDecodeFilter_Decode(filter_handle, input_data_buffer, decoded_data_buffer.out()), VANILLAPDF_ERROR_IMAGE_CODEC);
     EXPECT_EQ(decoded_data_buffer.get(), nullptr);
 }
+
+#else
+
+// Without OpenJPEG the filter still exists, so documents carrying JPXDecode images
+// can be opened, and only the decode itself reports the missing support.
+TEST(JPXDecodeFilter, DecodeNotSupported) {
+    const unsigned char INPUT_DATA[] = { 0x00, 0x00, 0x00, 0x0C, 0x6A, 0x50, 0x20, 0x20, 0x0D, 0x0A, 0x87, 0x0A };
+
+    HandleGuard<BufferHandle, Buffer_Release> input_data_buffer;
+    HandleGuard<BufferHandle, Buffer_Release> decoded_data_buffer;
+    HandleGuard<JPXDecodeFilterHandle, JPXDecodeFilter_Release> filter_handle;
+
+    ASSERT_EQ(JPXDecodeFilter_Create(filter_handle.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(filter_handle.get(), nullptr);
+
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(INPUT_DATA), sizeof(INPUT_DATA), input_data_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_NE(input_data_buffer.get(), nullptr);
+
+    EXPECT_EQ(JPXDecodeFilter_Decode(filter_handle, input_data_buffer, decoded_data_buffer.out()), VANILLAPDF_ERROR_NOT_SUPPORTED);
+    EXPECT_EQ(decoded_data_buffer.get(), nullptr);
+}
+
+#endif
 
 // --- RunLengthDecode -----------------------------------------------------
 //
