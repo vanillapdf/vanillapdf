@@ -1,9 +1,12 @@
 #include "precompiled.h"
 
 #include "semantics/objects/fields.h"
+#include "semantics/objects/annotations.h"
+#include "semantics/objects/document.h"
 
 #include "utils/buffer.h"
 #include "syntax/objects/dictionary_object.h"
+#include "syntax/objects/string_object.h"
 
 #include "vanillapdf/semantics/c_fields.h"
 #include "implementation/c_helper.h"
@@ -204,6 +207,55 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetChild(FieldHandle* handle,
         auto child = obj->GetChild(index);
         auto ptr = child.AddRefGet();
         *result = reinterpret_cast<FieldHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetWidgetCount(FieldHandle* handle, size_type* result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        *result = obj->GetWidgetCount();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_GetWidget(FieldHandle* handle, size_type index, WidgetAnnotationHandle** result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto widget = obj->GetWidget(index);
+        auto ptr = widget.AddRefGet();
+        *result = reinterpret_cast<WidgetAnnotationHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_AddWidget(FieldHandle* handle, WidgetAnnotationHandle* widget) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    WidgetAnnotation* annotation = reinterpret_cast<WidgetAnnotation*>(widget);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(annotation);
+
+    try {
+        obj->AddWidget(annotation);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Field_RemoveWidget(FieldHandle* handle, WidgetAnnotationHandle* widget, boolean_type* result) {
+    Field* obj = reinterpret_cast<Field*>(handle);
+    WidgetAnnotation* annotation = reinterpret_cast<WidgetAnnotation*>(widget);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(annotation);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        *result = obj->RemoveWidget(annotation) ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -466,6 +518,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION FieldCollection_At(FieldCollectionH
         auto direct = collection->At(at);
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<FieldHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_CreateFromDocument(DocumentHandle* handle, StringObjectHandle* name, SignatureFieldHandle** result) {
+    Document* document = reinterpret_cast<Document*>(handle);
+    StringObjectBase* partial_name = reinterpret_cast<StringObjectBase*>(name);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(partial_name);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto field = SignatureField::Create(document, partial_name);
+        auto ptr = field.AddRefGet();
+        *result = reinterpret_cast<SignatureFieldHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

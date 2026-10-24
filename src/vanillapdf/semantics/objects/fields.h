@@ -94,6 +94,16 @@ public:
     // Table 220 requires /Parent for kids only - and reports false.
     bool GetParent(OuputFieldPtr& result) const;
 
+    // Widget annotations in /Kids order. A field merged with its widget
+    // annotation (12.5.6.19) is its own single widget.
+    types::size_type GetWidgetCount() const;
+    WidgetAnnotationPtr GetWidget(types::size_type index) const;
+
+    // Links the widget through /Kids and /Parent. The page's /Annots is the
+    // page's own and is left to PageAnnotations.
+    void AddWidget(WidgetAnnotationPtr widget);
+    bool RemoveWidget(WidgetAnnotationPtr widget);
+
     // Fully qualified field name: the /T partial names joined with '.' from
     // the root of the hierarchy down to this field (12.7.3.2). Levels without
     // a /T entry do not contribute a segment. Each /T is a text string
@@ -198,6 +208,11 @@ class SignatureField : public Field {
 public:
     explicit SignatureField(syntax::DictionaryObjectPtr root) : Field(root) {}
     virtual Field::Type GetFieldType() const noexcept override { return Field::Type::Signature; }
+
+    // Registers a signature field at the root of the field hierarchy, creating
+    // the form and the hierarchy when missing. The name is what SignField
+    // resolves the field by, so a duplicate is refused here.
+    static SignatureFieldPtr Create(DocumentPtr document, syntax::StringObjectPtr partial_name);
 
     bool Value(OuputDigitalSignaturePtr& result) const;
 };

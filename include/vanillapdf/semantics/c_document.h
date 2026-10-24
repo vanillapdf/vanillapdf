@@ -140,6 +140,9 @@ extern "C"
     * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the field is not a
     * signature field, or already carries a signature - signing it again would
     * destroy the existing one, so it is refused rather than overwritten.
+    * \returns \ref VANILLAPDF_ERROR_NOT_SUPPORTED when the document already
+    * carries a signature anywhere - the signed file is written whole, which
+    * would invalidate it, and incremental signing is not implemented yet.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Document_SignField(DocumentHandle* handle, FileHandle* destination, string_type qualified_name, size_type size, DocumentSignatureSettingsHandle* settings);
 

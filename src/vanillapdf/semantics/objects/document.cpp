@@ -887,6 +887,20 @@ void Document::SignField(FilePtr destination, std::string_view qualified_name, D
         LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "The interactive form has no field hierarchy");
     }
 
+    // The signed file is written whole, so an existing signature could not survive it
+    auto field_count = field_tree->GetFieldCount();
+    for (types::size_type index = 0; index < field_count; ++index) {
+        auto existing_field = field_tree->GetField(index);
+        if (existing_field->GetFieldType() != Field::Type::Signature) {
+            continue;
+        }
+
+        auto existing_dictionary = existing_field->GetObject();
+        if (existing_dictionary->Contains(constant::Name::V) && !syntax::ObjectUtils::IsType<syntax::NullObjectPtr>(existing_dictionary->Find(constant::Name::V))) {
+            LOG_ERROR_AND_THROW(NotSupportedException, "The document already carries a signature - signing as an incremental update is not supported yet");
+        }
+    }
+
     // Resolving the field here is what establishes that it belongs to this
     // document and is reachable from the form - neither has to be checked
     OuputFieldPtr field;

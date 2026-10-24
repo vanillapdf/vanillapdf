@@ -46,6 +46,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
     utils_test.cpp
     digital_signature_test.cpp
     sign_field_test.cpp
+    signature_field_test.cpp
     signature_verifier_test.cpp
     thread_safety_test.cpp
     name_dictionary_test.cpp

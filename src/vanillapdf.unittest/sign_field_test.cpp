@@ -257,8 +257,8 @@ TEST(SignField, NonSignatureFieldIsRejected) {
     EXPECT_EQ(SignFieldInto(document, name, signed_stream), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
-// Signing over an existing signature would destroy it, so it is refused
-TEST(SignField, AlreadySignedFieldIsRejected) {
+// The signed file is written whole, so a document carrying a signature is refused
+TEST(SignField, AlreadySignedDocumentIsRejected) {
     const std::string name = "VisibleSignature";
 
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;
@@ -277,7 +277,7 @@ TEST(SignField, AlreadySignedFieldIsRejected) {
     ASSERT_EQ(Document_OpenFile(signed_file, signed_document.out()), VANILLAPDF_ERROR_SUCCESS);
 
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> resigned_stream;
-    EXPECT_EQ(SignFieldInto(signed_document, name, resigned_stream), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(SignFieldInto(signed_document, name, resigned_stream), VANILLAPDF_ERROR_NOT_SUPPORTED);
 }
 
 TEST(SignField, NullChecks) {
