@@ -64,6 +64,13 @@ private:
     static void ExtractCertificateChain(CMS_ContentInfo* cms, SignatureVerificationResultPtr& result);
 
     /**
+     * \brief Extract common name from the subject of the signing certificate
+     * \param signer_cert Signing certificate
+     * \param result Verification result to populate with the common name
+     */
+    static void ExtractSignerCommonName(X509* signer_cert, SignatureVerificationResultPtr& result);
+
+    /**
      * \brief Extract signing time from CMS authenticated attributes
      * \param cms CMS signature structure
      * \param signing_time Output parameter for extracted time
