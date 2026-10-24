@@ -34,11 +34,14 @@ option(VANILLAPDF_ENABLE_MIMALLOC "Serve the library's C++ heap allocations from
 # The OpenSSL 3 legacy provider supplies algorithms that only old documents and key
 # files use: RC2 envelopes of certificate encrypted documents, RC2 and RC4 protected
 # PKCS#12 key files, MD2 and MD4 signatures. The standard security handler does not
-# need it, RC4 and MD5 are implemented in-house. Intended for builds that link OpenSSL
-# statically, which compile the provider into libcrypto. A shared OpenSSL loads it as
-# a separate module from a directory fixed when OpenSSL was built, which does not
-# exist on most machines that run the library.
-option(VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER "Load the OpenSSL legacy provider for legacy key files, envelopes and signatures" OFF)
+# need it, RC4 and MD5 are implemented in-house. A static OpenSSL compiles the provider
+# into libcrypto. A shared OpenSSL loads it as a separate module from a directory fixed
+# when OpenSSL was built, which may not exist where the library runs (OPENSSL_MODULES
+# overrides it). Whether the provider is loaded, and whether failing to load it is fatal,
+# is the legacy algorithms policy of CryptoSettings at runtime; by default a failure is
+# logged and the library continues without it. Turn the option off to leave the provider
+# out entirely.
+option(VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER "Load the OpenSSL legacy provider for legacy key files, envelopes and signatures" ON)
 
 # Allocation tracking through the debug heap of the Microsoft C runtime, which
 # reports the blocks still allocated when the process exits together with the

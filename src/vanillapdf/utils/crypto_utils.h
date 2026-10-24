@@ -69,25 +69,51 @@ public:
 #endif // VANILLAPDF_HAVE_OPENSSL
 
     /**
-     * \brief Initialize OpenSSL library
+     * \brief Initialize OpenSSL with the default settings, unless already initialized
      *
-     * Thread-safe one-time initialization of OpenSSL.
-     * Loads the legacy and default providers when built with VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER,
-     * otherwise loads no provider explicitly, so the default provider and the process configuration apply.
-     * Registers cleanup handler via atexit().
+     * Called before every cryptographic operation. Does nothing once initialized,
+     * whichever settings the initialization used.
      *
-     * \throws GeneralException if initialization fails
+     * \throws CryptoErrorException if initialization fails
      * \throws NotSupportedException if compiled without OpenSSL
      */
-    static void InitializeOpenSSL();
+    static void EnsureInitialized();
 
     /**
-     * \brief Cleanup OpenSSL library resources
+     * \brief Initialize OpenSSL with explicit settings
      *
-     * Called automatically via atexit() on OpenSSL 3.x.
-     * Cleans up OpenSSL state.
+     * Thread-safe. Loads the providers the settings ask for: with legacy algorithms
+     * enabled the legacy and the default provider, otherwise none explicitly when built
+     * without VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER, so the default provider and
+     * the process configuration apply.
+     *
+     * Does nothing once initialized, whichever settings the initialization used, so that
+     * no operation runs under changing providers. Different settings need Cleanup() first.
+     * Use IsLegacyAlgorithmsAvailable() to check the outcome.
+     *
+     * \throws InvalidParameterException if the legacy algorithms policy is not set
+     * \throws NotSupportedException if the settings require legacy algorithms that cannot be enabled
+     * \throws CryptoErrorException if initialization fails
      */
-    static void CleanupOpenSSL();
+    static void Initialize(const CryptoSettings& settings);
+
+    /**
+     * \brief Check whether the legacy algorithms (RC2, MD2, MD4) can be used
+     *
+     * Initializes OpenSSL with the default settings first, unless already initialized.
+     * Reports the provider as OpenSSL sees it, so a legacy provider the process
+     * configuration loaded counts as well.
+     */
+    static bool IsLegacyAlgorithmsAvailable();
+
+    /**
+     * \brief Unload the providers the initialization loaded
+     *
+     * Optional: OpenSSL releases every loaded provider when the process exits. Does not
+     * shut OpenSSL down, which would affect the whole process and could not be undone,
+     * so the library can be initialized again afterwards.
+     */
+    static void Cleanup();
 
     /**
      * \brief Get last OpenSSL error message
@@ -97,11 +123,11 @@ public:
     static std::string GetLastOpensslError();
 
     /**
-     * rief Check whether the oldest queued OpenSSL error reports an unavailable algorithm
+     * \brief Check whether the oldest queued OpenSSL error reports an unavailable algorithm
      *
      * OpenSSL 3 reports an algorithm no loaded provider implements, such as RC2 without
      * the legacy provider, as unsupported. Leaves the error queue intact.
-     * eturn true if the algorithm is unavailable, false for any other error
+     * \return true if the algorithm is unavailable, false for any other error
      */
     static bool IsAlgorithmUnavailableError();
 

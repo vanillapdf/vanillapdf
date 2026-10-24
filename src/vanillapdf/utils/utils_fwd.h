@@ -40,6 +40,7 @@ class ISigningKey; using ISigningKeyPtr = Deferred<ISigningKey>;
 class ISignatureVerifier; using ISignatureVerifierPtr = Deferred<ISignatureVerifier>;
 class PKCS12Key; using PKCS12KeyPtr = Deferred<PKCS12Key>;
 class TrustedCertificateStore; using TrustedCertificateStorePtr = Deferred<TrustedCertificateStore>;
+class CryptoSettings; using CryptoSettingsPtr = Deferred<CryptoSettings>;
 
 // PDF standard security handler primitives
 class MD5Digest; using MD5DigestPtr = Deferred<MD5Digest>;

@@ -8,14 +8,14 @@ using namespace vanillapdf;
 
 VANILLAPDF_API error_type CALLING_CONVENTION MiscUtils_InitializeOpenSSL() {
     try {
-        CryptoUtils::InitializeOpenSSL();
+        CryptoUtils::EnsureInitialized();
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION MiscUtils_CleanupOpenSSL() {
     try {
-        CryptoUtils::CleanupOpenSSL();
+        CryptoUtils::Cleanup();
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

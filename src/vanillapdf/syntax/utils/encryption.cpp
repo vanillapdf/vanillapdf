@@ -446,7 +446,7 @@ BufferPtr EncryptionUtils::AESEncryptCBC_ZeroIV(const Buffer& key, const Buffer&
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
     if (evp_cipher_ctx == nullptr) {
@@ -500,7 +500,7 @@ BufferPtr EncryptionUtils::AESDecryptCBC_ZeroIV(const Buffer& key, const Buffer&
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
     if (evp_cipher_ctx == nullptr) {
@@ -554,7 +554,7 @@ BufferPtr EncryptionUtils::AESEncryptECB(const Buffer& key, const Buffer& data) 
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
     if (evp_cipher_ctx == nullptr) {
@@ -606,7 +606,7 @@ BufferPtr EncryptionUtils::AESDecryptECB(const Buffer& key, const Buffer& data) 
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
     if (evp_cipher_ctx == nullptr) {
@@ -825,7 +825,7 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
     (void)document_id; (void)permissions;
 
     // Initialize algorithms is required for any calculations
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     if (algorithm == EncryptionAlgorithm::Undefined) {
         LOG_ERROR_AND_THROW(CryptoErrorException, "Could not generate encryption key for Undefined encryption algorithm");
@@ -918,7 +918,7 @@ BufferPtr EncryptionUtils::GenerateUserEncryptionKey(
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
     // Initialize algorithms is required for any calculations
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     if (algorithm == EncryptionAlgorithm::Undefined) {
         LOG_ERROR_AND_THROW(CryptoErrorException, "Could not generate encryption key for Undefined encryption algorithm");
@@ -1306,7 +1306,7 @@ BufferPtr EncryptionUtils::ComputeAuthenticationOwnerData(const Buffer& pad_pass
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
     // Initialize algorithms is required for any calculations
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     auto user_value = encryption_dictionary.FindAs<syntax::StringObjectPtr>(constant::Name::U);
     auto owner_value = encryption_dictionary.FindAs<syntax::StringObjectPtr>(constant::Name::O);
@@ -1370,7 +1370,7 @@ BufferPtr EncryptionUtils::GenerateRandomData(int length) {
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
     // Initialize algorithms is required for any calculations
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     BufferPtr result = make_deferred_container<Buffer>(length);
 
@@ -1397,7 +1397,7 @@ BufferPtr EncryptionUtils::ComputeHashR6(
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     // Step 1: K = SHA-256(password + salt + u_value)
     Buffer initial_input;
@@ -1511,7 +1511,7 @@ EncryptionUtils::EncryptionDataR6 EncryptionUtils::GenerateEncryptionDataR6(
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     // Truncate passwords to 127 bytes max (UTF-8, SASLprep skipped for now)
     // TODO: Add SASLprep (RFC 4013) normalization for full Unicode support
@@ -1643,7 +1643,7 @@ bool EncryptionUtils::CheckKeyR6(
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     // Truncate password to 127 bytes
     Buffer password_truncated(password.begin(), password.begin() + std::min<types::size_type>(password.size(), 127));

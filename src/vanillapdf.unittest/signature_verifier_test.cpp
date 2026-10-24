@@ -865,7 +865,7 @@ TEST_P(WeakAlgorithmTest, AllowWeakAlgorithmsFlag_Integration) {
 // (si->digest_enc_alg) is determined by the key type + digest and is also checked.
 // MD2 is excluded because it's disabled in modern OpenSSL builds.
 static const MessageDigestAlgorithmType WEAK_DIGEST_ALGORITHMS[] = {
-#if defined(VANILLAPDF_TEST_OPENSSL_LEGACY)
+#if defined(VANILLAPDF_TEST_OPENSSL_LEGACY_PROVIDER)
     // MD4 is provided only by the OpenSSL legacy provider
     MessageDigestAlgorithmType_MD4,
 #endif

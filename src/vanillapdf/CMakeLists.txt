@@ -17,6 +17,8 @@ set(VANILLAPDF_C_IMPLEMENTATION_SOURCES
 set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_buffer.cpp
     implementation/utils/c_buffer_array.cpp
+    implementation/utils/c_crypto_settings.cpp
+    implementation/utils/c_crypto_utils.cpp
     implementation/utils/c_encryption.cpp
     implementation/utils/c_errors.cpp
     implementation/utils/c_input_stream.cpp
@@ -381,6 +383,7 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/compiler_utils.h
     utils/constants.h
     utils/conversion_utils.h
+    utils/crypto_settings.h
     utils/crypto_utils.h
     utils/custom_size_allocator.h
     utils/custom_size_vector.h
@@ -772,8 +775,8 @@ if (VANILLAPDF_ENABLE_ENCRYPTION AND OPENSSL_FOUND)
     message(STATUS "OpenSSL ${OPENSSL_VERSION} was found")
 
     if (VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER)
-        target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_LOAD_OPENSSL_LEGACY_PROVIDER)
-        message(STATUS "OpenSSL legacy provider will be loaded")
+        target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_OPENSSL_LEGACY_PROVIDER)
+        message(STATUS "OpenSSL legacy provider support enabled")
     endif ()
 elseif (VANILLAPDF_ENABLE_ENCRYPTION)
     message(FATAL_ERROR "Encryption enabled but OpenSSL not found. Please install OpenSSL or disable encryption with -DVANILLAPDF_ENABLE_ENCRYPTION=OFF")

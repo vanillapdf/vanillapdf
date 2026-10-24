@@ -130,8 +130,6 @@ jobs:
           fi
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
-          # Static vcpkg OpenSSL compiles the legacy provider into libcrypto, no module path involved
-          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=ON"
           cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
       - name: Build ${{ matrix.config.name }}
@@ -216,8 +214,6 @@ jobs:
           fi
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
-          # Static vcpkg OpenSSL compiles the legacy provider into libcrypto, no module path involved
-          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=ON"
           cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
       - name: Build ${{ matrix.config.name }}
@@ -302,8 +298,6 @@ jobs:
           fi
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
-          # Static vcpkg OpenSSL compiles the legacy provider into libcrypto, no module path involved
-          CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=ON"
           CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0"
           CMAKE_ARGS="$CMAKE_ARGS -DVCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}/cmake/overlays"
           cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS

@@ -1,8 +1,10 @@
 #include "precompiled.h"
 
 #include "utils/crypto_utils.h"
+#include "utils/crypto_settings.h"
 #include "utils/buffer.h"
 
+#include <atomic>
 #include <chrono>
 #include <mutex>
 #include <fmt/core.h>
@@ -14,7 +16,7 @@
 #include <openssl/err.h>
 #include <openssl/evp.h>
 
-#if OPENSSL_VERSION_MAJOR >= 3 && defined(VANILLAPDF_LOAD_OPENSSL_LEGACY_PROVIDER)
+#if OPENSSL_VERSION_MAJOR >= 3
     #include <openssl/provider.h>
 #endif
 #endif
@@ -26,9 +28,9 @@ namespace vanillapdf {
 // Static variables for OpenSSL 3.x one-time initialization
 #if OPENSSL_VERSION_MAJOR >= 3
 static std::mutex g_openssl_lock;
-static bool g_openssl_initialized = false;
+static std::atomic<bool> g_openssl_initialized = false;
 
-#if defined(VANILLAPDF_LOAD_OPENSSL_LEGACY_PROVIDER)
+#if defined(VANILLAPDF_HAVE_OPENSSL_LEGACY_PROVIDER)
 static OSSL_PROVIDER* g_legacy_provider = nullptr;
 static OSSL_PROVIDER* g_default_provider = nullptr;
 #endif
@@ -141,9 +143,29 @@ bool CryptoUtils::IsAlgorithmUnavailableError() {
 #endif
 }
 
-void CryptoUtils::InitializeOpenSSL() {
+void CryptoUtils::EnsureInitialized() {
 
 #if OPENSSL_VERSION_MAJOR >= 3
+    if (g_openssl_initialized) {
+        return;
+    }
+#endif
+
+    CryptoSettings default_settings;
+    Initialize(default_settings);
+}
+
+void CryptoUtils::Initialize(const CryptoSettings& settings) {
+
+    auto policy = settings.GetLegacyAlgorithmsPolicy();
+    if (policy == CryptoSettings::LegacyAlgorithmsPolicy::Undefined) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Legacy algorithms policy is not set");
+    }
+
+#if OPENSSL_VERSION_MAJOR >= 3
+
+    // Once initialized, by an earlier call or by the first cryptographic operation, the
+    // providers stay as they are until Cleanup. Callers check IsLegacyAlgorithmsAvailable.
     if (g_openssl_initialized) {
         return;
     }
@@ -152,38 +174,73 @@ void CryptoUtils::InitializeOpenSSL() {
         return;
     }
 
-#if defined(VANILLAPDF_LOAD_OPENSSL_LEGACY_PROVIDER)
+#if defined(VANILLAPDF_HAVE_OPENSSL_LEGACY_PROVIDER)
 
-    // Opted in at build time (VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER) for legacy key files,
-    // envelopes and signatures. Loading any provider explicitly stops OpenSSL from activating
-    // the default provider implicitly, so the default provider has to be loaded as well.
-    g_legacy_provider = OSSL_PROVIDER_load(nullptr, "legacy");
-    if (g_legacy_provider == nullptr) {
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to initialize legacy OSSL provider, {}", GetLastOpensslError());
+    if (policy == CryptoSettings::LegacyAlgorithmsPolicy::Optional || policy == CryptoSettings::LegacyAlgorithmsPolicy::Required) {
+        g_legacy_provider = OSSL_PROVIDER_load(nullptr, "legacy");
     }
 
+    // A shared OpenSSL may not find the legacy provider module. Unless the settings require
+    // it that is not fatal: everything else works, and the legacy algorithms report
+    // NotSupported when used.
+    if (g_legacy_provider == nullptr && policy == CryptoSettings::LegacyAlgorithmsPolicy::Required) {
+        LOG_ERROR_AND_THROW(NotSupportedException,
+            "Legacy algorithms are required, but the OpenSSL legacy provider could not be loaded, {}", GetLastOpensslError());
+    }
+
+    if (g_legacy_provider == nullptr && policy == CryptoSettings::LegacyAlgorithmsPolicy::Optional) {
+        spdlog::warn("OpenSSL legacy provider is not available, RC2 and MD2/MD4 are not supported. "
+            "Set OPENSSL_MODULES to the directory of the provider module to enable it, {}", GetLastOpensslError());
+    }
+
+    // Loading any provider explicitly stops OpenSSL from activating the default provider
+    // implicitly, permanently, so even a later initialization without the legacy provider
+    // has to load the default provider itself.
     g_default_provider = OSSL_PROVIDER_load(nullptr, "default");
     if (g_default_provider == nullptr) {
+        if (g_legacy_provider != nullptr) {
+            OSSL_PROVIDER_unload(g_legacy_provider);
+            g_legacy_provider = nullptr;
+        }
+
         LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to initialize default OSSL provider, {}", GetLastOpensslError());
+    }
+
+#else
+
+    if (policy == CryptoSettings::LegacyAlgorithmsPolicy::Required) {
+        LOG_ERROR_AND_THROW(NotSupportedException,
+            "Legacy algorithms are required, but the library was built without VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER");
     }
 
 #endif
 
-    // Without the opt-in no provider is loaded explicitly. The default provider is activated
-    // implicitly, and anything else (legacy, FIPS) is left to the process configuration.
-    // The PDF algorithms the legacy provider used to supply (RC4, MD5) are implemented in-house.
+    // Without the legacy provider built in no provider is loaded explicitly. The default
+    // provider is activated implicitly, and anything else (legacy, FIPS) is left to the
+    // process configuration. RC4 and MD5 of the standard security handler are implemented
+    // in-house and need no provider.
     OpenSSL_add_all_algorithms();
 
+    // No cleanup at exit: OpenSSL releases every loaded provider when the process exits
     g_openssl_initialized = true;
-
-    std::atexit(CryptoUtils::CleanupOpenSSL);
 #else
-    // OpenSSL 1.x - just add algorithms
+    // OpenSSL 1.x has no providers, every compiled-in algorithm is available
     OpenSSL_add_all_algorithms();
 #endif
 }
 
-void CryptoUtils::CleanupOpenSSL() {
+bool CryptoUtils::IsLegacyAlgorithmsAvailable() {
+    EnsureInitialized();
+
+#if OPENSSL_VERSION_MAJOR >= 3
+    return (OSSL_PROVIDER_available(nullptr, "legacy") == 1);
+#else
+    // OpenSSL 1.x has no providers, every compiled-in algorithm is available
+    return true;
+#endif
+}
+
+void CryptoUtils::Cleanup() {
 
 #if OPENSSL_VERSION_MAJOR >= 3
     if (!g_openssl_initialized) {
@@ -194,7 +251,7 @@ void CryptoUtils::CleanupOpenSSL() {
         return;
     }
 
-#if defined(VANILLAPDF_LOAD_OPENSSL_LEGACY_PROVIDER)
+#if defined(VANILLAPDF_HAVE_OPENSSL_LEGACY_PROVIDER)
     if (g_legacy_provider != nullptr) {
         OSSL_PROVIDER_unload(g_legacy_provider);
         g_legacy_provider = nullptr;
@@ -206,7 +263,9 @@ void CryptoUtils::CleanupOpenSSL() {
     }
 #endif
 
-    OPENSSL_cleanup();
+    // No OPENSSL_cleanup: it shuts OpenSSL down for the whole process, including the
+    // application's own use of it, and OpenSSL cannot be initialized again afterwards.
+    // OpenSSL cleans itself up at process exit.
     g_openssl_initialized = false;
 #endif
     // OpenSSL 1.x - no cleanup needed
@@ -229,11 +288,19 @@ bool CryptoUtils::IsAlgorithmUnavailableError() {
 }
 
 
-void CryptoUtils::InitializeOpenSSL() {
+void CryptoUtils::EnsureInitialized() {
     LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
 }
 
-void CryptoUtils::CleanupOpenSSL() {
+void CryptoUtils::Initialize(const CryptoSettings&) {
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
+}
+
+bool CryptoUtils::IsLegacyAlgorithmsAvailable() {
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
+}
+
+void CryptoUtils::Cleanup() {
     // Ignore when OpenSSL support is disabled
 }
 

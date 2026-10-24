@@ -152,7 +152,7 @@ endif()
 # Tests of algorithms served only by the OpenSSL legacy provider expect them
 # to work when the library loads it, and to be reported unavailable otherwise
 if(VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER)
-    target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_TEST_OPENSSL_LEGACY)
+    target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_TEST_OPENSSL_LEGACY_PROVIDER)
 endif()
 
 # Pass licensing flag to test code so it can skip license loading when disabled
