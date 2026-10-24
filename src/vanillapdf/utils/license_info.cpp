@@ -369,7 +369,7 @@ bool LicenseInfo::CheckUpdateExpiration(const std::string& expiration) {
 bool LicenseInfo::CheckCertificateChain(const std::vector<std::string>& certificates) {
 
     // Initialize algorithms is required before validating certificates
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     // Create trusted certificate store
     auto store = X509_STORE_new();

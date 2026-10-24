@@ -72,7 +72,7 @@ X509_STORE* TrustedCertificateStore::GetNativeHandle() const {
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 
 TrustedCertificateStore::TrustedCertificateStoreImpl::TrustedCertificateStoreImpl() {
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     m_store = X509_STORE_new();
     if (!m_store) {

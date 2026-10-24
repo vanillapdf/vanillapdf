@@ -24,7 +24,9 @@ TestEnvironment::~TestEnvironment() {
 
 void TestEnvironment::SetUp() {
 
-    ASSERT_EQ(MiscUtils_InitializeOpenSSL(), VANILLAPDF_ERROR_SUCCESS);
+    HandleGuard<CryptoSettingsHandle, CryptoSettings_Release> crypto_settings;
+    ASSERT_EQ(CryptoSettings_Create(crypto_settings.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(CryptoUtils_Initialize(crypto_settings), VANILLAPDF_ERROR_SUCCESS);
 
 #ifdef VANILLAPDF_ENABLE_LICENSING
     HandleGuard<BufferHandle, Buffer_Release> license_buffer;
@@ -41,5 +43,5 @@ void TestEnvironment::SetUp() {
 
 void TestEnvironment::TearDown() {
     ASSERT_EQ(Logging_Shutdown(), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(MiscUtils_CleanupOpenSSL(), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(CryptoUtils_Cleanup(), VANILLAPDF_ERROR_SUCCESS);
 }

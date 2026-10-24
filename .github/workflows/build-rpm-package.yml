@@ -50,8 +50,8 @@ jobs:
       - name: Build
         run: cmake --build build
 
-      # Rocky 9 OpenSSL restricts weak algorithms (SHA1, MD5, RC4) by default.
-      # Many test PDFs use legacy encryption that requires these algorithms.
+      # The Rocky DEFAULT crypto policy rejects SHA-1, which some signature tests use.
+      # RC4 and MD5 for encrypted PDFs are implemented in-house and need no policy change.
       - name: Enable legacy crypto policies
         run: update-crypto-policies --set LEGACY
 
