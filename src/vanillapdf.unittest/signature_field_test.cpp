@@ -216,6 +216,43 @@ TEST(SignatureField, WidgetOfAnotherDocumentIsRejected) {
     EXPECT_EQ(widget_count, 0u);
 }
 
+// Kids are matched by object number, and a fresh document allocates the same
+// numbers - a widget of another document must not remove this field's own
+TEST(SignatureField, RemovingWidgetOfAnotherDocumentKeepsOwnWidget) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateDocument(stream, file, document);
+
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> other_stream;
+    HandleGuard<FileHandle, File_Release> other_file;
+    HandleGuard<DocumentHandle, Document_Release> other_document;
+    CreateDocument(other_stream, other_file, other_document);
+
+    // The same sequence in both documents, so the widgets share an object number
+    HandleGuard<SignatureFieldHandle, SignatureField_Release> signature_field;
+    HandleGuard<SignatureFieldHandle, SignatureField_Release> other_signature_field;
+    ASSERT_EQ(CreateField(document, "Signature1", signature_field), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(CreateField(other_document, "Signature1", other_signature_field), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<WidgetAnnotationHandle, WidgetAnnotation_Release> widget;
+    HandleGuard<WidgetAnnotationHandle, WidgetAnnotation_Release> other_widget;
+    CreateWidget(document, 200, widget);
+    CreateWidget(other_document, 200, other_widget);
+
+    HandleGuard<FieldHandle, Field_Release> field;
+    ASSERT_EQ(SignatureField_ToField(signature_field, field.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Field_AddWidget(field, widget), VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type removed = VANILLAPDF_RV_TRUE;
+    ASSERT_EQ(Field_RemoveWidget(field, other_widget, &removed), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(removed, VANILLAPDF_RV_FALSE);
+
+    size_type widget_count = 0;
+    ASSERT_EQ(Field_GetWidgetCount(field, &widget_count), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(widget_count, 1u);
+}
+
 // A field merged with its widget annotation is its own single widget
 TEST(SignatureField, MergedFieldIsItsOwnWidget) {
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> stream;

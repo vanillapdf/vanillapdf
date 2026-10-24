@@ -267,6 +267,11 @@ bool Field::RemoveWidget(WidgetAnnotationPtr widget) {
         return false;
     }
 
+    // Kids are matched by object number, which another document may share
+    if (!_obj->GetFile().Identity(widget_dictionary->GetFile())) {
+        return false;
+    }
+
     auto kids = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
     auto kids_size = kids->GetSize();
     for (types::size_type index = 0; index < kids_size; ++index) {

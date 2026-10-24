@@ -381,7 +381,7 @@ extern "C"
     * Detach a widget annotation from the field's /Kids, clearing its /Parent.
     * The page's /Annots entry is left to \ref PageAnnotations_Remove.
     * \param result \ref VANILLAPDF_RV_FALSE when the widget is not a kid of
-    * this field.
+    * this field, including a widget of another document.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_RemoveWidget(FieldHandle* handle, WidgetAnnotationHandle* widget, boolean_type* result);
 

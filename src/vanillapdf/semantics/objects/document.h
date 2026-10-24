@@ -71,6 +71,8 @@ public:
     // ObjectMissingException when no field of that name exists,
     // InvalidParameterException when it is not a signature field, and
     // NotSupportedException when the document already carries a signature.
+    // A failed attempt leaves the unfinished signature in the field, so the
+    // document has to be opened again to retry.
     void SignField(syntax::FilePtr destination, std::string_view qualified_name, DocumentSignatureSettingsPtr options);
 
     void AddEncryption(DocumentEncryptionSettingsPtr settings);

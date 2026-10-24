@@ -143,6 +143,10 @@ extern "C"
     * \returns \ref VANILLAPDF_ERROR_NOT_SUPPORTED when the document already
     * carries a signature anywhere - the signed file is written whole, which
     * would invalidate it, and incremental signing is not implemented yet.
+    *
+    * A failed attempt leaves the unfinished signature in the field, so the
+    * document is refused as already signed afterwards. To retry - with a
+    * larger reserved signature size, for example - open the source again.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Document_SignField(DocumentHandle* handle, FileHandle* destination, string_type qualified_name, size_type size, DocumentSignatureSettingsHandle* settings);
 
