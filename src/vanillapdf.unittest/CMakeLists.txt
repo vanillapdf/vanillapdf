@@ -53,6 +53,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
 # into folders mirroring the library layers - syntax, semantics, contents and utils
 set(VANILLAPDF_UNITTEST_SYNTAX_SOURCES
     syntax/xref_test.cpp
+    syntax/object_stream_test.cpp
 )
 
 set(VANILLAPDF_UNITTEST_HEADERS
