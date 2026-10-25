@@ -3,6 +3,8 @@
 
 #include "utils/streams/input_stream_interface.h"
 
+#include <istream>
+#include <memory>
 #include <mutex>
 
 namespace vanillapdf {

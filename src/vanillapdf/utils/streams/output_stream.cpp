@@ -5,6 +5,8 @@
 
 #include "utils/constants.h"
 
+#include <ostream>
+
 namespace vanillapdf {
 
 OutputStream::OutputStream(std::shared_ptr<std::ostream> stream) : m_stream(stream) {
