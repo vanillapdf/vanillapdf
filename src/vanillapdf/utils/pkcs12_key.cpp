@@ -267,8 +267,13 @@ bool PKCS12Key::PKCS12KeyImpl::ContainsPrivateKey(const Buffer& issuer, const Bu
         return false;
     }
 
+    // ASN1_STRING is opaque since OpenSSL 4.0. The get0 accessor
+    // returns a pointer into the string, which must not be freed.
+    const unsigned char* serial_data = ASN1_STRING_get0_data(serial_asn);
+    int serial_length = ASN1_STRING_length(serial_asn);
+
     Buffer m_issuer(oneline);
-    Buffer m_serial(serial_asn->data, serial_asn->length);
+    Buffer m_serial(serial_data, serial_length);
     return m_issuer.Equals(issuer) && m_serial.Equals(serial);
 
 #else
