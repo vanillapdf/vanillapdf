@@ -5,6 +5,8 @@
 
 #include "utils/constants.h"
 
+#include <istream>
+
 namespace vanillapdf {
 
 InputStream::InputStream(std::shared_ptr<std::istream> stream) : m_stream(stream) {

@@ -45,6 +45,8 @@ set(VANILLAPDF_UNITTEST_SOURCES
     page_tree_test.cpp
     utils_test.cpp
     digital_signature_test.cpp
+    sign_field_test.cpp
+    signature_field_test.cpp
     signature_verifier_test.cpp
     thread_safety_test.cpp
     name_dictionary_test.cpp
@@ -141,6 +143,13 @@ endif()
 # Pass licensing flag to test code so it can skip license loading when disabled
 if(VANILLAPDF_ENABLE_LICENSING)
     target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_ENABLE_LICENSING)
+endif()
+
+# Mirror the library definition, which is private to the vanillapdf target.
+# The tests read OPENSSL_VERSION_NUMBER, so they also need the OpenSSL headers.
+if(VANILLAPDF_ENABLE_ENCRYPTION)
+    target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_HAVE_OPENSSL)
+    target_include_directories(vanillapdf.unittest PRIVATE ${OPENSSL_INCLUDE_DIR})
 endif()
 
 # Mirror the library definition so the JPXDecode tests can expect NotSupported when it is disabled

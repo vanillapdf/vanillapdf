@@ -115,6 +115,33 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCertificate(DocumentSignatureSettingsHandle* handle, HexadecimalStringObjectHandle* value);
 
     /**
+    * \brief
+    * The number of bytes reserved for the signature within the document.
+    *
+    * The signature is written into a fixed-size placeholder that lies inside
+    * the range being signed, so the reservation cannot be measured afterwards
+    * and has to be sufficient up front - a signature that does not fit fails
+    * at the very end of signing.
+    *
+    * The size of a detached CMS signature is dominated by what it carries
+    * rather than by the signature value: an RSA-2048 value is 256 bytes,
+    * while each embedded X.509 certificate costs one to two kilobytes of DER
+    * and an RFC 3161 timestamp token is a nested SignedData with a chain of
+    * its own. The default of 16384 accommodates a signer chain, the signed
+    * attributes and a timestamp with room to spare. Long-term validation
+    * additionally embeds OCSP responses and CRLs, whose size nothing local
+    * bounds, so that case has to raise this.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReservedSignatureSize(DocumentSignatureSettingsHandle* handle, size_type* result);
+
+    /**
+    * \brief \copybrief DocumentSignatureSettings_GetReservedSignatureSize
+    *
+    * Fails with \ref VANILLAPDF_ERROR_PARAMETER_VALUE when \p value is zero.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReservedSignatureSize(DocumentSignatureSettingsHandle* handle, size_type value);
+
+    /**
     * \brief Reinterpret current object as \ref IUnknownHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_ToUnknown(DocumentSignatureSettingsHandle* handle, IUnknownHandle** result);
