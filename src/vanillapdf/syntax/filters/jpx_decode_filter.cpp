@@ -105,6 +105,24 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
         throw ImageCodecErrorException("Failed to read JPEG2000 header");
     }
 
+    // The header has allocated the image, and every step below it can still fail on
+    // a malformed codestream, so the guard is installed before any of them, otherwise
+    // each rejected input leaks one image.
+    SCOPE_GUARD([image]() { opj_image_destroy(image); });
+
+    // The header states the grid before anything is decoded. Checking it here rather
+    // than next to the allocation below matters, because opj_decode fills a sample
+    // buffer per component first, and those are four bytes per sample. By the time the
+    // decoded image is copied out, the memory a rejected size was meant to save has
+    // already been taken.
+    auto declared_row_size = SafeMultiply<size_t, OPJ_UINT32>(image->x1, image->numcomps);
+    auto declared_size = SafeMultiply<size_t, size_t>(declared_row_size, image->y1);
+
+    if (declared_size > constant::MAX_IMAGE_SIZE) {
+        LOG_ERROR_AND_THROW(ImageCodecErrorException, "Declared JPEG2000 image of {} bytes ({}x{}, {} components) exceeds the {} byte limit",
+            declared_size, image->x1, image->y1, image->numcomps, constant::MAX_IMAGE_SIZE);
+    }
+
     if (!opj_set_decode_area(codec, image, parameters.DA_x0, parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)) {
         throw ImageCodecErrorException("Failed to decode JPEG2000 area");
     }
@@ -113,8 +131,6 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     if (!opj_decode(codec, stream, image)) {
         throw ImageCodecErrorException("Failed to decode JPEG2000 image");
     }
-
-    SCOPE_GUARD([image]() { opj_image_destroy(image); });
 
     // TODO: This code hangs the application in the unit tests
     //if (!opj_end_decompress(codec, stream)) {
