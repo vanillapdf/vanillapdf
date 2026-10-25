@@ -152,6 +152,11 @@ if(VANILLAPDF_ENABLE_ENCRYPTION)
     target_include_directories(vanillapdf.unittest PRIVATE ${OPENSSL_INCLUDE_DIR})
 endif()
 
+# Mirror the library definition so the JPXDecode tests can expect NotSupported when it is disabled
+if(VANILLAPDF_ENABLE_JPEG2000)
+    target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_HAVE_OPENJPEG)
+endif()
+
 # We do not need unit test project to be shipped
 #install(TARGETS vanillapdf.unittest
 #	RUNTIME DESTINATION bin
