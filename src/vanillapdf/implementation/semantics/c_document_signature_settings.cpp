@@ -284,6 +284,27 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetCertif
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReservedSignatureSize(DocumentSignatureSettingsHandle* handle, size_type* result) {
+    DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        *result = obj->GetReservedSignatureSize();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReservedSignatureSize(DocumentSignatureSettingsHandle* handle, size_type value) {
+    DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+
+    try {
+        obj->SetReservedSignatureSize(value);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_ToUnknown(DocumentSignatureSettingsHandle* handle, IUnknownHandle** result) {
     return SafeObjectConvert<DocumentSignatureSettings, IUnknown, DocumentSignatureSettingsHandle, IUnknownHandle>(handle, result);
 }

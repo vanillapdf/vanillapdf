@@ -235,6 +235,22 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_Sign(DocumentHandle* handl
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Document_SignField(DocumentHandle* handle, FileHandle* destination, string_type qualified_name, size_type size, DocumentSignatureSettingsHandle* settings) {
+    Document* document = reinterpret_cast<Document*>(handle);
+    File* file = reinterpret_cast<File*>(destination);
+    DocumentSignatureSettings* signature_settings = reinterpret_cast<DocumentSignatureSettings*>(settings);
+
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(document);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(file);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(qualified_name);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(signature_settings);
+
+    try {
+        document->SignField(file, std::string_view(qualified_name, size), signature_settings);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Document_AddEncryption(DocumentHandle* handle, DocumentEncryptionSettingsHandle* settings) {
 
     Document* document = reinterpret_cast<Document*>(handle);

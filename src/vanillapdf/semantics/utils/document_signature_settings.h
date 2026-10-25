@@ -24,6 +24,13 @@ public:
     bool GetReason(OutputPointer<syntax::LiteralStringObjectPtr>& result) const;
     bool GetSigningTime(OutputPointer<DatePtr>& result) const;
 
+    // Bytes reserved for the signature. The /Contents placeholder lies inside
+    // the signed range, so it cannot be measured afterwards - a signature that
+    // does not fit fails at the end of signing. The placeholder derived from
+    // this is value * 2 + 2 characters, hex encoded plus the delimiters.
+    types::size_type GetReservedSignatureSize() const;
+    void SetReservedSignatureSize(types::size_type value);
+
     void SetSigningKey(ISigningKeyPtr value);
     void SetCertificate(syntax::HexadecimalStringObjectPtr value);
     void SetName(syntax::LiteralStringObjectPtr value);
@@ -41,6 +48,11 @@ private:
     OutputPointer<syntax::LiteralStringObjectPtr> m_reason;
 
     OutputPointer<DatePtr> m_time;
+
+    // A detached CMS is dominated by the certificates and timestamp token it
+    // embeds, not by the signature value. Long-term validation embeds OCSP
+    // responses and CRLs on top and has to raise this.
+    types::size_type m_reserved_signature_size = 16384;
 };
 
 } // semantics

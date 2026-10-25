@@ -1,9 +1,16 @@
 #include "precompiled.h"
 
 #include "semantics/objects/fields.h"
+#include "semantics/objects/annotations.h"
+#include "semantics/objects/document.h"
+#include "semantics/objects/catalog.h"
+#include "semantics/objects/interactive_forms.h"
+#include "semantics/objects/field_tree.h"
 
 #include "syntax/exceptions/syntax_exceptions.h"
 #include "syntax/objects/array_object.h"
+#include "syntax/objects/mixed_array_object.h"
+#include "syntax/objects/indirect_reference_object.h"
 #include "syntax/utils/name_constants.h"
 
 #include "utils/buffer.h"
@@ -169,6 +176,122 @@ bool Field::GetParent(OuputFieldPtr& result) const {
 
     result = Create(parent_dictionary);
     return true;
+}
+
+types::size_type Field::GetWidgetCount() const {
+    if (_obj->Contains(constant::Name::Subtype)) {
+        return 1;
+    }
+
+    if (!_obj->Contains(constant::Name::Kids)) {
+        return 0;
+    }
+
+    types::size_type count = 0;
+
+    auto kids = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+    for (auto entry : kids) {
+        syntax::OutputDictionaryObjectPtr kid;
+        if (ClassifyChildEntry(entry, kid) == ChildEntryType::Widget) {
+            count += 1;
+        }
+    }
+
+    return count;
+}
+
+WidgetAnnotationPtr Field::GetWidget(types::size_type index) const {
+    if (_obj->Contains(constant::Name::Subtype) && index == 0) {
+        return make_deferred<WidgetAnnotation>(_obj);
+    }
+
+    if (_obj->Contains(constant::Name::Kids)) {
+        types::size_type current = 0;
+
+        auto kids = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+        for (auto entry : kids) {
+            syntax::OutputDictionaryObjectPtr kid;
+            if (ClassifyChildEntry(entry, kid) != ChildEntryType::Widget) {
+                continue;
+            }
+
+            if (current == index) {
+                return make_deferred<WidgetAnnotation>(kid);
+            }
+
+            current += 1;
+        }
+    }
+
+    LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "Widget index out of range: {}", index);
+}
+
+void Field::AddWidget(WidgetAnnotationPtr widget) {
+    auto widget_dictionary = widget->GetObject();
+
+    // /Kids and /Parent hold indirect references (Table 220)
+    if (!_obj->IsIndirect() || !widget_dictionary->IsIndirect()) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The field and the widget shall be indirect objects");
+    }
+
+    // A widget of another document would serialize as a dangling reference
+    if (!_obj->GetFile().Identity(widget_dictionary->GetFile())) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The widget annotation belongs to a different document than the field");
+    }
+
+    // /Kids holds either child fields or widgets (12.7.3.1), and a merged field is a widget itself
+    if (!IsTerminal() || _obj->Contains(constant::Name::Subtype)) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The field cannot take widget annotations");
+    }
+
+    if (widget_dictionary->Contains(constant::Name::Parent)) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "The widget annotation already belongs to a field");
+    }
+
+    if (!_obj->Contains(constant::Name::Kids)) {
+        syntax::MixedArrayObjectPtr kids;
+        kids->SetFile(_obj->GetFile());
+        kids->SetInitialized();
+
+        _obj->Insert(constant::Name::Kids, kids);
+    }
+
+    auto kids = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+    kids->Append(make_deferred<syntax::IndirectReferenceObject>(widget_dictionary));
+    widget_dictionary->Insert(constant::Name::Parent, make_deferred<syntax::IndirectReferenceObject>(_obj), true);
+}
+
+bool Field::RemoveWidget(WidgetAnnotationPtr widget) {
+    auto widget_dictionary = widget->GetObject();
+    if (!widget_dictionary->IsIndirect() || !_obj->Contains(constant::Name::Kids)) {
+        return false;
+    }
+
+    // Kids are matched by object number, which another document may share
+    if (!_obj->GetFile().Identity(widget_dictionary->GetFile())) {
+        return false;
+    }
+
+    auto kids = _obj->FindAs<syntax::MixedArrayObjectPtr>(constant::Name::Kids);
+    auto kids_size = kids->GetSize();
+    for (types::size_type index = 0; index < kids_size; ++index) {
+        syntax::OutputDictionaryObjectPtr kid;
+        if (ClassifyChildEntry(kids->GetValue(index), kid) != ChildEntryType::Widget) {
+            continue;
+        }
+
+        syntax::DictionaryObjectPtr kid_dictionary = kid;
+        if (kid_dictionary->GetObjectNumber() != widget_dictionary->GetObjectNumber()
+            || kid_dictionary->GetGenerationNumber() != widget_dictionary->GetGenerationNumber()) {
+            continue;
+        }
+
+        kids->Remove(index);
+        widget_dictionary->Remove(constant::Name::Parent);
+        return true;
+    }
+
+    return false;
 }
 
 BufferPtr Field::GetQualifiedName() const {
@@ -475,6 +598,57 @@ bool ChoiceField::GetOptionAt(types::size_type index, syntax::OutputContainableO
 }
 
 // SignatureField properties
+
+SignatureFieldPtr SignatureField::Create(DocumentPtr document, syntax::StringObjectPtr partial_name) {
+
+    OutputCatalogPtr catalog;
+    if (!document->GetDocumentCatalog(catalog)) {
+        LOG_ERROR_AND_THROW(syntax::ObjectMissingException, "The document has no catalog");
+    }
+
+    // Validated before anything is registered, so a refusal leaves nothing behind
+    syntax::DictionaryObjectPtr field_dictionary;
+    field_dictionary->Insert(constant::Name::FT, constant::Name::Sig.Clone());
+
+    auto field = make_deferred<SignatureField>(field_dictionary);
+    field->SetName(partial_name);
+
+    OuputInteractiveFormPtr interactive_form;
+    bool has_form = catalog->AcroForm(interactive_form);
+
+    OutputFieldTreePtr field_tree;
+    bool has_field_tree = has_form && interactive_form->GetFieldTree(field_tree);
+
+    if (has_field_tree) {
+        auto qualified_name = field->GetQualifiedName();
+        if (field_tree->ContainsName(qualified_name->ToStringView())) {
+            LOG_ERROR_AND_THROW(InvalidParameterException, "The document already has a field named \"{}\"", qualified_name->ToStringView());
+        }
+    }
+
+    auto file = document->GetFile();
+
+    syntax::XrefUsedEntryBasePtr field_entry = file->AllocateNewEntry();
+    field_entry->SetReference(field_dictionary);
+    field_entry->SetFile(file);
+    field_entry->SetInitialized();
+
+    field_dictionary->SetFile(file);
+    field_dictionary->SetInitialized();
+
+    if (!has_form) {
+        interactive_form = InteractiveForm::Create(file);
+        catalog->SetAcroForm(interactive_form);
+    }
+
+    if (!has_field_tree) {
+        field_tree = FieldTree::Create(file);
+        interactive_form->SetFieldTree(field_tree);
+    }
+
+    field_tree->AddRootChild(field);
+    return field;
+}
 
 bool SignatureField::Value(OuputDigitalSignaturePtr& result) const {
 

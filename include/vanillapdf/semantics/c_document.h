@@ -118,6 +118,39 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION Document_Sign(DocumentHandle* handle, FileHandle* destination, DocumentSignatureSettingsHandle* settings);
 
     /**
+    * \brief
+    * Digitally signs the document into a signature field that already exists
+    * within it.
+    *
+    * \ref Document_Sign creates an invisible field of its own. This signs into
+    * one the caller has built and attached, which is how a signature gets a
+    * visible appearance - the field carries the widget annotation, its
+    * rectangle and its appearance stream.
+    *
+    * The field is addressed by its fully qualified name rather than by handle,
+    * in the same form \ref FieldTree_FindField takes - the partial field names
+    * (/T entries) joined with '.', UTF-8 encoded, with an explicit size
+    * because a partial name may legitimately contain U+0000. Resolving it
+    * through the document's own field hierarchy is what establishes that the
+    * field belongs to this document and is reachable from the interactive
+    * form. A name shared by several fields resolves to the first in document
+    * order, as with \ref FieldTree_FindField.
+    *
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when the document has no
+    * interactive form, no field hierarchy, or no field of that name.
+    * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the field is not a
+    * signature field.
+    * \returns \ref VANILLAPDF_ERROR_NOT_SUPPORTED when the document already
+    * carries a signature anywhere - the signed file is written whole, which
+    * would invalidate it, and incremental signing is not implemented yet.
+    *
+    * A failed attempt leaves the unfinished signature in the field, so the
+    * document is refused as already signed afterwards. To retry - with a
+    * larger reserved signature size, for example - open the source again.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Document_SignField(DocumentHandle* handle, FileHandle* destination, string_type qualified_name, size_type size, DocumentSignatureSettingsHandle* settings);
+
+    /**
     * \brief Encrypt the document using the specified settings
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Document_AddEncryption(DocumentHandle* handle, DocumentEncryptionSettingsHandle* settings);
