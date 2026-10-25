@@ -7,6 +7,7 @@
 #include "utils/log.h"
 
 #include <chrono>
+#include <cstring>
 
 #if defined(VANILLAPDF_HAVE_OPENSSL)
 #include <openssl/pkcs7.h>
@@ -159,22 +160,31 @@ void SignatureVerifier::ExtractCertificateChain(PKCS7* p7, SignatureVerification
             result->SetSignerCertificate(cert_buf);
 
             // Extract common name from signing certificate
-            X509_NAME* subject = X509_get_subject_name(cert);
+            const X509_NAME* subject = X509_get_subject_name(cert);
             if (!subject) {
                 spdlog::warn("Common name not found in signing certificate");
                 continue;
             }
 
-            // First get the required buffer size
-            int cn_len = X509_NAME_get_text_by_NID(subject, NID_commonName, nullptr, 0);
-            if (cn_len < 0) {
+            // X509_NAME_get_text_by_NID is deprecated since OpenSSL 4.0, so the common name
+            // is read from its name entry. The get0 accessors return pointers into the
+            // certificate, which must not be freed.
+            int cn_index = X509_NAME_get_index_by_NID(subject, NID_commonName, -1);
+            if (cn_index < 0) {
                 spdlog::warn("Failed to get subject name from signing certificate");
                 continue;
             }
 
+            const X509_NAME_ENTRY* cn_entry = X509_NAME_get_entry(subject, cn_index);
+            const ASN1_STRING* cn_string = X509_NAME_ENTRY_get_data(cn_entry);
+
+            const unsigned char* cn_data = ASN1_STRING_get0_data(cn_string);
+            int cn_len = ASN1_STRING_length(cn_string);
+
             // Allocate buffer with exact size needed (+1 for null terminator)
             auto cn_buffer = make_deferred_container<Buffer>(cn_len + 1);
-            X509_NAME_get_text_by_NID(subject, NID_commonName, cn_buffer->data(), cn_len + 1);
+            std::memcpy(cn_buffer->data(), cn_data, cn_len);
+            cn_buffer->data()[cn_len] = 0;
 
             // Convert to BufferPtr (UTF-8 encoded)
             result->SetSignerCommonName(cn_buffer);
@@ -228,7 +238,7 @@ bool SignatureVerifier::ExtractSigningTime(PKCS7* p7, time_t* signing_time) {
     }
 
     // Get the ASN1_TYPE from the attribute
-    ASN1_TYPE* asn1_time = X509_ATTRIBUTE_get0_type(attr, 0);
+    const ASN1_TYPE* asn1_time = X509_ATTRIBUTE_get0_type(attr, 0);
     if (!asn1_time) {
         LOG_ERROR_AND_THROW_GENERAL("Failed to get ASN1_TYPE from signing time attribute");
     }
