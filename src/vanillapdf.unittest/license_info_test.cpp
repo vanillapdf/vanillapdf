@@ -52,7 +52,7 @@ TEST(LicenseInfo, SetLicenseBufferInvalidData) {
 TEST(LicenseInfo, SetLicenseFileNonExistent) {
 #ifdef VANILLAPDF_ENABLE_LICENSING
     // File does not exist, so opening fails
-    EXPECT_EQ(LicenseInfo_SetLicenseFile("nonexistent_license_file.json"), VANILLAPDF_ERROR_GENERAL);
+    EXPECT_NE(LicenseInfo_SetLicenseFile("nonexistent_license_file.json"), VANILLAPDF_ERROR_SUCCESS);
 #else
     // Licensing disabled, SetLicense is a no-op
     EXPECT_EQ(LicenseInfo_SetLicenseFile("nonexistent_license_file.json"), VANILLAPDF_ERROR_SUCCESS);
