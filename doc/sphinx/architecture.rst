@@ -301,10 +301,14 @@ For signing, the standard approach uses PKCS#12 key files
 
    PKCS12KeyHandle* pkcs12 = NULL;
    SigningKeyHandle* key = NULL;
+   DocumentSignatureSettingsHandle* settings = NULL;
 
    PKCS12Key_CreateFromFile("key.p12", "password", &pkcs12);
    PKCS12Key_ToSigningKey(pkcs12, &key);
-   Document_Sign(doc, file, key, settings);
+
+   DocumentSignatureSettings_Create(&settings);
+   DocumentSignatureSettings_SetSigningKey(settings, key);
+   Document_Sign(doc, destination, settings);
 
 When the private key resides on a smart card or HSM, implement
 ``SigningKeyHandle`` directly and provide your own signing logic.

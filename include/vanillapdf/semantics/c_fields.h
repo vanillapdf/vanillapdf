@@ -348,6 +348,45 @@ extern "C"
 
     /**
     * \brief
+    * Get the number of widget annotations of the field - the /Kids entries
+    * that are not child fields. A field merged with its widget annotation
+    * reports one.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetWidgetCount(FieldHandle* handle, size_type* result);
+
+    /**
+    * \brief
+    * Get the widget annotation at the given zero-based index, in /Kids order.
+    * \returns \ref VANILLAPDF_ERROR_OBJECT_MISSING when the index is out of range.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_GetWidget(FieldHandle* handle, size_type index, WidgetAnnotationHandle** result);
+
+    /**
+    * \brief
+    * Attach a widget annotation to the field through /Kids and /Parent.
+    *
+    * The page's /Annots entry is the page's own and is set with
+    * \ref PageAnnotations_Append. Create the widget with
+    * \ref WidgetAnnotation_CreateFromDocument, as both arrays hold
+    * indirect references.
+    * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the field has
+    * child fields or is merged with its widget annotation, when the widget
+    * already belongs to a field or to another document, or when either is
+    * not an indirect object.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_AddWidget(FieldHandle* handle, WidgetAnnotationHandle* widget);
+
+    /**
+    * \brief
+    * Detach a widget annotation from the field's /Kids, clearing its /Parent.
+    * The page's /Annots entry is left to \ref PageAnnotations_Remove.
+    * \param result \ref VANILLAPDF_RV_FALSE when the widget is not a kid of
+    * this field, including a widget of another document.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION Field_RemoveWidget(FieldHandle* handle, WidgetAnnotationHandle* widget, boolean_type* result);
+
+    /**
+    * \brief
     * Get the fully qualified field name.
     *
     * Partial field names (/T entries) joined with '.' from the root of the
@@ -612,6 +651,22 @@ extern "C"
     * \memberof SignatureFieldHandle
     * @{
     */
+
+    /**
+    * \brief
+    * Create a signature field registered within the document and placed at
+    * the root of its field hierarchy, creating the interactive form and the
+    * hierarchy when the document has none.
+    *
+    * The name is the partial field name (/T) in the form \ref Field_SetName
+    * takes; at the root it is also the fully qualified name
+    * \ref Document_SignField takes. The field has no widget yet - attach one
+    * with \ref Field_AddWidget so that viewers show the signature; a
+    * rectangle of zero area makes it invisible.
+    * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the name contains
+    * a PERIOD or a field of that name already exists.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_CreateFromDocument(DocumentHandle* handle, StringObjectHandle* name, SignatureFieldHandle** result);
 
     /**
     * \brief

@@ -5,6 +5,8 @@
 #include "utils/streams/input_stream.h"
 #include "utils/streams/output_stream.h"
 
+#include <istream>
+
 namespace vanillapdf {
 
 #if defined(COMPILER_MICROSOFT_VISUAL_STUDIO)

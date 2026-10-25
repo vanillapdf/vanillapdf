@@ -15,9 +15,6 @@
 #include "syntax/objects/array_object.h"
 
 #include <map>
-// TODO: <sstream> is only here for transitive include compatibility — remove once all
-// downstream files that depend on it transitively add their own explicit includes.
-#include <sstream>
 
 namespace vanillapdf {
 namespace syntax {

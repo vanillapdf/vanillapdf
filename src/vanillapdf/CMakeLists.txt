@@ -221,7 +221,6 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/exceptions.cpp
     utils/library_info.cpp
     utils/license_info.cpp
-    utils/log.cpp
     utils/md5_digest.cpp
     utils/misc_utils.cpp
     utils/pkcs12_key.cpp

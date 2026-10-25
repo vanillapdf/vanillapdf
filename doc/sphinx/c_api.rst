@@ -373,9 +373,68 @@ Common operations
    PKCS12KeyHandle* pkcs12 = NULL;
    SigningKeyHandle* key = NULL;
 
+   DocumentSignatureSettingsHandle* settings = NULL;
+
    PKCS12Key_CreateFromFile("key.p12", "password", &pkcs12);
    PKCS12Key_ToSigningKey(pkcs12, &key);
-   Document_Sign(doc, file, key, settings);
+
+   DocumentSignatureSettings_Create(&settings);
+   DocumentSignatureSettings_SetSigningKey(settings, key);
+   DocumentSignatureSettings_SetDigest(settings, MessageDigestAlgorithmType_SHA256);
+
+   Document_Sign(doc, destination, settings);
+
+``Document_Sign`` creates an invisible signature field of its own on the
+first page.
+
+**Sign a visible signature field:**
+
+A visible signature is a signature field whose widget annotation sits on a
+page with a rectangle and an appearance. The field and the widget are
+separate objects: the field joins the form's field hierarchy and carries the
+signature, the widget is linked to it through ``Field_AddWidget`` and to the
+page through its annotations.
+
+.. code-block:: c
+
+   SignatureFieldHandle* signature_field = NULL;
+   FieldHandle* field = NULL;
+   SignatureField_CreateFromDocument(doc, field_name, &signature_field);
+   SignatureField_ToField(signature_field, &field);
+
+   WidgetAnnotationHandle* widget = NULL;
+   AnnotationHandle* annotation = NULL;
+   WidgetAnnotation_CreateFromDocument(doc, &widget);
+   WidgetAnnotation_ToBaseAnnotation(widget, &annotation);
+
+   RectangleHandle* rect = NULL;
+   Rectangle_Create(&rect);
+   Rectangle_SetLowerLeftXReal(rect, 100);
+   Rectangle_SetLowerLeftYReal(rect, 100);
+   Rectangle_SetUpperRightXReal(rect, 300);
+   Rectangle_SetUpperRightYReal(rect, 160);
+   Annotation_SetRect(annotation, rect);
+
+   /* The appearance is a form XObject the caller draws into */
+   FormXObjectHandle* appearance = NULL;
+   FormXObject_CreateFromDocument(doc, &appearance);
+   Annotation_SetAppearance(annotation, AppearanceType_Normal, appearance);
+
+   /* From PageObject_GetAnnotations, or PageAnnotations_Create and
+      PageObject_SetAnnotations for a page without annotations */
+   PageAnnotations_Append(page_annotations, annotation);
+   Field_AddWidget(field, widget);
+
+   const char* signature_name = "Signature1";
+   Document_SignField(doc, destination, signature_name, strlen(signature_name), settings);
+
+``field_name`` is a ``StringObjectHandle`` holding the partial field name
+(``Signature1`` here). The field sits at the root of the hierarchy, so the
+same name is its fully qualified name, which ``Document_SignField`` resolves
+the field by. The name is UTF-8 with its size in bytes given explicitly,
+because a partial field name may contain U+0000. A document that already carries a signature is refused with
+``VANILLAPDF_ERROR_NOT_SUPPORTED``: the signed file is written whole, which
+would invalidate the existing signature.
 
 **Verify a signature:**
 
