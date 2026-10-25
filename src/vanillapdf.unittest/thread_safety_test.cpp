@@ -1,4 +1,5 @@
 #include "unittest.h"
+#include "handle_guard.h"
 #include "test_data.h"
 
 #include <thread>
@@ -84,6 +85,93 @@ TEST_P(DocumentOpenFileTest, ConcurrentOpenSameFile) {
 
     ASSERT_EQ(File_Release(shared_file), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(InputOutputStream_Release(io_stream), VANILLAPDF_ERROR_SUCCESS);
+}
+
+// Regression test for concurrent open AND release of a document over one
+// shared file.
+//
+// The sibling test above never releases a document while other threads are
+// running - every handle is parked in a vector and released after the join - so
+// the reference counter only ever climbs and never returns to zero during the
+// concurrent phase. That is precisely the window this bug needs, which is why
+// 50 threads x 2000 iterations could not reach it while an open/release cycle
+// reaches it at 2 threads.
+//
+// The failure is a heap corruption, not an assertion: a document whose counter
+// had already reached zero was revived by a weak reference upgrade, leaving two
+// owners of storage that was being torn down. Both eventually delete it. It
+// surfaces as the test host dying (STATUS_HEAP_CORRUPTION / FailFast) with no
+// managed exception, usually while some unrelated test is in flight, so treat
+// any hard crash of this binary as this test failing.
+void OpenReleaseCycleWorker(
+    FileHandle* shared_file,
+    int iterations,
+    std::atomic<int>& success_count,
+    std::atomic<int>& error_count) {
+
+    for (int i = 0; i < iterations; ++i) {
+        DocumentHandle* doc = nullptr;
+        if (Document_OpenFile(shared_file, &doc) != VANILLAPDF_ERROR_SUCCESS || doc == nullptr) {
+            error_count.fetch_add(1);
+            continue;
+        }
+
+        // Touch the document, so a revived instance is actually used
+        // and not merely held
+        CatalogHandle* catalog = nullptr;
+        if (Document_GetCatalog(doc, &catalog) == VANILLAPDF_ERROR_SUCCESS) {
+            Catalog_Release(catalog);
+        }
+
+        Document_Release(doc);
+        success_count.fetch_add(1);
+    }
+}
+
+TEST(DocumentOpenFileThreadSafety, ConcurrentOpenReleaseCycleSameFile) {
+    constexpr int NUM_THREADS = 4;
+    constexpr int ITERATIONS_PER_THREAD = 250;
+
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> shared_file;
+
+    ASSERT_EQ(InputOutputStream_CreateFromMemory(io_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(File_CreateStream(io_stream, "shared_open_release_cycle", shared_file.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    // One cycle up front, so the file materializes whatever it builds lazily on
+    // first use - the xref chain among it - before the threads start racing.
+    std::atomic<int> warmup_success{0};
+    std::atomic<int> warmup_errors{0};
+    OpenReleaseCycleWorker(shared_file.get(), 1, warmup_success, warmup_errors);
+    ASSERT_EQ(warmup_errors.load(), 0);
+
+    std::atomic<int> success_count{0};
+    std::atomic<int> error_count{0};
+
+    std::vector<std::thread> threads;
+    threads.reserve(NUM_THREADS);
+
+    for (int t = 0; t < NUM_THREADS; ++t) {
+        threads.emplace_back(
+            OpenReleaseCycleWorker,
+            shared_file.get(),
+            ITERATIONS_PER_THREAD,
+            std::ref(success_count),
+            std::ref(error_count));
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    EXPECT_EQ(error_count.load(), 0);
+    EXPECT_EQ(success_count.load(), NUM_THREADS * ITERATIONS_PER_THREAD);
+
+    // Deliberately no assertion that every open returned the same instance.
+    // A document that legitimately reached zero references is dead, and the
+    // next open has to build a fresh one - demanding identity here would be
+    // asserting the resurrection this test exists to prevent.
+
 }
 
 std::string ThreadTestParamsName(const ::testing::TestParamInfo<ThreadTestParams>& info) {
