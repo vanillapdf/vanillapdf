@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.20)
 # consumed by a downstream project via find_package.
 #
 # The CI workflow:
-#   1. Installs Homebrew dependencies (openssl@3, jpeg-turbo, zlib, openjpeg)
+#   1. Installs Homebrew dependencies (openssl@4, jpeg-turbo, zlib, openjpeg)
 #   2. Builds and installs vanillapdf using the same flags as the formula
 #   3. Runs this integration test to verify the installation works
 #

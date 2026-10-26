@@ -25,7 +25,7 @@ jobs:
       - name: Install system dependencies
         run: |
           brew update
-          brew install ninja openssl@3 jpeg-turbo zlib openjpeg spdlog nlohmann-json googletest
+          brew install ninja openssl@4 jpeg-turbo zlib openjpeg spdlog nlohmann-json googletest
 
       # The presets enable tests and vanillapdf.tools together; this package
       # build resolves dependencies from Homebrew, which does not provide the
@@ -38,6 +38,7 @@ jobs:
             -DVANILLAPDF_ENABLE_PACKAGING=ON \
             -DVANILLAPDF_ENABLE_TESTS=ON \
             -DVANILLAPDF_ENABLE_ENCRYPTION=ON -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
+            -DOPENSSL_ROOT_DIR="$(brew --prefix openssl@4)" \
             -DVANILLAPDF_ENABLE_JPEG=ON -DVANILLAPDF_EXTERNAL_JPEG=ON \
             -DVANILLAPDF_ENABLE_JPEG2000=ON -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
             -DVANILLAPDF_ENABLE_ZLIB=ON -DVANILLAPDF_EXTERNAL_ZLIB=ON \

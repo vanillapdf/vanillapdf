@@ -179,7 +179,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - name: Install system dependencies
-        run: brew install ninja openssl@3 jpeg-turbo zlib openjpeg
+        run: brew install ninja openssl@4 jpeg-turbo zlib openjpeg
 
       - name: Configure CMake
         working-directory: examples/fetchcontent-integration
@@ -188,6 +188,7 @@ jobs:
           cmake --preset ${{ matrix.preset }} \
             -DFETCHCONTENT_EXAMPLE_VANILLAPDF_GIT_TAG="${{ needs.setup.outputs.git_tag }}" \
             -DFETCHCONTENT_EXAMPLE_EXTERNAL_OPENSSL=ON \
+            -DOPENSSL_ROOT_DIR="$(brew --prefix openssl@4)" \
             -DFETCHCONTENT_EXAMPLE_EXTERNAL_JPEG=ON \
             -DFETCHCONTENT_EXAMPLE_EXTERNAL_OPENJPEG=ON \
             -DFETCHCONTENT_EXAMPLE_EXTERNAL_ZLIB=ON
@@ -388,7 +389,7 @@ jobs:
       - name: Install Homebrew dependencies
         run: |
           brew update
-          brew install ninja openssl@3 jpeg-turbo zlib openjpeg
+          brew install ninja openssl@4 jpeg-turbo zlib openjpeg
 
       - name: Generate formula for current branch
         env:
