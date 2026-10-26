@@ -10,14 +10,14 @@
 
 #include <cstring>
 
-#if defined(VANILLAPDF_HAVE_JPEG)
+#if VANILLAPDF_FEATURE_JPEG
 #include <jpeglib.h>
 #endif
 
 namespace vanillapdf {
 namespace syntax {
 
-#if defined(VANILLAPDF_HAVE_JPEG)
+#if VANILLAPDF_FEATURE_JPEG
 
 struct CustomDestinationManager {
 public:
@@ -119,7 +119,7 @@ J_COLOR_SPACE GetColorSpace(const NameObject& name) {
 
 BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 
-#if defined(VANILLAPDF_HAVE_JPEG)
+#if VANILLAPDF_FEATURE_JPEG
 
     IntegerObjectPtr width;
     IntegerObjectPtr height;
@@ -280,7 +280,7 @@ BufferPtr DCTDecodeFilter::Encode(IInputStreamPtr src, types::stream_size length
 // └────────────────────────────────┴───────────┴─────────┴────────────┘
 BufferPtr DCTDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr parameters/* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 
-#if defined(VANILLAPDF_HAVE_JPEG)
+#if VANILLAPDF_FEATURE_JPEG
 
     jpeg_decompress_struct jpeg = { };
     jpeg_error_mgr err = { };

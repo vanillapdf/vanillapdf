@@ -10,7 +10,7 @@
 
 #include <cstring>
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
 #include <openssl/aes.h>
 #include <openssl/x509.h>
@@ -108,7 +108,7 @@ BufferPtr EncryptionUtils::ComputeMD5(const Buffer& data, types::size_type lengt
 
 BufferPtr EncryptionUtils::ComputeSHA256(const Buffer& data) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     auto evp_md = EVP_sha256();
     auto evp_md_ctx = EVP_MD_CTX_new();
@@ -151,7 +151,7 @@ BufferPtr EncryptionUtils::ComputeSHA256(const Buffer& data) {
 
 BufferPtr EncryptionUtils::ComputeSHA384(const Buffer& data) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     constexpr unsigned int SHA384_LEN = 48;
 
@@ -196,7 +196,7 @@ BufferPtr EncryptionUtils::ComputeSHA384(const Buffer& data) {
 
 BufferPtr EncryptionUtils::ComputeSHA512(const Buffer& data) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     auto evp_md = EVP_sha512();
     auto evp_md_ctx = EVP_MD_CTX_new();
@@ -243,7 +243,7 @@ BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, const Buffer& data) {
 
 BufferPtr EncryptionUtils::AESDecrypt(const Buffer& key, types::size_type key_length, const Buffer& data) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     if (data.size() < static_cast<size_t>(AES_CBC_IV_LENGTH)) {
         LOG_ERROR_AND_THROW(CryptoErrorException, "Cannot find IV for encrypted data");
@@ -344,7 +344,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, const Buffer& data) {
 
 BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_length, const Buffer& data) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     if (data.size() == 0) {
         return BufferPtr();
@@ -444,7 +444,7 @@ BufferPtr EncryptionUtils::AESEncrypt(const Buffer& key, types::size_type key_le
 
 BufferPtr EncryptionUtils::AESEncryptCBC_ZeroIV(const Buffer& key, const Buffer& data) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     CryptoUtils::EnsureInitialized();
 
@@ -498,7 +498,7 @@ BufferPtr EncryptionUtils::AESEncryptCBC_ZeroIV(const Buffer& key, const Buffer&
 
 BufferPtr EncryptionUtils::AESDecryptCBC_ZeroIV(const Buffer& key, const Buffer& data) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     CryptoUtils::EnsureInitialized();
 
@@ -552,7 +552,7 @@ BufferPtr EncryptionUtils::AESDecryptCBC_ZeroIV(const Buffer& key, const Buffer&
 
 BufferPtr EncryptionUtils::AESEncryptECB(const Buffer& key, const Buffer& data) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     CryptoUtils::EnsureInitialized();
 
@@ -604,7 +604,7 @@ BufferPtr EncryptionUtils::AESEncryptECB(const Buffer& key, const Buffer& data) 
 
 BufferPtr EncryptionUtils::AESDecryptECB(const Buffer& key, const Buffer& data) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     CryptoUtils::EnsureInitialized();
 
@@ -819,7 +819,7 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
     uint32_t permissions,
     int32_t revision) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     // These parameters are not used, however I prefer to keep the interface similar to GenerateUserEncryptionKey
     (void)document_id; (void)permissions;
@@ -915,7 +915,7 @@ BufferPtr EncryptionUtils::GenerateUserEncryptionKey(
     int32_t permissions,
     int32_t revision) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     // Initialize algorithms is required for any calculations
     CryptoUtils::EnsureInitialized();
@@ -958,7 +958,7 @@ bool EncryptionUtils::CheckKey(
     int32_t key_length,
     Buffer& decryption_key) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     auto decryption_key_digest = CalculateDecryptionKeyDigest(input, document_id, owner_data, permissions);
 
@@ -995,7 +995,7 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
     const Buffer& document_id,
     int32_t key_length) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(key_length / 8);
     size_t decryption_key_length = std::min(length_bytes, decryption_key_digest->std_size());
@@ -1065,7 +1065,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
     EncryptionAlgorithm algorithm,
     IEncryptionKey& key) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     const EVP_MD* evp_md = nullptr;
     unsigned int expected_final_digest_size = 0;
@@ -1141,7 +1141,7 @@ BufferPtr EncryptionUtils::GetRecipientKey
 
 BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax::StringObjectPtr>& enveloped_data, IEncryptionKey& key) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     auto length = enveloped_data.GetSize();
     for (decltype(length) i = 0; i < length; ++i) {
@@ -1303,7 +1303,7 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
 
 BufferPtr EncryptionUtils::ComputeAuthenticationOwnerData(const Buffer& pad_password, const syntax::DictionaryObject& encryption_dictionary) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     // Initialize algorithms is required for any calculations
     CryptoUtils::EnsureInitialized();
@@ -1367,7 +1367,7 @@ BufferPtr EncryptionUtils::ComputeAuthenticationOwnerData(const Buffer& pad_pass
 
 BufferPtr EncryptionUtils::GenerateRandomData(int length) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     // Initialize algorithms is required for any calculations
     CryptoUtils::EnsureInitialized();
@@ -1395,7 +1395,7 @@ BufferPtr EncryptionUtils::ComputeHashR6(
     const Buffer& salt,
     const Buffer& u_value) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     CryptoUtils::EnsureInitialized();
 
@@ -1509,7 +1509,7 @@ EncryptionUtils::EncryptionDataR6 EncryptionUtils::GenerateEncryptionDataR6(
     const Buffer& owner_password,
     int32_t permissions) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     CryptoUtils::EnsureInitialized();
 
@@ -1641,7 +1641,7 @@ bool EncryptionUtils::CheckKeyR6(
     const Buffer& perms_value,
     Buffer& decryption_key) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     CryptoUtils::EnsureInitialized();
 

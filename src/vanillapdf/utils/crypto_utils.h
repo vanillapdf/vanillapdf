@@ -8,7 +8,7 @@
 #include <string>
 
 // OpenSSL forward declarations - avoid including heavy OpenSSL headers
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
 // Forward declarations for commonly used OpenSSL types
 // Note: Only include types that are used in public header interfaces
@@ -43,7 +43,7 @@ typedef struct asn1_string_st ASN1_TIME;
 typedef struct stack_st_X509 STACK_OF_X509;
 typedef struct CMS_ContentInfo_st CMS_ContentInfo;
 
-#endif // VANILLAPDF_HAVE_OPENSSL
+#endif // VANILLAPDF_FEATURE_ENCRYPTION
 
 namespace vanillapdf {
 
@@ -56,7 +56,7 @@ namespace vanillapdf {
  */
 class CryptoUtils {
 public:
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     /**
      * \brief Get EVP_MD algorithm for a message digest algorithm
@@ -66,7 +66,7 @@ public:
      */
     static const EVP_MD* GetAlgorithm(MessageDigestAlgorithm algorithm);
 
-#endif // VANILLAPDF_HAVE_OPENSSL
+#endif // VANILLAPDF_FEATURE_ENCRYPTION
 
     /**
      * \brief Initialize OpenSSL with the default settings, unless already initialized

@@ -48,7 +48,7 @@ private:
     SignatureVerifier() = delete;
     ~SignatureVerifier() = delete;
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
     /**
      * \brief Check if signature uses weak cryptographic algorithms
      * \return true if weak algorithm detected, false otherwise

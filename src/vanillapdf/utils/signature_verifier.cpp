@@ -8,7 +8,7 @@
 
 #include <chrono>
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 #include <openssl/cms.h>
 #include <openssl/x509.h>
 #include <openssl/x509_vfy.h>
@@ -20,7 +20,7 @@
 
 namespace vanillapdf {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
 // Helper to check if signature uses weak cryptographic algorithms.
 // Called after CMS_verify() so that signer certs are matched to signer infos.
@@ -431,7 +431,7 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
     // Currently implemented: SkipCertificateValidation, AllowWeakAlgorithmsFlag, CheckSigningTimeFlag
     // TODO: CheckRevocationFlag - CRL/OCSP implementation (https://github.com/vanillapdf/vanillapdf/issues/157)
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     CryptoUtils::EnsureInitialized();
 

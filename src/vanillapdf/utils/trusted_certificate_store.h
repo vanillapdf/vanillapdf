@@ -54,7 +54,7 @@ public:
     */
     void LoadSystemDefaults();
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
     /**
     * \brief Get native OpenSSL X509_STORE handle
     * \return Pointer to X509_STORE for OpenSSL operations
