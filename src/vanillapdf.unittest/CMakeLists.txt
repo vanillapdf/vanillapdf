@@ -145,7 +145,7 @@ if(VANILLAPDF_ENABLE_LICENSING)
     target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_ENABLE_LICENSING)
 endif()
 
-# The available features come from the generated vanillapdf_config.h. The tests
+# The available features come from the generated c_vanillapdf_config.h. The tests
 # also read OPENSSL_VERSION_NUMBER, so they need the OpenSSL headers.
 if(VANILLAPDF_ENABLE_ENCRYPTION)
     target_include_directories(vanillapdf.unittest PRIVATE ${OPENSSL_INCLUDE_DIR})

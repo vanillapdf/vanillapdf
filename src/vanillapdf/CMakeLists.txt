@@ -848,8 +848,8 @@ endif()
 set(VANILLAPDF_GENERATED_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 configure_file(
-    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/vanillapdf_config.h.in"
-    "${VANILLAPDF_GENERATED_INCLUDE_DIR}/vanillapdf/vanillapdf_config.h"
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/c_vanillapdf_config.h.in"
+    "${VANILLAPDF_GENERATED_INCLUDE_DIR}/vanillapdf/c_vanillapdf_config.h"
 )
 
 # This includes the public headers in the project as well as publishing them outside to be consumed
@@ -890,7 +890,7 @@ if (MSVC AND BUILD_SHARED_LIBS)
 endif()
 
 install(FILES ${VANILLAPDF_INCLUDE_HEADERS} DESTINATION "include/vanillapdf" COMPONENT Development)
-install(FILES "${VANILLAPDF_GENERATED_INCLUDE_DIR}/vanillapdf/vanillapdf_config.h" DESTINATION "include/vanillapdf" COMPONENT Development)
+install(FILES "${VANILLAPDF_GENERATED_INCLUDE_DIR}/vanillapdf/c_vanillapdf_config.h" DESTINATION "include/vanillapdf" COMPONENT Development)
 install(FILES ${VANILLAPDF_INCLUDE_UTILS_HEADERS} DESTINATION "include/vanillapdf/utils" COMPONENT Development)
 install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillapdf/syntax" COMPONENT Development)
 install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics" COMPONENT Development)
