@@ -7,7 +7,7 @@
 #include <mutex>
 #include <fmt/core.h>
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 #include <openssl/x509.h>
 #include <openssl/bio.h>
 #include <openssl/pem.h>
@@ -21,7 +21,7 @@
 
 namespace vanillapdf {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
 // Static variables for OpenSSL 3.x provider management
 #if OPENSSL_VERSION_MAJOR >= 3
@@ -206,6 +206,6 @@ void CryptoUtils::CleanupOpenSSL() {
     // Ignore when OpenSSL support is disabled
 }
 
-#endif // VANILLAPDF_HAVE_OPENSSL
+#endif // VANILLAPDF_FEATURE_ENCRYPTION
 
 } // namespace vanillapdf

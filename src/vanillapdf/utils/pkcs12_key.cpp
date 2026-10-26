@@ -8,7 +8,7 @@
 
 #include <fstream>
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
 #include <openssl/pkcs12.h>
 #include <openssl/cms.h>
@@ -43,7 +43,7 @@ public:
     // Certificate access
     BufferPtr GetCertificate() const;
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
 private:
     // Custom deleters for OpenSSL types
@@ -211,7 +211,7 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, std::string_view passwor
 
 BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     if (!encryption_context) {
         auto evp_pkey_context = EVP_PKEY_CTX_new_from_pkey(nullptr, key.get(), nullptr);
@@ -252,7 +252,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::Decrypt(const Buffer& data) {
 
 bool PKCS12Key::PKCS12KeyImpl::ContainsPrivateKey(const Buffer& issuer, const Buffer& serial) const {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     // X509_NAME is conflicting with some windows headers
     auto issuer_name = X509_get_issuer_name(cert.get());
@@ -287,7 +287,7 @@ bool PKCS12Key::PKCS12KeyImpl::ContainsPrivateKey(const Buffer& issuer, const Bu
 
 void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     // Reset existing state
     m_cms.reset();
@@ -386,7 +386,7 @@ void PKCS12Key::PKCS12KeyImpl::SignUpdate(const Buffer& data) {
 
 void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_size length) {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     types::stream_size read_total = 0;
 
@@ -420,7 +420,7 @@ void PKCS12Key::PKCS12KeyImpl::SignUpdate(IInputStreamPtr data, types::stream_si
 
 BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     // Finalize: adds content-type and message-digest signed attributes,
     // then performs the actual signing operation.
@@ -455,7 +455,7 @@ BufferPtr PKCS12Key::PKCS12KeyImpl::SignFinal() {
 
 void PKCS12Key::PKCS12KeyImpl::SignCleanup() {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     // Reset signing-related resources (unique_ptr handles cleanup automatically)
     m_cms.reset();
@@ -466,7 +466,7 @@ void PKCS12Key::PKCS12KeyImpl::SignCleanup() {
 
 BufferPtr PKCS12Key::PKCS12KeyImpl::GetCertificate() const {
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
     if (!cert) {
         LOG_ERROR_AND_THROW(CryptoErrorException, "No certificate available in PKCS12 key");

@@ -2,6 +2,7 @@
 #define _PRECOMPILED_H
 
 #include "vanillapdf/c_platform.h"
+#include "vanillapdf/vanillapdf_config.h"
 
 /*-----------------------TO DO-----------------------*/
 

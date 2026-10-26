@@ -5,7 +5,7 @@
 #include "utils/buffer.h"
 #include "utils/util.h"
 
-#if defined(VANILLAPDF_HAVE_ZLIB)
+#if VANILLAPDF_FEATURE_ZLIB
 #include <zlib.h>
 #endif
 
@@ -17,7 +17,7 @@ namespace vanillapdf {
 
 static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length, types::stream_size errors_after) {
 
-#if defined(VANILLAPDF_HAVE_ZLIB)
+#if VANILLAPDF_FEATURE_ZLIB
 
     int rv = 0;
     z_stream strm = { };
@@ -112,7 +112,7 @@ static BufferPtr Inflate(IInputStreamPtr input, types::stream_size length) {
 
 static BufferPtr Deflate(IInputStreamPtr input, types::stream_size length) {
 
-#if defined(VANILLAPDF_HAVE_ZLIB)
+#if VANILLAPDF_FEATURE_ZLIB
 
     int rv = 0;
     int flush = Z_NO_FLUSH;

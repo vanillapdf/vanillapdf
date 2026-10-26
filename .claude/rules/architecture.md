@@ -85,6 +85,10 @@ Thread safety is validated by `thread_safety_test.cpp` (concurrent `Document::Op
 
 ## Feature Dependencies
 
-Optional via `VANILLAPDF_HAVE_*`: OpenSSL (encryption/signing), libjpeg-turbo, openjpeg, zlib, spdlog, nlohmann-json, mimalloc (allocator of the `IUnknown` hierarchy)
+Optional: OpenSSL (encryption/signing), libjpeg-turbo, openjpeg, zlib, spdlog, nlohmann-json, mimalloc (allocator of the `IUnknown` hierarchy)
 
-The `VANILLAPDF_HAVE_*` definitions are `PRIVATE` to the library target. Everything outside it (unit tests, tools, consumers) reads the features from the generated public header `vanillapdf/vanillapdf_config.h` instead: `VANILLAPDF_FEATURE_ENCRYPTION`, `VANILLAPDF_FEATURE_JPEG`, `VANILLAPDF_FEATURE_JPEG2000`, `VANILLAPDF_FEATURE_ZLIB`, always defined to `0` or `1`, so test them with `#if`, not `#ifdef`. `c_export.h` includes it, so every public header provides it. It is generated from `include/vanillapdf/vanillapdf_config.h.in` by `src/vanillapdf/CMakeLists.txt`, and separately by `cmake/nuget.cmake` and `cmake/docs.cmake`, which never configure the library — keep their feature values in step when adding a feature.
+The available features are recorded in the generated public header `vanillapdf/vanillapdf_config.h`: `VANILLAPDF_FEATURE_ENCRYPTION`, `VANILLAPDF_FEATURE_JPEG`, `VANILLAPDF_FEATURE_JPEG2000`, `VANILLAPDF_FEATURE_ZLIB`, always defined to `0` or `1`, so test them with `#if`, not `#ifdef`. The library, the tests, the tools and consumers all use these same macros: `precompiled.h` includes the header for every library source, and `c_export.h` includes it for every public header. Internal headers that test a feature include it themselves (`utils/crypto_utils.h`).
+
+- Macros are named by capability, not by dependency, so a different provider (zlib-ng, LibreSSL, BoringSSL) only changes which CMake branch sets them. Checks of a specific provider's API version stay on the provider's own macros (`OPENSSL_VERSION_MAJOR >= 3`), not the feature macros.
+- The header is generated from `include/vanillapdf/vanillapdf_config.h.in` by `src/vanillapdf/CMakeLists.txt`, in the branch that enables each dependency. `cmake/nuget.cmake` and `cmake/docs.cmake` generate their own copy because they never configure the library — keep their feature values in step when adding a feature.
+- Settings that are not consumer-visible features stay private compile definitions: `VANILLAPDF_HAVE_MIMALLOC`, `VANILLAPDF_HAVE_CRTDBG`.
