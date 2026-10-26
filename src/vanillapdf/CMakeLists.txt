@@ -845,7 +845,9 @@ endif()
 # same way regardless of the build system or package manager they use. The
 # VANILLAPDF_FEATURE_* variables are set above, in the branches that enable each
 # dependency, so the header cannot disagree with the binary it describes.
-set(VANILLAPDF_GENERATED_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/include")
+# It is written into the generated/ subdirectory of the build directory, outside
+# the source tree, and installed alongside the other public headers.
+set(VANILLAPDF_GENERATED_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
 
 configure_file(
     "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/c_vanillapdf_config.h.in"
