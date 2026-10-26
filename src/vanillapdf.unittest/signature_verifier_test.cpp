@@ -19,7 +19,7 @@ static void ExpectBufferContent(BufferHandle* handle, const char* expected) {
     }
 }
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 #include <openssl/opensslv.h>
 #endif
 
@@ -47,7 +47,7 @@ static const CertificateTestInfo TEST_CERTIFICATES[] = {
     // system 3.0.x) fail in eddsa_digest_signverify_init when SHA-512 is passed as
     // the CMS digest algorithm. On OpenSSL >= 3.2 the signature uses SHA-512 as
     // RFC 8419 requires and is externally verifiable (e.g. pyhanko).
-#if defined(VANILLAPDF_HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER >= 0x30200000L
+#if VANILLAPDF_FEATURE_ENCRYPTION && OPENSSL_VERSION_NUMBER >= 0x30200000L
     {TEST_ED25519_CERTIFICATE, TEST_ED25519_CERTIFICATE_SIZE, "ED25519", "test", "Test_ED25519", MessageDigestAlgorithmType_SHA512},
 #endif
 
@@ -1352,7 +1352,7 @@ INSTANTIATE_TEST_SUITE_P(
     }
 );
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
 // Ed448 signing is rejected on every OpenSSL version until #320, so the
 // result does not depend on the OpenSSL the library is built with.
@@ -1373,9 +1373,9 @@ TEST(SigningKey, Ed448SignNotSupported) {
               VANILLAPDF_ERROR_NOT_SUPPORTED);
 }
 
-#endif /* VANILLAPDF_HAVE_OPENSSL */
+#endif /* VANILLAPDF_FEATURE_ENCRYPTION */
 
-#if defined(VANILLAPDF_HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER >= 0x30200000L
+#if VANILLAPDF_FEATURE_ENCRYPTION && OPENSSL_VERSION_NUMBER >= 0x30200000L
 
 // RFC 8419 requires SHA-512 for Ed25519; a different digest is rejected, not replaced
 TEST(SigningKey, Ed25519RejectsOtherDigest) {
@@ -1397,7 +1397,7 @@ TEST(SigningKey, Ed25519RejectsOtherDigest) {
 
 #endif
 
-#if defined(VANILLAPDF_HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER < 0x30200000L
+#if VANILLAPDF_FEATURE_ENCRYPTION && OPENSSL_VERSION_NUMBER < 0x30200000L
 
 // EdDSA CMS signing needs OpenSSL >= 3.2; older versions report it as not supported
 TEST(SigningKey, Ed25519SignNotSupportedBeforeOpenSSL32) {

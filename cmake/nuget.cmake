@@ -20,3 +20,22 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/nuget/vanillapdf.csproj
     @ONLY
 )
+
+# The vanillapdf package ships the public headers, but it is packed without
+# configuring the library, so the generated c_vanillapdf_config.h is produced here.
+# It has to describe the natives in the runtime packages, which are all built from
+# the presets with the default feature set. A function keeps these values from
+# leaking into the build that includes this file.
+function(vanillapdf_configure_nuget_config_header)
+    set(VANILLAPDF_FEATURE_ENCRYPTION ON)
+    set(VANILLAPDF_FEATURE_JPEG ON)
+    set(VANILLAPDF_FEATURE_JPEG2000 ON)
+    set(VANILLAPDF_FEATURE_ZLIB ON)
+
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/vanillapdf/c_vanillapdf_config.h.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/nuget/include/vanillapdf/c_vanillapdf_config.h
+    )
+endfunction()
+
+vanillapdf_configure_nuget_config_header()

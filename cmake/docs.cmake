@@ -13,3 +13,15 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/doc/doxyfile
     @ONLY
 )
+
+# c_vanillapdf_config.h is generated when the library is configured, which the
+# documentation build never does. Document it as the full-featured build.
+set(VANILLAPDF_FEATURE_ENCRYPTION ON)
+set(VANILLAPDF_FEATURE_JPEG ON)
+set(VANILLAPDF_FEATURE_JPEG2000 ON)
+set(VANILLAPDF_FEATURE_ZLIB ON)
+
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/vanillapdf/c_vanillapdf_config.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/doc/include/vanillapdf/c_vanillapdf_config.h
+)

@@ -145,16 +145,10 @@ if(VANILLAPDF_ENABLE_LICENSING)
     target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_ENABLE_LICENSING)
 endif()
 
-# Mirror the library definition, which is private to the vanillapdf target.
-# The tests read OPENSSL_VERSION_NUMBER, so they also need the OpenSSL headers.
+# The available features come from the generated c_vanillapdf_config.h. The tests
+# also read OPENSSL_VERSION_NUMBER, so they need the OpenSSL headers.
 if(VANILLAPDF_ENABLE_ENCRYPTION)
-    target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_HAVE_OPENSSL)
     target_include_directories(vanillapdf.unittest PRIVATE ${OPENSSL_INCLUDE_DIR})
-endif()
-
-# Mirror the library definition so the JPXDecode tests can expect NotSupported when it is disabled
-if(VANILLAPDF_ENABLE_JPEG2000)
-    target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_HAVE_OPENJPEG)
 endif()
 
 # We do not need unit test project to be shipped

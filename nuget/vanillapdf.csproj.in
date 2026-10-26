@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="../include/**/*.h" Pack="true" PackagePath="build/native/include" />
+    <None Include="include/**/*.h" Pack="true" PackagePath="build/native/include" />
     <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0" />
     <None Include="../LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="../NOTICE.md" Pack="true" PackagePath="" />

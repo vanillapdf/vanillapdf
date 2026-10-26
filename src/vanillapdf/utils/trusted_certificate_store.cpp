@@ -7,7 +7,7 @@
 #include <fstream>
 #include <filesystem>
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 #include <openssl/x509.h>
 #include <openssl/x509_vfy.h>
 #include <openssl/pem.h>
@@ -27,7 +27,7 @@ public:
     void LoadFromDirectory(const std::string& directory_path);
     void LoadSystemDefaults();
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
     X509_STORE* GetNativeHandle() const;
 
 private:
@@ -59,7 +59,7 @@ void TrustedCertificateStore::LoadSystemDefaults() {
     m_impl->LoadSystemDefaults();
 }
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 X509_STORE* TrustedCertificateStore::GetNativeHandle() const {
     return m_impl->GetNativeHandle();
 }
@@ -69,7 +69,7 @@ X509_STORE* TrustedCertificateStore::GetNativeHandle() const {
 
 // Implementation
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 
 TrustedCertificateStore::TrustedCertificateStoreImpl::TrustedCertificateStoreImpl() {
     CryptoUtils::InitializeOpenSSL();

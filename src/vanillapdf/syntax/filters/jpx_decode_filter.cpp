@@ -5,7 +5,7 @@
 
 #include "utils/math_utils.h"
 
-#if defined(VANILLAPDF_HAVE_OPENJPEG)
+#if VANILLAPDF_FEATURE_JPEG2000
 #include <openjpeg.h>
 #endif
 
@@ -14,7 +14,7 @@ namespace syntax {
 
 using namespace std;
 
-#if defined(VANILLAPDF_HAVE_OPENJPEG)
+#if VANILLAPDF_FEATURE_JPEG2000
 
 static void error_callback(const char* msg, void*) {
     spdlog::error("OpenJPEG error: {}", msg);
@@ -72,7 +72,7 @@ BufferPtr JPXDecodeFilter::Encode(IInputStreamPtr src, types::stream_size, Dicti
 
 BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr /* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
 
-#if defined(VANILLAPDF_HAVE_OPENJPEG)
+#if VANILLAPDF_FEATURE_JPEG2000
 
     // Set default decoder parameters
     opj_dparameters_t parameters = { };
