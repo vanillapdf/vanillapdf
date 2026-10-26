@@ -195,12 +195,8 @@ include(GoogleTest)
 # Without this flag, test names include raw memory addresses making output unreadable:
 #   Before: CertificateTypes/.../40-byte object <B0-4E 79-8B F7-7F 00-00...>
 #   After:  CertificateTypes/.../2kDSA_SHA256
-# Environment of the test executable, see cmake/test_environment.cmake
-set(VANILLAPDF_UNITTEST_PROPERTIES "")
-if(VANILLAPDF_TEST_ENVIRONMENT)
-    set(VANILLAPDF_UNITTEST_PROPERTIES PROPERTIES ENVIRONMENT "${VANILLAPDF_TEST_ENVIRONMENT}")
-endif()
-
+#
+# The tests of the legacy algorithms need the environment, see cmake/test_environment.cmake
 gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST NO_PRETTY_VALUES
-    ${VANILLAPDF_UNITTEST_PROPERTIES}
+    PROPERTIES ENVIRONMENT_MODIFICATION "${VANILLAPDF_TEST_ENVIRONMENT}"
 )

@@ -158,10 +158,11 @@ foreach(_index RANGE ${VANILLAPDF_MANIFEST_LAST})
         --license        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/scripts/VanillaPDF.lic"
         ${VANILLAPDF_TEST_LAUNCHER_OPTIONS}
     )
+
+    # The corpus contains documents protected with legacy algorithms, see cmake/test_environment.cmake
+    set_tests_properties(${TEST_FILENAME} PROPERTIES ENVIRONMENT_MODIFICATION "${VANILLAPDF_TEST_ENVIRONMENT}")
 endforeach()
 
 # MPK_SLOVLEX.pdf: 9.5 MB, 1,450 pages — takes 600-1500s under sanitizers and
 # dominates CI time, so it is disabled.
 set_tests_properties(MPK_SLOVLEX.pdf PROPERTIES DISABLED TRUE)
-
-vanillapdf_apply_test_environment()
