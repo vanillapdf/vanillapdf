@@ -32,24 +32,33 @@ struct CertificateTestInfo {
     const char* name;
     const char* password;
     const char* expected_cn;
+    MessageDigestAlgorithmType digest;
 };
 
 // Define test certificates using the CMake-generated header
 // All test certificates use password "test"
 // CN values match the certificate Subject CN field
 static const CertificateTestInfo TEST_CERTIFICATES[] = {
-    {TEST_2KDSA_SHA256_CERTIFICATE, TEST_2KDSA_SHA256_CERTIFICATE_SIZE, "2kDSA_SHA256", "test", "Test_2kDSA_SHA256"},
-    {TEST_4KRSA_SHA3_512_CERTIFICATE, TEST_4KRSA_SHA3_512_CERTIFICATE_SIZE, "4kRSA_SHA3_512", "test", "Test_4kRSA_SHA3_512"},
-    {TEST_EC384_SHA512_CERTIFICATE, TEST_EC384_SHA512_CERTIFICATE_SIZE, "EC384_SHA512", "test", "Test_EC384_SHA512"},
+    {TEST_2KDSA_SHA256_CERTIFICATE, TEST_2KDSA_SHA256_CERTIFICATE_SIZE, "2kDSA_SHA256", "test", "Test_2kDSA_SHA256", MessageDigestAlgorithmType_SHA256},
+    {TEST_4KRSA_SHA3_512_CERTIFICATE, TEST_4KRSA_SHA3_512_CERTIFICATE_SIZE, "4kRSA_SHA3_512", "test", "Test_4kRSA_SHA3_512", MessageDigestAlgorithmType_SHA256},
+    {TEST_EC384_SHA512_CERTIFICATE, TEST_EC384_SHA512_CERTIFICATE_SIZE, "EC384_SHA512", "test", "Test_EC384_SHA512", MessageDigestAlgorithmType_SHA256},
 
-    // EdDSA (Ed25519/Ed448) CMS signing requires OpenSSL >= 3.2. Older versions
-    // (e.g. Ubuntu system 3.0.x) fail in eddsa_digest_signverify_init when
-    // SHA-512 is passed as the CMS digest algorithm. On OpenSSL >= 3.2 the
-    // signature is produced correctly and is externally verifiable (e.g. pyhanko).
+    // Ed25519 CMS signing requires OpenSSL >= 3.2. Older versions (e.g. Ubuntu
+    // system 3.0.x) fail in eddsa_digest_signverify_init when SHA-512 is passed as
+    // the CMS digest algorithm. On OpenSSL >= 3.2 the signature uses SHA-512 as
+    // RFC 8419 requires and is externally verifiable (e.g. pyhanko).
 #if defined(VANILLAPDF_HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER >= 0x30200000L
-    {TEST_ED25519_CERTIFICATE, TEST_ED25519_CERTIFICATE_SIZE, "ED25519", "test", "Test_ED25519"},
-    {TEST_ED448_CERTIFICATE, TEST_ED448_CERTIFICATE_SIZE, "ED448", "test", "Test_ED448"},
+    {TEST_ED25519_CERTIFICATE, TEST_ED25519_CERTIFICATE_SIZE, "ED25519", "test", "Test_ED25519", MessageDigestAlgorithmType_SHA512},
 #endif
+
+    // Ed448 signing is rejected as not supported until #320 (see
+    // SigningKey.Ed448SignNotSupported). With signed attributes RFC 8419 3.1
+    // requires the id-shake256-len digest algorithm, which no OpenSSL release
+    // implements: OpenSSL 3.x would label the digest with the parameterless
+    // id-shake256 of ISO/TS 32002 instead, and OpenSSL 4 refuses the signer.
+    // RFC 8419 compliant Ed448 signatures (e.g. from pyhanko) cannot be verified
+    // through CMS_verify on any version either.
+    //{TEST_ED448_CERTIFICATE, TEST_ED448_CERTIFICATE_SIZE, "ED448", "test", "Test_ED448", MessageDigestAlgorithmType_Undefined},
 };
 
 // TrustedCertificateStore Tests
@@ -1267,10 +1276,9 @@ TEST_P(CertificateTypeTest, SignAndVerify_Integration) {
               VANILLAPDF_ERROR_SUCCESS) << "Failed to convert to SigningKey for " << cert_info.name;
     ASSERT_NE(signing_key.get(), nullptr);
 
-    // Step 2: Create signature with SHA256 (for RSA/DSA/EC) or default (for ED25519)
-    // ED25519 uses its own digest internally, but our API still requires a digest type
-    // The signing implementation should handle this appropriately
-    ASSERT_EQ(SigningKey_SignInitialize(signing_key, MessageDigestAlgorithmType_SHA256),
+    // Step 2: Create signature with the digest the key type requires
+    // (SHA-512 for Ed25519 per RFC 8419, SHA-256 for RSA/DSA/EC)
+    ASSERT_EQ(SigningKey_SignInitialize(signing_key, cert_info.digest),
               VANILLAPDF_ERROR_SUCCESS) << "Failed to initialize signing for " << cert_info.name;
 
     ASSERT_EQ(Buffer_CreateFromData(test_message, test_message_len, message_buffer.out()),
@@ -1343,6 +1351,73 @@ INSTANTIATE_TEST_SUITE_P(
         return std::string(info.param.name);
     }
 );
+
+#if defined(VANILLAPDF_HAVE_OPENSSL)
+
+// Ed448 signing is rejected on every OpenSSL version until #320, so the
+// result does not depend on the OpenSSL the library is built with.
+TEST(SigningKey, Ed448SignNotSupported) {
+    HandleGuard<BufferHandle, Buffer_Release> pkcs12_buffer;
+    HandleGuard<PKCS12KeyHandle, PKCS12Key_Release> pkcs12_key;
+    HandleGuard<SigningKeyHandle, SigningKey_Release> signing_key;
+
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(TEST_ED448_CERTIFICATE),
+                                     TEST_ED448_CERTIFICATE_SIZE, pkcs12_buffer.out()),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(pkcs12_buffer, "test", pkcs12_key.out()),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, signing_key.out()),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_EQ(SigningKey_SignInitialize(signing_key, MessageDigestAlgorithmType_SHA256),
+              VANILLAPDF_ERROR_NOT_SUPPORTED);
+}
+
+#endif /* VANILLAPDF_HAVE_OPENSSL */
+
+#if defined(VANILLAPDF_HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER >= 0x30200000L
+
+// RFC 8419 requires SHA-512 for Ed25519; a different digest is rejected, not replaced
+TEST(SigningKey, Ed25519RejectsOtherDigest) {
+    HandleGuard<BufferHandle, Buffer_Release> pkcs12_buffer;
+    HandleGuard<PKCS12KeyHandle, PKCS12Key_Release> pkcs12_key;
+    HandleGuard<SigningKeyHandle, SigningKey_Release> signing_key;
+
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(TEST_ED25519_CERTIFICATE),
+                                     TEST_ED25519_CERTIFICATE_SIZE, pkcs12_buffer.out()),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(pkcs12_buffer, "test", pkcs12_key.out()),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, signing_key.out()),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_EQ(SigningKey_SignInitialize(signing_key, MessageDigestAlgorithmType_SHA256),
+              VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+#endif
+
+#if defined(VANILLAPDF_HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER < 0x30200000L
+
+// EdDSA CMS signing needs OpenSSL >= 3.2; older versions report it as not supported
+TEST(SigningKey, Ed25519SignNotSupportedBeforeOpenSSL32) {
+    HandleGuard<BufferHandle, Buffer_Release> pkcs12_buffer;
+    HandleGuard<PKCS12KeyHandle, PKCS12Key_Release> pkcs12_key;
+    HandleGuard<SigningKeyHandle, SigningKey_Release> signing_key;
+
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(TEST_ED25519_CERTIFICATE),
+                                     TEST_ED25519_CERTIFICATE_SIZE, pkcs12_buffer.out()),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(pkcs12_buffer, "test", pkcs12_key.out()),
+              VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, signing_key.out()),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_EQ(SigningKey_SignInitialize(signing_key, MessageDigestAlgorithmType_SHA256),
+              VANILLAPDF_ERROR_NOT_SUPPORTED);
+}
+
+#endif
 
 // SignatureVerificationSettings ToUnknown/FromUnknown Tests
 

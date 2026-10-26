@@ -25,7 +25,7 @@ jobs:
       - name: Install system dependencies
         run: |
           brew update
-          brew install ninja openssl@3 jpeg-turbo zlib openjpeg spdlog nlohmann-json googletest
+          brew install ninja openssl@4 jpeg-turbo zlib openjpeg spdlog nlohmann-json googletest
 
       # The presets enable tests and vanillapdf.tools together; this package
       # build resolves dependencies from Homebrew, which does not provide the

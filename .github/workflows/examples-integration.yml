@@ -179,7 +179,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - name: Install system dependencies
-        run: brew install ninja openssl@3 jpeg-turbo zlib openjpeg
+        run: brew install ninja openssl@4 jpeg-turbo zlib openjpeg
 
       - name: Configure CMake
         working-directory: examples/fetchcontent-integration
@@ -388,7 +388,7 @@ jobs:
       - name: Install Homebrew dependencies
         run: |
           brew update
-          brew install ninja openssl@3 jpeg-turbo zlib openjpeg
+          brew install ninja openssl@4 jpeg-turbo zlib openjpeg
 
       - name: Generate formula for current branch
         env:

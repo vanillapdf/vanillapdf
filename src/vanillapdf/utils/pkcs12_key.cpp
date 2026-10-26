@@ -12,6 +12,7 @@
 
 #include <openssl/pkcs12.h>
 #include <openssl/cms.h>
+#include <openssl/crypto.h>
 #include <openssl/evp.h>
 #include <openssl/engine.h>
 #include <openssl/err.h>
@@ -293,26 +294,33 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
     m_cms.reset();
     m_data_bio.reset();
 
-    // For EdDSA keys (Ed25519/Ed448), RFC 8419 requires specific CMS digestAlgorithm
-    // identifiers: Ed25519 → SHA-512, Ed448 → SHAKE256. These are passed to
-    // CMS_add1_signer to set the correct DigestAlgorithmIdentifier in the structure.
+    // EdDSA keys dictate the CMS digest algorithm (RFC 8419): Ed25519 requires SHA-512,
+    // and a different requested digest is rejected rather than silently replaced.
+    // EdDSA CMS signing needs OpenSSL >= 3.2, older versions fail in
+    // eddsa_digest_signverify_init. The runtime version is checked, since a shared
+    // libcrypto may be older than the headers built against.
     //
-    // NOTE: CMS_final subsequently calls EVP_DigestSignInit with this digest, which
-    // OpenSSL's eddsa_digest_signverify_init rejects (EdDSA hashes internally and
-    // does not accept an external pre-hash digest). EdDSA signing via the standard
-    // CMS_add1_signer + CMS_final path is therefore not supported by OpenSSL's CMS API.
-    // A proper implementation requires bypassing CMS_SignerInfo_sign and instead calling
-    // EVP_DigestSign(NULL, ...) directly on the DER-encoded signed attributes.
+    // Ed448 with signed attributes requires id-shake256-len (SHAKE256 with an explicit
+    // 512 bit output length), which no OpenSSL release implements. OpenSSL 3.x would
+    // write the parameterless id-shake256 that ISO/TS 32002 prescribes instead, while
+    // OpenSSL 4 refuses the signer. Ed448 signing is rejected on every version, so the
+    // result does not depend on the OpenSSL the library is built with. Verifying
+    // existing Ed448 signatures is still supported.
     // See: https://github.com/vanillapdf/vanillapdf/issues/320
     int key_type = EVP_PKEY_base_id(key.get());
-    const EVP_MD* message_digest;
-    if (key_type == EVP_PKEY_ED25519) {
-        message_digest = EVP_sha512();
-    } else if (key_type == EVP_PKEY_ED448) {
-        message_digest = EVP_shake256();
-    } else {
-        message_digest = CryptoUtils::GetAlgorithm(algorithm);
+    if (key_type == EVP_PKEY_ED448) {
+        LOG_ERROR_AND_THROW(NotSupportedException, "Ed448 signatures are not supported: RFC 8419 requires the id-shake256-len digest algorithm, which OpenSSL does not implement");
     }
+
+    if (key_type == EVP_PKEY_ED25519 && OpenSSL_version_num() < 0x30200000L) {
+        LOG_ERROR_AND_THROW(NotSupportedException, "Ed25519 signatures require OpenSSL 3.2 or newer, the loaded version is {}", OpenSSL_version(OPENSSL_VERSION));
+    }
+
+    if (key_type == EVP_PKEY_ED25519 && algorithm != MessageDigestAlgorithm::SHA512) {
+        LOG_ERROR_AND_THROW(InvalidParameterException, "Ed25519 signatures require the SHA-512 digest (RFC 8419), requested digest {}", static_cast<int>(algorithm));
+    }
+
+    const EVP_MD* message_digest = CryptoUtils::GetAlgorithm(algorithm);
 
     // Create a partial detached CMS SignedData structure
     CMS_ContentInfo* cms_raw = CMS_sign(nullptr, nullptr, nullptr, nullptr,
