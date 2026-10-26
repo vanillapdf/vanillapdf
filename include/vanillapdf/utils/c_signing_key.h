@@ -89,6 +89,15 @@ extern "C"
 
     /**
     * \brief Initialize signing operation with specified digest algorithm
+    *
+    * EdDSA keys restrict the digest algorithm (RFC 8419). For PKCS#12 keys:
+    * - Ed25519 requires \ref MessageDigestAlgorithmType_SHA512, any other value
+    *   returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE. Ed25519 signing requires
+    *   OpenSSL 3.2 or newer and returns \ref VANILLAPDF_ERROR_NOT_SUPPORTED otherwise.
+    * - Ed448 signing returns \ref VANILLAPDF_ERROR_NOT_SUPPORTED, because RFC 8419
+    *   requires the id-shake256-len digest algorithm, which OpenSSL does not implement.
+    *   Verifying existing Ed448 signatures is supported.
+    *
     * \param handle The signing key
     * \param algorithm Message digest algorithm to use for signing
     */

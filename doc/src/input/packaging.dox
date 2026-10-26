@@ -41,7 +41,7 @@ This generates a `.deb` file that can be installed with `dpkg -i`.
 
 On macOS, install the required dependencies:
 \code{.bash}
-brew install openssl@3 jpeg-turbo zlib openjpeg
+brew install openssl@4 jpeg-turbo zlib openjpeg
 \endcode
 
 Build the Homebrew package:
