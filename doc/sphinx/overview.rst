@@ -44,7 +44,7 @@ entries. It is not a rendering engine.
 
 - Create, open, modify, and save PDF documents
 - Validate PDF file structure (xref, trailers, streams) and report issues
-- Add and verify CMS digital signatures with RSA, ECDSA (P-256/P-384/P-521), Ed25519, and Ed448
+- Add and verify CMS digital signatures with RSA, ECDSA (P-256/P-384/P-521), and Ed25519; verify Ed448 signatures
 - Encrypt and decrypt with AES/RC4 (password and certificate-based); compatible with FIPS-enabled OpenSSL
 - Fill and read interactive form fields
 - Extract embedded images (JPEG, JPEG2000)
@@ -74,7 +74,7 @@ Functionality
      - Generate PDFs with pages, text, images, and vector paths
    * - **Digital signatures**
      - C API, CLI
-     - OpenSSL CMS signatures with RSA, ECDSA (P-256/P-384/P-521), Ed25519, and Ed448 using PKCS#12 keys or custom callbacks
+     - OpenSSL CMS signatures with RSA, ECDSA (P-256/P-384/P-521), and Ed25519 using PKCS#12 keys or custom callbacks
    * - **Signature verification**
      - C API, CLI
      - Validate signatures with chain validation, weak-algorithm detection, and signing-time checks

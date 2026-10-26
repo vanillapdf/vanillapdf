@@ -86,7 +86,7 @@ int main(void) {
 | Feature | C API | Description |
 |---------|-------|-------------|
 | **Create documents** | `Document_Create` | Pages, text, images, vector paths |
-| **Digital signatures** | `Document_Sign` | OpenSSL CMS — RSA, ECDSA (P-256/P-384/P-521), Ed25519, Ed448 via PKCS#12 keys or custom callbacks |
+| **Digital signatures** | `Document_Sign` | OpenSSL CMS — RSA, ECDSA (P-256/P-384/P-521), Ed25519 (OpenSSL 3.2+) via PKCS#12 keys or custom callbacks |
 | **Signature verification** | `DigitalSignatureExtensions_Verify` | Chain validation, weak-algorithm detection, signing-time checks |
 | **File structure validation** | `FileStructureValidator_*` | Walk xref/trailers/streams and report malformed files |
 | **Interactive forms** | `FormField_GetValue` / `_SetValue` | Read/write AcroForm field values |

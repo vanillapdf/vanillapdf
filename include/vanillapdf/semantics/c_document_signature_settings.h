@@ -45,6 +45,9 @@ extern "C"
 
     /**
     * \brief \copybrief DocumentSignatureSettings_GetDigest
+    *
+    * The digest has to match the signing key: Ed25519 keys require
+    * \ref MessageDigestAlgorithmType_SHA512, see SigningKey_SignInitialize().
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetDigest(DocumentSignatureSettingsHandle* handle, MessageDigestAlgorithmType value);
 

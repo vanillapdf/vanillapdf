@@ -35,17 +35,22 @@ including modern EdDSA curves rarely supported by other PDF libraries:
      - SHA-256, SHA-384, SHA-512
      - Smaller keys, equivalent security to RSA
    * - Ed25519 (EdDSA)
-     - SHA-512 (per RFC 8419)
-     - Fast, small signatures; modern standard
+     - SHA-512 (required by RFC 8419)
+     - Fast, small signatures; modern standard. Signing requires OpenSSL 3.2 or newer,
+       and requesting any other digest is rejected as an invalid parameter
    * - Ed448 (EdDSA)
-     - SHAKE256 (per RFC 8419)
-     - Higher security margin than Ed25519
+     - SHAKE256
+     - Verification only. Signing is rejected as not supported: RFC 8419 requires the
+       ``id-shake256-len`` digest algorithm, which OpenSSL does not implement
+       (`#320 <https://github.com/vanillapdf/vanillapdf/issues/320>`_)
    * - DSA (2048-bit)
      - SHA-256
      - Legacy; prefer ECDSA or EdDSA for new deployments
 
-All algorithms are validated end-to-end via the CI interoperability check
-against `pdfsig (poppler-utils) <https://manpages.debian.org/testing/poppler-utils/pdfsig.1.en.html>`_.
+Signatures are validated end-to-end by the CI interoperability check against
+`pdfsig (poppler-utils) <https://manpages.debian.org/testing/poppler-utils/pdfsig.1.en.html>`_
+for RSA, ECDSA and DSA, and against `pyHanko <https://github.com/MatthiasValvekens/pyHanko>`_
+for RSA, ECDSA and Ed25519.
 
 Verification Status Codes
 --------------------------
