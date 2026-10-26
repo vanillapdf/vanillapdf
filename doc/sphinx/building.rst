@@ -139,7 +139,7 @@ Building on macOS
 
 .. code-block:: bash
 
-   brew install openssl@3 jpeg-turbo zlib openjpeg
+   brew install openssl@4 jpeg-turbo zlib openjpeg
    cmake --preset macos-arm64 -DVANILLAPDF_EXTERNAL_OPENSSL=ON \
      -DVANILLAPDF_EXTERNAL_JPEG=ON -DVANILLAPDF_EXTERNAL_OPENJPEG=ON \
      -DVANILLAPDF_EXTERNAL_ZLIB=ON
@@ -337,7 +337,7 @@ Troubleshooting
 **Platform-specific dependency issues:**
 
 - **Linux**: Install system packages: ``sudo apt-get install libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev``
-- **macOS**: Install via Homebrew: ``brew install openssl@3 jpeg-turbo zlib openjpeg``
+- **macOS**: Install via Homebrew: ``brew install openssl@4 jpeg-turbo zlib openjpeg``
 - **Windows**: Use vcpkg presets or ensure Visual Studio 2022 or 2026 is properly installed
 
 **OpenSSL legacy algorithms:**

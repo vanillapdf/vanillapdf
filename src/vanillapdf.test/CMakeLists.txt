@@ -84,15 +84,12 @@ set(VANILLAPDF_TEST_LIBS
     vanillapdf
 )
 
-if (CMAKE_COMPILER_IS_GNUCC)
-
-    # C executables does not have access to c++ standard library by default
-    # We need to explicitly pull dependencies
-    set(VANILLAPDF_TEST_LIBS ${VANILLAPDF_TEST_LIBS} -lstdc++)
-
-endif (CMAKE_COMPILER_IS_GNUCC)
-
 target_link_libraries(vanillapdf.test PRIVATE ${VANILLAPDF_TEST_LIBS})
+
+# The test is written in C, but a static vanillapdf needs the C++ runtime.
+# Linking through the C++ driver selects the right one on every toolchain
+# (libstdc++ for GCC, libc++ for Clang and Apple Clang).
+set_target_properties(vanillapdf.test PROPERTIES LINKER_LANGUAGE CXX)
 
 # In case we have the dynamic link configuration add specific definitions
 if(BUILD_SHARED_LIBS)

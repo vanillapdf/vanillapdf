@@ -50,7 +50,7 @@ On macOS, install the required dependencies:
 
 .. code-block:: bash
 
-   brew install openssl@3 jpeg-turbo zlib openjpeg
+   brew install openssl@4 jpeg-turbo zlib openjpeg
 
 Build the Homebrew package:
 

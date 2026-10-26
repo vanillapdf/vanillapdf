@@ -89,7 +89,7 @@ Self-contained approach without external package managers:
 
    .. code-block:: bash
 
-      brew install openssl@3 jpeg-turbo zlib openjpeg
+      brew install openssl@4 jpeg-turbo zlib openjpeg
 
 A complete working example with cross-platform CI validation is available in
 `examples/fetchcontent-integration/
