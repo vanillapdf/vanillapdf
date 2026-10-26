@@ -4,8 +4,6 @@
 #include "utils/utils_fwd.h"
 #include "utils/message_digest_algorithm.h"
 
-#include "vanillapdf/vanillapdf_config.h"
-
 #include <ctime>
 #include <string>
 
