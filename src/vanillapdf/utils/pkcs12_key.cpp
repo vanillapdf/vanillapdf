@@ -320,12 +320,7 @@ void PKCS12Key::PKCS12KeyImpl::SignInitialize(MessageDigestAlgorithm algorithm) 
         LOG_ERROR_AND_THROW(InvalidParameterException, "Ed25519 signatures require the SHA-512 digest (RFC 8419), requested digest {}", static_cast<int>(algorithm));
     }
 
-    const EVP_MD* message_digest;
-    if (key_type == EVP_PKEY_ED25519) {
-        message_digest = EVP_sha512();
-    } else {
-        message_digest = CryptoUtils::GetAlgorithm(algorithm);
-    }
+    const EVP_MD* message_digest = CryptoUtils::GetAlgorithm(algorithm);
 
     // Create a partial detached CMS SignedData structure
     CMS_ContentInfo* cms_raw = CMS_sign(nullptr, nullptr, nullptr, nullptr,
