@@ -19,7 +19,7 @@ static void ExpectBufferContent(BufferHandle* handle, const char* expected) {
     }
 }
 
-#if defined(VANILLAPDF_HAVE_OPENSSL)
+#if VANILLAPDF_FEATURE_ENCRYPTION
 #include <openssl/opensslv.h>
 #endif
 
@@ -46,7 +46,7 @@ static const CertificateTestInfo TEST_CERTIFICATES[] = {
     // (e.g. Ubuntu system 3.0.x) fail in eddsa_digest_signverify_init when
     // SHA-512 is passed as the CMS digest algorithm. On OpenSSL >= 3.2 the
     // signature is produced correctly and is externally verifiable (e.g. pyhanko).
-#if defined(VANILLAPDF_HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER >= 0x30200000L
+#if VANILLAPDF_FEATURE_ENCRYPTION && OPENSSL_VERSION_NUMBER >= 0x30200000L
     {TEST_ED25519_CERTIFICATE, TEST_ED25519_CERTIFICATE_SIZE, "ED25519", "test", "Test_ED25519"},
     {TEST_ED448_CERTIFICATE, TEST_ED448_CERTIFICATE_SIZE, "ED448", "test", "Test_ED448"},
 #endif

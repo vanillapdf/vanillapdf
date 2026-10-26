@@ -2,6 +2,7 @@
 #define _C_EXPORT_H
 
 #include "c_platform.h"
+#include "vanillapdf/vanillapdf_config.h"
 
 /**
 * \file c_export.h

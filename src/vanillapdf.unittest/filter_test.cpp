@@ -541,7 +541,7 @@ TEST(DCTDecodeFilter, RejectsOversizedDimensions) {
     EXPECT_EQ(decoded_data_buffer.get(), nullptr);
 }
 
-#if defined(VANILLAPDF_HAVE_OPENJPEG)
+#if VANILLAPDF_FEATURE_JPEG2000
 
 TEST(JPXDecodeFilter, Decode) {
 

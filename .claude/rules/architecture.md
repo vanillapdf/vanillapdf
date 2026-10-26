@@ -86,3 +86,5 @@ Thread safety is validated by `thread_safety_test.cpp` (concurrent `Document::Op
 ## Feature Dependencies
 
 Optional via `VANILLAPDF_HAVE_*`: OpenSSL (encryption/signing), libjpeg-turbo, openjpeg, zlib, spdlog, nlohmann-json, mimalloc (allocator of the `IUnknown` hierarchy)
+
+The `VANILLAPDF_HAVE_*` definitions are `PRIVATE` to the library target. Everything outside it (unit tests, tools, consumers) reads the features from the generated public header `vanillapdf/vanillapdf_config.h` instead: `VANILLAPDF_FEATURE_ENCRYPTION`, `VANILLAPDF_FEATURE_JPEG`, `VANILLAPDF_FEATURE_JPEG2000`, `VANILLAPDF_FEATURE_ZLIB`, always defined to `0` or `1`, so test them with `#if`, not `#ifdef`. `c_export.h` includes it, so every public header provides it. It is generated from `include/vanillapdf/vanillapdf_config.h.in` by `src/vanillapdf/CMakeLists.txt`, and separately by `cmake/nuget.cmake` and `cmake/docs.cmake`, which never configure the library — keep their feature values in step when adding a feature.

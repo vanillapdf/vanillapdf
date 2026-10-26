@@ -35,5 +35,7 @@ CMakeSettings.json
 /nuget/*.nupkg
 /*.nupkg
 /nuget/*.csproj
+/nuget/include/
 /doc/doxyfile
+/doc/include/
 /doc/sphinx/_build/

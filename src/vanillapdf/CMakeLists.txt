@@ -761,6 +761,7 @@ endif (COMPILE_SKIA)
 if (VANILLAPDF_ENABLE_ENCRYPTION AND OPENSSL_FOUND)
     target_link_libraries(vanillapdf PRIVATE OpenSSL::Crypto)
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_OPENSSL)
+    set(VANILLAPDF_FEATURE_ENCRYPTION ON)
 
     message(STATUS "OpenSSL ${OPENSSL_VERSION} was found")
 elseif (VANILLAPDF_ENABLE_ENCRYPTION)
@@ -772,6 +773,7 @@ endif ()
 if (VANILLAPDF_ENABLE_JPEG AND JPEG_FOUND)
     target_link_libraries(vanillapdf PRIVATE JPEG::JPEG)
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_JPEG)
+    set(VANILLAPDF_FEATURE_JPEG ON)
 
     message(STATUS "JPEG library ${JPEG_VERSION} was found")
 elseif (VANILLAPDF_ENABLE_JPEG)
@@ -783,6 +785,7 @@ endif ()
 if (VANILLAPDF_ENABLE_ZLIB AND ZLIB_FOUND)
     target_link_libraries(vanillapdf PRIVATE ZLIB::ZLIB)
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_ZLIB)
+    set(VANILLAPDF_FEATURE_ZLIB ON)
     message(STATUS "zlib ${ZLIB_VERSION_STRING} was found")
 elseif (VANILLAPDF_ENABLE_ZLIB)
     message(FATAL_ERROR "ZLIB enabled but not found. Please install ZLIB or disable zlib support with -DVANILLAPDF_ENABLE_ZLIB=OFF")
@@ -794,6 +797,7 @@ if (VANILLAPDF_ENABLE_JPEG2000 AND TARGET openjp2)
     target_link_libraries(vanillapdf PRIVATE openjp2)
     target_include_directories(vanillapdf PRIVATE ${OPENJPEG_INCLUDE_DIRS})
     target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_OPENJPEG)
+    set(VANILLAPDF_FEATURE_JPEG2000 ON)
     message(STATUS "OpenJPEG ${OPENJPEG_MAJOR_VERSION}.${OPENJPEG_MINOR_VERSION} found and linked")
 elseif (VANILLAPDF_ENABLE_JPEG2000)
     message(FATAL_ERROR "JPEG2000 enabled but OpenJPEG not found. Please install OpenJPEG or disable JPEG2000 support with -DVANILLAPDF_ENABLE_JPEG2000=OFF")
@@ -841,9 +845,21 @@ else()
     message(STATUS "mimalloc support disabled. The default allocator will be used")
 endif()
 
+# Record the build configuration in a public header, so consumers read it the
+# same way regardless of the build system or package manager they use. The
+# VANILLAPDF_FEATURE_* variables are set above, in the branches that enable each
+# dependency, so the header cannot disagree with the binary it describes.
+set(VANILLAPDF_GENERATED_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/include")
+
+configure_file(
+    "${VANILLAPDF_SOLUTION_SOURCE_DIR}/include/vanillapdf/vanillapdf_config.h.in"
+    "${VANILLAPDF_GENERATED_INCLUDE_DIR}/vanillapdf/vanillapdf_config.h"
+)
+
 # This includes the public headers in the project as well as publishing them outside to be consumed
 target_include_directories(vanillapdf PUBLIC
     $<BUILD_INTERFACE:${VANILLAPDF_SOLUTION_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${VANILLAPDF_GENERATED_INCLUDE_DIR}>
     $<INSTALL_INTERFACE:include>
 )
 
@@ -878,6 +894,7 @@ if (MSVC AND BUILD_SHARED_LIBS)
 endif()
 
 install(FILES ${VANILLAPDF_INCLUDE_HEADERS} DESTINATION "include/vanillapdf" COMPONENT Development)
+install(FILES "${VANILLAPDF_GENERATED_INCLUDE_DIR}/vanillapdf/vanillapdf_config.h" DESTINATION "include/vanillapdf" COMPONENT Development)
 install(FILES ${VANILLAPDF_INCLUDE_UTILS_HEADERS} DESTINATION "include/vanillapdf/utils" COMPONENT Development)
 install(FILES ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS} DESTINATION "include/vanillapdf/syntax" COMPONENT Development)
 install(FILES ${VANILLAPDF_INCLUDE_SEMANTICS_HEADERS} DESTINATION "include/vanillapdf/semantics" COMPONENT Development)
