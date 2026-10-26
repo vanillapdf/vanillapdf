@@ -24,6 +24,20 @@
 
 using namespace nlohmann;
 
+#else /* !VANILLAPDF_ENABLE_LICENSING */
+
+#include <spdlog/spdlog.h>
+
+#endif /* VANILLAPDF_ENABLE_LICENSING */
+
+namespace vanillapdf {
+
+// Initialize static members
+bool LicenseInfo::m_update_valid = false;
+std::string LicenseInfo::m_temporary_expiration;
+
+#ifdef VANILLAPDF_ENABLE_LICENSING
+
 static const char VERSION_NODE[] =				"version";
 static const char DATA_NODE[] =					"data";
 static const char OWNER_NODE[] =				"owner";
@@ -42,7 +56,7 @@ static X509* LoadCertificate(const std::string& certificate) {
 
     SCOPE_GUARD([signing_certificate_bio]() { BIO_free(signing_certificate_bio); });
 
-    auto signing_certificate_size = vanillapdf::ValueConvertUtils::SafeConvert<int>(certificate.size());
+    auto signing_certificate_size = ValueConvertUtils::SafeConvert<int>(certificate.size());
     auto bytes_written = BIO_write(signing_certificate_bio, certificate.data(), signing_certificate_size);
     if (bytes_written <= 0) {
         LOG_ERROR_AND_THROW(IOErrorException, "Could not write certificate data");
@@ -55,20 +69,6 @@ static X509* LoadCertificate(const std::string& certificate) {
 
     return certificate_x509;
 }
-
-#else /* !VANILLAPDF_ENABLE_LICENSING */
-
-#include <spdlog/spdlog.h>
-
-#endif /* VANILLAPDF_ENABLE_LICENSING */
-
-namespace vanillapdf {
-
-// Initialize static members
-bool LicenseInfo::m_update_valid = false;
-std::string LicenseInfo::m_temporary_expiration;
-
-#ifdef VANILLAPDF_ENABLE_LICENSING
 
 void LicenseInfo::SetLicense(IInputStreamPtr stream, types::stream_size length) {
     Buffer buffer(length);

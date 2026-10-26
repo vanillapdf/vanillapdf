@@ -5,12 +5,16 @@
 
 #include "utils/math_utils.h"
 
+#if defined(VANILLAPDF_HAVE_OPENJPEG)
 #include <openjpeg.h>
+#endif
 
 namespace vanillapdf {
 namespace syntax {
 
 using namespace std;
+
+#if defined(VANILLAPDF_HAVE_OPENJPEG)
 
 static void error_callback(const char* msg, void*) {
     spdlog::error("OpenJPEG error: {}", msg);
@@ -60,11 +64,15 @@ static OPJ_BOOL memory_stream_seek(OPJ_OFF_T p_nb_bytes, void* p_user_data) {
     return OPJ_TRUE;
 }
 
+#endif
+
 BufferPtr JPXDecodeFilter::Encode(IInputStreamPtr src, types::stream_size, DictionaryObjectPtr /* = DictionaryObjectPtr() */, AttributeListPtr /* = AttributeListPtr() */) const {
     LOG_ERROR_AND_THROW(NotSupportedException, "JPXDecodeFilter encoding is not supported");
 }
 
 BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length, DictionaryObjectPtr /* = DictionaryObjectPtr() */, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
+
+#if defined(VANILLAPDF_HAVE_OPENJPEG)
 
     // Set default decoder parameters
     opj_dparameters_t parameters = { };
@@ -245,6 +253,11 @@ BufferPtr JPXDecodeFilter::Decode(IInputStreamPtr src, types::stream_size length
     }
 
     LOG_ERROR_AND_THROW(ImageCodecErrorException, "Unknown JPEG2000 color space: {}", static_cast<int>(image->color_space));
+
+#else
+    (void) src; (void) length; (void) object_attributes;
+    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without JPEG2000 support");
+#endif
 }
 
 BufferPtr JPXDecodeFilter::Encode(BufferPtr src, DictionaryObjectPtr parameters, AttributeListPtr object_attributes /* = AttributeListPtr() */) const {
