@@ -13,6 +13,8 @@ on:
     paths:
       - 'CMakeLists.txt'
       - 'cmake/**'
+      - 'include/vanillapdf/c_export.h'
+      - 'include/vanillapdf/c_vanillapdf_config.h.in'
       - 'vcpkg.json.in'
       - 'ports/**'
       - 'homebrew/**'
@@ -25,6 +27,8 @@ on:
     paths:
       - 'CMakeLists.txt'
       - 'cmake/**'
+      - 'include/vanillapdf/c_export.h'
+      - 'include/vanillapdf/c_vanillapdf_config.h.in'
       - 'vcpkg.json.in'
       - 'ports/**'
       - 'homebrew/**'

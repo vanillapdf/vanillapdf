@@ -325,9 +325,9 @@ CALLING_CONVENTION      // __cdecl on x86, empty on x64/ARM
 VANILLAPDF_DEPRECATED   // __declspec(deprecated) or __attribute__((deprecated))
 ```
 
-**Build definitions** (set in CMakeLists.txt):
-- `VANILLAPDF_EXPORTS` - defined when building the library
-- `VANILLAPDF_CONFIGURATION_DLL` - defined for shared lib consumers
+**Linkage**:
+- `VANILLAPDF_EXPORTS` - private compile definition of a shared library build, selects `dllexport`
+- `VANILLAPDF_SHARED_LIBRARY` - recorded in the generated `c_vanillapdf_config.h` from the linkage decided in the top-level `CMakeLists.txt`, selects `dllimport` for consumers. Consumers define nothing, whether they use the CMake package, Conan, vcpkg, NuGet or include the headers and link the `.lib` directly
 
 **Deprecating a C API symbol**: when applying `VANILLAPDF_DEPRECATED` to a constant or function, update ALL internal references — `c_errors.cpp` error name lookup, `utils.c` integration test smoke tests, and any other usage. Clang `-Werror,-Wdeprecated-declarations` will fail the CI build if any reference is missed.
 
