@@ -17,17 +17,24 @@ extern "C" {
     * \class MiscUtils
     * \ingroup group_utils
     * \brief Static utility class for OpenSSL initialization and cleanup
+    * \deprecated Use \ref CryptoUtils instead
     */
 
     /**
     * \memberof MiscUtils
     * @{ */
 
-    /** \brief Initialize OpenSSL providers and algorithms. */
-    VANILLAPDF_API error_type CALLING_CONVENTION MiscUtils_InitializeOpenSSL();
+    /**
+    * \brief Initialize OpenSSL with the default \ref CryptoSettingsHandle
+    * \deprecated Use CryptoUtils_Initialize instead
+    */
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION MiscUtils_InitializeOpenSSL();
 
-    /** \brief Cleanup OpenSSL providers and algorithms. */
-    VANILLAPDF_API error_type CALLING_CONVENTION MiscUtils_CleanupOpenSSL();
+    /**
+    * \brief Release what the initialization loaded
+    * \deprecated Use CryptoUtils_Cleanup instead
+    */
+    VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION MiscUtils_CleanupOpenSSL();
 
     /** @} */
 

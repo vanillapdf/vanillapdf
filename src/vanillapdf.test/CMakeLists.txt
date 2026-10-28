@@ -159,13 +159,8 @@ foreach(_index RANGE ${VANILLAPDF_MANIFEST_LAST})
         ${VANILLAPDF_TEST_LAUNCHER_OPTIONS}
     )
 
-    # OpenSSL 3.x: set provider module search path (see vanillapdf/CMakeLists.txt)
-    if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG AND NOT VANILLAPDF_EXTERNAL_OPENSSL
-            AND VANILLAPDF_OPENSSL_MODULES_DIR)
-        set_tests_properties(${TEST_FILENAME} PROPERTIES
-            ENVIRONMENT "OPENSSL_MODULES=${VANILLAPDF_OPENSSL_MODULES_DIR}"
-        )
-    endif()
+    # The corpus contains documents protected with legacy algorithms, see cmake/test_environment.cmake
+    set_tests_properties(${TEST_FILENAME} PROPERTIES ENVIRONMENT_MODIFICATION "${VANILLAPDF_TEST_ENVIRONMENT}")
 endforeach()
 
 # MPK_SLOVLEX.pdf: 9.5 MB, 1,450 pages — takes 600-1500s under sanitizers and

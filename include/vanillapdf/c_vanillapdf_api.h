@@ -89,6 +89,8 @@
 #include "vanillapdf/utils/c_library_info.h"
 #include "vanillapdf/utils/c_license_info.h"
 #include "vanillapdf/utils/c_misc_utils.h"
+#include "vanillapdf/utils/c_crypto_settings.h"
+#include "vanillapdf/utils/c_crypto_utils.h"
 #include "vanillapdf/utils/c_object_diagnostics.h"
 #include "vanillapdf/utils/c_errors.h"
 #include "vanillapdf/utils/c_pkcs12_key.h"
@@ -96,6 +98,8 @@
 #include "vanillapdf/utils/c_signature_verifier.h"
 #include "vanillapdf/utils/c_signature_verification_settings.h"
 #include "vanillapdf/utils/c_message_digest_algorithm.h"
+#include "vanillapdf/utils/c_md5_digest.h"
+#include "vanillapdf/utils/c_rc4_cipher.h"
 #include "vanillapdf/utils/c_name_constants.h"
 
 #include "vanillapdf/utils/c_io_strategy.h"

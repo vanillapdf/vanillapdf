@@ -2,6 +2,8 @@
 
 #include "utils/misc_utils.h"
 #include "utils/math_utils.h"
+#include "utils/md5_digest.h"
+#include "utils/rc4_cipher.h"
 
 #include "syntax/utils/encryption.h"
 #include "syntax/utils/name_constants.h"
@@ -10,10 +12,8 @@
 
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
-#include <openssl/rc4.h>
 #include <openssl/aes.h>
 #include <openssl/x509.h>
-#include <openssl/md5.h>
 #include <openssl/sha.h>
 #include <openssl/pkcs7.h>
 #include <openssl/objects.h>
@@ -58,61 +58,17 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
     types::ushort genNumber,
     EncryptionAlgorithm alg) {
 
-#if VANILLAPDF_FEATURE_ENCRYPTION
-
-    BufferPtr object_key = make_deferred_container<Buffer>(MD5_DIGEST_LENGTH);
-
-    uint8_t object_info[5];
-    object_info[0] = objNumber & 0xFF;
-    object_info[1] = (objNumber >> 8) & 0xFF;
-    object_info[2] = (objNumber >> 16) & 0xFF;
-    object_info[3] = (genNumber) & 0xFF;
-    object_info[4] = (genNumber >> 8) & 0xFF;
-
-    auto evp_md = EVP_md5();
-    auto evp_md_ctx = EVP_MD_CTX_new();
-
-    if (evp_md_ctx == nullptr) {
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_MD_CTX");
-    }
-
-    SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
-
-    auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
-    if (init_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize MD5 digest: {}", openssl_error);
-    }
-
-    auto update_key_result = EVP_DigestUpdate(evp_md_ctx, key.data(), key.std_size());
-    if (update_key_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
-    }
-
-    auto update_object_result = EVP_DigestUpdate(evp_md_ctx, object_info, sizeof(object_info));
-    if (update_object_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
-    }
+    // The low-order 3 bytes of the object number and 2 bytes of the generation number, low-order byte first
+    MD5Digest digest;
+    digest.Update(key);
+    digest.Update(Buffer::FromInteger(objNumber, 3, endian::little));
+    digest.Update(Buffer::FromInteger(genNumber, 2, endian::little));
 
     if (alg == EncryptionAlgorithm::AES) {
-        auto update_salt_result = EVP_DigestUpdate(evp_md_ctx, &AES_ADDITIONAL_SALT[0], sizeof(AES_ADDITIONAL_SALT));
-        if (update_salt_result != 1) {
-            auto openssl_error = CryptoUtils::GetLastOpensslError();
-            LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
-        }
+        digest.Update(Buffer(AES_ADDITIONAL_SALT, sizeof(AES_ADDITIONAL_SALT)));
     }
 
-    unsigned int final_size = 0;
-    auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)object_key->data(), &final_size);
-    if (final_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not finalize MD5 digest: {}", openssl_error);
-    }
-
-    // Confirm the actual output matches  the digest
-    assert(final_size == MD5_DIGEST_LENGTH);
+    BufferPtr object_key = digest.Final();
 
     // 7.6.2 General Encryption Algorithm
     // Algorithm 1: Encryption of data using the RC4 or AES algorithms
@@ -121,12 +77,6 @@ BufferPtr EncryptionUtils::ComputeObjectKey(
     // along with the string or stream data to be encrypted.
     types::size_type key_length = std::min<types::size_type>(key.size() + 5, 16);
     return make_deferred_container<Buffer>(object_key.begin(), object_key.begin() + key_length);
-
-#else
-    (void) key; (void) objNumber; (void) genNumber; (void) alg;
-    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
-#endif
-
 }
 
 BufferPtr EncryptionUtils::PadTruncatePassword(const Buffer& password) {
@@ -142,89 +92,8 @@ BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, const Buffer& data) {
 }
 
 BufferPtr EncryptionUtils::ComputeRC4(const Buffer& key, types::size_type key_length, const Buffer& data) {
-
-#if VANILLAPDF_FEATURE_ENCRYPTION
-
-    BufferPtr result = make_deferred_container<Buffer>(data.size());
-
-    const EVP_CIPHER* evp_cipher = EVP_rc4();
-    
-    auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
-    if (evp_cipher_ctx == nullptr) {
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_CIPHER_CTX");
-    }
-    
-    SCOPE_GUARD([evp_cipher_ctx]() { EVP_CIPHER_CTX_free(evp_cipher_ctx); });
-
-    // This is a trick required by the OpenSSL 3.0 to call EVP_EncryptInit two times
-
-    // The issue is that EVP_rc4 is a variable length and the parameter for the key length cannot be set directly
-    // https://www.openssl.org/docs/manmaster/man3/EVP_rc4.html
-    // RC4 stream cipher. This is a variable key length cipher with a default key length of 128 bits.
-
-    // In the first call of EVP_EncryptInit leave key empty to just initialize the engine.
-    // In the second call of EVP_EncryptInit leave the cipher empty and set only the key.
-    // https://github.com/openssl/openssl/issues/22629
-    
-    auto init_result = EVP_EncryptInit(evp_cipher_ctx, evp_cipher, nullptr, nullptr);
-    if (init_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize RC4 digest: {}", openssl_error);
-    }
-
-    // Key length is set in bytes and not bits, found this experimentally
-    // auto test = EVP_CIPHER_CTX_get_key_length(evp_cipher_ctx);
-
-    auto key_length_converted = ValueConvertUtils::SafeConvert<int>(key_length);
-    auto set_key_length_result = EVP_CIPHER_CTX_set_key_length(evp_cipher_ctx, key_length_converted);
-    if (set_key_length_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not set RC4 key length: {}", openssl_error);
-    }
-
-    auto init_result2 = EVP_EncryptInit(evp_cipher_ctx, nullptr, (unsigned char*)key.data(), nullptr);
-    if (init_result2 != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not re-initialize RC4 digest: {}", openssl_error);
-    }
-    
-    int current_offset = 0;
-    int total_result_length = 0;
-
-    int data_size = ValueConvertUtils::SafeConvert<int>(data.size());
-    
-    auto update_result = EVP_EncryptUpdate(
-        evp_cipher_ctx,
-        (unsigned char*) result->data(),
-        &current_offset,
-        (unsigned char*) data.data(),
-        data_size);
-    
-    if (update_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update RC4 digest: {}", openssl_error);
-    }
-
-    total_result_length += current_offset;
-    
-    auto final_result = EVP_EncryptFinal(evp_cipher_ctx, (unsigned char*)result->data() + current_offset, &current_offset);
-    if (final_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not finalize RC4 digest: {}", openssl_error);
-    }
-
-    total_result_length += current_offset;
-
-    // Remove trailing zeroes
-    result->resize(total_result_length);
-
-    return result;
-
-#else
-    (void) key; (void) key_length; (void) data;
-    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
-#endif
-
+    RC4Cipher cipher(key, key_length);
+    return cipher.Process(data);
 }
 
 BufferPtr EncryptionUtils::ComputeMD5(const Buffer& data) {
@@ -232,50 +101,9 @@ BufferPtr EncryptionUtils::ComputeMD5(const Buffer& data) {
 }
 
 BufferPtr EncryptionUtils::ComputeMD5(const Buffer& data, types::size_type length) {
-
-#if VANILLAPDF_FEATURE_ENCRYPTION
-
-    assert(length <= data.size() && "MD5 prefix length exceeds buffer size");
-
-    auto evp_md = EVP_md5();
-    auto evp_md_ctx = EVP_MD_CTX_new();
-    if (evp_md_ctx == nullptr) {
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_MD_CTX");
-    }
-
-    SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
-
-    BufferPtr key_digest = make_deferred_container<Buffer>(MD5_DIGEST_LENGTH);
-
-    auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
-    if (init_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize MD5 digest: {}", openssl_error);
-    }
-
-    auto update_length = ValueConvertUtils::SafeConvert<size_t>(length);
-    auto update_document_id_result = EVP_DigestUpdate(evp_md_ctx, data.data(), update_length);
-    if (update_document_id_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
-    }
-
-    unsigned int final_size = 0;
-    auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)key_digest->data(), &final_size);
-    if (final_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not finalize MD5 digest: {}", openssl_error);
-    }
-
-    // Confirm the actual output matches  the digest
-    assert(final_size == MD5_DIGEST_LENGTH);
-
-    return key_digest;
-
-#else
-    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
-#endif
-
+    MD5Digest digest;
+    digest.Update(data, length);
+    return digest.Final();
 }
 
 BufferPtr EncryptionUtils::ComputeSHA256(const Buffer& data) {
@@ -618,7 +446,7 @@ BufferPtr EncryptionUtils::AESEncryptCBC_ZeroIV(const Buffer& key, const Buffer&
 
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
     if (evp_cipher_ctx == nullptr) {
@@ -672,7 +500,7 @@ BufferPtr EncryptionUtils::AESDecryptCBC_ZeroIV(const Buffer& key, const Buffer&
 
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
     if (evp_cipher_ctx == nullptr) {
@@ -726,7 +554,7 @@ BufferPtr EncryptionUtils::AESEncryptECB(const Buffer& key, const Buffer& data) 
 
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
     if (evp_cipher_ctx == nullptr) {
@@ -778,7 +606,7 @@ BufferPtr EncryptionUtils::AESDecryptECB(const Buffer& key, const Buffer& data) 
 
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     auto evp_cipher_ctx = EVP_CIPHER_CTX_new();
     if (evp_cipher_ctx == nullptr) {
@@ -997,7 +825,7 @@ BufferPtr EncryptionUtils::GenerateOwnerEncryptionKey(
     (void)document_id; (void)permissions;
 
     // Initialize algorithms is required for any calculations
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     if (algorithm == EncryptionAlgorithm::Undefined) {
         LOG_ERROR_AND_THROW(CryptoErrorException, "Could not generate encryption key for Undefined encryption algorithm");
@@ -1090,7 +918,7 @@ BufferPtr EncryptionUtils::GenerateUserEncryptionKey(
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
     // Initialize algorithms is required for any calculations
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     if (algorithm == EncryptionAlgorithm::Undefined) {
         LOG_ERROR_AND_THROW(CryptoErrorException, "Could not generate encryption key for Undefined encryption algorithm");
@@ -1169,80 +997,23 @@ BufferPtr EncryptionUtils::CalculateDecryptionCompareDataV3(
 
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
-    auto evp_md = EVP_md5();
-    auto evp_md_ctx = EVP_MD_CTX_new();
-    if (evp_md_ctx == nullptr) {
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_CIPHER_CTX");
-    }
-
-    SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
-
     auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(key_length / 8);
     size_t decryption_key_length = std::min(length_bytes, decryption_key_digest->std_size());
 
-    Buffer temporary_digest(MD5_DIGEST_LENGTH);
-
     for (int i = 0; i < 50; ++i) {
-
-        auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
-        if (init_result != 1) {
-            auto openssl_error = CryptoUtils::GetLastOpensslError();
-            LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize MD5 cipher: {}", openssl_error);
-        }
-
-        auto update_result = EVP_DigestUpdate(evp_md_ctx, decryption_key_digest->data(), decryption_key_length);
-        if (update_result != 1) {
-            auto openssl_error = CryptoUtils::GetLastOpensslError();
-            LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 cipher: {}", openssl_error);
-        }
-
-        unsigned int final_size = 0;
-        auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)temporary_digest.data(), &final_size);
-        if (final_result != 1) {
-            auto openssl_error = CryptoUtils::GetLastOpensslError();
-            LOG_ERROR_AND_THROW(CryptoErrorException, "Could not finalize MD5 cipher: {}", openssl_error);
-        }
-
-        // Confirm the actual output matches  the digest
-        assert(final_size == MD5_DIGEST_LENGTH);
-
-        std::copy_n(temporary_digest.begin(), decryption_key_length, decryption_key_digest.begin());
+        BufferPtr iteration_digest = ComputeMD5(decryption_key_digest, decryption_key_length);
+        std::copy_n(iteration_digest.begin(), decryption_key_length, decryption_key_digest.begin());
     }
 
-    Buffer key_digest(MD5_DIGEST_LENGTH);
-
-    auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
-    if (init_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize MD5 digest: {}", openssl_error);
-    }
-
-    auto update_pad_result = EVP_DigestUpdate(evp_md_ctx, HARDCODED_PDF_PAD, sizeof(HARDCODED_PDF_PAD));
-    if (update_pad_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
-    }
-
-    auto update_document_id_result = EVP_DigestUpdate(evp_md_ctx, document_id.data(), document_id.std_size());
-    if (update_document_id_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
-    }
-
-    unsigned int final_size = 0;
-    auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)key_digest.data(), &final_size);
-    if (final_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not finalize MD5 digest: {}", openssl_error);
-    }
-
-    // Confirm the actual output matches  the digest
-    assert(final_size == MD5_DIGEST_LENGTH);
+    MD5Digest pad_digest;
+    pad_digest.Update(Buffer(HARDCODED_PDF_PAD, sizeof(HARDCODED_PDF_PAD)));
+    pad_digest.Update(document_id);
+    BufferPtr key_digest = pad_digest.Final();
 
     // Encrypt the 16-byte result of the hash,
     // using an RC4 encryption function with the encryption key from step (a).
     // The key length is n bytes (key_length / 8), which is 5 for revision 2 but depends on the
-    // Length entry for revision 3 or greater. The digest buffer is always MD5_DIGEST_LENGTH (16),
+    // Length entry for revision 3 or greater. The digest buffer is always MD5Digest::DIGEST_LENGTH (16),
     // so we must restrict the RC4 key to the first decryption_key_length bytes; otherwise files
     // with a sub-128-bit key (e.g. Adobe's inconsistent /V 1 /R 3 /Length 40) fail to authenticate.
     BufferPtr compare_data = EncryptionUtils::ComputeRC4(decryption_key_digest, decryption_key_length, key_digest);
@@ -1280,67 +1051,12 @@ BufferPtr EncryptionUtils::CalculateDecryptionKeyDigest(
     const Buffer& owner_data,
     uint32_t permissions) {
 
-#if VANILLAPDF_FEATURE_ENCRYPTION
-
-    BufferPtr decryption_key_digest = make_deferred_container<Buffer>(MD5_DIGEST_LENGTH);
-
-    auto evp_md = EVP_md5();
-    auto evp_md_ctx = EVP_MD_CTX_new();
-    if (evp_md_ctx == nullptr) {
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_CIPHER_CTX");
-    }
-
-    SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
-
-    auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
-    if (init_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize MD5 digest: {}", openssl_error);
-    }
-
-    auto update_input_result = EVP_DigestUpdate(evp_md_ctx, input.data(), input.std_size());
-    if (update_input_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
-    }
-
-    auto update_owner_result = EVP_DigestUpdate(evp_md_ctx, owner_data.data(), owner_data.std_size());
-    if (update_owner_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
-    }
-
-    uint8_t permissions_array[sizeof(permissions)];
-
-    for (size_t i = 0; i < sizeof(permissions); ++i) {
-        permissions_array[i] = (permissions >> (i * 8)) & 0xFF;
-    }
-
-    auto update_permissions_result = EVP_DigestUpdate(evp_md_ctx, permissions_array, sizeof(permissions_array));
-    if (update_permissions_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
-    }
-
-    auto update_document_id_result = EVP_DigestUpdate(evp_md_ctx, document_id.data(), document_id.std_size());
-    if (update_document_id_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
-    }
-
-    unsigned int final_size = 0;
-    auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)decryption_key_digest->data(), &final_size);
-    if (final_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not finalize MD5 digest: {}", openssl_error);
-    }
-
-    return decryption_key_digest;
-
-#else
-    LOG_ERROR_AND_THROW(NotSupportedException, "This library was compiled without OpenSSL support");
-#endif
-
+    MD5Digest digest;
+    digest.Update(input);
+    digest.Update(owner_data);
+    digest.Update(Buffer::FromInteger(permissions, sizeof(permissions), endian::little));
+    digest.Update(document_id);
+    return digest.Final();
 }
 
 BufferPtr EncryptionUtils::GetRecipientKey
@@ -1493,7 +1209,23 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
             SCOPE_GUARD_CAPTURE_REFERENCES(BIO_free(etmp));
 
             const EVP_CIPHER *evp_cipher = EVP_get_cipherbyobj(envelope->enc_data->algorithm->algorithm);
-            assert(nullptr != evp_cipher && "EVP cipher is null");
+            if (nullptr == evp_cipher) {
+                char algorithm_name[128] = {};
+                OBJ_obj2txt(algorithm_name, sizeof(algorithm_name), envelope->enc_data->algorithm->algorithm, 0);
+                LOG_ERROR_AND_THROW(NotSupportedException, "Unknown envelope encryption algorithm {}", algorithm_name);
+            }
+
+#if OPENSSL_VERSION_MAJOR >= 3
+            // The cipher object above exists even when no loaded provider implements it,
+            // older producers use RC2 which only the legacy provider implements
+            EVP_CIPHER* fetched_cipher = EVP_CIPHER_fetch(nullptr, EVP_CIPHER_get0_name(evp_cipher), nullptr);
+            SCOPE_GUARD([fetched_cipher]() { EVP_CIPHER_free(fetched_cipher); });
+
+            if (nullptr == fetched_cipher) {
+                LOG_ERROR_AND_THROW(NotSupportedException, "Envelope algorithm {} requires the OpenSSL legacy provider, {}",
+                    EVP_CIPHER_get0_name(evp_cipher), CryptoUtils::GetLastOpensslError());
+            }
+#endif
 
             int rv;
             EVP_CIPHER_CTX *evp_ctx = nullptr;
@@ -1574,7 +1306,7 @@ BufferPtr EncryptionUtils::ComputeAuthenticationOwnerData(const Buffer& pad_pass
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
     // Initialize algorithms is required for any calculations
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     auto user_value = encryption_dictionary.FindAs<syntax::StringObjectPtr>(constant::Name::U);
     auto owner_value = encryption_dictionary.FindAs<syntax::StringObjectPtr>(constant::Name::O);
@@ -1589,70 +1321,16 @@ BufferPtr EncryptionUtils::ComputeAuthenticationOwnerData(const Buffer& pad_pass
     }
 
     // check owner key
-    Buffer password_digest(MD5_DIGEST_LENGTH);
-
-    auto evp_md = EVP_md5();
-    auto evp_md_ctx = EVP_MD_CTX_new();
-    if (evp_md_ctx == nullptr) {
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Failed to allocate new EVP_CIPHER_CTX");
-    }
-
-    SCOPE_GUARD([evp_md_ctx]() { EVP_MD_CTX_free(evp_md_ctx); });
-
-    auto init_result = EVP_DigestInit(evp_md_ctx, evp_md);
-    if (init_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize MD5 digest: {}", openssl_error);
-    }
-
-    auto update_password_result = EVP_DigestUpdate(evp_md_ctx, pad_password.data(), pad_password.std_size());
-    if (update_password_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
-    }
-
-    unsigned int final_size = 0;
-    auto final_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)password_digest.data(), &final_size);
-    if (final_result != 1) {
-        auto openssl_error = CryptoUtils::GetLastOpensslError();
-        LOG_ERROR_AND_THROW(CryptoErrorException, "Could not finalize MD5 digest: {}", openssl_error);
-    }
-
-    // Confirm the actual output matches  the digest
-    assert(final_size == MD5_DIGEST_LENGTH);
+    BufferPtr password_digest = ComputeMD5(pad_password);
 
     if (*revision >= 3) {
 
-        Buffer temporary_digest(MD5_DIGEST_LENGTH);
-
         auto length_bytes = ValueConvertUtils::SafeConvert<size_t>(length_bits->GetIntegerValue() / 8);
-        auto password_length = std::min(length_bytes, password_digest.std_size());
+        auto password_length = std::min(length_bytes, password_digest->std_size());
 
         for (int i = 0; i < 50; ++i) {
-
-            auto init_loop_result = EVP_DigestInit(evp_md_ctx, evp_md);
-            if (init_loop_result != 1) {
-                auto openssl_error = CryptoUtils::GetLastOpensslError();
-                LOG_ERROR_AND_THROW(CryptoErrorException, "Could not initialize MD5 digest: {}", openssl_error);
-            }
-
-            auto update_loop_result = EVP_DigestUpdate(evp_md_ctx, password_digest.data(), password_length);
-            if (update_loop_result != 1) {
-                auto openssl_error = CryptoUtils::GetLastOpensslError();
-                LOG_ERROR_AND_THROW(CryptoErrorException, "Could not update MD5 digest: {}", openssl_error);
-            }
-
-            unsigned int final_loop_size = 0;
-            auto final_loop_result = EVP_DigestFinal(evp_md_ctx, (unsigned char*)temporary_digest.data(), &final_loop_size);
-            if (final_loop_result != 1) {
-                auto openssl_error = CryptoUtils::GetLastOpensslError();
-                LOG_ERROR_AND_THROW(CryptoErrorException, "Could not finalize MD5 digest: {}", openssl_error);
-            }
-
-            // Confirm the actual output matches  the digest
-            assert(final_loop_size == MD5_DIGEST_LENGTH);
-
-            std::copy_n(temporary_digest.begin(), password_length, password_digest.begin());
+            BufferPtr iteration_digest = ComputeMD5(password_digest, password_length);
+            std::copy_n(iteration_digest.begin(), password_length, password_digest.begin());
         }
 
         // (Security handlers of revision 3 or greater) Do the following 20 times: Decrypt the value of the encryption
@@ -1692,7 +1370,7 @@ BufferPtr EncryptionUtils::GenerateRandomData(int length) {
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
     // Initialize algorithms is required for any calculations
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     BufferPtr result = make_deferred_container<Buffer>(length);
 
@@ -1719,7 +1397,7 @@ BufferPtr EncryptionUtils::ComputeHashR6(
 
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     // Step 1: K = SHA-256(password + salt + u_value)
     Buffer initial_input;
@@ -1833,7 +1511,7 @@ EncryptionUtils::EncryptionDataR6 EncryptionUtils::GenerateEncryptionDataR6(
 
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     // Truncate passwords to 127 bytes max (UTF-8, SASLprep skipped for now)
     // TODO: Add SASLprep (RFC 4013) normalization for full Unicode support
@@ -1965,7 +1643,7 @@ bool EncryptionUtils::CheckKeyR6(
 
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     // Truncate password to 127 bytes
     Buffer password_truncated(password.begin(), password.begin() + std::min<types::size_type>(password.size(), 127));

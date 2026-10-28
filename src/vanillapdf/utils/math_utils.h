@@ -5,6 +5,7 @@
 
 #include <cassert>
 #include <limits>
+#include <type_traits>
 
 #include <fmt/core.h>
 
@@ -79,6 +80,44 @@ inline auto MostSignificantBit(T value) -> decltype(sizeof(T)) {
     }
 
     return result;
+}
+
+/**
+ * @brief Reverses the byte order of an unsigned \p value, mirroring C++23 std::byteswap.
+ */
+template <
+    typename T,
+    typename = typename std::enable_if<std::is_unsigned<T>::value>::type
+>
+inline T ByteSwap(T value) {
+    T result = 0;
+    for (decltype(sizeof(T)) i = 0; i < sizeof(T); ++i) {
+        result = static_cast<T>((result << 8) | (value & 0xFF));
+        value = static_cast<T>(value >> 8);
+    }
+
+    return result;
+}
+
+/**
+ * @brief Rotates the bits of an unsigned \p value left by \p count positions.
+ *
+ * \p count is taken modulo the bit width of \p value.
+ */
+template <
+    typename T,
+    typename = typename std::enable_if<std::is_unsigned<T>::value>::type
+>
+inline T RotateLeft(T value, unsigned int count) {
+    constexpr unsigned int bit_width = std::numeric_limits<T>::digits;
+
+    // Shifting by the full bit width is undefined behavior
+    count %= bit_width;
+    if (count == 0) {
+        return value;
+    }
+
+    return static_cast<T>((value << count) | (value >> (bit_width - count)));
 }
 
 } // vanillapdf

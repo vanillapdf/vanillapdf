@@ -62,6 +62,12 @@ set(VANILLAPDF_UNITTEST_SYNTAX_SOURCES
     syntax/xref_test.cpp
 )
 
+set(VANILLAPDF_UNITTEST_UTILS_SOURCES
+    utils/md5_digest_test.cpp
+    utils/openssl_legacy_test.cpp
+    utils/rc4_cipher_test.cpp
+)
+
 set(VANILLAPDF_UNITTEST_HEADERS
     unittest.h
     test_data.h
@@ -86,10 +92,15 @@ source_group("Source Files\\syntax" FILES
     ${VANILLAPDF_UNITTEST_SYNTAX_SOURCES}
 )
 
+source_group("Source Files\\utils" FILES
+    ${VANILLAPDF_UNITTEST_UTILS_SOURCES}
+)
+
 add_executable(vanillapdf.unittest
     ${VANILLAPDF_UNITTEST_HEADERS}
     ${VANILLAPDF_UNITTEST_SOURCES}
     ${VANILLAPDF_UNITTEST_SYNTAX_SOURCES}
+    ${VANILLAPDF_UNITTEST_UTILS_SOURCES}
     ${VANILLAPDF_UNITTEST_RESOURCE_FILES}
 )
 
@@ -140,6 +151,12 @@ if(BUILD_SHARED_LIBS)
     target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_CONFIGURATION_DLL)
 endif()
 
+# Tests of algorithms served only by the OpenSSL legacy provider expect them
+# to work when the library loads it, and to be reported unavailable otherwise
+if(VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER)
+    target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_TEST_OPENSSL_LEGACY_PROVIDER)
+endif()
+
 # Pass licensing flag to test code so it can skip license loading when disabled
 if(VANILLAPDF_ENABLE_LICENSING)
     target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_ENABLE_LICENSING)
@@ -178,13 +195,8 @@ include(GoogleTest)
 # Without this flag, test names include raw memory addresses making output unreadable:
 #   Before: CertificateTypes/.../40-byte object <B0-4E 79-8B F7-7F 00-00...>
 #   After:  CertificateTypes/.../2kDSA_SHA256
-# OpenSSL 3.x: set provider module search path (see vanillapdf/CMakeLists.txt)
-set(VANILLAPDF_UNITTEST_EXTRA_PROPERTIES "")
-if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG AND NOT VANILLAPDF_EXTERNAL_OPENSSL
-        AND VANILLAPDF_OPENSSL_MODULES_DIR)
-    set(VANILLAPDF_UNITTEST_EXTRA_PROPERTIES PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${VANILLAPDF_OPENSSL_MODULES_DIR}")
-endif()
-
+#
+# The tests of the legacy algorithms need the environment, see cmake/test_environment.cmake
 gtest_discover_tests(vanillapdf.unittest DISCOVERY_MODE PRE_TEST NO_PRETTY_VALUES
-    ${VANILLAPDF_UNITTEST_EXTRA_PROPERTIES}
+    PROPERTIES ENVIRONMENT_MODIFICATION "${VANILLAPDF_TEST_ENVIRONMENT}"
 )

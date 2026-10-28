@@ -34,6 +34,18 @@ Detailed coding style preferences for C++ code in this project. This file is con
   - Good: `return (A) || (B);`
   - Avoid: `if (A) return true; return B;`
 
+## Function Bodies
+
+- Put the opening brace at the end of the signature line and the body on the following lines, even for one-statement getters and setters
+  - Good:
+    ```cpp
+    LegacyAlgorithmsPolicy GetLegacyAlgorithmsPolicy(void) const noexcept {
+        return m_legacy_algorithms_policy;
+    }
+    ```
+  - Avoid: `LegacyAlgorithmsPolicy GetLegacyAlgorithmsPolicy(void) const noexcept { return m_legacy_algorithms_policy; }`
+- Single-line definitions only in very specific cases, such as empty bodies or deliberately compact tables
+
 ## Visual Cohesion
 
 - Do not insert structurally different code into a group of similarly-looking lines without separating it with a blank line and a comment

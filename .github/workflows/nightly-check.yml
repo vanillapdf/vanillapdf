@@ -229,6 +229,11 @@ jobs:
           - { name: "win.2025-x64", os: windows-2025, preset: "windows-x64-msvc-18" }
           - { name: "win.11-arm64", os: windows-11-arm, preset: "windows-arm64-msvc-18" }
 
+          # Built without the OpenSSL legacy provider, the opt-out every other row skips:
+          # RC2 and MD2/MD4 must report NotSupported under every legacy algorithms policy,
+          # and LegacyAlgorithmsPolicy_Required must fail the initialization.
+          - { name: "win.2025-x64-no-openssl-legacy", os: windows-2025, preset: "windows-x64-msvc-18", extra_args: "-DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=OFF" }
+
           # The debug heap of the dynamic debug runtime (/MDd), which the library
           # and the test executables share, so that _CrtCheckMemory in the test
           # executables validates the blocks of the library as well. The debug

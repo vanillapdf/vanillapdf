@@ -158,7 +158,7 @@ PKCS12Key::PKCS12KeyImpl::PKCS12KeyImpl(const Buffer& data, std::string_view pas
 
 void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, std::string_view password) {
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     // The const cast seems to be unnecessary, but on my linux VM
     // with OpenSSL 1.0.1f method BIO_new_mem_buf takes only void*
@@ -178,7 +178,12 @@ void PKCS12Key::PKCS12KeyImpl::Load(const Buffer& data, std::string_view passwor
     EVP_PKEY* key_raw = nullptr;
     X509* cert_raw = nullptr;
     int parsed = PKCS12_parse(p12.get(), password.data(), &key_raw, &cert_raw, &additional_certs);
-    if (1 != parsed) {
+    if (parsed != 1) {
+        if (CryptoUtils::IsAlgorithmUnavailableError()) {
+            LOG_ERROR_AND_THROW(NotSupportedException, "PKCS#12 algorithm requires the OpenSSL legacy provider, {}",
+                CryptoUtils::GetLastOpensslError());
+        }
+
         LOG_ERROR_AND_THROW(CryptoErrorException, "Could not parse PKCS#12, {}", CryptoUtils::GetLastOpensslError());
     }
 

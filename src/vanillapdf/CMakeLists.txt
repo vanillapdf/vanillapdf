@@ -17,6 +17,8 @@ set(VANILLAPDF_C_IMPLEMENTATION_SOURCES
 set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_buffer.cpp
     implementation/utils/c_buffer_array.cpp
+    implementation/utils/c_crypto_settings.cpp
+    implementation/utils/c_crypto_utils.cpp
     implementation/utils/c_encryption.cpp
     implementation/utils/c_errors.cpp
     implementation/utils/c_input_stream.cpp
@@ -24,11 +26,13 @@ set(VANILLAPDF_C_IMPLEMENTATION_UTILS_SOURCES
     implementation/utils/c_library_info.cpp
     implementation/utils/c_license_info.cpp
     implementation/utils/c_logging.cpp
+    implementation/utils/c_md5_digest.cpp
     implementation/utils/c_misc_utils.cpp
     implementation/utils/c_object_diagnostics.cpp
     implementation/utils/c_output_stream.cpp
     implementation/utils/c_memory_buffer_output_stream.cpp
     implementation/utils/c_pkcs12_key.cpp
+    implementation/utils/c_rc4_cipher.cpp
     implementation/utils/c_signature_verifier.cpp
     implementation/utils/c_signature_verification_settings.cpp
     implementation/utils/c_signing_key.cpp
@@ -217,8 +221,10 @@ set(VANILLAPDF_UTILS_SOURCES
     utils/exceptions.cpp
     utils/library_info.cpp
     utils/license_info.cpp
+    utils/md5_digest.cpp
     utils/misc_utils.cpp
     utils/pkcs12_key.cpp
+    utils/rc4_cipher.cpp
     utils/resource.cpp
     utils/signature_verification_result.cpp
     utils/signature_verifier.cpp
@@ -376,6 +382,7 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/compiler_utils.h
     utils/constants.h
     utils/conversion_utils.h
+    utils/crypto_settings.h
     utils/crypto_utils.h
     utils/custom_size_allocator.h
     utils/custom_size_vector.h
@@ -386,6 +393,7 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/license_info.h
     utils/log.h
     utils/math_utils.h
+    utils/md5_digest.h
     utils/message_digest_algorithm.h
     utils/observable_interface.h
     utils/versionable.h
@@ -393,6 +401,7 @@ set(VANILLAPDF_UTILS_HEADERS
     utils/pdf_allocator.h
     utils/pdf_version.h
     utils/pkcs12_key.h
+    utils/rc4_cipher.h
     utils/resource.h
     utils/signature_verification_result.h
     utils/signature_verifier.h
@@ -763,6 +772,11 @@ if (VANILLAPDF_ENABLE_ENCRYPTION AND OPENSSL_FOUND)
     set(VANILLAPDF_FEATURE_ENCRYPTION ON)
 
     message(STATUS "OpenSSL ${OPENSSL_VERSION} was found")
+
+    if (VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER)
+        target_compile_definitions(vanillapdf PRIVATE -DVANILLAPDF_HAVE_OPENSSL_LEGACY_PROVIDER)
+        message(STATUS "OpenSSL legacy provider support enabled")
+    endif ()
 elseif (VANILLAPDF_ENABLE_ENCRYPTION)
     message(FATAL_ERROR "Encryption enabled but OpenSSL not found. Please install OpenSSL or disable encryption with -DVANILLAPDF_ENABLE_ENCRYPTION=OFF")
 else()
@@ -928,45 +942,24 @@ if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG)
         "Automatically copy vcpkg dependencies into install target directory" FORCE)
 endif()
 
-# OpenSSL 3.x legacy provider module — runtime-loaded via OSSL_PROVIDER_load,
-# not a linked dependency, so VCPKG_APPLOCAL_DEPS does not handle it.
-# Neither vcpkg nor CMake's FindOpenSSL expose whether OpenSSL was built as
-# shared or static (VCPKG_LIBRARY_LINKAGE is not available to consumer projects,
-# and imported targets are created as UNKNOWN). The most reliable check is to
-# look for the provider file directly. On static vcpkg triplets, providers are
-# compiled into the library and no separate DLL exists, so find_file fails
-# silently.
-if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG
-        AND OPENSSL_FOUND AND NOT VANILLAPDF_EXTERNAL_OPENSSL
-        AND OPENSSL_VERSION VERSION_GREATER_EQUAL "3.0.0")
+# The bundled shared OpenSSL is incomplete without its legacy provider module,
+# which is loaded at runtime rather than linked, so the dependency copy above
+# does not see it (see cmake/openssl_legacy_module.cmake). OpenSSL does not
+# search the library directory for providers: consumers of the installation
+# that load the legacy provider point OPENSSL_MODULES at the bin directory.
+if(WIN32 AND VANILLAPDF_INTERNAL_VCPKG AND VANILLAPDF_OPENSSL_LEGACY_MODULE_DIR)
+    set(VANILLAPDF_OPENSSL_LEGACY_MODULE "${VANILLAPDF_OPENSSL_LEGACY_MODULE_DIR}/legacy.dll")
 
-    find_file(OPENSSL_LEGACY_PROVIDER
-        NAMES legacy.dll
-        PATHS "${OPENSSL_MODULES_DIR}"
-              "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin"
-        NO_DEFAULT_PATH
-    )
-
-    if(EXISTS "${OPENSSL_LEGACY_PROVIDER}")
-        message(STATUS "OpenSSL legacy provider found at ${OPENSSL_LEGACY_PROVIDER}")
-
-        add_custom_command(
-            TARGET vanillapdf POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${OPENSSL_LEGACY_PROVIDER}"
-            "$<TARGET_FILE_DIR:vanillapdf>"
-            COMMENT "Copying OpenSSL legacy provider module"
-        )
-        install(FILES "${OPENSSL_LEGACY_PROVIDER}" DESTINATION bin COMPONENT Runtime)
-
-        # Set the modules directory so test targets can set OPENSSL_MODULES env var.
-        # OpenSSL checks this env var at runtime to locate provider modules.
-        # Users can override via -DVANILLAPDF_OPENSSL_MODULES_DIR=<path>.
-        set(VANILLAPDF_OPENSSL_MODULES_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin"
-            CACHE PATH "Directory containing OpenSSL provider modules")
-    else()
-        message(STATUS "OpenSSL legacy provider not found — assuming static linkage (providers compiled in)")
+    set(VANILLAPDF_OPENSSL_LEGACY_MODULE_DEBUG "${VANILLAPDF_OPENSSL_LEGACY_MODULE}")
+    if(VANILLAPDF_OPENSSL_LEGACY_MODULE_DEBUG_DIR)
+        set(VANILLAPDF_OPENSSL_LEGACY_MODULE_DEBUG "${VANILLAPDF_OPENSSL_LEGACY_MODULE_DEBUG_DIR}/legacy.dll")
     endif()
+
+    install(FILES
+        "$<IF:$<CONFIG:Debug>,${VANILLAPDF_OPENSSL_LEGACY_MODULE_DEBUG},${VANILLAPDF_OPENSSL_LEGACY_MODULE}>"
+        DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        COMPONENT Runtime
+    )
 endif()
 
 # Add export verification test for shared library builds

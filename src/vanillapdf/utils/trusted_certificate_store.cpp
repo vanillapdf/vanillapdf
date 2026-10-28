@@ -72,7 +72,7 @@ X509_STORE* TrustedCertificateStore::GetNativeHandle() const {
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
 TrustedCertificateStore::TrustedCertificateStoreImpl::TrustedCertificateStoreImpl() {
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     m_store = X509_STORE_new();
     if (!m_store) {

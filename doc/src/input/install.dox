@@ -293,19 +293,46 @@ cmake --preset <your-preset>
 
 Vanilla.PDF is compatible with FIPS-enabled and policy-restricted OpenSSL
 configurations commonly found on RHEL-based distributions (Rocky Linux, Fedora,
-AlmaLinux, RHEL). The library uses OpenSSL's PKCS#7 padding for AES encryption
-and loads the OpenSSL \c legacy provider at startup to support the full range
-of PDF encryption standards.
+AlmaLinux, RHEL). RC4 and MD5, which the standard security handler uses for
+password protected documents up to revision 4, are implemented in-house and do
+not depend on the OpenSSL configuration. AES and the SHA-2 family come from the
+OpenSSL default provider.
+
+\subsection install_openssl_legacy Legacy Provider
+
+The OpenSSL 3 \c legacy provider supplies RC2 envelopes of certificate encrypted
+documents and PKCS#12 key files protected with RC2 or RC4, which otherwise fail
+with \c VANILLAPDF_ERROR_NOT_SUPPORTED, and MD2 or MD4 signatures, which otherwise
+do not verify. The library loads it by default.
+
+Configure with \c -DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=OFF to leave it out
+entirely. At runtime the legacy algorithms policy of \ref CryptoSettingsHandle,
+applied with \ref CryptoUtils_Initialize before any other call, chooses between
+\ref LegacyAlgorithmsPolicy_Optional (the default: load it, continue without it
+when it cannot be loaded), \ref LegacyAlgorithmsPolicy_Required (fail the
+initialization instead) and \ref LegacyAlgorithmsPolicy_Disabled (do not load it):
+\code{.c}
+CryptoSettingsHandle* settings = NULL;
+CryptoSettings_Create(&settings);
+CryptoSettings_SetLegacyAlgorithmsPolicy(settings, LegacyAlgorithmsPolicy_Required);
+CryptoUtils_Initialize(settings);
+CryptoSettings_Release(settings);
+\endcode
+A shared OpenSSL loads the provider as a separate module from a directory fixed
+when OpenSSL was built. With a dynamic vcpkg triplet that directory does not
+exist on the target machine, so point the \c OPENSSL_MODULES environment variable
+at the directory holding \c legacy.dll. A legacy key file can also be
+re-exported with AES:
+\code{.bash}
+openssl pkcs12 -legacy -in old.pfx -nodes | openssl pkcs12 -export -out new.pfx
+\endcode
 
 \subsection install_openssl_crypto_policy Crypto Policy Configuration
 
-The PDF specification requires algorithms that some OpenSSL crypto policies
-consider legacy: MD5 for encryption key derivation, RC4 for older encrypted
-documents, and SHA-1 for some digital signatures. On RHEL-based distributions,
-the \c DEFAULT crypto policy may restrict these algorithms.
-
-If encrypted PDF operations fail with crypto errors, enable the legacy
-algorithms via the system crypto policy:
+Some OpenSSL crypto policies reject SHA-1, which some digital signatures use.
+On RHEL-based distributions the \c DEFAULT crypto policy restricts it. If
+signature operations fail with crypto errors, enable the legacy algorithms via
+the system crypto policy:
 \code{.bash}
 sudo update-crypto-policies --set LEGACY
 \endcode

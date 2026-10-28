@@ -433,7 +433,7 @@ SignatureVerificationResultPtr SignatureVerifier::Verify(
 
 #if VANILLAPDF_FEATURE_ENCRYPTION
 
-    CryptoUtils::InitializeOpenSSL();
+    CryptoUtils::EnsureInitialized();
 
     // Parse CMS signature
     const unsigned char* sig_ptr = reinterpret_cast<const unsigned char*>(signature_contents.data());
