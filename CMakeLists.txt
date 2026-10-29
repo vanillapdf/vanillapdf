@@ -122,6 +122,7 @@ project(vanillapdf)
 # even when asked for a shared one, so it is decided as static here as well.
 # It has to follow project(), which records whether the platform supports them.
 get_property(VANILLAPDF_TARGET_SUPPORTS_SHARED_LIBS GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS)
+
 if(BUILD_SHARED_LIBS AND VANILLAPDF_TARGET_SUPPORTS_SHARED_LIBS)
     set(VANILLAPDF_SHARED_LIBRARY ON)
     set(VANILLAPDF_LIBRARY_TYPE SHARED)
