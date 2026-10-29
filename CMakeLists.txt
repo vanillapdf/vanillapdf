@@ -114,6 +114,23 @@ include(cmake/vcpkg_init.cmake)
 # Define main solution
 project(vanillapdf)
 
+# The linkage is decided once, here. The library is created with this type
+# explicitly, and everything that depends on the linkage follows these
+# variables rather than BUILD_SHARED_LIBS: the export definitions, the
+# generated c_vanillapdf_config.h, the installed package and the tools.
+# A platform without shared libraries (Emscripten) builds a static library
+# even when asked for a shared one, so it is decided as static here as well.
+# It has to follow project(), which records whether the platform supports them.
+get_property(VANILLAPDF_TARGET_SUPPORTS_SHARED_LIBS GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS)
+
+if(BUILD_SHARED_LIBS AND VANILLAPDF_TARGET_SUPPORTS_SHARED_LIBS)
+    set(VANILLAPDF_SHARED_LIBRARY ON)
+    set(VANILLAPDF_LIBRARY_TYPE SHARED)
+else()
+    set(VANILLAPDF_SHARED_LIBRARY OFF)
+    set(VANILLAPDF_LIBRARY_TYPE STATIC)
+endif()
+
 # Standard installation directory layout (CMAKE_INSTALL_BINDIR, CMAKE_INSTALL_LIBDIR, ...)
 # Included here rather than in cmake/vanillapdf_install.cmake, because the install
 # rules in src/vanillapdf/CMakeLists.txt run before that file is included.

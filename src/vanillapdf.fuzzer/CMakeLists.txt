@@ -35,11 +35,6 @@ function(add_fuzz_target TARGET_NAME SOURCE_FILE)
     enable_fuzzer_for_target(${TARGET_NAME})
 
     target_link_libraries(${TARGET_NAME} PRIVATE vanillapdf)
-
-    # In case we have the dynamic link configuration add specific definitions
-    if(BUILD_SHARED_LIBS)
-        target_compile_definitions(${TARGET_NAME} PRIVATE VANILLAPDF_CONFIGURATION_DLL)
-    endif()
 endfunction()
 
 # Always-available fuzz targets

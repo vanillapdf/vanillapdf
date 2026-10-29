@@ -41,4 +41,15 @@
 */
 #cmakedefine01 VANILLAPDF_FEATURE_ZLIB
 
+/**
+* \def VANILLAPDF_SHARED_LIBRARY
+* \brief Defined to 1 when the library is built as a shared library, otherwise 0.
+*
+* Consumers of a shared library on Windows have to import the exported symbols,
+* and the exported constants cannot be linked any other way.
+* The headers derive the linkage from it, so consumers that include them
+* directly, without the CMake package, do not have to define anything.
+*/
+#cmakedefine01 VANILLAPDF_SHARED_LIBRARY
+
 #endif /* _C_VANILLAPDF_CONFIG_H */
