@@ -10,6 +10,7 @@
 #include <fmt/core.h>
 
 #if VANILLAPDF_FEATURE_ENCRYPTION
+#include <openssl/asn1.h>
 #include <openssl/x509.h>
 #include <openssl/bio.h>
 #include <openssl/pem.h>
@@ -130,6 +131,17 @@ std::string CryptoUtils::GetLastOpensslError() {
     return fmt::format(
         "Error: '{}'\nFile: '{}'\nLine: '{}'\nData: '{}'\nFlags: '{}'\n",
         err_code, to_string(err_file), err_line, to_string(err_data), err_flags);
+#endif
+}
+
+size_t CryptoUtils::GetStringLength(const ASN1_STRING* value) {
+
+    // ASN1_STRING_length is deprecated since OpenSSL 4.1
+#if OPENSSL_VERSION_NUMBER >= 0x40100000L
+    return ASN1_STRING_get_length(value);
+#else
+    int length = ASN1_STRING_length(value);
+    return ValueConvertUtils::SafeConvert<size_t>(length);
 #endif
 }
 

@@ -46,6 +46,17 @@ Detailed coding style preferences for C++ code in this project. This file is con
   - Avoid: `LegacyAlgorithmsPolicy GetLegacyAlgorithmsPolicy(void) const noexcept { return m_legacy_algorithms_policy; }`
 - Single-line definitions only in very specific cases, such as empty bodies or deliberately compact tables
 
+## Nested Calls
+
+- Do not pass the result of one function call directly into another; store each intermediate result in its own named variable first
+  - Good:
+    ```cpp
+    int length = ASN1_STRING_length(value);
+    return ValueConvertUtils::SafeConvert<size_t>(length);
+    ```
+  - Avoid: `return ValueConvertUtils::SafeConvert<size_t>(ASN1_STRING_length(value));`
+- When a variable holds the converted form of another, name it with a `_converted` suffix (`encrypted_content_length_converted`, `count_converted`)
+
 ## Visual Cohesion
 
 - Do not insert structurally different code into a group of similarly-looking lines without separating it with a blank line and a comment

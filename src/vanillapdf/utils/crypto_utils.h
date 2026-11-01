@@ -39,6 +39,7 @@ typedef struct evp_md_ctx_st EVP_MD_CTX;
 typedef struct evp_cipher_ctx_st EVP_CIPHER_CTX;
 typedef struct bio_st BIO;
 typedef struct pkcs7_st PKCS7;
+typedef struct asn1_string_st ASN1_STRING;
 typedef struct asn1_string_st ASN1_TIME;
 typedef struct stack_st_X509 STACK_OF_X509;
 typedef struct CMS_ContentInfo_st CMS_ContentInfo;
@@ -65,6 +66,17 @@ public:
      * \throws GeneralException if algorithm is unknown or unsupported
      */
     static const EVP_MD* GetAlgorithm(MessageDigestAlgorithm algorithm);
+
+    /**
+     * \brief Get the length of an ASN1_STRING in bytes
+     *
+     * Wraps ASN1_STRING_length, which is deprecated since OpenSSL 4.1
+     * in favor of ASN1_STRING_get_length.
+     *
+     * \param value ASN1 string to measure
+     * \return Number of bytes in the string data
+     */
+    static size_t GetStringLength(const ASN1_STRING* value);
 
 #endif // VANILLAPDF_FEATURE_ENCRYPTION
 
