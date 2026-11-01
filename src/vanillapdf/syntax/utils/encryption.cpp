@@ -1191,7 +1191,7 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
             // ASN1_STRING is opaque since OpenSSL 4.0. The get0 accessor
             // returns a pointer into the string, which must not be freed.
             const unsigned char* serial_data = ASN1_STRING_get0_data(serial);
-            int serial_length = ASN1_STRING_length(serial);
+            auto serial_length = CryptoUtils::GetStringLength(serial);
 
             Buffer issuer_buffer(oneline);
             Buffer serial_buffer(serial_data, serial_length);
@@ -1200,7 +1200,7 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
             }
 
             const unsigned char* encrypted_key_data = ASN1_STRING_get0_data(pkcs7_recipient->enc_key);
-            int encrypted_key_length = ASN1_STRING_length(pkcs7_recipient->enc_key);
+            auto encrypted_key_length = CryptoUtils::GetStringLength(pkcs7_recipient->enc_key);
 
             Buffer encrypted_recipient_key(encrypted_key_data, encrypted_key_length);
             Buffer decrypted_recipient_key = key.Decrypt(encrypted_recipient_key);
@@ -1263,9 +1263,10 @@ BufferPtr EncryptionUtils::DecryptEnvelopedData(const syntax::ArrayObject<syntax
             }
 
             const unsigned char* encrypted_content_data = ASN1_STRING_get0_data(envelope->enc_data->enc_data);
-            int encrypted_content_length = ASN1_STRING_length(envelope->enc_data->enc_data);
+            auto encrypted_content_length = CryptoUtils::GetStringLength(envelope->enc_data->enc_data);
+            auto encrypted_content_length_converted = ValueConvertUtils::SafeConvert<int>(encrypted_content_length);
 
-            auto out = BIO_new_mem_buf(encrypted_content_data, encrypted_content_length);
+            auto out = BIO_new_mem_buf(encrypted_content_data, encrypted_content_length_converted);
             SCOPE_GUARD_CAPTURE_REFERENCES(BIO_free(out));
             if (nullptr == out) {
                 spdlog::error("Could not create BIO structure for decrypted data");

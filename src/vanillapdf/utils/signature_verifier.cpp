@@ -214,7 +214,7 @@ void SignatureVerifier::ExtractSignerCommonName(X509* signer_cert, SignatureVeri
     const ASN1_STRING* cn_string = X509_NAME_ENTRY_get_data(cn_entry);
 
     const unsigned char* cn_data = ASN1_STRING_get0_data(cn_string);
-    int cn_length = ASN1_STRING_length(cn_string);
+    auto cn_length = CryptoUtils::GetStringLength(cn_string);
 
     auto cn_buffer = make_deferred_container<Buffer>(cn_data, cn_length);
     result->SetSignerCommonName(cn_buffer);
