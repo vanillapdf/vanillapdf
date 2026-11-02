@@ -306,6 +306,17 @@ jobs:
         working-directory: examples/vcpkg-port-integration
         run: ctest --preset ${{ matrix.preset }} -C ${{ matrix.build_type }} --output-on-failure
 
+      # The same installed port, consumed through the vcpkg MSBuild integration
+      # instead of CMake: no package config and no compile definitions, only
+      # the installed headers and the import library.
+      - name: Build (MSBuild integration)
+        working-directory: examples/vcpkg-msbuild-integration
+        run: msbuild vcpkg_msbuild_test.vcxproj /p:Configuration=${{ matrix.build_type }} /p:Platform=x64 /m
+
+      - name: Test (MSBuild integration)
+        working-directory: examples/vcpkg-msbuild-integration
+        run: .\build\x64\${{ matrix.build_type }}\vcpkg_msbuild_test.exe
+
   vcpkg-port-macos:
     name: vcpkg Port - macOS ${{ matrix.preset }}
     runs-on: macos-26

@@ -1,7 +1,8 @@
 /*
-* Consumes the library the way a project without CMake does, such as one using
-* the vcpkg MSBuild integration: the include directory and the import library,
-* nothing else. No vanillapdf::vanillapdf target, so no compile definitions.
+* Consumes the library through the vcpkg MSBuild integration, the way a Visual
+* Studio project without CMake does: the include directory and the import
+* library, nothing else. No vanillapdf::vanillapdf target, so no compile
+* definitions.
 *
 * The headers alone have to select __declspec(dllimport). The exported
 * constants below cannot be linked from a DLL without it.
@@ -25,8 +26,8 @@ int main(void) {
     integer_type minor = 0;
     integer_type patch = 0;
 
-    printf("vcpkg Port Direct Link Test\n");
-    printf("===========================\n");
+    printf("vcpkg MSBuild Integration Test\n");
+    printf("==============================\n");
 
     /* Exported data, unresolved at link time without dllimport */
     if (VANILLAPDF_RV_TRUE == VANILLAPDF_RV_FALSE) {
