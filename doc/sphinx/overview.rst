@@ -120,9 +120,11 @@ When you receive a handle through an output parameter, you own one reference and
 must release it when done. There are no hidden shared-ownership surprises:
 every ``_Release`` call is explicit.
 
-**No global state.** Error codes and messages are stored in thread-local
-buffers, one per thread. The library does not allocate process-wide singletons
-or require initialization/shutdown calls.
+**No library context to manage.** There is no context object to create or pass
+around, and no initialization or shutdown call is required: optional subsystems
+such as cryptography and logging configure themselves with defaults on first
+use. Error codes and messages are stored per thread, so concurrent calls never
+overwrite each other's error state.
 
 Architecture overview
 ---------------------
