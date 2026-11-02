@@ -2390,6 +2390,7 @@ error_type process_digital_signature(DigitalSignatureHandle* obj, int nested) {
     ByteRangeCollectionHandle* byte_range = NULL;
     HexadecimalStringObjectHandle* contents = NULL;
     DateHandle* signing_time = NULL;
+    NameObjectHandle* sub_filter = NULL;
 
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetContactInfo(obj, &contact_info),
     process_string(contact_info, nested + 1),
@@ -2426,6 +2427,10 @@ error_type process_digital_signature(DigitalSignatureHandle* obj, int nested) {
     RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetByteRange(obj, &byte_range),
     process_byte_range_collection(byte_range, nested + 1),
     ByteRangeCollection_Release(byte_range));
+
+    RETURN_ERROR_IF_NOT_SUCCESS_OPTIONAL_RELEASE(DigitalSignature_GetSubFilter(obj, &sub_filter),
+    process_name(sub_filter, nested + 1),
+    NameObject_Release(sub_filter));
 
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }

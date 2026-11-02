@@ -108,6 +108,15 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(DigitalSignatureHandle* handle, ByteRangeCollectionHandle** result);
 
     /**
+    * \brief
+    * The encoding of the signature value.
+    *
+    * Common values are \ref NameConstant_AdbePkcs7Detached, \ref NameConstant_EtsiCadesDetached
+    * and \ref NameConstant_EtsiRfc3161, the last one marking a document timestamp.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetSubFilter(DigitalSignatureHandle* handle, NameObjectHandle** result);
+
+    /**
     * \brief Reinterpret current object as \ref IUnknownHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_ToUnknown(DigitalSignatureHandle* handle, IUnknownHandle** result);
