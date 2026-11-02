@@ -14,7 +14,7 @@
 - 🔏 **Sign & verify** digital signatures (CMS/PKCS#7) with certificate chain validation
 - 🔒 **Encrypt & decrypt** with AES or RC4 using passwords or certificates
 - ⚙️ **ABI-stable C API** — opaque handles callable from any language with a C FFI
-- 🧵 **Thread-safe** — no global state; synchronization is handled internally
+- 🧵 **Thread-safe** — share any object across threads; synchronization is handled internally
 
 ## Install
 

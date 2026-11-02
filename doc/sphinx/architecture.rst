@@ -194,8 +194,10 @@ objects without preventing their destruction. Weak reference counters use
 Thread safety
 -------------
 
-Vanilla.PDF is thread-safe. The library does not use global mutable state,
-and key internal objects are protected by mutexes and atomics.
+Vanilla.PDF provides fine-grained thread safety: the **same object** can be
+accessed concurrently from multiple threads — including objects that initialize
+lazily on first access — without any caller-side locking. Internally, objects
+are protected by mutexes and atomics.
 
 **Error context is thread-local.** Each thread maintains its own error code
 and message buffer:
@@ -230,8 +232,7 @@ preventing race conditions when multiple threads open the same file.
 
 **Logging is thread-safe.** The logging subsystem uses ``spdlog``
 multi-threaded sinks (``rotating_logger_mt``, ``custom_callback_sink_mt``
-with internal ``std::mutex``). Calling ``Logging_Enable()`` or writing log
-output from any thread is safe.
+with internal ``std::mutex``). Writing log output from any thread is safe.
 
 Error handling
 --------------

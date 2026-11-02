@@ -277,12 +277,13 @@ All error codes are defined as ``extern const error_type`` in ``c_values.h``:
 Thread safety
 -------------
 
-Vanilla.PDF is thread-safe. Key internal objects are protected by mutexes,
-reference counting is atomic, and error context is stored in ``thread_local``
-buffers so concurrent threads never interfere with each other.
+Vanilla.PDF provides fine-grained thread safety: the **same object** can be
+accessed concurrently from multiple threads — including objects that initialize
+lazily on first access — without any caller-side locking. Objects synchronize
+internally, reference counting is atomic, and error context is stored per
+thread, so concurrent calls never interfere with each other.
 
-See :doc:`architecture` for the full list of protected objects and
-implementation details.
+See :doc:`architecture` for the memory and locking model.
 
 Versioning
 ----------
@@ -329,13 +330,12 @@ Enable diagnostic logging to get internal trace output:
 
 .. code-block:: c
 
-   #include "vanillapdf/c_logging.h"
+   #include "vanillapdf/utils/c_logging.h"
 
-   Logging_Enable();
    Logging_SetSeverity(LoggingSeverity_Debug);
 
-Log levels from least to most verbose: ``Error``, ``Warning``, ``Info``,
-``Debug``.
+Log levels from least to most verbose: ``Off``, ``Critical``, ``Error``,
+``Warning``, ``Info``, ``Debug``, ``Trace``.
 
 Common operations
 -----------------

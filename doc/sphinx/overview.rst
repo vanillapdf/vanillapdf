@@ -10,7 +10,7 @@ into desktop, server, or automation workflows.
 - **Sign & verify** digital signatures (CMS/PKCS#7) with certificate chain validation
 - **Encrypt & decrypt** with AES or RC4 using passwords or certificates
 - **ABI-stable C API** — opaque handles callable from any language with a C FFI
-- **Thread-safe** — no global state, process documents in parallel without locking
+- **Thread-safe** — share any object across threads; synchronization is handled internally
 
 Where to go next
 ----------------
@@ -154,10 +154,13 @@ description including the object model, memory model, and extension points.
 Thread safety
 -------------
 
-Vanilla.PDF is thread-safe. Key internal objects are protected by
-``std::recursive_mutex``, reference counting is atomic, and error context is
-stored in ``thread_local`` buffers so concurrent threads never interfere with
-each other. See :doc:`architecture` for implementation details.
+Vanilla.PDF provides fine-grained thread safety: the **same object** can be
+accessed concurrently from multiple threads — including objects that initialize
+lazily on first access — without any caller-side locking. Objects synchronize
+internally, reference counting is atomic, and error context is stored per
+thread, so concurrent calls never interfere with each other.
+
+See :doc:`architecture` for the memory and locking model.
 
 Versioning and compatibility
 ----------------------------
