@@ -403,6 +403,10 @@ error_type process_constants() {
     dummy_name = NameConstant_AdbePkcs7s4;
     dummy_name = NameConstant_AdbePkcs7s5;
 
+    dummy_name = NameConstant_AdbePkcs7Detached;
+    dummy_name = NameConstant_EtsiCadesDetached;
+    dummy_name = NameConstant_EtsiRfc3161;
+
     return VANILLAPDF_TEST_ERROR_SUCCESS;
 }
 

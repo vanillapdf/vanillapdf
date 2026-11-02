@@ -605,6 +605,10 @@ extern "C"
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_AdbePkcs7s4;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_AdbePkcs7s5;
 
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_AdbePkcs7Detached;
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_EtsiCadesDetached;
+    VANILLAPDF_API extern const NameObjectHandle* NameConstant_EtsiRfc3161;
+
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_EntrustPPKEF;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_AdobePPKLite;
     VANILLAPDF_API extern const NameObjectHandle* NameConstant_AdobePubSec;

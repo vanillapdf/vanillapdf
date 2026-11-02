@@ -144,6 +144,12 @@ extern const syntax::NameObject SubFilter;
 extern const syntax::NameObject AdbePkcs7s3;
 extern const syntax::NameObject AdbePkcs7s4;
 extern const syntax::NameObject AdbePkcs7s5;
+
+// Signature dictionary SubFilter values, see 12.8.3
+extern const syntax::NameObject AdbePkcs7Detached;
+extern const syntax::NameObject EtsiCadesDetached;
+extern const syntax::NameObject EtsiRfc3161;
+
 extern const syntax::NameObject Recipients;
 extern const syntax::NameObject DefaultCryptFilter;
 extern const syntax::NameObject AuthEvent;
