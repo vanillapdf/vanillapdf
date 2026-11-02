@@ -227,8 +227,10 @@ protect concurrent access. Each object owns its mutex via
 ``std::atomic<bool>``, so reference management is safe across threads.
 
 **Document opening is thread-safe.** ``Document::OpenFile`` atomically
-returns the existing document or creates a new one for a given file,
-preventing race conditions when multiple threads open the same file.
+returns the document already associated with a ``File`` instance, or creates
+one, so threads that open the same ``File`` concurrently always receive the
+same ``Document``. Each ``File::Open`` call creates a new ``File``, so opening
+the same path twice yields two independent documents.
 
 **Logging is thread-safe.** The logging subsystem uses ``spdlog``
 multi-threaded sinks (``rotating_logger_mt``, ``custom_callback_sink_mt``
