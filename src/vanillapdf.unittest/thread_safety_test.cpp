@@ -985,6 +985,183 @@ TEST(SemanticLayerThreadSafety, ConcurrentPagePipelineWalkIsConsistent) {
     EXPECT_EQ(remaining_objects, baseline_objects);
 }
 
+// Regression test for concurrent PageTree::Append on a tree that already has
+// a Kids array (#529). Append grew the root Kids array and then refreshed the
+// Count entries with no lock across the two steps, and the refresh iterated
+// the Kids array directly. Another thread's append reallocating the array
+// left those iterators dangling, which crashed the process with an access
+// violation rather than merely producing a wrong count.
+//
+// Mutators now hold the page-cache lock for their whole body, so every append
+// has to land and the final Count has to match, also after a save and reopen.
+// Readers run alongside and check the append-only page count never shrinks.
+//
+// The pages are created up front on this thread. Allocating their
+// cross-reference entries concurrently is a separate race in
+// File::AllocateNewEntry and the xref tables, not the subject here.
+TEST(PageTreeThreadSafety, ConcurrentAppendKeepsPageCountConsistent) {
+    constexpr int NUM_DOCUMENTS = 10;
+    constexpr int NUM_WRITER_THREADS = 8;
+    constexpr int APPENDS_PER_THREAD = 25;
+    constexpr int NUM_READER_THREADS = 2;
+    constexpr int INITIAL_PAGES = 10;
+    constexpr size_type EXPECTED_PAGES = INITIAL_PAGES + NUM_WRITER_THREADS * APPENDS_PER_THREAD;
+
+    for (int d = 0; d < NUM_DOCUMENTS; ++d) {
+        HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> source_stream;
+        HandleGuard<FileHandle, File_Release> source_file;
+        HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> existing_stream;
+        HandleGuard<FileHandle, File_Release> saved_existing_file;
+
+        ASSERT_EQ(InputOutputStream_CreateFromMemory(source_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(File_CreateStream(source_stream, "page_tree_source", source_file.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(InputOutputStream_CreateFromMemory(existing_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(File_CreateStream(existing_stream, "page_tree_existing", saved_existing_file.out()), VANILLAPDF_ERROR_SUCCESS);
+
+        // Build an existing multi-page document and save it, so the threads
+        // below race on a parsed tree whose root Kids array is already present
+        {
+            HandleGuard<DocumentHandle, Document_Release> setup_doc;
+            HandleGuard<CatalogHandle, Catalog_Release> setup_catalog;
+            HandleGuard<PageTreeHandle, PageTree_Release> setup_pages;
+
+            ASSERT_EQ(Document_CreateFile(source_file, setup_doc.out()), VANILLAPDF_ERROR_SUCCESS);
+            ASSERT_EQ(Document_GetCatalog(setup_doc, setup_catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+            ASSERT_EQ(Catalog_GetPages(setup_catalog, setup_pages.out()), VANILLAPDF_ERROR_SUCCESS);
+
+            // Document_CreateFile already leaves one empty page behind
+            for (int i = 1; i < INITIAL_PAGES; ++i) {
+                HandleGuard<PageObjectHandle, PageObject_Release> page;
+                ASSERT_EQ(PageObject_CreateFromDocument(setup_doc, page.out()), VANILLAPDF_ERROR_SUCCESS);
+                ASSERT_EQ(PageTree_AppendPage(setup_pages, page), VANILLAPDF_ERROR_SUCCESS);
+            }
+
+            ASSERT_EQ(Document_SaveFile(setup_doc, saved_existing_file), VANILLAPDF_ERROR_SUCCESS);
+        }
+
+        HandleGuard<FileHandle, File_Release> existing_file;
+        HandleGuard<DocumentHandle, Document_Release> doc;
+        HandleGuard<CatalogHandle, Catalog_Release> catalog;
+        HandleGuard<PageTreeHandle, PageTree_Release> pages;
+
+        ASSERT_EQ(File_OpenStream(existing_stream, "page_tree_existing", existing_file.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(File_Initialize(existing_file), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Document_OpenFile(existing_file, doc.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Document_GetCatalog(doc, catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Catalog_GetPages(catalog, pages.out()), VANILLAPDF_ERROR_SUCCESS);
+
+        size_type initial_count = 0;
+        ASSERT_EQ(PageTree_GetPageCount(pages, &initial_count), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(initial_count, static_cast<size_type>(INITIAL_PAGES));
+
+        std::vector<PageObjectHandle*> new_pages(NUM_WRITER_THREADS * APPENDS_PER_THREAD, nullptr);
+        for (auto& new_page : new_pages) {
+            ASSERT_EQ(PageObject_CreateFromDocument(doc, &new_page), VANILLAPDF_ERROR_SUCCESS);
+        }
+
+        // Spin barrier so all threads start mutating at the same moment
+        std::atomic<int> ready = 0;
+        std::atomic<bool> go = false;
+        std::atomic<int> writers_remaining = NUM_WRITER_THREADS;
+        std::atomic<int> error_count = 0;
+        std::atomic<int> shrink_count = 0;
+
+        std::vector<std::thread> threads;
+        threads.reserve(NUM_WRITER_THREADS + NUM_READER_THREADS);
+
+        for (int t = 0; t < NUM_WRITER_THREADS; ++t) {
+            threads.emplace_back([&, t]() {
+                ready.fetch_add(1);
+                while (!go.load()) { std::this_thread::yield(); }
+
+                for (int i = 0; i < APPENDS_PER_THREAD; ++i) {
+                    auto page = new_pages[t * APPENDS_PER_THREAD + i];
+                    if (PageTree_AppendPage(pages, page) != VANILLAPDF_ERROR_SUCCESS) {
+                        error_count.fetch_add(1);
+                    }
+                }
+
+                writers_remaining.fetch_sub(1);
+            });
+        }
+
+        for (int t = 0; t < NUM_READER_THREADS; ++t) {
+            threads.emplace_back([&]() {
+                ready.fetch_add(1);
+                while (!go.load()) { std::this_thread::yield(); }
+
+                size_type last_count = 0;
+                while (writers_remaining.load() > 0) {
+                    size_type count = 0;
+                    if (PageTree_GetPageCount(pages, &count) != VANILLAPDF_ERROR_SUCCESS) {
+                        error_count.fetch_add(1);
+                        continue;
+                    }
+
+                    // Pages are only appended, so the count never shrinks
+                    if (count < last_count) {
+                        shrink_count.fetch_add(1);
+                    }
+                    last_count = count;
+
+                    // The observed count only grows, so the last page stays valid
+                    PageObjectHandle* observed_page = nullptr;
+                    if (PageTree_GetPage(pages, count, &observed_page) != VANILLAPDF_ERROR_SUCCESS) {
+                        error_count.fetch_add(1);
+                    } else {
+                        PageObject_Release(observed_page);
+                    }
+                }
+            });
+        }
+
+        while (ready.load() < NUM_WRITER_THREADS + NUM_READER_THREADS) { std::this_thread::yield(); }
+        go.store(true);
+
+        for (auto& thread : threads) {
+            thread.join();
+        }
+
+        for (auto* new_page : new_pages) {
+            if (new_page != nullptr) {
+                PageObject_Release(new_page);
+            }
+        }
+
+        EXPECT_EQ(error_count.load(), 0);
+        EXPECT_EQ(shrink_count.load(), 0)
+            << "A concurrent reader observed the append-only page count shrinking";
+
+        size_type final_count = 0;
+        ASSERT_EQ(PageTree_GetPageCount(pages, &final_count), VANILLAPDF_ERROR_SUCCESS);
+        EXPECT_EQ(final_count, EXPECTED_PAGES)
+            << "Concurrent PageTree_AppendPage calls lost pages";
+
+        // The count has to survive a save and reopen as well
+        HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> saved_stream;
+        HandleGuard<FileHandle, File_Release> saved_file;
+        ASSERT_EQ(InputOutputStream_CreateFromMemory(saved_stream.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(File_CreateStream(saved_stream, "page_tree_saved", saved_file.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Document_SaveFile(doc, saved_file), VANILLAPDF_ERROR_SUCCESS);
+
+        HandleGuard<FileHandle, File_Release> reloaded_file;
+        HandleGuard<DocumentHandle, Document_Release> reloaded_doc;
+        HandleGuard<CatalogHandle, Catalog_Release> reloaded_catalog;
+        HandleGuard<PageTreeHandle, PageTree_Release> reloaded_pages;
+
+        ASSERT_EQ(File_OpenStream(saved_stream, "page_tree_saved", reloaded_file.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(File_Initialize(reloaded_file), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Document_OpenFile(reloaded_file, reloaded_doc.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Document_GetCatalog(reloaded_doc, reloaded_catalog.out()), VANILLAPDF_ERROR_SUCCESS);
+        ASSERT_EQ(Catalog_GetPages(reloaded_catalog, reloaded_pages.out()), VANILLAPDF_ERROR_SUCCESS);
+
+        size_type reloaded_count = 0;
+        ASSERT_EQ(PageTree_GetPageCount(reloaded_pages, &reloaded_count), VANILLAPDF_ERROR_SUCCESS);
+        EXPECT_EQ(reloaded_count, EXPECTED_PAGES)
+            << "The page count did not survive a save and reopen";
+    }
+}
+
 // Regression test for the shared input-stream cursor race in File::GetByteRange.
 //
 // A single PDF File is backed by one input stream with a single read cursor. Reading a
