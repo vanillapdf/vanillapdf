@@ -6,6 +6,7 @@ This directory contains practical examples demonstrating Vanilla.PDF integration
 
 - **[`fetchcontent-integration/`](fetchcontent-integration/)** - Complete CMake FetchContent integration example with cross-platform testing
 - **[`vcpkg-port-integration/`](vcpkg-port-integration/)** - Consuming Vanilla.PDF via its vcpkg port
+- **[`vcpkg-msbuild-integration/`](vcpkg-msbuild-integration/)** - Consuming the vcpkg port from a Visual Studio project through the vcpkg MSBuild integration, without CMake
 - **[`conan-integration/`](conan-integration/)** - Consuming Vanilla.PDF via its Conan recipe
 - **[`homebrew-integration/`](homebrew-integration/)** - Consuming Vanilla.PDF via its Homebrew formula
 - **[`system-package-integration/`](system-package-integration/)** - Consuming Vanilla.PDF from an installed DEB or RPM package

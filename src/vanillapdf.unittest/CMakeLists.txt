@@ -146,11 +146,6 @@ endif()
 
 target_link_libraries(vanillapdf.unittest PRIVATE ${VANILLAPDF_UNITTEST_LIBS})
 
-# In case we have the dynamic link configuration add specific definitions
-if(BUILD_SHARED_LIBS)
-    target_compile_definitions(vanillapdf.unittest PRIVATE VANILLAPDF_CONFIGURATION_DLL)
-endif()
-
 # Tests of algorithms served only by the OpenSSL legacy provider expect them
 # to work when the library loads it, and to be reported unavailable otherwise
 if(VANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER)

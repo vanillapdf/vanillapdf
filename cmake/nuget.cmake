@@ -32,6 +32,9 @@ function(vanillapdf_configure_nuget_config_header)
     set(VANILLAPDF_FEATURE_JPEG2000 ON)
     set(VANILLAPDF_FEATURE_ZLIB ON)
 
+    # The runtime packages ship libvanillapdf as a shared library on every platform
+    set(VANILLAPDF_SHARED_LIBRARY ON)
+
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/vanillapdf/c_vanillapdf_config.h.in
         ${CMAKE_CURRENT_SOURCE_DIR}/nuget/include/vanillapdf/c_vanillapdf_config.h

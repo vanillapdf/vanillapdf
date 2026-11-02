@@ -105,9 +105,8 @@ set(VANILLAPDF_TOOLS_LIBS
 
 target_link_libraries(vanillapdf.tools PRIVATE ${VANILLAPDF_TOOLS_LIBS})
 
-# In case we have the dynamic link configuration add specific definitions
-if(BUILD_SHARED_LIBS)
-    target_compile_definitions(vanillapdf.tools PRIVATE VANILLAPDF_CONFIGURATION_DLL)
+# The installed tool has to find the shared library at runtime
+if(VANILLAPDF_SHARED_LIBRARY)
 
     # CMake strips build-time RPATHs during install, so the installed binary
     # has no RPATH entries and cannot find libvanillapdf in ../lib.

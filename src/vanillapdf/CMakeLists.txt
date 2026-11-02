@@ -555,9 +555,9 @@ set(VANILLAPDF_ALL_SOURCES
     ${VANILLAPDF_UTILS_SOURCES}
 )
 
-# vanillapdf supports both SHARED and STATIC builds,
-# which is being configured using BUILD_SHARED_LIBS.
-add_library(vanillapdf
+# vanillapdf supports both SHARED and STATIC builds, the type is decided
+# from BUILD_SHARED_LIBS in the top-level CMakeLists.
+add_library(vanillapdf ${VANILLAPDF_LIBRARY_TYPE}
     ${VANILLAPDF_INCLUDE_HEADERS}
     ${VANILLAPDF_INCLUDE_UTILS_HEADERS}
     ${VANILLAPDF_INCLUDE_SYNTAX_HEADERS}
@@ -614,7 +614,7 @@ if(MSVC)
 
 endif(MSVC)
 
-if (MSVC AND BUILD_SHARED_LIBS)
+if (MSVC AND VANILLAPDF_SHARED_LIBRARY)
 
     # Enable PDB generation for debug and release configurations
     target_compile_options(vanillapdf PRIVATE "/Zi")
@@ -640,13 +640,9 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSIO
     target_link_libraries(vanillapdf PRIVATE stdc++fs)
 endif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" AND "${CXX_COMPILER_VERSION}" VERSION_LESS "9.1")
 
-# In case we have the dynamic link configuration add specific definitions
-if(BUILD_SHARED_LIBS)
-
-    target_compile_definitions(vanillapdf
-        PUBLIC VANILLAPDF_CONFIGURATION_DLL
-        PRIVATE VANILLAPDF_EXPORTS)
-
+# Consumers learn the linkage from the generated c_vanillapdf_config.h below
+if(VANILLAPDF_SHARED_LIBRARY)
+    target_compile_definitions(vanillapdf PRIVATE VANILLAPDF_EXPORTS)
 endif()
 
 # Specify the limit on the size of a single decoded image
@@ -703,7 +699,7 @@ enable_fuzzer_coverage_for_target(vanillapdf)
 
 # Prevent POSIX thread detection on MSVC
 # LINK : fatal error LNK1104: cannot open file 'pthread.lib'
-if (MSVC AND NOT BUILD_SHARED_LIBS)
+if (MSVC AND NOT VANILLAPDF_SHARED_LIBRARY)
     set(CMAKE_THREAD_PREFER_PTHREAD OFF)
     set(THREADS_PREFER_PTHREAD_FLAG OFF)
 endif()
@@ -858,7 +854,8 @@ endif()
 # Record the build configuration in a public header, so consumers read it the
 # same way regardless of the build system or package manager they use. The
 # VANILLAPDF_FEATURE_* variables are set above, in the branches that enable each
-# dependency, so the header cannot disagree with the binary it describes.
+# dependency, and VANILLAPDF_SHARED_LIBRARY is the type the library is created
+# with, so the header cannot disagree with the binary it describes.
 # It is written into the generated/ subdirectory of the build directory, outside
 # the source tree, and installed alongside the other public headers.
 set(VANILLAPDF_GENERATED_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
@@ -883,7 +880,7 @@ install(TARGETS vanillapdf
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT Development
 )
 
-if (MSVC AND BUILD_SHARED_LIBS)
+if (MSVC AND VANILLAPDF_SHARED_LIBRARY)
 
     # The PDB belongs next to the DLL it describes. Package managers that keep
     # debug and release side by side in a single tree (vcpkg, conan) produce that
@@ -967,7 +964,7 @@ endif()
 # TODO: Re-enable after fixing test infrastructure (https://github.com/vanillapdf/vanillapdf/issues/162)
 # - Windows: dumpbin not available in CI runner PATH
 # - Linux/macOS: Missing symbol visibility attributes cause C++ symbols to leak
-if(FALSE AND VANILLAPDF_ENABLE_TESTS AND BUILD_SHARED_LIBS)
+if(FALSE AND VANILLAPDF_ENABLE_TESTS AND VANILLAPDF_SHARED_LIBRARY)
 
     # Find Python3 executable
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
@@ -987,6 +984,6 @@ if(FALSE AND VANILLAPDF_ENABLE_TESTS AND BUILD_SHARED_LIBS)
 
     message(STATUS "Added export verification test using Python3: ${Python3_EXECUTABLE}")
 
-elseif(VANILLAPDF_ENABLE_TESTS AND NOT BUILD_SHARED_LIBS)
+elseif(VANILLAPDF_ENABLE_TESTS AND NOT VANILLAPDF_SHARED_LIBRARY)
     message(STATUS "Export verification test skipped for static builds")
 endif()
