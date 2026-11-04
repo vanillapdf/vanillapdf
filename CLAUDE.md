@@ -145,7 +145,7 @@ For vcpkg port development, work in `ports/vanillapdf/` (not `external/vcpkg/por
 
 ### Contribution Guidelines
 
-- All commits must be signed off with `git commit -s`
+- Contributions are governed by the CLA (see CONTRIBUTING.md); commit sign-off (`git commit -s`) is optional and harmless
 - Base PRs on `main` branch
 - Match existing coding style
 - Test changes with available presets
