@@ -247,21 +247,19 @@ Package availability
    * - FetchContent
      - ``FetchContent_Declare(vanillapdf ...)``
      - No external tools; caller manages dependencies
-   * - Conan
-     - :substitution-code:`conan install --requires="vanillapdf/|release|"`
-     - Coming soon; not yet on Conan Center
-   * - Homebrew
-     - ``brew install vanillapdf``
-     - Coming soon; macOS formula not yet live
    * - NuGet
      - ``dotnet add package vanillapdf.net``
-     - .NET interop with native runtime
+     - .NET wrapper with native runtime; see the
+       `vanillapdf.net repository <https://github.com/vanillapdf/vanillapdf.net>`_
    * - Debian
      - ``dpkg -i vanillapdf_*.deb``
      - Built via :doc:`packaging`
    * - Source
      - ``cmake --preset <platform>``
      - See :doc:`building`
+
+Conan Center and Homebrew packages are in progress and not yet available; see
+:ref:`upcoming-packages`.
 
 External resources
 ------------------

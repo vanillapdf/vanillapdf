@@ -37,10 +37,10 @@ target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 
 ### Other methods
 
-- **NuGet** (.NET interop) — `dotnet add package vanillapdf.net`
-- **Conan** 🚧 — coming soon (not yet published to Conan Center)
-- **Homebrew** (macOS) 🚧 — coming soon (formula not yet live in Homebrew core)
+- **NuGet** (.NET wrapper) — `dotnet add package vanillapdf.net`, see the [vanillapdf.net](https://github.com/vanillapdf/vanillapdf.net) repository
 - **Build from source** — clone with submodules, then configure with a CMake preset
+
+🚧 **In progress:** Conan Center and Homebrew packages are not published yet.
 
 See the [installation guide](https://vanillapdf.readthedocs.io/en/latest/installation.html) and [building from source](https://vanillapdf.readthedocs.io/en/latest/building.html) on Read the Docs for full instructions.
 
@@ -127,7 +127,7 @@ Full documentation is hosted on **[Read the Docs](https://vanillapdf.readthedocs
 |-------|-------------|
 | [Overview](https://vanillapdf.readthedocs.io/en/latest/overview.html) | Design philosophy, scope, and project goals |
 | [Quickstart](https://vanillapdf.readthedocs.io/en/latest/quickstart.html) | Create your first PDF document step by step |
-| [Installation](https://vanillapdf.readthedocs.io/en/latest/installation.html) | vcpkg, FetchContent, Conan, Homebrew, NuGet |
+| [Installation](https://vanillapdf.readthedocs.io/en/latest/installation.html) | vcpkg, FetchContent, NuGet |
 | [C API Guide](https://vanillapdf.readthedocs.io/en/latest/c_api.html) | Handles, memory management, error handling |
 | [Architecture](https://vanillapdf.readthedocs.io/en/latest/architecture.html) | Three-layer design, object model, memory model, thread safety |
 | [Signature Verification](https://vanillapdf.readthedocs.io/en/latest/signature_verification.html) | Trust stores, chain validation, weak-algorithm detection |

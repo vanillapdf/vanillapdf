@@ -104,62 +104,6 @@ Run it:
    cmake --build --preset windows-x64-debug
    ctest --preset windows-x64-debug --output-on-failure
 
-Conan
------
-
-.. note::
-
-   **Coming soon.** The ``vanillapdf`` package is not yet published to Conan
-   Center. The instructions below will apply once it is available.
-
-Install via `Conan <https://conan.io/>`_:
-
-.. code-block:: bash
-   :substitutions:
-
-   pip install conan
-   conan install --requires="vanillapdf/|release|" --build=missing
-
-Or add a ``conanfile.py`` to your project:
-
-.. code-block:: python
-   :substitutions:
-
-   from conan import ConanFile
-   from conan.tools.cmake import cmake_layout
-
-   class MyApp(ConanFile):
-       settings = "os", "compiler", "build_type", "arch"
-       generators = "CMakeDeps", "CMakeToolchain"
-
-       def requirements(self):
-           self.requires("vanillapdf/|release|")
-
-       def layout(self):
-           cmake_layout(self)
-
-A working Conan integration example is available in
-`examples/conan-integration/
-<https://github.com/vanillapdf/vanillapdf/tree/main/examples/conan-integration>`_.
-
-Homebrew (macOS)
-----------------
-
-.. note::
-
-   **Coming soon.** The Homebrew formula is not yet live in Homebrew core. The
-   instructions below will apply once it is available.
-
-Install via `Homebrew <https://brew.sh/>`_:
-
-.. code-block:: bash
-
-   brew install vanillapdf
-
-The formula installs the shared library and headers. Dependencies
-(OpenSSL, jpeg-turbo, openjpeg, spdlog, nlohmann-json) are pulled
-automatically.
-
 NuGet (.NET interop)
 --------------------
 
@@ -171,6 +115,10 @@ For .NET projects, install the NuGet package:
 
 The correct native runtime is included automatically based on your target
 platform and RID. No manual DLL management is required.
+
+The ``vanillapdf.net`` package is a managed .NET wrapper around the C API. It
+is developed in its own repository, `vanillapdf.net
+<https://github.com/vanillapdf/vanillapdf.net>`_.
 
 Linking with CMake
 ------------------
@@ -216,3 +164,62 @@ Build and run:
 
 For building the library from source (cloning, presets, CMake options, tests,
 and troubleshooting), see :doc:`building`.
+
+.. _upcoming-packages:
+
+In progress
+-----------
+
+.. warning::
+
+   The packages below are **not available yet**. Their recipes are maintained
+   in the repository, but they cannot be installed until Conan Center and
+   Homebrew core accept them. Use one of the methods above in the meantime.
+
+Conan
+^^^^^
+
+The ``vanillapdf`` package is not yet published to Conan Center. Once it is,
+install via `Conan <https://conan.io/>`_:
+
+.. code-block:: bash
+   :substitutions:
+
+   pip install conan
+   conan install --requires="vanillapdf/|release|" --build=missing
+
+Or add a ``conanfile.py`` to your project:
+
+.. code-block:: python
+   :substitutions:
+
+   from conan import ConanFile
+   from conan.tools.cmake import cmake_layout
+
+   class MyApp(ConanFile):
+       settings = "os", "compiler", "build_type", "arch"
+       generators = "CMakeDeps", "CMakeToolchain"
+
+       def requirements(self):
+           self.requires("vanillapdf/|release|")
+
+       def layout(self):
+           cmake_layout(self)
+
+A working Conan integration example is available in
+`examples/conan-integration/
+<https://github.com/vanillapdf/vanillapdf/tree/main/examples/conan-integration>`_.
+
+Homebrew (macOS)
+^^^^^^^^^^^^^^^^
+
+The formula is not yet in Homebrew core. Once it is, install via
+`Homebrew <https://brew.sh/>`_:
+
+.. code-block:: bash
+
+   brew install vanillapdf
+
+The formula installs the shared library and headers. Dependencies
+(OpenSSL, jpeg-turbo, openjpeg, spdlog, nlohmann-json) are pulled
+automatically.
