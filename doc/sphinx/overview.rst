@@ -30,7 +30,7 @@ Where to go next
 **Learning** -- understand the PDF format and see examples:
 
 - :doc:`pdf_format` -- PDF syntax, objects, and document structure
-- :doc:`examples` -- Code samples from the test suite and CLI tools
+- :doc:`examples` -- Code samples showing the C API in use
 
 Scope and non-goals
 --------------------
@@ -64,40 +64,29 @@ Functionality
 
 .. list-table::
    :header-rows: 1
-   :widths: 28 18 54
+   :widths: 30 70
 
    * - Operation
-     - Interface
      - Description
    * - **Create documents**
-     - C API
      - Generate PDFs with pages, text, images, and vector paths
    * - **Digital signatures**
-     - C API, CLI
      - OpenSSL CMS signatures with RSA, ECDSA (P-256/P-384/P-521), and Ed25519 using PKCS#12 keys or custom callbacks
    * - **Signature verification**
-     - C API, CLI
      - Validate signatures with chain validation, weak-algorithm detection, and signing-time checks
    * - **File structure validation**
-     - C API, CLI
      - Walk xref tables, trailers, and streams to detect malformed or corrupt files
    * - **Interactive forms**
-     - C API
      - Read and write AcroForm field values (text, choice, checkbox, radio button)
    * - **Merge documents**
-     - CLI
      - Combine multiple PDFs into a single file
    * - **Encryption / decryption**
-     - CLI
      - AES and RC4 with owner/user passwords; certificate-based decryption; compatible with FIPS-enabled OpenSSL
    * - **Image extraction**
-     - CLI
      - Export embedded JPEG and JPEG2000 images from PDF streams
    * - **Content stream processing**
-     - C API, CLI
      - Parse and encode PostScript-style page content; apply compression filters
    * - **Low-level parsing**
-     - C API
      - Inspect XRef tables, indirect objects, cross-reference streams, and file trailers
 
 Design philosophy

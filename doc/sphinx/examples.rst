@@ -4,6 +4,10 @@ Examples
 API Usage Examples
 ------------------
 
+Most examples come from ``vanillapdf.tools``, an internal test tool in the
+repository. It is not part of the distributed packages; its sources show how
+the C API is used.
+
 - `merge.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/merge.cpp>`_ — File merge
 - `extract.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/extract.cpp>`_ — Image extraction
 - `filter.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/filter.cpp>`_ — Compression filters
@@ -83,6 +87,6 @@ Enumerate xref
 Additional Resources
 --------------------
 
-- `main.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/main.cpp>`_ -- Main file for command-line application vanillapdf.tools
+- `main.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/main.cpp>`_ -- Entry point of the internal ``vanillapdf.tools`` test tool
 - `tools.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/tools.h>`_ -- Tools project header file including macro definitions
 - `handle_guard.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/handle_guard.h>`_ -- RAII wrapper releasing C API handles at scope exit

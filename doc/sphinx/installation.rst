@@ -156,7 +156,7 @@ Install via `Homebrew <https://brew.sh/>`_:
 
    brew install vanillapdf
 
-The formula installs the shared library, headers, and CLI tools. Dependencies
+The formula installs the shared library and headers. Dependencies
 (OpenSSL, jpeg-turbo, openjpeg, spdlog, nlohmann-json) are pulled
 automatically.
 
