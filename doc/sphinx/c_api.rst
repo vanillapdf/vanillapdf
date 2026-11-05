@@ -48,14 +48,10 @@ Common handle types:
      - The page tree node containing all pages
    * - ``PageObjectHandle``
      - A single page (content stream, media box, annotations)
-   * - ``InteractiveFormHandle`` / ``FormFieldHandle``
+   * - ``InteractiveFormHandle`` / ``FieldHandle``
      - AcroForm tree and individual fields (read/write values)
-   * - ``FileStructureValidatorHandle``
-     - Walks the PDF structure and reports xref/trailer/stream issues
-   * - ``IoStrategyHandle``
-     - Pluggable backend for file I/O (in-memory buffer or file stream)
-   * - ``ObjectDiagnosticsHandle``
-     - Per-type allocation counters for leak detection in tests
+   * - ``FileStructureValidationResultHandle``
+     - Xref, trailer and stream issues reported by ``FileStructureValidator_Validate``
    * - ``PKCS12KeyHandle``
      - A PKCS#12 key for signing
    * - ``SigningKeyHandle``

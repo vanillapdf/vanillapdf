@@ -91,8 +91,7 @@ The handles fall into four categories matching the three layers plus utilities:
 
 - ``DocumentHandle``, ``CatalogHandle``, ``PageTreeHandle``,
   ``PageObjectHandle``, ``PageContentsHandle``
-- ``DigitalSignatureHandle``, ``DocumentSignerHandle``,
-  ``DocumentSignatureSettingsHandle``
+- ``DigitalSignatureHandle``, ``DocumentSignatureSettingsHandle``
 - ``InteractiveFormHandle``, ``FieldHandle``, ``SignatureFieldHandle``
 - ``OutlineHandle``, ``AnnotationHandle``, ``NamedDestinationsHandle``
 - ``FontHandle``, ``ResourceDictionaryHandle``, ``DateHandle``,
@@ -293,11 +292,6 @@ customize behavior without modifying the library itself.
    * - ``FileWriterObserverHandle``
      - Callback interface invoked during PDF file writing. Allows callers
        to monitor or modify the output process.
-   * - ``IoStrategyHandle``
-     - Pluggable file I/O backend. Two implementations ship in-box: an
-       in-memory ``MemoryBuffer`` strategy and a ``FileStream`` strategy
-       that reads from disk. Custom implementations can route reads through
-       arbitrary transports (e.g. encrypted blob stores, network).
 
 For signing, the standard approach uses PKCS#12 key files
 (`RFC 7292 <https://tools.ietf.org/html/rfc7292>`_):
@@ -333,9 +327,12 @@ two stream types:
 - ``InputStreamHandle`` -- for reading source files
 - ``OutputStreamHandle`` -- for writing output files
 
-For custom I/O backends (memory-mapped files, network streams, encrypted blob
-stores), implement ``IoStrategyHandle``. Two ship in-box: an in-memory buffer
-strategy and a file-stream strategy.
+How a file is read and written is selected with ``IOStrategyType``, passed to
+``File_OpenWithStrategy``, ``File_CreateWithStrategy``,
+``Document_OpenWithStrategy`` and ``Document_CreateWithStrategy``. The default
+uses C++ ``fstream``; ``IOStrategy_FileStream`` uses ``FILE*`` based streaming.
+The in-memory and memory-mapped strategies are reserved and not yet supported.
+Custom I/O backends cannot be plugged in.
 
 Tokenizer
 ^^^^^^^^^
