@@ -114,6 +114,15 @@ For more details please visit [section 12.3.2 - Destinations](PDF32000_2008.pdf#
 */
 
 /**
+\defgroup group_actions Actions
+\ingroup group_documents
+\brief
+An action defines what happens when the user activates an annotation or outline item, such as going to a destination or launching an application.
+
+For more details please see section 12.6 - Actions of the PDF specification.
+*/
+
+/**
 \defgroup group_contents Page contents
 \brief
 This module groups all visual operations, that are available for altering page appearance.

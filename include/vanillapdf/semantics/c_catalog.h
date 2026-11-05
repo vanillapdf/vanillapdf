@@ -26,6 +26,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_documents
     * \brief Page layout which shall be used when the document is opened.
     */
     typedef enum {

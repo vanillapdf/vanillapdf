@@ -23,6 +23,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_common_data_structures
     * \brief Color space types
     */
     typedef enum {

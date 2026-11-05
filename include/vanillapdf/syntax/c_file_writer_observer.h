@@ -28,51 +28,61 @@ extern "C"
     */
 
     /**
+    * \ingroup group_files
     * \brief The first operation of the FileWriter
     */
     typedef error_type(*FileWriterObserver_OnInitializing_Function)(void* user_data, InputOutputStreamHandle* output_stream);
 
     /**
+    * \ingroup group_files
     * \brief The last operation of the FileWriter
     */
     typedef error_type(*FileWriterObserver_OnFinalizing_Function)(void* user_data, InputOutputStreamHandle* output_stream);
 
     /**
+    * \ingroup group_files
     * \brief Invoked before every single object is written to the destination file
     */
     typedef error_type(*FileWriterObserver_OnBeforeObjectWrite_Function)(void* user_data, ObjectHandle* object);
 
     /**
+    * \ingroup group_files
     * \brief Invoked after every single object is written to the destination file
     */
     typedef error_type(*FileWriterObserver_OnAfterObjectWrite_Function)(void* user_data, ObjectHandle* object);
 
     /**
+    * \ingroup group_files
     * \brief Invoked before new object offset is recalculated
     */
     typedef error_type(*FileWriterObserver_OnBeforeObjectOffsetRecalculation_Function)(void* user_data, ObjectHandle* object);
 
     /**
+    * \ingroup group_files
     * \brief Invoked after new object offset is recalculated
     */
     typedef error_type(*FileWriterObserver_OnAfterObjectOffsetRecalculation_Function)(void* user_data, ObjectHandle* object);
 
     /**
+    * \ingroup group_files
     * \brief Invoked before xref entry offset is recalculated
     */
     typedef error_type(*FileWriterObserver_OnBeforeEntryOffsetRecalculation_Function)(void* user_data, XrefEntryHandle* entry);
 
     /**
+    * \ingroup group_files
     * \brief Invoked after xref entry offset is recalculated
     */
     typedef error_type(*FileWriterObserver_OnAfterEntryOffsetRecalculation_Function)(void* user_data, XrefEntryHandle* entry);
 
     /**
+    * \ingroup group_files
     * \brief Invoked before the destination stream is flushed
     */
     typedef error_type(*FileWriterObserver_OnBeforeOutputFlush_Function)(void* user_data, InputOutputStreamHandle* output_stream);
 
     /**
+    * \ingroup group_files
     * \brief Invoked after the destination stream is flushed
     */
     typedef error_type(*FileWriterObserver_OnAfterOutputFlush_Function)(void* user_data, InputOutputStreamHandle* output_stream);

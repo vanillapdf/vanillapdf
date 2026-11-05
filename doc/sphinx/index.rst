@@ -38,3 +38,4 @@ Cross-platform toolkit for creating and modifying PDF documents.
    api/contents
    api/utils
    api/types
+   api/deprecated

@@ -28,6 +28,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_utils
     * \brief Function pointer used to initialize dependencies in order to provide decryption
     *
     * This function currently cannot fail. In order to indicate failure on initialization
@@ -37,6 +38,7 @@ extern "C"
     typedef void (*EncryptionKeyInitializeFunction)(void);
 
     /**
+    * \ingroup group_utils
     * \brief Cleanup all dependencies after the decryption process has finished
     *
     * This function is called when the last reference to the
@@ -45,6 +47,7 @@ extern "C"
     typedef void (*EncryptionKeyCleanupFunction)(void);
 
     /**
+    * \ingroup group_utils
     * \brief User provided function used for decrypting data
     *
     * This function is only called when \ref EncryptionKeyContainsFunction sets the result to true.
@@ -54,6 +57,7 @@ extern "C"
     typedef error_type (*EncryptionKeyDecryptFunction)(const BufferHandle* data, BufferHandle** result);
 
     /**
+    * \ingroup group_utils
     * \brief Function used to determine whether the private key for certificate issued by \p issuer with \p serial is present
     * \param issuer a pointer to X509 NAME structure containning the certificate issuer
     * \param issuer a pointer to ASN.1 structure containning the certificate serial

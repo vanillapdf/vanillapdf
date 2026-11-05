@@ -46,3 +46,10 @@ Destinations
 .. doxygengroup:: group_destinations
    :content-only:
    :members:
+
+Actions
+-------
+
+.. doxygengroup:: group_actions
+   :content-only:
+   :members:

@@ -23,6 +23,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_documents
     * \brief Available user access permission flags for the encrypted document
     */
     typedef enum {
@@ -95,6 +96,7 @@ extern "C"
     } UserAccessPermissionFlags;
 
     /**
+    * \ingroup group_documents
     * \brief Algorithm to be used for document encryption
     */
     typedef enum {
