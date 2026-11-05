@@ -38,25 +38,25 @@ Common handle types:
 
    * - Handle
      - Represents
-   * - ``DocumentHandle``
+   * - :cpp:class:`DocumentHandle`
      - A PDF document (create, open, save, sign)
-   * - ``FileHandle``
+   * - :cpp:class:`FileHandle`
      - Low-level file access (XRef, trailers, objects)
-   * - ``CatalogHandle``
+   * - :cpp:class:`CatalogHandle`
      - The document root (page tree, outlines, names)
-   * - ``PageTreeHandle``
+   * - :cpp:class:`PageTreeHandle`
      - The page tree node containing all pages
-   * - ``PageObjectHandle``
+   * - :cpp:class:`PageObjectHandle`
      - A single page (content stream, media box, annotations)
-   * - ``InteractiveFormHandle`` / ``FieldHandle``
+   * - :cpp:class:`InteractiveFormHandle` / :cpp:class:`FieldHandle`
      - AcroForm tree and individual fields (read/write values)
-   * - ``FileStructureValidationResultHandle``
-     - Xref, trailer and stream issues reported by ``FileStructureValidator_Validate``
-   * - ``PKCS12KeyHandle``
+   * - :cpp:class:`FileStructureValidationResultHandle`
+     - Xref, trailer and stream issues reported by :cpp:func:`FileStructureValidator_Validate <FileStructureValidator::FileStructureValidator_Validate>`
+   * - :cpp:class:`PKCS12KeyHandle`
      - A PKCS#12 key for signing
-   * - ``SigningKeyHandle``
+   * - :cpp:class:`SigningKeyHandle`
      - Abstract signing interface (for custom/smart card signing)
-   * - ``TrustedCertificateStoreHandle``
+   * - :cpp:class:`TrustedCertificateStoreHandle`
      - Certificate store for signature verification
 
 Typical usage pattern:
@@ -256,7 +256,7 @@ All error codes are defined as ``extern const error_type`` in ``c_values.h``:
    * - ``VANILLAPDF_ERROR_FILE_DISPOSED``
      - File handle already disposed
    * - ``VANILLAPDF_ERROR_FILE_NOT_INITIALIZED``
-     - File not yet initialized (call ``File_Initialize`` first)
+     - File not yet initialized (call :cpp:func:`File_Initialize <FileHandle::File_Initialize>` first)
    * - ``VANILLAPDF_ERROR_OBJECT_MISSING``
      - Required dependent object not found in file
    * - ``VANILLAPDF_ERROR_PARSE_EXCEPTION``
@@ -298,21 +298,21 @@ Query the version at runtime:
 
    * - Function
      - Returns
-   * - ``LibraryInfo_GetVersionMajor``
+   * - :cpp:func:`LibraryInfo_GetVersionMajor <LibraryInfo::LibraryInfo_GetVersionMajor>`
      - Major version (backward-incompatible changes)
-   * - ``LibraryInfo_GetVersionMinor``
+   * - :cpp:func:`LibraryInfo_GetVersionMinor <LibraryInfo::LibraryInfo_GetVersionMinor>`
      - Minor version (new features, backward-compatible)
-   * - ``LibraryInfo_GetVersionPatch``
+   * - :cpp:func:`LibraryInfo_GetVersionPatch <LibraryInfo::LibraryInfo_GetVersionPatch>`
      - Patch version (bug fixes only)
-   * - ``LibraryInfo_GetVersionBuild``
+   * - :cpp:func:`LibraryInfo_GetVersionBuild <LibraryInfo::LibraryInfo_GetVersionBuild>`
      - Build metadata (no functional impact)
-   * - ``LibraryInfo_GetAuthor``
+   * - :cpp:func:`LibraryInfo_GetAuthor <LibraryInfo::LibraryInfo_GetAuthor>`
      - Library author name
-   * - ``LibraryInfo_GetBuildDay``
+   * - :cpp:func:`LibraryInfo_GetBuildDay <LibraryInfo::LibraryInfo_GetBuildDay>`
      - Day of month when library was compiled
-   * - ``LibraryInfo_GetBuildMonth``
+   * - :cpp:func:`LibraryInfo_GetBuildMonth <LibraryInfo::LibraryInfo_GetBuildMonth>`
      - Month when library was compiled
-   * - ``LibraryInfo_GetBuildYear``
+   * - :cpp:func:`LibraryInfo_GetBuildYear <LibraryInfo::LibraryInfo_GetBuildYear>`
      - Year when library was compiled
 
 Debugging
@@ -376,7 +376,7 @@ Common operations
 
    Document_Sign(doc, destination, settings);
 
-``Document_Sign`` creates an invisible signature field of its own on the
+:cpp:func:`Document_Sign <DocumentHandle::Document_Sign>` creates an invisible signature field of its own on the
 first page.
 
 **Sign a visible signature field:**
@@ -384,7 +384,7 @@ first page.
 A visible signature is a signature field whose widget annotation sits on a
 page with a rectangle and an appearance. The field and the widget are
 separate objects: the field joins the form's field hierarchy and carries the
-signature, the widget is linked to it through ``Field_AddWidget`` and to the
+signature, the widget is linked to it through :cpp:func:`Field_AddWidget <FieldHandle::Field_AddWidget>` and to the
 page through its annotations.
 
 .. code-block:: c
@@ -420,9 +420,9 @@ page through its annotations.
    const char* signature_name = "Signature1";
    Document_SignField(doc, destination, signature_name, strlen(signature_name), settings);
 
-``field_name`` is a ``StringObjectHandle`` holding the partial field name
+``field_name`` is a :cpp:class:`StringObjectHandle` holding the partial field name
 (``Signature1`` here). The field sits at the root of the hierarchy, so the
-same name is its fully qualified name, which ``Document_SignField`` resolves
+same name is its fully qualified name, which :cpp:func:`Document_SignField <DocumentHandle::Document_SignField>` resolves
 the field by. The name is UTF-8 with its size in bytes given explicitly,
 because a partial field name may contain U+0000. A document that already carries a signature is refused with
 ``VANILLAPDF_ERROR_NOT_SUPPORTED``: the signed file is written whole, which

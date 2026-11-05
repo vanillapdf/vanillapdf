@@ -360,7 +360,7 @@ The library loads the legacy provider by default. Two switches control it:
 - **At build time**, ``-DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=OFF`` leaves
   the provider out entirely, when building the library from source.
 - **At runtime**, the legacy algorithms policy of ``CryptoSettings``, applied
-  with ``CryptoUtils_Initialize`` before any other call:
+  with :cpp:func:`CryptoUtils_Initialize <CryptoUtils::CryptoUtils_Initialize>` before any other call:
 
 .. list-table::
    :header-rows: 1
@@ -373,7 +373,7 @@ The library loads the legacy provider by default. Two switches control it:
      - A warning is logged and the library continues without it
    * - ``LegacyAlgorithmsPolicy_Required``
      - Loaded
-     - ``CryptoUtils_Initialize`` fails with ``VANILLAPDF_ERROR_NOT_SUPPORTED``
+     - :cpp:func:`CryptoUtils_Initialize <CryptoUtils::CryptoUtils_Initialize>` fails with ``VANILLAPDF_ERROR_NOT_SUPPORTED``
    * - ``LegacyAlgorithmsPolicy_Disabled``
      - Not loaded
      - \-
@@ -388,7 +388,7 @@ The library loads the legacy provider by default. Two switches control it:
 
 Without the legacy provider RC2 envelopes and key files fail with
 ``VANILLAPDF_ERROR_NOT_SUPPORTED``, while MD2 and MD4 signatures do not verify.
-``CryptoUtils_GetLegacyAlgorithmsAvailable`` reports whether it is loaded. A legacy key file can be re-exported with AES:
+:cpp:func:`CryptoUtils_GetLegacyAlgorithmsAvailable <CryptoUtils::CryptoUtils_GetLegacyAlgorithmsAvailable>` reports whether it is loaded. A legacy key file can be re-exported with AES:
 
 .. code-block:: bash
 

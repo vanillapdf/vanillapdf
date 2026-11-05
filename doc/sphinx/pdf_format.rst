@@ -177,14 +177,14 @@ Document semantics
 Document encapsulates syntactic operations and forms operations with semantic validity.
 This abstraction level is provided so that users no longer need to understand all the caveats of the PDF file format.
 
-Root of documents hierarchy is so called ``CatalogHandle``, which contains information about document pages, layout, actions and so on.
-All document pages can be found within ``PageTreeHandle``, with references to their ``PageObjectHandle``.
+Root of documents hierarchy is so called :cpp:class:`CatalogHandle`, which contains information about document pages, layout, actions and so on.
+All document pages can be found within :cpp:class:`PageTreeHandle`, with references to their :cpp:class:`PageObjectHandle`.
 Page contents are described in the `Page contents`_ section.
 
 Digital signatures are fully supported:
 
-- Sign documents using ``Document_Sign`` function with ``PKCS12KeyHandle``
-- Verify signatures using ``DigitalSignatureExtensions_Verify`` with ``TrustedCertificateStoreHandle``
+- Sign documents using :cpp:func:`Document_Sign <DocumentHandle::Document_Sign>` function with :cpp:class:`PKCS12KeyHandle`
+- Verify signatures using ``DigitalSignatureExtensions_Verify`` with :cpp:class:`TrustedCertificateStoreHandle`
 
 Complete examples are available at ``sign.cpp`` (signing) and ``verify.cpp`` (verification).
 See also :doc:`signature_verification` for comprehensive verification guide.
@@ -192,7 +192,7 @@ See also :doc:`signature_verification` for comprehensive verification guide.
 Common data structures
 ^^^^^^^^^^^^^^^^^^^^^^
 
-There are multiple general-purpose data structures that are built from the basic object types, such as ``DateHandle``, Rectangles or Trees.
+There are multiple general-purpose data structures that are built from the basic object types, such as :cpp:class:`DateHandle`, Rectangles or Trees.
 Since they are composed from the basic object types, they provide interface to modify their back-end object in graceful manner.
 
 For example when a date field is expected, the user does not need to know the syntax of date (D:YYYYMMDDHHmmSSOHH'mm).
@@ -205,7 +205,7 @@ This process is done by the semantic layer, who is responsible for making best e
 Page contents
 -------------
 
-Document ``PageObjectHandle`` contains entry called Contents, which contains serialized stream of PostScript instructions.
+Document :cpp:class:`PageObjectHandle` contains entry called Contents, which contains serialized stream of PostScript instructions.
 
 Sample page contents:
 

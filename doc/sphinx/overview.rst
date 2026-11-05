@@ -100,7 +100,7 @@ C or C++ compiler and called from any language with a C FFI -- Python, C#,
 Rust, Go, Java (via JNI), and others.
 
 **Handle-based design.** All objects are represented as opaque pointers
-(``DocumentHandle*``, ``FileHandle*``, ``PageObjectHandle*``). The internal C++
+(:cpp:class:`DocumentHandle* <DocumentHandle>`, :cpp:class:`FileHandle* <FileHandle>`, :cpp:class:`PageObjectHandle* <PageObjectHandle>`). The internal C++
 class layout is never visible to callers, which means the library can change its
 implementation without breaking binary compatibility.
 

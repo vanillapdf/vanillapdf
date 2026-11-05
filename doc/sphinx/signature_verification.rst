@@ -142,7 +142,7 @@ Call the verification API and inspect the results:
 Security Recommendations
 ------------------------
 
-1. **Always use system trust store** — Let the OS manage trusted root certificates (``TrustedCertificateStore_LoadSystemDefaults``)
+1. **Always use system trust store** — Let the OS manage trusted root certificates (:cpp:func:`TrustedCertificateStore_LoadSystemDefaults <TrustedCertificateStoreHandle::TrustedCertificateStore_LoadSystemDefaults>`)
 2. **Avoid** ``SetSkipCertificateValidation`` — Only use for testing self-signed certificates
 3. **Avoid** ``SetAllowWeakAlgorithmsFlag`` — Only enable when absolutely necessary for legacy documents
 4. **Use** ``SetCheckSigningTimeFlag`` — For old documents where certificates may have expired

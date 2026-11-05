@@ -71,45 +71,45 @@ internal C++ structures. Handles are declared using the
    #define DECLARE_OBJECT_HANDLE(x) \
        typedef struct x##HandleTag x##Handle
 
-This ensures that ``DocumentHandle*`` and ``FileHandle*`` are distinct pointer
+This ensures that :cpp:class:`DocumentHandle* <DocumentHandle>` and :cpp:class:`FileHandle* <FileHandle>` are distinct pointer
 types at the compiler level, preventing accidental misuse.
 
 The handles fall into four categories matching the three layers plus utilities:
 
 **Syntax layer handles** -- PDF primitive objects and file structure:
 
-- ``ObjectHandle``, ``ArrayObjectHandle``, ``BooleanObjectHandle``,
-  ``NameObjectHandle``, ``IntegerObjectHandle``, ``RealObjectHandle``,
-  ``StringObjectHandle``, ``StreamObjectHandle``, ``DictionaryObjectHandle``,
-  ``NullObjectHandle``
-- ``FileHandle``, ``FileWriterHandle``, ``XrefHandle``, ``XrefEntryHandle``
-- Filter handles: ``FlateDecodeFilterHandle``, ``DCTDecodeFilterHandle``,
-  ``ASCII85DecodeFilterHandle``, ``ASCIIHexDecodeFilterHandle``,
-  ``LZWDecodeFilterHandle``, ``JPXDecodeFilterHandle``
+- :cpp:class:`ObjectHandle`, :cpp:class:`ArrayObjectHandle`, :cpp:class:`BooleanObjectHandle`,
+  :cpp:class:`NameObjectHandle`, :cpp:class:`IntegerObjectHandle`, :cpp:class:`RealObjectHandle`,
+  :cpp:class:`StringObjectHandle`, :cpp:class:`StreamObjectHandle`, :cpp:class:`DictionaryObjectHandle`,
+  :cpp:class:`NullObjectHandle`
+- :cpp:class:`FileHandle`, :cpp:class:`FileWriterHandle`, :cpp:class:`XrefHandle`, :cpp:class:`XrefEntryHandle`
+- Filter handles: :cpp:class:`FlateDecodeFilterHandle`, :cpp:class:`DCTDecodeFilterHandle`,
+  :cpp:class:`ASCII85DecodeFilterHandle`, :cpp:class:`ASCIIHexDecodeFilterHandle`,
+  :cpp:class:`LZWDecodeFilterHandle`, :cpp:class:`JPXDecodeFilterHandle`
 
 **Semantics layer handles** -- document-level objects:
 
-- ``DocumentHandle``, ``CatalogHandle``, ``PageTreeHandle``,
-  ``PageObjectHandle``, ``PageContentsHandle``
-- ``DigitalSignatureHandle``, ``DocumentSignatureSettingsHandle``
-- ``InteractiveFormHandle``, ``FieldHandle``, ``SignatureFieldHandle``
-- ``OutlineHandle``, ``AnnotationHandle``, ``NamedDestinationsHandle``
-- ``FontHandle``, ``ResourceDictionaryHandle``, ``DateHandle``,
-  ``RectangleHandle``
+- :cpp:class:`DocumentHandle`, :cpp:class:`CatalogHandle`, :cpp:class:`PageTreeHandle`,
+  :cpp:class:`PageObjectHandle`, :cpp:class:`PageContentsHandle`
+- :cpp:class:`DigitalSignatureHandle`, :cpp:class:`DocumentSignatureSettingsHandle`
+- :cpp:class:`InteractiveFormHandle`, :cpp:class:`FieldHandle`, :cpp:class:`SignatureFieldHandle`
+- :cpp:class:`OutlineHandle`, :cpp:class:`AnnotationHandle`, :cpp:class:`NamedDestinationsHandle`
+- :cpp:class:`FontHandle`, :cpp:class:`ResourceDictionaryHandle`, :cpp:class:`DateHandle`,
+  :cpp:class:`RectangleHandle`
 
 **Contents layer handles** -- content stream objects:
 
-- ``ContentObjectHandle``, ``ContentOperationHandle``,
-  ``ContentInstructionHandle``, ``ContentParserHandle``
-- Text operations: ``ContentOperationTextFontHandle``,
-  ``ContentOperationTextShowHandle``, ``ContentOperationBeginTextHandle``
+- :cpp:class:`ContentObjectHandle`, :cpp:class:`ContentOperationHandle`,
+  :cpp:class:`ContentInstructionHandle`, :cpp:class:`ContentParserHandle`
+- Text operations: :cpp:class:`ContentOperationTextFontHandle`,
+  :cpp:class:`ContentOperationTextShowHandle`, :cpp:class:`ContentOperationBeginTextHandle`
 
 **Utility handles** -- I/O, buffers, cryptography:
 
-- ``BufferHandle``, ``InputStreamHandle``, ``OutputStreamHandle``
-- ``SigningKeyHandle``, ``EncryptionKeyHandle``, ``PKCS12KeyHandle``
-- ``TrustedCertificateStoreHandle``,
-  ``SignatureVerificationResultHandle``
+- :cpp:class:`BufferHandle`, :cpp:class:`InputStreamHandle`, :cpp:class:`OutputStreamHandle`
+- :cpp:class:`SigningKeyHandle`, :cpp:class:`EncryptionKeyHandle`, :cpp:class:`PKCS12KeyHandle`
+- :cpp:class:`TrustedCertificateStoreHandle`,
+  :cpp:class:`SignatureVerificationResultHandle`
 
 Internal class hierarchy
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -136,9 +136,9 @@ Semantics-layer objects use a template wrapper:
        // Wraps a syntax-layer object with semantic meaning
    };
 
-This separation means the semantic layer (``DocumentHandle``,
-``PageObjectHandle``) operates on top of the syntax layer
-(``DictionaryObjectHandle``, ``StreamObjectHandle``) without exposing the
+This separation means the semantic layer (:cpp:class:`DocumentHandle`,
+:cpp:class:`PageObjectHandle`) operates on top of the syntax layer
+(:cpp:class:`DictionaryObjectHandle`, :cpp:class:`StreamObjectHandle`) without exposing the
 lower-level structure to callers.
 
 Memory model
@@ -282,14 +282,14 @@ customize behavior without modifying the library itself.
 
    * - Interface
      - Purpose
-   * - ``SigningKeyHandle``
+   * - :cpp:class:`SigningKeyHandle`
      - Custom signing implementation for smart cards or HSMs where the
        private key is not directly accessible. Override instead of using
-       ``PKCS12KeyHandle`` when keys cannot be exported.
-   * - ``EncryptionKeyHandle``
+       :cpp:class:`PKCS12KeyHandle` when keys cannot be exported.
+   * - :cpp:class:`EncryptionKeyHandle`
      - Custom encryption key provider for certificate-based decryption
        or external key management systems.
-   * - ``FileWriterObserverHandle``
+   * - :cpp:class:`FileWriterObserverHandle`
      - Callback interface invoked during PDF file writing. Allows callers
        to monitor or modify the output process.
 
@@ -310,7 +310,7 @@ For signing, the standard approach uses PKCS#12 key files
    Document_Sign(doc, destination, settings);
 
 When the private key resides on a smart card or HSM, implement
-``SigningKeyHandle`` directly and provide your own signing logic.
+:cpp:class:`SigningKeyHandle` directly and provide your own signing logic.
 See ``sign_custom.c`` for an example.
 
 File layer internals
@@ -324,12 +324,12 @@ IO streams
 The library uses C++ I/O streams internally. The public interface exposes
 two stream types:
 
-- ``InputStreamHandle`` -- for reading source files
-- ``OutputStreamHandle`` -- for writing output files
+- :cpp:class:`InputStreamHandle` -- for reading source files
+- :cpp:class:`OutputStreamHandle` -- for writing output files
 
-How a file is read and written is selected with ``IOStrategyType``, passed to
-``File_OpenWithStrategy``, ``File_CreateWithStrategy``,
-``Document_OpenWithStrategy`` and ``Document_CreateWithStrategy``. The default
+How a file is read and written is selected with :cpp:enum:`IOStrategyType`, passed to
+:cpp:func:`File_OpenWithStrategy <FileHandle::File_OpenWithStrategy>`, :cpp:func:`File_CreateWithStrategy <FileHandle::File_CreateWithStrategy>`,
+:cpp:func:`Document_OpenWithStrategy <DocumentHandle::Document_OpenWithStrategy>` and :cpp:func:`Document_CreateWithStrategy <DocumentHandle::Document_CreateWithStrategy>`. The default
 uses C++ ``fstream``; ``IOStrategy_FileStream`` uses ``FILE*`` based streaming.
 The in-memory and memory-mapped strategies are reserved and not yet supported.
 Custom I/O backends cannot be plugged in.
@@ -369,8 +369,8 @@ indirect reference is three tokens: object number, generation number, ``R``).
 Indirect references
 ^^^^^^^^^^^^^^^^^^^
 
-``IndirectReferenceObjectHandle`` must often be resolved to access the
-referenced object. For example, ``StreamObjectHandle`` frequently stores its
+:cpp:class:`IndirectReferenceObjectHandle` must often be resolved to access the
+referenced object. For example, :cpp:class:`StreamObjectHandle` frequently stores its
 ``Length`` as an indirect reference. The file layer resolves these references
 transparently during parsing.
 
