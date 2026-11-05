@@ -17,52 +17,12 @@ Create a PDF document
 ---------------------
 
 The following example creates a PDF document with a single blank page and
-writes it to disk.
+writes it to disk. Both files are in `examples/quickstart/
+<https://github.com/vanillapdf/vanillapdf/tree/main/examples/quickstart>`_,
+and the library's test suite builds and runs the program.
 
-.. code-block:: c
-
-   #include <stdio.h>
-   #include <vanillapdf/c_vanillapdf_api.h>
-
-   int main(void) {
-       DocumentHandle* document = NULL;
-       CatalogHandle* catalog = NULL;
-       PageTreeHandle* page_tree = NULL;
-       PageObjectHandle* page = NULL;
-       error_type rc;
-
-       /* Create a new document bound to an output path */
-       rc = Document_Create("output.pdf", &document);
-       if (rc != VANILLAPDF_ERROR_SUCCESS) { return 1; }
-
-       /* Navigate to the page tree via the root catalog */
-       rc = Document_GetCatalog(document, &catalog);
-       if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
-
-       rc = Catalog_GetPages(catalog, &page_tree);
-       if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
-
-       /* Create a blank page and append it */
-       rc = PageObject_CreateFromDocument(document, &page);
-       if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
-
-       rc = PageTree_AppendPage(page_tree, page);
-       if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
-
-       /* Write to disk */
-       rc = Document_Save(document, "output.pdf");
-       if (rc != VANILLAPDF_ERROR_SUCCESS) { goto cleanup; }
-
-       printf("Created output.pdf successfully.\n");
-
-   cleanup:
-       if (page)      PageObject_Release(page);
-       if (page_tree) PageTree_Release(page_tree);
-       if (catalog)   Catalog_Release(catalog);
-       if (document)  Document_Release(document);
-
-       return (rc == VANILLAPDF_ERROR_SUCCESS) ? 0 : 1;
-   }
+.. literalinclude:: ../../examples/quickstart/main.c
+   :language: c
 
 **Key patterns to notice:**
 
@@ -70,7 +30,8 @@ writes it to disk.
 - **Handle-based** -- Every object is an opaque pointer (``DocumentHandle*``,
   ``CatalogHandle*``, etc.). The internal C++ implementation is never exposed.
 - **Error codes** -- Every function returns ``error_type``. Check against
-  ``VANILLAPDF_ERROR_SUCCESS``.
+  ``VANILLAPDF_ERROR_SUCCESS``; the ``CHECK`` macro jumps to the cleanup on
+  the first failure, where ``Errors_GetLastErrorMessage`` explains it.
 - **Manual cleanup** -- Each handle obtained from the library must be released.
   Initialize to ``NULL`` and release in reverse order.
 
@@ -79,15 +40,8 @@ Build and run
 
 Create a ``CMakeLists.txt``:
 
-.. code-block:: cmake
-
-   cmake_minimum_required(VERSION 3.20)
-   project(QuickStart C)
-
-   find_package(vanillapdf CONFIG REQUIRED)
-
-   add_executable(quickstart main.c)
-   target_link_libraries(quickstart PRIVATE vanillapdf::vanillapdf)
+.. literalinclude:: ../../examples/quickstart/CMakeLists.txt
+   :language: cmake
 
 Build:
 

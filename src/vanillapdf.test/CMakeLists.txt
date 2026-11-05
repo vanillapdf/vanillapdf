@@ -161,3 +161,35 @@ endforeach()
 # MPK_SLOVLEX.pdf: 9.5 MB, 1,450 pages — takes 600-1500s under sanitizers and
 # dominates CI time, so it is disabled.
 set_tests_properties(MPK_SLOVLEX.pdf PROPERTIES DISABLED TRUE)
+
+# The quickstart example shown in the documentation. It is built and run here
+# so that the published code cannot stop compiling or working unnoticed.
+add_executable(vanillapdf.quickstart "${VANILLAPDF_SOLUTION_SOURCE_DIR}/examples/quickstart/main.c")
+vanillapdf_target_compile_defaults(vanillapdf.quickstart)
+target_link_libraries(vanillapdf.quickstart PRIVATE vanillapdf)
+
+# A static vanillapdf needs the C++ runtime, see vanillapdf.test above
+set_target_properties(vanillapdf.quickstart PROPERTIES LINKER_LANGUAGE CXX)
+
+if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+    vanillapdf_configure_msvc_runtime(vanillapdf.quickstart)
+endif()
+
+if(WIN32)
+    add_custom_command(
+        TARGET vanillapdf.quickstart POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "$<TARGET_FILE_DIR:vanillapdf>"
+        "$<TARGET_FILE_DIR:vanillapdf.quickstart>"
+    )
+endif(WIN32)
+
+# The example writes output.pdf into its working directory, which only exists
+# on the host. A cross-compiled build (Android) still compiles the example.
+if(NOT CMAKE_CROSSCOMPILING)
+    add_test(
+        NAME Examples.quickstart
+        COMMAND vanillapdf.quickstart
+        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    )
+endif()
