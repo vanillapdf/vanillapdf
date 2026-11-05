@@ -46,31 +46,7 @@ See the [installation guide](https://vanillapdf.readthedocs.io/en/latest/install
 
 ## Quick Example
 
-Create a PDF with a blank page:
-
-```c
-#include <vanillapdf/c_vanillapdf_api.h>
-
-int main(void) {
-    DocumentHandle* doc = NULL;
-    CatalogHandle* cat = NULL;
-    PageTreeHandle* pages = NULL;
-    PageObjectHandle* page = NULL;
-
-    Document_Create("hello.pdf", &doc);
-    Document_GetCatalog(doc, &cat);
-    Catalog_GetPages(cat, &pages);
-    PageObject_CreateFromDocument(doc, &page);
-    PageTree_AppendPage(pages, page);
-    Document_Save(doc, "hello.pdf");
-
-    PageObject_Release(page);
-    PageTree_Release(pages);
-    Catalog_Release(cat);
-    Document_Release(doc);
-    return 0;
-}
-```
+The [quickstart guide](https://vanillapdf.readthedocs.io/en/latest/quickstart.html) walks through a complete C program that creates a PDF with a blank page, including error handling and cleanup. The source is in [`examples/quickstart/`](examples/quickstart/), and the test suite builds and runs it, so it always compiles against the current API.
 
 ## Platforms
 
