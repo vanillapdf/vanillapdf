@@ -104,12 +104,6 @@ The library is organized into three layers:
 
 The C++ core is hidden behind an ABI-stable ANSI C interface using opaque handles (`DocumentHandle*`, `FileHandle*`, `PageObjectHandle*`, etc.) and `cdecl` calling conventions, so any language with a C FFI can use this library. Handles are reference-counted; callers acquire and release references explicitly. This design guarantees binary compatibility across compiler versions and minor/patch releases.
 
-## Thread Safety
-
-Vanilla.PDF provides fine-grained thread safety: the **same object** can be accessed concurrently from multiple threads — including objects that initialize lazily on first access — without any caller-side locking. This is a stronger guarantee than merely running separate documents on separate threads; synchronization *within* a shared object is handled internally.
-
-See the [Architecture Guide](https://vanillapdf.readthedocs.io/en/latest/architecture.html) for the memory and locking model.
-
 ## Non-Goals
 
 Vanilla.PDF is a **document structure library**, not a rendering engine. It does not rasterize pages, lay out text with font shaping, or display PDFs on screen. If you need to view a PDF, use a dedicated renderer and this library for the structural operations around it.

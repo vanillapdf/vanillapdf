@@ -277,13 +277,9 @@ All error codes are defined as ``extern const error_type`` in ``c_values.h``:
 Thread safety
 -------------
 
-Vanilla.PDF provides fine-grained thread safety: the **same object** can be
-accessed concurrently from multiple threads — including objects that initialize
-lazily on first access — without any caller-side locking. Objects synchronize
-internally, reference counting is atomic, and error context is stored per
-thread, so concurrent calls never interfere with each other.
-
-See :doc:`architecture` for the memory and locking model.
+Any handle can be shared between threads without caller-side locking, and the
+last error is stored per thread, so a failing call on one thread never
+overwrites another thread's error. See :ref:`thread-safety` for the details.
 
 Versioning
 ----------

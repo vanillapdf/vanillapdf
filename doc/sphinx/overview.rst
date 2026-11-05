@@ -10,7 +10,7 @@ into desktop, server, or automation workflows.
 - **Sign & verify** digital signatures (CMS/PKCS#7) with certificate chain validation
 - **Encrypt & decrypt** with AES or RC4 using passwords or certificates
 - **ABI-stable C API** — opaque handles callable from any language with a C FFI
-- **Thread-safe** — share any object across threads; synchronization is handled internally
+- **Thread-safe** — share any object across threads; synchronization is handled internally (see :ref:`thread-safety`)
 
 Where to go next
 ----------------
@@ -24,7 +24,7 @@ Where to go next
 
 - :doc:`building` -- Clone, configure, build, and test
 - :doc:`c_api` -- Handle system, memory management, error handling
-- :doc:`architecture` -- Three-layer design, object model, memory model
+- :doc:`architecture` -- Three-layer design, object model, memory model, thread safety
 - :doc:`signature_verification` -- Trust stores, chain validation, weak-algorithm detection
 
 **Learning** -- understand the PDF format and see examples:
@@ -152,17 +152,6 @@ The library is organized into three layers:
 A thin C interface layer wraps the C++ implementation, mapping each internal
 object to an opaque handle. See :doc:`architecture` for the full design
 description including the object model, memory model, and extension points.
-
-Thread safety
--------------
-
-Vanilla.PDF provides fine-grained thread safety: the **same object** can be
-accessed concurrently from multiple threads — including objects that initialize
-lazily on first access — without any caller-side locking. Objects synchronize
-internally, reference counting is atomic, and error context is stored per
-thread, so concurrent calls never interfere with each other.
-
-See :doc:`architecture` for the memory and locking model.
 
 Versioning and compatibility
 ----------------------------

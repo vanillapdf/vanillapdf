@@ -191,6 +191,8 @@ objects without preventing their destruction. Weak reference counters use
        std::atomic<bool> m_active;
    };
 
+.. _thread-safety:
+
 Thread safety
 -------------
 
