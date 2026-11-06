@@ -184,7 +184,7 @@ Page contents are described in the `Page contents`_ section.
 Digital signatures are fully supported:
 
 - Sign documents using :cpp:func:`Document_Sign <DocumentHandle::Document_Sign>` function with :cpp:class:`PKCS12KeyHandle`
-- Verify signatures using ``DigitalSignatureExtensions_Verify`` with :cpp:class:`TrustedCertificateStoreHandle`
+- Verify signatures using :cpp:func:`DigitalSignatureExtensions_Verify` with :cpp:class:`TrustedCertificateStoreHandle`
 
 Complete examples are available at ``sign.cpp`` (signing) and ``verify.cpp`` (verification).
 See also :doc:`signature_verification` for comprehensive verification guide.

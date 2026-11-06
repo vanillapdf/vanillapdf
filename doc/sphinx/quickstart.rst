@@ -57,7 +57,7 @@ Sign the document
 Digital signatures are applied through the same C API: load a PKCS#12 key
 with :cpp:func:`PKCS12Key_CreateFromFile <PKCS12KeyHandle::PKCS12Key_CreateFromFile>`, configure ``DocumentSignatureSettings``
 and call :cpp:func:`Document_Sign <DocumentHandle::Document_Sign>`. Signatures are checked with
-``DigitalSignatureExtensions_Verify``; see :doc:`signature_verification`
+:cpp:func:`DigitalSignatureExtensions_Verify`; see :doc:`signature_verification`
 for a complete walkthrough of trust stores, settings and result handling.
 
 Query library version

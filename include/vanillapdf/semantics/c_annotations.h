@@ -1081,7 +1081,9 @@ extern "C"
     *
     * Widget annotations are attached by indirect reference - from the page
     * \c Annots array and, when merged with a form field, from the field tree
-    * (see \ref InteractiveForm_AddField) - so the annotation dictionary is
+    * (see \ref FieldTreeHandle::FieldTree_AddRootChild "FieldTree_AddRootChild" and
+    * \ref FieldTreeHandle::FieldTree_AddChild "FieldTree_AddChild") - so the annotation
+    * dictionary is
     * allocated as an indirect object of the document up front.
     *
     * The new widget carries an empty rectangle; set it with \ref Annotation_SetRect.

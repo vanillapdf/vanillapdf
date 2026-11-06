@@ -17,6 +17,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_documents
     * \brief Verify the digital signature in a PDF document
     * \param signature The digital signature object to verify
     * \param document The PDF document containing the signature

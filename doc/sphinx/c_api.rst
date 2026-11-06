@@ -201,11 +201,14 @@ of work, compare, and any non-zero delta points at a leaked handle. See the
 Text strings
 ------------
 
-PDF text strings are not bare UTF-8; they use PDFDocEncoding by default and
-UTF-16BE when prefixed with a byte-order mark. The ``c_text_string_encoding.h``
-helpers (``TextStringEncoding_DetectEncoding``, ``TextStringEncoding_ToUtf8``,
-``TextStringEncoding_FromUtf8``) handle detection and conversion so callers can
-work with plain UTF-8 at the boundary.
+PDF text strings are not bare UTF-8: they use PDFDocEncoding by default, and
+UTF-16BE or (since PDF 2.0) UTF-8 when prefixed with a byte order mark.
+Functions that document a UTF-8 result, such as
+:cpp:func:`Field_GetQualifiedName <FieldHandle::Field_GetQualifiedName>`,
+normalize the text for you. To interpret the raw bytes of a string object,
+:cpp:func:`TextStringEncoding_Detect` reports which encoding they use and
+:cpp:func:`TextStringEncoding_PDFDocEncodingByteToUnicode` maps a
+PDFDocEncoding byte to its Unicode code point.
 
 Error handling
 --------------
