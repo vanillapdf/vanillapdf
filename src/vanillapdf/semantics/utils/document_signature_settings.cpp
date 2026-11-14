@@ -105,5 +105,13 @@ void DocumentSignatureSettings::SetReservedSignatureSize(types::size_type value)
     m_reserved_signature_size = value;
 }
 
+syntax::NameObjectPtr DocumentSignatureSettings::GetSubFilter() const {
+    return m_sub_filter;
+}
+
+void DocumentSignatureSettings::SetSubFilter(syntax::NameObjectPtr value) {
+    m_sub_filter = value;
+}
+
 } // semantics
 } // vanillapdf

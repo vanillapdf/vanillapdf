@@ -11,6 +11,10 @@ const syntax::NameObject AdbePkcs7s3 = syntax::NameObject::CreateFromDecoded("ad
 const syntax::NameObject AdbePkcs7s4 = syntax::NameObject::CreateFromDecoded("adbe.pkcs7.s4");
 const syntax::NameObject AdbePkcs7s5 = syntax::NameObject::CreateFromDecoded("adbe.pkcs7.s5");
 
+const syntax::NameObject AdbePkcs7Detached = syntax::NameObject::CreateFromDecoded("adbe.pkcs7.detached");
+const syntax::NameObject EtsiCadesDetached = syntax::NameObject::CreateFromDecoded("ETSI.CAdES.detached");
+const syntax::NameObject EtsiRfc3161 = syntax::NameObject::CreateFromDecoded("ETSI.RFC3161");
+
 const syntax::NameObject EntrustPPKEF = syntax::NameObject::CreateFromDecoded("Entrust.PPKEF");
 const syntax::NameObject AdobePPKLite = syntax::NameObject::CreateFromDecoded("Adobe.PPKLite");
 const syntax::NameObject AdobePubSec = syntax::NameObject::CreateFromDecoded("Adobe.PubSec");
@@ -23,9 +27,13 @@ VANILLAPDF_API const NameObjectHandle* NameConstant_AdbePkcs7s3 = reinterpret_ca
 VANILLAPDF_API const NameObjectHandle* NameConstant_AdbePkcs7s4 = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s4);
 VANILLAPDF_API const NameObjectHandle* NameConstant_AdbePkcs7s5 = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s5);
 
-VANILLAPDF_API const NameObjectHandle* NameConstant_EntrustPPKEF = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s5);
-VANILLAPDF_API const NameObjectHandle* NameConstant_AdobePPKLite = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s5);
-VANILLAPDF_API const NameObjectHandle* NameConstant_AdobePubSec = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7s5);
+VANILLAPDF_API const NameObjectHandle* NameConstant_AdbePkcs7Detached = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdbePkcs7Detached);
+VANILLAPDF_API const NameObjectHandle* NameConstant_EtsiCadesDetached = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::EtsiCadesDetached);
+VANILLAPDF_API const NameObjectHandle* NameConstant_EtsiRfc3161 = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::EtsiRfc3161);
+
+VANILLAPDF_API const NameObjectHandle* NameConstant_EntrustPPKEF = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::EntrustPPKEF);
+VANILLAPDF_API const NameObjectHandle* NameConstant_AdobePPKLite = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdobePPKLite);
+VANILLAPDF_API const NameObjectHandle* NameConstant_AdobePubSec = reinterpret_cast<const NameObjectHandle*>(&vanillapdf::constant::Name::AdobePubSec);
 
 #define DECLARE_CONST_NAME(name) \
     namespace vanillapdf { namespace constant { namespace Name { \

@@ -145,6 +145,24 @@ extern "C"
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReservedSignatureSize(DocumentSignatureSettingsHandle* handle, size_type value);
 
     /**
+    * \brief
+    * The encoding of the signature value, written as the signature dictionary /SubFilter.
+    *
+    * Defaults to \ref NameConstant_AdbePkcs7Detached. The library does not
+    * interpret the value: the signing key produces the signature, so a custom
+    * signing key (see SigningKey_CreateCustom()) has to return what the
+    * declared encoding requires - for \ref NameConstant_EtsiCadesDetached a
+    * detached CAdES signature carrying the ESS signing-certificate-v2
+    * attribute and no signing-time attribute.
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetSubFilter(DocumentSignatureSettingsHandle* handle, NameObjectHandle** result);
+
+    /**
+    * \brief \copybrief DocumentSignatureSettings_GetSubFilter
+    */
+    VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetSubFilter(DocumentSignatureSettingsHandle* handle, NameObjectHandle* value);
+
+    /**
     * \brief Reinterpret current object as \ref IUnknownHandle
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_ToUnknown(DocumentSignatureSettingsHandle* handle, IUnknownHandle** result);

@@ -22,10 +22,26 @@ TEST(DocumentSignatureSettings, ReservedSignatureSizeRoundtrip) {
     EXPECT_EQ(reserved_size, 65536u);
 }
 
-// Signs an empty in-memory document with the given reservation and hands back
-// the signed stream, so the /Contents actually written can be inspected
-static void SignWithReservedSize(
-    size_type reserved_size,
+// Settings signing with the test certificate
+static void CreateSigningSettings(HandleGuard<DocumentSignatureSettingsHandle, DocumentSignatureSettings_Release>& settings) {
+    HandleGuard<BufferHandle, Buffer_Release> pkcs12_buffer;
+    HandleGuard<PKCS12KeyHandle, PKCS12Key_Release> pkcs12_key;
+    HandleGuard<SigningKeyHandle, SigningKey_Release> signing_key;
+
+    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(SIGNING_CERTIFICATE),
+        SIGNING_CERTIFICATE_SIZE, pkcs12_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_CreateFromBuffer(pkcs12_buffer, nullptr, pkcs12_key.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, signing_key.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(DocumentSignatureSettings_Create(settings.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentSignatureSettings_SetSigningKey(settings, signing_key), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentSignatureSettings_SetDigest(settings, MessageDigestAlgorithmType_SHA256), VANILLAPDF_ERROR_SUCCESS);
+}
+
+// Signs an empty in-memory document and hands back the signed stream, so the
+// signature actually written can be inspected
+static void SignEmptyDocument(
+    DocumentSignatureSettingsHandle* settings,
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release>& signed_stream,
     error_type* sign_result
 ) {
@@ -37,21 +53,6 @@ static void SignWithReservedSize(
     ASSERT_EQ(File_CreateStream(source_stream, "reserved_source.pdf", source_file.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Document_CreateFile(source_file, source_document.out()), VANILLAPDF_ERROR_SUCCESS);
 
-    HandleGuard<BufferHandle, Buffer_Release> pkcs12_buffer;
-    HandleGuard<PKCS12KeyHandle, PKCS12Key_Release> pkcs12_key;
-    HandleGuard<SigningKeyHandle, SigningKey_Release> signing_key;
-
-    ASSERT_EQ(Buffer_CreateFromData(reinterpret_cast<string_type>(SIGNING_CERTIFICATE),
-        SIGNING_CERTIFICATE_SIZE, pkcs12_buffer.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PKCS12Key_CreateFromBuffer(pkcs12_buffer, nullptr, pkcs12_key.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(PKCS12Key_ToSigningKey(pkcs12_key, signing_key.out()), VANILLAPDF_ERROR_SUCCESS);
-
-    HandleGuard<DocumentSignatureSettingsHandle, DocumentSignatureSettings_Release> settings;
-    ASSERT_EQ(DocumentSignatureSettings_Create(settings.out()), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DocumentSignatureSettings_SetSigningKey(settings, signing_key), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DocumentSignatureSettings_SetDigest(settings, MessageDigestAlgorithmType_SHA256), VANILLAPDF_ERROR_SUCCESS);
-    ASSERT_EQ(DocumentSignatureSettings_SetReservedSignatureSize(settings, reserved_size), VANILLAPDF_ERROR_SUCCESS);
-
     HandleGuard<FileHandle, File_Release> signed_file;
     ASSERT_EQ(InputOutputStream_CreateFromMemory(signed_stream.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(File_CreateStream(signed_stream, "reserved_signed.pdf", signed_file.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -59,14 +60,25 @@ static void SignWithReservedSize(
     *sign_result = Document_Sign(source_document, signed_file, settings);
 }
 
-// Reads back the /Contents of the single signature in a signed stream
-static void ReadSignatureContentsSize(
+static void SignWithReservedSize(
+    size_type reserved_size,
     HandleGuard<InputOutputStreamHandle, InputOutputStream_Release>& signed_stream,
-    size_type* contents_size
+    error_type* sign_result
 ) {
-    HandleGuard<FileHandle, File_Release> signed_file;
-    HandleGuard<DocumentHandle, Document_Release> signed_document;
+    HandleGuard<DocumentSignatureSettingsHandle, DocumentSignatureSettings_Release> settings;
+    CreateSigningSettings(settings);
+    ASSERT_EQ(DocumentSignatureSettings_SetReservedSignatureSize(settings, reserved_size), VANILLAPDF_ERROR_SUCCESS);
 
+    SignEmptyDocument(settings, signed_stream, sign_result);
+}
+
+// Opens the single signature in a signed stream
+static void OpenSignature(
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release>& signed_stream,
+    HandleGuard<FileHandle, File_Release>& signed_file,
+    HandleGuard<DocumentHandle, Document_Release>& signed_document,
+    HandleGuard<DigitalSignatureHandle, DigitalSignature_Release>& digital_signature
+) {
     ASSERT_EQ(File_OpenStream(signed_stream, "reserved_signed.pdf", signed_file.out()), VANILLAPDF_ERROR_SUCCESS);
     ASSERT_EQ(Document_OpenFile(signed_file, signed_document.out()), VANILLAPDF_ERROR_SUCCESS);
 
@@ -84,9 +96,18 @@ static void ReadSignatureContentsSize(
 
     HandleGuard<SignatureFieldHandle, SignatureField_Release> signature_field;
     ASSERT_EQ(SignatureField_FromField(field, signature_field.out()), VANILLAPDF_ERROR_SUCCESS);
-
-    HandleGuard<DigitalSignatureHandle, DigitalSignature_Release> digital_signature;
     ASSERT_EQ(SignatureField_GetValue(signature_field, digital_signature.out()), VANILLAPDF_ERROR_SUCCESS);
+}
+
+// Reads back the /Contents of the single signature in a signed stream
+static void ReadSignatureContentsSize(
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release>& signed_stream,
+    size_type* contents_size
+) {
+    HandleGuard<FileHandle, File_Release> signed_file;
+    HandleGuard<DocumentHandle, Document_Release> signed_document;
+    HandleGuard<DigitalSignatureHandle, DigitalSignature_Release> digital_signature;
+    OpenSignature(signed_stream, signed_file, signed_document, digital_signature);
 
     HandleGuard<HexadecimalStringObjectHandle, HexadecimalStringObject_Release> contents;
     ASSERT_EQ(DigitalSignature_GetContents(digital_signature, contents.out()), VANILLAPDF_ERROR_SUCCESS);
@@ -158,6 +179,110 @@ TEST(DocumentSignatureSettings, ReservedSignatureSizeNullChecks) {
     HandleGuard<DocumentSignatureSettingsHandle, DocumentSignatureSettings_Release> settings;
     ASSERT_EQ(DocumentSignatureSettings_Create(settings.out()), VANILLAPDF_ERROR_SUCCESS);
     EXPECT_EQ(DocumentSignatureSettings_GetReservedSignatureSize(settings, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+}
+
+// DocumentSignatureSettings sub filter
+
+static bool NamesEqual(const NameObjectHandle* left, const NameObjectHandle* right) {
+    boolean_type equal = VANILLAPDF_RV_FALSE;
+    EXPECT_EQ(NameObject_Equals(left, right, &equal), VANILLAPDF_ERROR_SUCCESS);
+    return equal == VANILLAPDF_RV_TRUE;
+}
+
+TEST(DocumentSignatureSettings, SubFilterRoundtrip) {
+    HandleGuard<DocumentSignatureSettingsHandle, DocumentSignatureSettings_Release> settings;
+    ASSERT_EQ(DocumentSignatureSettings_Create(settings.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> sub_filter;
+    ASSERT_EQ(DocumentSignatureSettings_GetSubFilter(settings, sub_filter.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_TRUE(NamesEqual(sub_filter, NameConstant_AdbePkcs7Detached));
+
+    HandleGuard<NameObjectHandle, NameObject_Release> cades;
+    ASSERT_EQ(NameObject_CreateFromDecodedString("ETSI.CAdES.detached", cades.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(DocumentSignatureSettings_SetSubFilter(settings, cades), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> changed_sub_filter;
+    ASSERT_EQ(DocumentSignatureSettings_GetSubFilter(settings, changed_sub_filter.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_TRUE(NamesEqual(changed_sub_filter, NameConstant_EtsiCadesDetached));
+}
+
+TEST(DocumentSignatureSettings, DefaultSubFilterIsWritten) {
+    HandleGuard<DocumentSignatureSettingsHandle, DocumentSignatureSettings_Release> settings;
+    CreateSigningSettings(settings);
+
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> signed_stream;
+    error_type sign_result = VANILLAPDF_ERROR_GENERAL;
+    SignEmptyDocument(settings, signed_stream, &sign_result);
+    ASSERT_EQ(sign_result, VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FileHandle, File_Release> signed_file;
+    HandleGuard<DocumentHandle, Document_Release> signed_document;
+    HandleGuard<DigitalSignatureHandle, DigitalSignature_Release> digital_signature;
+    OpenSignature(signed_stream, signed_file, signed_document, digital_signature);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> sub_filter;
+    ASSERT_EQ(DigitalSignature_GetSubFilter(digital_signature, sub_filter.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_TRUE(NamesEqual(sub_filter, NameConstant_AdbePkcs7Detached));
+}
+
+// The library writes the declared encoding through without interpreting it, so
+// a CAdES declaration over the built-in CMS still verifies
+TEST(DocumentSignatureSettings, SubFilterIsWritten) {
+    HandleGuard<NameObjectHandle, NameObject_Release> cades;
+    ASSERT_EQ(NameObject_CreateFromDecodedString("ETSI.CAdES.detached", cades.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<DocumentSignatureSettingsHandle, DocumentSignatureSettings_Release> settings;
+    CreateSigningSettings(settings);
+    ASSERT_EQ(DocumentSignatureSettings_SetSubFilter(settings, cades), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> signed_stream;
+    error_type sign_result = VANILLAPDF_ERROR_GENERAL;
+    SignEmptyDocument(settings, signed_stream, &sign_result);
+    ASSERT_EQ(sign_result, VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<FileHandle, File_Release> signed_file;
+    HandleGuard<DocumentHandle, Document_Release> signed_document;
+    HandleGuard<DigitalSignatureHandle, DigitalSignature_Release> digital_signature;
+    OpenSignature(signed_stream, signed_file, signed_document, digital_signature);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> sub_filter;
+    ASSERT_EQ(DigitalSignature_GetSubFilter(digital_signature, sub_filter.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_TRUE(NamesEqual(sub_filter, NameConstant_EtsiCadesDetached));
+
+    // The test certificate is self-signed, so the first pass extracts it and
+    // the second trusts it
+    HandleGuard<TrustedCertificateStoreHandle, TrustedCertificateStore_Release> trust_store;
+    ASSERT_EQ(TrustedCertificateStore_Create(trust_store.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<SignatureVerificationResultHandle, SignatureVerificationResult_Release> result;
+    ASSERT_EQ(DigitalSignatureExtensions_Verify(digital_signature, signed_document, trust_store, nullptr, result.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<BufferHandle, Buffer_Release> signer_certificate;
+    ASSERT_EQ(SignatureVerificationResult_GetSignerCertificate(result, signer_certificate.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(TrustedCertificateStore_AddCertificateFromDER(trust_store, signer_certificate), VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_EQ(DigitalSignatureExtensions_Verify(digital_signature, signed_document, trust_store, nullptr, result.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    SignatureVerificationStatusType status = SignatureStatus_Undefined;
+    ASSERT_EQ(SignatureVerificationResult_GetStatus(result, &status), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(status, SignatureStatus_Valid);
+}
+
+TEST(DocumentSignatureSettings, SubFilterNullChecks) {
+    HandleGuard<DocumentSignatureSettingsHandle, DocumentSignatureSettings_Release> settings;
+    ASSERT_EQ(DocumentSignatureSettings_Create(settings.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> sub_filter;
+    EXPECT_EQ(DocumentSignatureSettings_GetSubFilter(nullptr, sub_filter.out()), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(DocumentSignatureSettings_GetSubFilter(settings, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> cades;
+    ASSERT_EQ(NameObject_CreateFromDecodedString("ETSI.CAdES.detached", cades.out()), VANILLAPDF_ERROR_SUCCESS);
+    EXPECT_EQ(DocumentSignatureSettings_SetSubFilter(nullptr, cades), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(DocumentSignatureSettings_SetSubFilter(settings, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
+
+    HandleGuard<NameObjectHandle, NameObject_Release> result;
+    EXPECT_EQ(DigitalSignature_GetSubFilter(nullptr, result.out()), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
 
 // DigitalSignature ToUnknown/FromUnknown null checks

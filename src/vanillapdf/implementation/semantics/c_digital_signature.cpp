@@ -143,6 +143,21 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(Digit
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetSubFilter(DigitalSignatureHandle* handle, NameObjectHandle** result) {
+    DigitalSignature* signature = reinterpret_cast<DigitalSignature*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(signature);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        OutputNameObjectPtr direct;
+        bool contains = signature->SubFilter(direct);
+        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        auto ptr = direct.AddRefGet();
+        *result = reinterpret_cast<NameObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_ToUnknown(DigitalSignatureHandle* handle, IUnknownHandle** result) {
     return SafeObjectConvert<DigitalSignature, IUnknown, DigitalSignatureHandle, IUnknownHandle>(handle, result);
 }

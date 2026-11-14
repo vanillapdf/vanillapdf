@@ -4,6 +4,8 @@
 #include "semantics/objects/date.h"
 #include "semantics/utils/semantics_fwd.h"
 
+#include "syntax/objects/name_object.h"
+#include "syntax/utils/name_constants.h"
 #include "syntax/utils/output_pointer.h"
 
 #include "utils/signing_key_interface.h"
@@ -31,6 +33,11 @@ public:
     types::size_type GetReservedSignatureSize() const;
     void SetReservedSignatureSize(types::size_type value);
 
+    // The encoding of the signature value, written as /SubFilter. The
+    // library does not interpret it - the signing key produces the value.
+    syntax::NameObjectPtr GetSubFilter() const;
+    void SetSubFilter(syntax::NameObjectPtr value);
+
     void SetSigningKey(ISigningKeyPtr value);
     void SetCertificate(syntax::HexadecimalStringObjectPtr value);
     void SetName(syntax::LiteralStringObjectPtr value);
@@ -53,6 +60,8 @@ private:
     // embeds, not by the signature value. Long-term validation embeds OCSP
     // responses and CRLs on top and has to raise this.
     types::size_type m_reserved_signature_size = 16384;
+
+    syntax::NameObjectPtr m_sub_filter = make_deferred<syntax::NameObject>(constant::Name::AdbePkcs7Detached);
 };
 
 } // semantics

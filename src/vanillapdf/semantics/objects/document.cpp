@@ -706,9 +706,9 @@ syntax::DictionaryObjectPtr Document::CreateSignatureDictionary(DocumentSignatur
         signature_dictionary->Insert(constant::Name::M, signing_time->GetObject());
     }
 
-    // TODO
+    // The settings may be reused for another signature, so the dictionary gets its own copy
     signature_dictionary->Insert(constant::Name::Filter, constant::Name::AdobePPKLite.Clone());
-    signature_dictionary->Insert(constant::Name::SubFilter, NameObject::CreateFromDecoded("adbe.pkcs7.detached"));
+    signature_dictionary->Insert(constant::Name::SubFilter, options->GetSubFilter()->Clone());
 
     // TODO hardcoded value
     std::string byte_range_value(100, ' ');

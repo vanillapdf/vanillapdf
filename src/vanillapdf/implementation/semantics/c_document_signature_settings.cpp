@@ -305,6 +305,31 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetReserv
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetSubFilter(DocumentSignatureSettingsHandle* handle, NameObjectHandle** result) {
+    DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        auto sub_filter = obj->GetSubFilter();
+        auto ptr = sub_filter.AddRefGet();
+        *result = reinterpret_cast<NameObjectHandle*>(ptr);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetSubFilter(DocumentSignatureSettingsHandle* handle, NameObjectHandle* value) {
+    DocumentSignatureSettings* obj = reinterpret_cast<DocumentSignatureSettings*>(handle);
+    NameObject* sub_filter = reinterpret_cast<NameObject*>(value);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(sub_filter);
+
+    try {
+        obj->SetSubFilter(sub_filter);
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_ToUnknown(DocumentSignatureSettingsHandle* handle, IUnknownHandle** result) {
     return SafeObjectConvert<DocumentSignatureSettings, IUnknown, DocumentSignatureSettingsHandle, IUnknownHandle>(handle, result);
 }
