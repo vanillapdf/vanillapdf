@@ -37,7 +37,9 @@ private:
     // Built in full on first access (by GetCachedPage or WarmPageCache).
     // Cleared by Insert/Remove/Append so structural changes are reflected
     // on the next access. GetCachedPage constructs a PageObject on demand
-    // from the cached dictionary pointer.
+    // from the cached dictionary pointer. Insert/Remove/Append hold the lock
+    // for their whole body, so concurrent mutators serialize and a cache build
+    // never observes a half-updated tree.
     mutable std::unique_ptr<std::recursive_mutex> m_cache_lock;
     mutable std::vector<syntax::DictionaryObjectPtr> m_page_cache;
     mutable bool m_cache_built = false;

@@ -170,6 +170,12 @@ void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
         LOG_ERROR_AND_THROW(InvalidParameterException, "Invalid page index: {}. Page indices are 1-based", page_index);
     }
 
+    // Hold the cache lock across the whole mutation, not only the final
+    // invalidation. Concurrent mutators then serialize, so the create-if-missing
+    // Kids insert and the Count refresh never interleave with another thread's
+    // change, and a concurrent cache build never observes a half-updated tree.
+    ACCESS_LOCK_GUARD(m_cache_lock);
+
     // Inserting after the current last page is an append
     if (page_index == PageCount() + 1) {
         Append(object);
@@ -193,6 +199,8 @@ void PageTree::Insert(PageObjectPtr object, types::size_type page_index) {
 }
 
 void PageTree::Append(PageObjectPtr object) {
+    // Hold the cache lock across the whole mutation, see Insert
+    ACCESS_LOCK_GUARD(m_cache_lock);
 
     // Appended pages become direct children of the root node - the position
     // after the last page always coincides with the end of the root Kids
@@ -212,6 +220,9 @@ void PageTree::Remove(types::size_type page_index) {
     if (page_index < 1) {
         LOG_ERROR_AND_THROW(InvalidParameterException, "Invalid page index: {}. Page indices are 1-based", page_index);
     }
+
+    // Hold the cache lock across the whole mutation, see Insert
+    ACCESS_LOCK_GUARD(m_cache_lock);
 
     types::size_type kid_index = 0;
     auto parent_node = FindPageParent(page_index, kid_index);
@@ -272,9 +283,14 @@ types::size_type PageTree::UpdateKidsCount(PageNodeBasePtr node) {
         auto tree_node_object = tree_node->GetObject();
         auto kid_count_object = tree_node_object->FindAs<IntegerObjectPtr>(constant::Name::Count);
 
+        // Walk by index rather than with iterators - the array locks each
+        // GetValue, while its iterators point straight into the storage and
+        // are invalidated when another thread grows the array
         types::size_type kid_count = 0;
         auto kids = tree_node->Kids();
-        for (auto kid : kids) {
+        auto kids_size = kids->GetSize();
+        for (decltype(kids_size) i = 0; i < kids_size; ++i) {
+            auto kid = kids->GetValue(i);
             kid_count += UpdateKidsCount(kid);
         }
 
