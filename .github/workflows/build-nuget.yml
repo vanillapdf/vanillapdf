@@ -160,18 +160,19 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # Release artifacts must build on GA runner images. x86 and x64
-          # stay on windows-2022 with VS 2022, as windows-2025 dropped it. The
-          # only GA arm64 image (windows-11-arm) has moved to VS 2026 and no
-          # longer ships VS 2022, so the arm64 job uses msvc-18.
-          - name: win.2022-x86-static
-            os: windows-2022
-            preset: windows-x86-msvc-17-static
+          # Release artifacts must build on GA runner images. All three
+          # architectures build with VS 2026 (msvc-18), the toolset the
+          # sanity check gates pull requests with. windows-2025 and
+          # windows-11-arm no longer ship VS 2022; VS 2022 (msvc-17) keeps
+          # its coverage in the nightly matrix on windows-2022.
+          - name: win.2025-x86-static
+            os: windows-2025
+            preset: windows-x86-msvc-18-static
             build_type: Release
 
-          - name: win.2022-x64-static
-            os: windows-2022
-            preset: windows-x64-msvc-17-static
+          - name: win.2025-x64-static
+            os: windows-2025
+            preset: windows-x64-msvc-18-static
             build_type: Release
 
           - name: win.11-arm64-static
@@ -244,13 +245,15 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - name: osx.15-x64
-            runner: macos-15-intel
+          # The deployment target below keeps the binaries running on macOS 14,
+          # whichever SDK the runner image ships
+          - name: osx.26-x64
+            runner: macos-26-intel
             preset: macos-x64
             build_type: Release
 
-          - name: osx.15-arm64
-            runner: macos-15
+          - name: osx.26-arm64
+            runner: macos-26
             preset: macos-arm64
             build_type: Release
 
