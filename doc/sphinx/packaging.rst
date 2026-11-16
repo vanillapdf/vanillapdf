@@ -74,10 +74,10 @@ Windows NuGet packages are built using the automated workflow with vcpkg depende
 
 .. code-block:: bash
 
-   cmake --preset windows-x64-msvc-17-static -DCMAKE_BUILD_TYPE=Release \
+   cmake --preset windows-x64-msvc-18-static -DCMAKE_BUILD_TYPE=Release \
      -DVANILLAPDF_ENABLE_PACKAGING=ON \
      -DVANILLAPDF_ENABLE_TESTS=ON
-   cmake --build --preset windows-x64-msvc-17-static --config Release --target package
+   cmake --build --preset windows-x64-msvc-18-static --config Release --target package
 
 Configuration Notes
 -------------------
