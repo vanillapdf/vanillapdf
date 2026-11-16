@@ -245,7 +245,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # The deployment target below keeps the binaries running on macOS 14,
+          # The deployment target below keeps the binaries running on macOS 15,
           # whichever SDK the runner image ships
           - name: osx.26-x64
             runner: macos-26-intel
@@ -301,7 +301,7 @@ jobs:
           fi
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_TESTS=ON"
           CMAKE_ARGS="$CMAKE_ARGS -DVANILLAPDF_ENABLE_PACKAGING=ON"
-          CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0"
+          CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_OSX_DEPLOYMENT_TARGET=15.0"
           CMAKE_ARGS="$CMAKE_ARGS -DVCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}/cmake/overlays"
           cmake --preset ${{ matrix.config.preset }} $CMAKE_ARGS
 
