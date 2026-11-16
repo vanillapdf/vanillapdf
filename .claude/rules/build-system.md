@@ -10,7 +10,7 @@
 
 Presets organized by platform in `cmake/presets/{windows,linux,macos,android}.json`, with shared base configs in `cmake/presets/shared.json`. Each includes configure, build, and test configurations. List with `cmake --list-presets`.
 
-Common patterns: `windows-x64-msvc-17`, `windows-x64-msvc-17-static` (static CRT), `windows-x64-msvc-17-static-md` (static libs + dynamic CRT). Same variants for `msvc-18` (VS 2026). Linux: `linux-x64-gcc`, `linux-x64-clang`, `linux-x64-musl`. macOS: `macos-x64`, `macos-arm64`.
+Common patterns: `windows-x64-msvc-18`, `windows-x64-msvc-18-static` (static CRT), `windows-x64-msvc-18-static-md` (static libs + dynamic CRT) — VS 2026 on `windows-2025`, the primary Windows platform (release packages and the PR gate). Same variants for `msvc-17` (VS 2022), covered by the nightly matrix on `windows-2022`. Linux: `linux-x64-gcc`, `linux-x64-clang`, `linux-x64-musl`. macOS: `macos-x64`, `macos-arm64`.
 
 ## Build Targets
 
