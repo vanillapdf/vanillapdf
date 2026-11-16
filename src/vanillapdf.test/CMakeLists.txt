@@ -91,11 +91,6 @@ target_link_libraries(vanillapdf.test PRIVATE ${VANILLAPDF_TEST_LIBS})
 # (libstdc++ for GCC, libc++ for Clang and Apple Clang).
 set_target_properties(vanillapdf.test PROPERTIES LINKER_LANGUAGE CXX)
 
-# In case we have the dynamic link configuration add specific definitions
-if(BUILD_SHARED_LIBS)
-    target_compile_definitions(vanillapdf.test PRIVATE VANILLAPDF_CONFIGURATION_DLL)
-endif()
-
 # We do not need test project to be shipped
 #install(TARGETS vanillapdf.test
     #RUNTIME DESTINATION "bin/${PLATFORM_IDENTIFIER}"

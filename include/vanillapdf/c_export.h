@@ -33,7 +33,11 @@
     #define CALLING_CONVENTION
 #endif
 
-#if defined(VANILLAPDF_CONFIGURATION_DLL) && defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
+/*
+* The linkage is recorded in c_vanillapdf_config.h, so that it is always the
+* linkage of the installed library, whichever build system the consumer uses.
+*/
+#if VANILLAPDF_SHARED_LIBRARY && defined(COMPILER_MICROSOFT_VISUAL_STUDIO)
     #if defined(VANILLAPDF_EXPORTS)
         #define VANILLAPDF_API __declspec(dllexport)
     #else
