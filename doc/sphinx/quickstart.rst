@@ -81,22 +81,19 @@ see :doc:`signature_verification` for trust stores, settings and result handling
 Query library version
 ---------------------
 
-.. literalinclude:: ../../src/vanillapdf.test/utils.c
-   :language: c
-   :start-after: //! [Print library info]
-   :end-before: //! [Print library info]
-   :dedent:
+To check which version of the library a program runs with:
 
-Retrieve error details
-----------------------
+.. code-block:: c
 
-When a function returns an error code, extract the message:
+   integer_type major = 0;
+   integer_type minor = 0;
+   integer_type patch = 0;
 
-.. literalinclude:: ../../src/vanillapdf.test/utils.c
-   :language: c
-   :start-after: //! [Print last error]
-   :end-before: //! [Print last error]
-   :dedent:
+   LibraryInfo_GetVersionMajor(&major);
+   LibraryInfo_GetVersionMinor(&minor);
+   LibraryInfo_GetVersionPatch(&patch);
+
+   printf("Vanilla.PDF %d.%d.%d\n", (int) major, (int) minor, (int) patch);
 
 Next steps
 ----------

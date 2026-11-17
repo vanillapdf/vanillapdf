@@ -218,13 +218,27 @@ Every function returns ``error_type``. On success, the value is
 ``VANILLAPDF_ERROR_SUCCESS``. Any other value indicates an error whose message
 is stored in a thread-local buffer.
 
-Retrieve the last error:
+Retrieve the last error of the calling thread:
 
-.. literalinclude:: ../../src/vanillapdf.test/utils.c
-   :language: c
-   :start-after: //! [Print last error]
-   :end-before: //! [Print last error]
-   :dedent:
+.. code-block:: c
+
+   error_type error = VANILLAPDF_ERROR_SUCCESS;
+   size_type message_length = 0;
+
+   Errors_GetLastError(&error);
+
+   /* The length includes the terminating NUL character */
+   Errors_GetLastErrorMessageLength(&message_length);
+
+   if (message_length > 0) {
+       char* message = (char*) malloc(message_length);
+
+       if (message != NULL && Errors_GetLastErrorMessage(message, message_length) == VANILLAPDF_ERROR_SUCCESS) {
+           fprintf(stderr, "Error %u: %.*s\n", (unsigned) error, (int) message_length, message);
+       }
+
+       free(message);
+   }
 
 Error codes
 ^^^^^^^^^^^
@@ -290,11 +304,17 @@ changing existing ones, patch releases contain only fixes.
 
 Query the version at runtime:
 
-.. literalinclude:: ../../src/vanillapdf.test/utils.c
-   :language: c
-   :start-after: //! [Print library info]
-   :end-before: //! [Print library info]
-   :dedent:
+.. code-block:: c
+
+   integer_type major = 0;
+   integer_type minor = 0;
+   integer_type patch = 0;
+
+   LibraryInfo_GetVersionMajor(&major);
+   LibraryInfo_GetVersionMinor(&minor);
+   LibraryInfo_GetVersionPatch(&patch);
+
+   printf("Vanilla.PDF %d.%d.%d\n", (int) major, (int) minor, (int) patch);
 
 .. list-table::
    :header-rows: 1
