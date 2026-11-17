@@ -35,17 +35,6 @@
         return VANILLAPDF_ERROR_GENERAL; \
     }
 
-template <
-    typename SourceT,
-    typename DestT,
-    typename SourceHandleT,
-    typename DestHandleT,
-    typename = typename std::enable_if<std::is_polymorphic<SourceT>::value>::type,
-    typename = typename std::enable_if<
-        std::is_convertible<SourceT *, DestT *>::value ||
-        std::is_base_of<SourceT, DestT>::value
-    >::type
->
 // Contract: every *_To* / *_From* function built on this template is a trivial
 // function (\trivial in the public headers, see doc/src/input/trivial_functions.dox).
 // The body must not lock, allocate, throw, log or set the thread error state.
@@ -64,6 +53,17 @@ template <
 // lock, allocates nothing) and the atomic increment in IUnknown::AddRef. There is
 // deliberately no try/catch: nothing here can throw, and CATCH_VANILLAPDF_EXCEPTIONS
 // would add logging. Changing any of this is a breaking change for the bindings.
+template <
+    typename SourceT,
+    typename DestT,
+    typename SourceHandleT,
+    typename DestHandleT,
+    typename = typename std::enable_if<std::is_polymorphic<SourceT>::value>::type,
+    typename = typename std::enable_if<
+        std::is_convertible<SourceT *, DestT *>::value ||
+        std::is_base_of<SourceT, DestT>::value
+    >::type
+>
 error_type SafeObjectConvert(SourceHandleT* from, DestHandleT** result) {
     SourceT* obj = reinterpret_cast<SourceT*>(from);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
@@ -91,14 +91,14 @@ error_type SafeObjectConvert(SourceHandleT* from, DestHandleT** result) {
     return VANILLAPDF_ERROR_SUCCESS;
 }
 
+// Not a trivial function, and must never be marked \trivial: when the counter
+// reaches zero, Release deletes the object. The destructors free memory, take
+// locks (~Document takes the document registry lock) and can log.
 template <
     typename T,
     typename HandleT,
     typename = typename std::enable_if<std::is_base_of<vanillapdf::IUnknown, T>::value>::type
 >
-// Not a trivial function, and must never be marked \trivial: when the counter
-// reaches zero, Release deletes the object. The destructors free memory, take
-// locks (~Document takes the document registry lock) and can log.
 error_type ObjectRelease(HandleT* handle) {
     T* obj = reinterpret_cast<T*>(handle);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
