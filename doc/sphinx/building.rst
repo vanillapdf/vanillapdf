@@ -1,4 +1,4 @@
-Building from Source
+Building from source
 ====================
 
 This page explains how to clone, configure, build, test, and troubleshoot
@@ -78,15 +78,15 @@ List the available build presets:
 
 Common presets:
 
-- ``windows-{x86,x64,arm64}-msvc-18`` -- Windows with Visual Studio 2026 (dynamic CRT)
-- ``windows-{x86,x64,arm64}-msvc-18-static`` -- Windows with Visual Studio 2026 (static CRT)
-- ``windows-{x86,x64,arm64}-msvc-18-static-md`` -- Windows with Visual Studio 2026 (static libs, dynamic CRT)
-- ``windows-{x86,x64,arm64}-msvc-17`` -- Windows with Visual Studio 2022 (dynamic CRT)
-- ``windows-{x86,x64,arm64}-msvc-17-static`` -- Windows with Visual Studio 2022 (static CRT)
-- ``windows-{x86,x64,arm64}-msvc-17-static-md`` -- Windows with Visual Studio 2022 (static libs, dynamic CRT)
-- ``linux-x64-gcc`` / ``linux-arm64-gcc`` -- Linux with GCC
-- ``linux-x64-clang`` / ``linux-arm64-clang`` -- Linux with Clang
-- ``macos-x64`` / ``macos-arm64`` -- macOS builds
+- ``windows-{x86,x64,arm64}-msvc-18`` — Windows with Visual Studio 2026 (dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-18-static`` — Windows with Visual Studio 2026 (static CRT)
+- ``windows-{x86,x64,arm64}-msvc-18-static-md`` — Windows with Visual Studio 2026 (static libs, dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-17`` — Windows with Visual Studio 2022 (dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-17-static`` — Windows with Visual Studio 2022 (static CRT)
+- ``windows-{x86,x64,arm64}-msvc-17-static-md`` — Windows with Visual Studio 2022 (static libs, dynamic CRT)
+- ``linux-x64-gcc`` / ``linux-arm64-gcc`` — Linux with GCC
+- ``linux-x64-clang`` / ``linux-arm64-clang`` — Linux with Clang
+- ``macos-x64`` / ``macos-arm64`` — macOS builds
 
 Platform-specific builds
 ------------------------
@@ -148,7 +148,7 @@ Dependency management
 ---------------------
 
 Vanilla.PDF uses **vcpkg** for automatic dependency management. Dependencies
-are handled automatically -- no manual installation required.
+are handled automatically — no manual installation required.
 
 **Automatic dependencies:**
 
@@ -211,42 +211,42 @@ Build configuration
 Feature enable/disable options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- ``-DVANILLAPDF_ENABLE_ENCRYPTION=ON/OFF`` -- PDF encryption/decryption support (default: ON)
-- ``-DVANILLAPDF_ENABLE_JPEG=ON/OFF`` -- JPEG image support (default: ON)
-- ``-DVANILLAPDF_ENABLE_JPEG2000=ON/OFF`` -- JPEG2000 support (default: ON)
-- ``-DVANILLAPDF_ENABLE_MIMALLOC=ON/OFF`` -- Serve the reference counted objects from mimalloc instead of the default allocator (default: OFF)
-- ``-DVANILLAPDF_ENABLE_CRTDBG=ON/OFF`` -- Track allocations through the debug heap of the Microsoft C runtime in the Debug configuration; cannot be combined with mimalloc (default: OFF)
+- ``-DVANILLAPDF_ENABLE_ENCRYPTION=ON/OFF`` — PDF encryption/decryption support (default: ON)
+- ``-DVANILLAPDF_ENABLE_JPEG=ON/OFF`` — JPEG image support (default: ON)
+- ``-DVANILLAPDF_ENABLE_JPEG2000=ON/OFF`` — JPEG2000 support (default: ON)
+- ``-DVANILLAPDF_ENABLE_MIMALLOC=ON/OFF`` — Serve the reference counted objects from mimalloc instead of the default allocator (default: OFF)
+- ``-DVANILLAPDF_ENABLE_CRTDBG=ON/OFF`` — Track allocations through the debug heap of the Microsoft C runtime in the Debug configuration; cannot be combined with mimalloc (default: OFF)
 
 Build configuration options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- ``-DVANILLAPDF_INTERNAL_VCPKG=ON/OFF`` -- Enable internal vcpkg dependency management (default: ON)
-- ``-DVANILLAPDF_ENABLE_PACKAGING=ON/OFF`` -- Enable packaging features like CPack (auto-detected)
-- ``-DVANILLAPDF_ENABLE_TESTS=ON/OFF`` -- Build and run test scenarios (default: OFF)
-- ``-DVANILLAPDF_ENABLE_BENCHMARK=ON/OFF`` -- Include benchmarking project (default: OFF)
-- ``-DVANILLAPDF_USE_STATIC_CRT=ON/OFF`` -- Use static MSVC runtime (/MT) instead of dynamic (/MD) (default: OFF)
-- ``-DBUILD_SHARED_LIBS=ON/OFF`` -- Build vanillapdf as a shared library (default: ON)
+- ``-DVANILLAPDF_INTERNAL_VCPKG=ON/OFF`` — Enable internal vcpkg dependency management (default: ON)
+- ``-DVANILLAPDF_ENABLE_PACKAGING=ON/OFF`` — Enable packaging features like CPack (auto-detected)
+- ``-DVANILLAPDF_ENABLE_TESTS=ON/OFF`` — Build and run test scenarios (default: OFF)
+- ``-DVANILLAPDF_ENABLE_BENCHMARK=ON/OFF`` — Include benchmarking project (default: OFF)
+- ``-DVANILLAPDF_USE_STATIC_CRT=ON/OFF`` — Use static MSVC runtime (/MT) instead of dynamic (/MD) (default: OFF)
+- ``-DBUILD_SHARED_LIBS=ON/OFF`` — Build vanillapdf as a shared library (default: ON)
 
 Development options
 ^^^^^^^^^^^^^^^^^^^^
 
-- ``-DVANILLAPDF_ENABLE_COVERAGE=ON`` -- Enable code coverage instrumentation (GCC/Clang only)
-- ``-DVANILLAPDF_FORCE_32_BIT=ON`` -- Force 32-bit output binary regardless of architecture
-- ``-DVANILLAPDF_ENABLE_ASAN=ON`` -- Enable AddressSanitizer (use with Debug builds)
-- ``-DVANILLAPDF_ENABLE_UBSAN=ON`` -- Enable UndefinedBehaviorSanitizer (use with Debug builds)
-- ``-DVANILLAPDF_ENABLE_TSAN=ON`` -- Enable ThreadSanitizer (use with Debug builds)
+- ``-DVANILLAPDF_ENABLE_COVERAGE=ON`` — Enable code coverage instrumentation (GCC/Clang only)
+- ``-DVANILLAPDF_FORCE_32_BIT=ON`` — Force 32-bit output binary regardless of architecture
+- ``-DVANILLAPDF_ENABLE_ASAN=ON`` — Enable AddressSanitizer (use with Debug builds)
+- ``-DVANILLAPDF_ENABLE_UBSAN=ON`` — Enable UndefinedBehaviorSanitizer (use with Debug builds)
+- ``-DVANILLAPDF_ENABLE_TSAN=ON`` — Enable ThreadSanitizer (use with Debug builds)
 
 ASan and TSan cannot be enabled simultaneously. UBSan can be combined with either.
 
 External dependency options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- ``-DVANILLAPDF_EXTERNAL_OPENSSL=ON/OFF`` -- Use system OpenSSL instead of vcpkg (default: OFF)
-- ``-DVANILLAPDF_EXTERNAL_JPEG=ON/OFF`` -- Use system libjpeg instead of vcpkg (default: OFF)
-- ``-DVANILLAPDF_EXTERNAL_OPENJPEG=ON/OFF`` -- Use system OpenJPEG instead of vcpkg (default: OFF)
-- ``-DVANILLAPDF_EXTERNAL_ZLIB=ON/OFF`` -- Use system zlib instead of vcpkg (default: OFF)
-- ``-DVANILLAPDF_EXTERNAL_SPDLOG=ON/OFF`` -- Use system spdlog instead of vcpkg (default: OFF)
-- ``-DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON/OFF`` -- Use system nlohmann-json instead of vcpkg (default: OFF)
+- ``-DVANILLAPDF_EXTERNAL_OPENSSL=ON/OFF`` — Use system OpenSSL instead of vcpkg (default: OFF)
+- ``-DVANILLAPDF_EXTERNAL_JPEG=ON/OFF`` — Use system libjpeg instead of vcpkg (default: OFF)
+- ``-DVANILLAPDF_EXTERNAL_OPENJPEG=ON/OFF`` — Use system OpenJPEG instead of vcpkg (default: OFF)
+- ``-DVANILLAPDF_EXTERNAL_ZLIB=ON/OFF`` — Use system zlib instead of vcpkg (default: OFF)
+- ``-DVANILLAPDF_EXTERNAL_SPDLOG=ON/OFF`` — Use system spdlog instead of vcpkg (default: OFF)
+- ``-DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON/OFF`` — Use system nlohmann-json instead of vcpkg (default: OFF)
 
 Running tests
 -------------

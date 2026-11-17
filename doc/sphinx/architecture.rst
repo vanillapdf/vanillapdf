@@ -61,7 +61,7 @@ Object model
 Handle types
 ^^^^^^^^^^^^
 
-All objects exposed through the C API are opaque handles -- typed pointers to
+All objects exposed through the C API are opaque handles — typed pointers to
 internal C++ structures. Handles are declared using the
 ``DECLARE_OBJECT_HANDLE`` macro, which creates a forward-declared struct tag:
 
@@ -76,7 +76,7 @@ types at the compiler level, preventing accidental misuse.
 
 The handles fall into four categories matching the three layers plus utilities:
 
-**Syntax layer handles** -- PDF primitive objects and file structure:
+**Syntax layer handles** — PDF primitive objects and file structure:
 
 - :cpp:class:`ObjectHandle`, :cpp:class:`ArrayObjectHandle`, :cpp:class:`BooleanObjectHandle`,
   :cpp:class:`NameObjectHandle`, :cpp:class:`IntegerObjectHandle`, :cpp:class:`RealObjectHandle`,
@@ -87,7 +87,7 @@ The handles fall into four categories matching the three layers plus utilities:
   :cpp:class:`ASCII85DecodeFilterHandle`, :cpp:class:`ASCIIHexDecodeFilterHandle`,
   :cpp:class:`LZWDecodeFilterHandle`, :cpp:class:`JPXDecodeFilterHandle`
 
-**Semantics layer handles** -- document-level objects:
+**Semantics layer handles** — document-level objects:
 
 - :cpp:class:`DocumentHandle`, :cpp:class:`CatalogHandle`, :cpp:class:`PageTreeHandle`,
   :cpp:class:`PageObjectHandle`, :cpp:class:`PageContentsHandle`
@@ -97,14 +97,14 @@ The handles fall into four categories matching the three layers plus utilities:
 - :cpp:class:`FontHandle`, :cpp:class:`ResourceDictionaryHandle`, :cpp:class:`DateHandle`,
   :cpp:class:`RectangleHandle`
 
-**Contents layer handles** -- content stream objects:
+**Contents layer handles** — content stream objects:
 
 - :cpp:class:`ContentObjectHandle`, :cpp:class:`ContentOperationHandle`,
   :cpp:class:`ContentInstructionHandle`, :cpp:class:`ContentParserHandle`
 - Text operations: :cpp:class:`ContentOperationTextFontHandle`,
   :cpp:class:`ContentOperationTextShowHandle`, :cpp:class:`ContentOperationBeginTextHandle`
 
-**Utility handles** -- I/O, buffers, cryptography:
+**Utility handles** — I/O, buffers, cryptography:
 
 - :cpp:class:`BufferHandle`, :cpp:class:`InputStreamHandle`, :cpp:class:`OutputStreamHandle`
 - :cpp:class:`SigningKeyHandle`, :cpp:class:`EncryptionKeyHandle`, :cpp:class:`PKCS12KeyHandle`
@@ -151,8 +151,8 @@ The library uses **intrusive reference counting**. The reference counter is
 embedded directly inside each object, not in a separate control block. This
 gives two advantages over ``std::shared_ptr``:
 
-1. **Single allocation** -- object and counter are allocated together
-2. **Single dereference** -- accessing the object does not require a second
+1. **Single allocation** — object and counter are allocated together
+2. **Single dereference** — accessing the object does not require a second
    pointer hop through a control block
 
 When an API function returns a handle through an output parameter, the caller
@@ -294,7 +294,7 @@ customize behavior without modifying the library itself.
        to monitor or modify the output process.
 
 For signing, the standard approach uses PKCS#12 key files
-(`RFC 7292 <https://tools.ietf.org/html/rfc7292>`_):
+(`RFC 7292 <https://www.rfc-editor.org/rfc/rfc7292>`_):
 
 .. code-block:: c
 
@@ -324,8 +324,8 @@ IO streams
 The library uses C++ I/O streams internally. The public interface exposes
 two stream types:
 
-- :cpp:class:`InputStreamHandle` -- for reading source files
-- :cpp:class:`OutputStreamHandle` -- for writing output files
+- :cpp:class:`InputStreamHandle` — for reading source files
+- :cpp:class:`OutputStreamHandle` — for writing output files
 
 How a file is read and written is selected with :cpp:enum:`IOStrategyType`, passed to
 :cpp:func:`File_OpenWithStrategy <FileHandle::File_OpenWithStrategy>`, :cpp:func:`File_CreateWithStrategy <FileHandle::File_CreateWithStrategy>`,
@@ -402,7 +402,7 @@ Dependencies
      - Purpose
    * - `OpenSSL <https://www.openssl.org/>`_
      - Encryption, decryption, and digital signatures
-   * - `zlib <http://www.zlib.net/>`_
+   * - `zlib <https://zlib.net/>`_
      - Flate compression
    * - `libjpeg-turbo <https://libjpeg-turbo.org/>`_
      - JPEG image decoding

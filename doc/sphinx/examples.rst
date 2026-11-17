@@ -1,7 +1,7 @@
 Examples
 ========
 
-API Usage Examples
+API usage examples
 ------------------
 
 Most examples come from ``vanillapdf.tools``, an internal test tool in the
@@ -84,9 +84,9 @@ Enumerate xref
    :end-before: //! [Enumerate xref]
    :dedent:
 
-Additional Resources
+Additional resources
 --------------------
 
-- `main.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/main.cpp>`_ -- Entry point of the internal ``vanillapdf.tools`` test tool
-- `tools.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/tools.h>`_ -- Tools project header file including macro definitions
-- `handle_guard.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/handle_guard.h>`_ -- RAII wrapper releasing C API handles at scope exit
+- `main.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/main.cpp>`_ — Entry point of the internal ``vanillapdf.tools`` test tool
+- `tools.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/tools.h>`_ — Tools project header file including macro definitions
+- `handle_guard.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/handle_guard.h>`_ — RAII wrapper releasing C API handles at scope exit

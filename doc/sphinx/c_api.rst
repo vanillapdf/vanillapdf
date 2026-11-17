@@ -1,8 +1,9 @@
-C API Guide
+C API guide
 ===========
 
 Vanilla.PDF is written in C++17 but exposes only an **ANSI C interface**,
-ensuring ABI stability across compilers and easy interop with other languages.
+ensuring ABI stability across compilers and a binding surface for any language
+with a C foreign function interface.
 
 This page covers the core concepts you need to use the API effectively:
 handles, types, memory management, error handling, and versioning.
@@ -26,7 +27,7 @@ Link with CMake:
 Handle system
 -------------
 
-All objects are represented as **opaque handles** -- typed pointers to internal
+All objects are represented as **opaque handles** — typed pointers to internal
 C++ structures. You never access fields directly; all interaction goes through
 API functions.
 

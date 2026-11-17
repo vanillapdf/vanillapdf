@@ -1,4 +1,4 @@
-Signature Verification Guide
+Signature verification guide
 ============================
 
 This guide explains how to verify digital signatures in PDF documents using the Vanilla.PDF C API.
@@ -15,7 +15,7 @@ PDF digital signatures use CMS (Cryptographic Message Syntax) format to store cr
 3. **Algorithm strength check** - Detect weak algorithms (MD5, SHA-1, small keys)
 4. **Time validation** - Optionally validate certificate at signing time
 
-Supported Signing Algorithms
+Supported signing algorithms
 ----------------------------
 
 Vanilla.PDF supports signing and verification with a wide range of key types,
@@ -52,7 +52,7 @@ Signatures are validated end-to-end by the CI interoperability check against
 for RSA, ECDSA and DSA, and against `pyHanko <https://github.com/MatthiasValvekens/pyHanko>`_
 for RSA, ECDSA and Ed25519.
 
-Verification Status Codes
+Verification status codes
 --------------------------
 
 The verification result includes a status code indicating the outcome:
@@ -78,7 +78,7 @@ The verification result includes a status code indicating the outcome:
    * - ``SignatureStatus_DocumentModified``
      - Document modified after signing
 
-Weak Algorithm Detection
+Weak algorithm detection
 -------------------------
 
 The verifier detects the following weak algorithms:
@@ -100,7 +100,7 @@ The verifier detects the following weak algorithms:
 - DSA keys < 2048 bits
 - EC keys < 256 bits
 
-Creating a Trust Store
+Creating a trust store
 ----------------------
 
 Create a trusted certificate store and load certificates:
@@ -111,7 +111,7 @@ Create a trusted certificate store and load certificates:
    :end-before: //! [Create trust store]
    :dedent:
 
-Configuring Verification Settings
+Configuring verification settings
 ----------------------------------
 
 Configure verification behavior with custom settings:
@@ -128,7 +128,7 @@ Available settings:
 - ``SetAllowWeakAlgorithmsFlag`` - Allow MD5, SHA-1, small keys
 - ``SetCheckSigningTimeFlag`` - Validate cert at signing time instead of current time
 
-Verifying a Signature
+Verifying a signature
 ---------------------
 
 Call the verification API and inspect the results:
@@ -139,7 +139,7 @@ Call the verification API and inspect the results:
    :end-before: //! [Verify signature]
    :dedent:
 
-Security Recommendations
+Security recommendations
 ------------------------
 
 1. **Always use system trust store** — Let the OS manage trusted root certificates (:cpp:func:`TrustedCertificateStore_LoadSystemDefaults <TrustedCertificateStoreHandle::TrustedCertificateStore_LoadSystemDefaults>`)

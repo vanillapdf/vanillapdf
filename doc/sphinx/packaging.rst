@@ -6,7 +6,7 @@ common platforms using automated packaging workflows.
 
 For general build instructions, see :doc:`building`.
 
-Automated Package Building
+Automated package building
 --------------------------
 
 The project includes automated GitHub Actions workflows for package generation:
@@ -18,7 +18,7 @@ The project includes automated GitHub Actions workflows for package generation:
 
 These workflows are continuously tested and use the exact configuration shown below.
 
-Debian Packages
+Debian packages
 ---------------
 
 On Debian/Ubuntu systems, first install the required dependencies:
@@ -43,7 +43,7 @@ Build the Debian package:
 
 This generates a ``.deb`` file that can be installed with ``dpkg -i``.
 
-Homebrew Packages
+Homebrew packages
 -----------------
 
 On macOS, install the required dependencies:
@@ -67,7 +67,7 @@ Build the Homebrew package:
 
 This generates package files suitable for Homebrew distribution.
 
-NuGet Packages
+NuGet packages
 --------------
 
 Windows NuGet packages are built using the automated workflow with vcpkg dependencies:
@@ -79,7 +79,7 @@ Windows NuGet packages are built using the automated workflow with vcpkg depende
      -DVANILLAPDF_ENABLE_TESTS=ON
    cmake --build --preset windows-x64-msvc-18-static --config Release --target package
 
-Configuration Notes
+Configuration notes
 -------------------
 
 - ``VANILLAPDF_ENABLE_PACKAGING`` is auto-detected for main project builds

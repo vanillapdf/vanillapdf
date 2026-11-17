@@ -15,28 +15,28 @@ into desktop, server, or automation workflows.
 Where to go next
 ----------------
 
-**Getting started** -- install the library and create your first PDF:
+**Getting started** — install the library and create your first PDF:
 
-- :doc:`quickstart` -- Create a PDF document in a few lines of C code
-- :doc:`installation` -- All package manager options with copy-paste commands
+- :doc:`quickstart` — Create a PDF document in a few lines of C code
+- :doc:`installation` — All package manager options with copy-paste commands
 
-**Developer guide** -- build from source and understand the internals:
+**Developer guide** — build from source and understand the internals:
 
-- :doc:`building` -- Clone, configure, build, and test
-- :doc:`c_api` -- Handle system, memory management, error handling
-- :doc:`architecture` -- Three-layer design, object model, memory model, thread safety
-- :doc:`signature_verification` -- Trust stores, chain validation, weak-algorithm detection
+- :doc:`building` — Clone, configure, build, and test
+- :doc:`c_api` — Handle system, memory management, error handling
+- :doc:`architecture` — Three-layer design, object model, memory model, thread safety
+- :doc:`signature_verification` — Trust stores, chain validation, weak-algorithm detection
 
-**Learning** -- understand the PDF format and see examples:
+**Learning** — understand the PDF format and see examples:
 
-- :doc:`pdf_format` -- PDF syntax, objects, and document structure
-- :doc:`examples` -- Code samples showing the C API in use
+- :doc:`pdf_format` — PDF syntax, objects, and document structure
+- :doc:`examples` — Code samples showing the C API in use
 
 Scope and non-goals
 --------------------
 
 Vanilla.PDF is a **document structure library**. It operates on the PDF object
-graph -- creating pages, embedding images, attaching digital signatures,
+graph — creating pages, embedding images, attaching digital signatures,
 encrypting content, and parsing the binary format down to individual XRef
 entries. It is not a rendering engine.
 
@@ -96,7 +96,7 @@ Design philosophy
 across major versions of the same compiler. A native C++ interface would force
 every consumer to use the exact same toolchain. By exposing only ANSI C
 functions with ``cdecl`` calling conventions, Vanilla.PDF can be linked by any
-C or C++ compiler and called from any language with a C FFI -- Python, C#,
+C or C++ compiler and called from any language with a C FFI — Python, C#,
 Rust, Go, Java (via JNI), and others.
 
 **Handle-based design.** All objects are represented as opaque pointers
@@ -264,7 +264,7 @@ Conan Center and Homebrew packages are in progress and not yet available; see
 External resources
 ------------------
 
-- Adobe PDF specification: `official site <http://www.adobe.com/devnet/pdf/pdf_reference.html>`_ |
+- PDF specification: `ISO 32000-1 published by Adobe <https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/PDF32000_2008.pdf>`_ |
   `local copy <_static/PDF32000_2008.pdf>`_
 - `GitHub repository <https://github.com/vanillapdf/vanillapdf>`_
 - `Website <https://vanillapdf.com>`_

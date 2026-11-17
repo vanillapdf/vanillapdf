@@ -1,4 +1,4 @@
-Page Contents
+Page contents
 =============
 
 .. doxygengroup:: group_contents

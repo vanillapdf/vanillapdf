@@ -26,13 +26,13 @@ and the library's test suite builds and runs the program.
 
 **Key patterns to notice:**
 
-- **Single header** -- ``<vanillapdf/c_vanillapdf_api.h>`` includes the entire C API.
-- **Handle-based** -- Every object is an opaque pointer (:cpp:class:`DocumentHandle* <DocumentHandle>`,
+- **Single header** — ``<vanillapdf/c_vanillapdf_api.h>`` includes the entire C API.
+- **Handle-based** — Every object is an opaque pointer (:cpp:class:`DocumentHandle* <DocumentHandle>`,
   :cpp:class:`CatalogHandle* <CatalogHandle>`, etc.). The internal C++ implementation is never exposed.
-- **Error codes** -- Every function returns ``error_type``. Check against
+- **Error codes** — Every function returns ``error_type``. Check against
   ``VANILLAPDF_ERROR_SUCCESS``; the ``CHECK`` macro jumps to the cleanup on
   the first failure, where :cpp:func:`Errors_GetLastErrorMessage <Errors::Errors_GetLastErrorMessage>` explains it.
-- **Manual cleanup** -- Each handle obtained from the library must be released.
+- **Manual cleanup** — Each handle obtained from the library must be released.
   Initialize to ``NULL`` and release in reverse order.
 
 Build and run
@@ -83,7 +83,7 @@ When a function returns an error code, extract the message:
 Next steps
 ----------
 
-- :doc:`c_api` -- Handle system, memory management, error handling, debugging
-- :doc:`examples` -- Signing, merging, encryption, content stream processing
-- :doc:`signature_verification` -- Verify digital signatures with trust stores
-- :doc:`pdf_format` -- Understand PDF syntax: objects, XRef tables, trailers
+- :doc:`c_api` — Handle system, memory management, error handling, debugging
+- :doc:`examples` — Signing, merging, encryption, content stream processing
+- :doc:`signature_verification` — Verify digital signatures with trust stores
+- :doc:`pdf_format` — Understand PDF syntax: objects, XRef tables, trailers

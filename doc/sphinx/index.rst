@@ -1,4 +1,4 @@
-Vanilla.PDF Documentation
+Vanilla.PDF documentation
 =========================
 
 Cross-platform toolkit for creating and modifying PDF documents.

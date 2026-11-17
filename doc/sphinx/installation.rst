@@ -4,7 +4,7 @@ Installation
 This page covers how to add Vanilla.PDF to your project as a pre-built
 dependency. To build from source instead, see :doc:`building`.
 
-vcpkg (Recommended)
+vcpkg (recommended)
 -------------------
 
 Install with `vcpkg <https://github.com/microsoft/vcpkg>`_:
