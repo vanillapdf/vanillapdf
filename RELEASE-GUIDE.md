@@ -61,9 +61,8 @@ workflow owns tag creation end-to-end, for both prereleases (`alpha`, `beta`,
    `gh workflow run release.yml -f tag=v2.3.0-rc.1 -f dry_run=true`) with the
    desired tag name. Run it once with `dry_run: true` first — this builds and
    validates every package (NuGet, binary ZIP/.tar.gz archives, deb, rpm,
-   dmg, docs, and, for stable tags
-   only, the vcpkg/Conan submission dry-runs) without publishing or tagging
-   anything.
+   dmg, docs, and, for stable tags only, the vcpkg/Conan submission
+   dry-runs) without publishing or tagging anything.
 2. Re-run with `dry_run: false`. This builds the packages for real and creates
    the GitHub release as a **draft**, still without creating the tag.
 3. The `production` environment gate pauses the workflow. Review/edit the

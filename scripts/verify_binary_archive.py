@@ -18,7 +18,8 @@ Usage:
     python scripts/verify_binary_archive.py --directory build/windows-x86-msvc-18-static --platform windows --build-type Release --cmake-arg=-A --cmake-arg=Win32
 
 Requirements:
-    - Python 3.6+
+    - Python 3 with tarfile extraction filters (3.12, or a security release
+      that backports them)
     - CMake and a C++ compiler (for the consumer build)
 """
 

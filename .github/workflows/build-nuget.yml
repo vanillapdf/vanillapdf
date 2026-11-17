@@ -40,6 +40,8 @@ on:
       - 'nuget/**'
       - 'cmake/**'
       - 'vcpkg.json.in'
+      - 'scripts/verify_binary_archive.py'
+      - 'examples/system-package-integration/**'
 
   pull_request:
     branches: [ "main", "release/*" ]
@@ -48,6 +50,8 @@ on:
       - 'nuget/**'
       - 'cmake/**'
       - 'vcpkg.json.in'
+      - 'scripts/verify_binary_archive.py'
+      - 'examples/system-package-integration/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
