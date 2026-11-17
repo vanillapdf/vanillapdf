@@ -329,8 +329,9 @@ never calls back into managed code. The Vanilla.PDF .NET binding uses this
 attribute for the trivial functions.
 
 The "Trivial function" note is part of the API contract. A function that has
-the note keeps it in all later versions with the same major version. New
-functions can get the note in a minor version.
+the note keeps it in all later versions with the same major version. Only a
+new major version can remove the note, or remove the function. New functions
+can get the note in a minor version.
 
 Versioning
 ----------

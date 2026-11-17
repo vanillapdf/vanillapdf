@@ -313,7 +313,7 @@ ObjectRelease<T>(handle)                          // Cast + Release
 
 A function tagged `\trivial` in its public header doc comment promises: no lock, no allocation or free, no exception, no logging, no application callback, no I/O or parsing, no `Errors::SetLastError`, bounded work. The user-facing definition is `doc/src/input/trivial_functions.dox` (and the "Trivial functions" section of `doc/sphinx/c_api.rst`); the `\trivial` alias is defined in both `doc/doxyfile.in` and `doc/Doxyfile-xml`.
 
-Bindings depend on it: the .NET binding calls these functions with `[SuppressGCTransition]`. Removing the tag, or adding work that breaks the promise, is a breaking change — a lock can deadlock with the garbage collector, and a log line can call the managed logger callback.
+Bindings depend on it: the .NET binding calls these functions with `[SuppressGCTransition]`. Removing the tag, or adding work that breaks the promise, is a breaking change and is allowed only in a new major version — a lock can deadlock with the garbage collector, and a log line can call the managed logger callback.
 
 Rules for a `\trivial` wrapper:
 - No `try` / `CATCH_VANILLAPDF_EXCEPTIONS` (the catch logs). Everything it calls must be `noexcept`, so the compiler backs the "no exception" part.
