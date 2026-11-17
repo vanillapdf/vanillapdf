@@ -51,6 +51,8 @@ Build:
    cmake --build build
    ./build/quickstart    # creates output.pdf
 
+.. _quickstart-signing:
+
 Sign the document
 -----------------
 
@@ -100,6 +102,6 @@ Next steps
 ----------
 
 - :doc:`c_api` — Handle system, memory management, error handling, debugging
-- :doc:`examples` — Signing, merging, encryption, content stream processing
+- :doc:`examples` — Inspecting, merging, verifying, encrypting and validating documents
 - :doc:`signature_verification` — Verify digital signatures with trust stores
 - :doc:`pdf_format` — Understand PDF syntax: objects, XRef tables, trailers

@@ -198,14 +198,56 @@ function(vanillapdf_add_example EXAMPLE_NAME)
     endif()
 endfunction()
 
+set(VANILLAPDF_EXAMPLE_FIXTURES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures")
+
 vanillapdf_add_example(quickstart)
 
-# Signing needs OpenSSL, which the encryption feature brings in
+vanillapdf_add_example(merge
+    "example-merged.pdf"
+    "${VANILLAPDF_EXAMPLE_FIXTURES}/sample-document.pdf"
+    "${VANILLAPDF_EXAMPLE_FIXTURES}/nested-pages.pdf"
+)
+
+# Inspects the merged document, which shows that the merge kept every page
+vanillapdf_add_example(inspect "example-merged.pdf")
+
+vanillapdf_add_example(validation "${VANILLAPDF_EXAMPLE_FIXTURES}/sample-document.pdf")
+
+# Signing and encryption need OpenSSL, which the encryption feature brings in
 if(VANILLAPDF_ENABLE_ENCRYPTION)
     vanillapdf_add_example(signing
-        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/sample-document.pdf"
+        "${VANILLAPDF_EXAMPLE_FIXTURES}/sample-document.pdf"
         "example-signed.pdf"
-        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/certificates/Test_EC384_SHA512.pfx"
+        "${VANILLAPDF_EXAMPLE_FIXTURES}/certificates/Test_EC384_SHA512.pfx"
         "test"
     )
+
+    # Verifies the document signed by the signing example
+    vanillapdf_add_example(verification "example-signed.pdf")
+
+    vanillapdf_add_example(encryption
+        "${VANILLAPDF_EXAMPLE_FIXTURES}/sample-document.pdf"
+        "example-encrypted.pdf"
+        "user"
+        "owner"
+    )
+endif()
+
+if(NOT CMAKE_CROSSCOMPILING)
+    set_tests_properties(Examples.merge PROPERTIES FIXTURES_SETUP ExampleMerged)
+    set_tests_properties(Examples.inspect PROPERTIES
+        FIXTURES_REQUIRED ExampleMerged
+        PASS_REGULAR_EXPRESSION "Pages: 7"
+    )
+
+    if(VANILLAPDF_ENABLE_ENCRYPTION)
+        set_tests_properties(Examples.signing PROPERTIES FIXTURES_SETUP ExampleSigned)
+
+        # The test certificate does not chain to a trusted root, so the example
+        # reports the signature as not valid; the signed content must be intact
+        set_tests_properties(Examples.verification PROPERTIES
+            FIXTURES_REQUIRED ExampleSigned
+            PASS_REGULAR_EXPRESSION "Document intact: yes"
+        )
+    endif()
 endif()

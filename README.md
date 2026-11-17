@@ -137,7 +137,7 @@ Full documentation is hosted on **[Read the Docs](https://vanillapdf.readthedocs
 | [Architecture](https://vanillapdf.readthedocs.io/en/latest/architecture.html) | Three-layer design, object model, memory model, thread safety |
 | [Signature Verification](https://vanillapdf.readthedocs.io/en/latest/signature_verification.html) | Trust stores, chain validation, weak-algorithm detection |
 | [Building](https://vanillapdf.readthedocs.io/en/latest/building.html) | Build from source with CMake presets |
-| [Examples](https://vanillapdf.readthedocs.io/en/latest/examples.html) | Code samples for signing, merging, encryption |
+| [Examples](https://vanillapdf.readthedocs.io/en/latest/examples.html) | Tested programs for merging, signing, verification, encryption and validation |
 | [PDF Format](https://vanillapdf.readthedocs.io/en/latest/pdf_format.html) | PDF syntax, objects, and document structure |
 
 See the [Changelog](CHANGELOG.md) for release notes.
