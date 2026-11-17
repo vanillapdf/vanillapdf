@@ -65,8 +65,10 @@ workflow owns tag creation end-to-end, for both prereleases (`alpha`, `beta`,
    anything.
 2. Re-run with `dry_run: false`. This builds the packages for real and creates
    the GitHub release as a **draft**, still without creating the tag.
-3. The `production` environment gate pauses the workflow. Review/edit the
-   draft release body in the GitHub UI, then approve the gate.
+3. The `production` environment gate pauses the workflow. Replace the
+   generated draft release body with curated notes (see
+   [Release Notes](#-release-notes) below) in the GitHub UI, then approve the
+   gate.
 4. Approving publishes the draft, which is what actually **creates the tag**
    at the draft's target commit. This ordering avoids binding the release to
    a pre-existing tag before the draft is finalized.
@@ -74,6 +76,41 @@ workflow owns tag creation end-to-end, for both prereleases (`alpha`, `beta`,
 > Whether a tag counts as a prerelease is derived automatically from its
 > suffix (`-alpha.N`, `-beta.N`, `-rc.N`) — see the tag-parsing logic in
 > `release.yml`'s `prepare` job.
+
+---
+
+## 📝 Release Notes
+
+The draft release starts with GitHub's generated list of every merged pull
+request. That list is the raw material, not the release notes: write curated
+notes from [`.github/release-notes-template.md`](.github/release-notes-template.md)
+before approving the gate. The structure is the same for every release, so
+users find the same information in the same place:
+
+1. **Title** `# Vanilla.PDF X.Y.Z[-pre.N]`, then for pre-releases a
+   blockquote saying what kind of pre-release it is (alpha, beta, release
+   candidate) and how stable the API is.
+2. **Summary**: two or three sentences on what the release is about.
+3. **⚠️ Breaking changes**, only when there are any, each with what to do
+   instead. Raised minimum platform versions count.
+4. **✨ Highlights**: the three to five changes worth reading about.
+5. **Topic sections** in a fixed order: 📝 Interactive forms,
+   🔏 Digital signatures, 🔒 Encryption, 📄 Pages & content,
+   🐛 Bug fixes & robustness, 🧵 Thread safety, 🛠️ Build, CI & platforms,
+   📚 Documentation, 📦 Dependencies. Empty sections are left out.
+6. **⚠️ Known limitations** with workarounds, when there are any.
+7. **The generated pull request list**, unchanged, collapsed in a
+   `<details>` block.
+8. **Full Changelog** link, as generated.
+
+One line per change, written for library users in the imperative mood of the
+pull request titles, without the conventional-commit prefix, and ending with
+the pull request numbers in parentheses. Routine dependency bumps collapse
+into a single line under 📦 Dependencies.
+
+Every pre-release gets the full structure, not only the stable release: the
+notes of a pre-release are what early adopters read to decide whether to test
+it.
 
 ---
 
@@ -144,4 +181,4 @@ fi
 
 ---
 
-*Last updated: 2026-07-01*
+*Last updated: 2026-11-17*
