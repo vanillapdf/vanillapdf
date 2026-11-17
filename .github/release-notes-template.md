@@ -21,7 +21,9 @@ Rules:
   (internal refactoring, CI-only fixes) unless they explain a user-visible
   change.
 - Put API and symbol names in backticks.
-- Keep the section order and the emoji below, so releases look alike.
+- Keep the section order below, so releases look alike. Headings are level 3
+  (###) without emoji; only the warning sections carry ⚠️, to catch the
+  reader's attention.
 - No title heading: GitHub shows the release name right above the notes.
 -->
 <!-- Keep the line that matches the tag; delete the others. Stable releases have none. -->
@@ -34,59 +36,76 @@ Rules:
 <!-- Two or three sentences: what this release is about, for someone deciding whether to upgrade. -->
 This release ...
 
-## ⚠️ Breaking changes
+### ⚠️ Breaking changes
 
 <!-- Anything that can break code, builds or deployments that worked with the previous release:
      removed or renamed API, changed behavior, raised minimum platform versions, changed package
      layout. Say what to do instead. -->
 - 
 
-## ✨ Highlights
+### ⚠️ Security
+
+<!-- Fixes for vulnerabilities and hardening against malformed or hostile documents: crashes,
+     unbounded allocation or recursion, CVEs, fuzzing findings. Say what an attacker could do
+     before the fix, without a recipe for doing it. -->
+- 
+
+### Highlights
 
 <!-- The three to five changes worth reading about even if nothing else is. Bold lead-in, then a short description. -->
 - **Feature name** — what it lets users do (#000)
 
-## 📝 Interactive forms
+### Interactive forms
 
 - 
 
-## 🔏 Digital signatures
+### Digital signatures
 
 - 
 
-## 🔒 Encryption
+### Encryption
 
 - 
 
-## 📄 Pages & content
+### Pages & content
 
 - 
 
-## 🐛 Bug fixes & robustness
+### Performance
 
 - 
 
-## 🧵 Thread safety
+### Bug fixes
 
 - 
 
-## 🛠️ Build, CI & platforms
+### Thread safety
+
+- 
+
+### Build, CI & platforms
 
 <!-- Platform support changes (minimum OS, toolchains the binaries are built with) come first. -->
 - 
 
-## 📚 Documentation
+### Documentation
 
 - 
 
-## 📦 Dependencies
+### Dependencies
 
 <!-- One line: the vcpkg baseline and anything users must install or upgrade. -->
 - Update vcpkg to YYYY.MM.DD (from YYYY.MM.DD) and routine GitHub Actions group bumps
 
-## ⚠️ Known limitations
+### ⚠️ Known limitations
 
 <!-- Problems known at release time, with the workaround. -->
+- 
+
+### Contributors
+
+<!-- Outside contributors by GitHub handle, first-time contributors marked. Leave out the
+     maintainers and bots. -->
 - 
 
 <details>

@@ -94,15 +94,22 @@ users find the same information in the same place:
 2. **Summary**: two or three sentences on what the release is about.
 3. **⚠️ Breaking changes**, only when there are any, each with what to do
    instead. Raised minimum platform versions count.
-4. **✨ Highlights**: the three to five changes worth reading about.
-5. **Topic sections** in a fixed order: 📝 Interactive forms,
-   🔏 Digital signatures, 🔒 Encryption, 📄 Pages & content,
-   🐛 Bug fixes & robustness, 🧵 Thread safety, 🛠️ Build, CI & platforms,
-   📚 Documentation, 📦 Dependencies. Empty sections are left out.
-6. **⚠️ Known limitations** with workarounds, when there are any.
-7. **The generated pull request list**, unchanged, collapsed in a
+4. **⚠️ Security**: vulnerability fixes and hardening against malformed or
+   hostile documents, when there are any.
+5. **Highlights**: the three to five changes worth reading about.
+6. **Topic sections** in a fixed order: Interactive forms, Digital
+   signatures, Encryption, Pages & content, Performance, Bug fixes, Thread
+   safety, Build, CI & platforms, Documentation, Dependencies. Empty
+   sections are left out.
+7. **⚠️ Known limitations** with workarounds, when there are any.
+8. **Contributors**: outside contributors, when there are any.
+9. **The generated pull request list**, unchanged, collapsed in a
    `<details>` block.
-8. **Full Changelog** link, as generated.
+10. **Full Changelog** link, as generated.
+
+Section headings are level 3 (`###`) and carry no emoji, like the release
+notes of most established projects; only the three warning sections carry
+⚠️, so readers do not miss them.
 
 One line per change, written for library users in the imperative mood of the
 pull request titles, without the conventional-commit prefix, and ending with
