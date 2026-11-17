@@ -87,9 +87,10 @@ notes from [`.github/release-notes-template.md`](.github/release-notes-template.
 before approving the gate. The structure is the same for every release, so
 users find the same information in the same place:
 
-1. **Title** `# Vanilla.PDF X.Y.Z[-pre.N]`, then for pre-releases a
-   blockquote saying what kind of pre-release it is (alpha, beta, release
-   candidate) and how stable the API is.
+1. **Pre-release notice**, for pre-releases only: a blockquote saying what
+   kind of pre-release it is (alpha, beta, release candidate) and how stable
+   the API is. There is no title heading; GitHub shows the release name
+   right above the notes.
 2. **Summary**: two or three sentences on what the release is about.
 3. **⚠️ Breaking changes**, only when there are any, each with what to do
    instead. Raised minimum platform versions count.

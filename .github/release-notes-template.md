@@ -22,9 +22,8 @@ Rules:
   change.
 - Put API and symbol names in backticks.
 - Keep the section order and the emoji below, so releases look alike.
+- No title heading: GitHub shows the release name right above the notes.
 -->
-# Vanilla.PDF X.Y.Z-alpha.N
-
 <!-- Keep the line that matches the tag; delete the others. Stable releases have none. -->
 > **Alpha.** This is a pre-release of X.Y.Z, published for early testing. The API added in this release may still change before X.Y.Z is final. Please report problems in [issues](https://github.com/vanillapdf/vanillapdf/issues).
 
