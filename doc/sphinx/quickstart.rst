@@ -54,11 +54,27 @@ Build:
 Sign the document
 -----------------
 
-Digital signatures are applied through the same C API: load a PKCS#12 key
-with :cpp:func:`PKCS12Key_CreateFromFile <PKCS12KeyHandle::PKCS12Key_CreateFromFile>`, configure ``DocumentSignatureSettings``
-and call :cpp:func:`Document_Sign <DocumentHandle::Document_Sign>`. Signatures are checked with
-:cpp:func:`DigitalSignatureExtensions_Verify`; see :doc:`signature_verification`
-for a complete walkthrough of trust stores, settings and result handling.
+The next program signs an existing document with a key from a PKCS#12 file
+(``.p12`` or ``.pfx``), which holds the signer's certificate and private key.
+It loads the key with :cpp:func:`PKCS12Key_CreateFromFile <PKCS12KeyHandle::PKCS12Key_CreateFromFile>`,
+describes the signature with :cpp:class:`DocumentSignatureSettingsHandle` and
+writes the signed copy with :cpp:func:`Document_Sign <DocumentHandle::Document_Sign>`.
+It is in `examples/signing/
+<https://github.com/vanillapdf/vanillapdf/tree/main/examples/signing>`_ and
+the test suite runs it as well.
+
+.. literalinclude:: ../../examples/signing/main.c
+   :language: c
+
+Run it with the document, the output file, the key file and its password:
+
+.. code-block:: bash
+
+   ./build/signing input.pdf signed.pdf signer.p12 password
+
+Signing requires a library built with the encryption feature, which is on by
+default. Signatures are checked with :cpp:func:`DigitalSignatureExtensions_Verify`;
+see :doc:`signature_verification` for trust stores, settings and result handling.
 
 Query library version
 ---------------------

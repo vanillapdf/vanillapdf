@@ -5,6 +5,7 @@ This directory contains practical examples demonstrating Vanilla.PDF integration
 ## Available Examples
 
 - **[`quickstart/`](quickstart/)** - The minimal C program from the quickstart guide; built and run by the library's test suite
+- **[`signing/`](signing/)** - Signs an existing document with a PKCS#12 key, as shown in the quickstart guide; built and run by the library's test suite
 - **[`fetchcontent-integration/`](fetchcontent-integration/)** - Complete CMake FetchContent integration example with cross-platform testing
 - **[`vcpkg-port-integration/`](vcpkg-port-integration/)** - Consuming Vanilla.PDF via its vcpkg port
 - **[`vcpkg-msbuild-integration/`](vcpkg-msbuild-integration/)** - Consuming the vcpkg port from a Visual Studio project through the vcpkg MSBuild integration, without CMake

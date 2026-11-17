@@ -162,34 +162,50 @@ endforeach()
 # dominates CI time, so it is disabled.
 set_tests_properties(MPK_SLOVLEX.pdf PROPERTIES DISABLED TRUE)
 
-# The quickstart example shown in the documentation. It is built and run here
-# so that the published code cannot stop compiling or working unnoticed.
-add_executable(vanillapdf.quickstart "${VANILLAPDF_SOLUTION_SOURCE_DIR}/examples/quickstart/main.c")
-vanillapdf_target_compile_defaults(vanillapdf.quickstart)
-target_link_libraries(vanillapdf.quickstart PRIVATE vanillapdf)
+# The examples shown in the documentation. They are built and run here so that
+# the published code cannot stop compiling or working unnoticed.
+function(vanillapdf_add_example EXAMPLE_NAME)
+    set(EXAMPLE_TARGET "vanillapdf.example.${EXAMPLE_NAME}")
 
-# A static vanillapdf needs the C++ runtime, see vanillapdf.test above
-set_target_properties(vanillapdf.quickstart PROPERTIES LINKER_LANGUAGE CXX)
+    add_executable(${EXAMPLE_TARGET} "${VANILLAPDF_SOLUTION_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.c")
+    vanillapdf_target_compile_defaults(${EXAMPLE_TARGET})
+    target_link_libraries(${EXAMPLE_TARGET} PRIVATE vanillapdf)
 
-if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
-    vanillapdf_configure_msvc_runtime(vanillapdf.quickstart)
-endif()
+    # A static vanillapdf needs the C++ runtime, see vanillapdf.test above
+    set_target_properties(${EXAMPLE_TARGET} PROPERTIES LINKER_LANGUAGE CXX)
 
-if(WIN32)
-    add_custom_command(
-        TARGET vanillapdf.quickstart POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "$<TARGET_FILE_DIR:vanillapdf>"
-        "$<TARGET_FILE_DIR:vanillapdf.quickstart>"
-    )
-endif(WIN32)
+    if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+        vanillapdf_configure_msvc_runtime(${EXAMPLE_TARGET})
+    endif()
 
-# The example writes output.pdf into its working directory, which only exists
-# on the host. A cross-compiled build (Android) still compiles the example.
-if(NOT CMAKE_CROSSCOMPILING)
-    add_test(
-        NAME Examples.quickstart
-        COMMAND vanillapdf.quickstart
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    if(WIN32)
+        add_custom_command(
+            TARGET ${EXAMPLE_TARGET} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "$<TARGET_FILE_DIR:vanillapdf>"
+            "$<TARGET_FILE_DIR:${EXAMPLE_TARGET}>"
+        )
+    endif(WIN32)
+
+    # The examples write their output into the working directory, which only
+    # exists on the host. A cross-compiled build (Android) still compiles them.
+    if(NOT CMAKE_CROSSCOMPILING)
+        add_test(
+            NAME Examples.${EXAMPLE_NAME}
+            COMMAND ${EXAMPLE_TARGET} ${ARGN}
+            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+        )
+    endif()
+endfunction()
+
+vanillapdf_add_example(quickstart)
+
+# Signing needs OpenSSL, which the encryption feature brings in
+if(VANILLAPDF_ENABLE_ENCRYPTION)
+    vanillapdf_add_example(signing
+        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/sample-document.pdf"
+        "example-signed.pdf"
+        "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures/certificates/Test_EC384_SHA512.pfx"
+        "test"
     )
 endif()
