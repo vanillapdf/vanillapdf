@@ -1,16 +1,18 @@
 Overview
 ========
 
-**Vanilla.PDF** is a modern, high-performance, open-source C++17 SDK for
-creating, editing, signing, and analyzing PDF documents. With no external
-runtime dependencies and full cross-platform support, it's ideal for embedding
-into desktop, server, or automation workflows.
+**Vanilla.PDF** is the C and C++ library for creating, editing, signing and
+validating PDF documents. It is an open-source C++17 library with a plain C
+API, usable across multiple languages through a C foreign function interface
+(FFI). It is licensed under the permissive Apache 2.0 license, suitable for
+both private and commercial use.
 
-- **Create & modify** PDF documents — pages, text, images, vector graphics
-- **Sign & verify** digital signatures (CMS/PKCS#7) with certificate chain validation
-- **Encrypt & decrypt** with AES or RC4 using passwords or certificates
-- **ABI-stable C API** — opaque handles callable from any language with a C FFI
+- **Create & modify** — pages, text, images, vector graphics, form fields
+- **Sign & verify** — CMS/PKCS#7 signatures with certificate chain validation
+- **Encrypt & decrypt** — AES or RC4, with passwords or certificates
+- **Stable ABI** — no breaking changes within a major version (see `Versioning and compatibility`_)
 - **Thread-safe** — share any object across threads; synchronization is handled internally (see :ref:`thread-safety`)
+- **Hardened** — fuzzed and tested under ASan, UBSan and TSan every week
 
 Where to go next
 ----------------
