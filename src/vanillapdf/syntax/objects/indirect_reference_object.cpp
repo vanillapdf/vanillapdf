@@ -142,7 +142,7 @@ void IndirectReferenceObject::SetReferencedObject(ObjectPtr obj) {
         m_reference_generation_number = obj->GetGenerationNumber();
     }
 
-    m_reference = obj;
+    m_reference = obj->GetWeakReference();
     IncrementVersion();
 }
 
@@ -168,7 +168,7 @@ ObjectPtr IndirectReferenceObject::GetReferencedObject() const {
     lock.lock();
 
     if (!IsReferenceInitialized()) {
-        m_reference = new_reference;
+        m_reference = new_reference->GetWeakReference();
     }
 
     return new_reference;
