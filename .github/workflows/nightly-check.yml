@@ -213,7 +213,7 @@ jobs:
           - { name: "win.11-arm64-static", os: windows-11-arm, preset: "windows-arm64-msvc-18-static" }
 
           # The allocator, on the static preset the NuGet natives are built from
-          - { name: "win.2022-x64-static-mimalloc", os: windows-2022, preset: "windows-x64-msvc-17-static", extra_args: "-DVANILLAPDF_ENABLE_MIMALLOC=ON" }
+          - { name: "win.2025-x64-static-mimalloc", os: windows-2025, preset: "windows-x64-msvc-18-static", extra_args: "-DVANILLAPDF_ENABLE_MIMALLOC=ON" }
 
           # Static dependencies + Dynamic CRT (for Python wrappers)
           - { name: "win.2022-x86-static-md", os: windows-2022, preset: "windows-x86-msvc-17-static-md" }
@@ -238,7 +238,7 @@ jobs:
           # and the test executables share, so that _CrtCheckMemory in the test
           # executables validates the blocks of the library as well. The debug
           # heap exists only in the debug runtime, hence the Debug build.
-          - { name: "win.2022-x64-crtdbg", os: windows-2022, preset: "windows-x64-msvc-17", build_type: "Debug", extra_args: "-DVANILLAPDF_ENABLE_CRTDBG=ON" }
+          - { name: "win.2025-x64-crtdbg", os: windows-2025, preset: "windows-x64-msvc-18", build_type: "Debug", extra_args: "-DVANILLAPDF_ENABLE_CRTDBG=ON" }
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -278,7 +278,7 @@ jobs:
           - { name: "osx.26-arm64", runner: macos-26, preset: "macos-arm64" }
 
           # The allocator, on the runner the NuGet natives are built on
-          - { name: "osx.15-arm64-mimalloc", runner: macos-15, preset: "macos-arm64", extra_args: "-DVANILLAPDF_ENABLE_MIMALLOC=ON" }
+          - { name: "osx.26-arm64-mimalloc", runner: macos-26, preset: "macos-arm64", extra_args: "-DVANILLAPDF_ENABLE_MIMALLOC=ON" }
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
