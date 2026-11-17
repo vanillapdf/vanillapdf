@@ -72,7 +72,7 @@ def classify(package_format: str, package: Path) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0].strip())
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--format", required=True, choices=sorted(EXPECTED_PACKAGES), dest="package_format")
     parser.add_argument("--directory", required=True, type=Path, help="Directory holding the packages")
     arguments = parser.parse_args()
