@@ -1,13 +1,15 @@
-PDF Format Guide
+PDF format guide
 ================
 
-In the first place, let's talk about the syntactic structure of the document.
-If you're already familiar with the syntax, please skip to the `Document semantics`_.
+This guide introduces the parts of the PDF file format that the library works
+with. It starts with the syntax of the file and continues with the document
+structure built on top of it. Readers already familiar with the syntax can
+continue with `Document semantics`_.
 
 File structure
 --------------
 
-The first part explains syntactic structure of the document:
+The syntactic structure of a PDF file consists of:
 
 - `Object types`_
 - `Indirect objects`_
@@ -20,7 +22,7 @@ The first part explains syntactic structure of the document:
 Object types
 ^^^^^^^^^^^^
 
-PDF file consists on sequence of object with a few basic types.
+A PDF file is a sequence of objects of a few basic types:
 ``BooleanObject``,
 ``IntegerObject``,
 ``RealObject``,
@@ -39,16 +41,16 @@ PDF file consists on sequence of object with a few basic types.
    (Literal)        % literal string
    <00FF00FF>       % hexadecimal string
    /Name            % name object
-   [0 1 2 3]        % homogenous array
-   null             % null reference
+   [0 1 2 3]        % array
+   null             % null object
 
    <<                       % Dictionary begin
        /Type /Dictionary    % Dictionary entry with key "/Type" and value "/Dictionary"
-       /Value 10            % Dictionary entry with key "Value" and value "10"
+       /Value 10            % Dictionary entry with key "/Value" and value "10"
    >>                       % Dictionary end
 
    <<                       % Stream header begin
-       /Length 1337         % Stream byte stream length
+       /Length 1337         % Length of the stream data in bytes
    >>                       % Stream header end
    stream                   % Stream data begin
    %% byte stream data skipped for brevity %%
@@ -57,27 +59,32 @@ PDF file consists on sequence of object with a few basic types.
 Indirect objects
 ^^^^^^^^^^^^^^^^
 
-Any object can be labeled as indirect, meaning it is assigned an unique number within file.
-In most places an indirect reference to object can be used instead of the object value itself.
+Any object can be labeled as indirect, which assigns it an object number that
+is unique within the file. In most places an indirect reference can be used
+instead of the object value itself.
 
 .. code-block:: text
 
    1 0 obj
    (This is an indirect object)
+   endobj
 
    2 0 obj
    <<                       % Dictionary begin
        /Type (Dictionary)   % Sample dictionary entry
-       /Value 1 0 R         % Dictionary entry with key "Value" and its value "(This is an indirect object)"
+       /Value 1 0 R         % Entry with key "/Value", referencing "(This is an indirect object)"
    >>                       % Dictionary end
+   endobj
 
-This association has to be added into the cross-reference table, explained in the section `File cross-reference table`_.
+Each indirect object is listed in the cross-reference table, described in
+`File cross-reference table`_.
 
 Filters
 ^^^^^^^
 
-PDF streams support compression, so that the file size can be optimized.
-Multiple compression methods are supported, such as ``ASCII85DecodeFilter``, ``FlateDecodeFilter`` and others.
+Stream data can be encoded with filters, most often to compress it. The PDF
+specification defines several filters, such as ``/FlateDecode`` and
+``/ASCII85Decode``.
 
 .. code-block:: text
 
@@ -89,15 +96,18 @@ Multiple compression methods are supported, such as ``ASCII85DecodeFilter``, ``F
    stream
    %% byte stream data skipped for brevity %%
    endstream
+   endobj
 
-In this sample was used ``FlateDecodeFilter``. The compressed byte stream size is exactly 1337 bytes long.
+This sample uses the ``/FlateDecode`` filter. ``/Length`` is the size of the
+encoded data, 1337 bytes.
 
 File header
 ^^^^^^^^^^^
 
-Header basically contains only the version of the PDF specification this file conforms to.
-Depending on the version, certain features are disabled, as they were not available in the earlier standards.
-A very common feature nowdays is cross-reference section compression, which is available since PDF 1.4.
+The header states the version of the PDF specification the file conforms to.
+The version determines which features the file may use; for example,
+cross-reference streams, which compress the cross-reference information, are
+available since PDF 1.5.
 
 .. code-block:: text
 
@@ -106,8 +116,9 @@ A very common feature nowdays is cross-reference section compression, which is a
 File body
 ^^^^^^^^^
 
-Body is composed from sequence of indirect objects defined in the `File cross-reference table`_.
-For a complete sample view `Complete file example`_.
+The body is a sequence of indirect objects, each listed in the
+`File cross-reference table`_. See `Complete file example`_ for a complete
+file.
 
 .. code-block:: text
 
@@ -124,15 +135,15 @@ For a complete sample view `Complete file example`_.
 File cross-reference table
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Quote from `section 7.5.4 - Cross-Reference Table <_static/PDF32000_2008.pdf#G6.1839814>`_:
+From `section 7.5.4, "Cross-Reference Table" <_static/PDF32000_2008.pdf#G6.1839814>`_:
 
    The cross-reference table contains information that permits random access to indirect objects
    within the file so that the entire file need not be read to locate any particular object.
 
-What this means, is that there are stored byte offsets for every indirect object.
-When the file is read, the reader jumps to the `File trailer`_, which is at the very end of the file.
-Finds an offset to this section, searches for a object by their unique identifier (object number).
-From this point, the reader can just seek to the exact offset and read the object.
+The table stores the byte offset of every indirect object. A reader starts at
+the `File trailer`_ at the end of the file, which holds the offset of the
+cross-reference table. The table gives the offset of each object by its object
+number, so the reader can seek directly to any object and parse it.
 
 .. code-block:: text
 
@@ -143,16 +154,17 @@ From this point, the reader can just seek to the exact offset and read the objec
    0000000056 00000 n
    0000000097 00000 n
 
-This sample defined a cross-reference section with 4 entries.
-First entry is not used, denoted by the letter 'f' as "free".
-Next entry is at the file offset 9. Letter 'n' means the entry is "in-use".
+This sample defines a cross-reference section with 4 entries. The first entry
+is marked ``f`` (free) and is not used by any object. The next entry, marked
+``n`` (in use), places object 1 at byte offset 9.
 
 File trailer
 ^^^^^^^^^^^^
 
-File trailer should be located at the very end of the file, thus can be found easily.
-Trailer contains a byte offset to the files cross-reference table.
-There are also a few metadata information about the file, for example whether the document is encrypted.
+The trailer is located at the end of the file, where a reader can find it
+without parsing anything else. It contains the byte offset of the
+cross-reference table and information about the file as a whole, for example
+whether the document is encrypted.
 
 .. code-block:: text
 
@@ -162,50 +174,59 @@ There are also a few metadata information about the file, for example whether th
    181
    %%EOF
 
-This trailer states, that a cross-reference section can be found at offset 181.
-Additionaly, the document root object is indirect with identifier 1 (object number).
-Document metadata are stored in is indirect with identifier 3 (object number).
-Both document root and metadata should be defined in the cross-reference table.
+This trailer states that the cross-reference section is at offset 181. The
+document catalog (``/Root``) is object 1 and the document information
+dictionary (``/Info``) is object 3. Both are listed in the cross-reference
+table.
 
-For more detailed information please visit `section 7.5.5 - File Trailer <_static/PDF32000_2008.pdf#G6.1639448>`_.
+For details see `section 7.5.5, "File Trailer" <_static/PDF32000_2008.pdf#G6.1639448>`_.
 
 ----
 
 Document semantics
 ------------------
 
-Document encapsulates syntactic operations and forms operations with semantic validity.
-This abstraction level is provided so that users no longer need to understand all the caveats of the PDF file format.
+The document layer builds on the syntax and keeps the file semantically valid
+when it is modified, so users do not need to know every detail of the file
+format.
 
-Root of documents hierarchy is so called :cpp:class:`CatalogHandle`, which contains information about document pages, layout, actions and so on.
-All document pages can be found within :cpp:class:`PageTreeHandle`, with references to their :cpp:class:`PageObjectHandle`.
-Page contents are described in the `Page contents`_ section.
+The root of the document hierarchy is the :cpp:class:`CatalogHandle`, which
+holds the pages, the page layout, document actions and other document-wide
+information. The pages are organized in the :cpp:class:`PageTreeHandle`, which
+references each :cpp:class:`PageObjectHandle`. Page contents are described in
+`Page contents`_.
 
-Digital signatures are fully supported:
+Digital signatures can be created and verified:
 
-- Sign documents using :cpp:func:`Document_Sign <DocumentHandle::Document_Sign>` function with :cpp:class:`PKCS12KeyHandle`
-- Verify signatures using :cpp:func:`DigitalSignatureExtensions_Verify` with :cpp:class:`TrustedCertificateStoreHandle`
+- Sign documents using :cpp:func:`Document_Sign <DocumentHandle::Document_Sign>` with a :cpp:class:`PKCS12KeyHandle`
+- Verify signatures using :cpp:func:`DigitalSignatureExtensions_Verify` with a :cpp:class:`TrustedCertificateStoreHandle`
 
-Complete examples are available at ``sign.cpp`` (signing) and ``verify.cpp`` (verification).
-See also :doc:`signature_verification` for comprehensive verification guide.
+The `sign.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign.cpp>`_
+and `verify.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/verify.cpp>`_
+sources show both in use. See :doc:`signature_verification` for a complete
+guide to verification.
 
 Common data structures
 ^^^^^^^^^^^^^^^^^^^^^^
 
-There are multiple general-purpose data structures that are built from the basic object types, such as :cpp:class:`DateHandle`, Rectangles or Trees.
-Since they are composed from the basic object types, they provide interface to modify their back-end object in graceful manner.
+Several general-purpose data structures are built from the basic object types,
+such as dates (:cpp:class:`DateHandle`), rectangles and trees. Their interfaces
+read and modify the underlying objects, so callers work with values rather
+than syntax.
 
-For example when a date field is expected, the user does not need to know the syntax of date (D:YYYYMMDDHHmmSSOHH'mm).
+For example, a date can be set without knowing the PDF date format
+(``D:YYYYMMDDHHmmSSOHH'mm``).
 
-Another example are trees, which should be balanced to help the PDF readers optimize searching within large amount of data.
-This process is done by the semantic layer, who is responsible for making best efforts on such optimizations.
+Trees are another example: PDF readers search large trees faster when they are
+balanced, and the semantic layer takes care of keeping them so.
 
 ----
 
 Page contents
 -------------
 
-Document :cpp:class:`PageObjectHandle` contains entry called Contents, which contains serialized stream of PostScript instructions.
+Each :cpp:class:`PageObjectHandle` has a ``/Contents`` entry, a content stream
+of operators that describe what is drawn on the page.
 
 Sample page contents:
 
@@ -236,39 +257,39 @@ Sample page contents:
    ET
    EMC
 
-Essential clue is that all operators are preceeded by their parameters.
-The generic formula for all postscript instructions is:
+As in PostScript, every operator follows its operands:
 
 .. code-block:: text
 
    operand operand operand operator
 
-The number of operands is always dependent on the operator.
+The number of operands depends on the operator.
 
-For example, following code snippet sets current font to font associated with name /TT0 and it's size to 1:
+For example, the following instruction selects the font named ``/TT0`` at a
+size of 1:
 
 .. code-block:: text
 
    /TT0 1 Tf
 
-Following snippet prints a literal string at the current location on the page.
-The current location depends on the previous move and print instructions.
+The following instruction shows a literal string at the current text position,
+which is set by the preceding positioning and text-showing operators:
 
 .. code-block:: text
 
    (This FAQ is prepared in support of) Tj
 
-For a complete list of postscript instructions visit `Table A.1 - PDF content stream operators <_static/PDF32000_2008.pdf#G14.1029307>`_.
+For the complete list of operators see `Table A.1, "PDF content stream operators" <_static/PDF32000_2008.pdf#G14.1029307>`_.
 
-For implementation reference visit the :doc:`Page Contents API reference <api/contents>`.
+The content stream API is described in the :doc:`page contents API reference <api/contents>`.
 
 ----
 
 Complete file example
 ---------------------
 
-This is a minimal valid PDF document, that can be opened by Adobe Acrobat Reader.
-It has zero visible pages and it only contains document metadata.
+This is a minimal, structurally complete PDF file. Its page tree is empty, so
+it has no pages, and it only carries document metadata.
 
 .. code-block:: text
 
@@ -295,19 +316,18 @@ It has zero visible pages and it only contains document metadata.
    181
    %%EOF
 
-At the start, there is marker, that this file conforms to the latest PDF standard 1.7.
-Next we seek to the end of the file, searching for offset to the last cross-reference section.
-In this case, the cross-reference section is at offset 181 from the beginning of the file.
-The file contains 3 indirect objects, with identifiers 1, 2, 3 (object numbers).
+The header declares that the file conforms to PDF 1.7. A reader then reads the
+end of the file, where ``startxref`` gives the offset of the last
+cross-reference section, here 181 bytes from the beginning of the file. The
+file contains 3 indirect objects, numbered 1, 2 and 3.
 
 .. note::
 
-   The first entry in the cross-reference table is a head of "free entries list".
-   It is possible to free and reuse objects using incremental updates, but that is out of scope of this tutorial.
+   The first entry in the cross-reference table is the head of the list of free
+   entries. Objects can be freed and their numbers reused by incremental
+   updates, which are beyond the scope of this guide.
 
-Trailer contains reference to the root of the document structure - Catalog, object number 1.
-Catalog contains reference to page tree structure with object number 2.
-Page tree is empty for this document - it does not contain any page.
-The last object number 3. is just the document metadata, with the date it was created and name of the producer.
-
-**That's it! We've covered the fundamentals of the PDF files.**
+The trailer references the root of the document structure, the catalog, which
+is object 1. The catalog references the page tree, object 2, which is empty.
+Object 3 is the document information dictionary, which records when the
+document was created and the application that produced it.
