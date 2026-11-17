@@ -56,7 +56,7 @@ jobs:
 
         config:
           - name: ubuntu.22.04-x64
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:22.04
             platform: linux/amd64
             preset: linux-x64-gcc
@@ -64,31 +64,31 @@ jobs:
           # TODO:
           # Ubuntu 22.04 arm image cannot be built on windows due to QEMU bug
           # - name: ubuntu.22.04-arm64
-          #   os: ubuntu-24.04-arm
+          #   os: ubuntu-26.04-arm
           #   image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:22.04
           #   platform: linux/arm64
           #   preset: linux-arm64-gcc
 
           - name: ubuntu.24.04-x64
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
             platform: linux/amd64
             preset: linux-x64-gcc
 
           - name: ubuntu.24.04-arm64
-            os: ubuntu-24.04-arm
+            os: ubuntu-26.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-arm64v8:24.04
             platform: linux/arm64
             preset: linux-arm64-gcc
 
           - name: ubuntu.26.04-x64
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu:26.04
             platform: linux/amd64
             preset: linux-x64-gcc
 
           - name: ubuntu.26.04-arm64
-            os: ubuntu-24.04-arm
+            os: ubuntu-26.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu:26.04
             platform: linux/arm64
             preset: linux-arm64-gcc
@@ -98,68 +98,68 @@ jobs:
           # rather than adding its own code paths, so one row per platform is
           # enough.
           - name: ubuntu.24.04-x64-mimalloc
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
             platform: linux/amd64
             preset: linux-x64-gcc
             extra_args: -DVANILLAPDF_ENABLE_MIMALLOC=ON
 
           - name: rocky.8-x64
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:8
             platform: linux/amd64
             preset: linux-x64-gcc
 
           - name: rocky.8-arm64
-            os: ubuntu-24.04-arm
+            os: ubuntu-26.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:8
             platform: linux/arm64
             preset: linux-arm64-gcc
 
           - name: rocky.9-x64
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
 
           - name: rocky.9-arm64
-            os: ubuntu-24.04-arm
+            os: ubuntu-26.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
             preset: linux-arm64-gcc
 
           - name: rocky.10-x64
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux:10
             platform: linux/amd64
             preset: linux-x64-gcc
 
           - name: rocky.10-arm64
-            os: ubuntu-24.04-arm
+            os: ubuntu-26.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux:10
             platform: linux/arm64
             preset: linux-arm64-gcc
 
           - name: fedora.44-x64
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             image: ghcr.io/vanillapdf/vanillapdf-fedora:44
             platform: linux/amd64
             preset: linux-x64-gcc
 
           - name: fedora.44-arm64
-            os: ubuntu-24.04-arm
+            os: ubuntu-26.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-fedora:44
             platform: linux/arm64
             preset: linux-arm64-gcc
 
           - name: fedora.45-x64
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             image: ghcr.io/vanillapdf/vanillapdf-fedora:45
             platform: linux/amd64
             preset: linux-x64-gcc
 
           - name: fedora.45-arm64
-            os: ubuntu-24.04-arm
+            os: ubuntu-26.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-fedora:45
             platform: linux/arm64
             preset: linux-arm64-gcc
@@ -320,7 +320,7 @@ jobs:
 
   android:
     name: android.${{ matrix.api_level }}-x86_64 - ${{ matrix.build_type }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 120
 
     strategy:

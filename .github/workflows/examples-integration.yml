@@ -551,7 +551,7 @@ jobs:
 
   conan-linux:
     name: Conan - Linux ${{ matrix.build_type }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 90
     needs: setup
     permissions:

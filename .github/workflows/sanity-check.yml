@@ -63,25 +63,25 @@ jobs:
 
         config:
           - name: rocky.9-x64
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-amd64:9
             platform: linux/amd64
             preset: linux-x64-gcc
 
           - name: rocky.9-arm64
-            os: ubuntu-24.04-arm
+            os: ubuntu-26.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-rockylinux-arm64v8:9
             platform: linux/arm64
             preset: linux-arm64-gcc
 
           - name: ubuntu.26.04-x64
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu:26.04
             platform: linux/amd64
             preset: linux-x64-gcc
 
           - name: ubuntu.26.04-arm64
-            os: ubuntu-24.04-arm
+            os: ubuntu-26.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu:26.04
             platform: linux/arm64
             preset: linux-arm64-gcc
