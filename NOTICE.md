@@ -1,3 +1,6 @@
+Vanilla.PDF
+Copyright 2018-2026 Vanilla.PDF Labs s.r.o.
+
 # Third-party notices
 
 Vanilla.PDF links the open source libraries listed below. Which of them a
