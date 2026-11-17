@@ -154,7 +154,10 @@ if(WIN32)
     set(CPACK_GENERATOR		"ZIP")
 
 elseif(APPLE)
-    set(CPACK_GENERATOR		"DragNDrop;TGZ")
+    # The DMG is requested explicitly where it is wanted
+    # (cpack -G DragNDrop, build-brew-package.yml): building it mounts a
+    # disk image, which fails intermittently on CI runners
+    set(CPACK_GENERATOR		"TGZ")
     set(CPACK_SYSTEM_NAME	"OSX")
 
     # Use retry script for hdiutil to work around XProtect race conditions

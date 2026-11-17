@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 
 # This example consumes vanillapdf from an installed system package, as produced
-# by build-deb-package.yml and build-rpm-package.yml.
+# by build-deb-package.yml and build-rpm-package.yml, and from the binary
+# archives attached to each release (scripts/verify_binary_archive.py points
+# CMAKE_PREFIX_PATH at the extracted archive).
 #
 # The shared library and the CMake config package are installed by separate
 # rules, so they can disagree about which directory libraries live in - lib

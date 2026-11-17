@@ -138,8 +138,13 @@ jobs:
       - name: Test ${{ matrix.config.name }}
         run: ctest --preset ${{ matrix.config.preset }}
 
-      - name: Build package ${{ matrix.config.name }}
+      # The binary archive attached to the GitHub release (CPACK_GENERATOR
+      # in cmake/packaging.cmake: TGZ on Linux and macOS, ZIP on Windows)
+      - name: Build archive ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --target package
+
+      - name: Verify archive ${{ matrix.config.name }}
+        run: python3 scripts/verify_binary_archive.py --directory build/${{ matrix.config.preset }} --platform linux
 
       - name: Execute nuget packaging
         run: dotnet pack nuget/vanillapdf.runtime.csproj --output .
@@ -149,6 +154,12 @@ jobs:
         with:
           name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
           path: '*.nupkg'
+
+      - name: Upload archive
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: vanillapdf-archive.${{ matrix.config.name }}${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
+          path: build/${{ matrix.config.preset }}/*.tar.gz
 
 
   build-windows:
@@ -169,6 +180,7 @@ jobs:
             os: windows-2025
             preset: windows-x86-msvc-18-static
             build_type: Release
+            consumer_args: --cmake-arg=-A --cmake-arg=Win32
 
           - name: win.2025-x64-static
             os: windows-2025
@@ -223,8 +235,13 @@ jobs:
       - name: Test ${{ matrix.config.name }}
         run: ctest --preset ${{ matrix.config.preset }} -C ${{ matrix.config.build_type }} --output-on-failure
 
-      - name: Build package ${{ matrix.config.name }}
+      # The binary archive attached to the GitHub release (CPACK_GENERATOR
+      # in cmake/packaging.cmake: TGZ on Linux and macOS, ZIP on Windows)
+      - name: Build archive ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --config ${{ matrix.config.build_type }} --target package
+
+      - name: Verify archive ${{ matrix.config.name }}
+        run: python scripts/verify_binary_archive.py --directory build/${{ matrix.config.preset }} --platform windows ${{ matrix.config.consumer_args }}
 
       - name: Execute nuget packaging
         run: dotnet pack nuget/vanillapdf.runtime.csproj --output .
@@ -234,6 +251,12 @@ jobs:
         with:
           name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
           path: '*.nupkg'
+
+      - name: Upload archive
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: vanillapdf-archive.${{ matrix.config.name }}${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
+          path: build/${{ matrix.config.preset }}/*.zip
 
 
   build-macos:
@@ -311,8 +334,13 @@ jobs:
       - name: Test ${{ matrix.config.name }}
         run: ctest --preset ${{ matrix.config.preset }}
 
-      - name: Build package ${{ matrix.config.name }}
+      # The binary archive attached to the GitHub release (CPACK_GENERATOR
+      # in cmake/packaging.cmake: TGZ on Linux and macOS, ZIP on Windows)
+      - name: Build archive ${{ matrix.config.name }}
         run: cmake --build build/${{ matrix.config.preset }} --target package
+
+      - name: Verify archive ${{ matrix.config.name }}
+        run: python3 scripts/verify_binary_archive.py --directory build/${{ matrix.config.preset }} --platform macos
 
       - name: Execute nuget packaging
         run: dotnet pack nuget/vanillapdf.runtime.csproj --output .
@@ -322,6 +350,12 @@ jobs:
         with:
           name: vanillapdf.runtime.${{ matrix.config.name }}${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
           path: '*.nupkg'
+
+      - name: Upload archive
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: vanillapdf-archive.${{ matrix.config.name }}${{ inputs.build_suffix && format('-{0}', inputs.build_suffix) || '' }}
+          path: build/${{ matrix.config.preset }}/*.tar.gz
 
 
   build-vanillapdf-core:
