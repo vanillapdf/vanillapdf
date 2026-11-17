@@ -277,6 +277,10 @@ jobs:
           - { name: "osx.26-x64", runner: macos-26-intel, preset: "macos-x64" }
           - { name: "osx.26-arm64", runner: macos-26, preset: "macos-arm64" }
 
+          # GitHub names the macOS 27 image after its Xcode (xcode-27), and it
+          # exists for Apple Silicon only: macOS 27 drops Intel Macs.
+          - { name: "osx.27-arm64", runner: xcode-27, preset: "macos-arm64" }
+
           # The allocator, on the runner the NuGet natives are built on
           - { name: "osx.26-arm64-mimalloc", runner: macos-26, preset: "macos-arm64", extra_args: "-DVANILLAPDF_ENABLE_MIMALLOC=ON" }
 
