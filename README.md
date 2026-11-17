@@ -76,7 +76,7 @@ int main(void) {
 
 | Platform | Compilers | Architectures |
 |----------|-----------|---------------|
-| Windows | Visual Studio 2022, 2026 | x86, x64, ARM64 |
+| Windows | Visual Studio 2026, 2022 | x86, x64, ARM64 |
 | Linux | GCC 8.1+, Clang 10+ | x64, ARM64, ARM |
 | macOS | AppleClang 15+ (Xcode 15) | x64, ARM64 |
 | Android | NDK toolchain | arm64, armv7, x86, x86_64 |

@@ -13,7 +13,7 @@ Download from https://cmake.org/download/
 
 **Supported compilers:**
 
-- **Windows:** Visual Studio 2022 (MSVC 17.x) or Visual Studio 2026 (MSVC 18.x) — x86, x64, ARM64
+- **Windows:** Visual Studio 2026 (MSVC 18.x) or Visual Studio 2022 (MSVC 17.x) — x86, x64, ARM64
 - **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
 - **macOS:** AppleClang 15+ (Xcode 15)
 - **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
@@ -78,12 +78,12 @@ List the available build presets:
 
 Common presets:
 
-- ``windows-{x86,x64,arm64}-msvc-17`` -- Windows with Visual Studio 2022 (dynamic CRT)
-- ``windows-{x86,x64,arm64}-msvc-17-static`` -- Windows with Visual Studio 2022 (static CRT)
-- ``windows-{x86,x64,arm64}-msvc-17-static-md`` -- Windows with Visual Studio 2022 (static libs, dynamic CRT)
 - ``windows-{x86,x64,arm64}-msvc-18`` -- Windows with Visual Studio 2026 (dynamic CRT)
 - ``windows-{x86,x64,arm64}-msvc-18-static`` -- Windows with Visual Studio 2026 (static CRT)
 - ``windows-{x86,x64,arm64}-msvc-18-static-md`` -- Windows with Visual Studio 2026 (static libs, dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-17`` -- Windows with Visual Studio 2022 (dynamic CRT)
+- ``windows-{x86,x64,arm64}-msvc-17-static`` -- Windows with Visual Studio 2022 (static CRT)
+- ``windows-{x86,x64,arm64}-msvc-17-static-md`` -- Windows with Visual Studio 2022 (static libs, dynamic CRT)
 - ``linux-x64-gcc`` / ``linux-arm64-gcc`` -- Linux with GCC
 - ``linux-x64-clang`` / ``linux-arm64-clang`` -- Linux with Clang
 - ``macos-x64`` / ``macos-arm64`` -- macOS builds
@@ -98,13 +98,13 @@ Choose a preset matching your toolchain:
 
 .. code-block:: bash
 
-   cmake --preset windows-x64-msvc-17
-   cmake --build --preset windows-x64-msvc-17
-   ctest --preset windows-x64-msvc-17
+   cmake --preset windows-x64-msvc-18
+   cmake --build --preset windows-x64-msvc-18
+   ctest --preset windows-x64-msvc-18
 
 **Windows build notes:**
 
-- Uses Visual Studio 2022 (msvc-17) or Visual Studio 2026 (msvc-18) generator
+- Uses Visual Studio 2026 (msvc-18) or Visual Studio 2022 (msvc-17) generator
 - CRT linking depends on preset: ``-static`` variants use static CRT (``VANILLAPDF_USE_STATIC_CRT=ON``)
 - Uses optimised vcpkg triplets (e.g. ``x64-windows-static-md`` for static libs + dynamic CRT)
 
@@ -277,8 +277,8 @@ so you must specify a build configuration:
 
 .. code-block:: bash
 
-   ctest --preset windows-x64-msvc-17 --build-config Debug -R "unittest"
-   ctest --preset windows-x64-msvc-17 --build-config Release -R "unittest"
+   ctest --preset windows-x64-msvc-18 --build-config Debug -R "unittest"
+   ctest --preset windows-x64-msvc-18 --build-config Release -R "unittest"
 
 Fuzzing
 ^^^^^^^
@@ -338,7 +338,7 @@ Troubleshooting
 
 - **Linux**: Install system packages: ``sudo apt-get install libssl-dev libjpeg-turbo8-dev zlib1g-dev libopenjp2-7-dev``
 - **macOS**: Install via Homebrew: ``brew install openssl@4 jpeg-turbo zlib openjpeg``
-- **Windows**: Use vcpkg presets or ensure Visual Studio 2022 or 2026 is properly installed
+- **Windows**: Use vcpkg presets or ensure Visual Studio 2026 or 2022 is properly installed
 
 **OpenSSL legacy algorithms:**
 

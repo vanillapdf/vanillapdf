@@ -37,7 +37,7 @@
 
 **Testing**:
 ```bash
-ctest --preset windows-x64-msvc-17 --build-config Debug \
+ctest --preset windows-x64-msvc-18 --build-config Debug \
   -R "TrustedCertificateStore|SignatureVerifier|SignatureVerificationResult" \
   --output-on-failure
 ```

@@ -236,7 +236,7 @@ Supported platforms
      - Compilers
      - Architectures
    * - Windows
-     - Visual Studio 2022 (MSVC 17.x), Visual Studio 2026 (MSVC 18.x)
+     - Visual Studio 2026 (MSVC 18.x), Visual Studio 2022 (MSVC 17.x)
      - x86, x64, ARM64
    * - Linux
      - GCC 8.1+, Clang 10+
