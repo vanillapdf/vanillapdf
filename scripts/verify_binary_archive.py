@@ -14,8 +14,8 @@ would: it extracts the archive, builds examples/system-package-integration
 against it with find_package, and runs the resulting test.
 
 Usage:
-    python3 scripts/verify_binary_archive.py --directory build/linux-x64-gcc --platform linux
-    python scripts/verify_binary_archive.py --directory build/windows-x86-msvc-18-static --platform windows --cmake-arg=-A --cmake-arg=Win32
+    python3 scripts/verify_binary_archive.py --directory build/linux-x64-gcc --platform linux --build-type Release
+    python scripts/verify_binary_archive.py --directory build/windows-x86-msvc-18-static --platform windows --build-type Release --cmake-arg=-A --cmake-arg=Win32
 
 Requirements:
     - Python 3.6+
@@ -23,7 +23,6 @@ Requirements:
 """
 
 import argparse
-import os
 import subprocess
 import sys
 import tarfile
@@ -44,10 +43,19 @@ REQUIRED_FILES = [
     ["share/vanillapdf/NOTICE.md"],
 ]
 
-LIBRARY_FILE = {
-    "windows": ["bin/libvanillapdf.dll"],
-    "linux": ["lib/libvanillapdf.so", "lib64/libvanillapdf.so"],
-    "macos": ["lib/libvanillapdf.dylib"],
+# The shared library, and on Windows also the import library that consumers
+# link against; the same format as REQUIRED_FILES
+PLATFORM_FILES = {
+    "windows": [
+        ["bin/libvanillapdf.dll"],
+        ["lib/libvanillapdf.lib"],
+    ],
+    "linux": [
+        ["lib/libvanillapdf.so", "lib64/libvanillapdf.so"],
+    ],
+    "macos": [
+        ["lib/libvanillapdf.dylib"],
+    ],
 }
 
 REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
@@ -160,39 +168,35 @@ def find_missing_files(relative_paths: Set[PurePosixPath], required_files: List[
     return missing
 
 
-def run(command: List[str], environment: dict) -> None:
+def run(command: List[str]) -> None:
     print("+ " + " ".join(command), flush=True)
-    subprocess.run(command, check=True, env=environment)
+    subprocess.run(command, check=True)
 
 
-def consume(prefix: Path, platform: str, cmake_arguments: List[str], work_directory: Path) -> None:
+def consume(prefix: Path, build_type: str, cmake_arguments: List[str], work_directory: Path) -> None:
     """Build and run the consumer example against the extracted archive."""
     build_directory = work_directory / "consumer-build"
-    environment = dict(os.environ)
-
-    # The consumer executable loads the library at run time. On Windows the
-    # loader searches PATH; Linux and macOS use the run path CMake records.
-    if platform == "windows":
-        environment["PATH"] = str(prefix / "bin") + os.pathsep + environment.get("PATH", "")
 
     configure = [
         "cmake",
         "-S", str(CONSUMER_SOURCE),
         "-B", str(build_directory),
-        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_BUILD_TYPE=" + build_type,
         "-DCMAKE_PREFIX_PATH=" + str(prefix),
     ]
     configure.extend(cmake_arguments)
 
-    run(configure, environment)
-    run(["cmake", "--build", str(build_directory), "--config", "Release"], environment)
-    run(["ctest", "--test-dir", str(build_directory), "-C", "Release", "--output-on-failure"], environment)
+    run(configure)
+    run(["cmake", "--build", str(build_directory), "--config", build_type])
+    run(["ctest", "--test-dir", str(build_directory), "-C", build_type, "--output-on-failure"])
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0].strip())
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--directory", required=True, type=Path, help="Directory holding the archive")
     parser.add_argument("--platform", required=True, choices=sorted(ARCHIVE_FORMAT))
+    parser.add_argument("--build-type", required=True,
+                        help="Configuration the archive was built in; the consumer is built the same way")
     parser.add_argument("--cmake-arg", action="append", default=[], dest="cmake_arguments",
                         help="Extra argument for configuring the consumer project (repeatable)")
     arguments = parser.parse_args()
@@ -219,7 +223,7 @@ def main() -> int:
         return 1
 
     relative_paths = strip_top_level(members)
-    required_files = REQUIRED_FILES + [LIBRARY_FILE[platform]]
+    required_files = REQUIRED_FILES + PLATFORM_FILES[platform]
     missing = find_missing_files(relative_paths, required_files)
     for file in missing:
         print(f"::error::{archive.name} does not contain {file}")
@@ -233,7 +237,7 @@ def main() -> int:
         archive_format.extract(archive, extracted)
 
         try:
-            consume(extracted / top_level, platform, arguments.cmake_arguments, work_directory)
+            consume(extracted / top_level, arguments.build_type, arguments.cmake_arguments, work_directory)
         except subprocess.CalledProcessError as error:
             print(f"::error::Consuming {archive.name} failed: {error}")
             return 1

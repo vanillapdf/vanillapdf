@@ -144,7 +144,7 @@ jobs:
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
       - name: Verify archive ${{ matrix.config.name }}
-        run: python3 scripts/verify_binary_archive.py --directory build/${{ matrix.config.preset }} --platform linux
+        run: python3 scripts/verify_binary_archive.py --directory build/${{ matrix.config.preset }} --platform linux --build-type ${{ matrix.config.build_type }}
 
       - name: Execute nuget packaging
         run: dotnet pack nuget/vanillapdf.runtime.csproj --output .
@@ -241,7 +241,7 @@ jobs:
         run: cmake --build build/${{ matrix.config.preset }} --config ${{ matrix.config.build_type }} --target package
 
       - name: Verify archive ${{ matrix.config.name }}
-        run: python scripts/verify_binary_archive.py --directory build/${{ matrix.config.preset }} --platform windows ${{ matrix.config.consumer_args }}
+        run: python scripts/verify_binary_archive.py --directory build/${{ matrix.config.preset }} --platform windows --build-type ${{ matrix.config.build_type }} ${{ matrix.config.consumer_args }}
 
       - name: Execute nuget packaging
         run: dotnet pack nuget/vanillapdf.runtime.csproj --output .
@@ -340,7 +340,7 @@ jobs:
         run: cmake --build build/${{ matrix.config.preset }} --target package
 
       - name: Verify archive ${{ matrix.config.name }}
-        run: python3 scripts/verify_binary_archive.py --directory build/${{ matrix.config.preset }} --platform macos
+        run: python3 scripts/verify_binary_archive.py --directory build/${{ matrix.config.preset }} --platform macos --build-type ${{ matrix.config.build_type }}
 
       - name: Execute nuget packaging
         run: dotnet pack nuget/vanillapdf.runtime.csproj --output .

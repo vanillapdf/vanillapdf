@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.26)
 
 # This example consumes vanillapdf from an installed system package, as produced
 # by build-deb-package.yml and build-rpm-package.yml, and from the binary
@@ -20,6 +20,16 @@ find_package(vanillapdf CONFIG REQUIRED)
 
 add_executable(system_package_test main.cpp)
 target_link_libraries(system_package_test PRIVATE vanillapdf::vanillapdf)
+
+# Windows has no run path: the loader looks for DLLs next to the executable.
+# Copy every DLL the executable links next to it. Elsewhere the list is empty,
+# copy -t (CMake 3.26) with no files does nothing, and the run path CMake
+# records finds the library.
+add_custom_command(TARGET system_package_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different -t $<TARGET_FILE_DIR:system_package_test>
+            $<TARGET_RUNTIME_DLLS:system_package_test>
+    COMMAND_EXPAND_LISTS
+)
 
 enable_testing()
 add_test(NAME system_package_integration_test
