@@ -140,18 +140,6 @@ jobs:
             platform: linux/arm64
             preset: linux-arm64-gcc
 
-          - name: fedora.43-x64
-            os: ubuntu-24.04
-            image: ghcr.io/vanillapdf/vanillapdf-fedora:43
-            platform: linux/amd64
-            preset: linux-x64-gcc
-
-          - name: fedora.43-arm64
-            os: ubuntu-24.04-arm
-            image: ghcr.io/vanillapdf/vanillapdf-fedora:43
-            platform: linux/arm64
-            preset: linux-arm64-gcc
-
           - name: fedora.44-x64
             os: ubuntu-24.04
             image: ghcr.io/vanillapdf/vanillapdf-fedora:44
@@ -161,6 +149,18 @@ jobs:
           - name: fedora.44-arm64
             os: ubuntu-24.04-arm
             image: ghcr.io/vanillapdf/vanillapdf-fedora:44
+            platform: linux/arm64
+            preset: linux-arm64-gcc
+
+          - name: fedora.45-x64
+            os: ubuntu-24.04
+            image: ghcr.io/vanillapdf/vanillapdf-fedora:45
+            platform: linux/amd64
+            preset: linux-x64-gcc
+
+          - name: fedora.45-arm64
+            os: ubuntu-24.04-arm
+            image: ghcr.io/vanillapdf/vanillapdf-fedora:45
             platform: linux/arm64
             preset: linux-arm64-gcc
 
