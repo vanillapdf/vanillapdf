@@ -45,11 +45,13 @@ REQUIRED_FILES = [
 ]
 
 # The shared library, and on Windows also the import library that consumers
-# link against; the same format as REQUIRED_FILES
+# link against; the same format as REQUIRED_FILES. The import library has no
+# "lib" prefix: PREFIX names the DLL, IMPORT_PREFIX (empty for MSVC) the
+# import library.
 PLATFORM_FILES = {
     "windows": [
         ["bin/libvanillapdf.dll"],
-        ["lib/libvanillapdf.lib"],
+        ["lib/vanillapdf.lib"],
     ],
     "linux": [
         ["lib/libvanillapdf.so", "lib64/libvanillapdf.so"],
