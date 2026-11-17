@@ -166,11 +166,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Document_ToUnknown(DocumentHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref DocumentHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Document_FromUnknown(IUnknownHandle* handle, DocumentHandle** result);
 

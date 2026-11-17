@@ -284,6 +284,54 @@ buffers so concurrent threads never interfere with each other.
 See :doc:`architecture` for the full list of protected objects and
 implementation details.
 
+Trivial functions
+-----------------
+
+A trivial function is a C API function that only reads or writes a value that
+is already in memory. It does no other work. The API reference marks each
+trivial function with a "Trivial function" note.
+
+While a trivial function runs, it:
+
+- does not acquire a lock and does not wait for another thread,
+- does not allocate or free memory,
+- does not raise an internal C++ exception,
+- does not write to the log, so it never calls the callback set with
+  ``Logging_SetCallbackLogger``,
+- does not call any other callback that the application supplied,
+- does not read files or streams, and does not parse, decode or encode data,
+- does not change the last error of the thread,
+- returns after a small, fixed amount of work.
+
+A trivial function can still fail and return an error code, for example
+``VANILLAPDF_ERROR_PARAMETER_VALUE`` for a ``NULL`` handle or a conversion
+such as ``ButtonField_FromField`` that gets an object of a different type. It
+does not store an error message, so ``Errors_GetLastError`` and
+``Errors_GetLastErrorMessage`` still return the values of the last function
+that stored an error. Use the return code.
+
+What trivial does not mean:
+
+- A trivial function adds no synchronization. If another thread calls a setter
+  on the same object at the same time, the result is a data race, as with every
+  other function.
+- A trivial function does not check that a handle is still valid. A handle that
+  was already released causes undefined behavior.
+- Not every getter is trivial. Many getters take a lock (for example on
+  dictionaries, streams and strings) or load data on demand.
+
+The contract lets a language binding call these functions in a cheaper way.
+For example, .NET can call a native function with the
+``[SuppressGCTransition]`` attribute. The runtime then does not switch the
+thread from managed to native mode, which saves a few nanoseconds per call.
+This is only safe when the native function returns quickly, never blocks and
+never calls back into managed code. The Vanilla.PDF .NET binding uses this
+attribute for the trivial functions.
+
+The "Trivial function" note is part of the API contract. A function that has
+the note keeps it in all later versions with the same major version. New
+functions can get the note in a minor version.
+
 Versioning
 ----------
 

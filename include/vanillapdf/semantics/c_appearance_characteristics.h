@@ -123,11 +123,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION AppearanceCharacteristics_ToUnknown(AppearanceCharacteristicsHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref AppearanceCharacteristicsHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION AppearanceCharacteristics_FromUnknown(IUnknownHandle* handle, AppearanceCharacteristicsHandle** result);
 

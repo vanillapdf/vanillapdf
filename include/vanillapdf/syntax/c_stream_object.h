@@ -63,11 +63,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_ToObject(StreamObjectHandle* handle, ObjectHandle** result);
 
     /**
     * \brief Convert \ref ObjectHandle to \ref StreamObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION StreamObject_FromObject(ObjectHandle* handle, StreamObjectHandle** result);
 

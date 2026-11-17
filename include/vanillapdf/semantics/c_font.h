@@ -77,6 +77,7 @@ extern "C"
 
     /**
     * \brief Get derived type of current object.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Font_GetFontType(FontHandle* handle, FontType* result);
 
@@ -89,11 +90,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Font_ToUnknown(FontHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref FontHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Font_FromUnknown(IUnknownHandle* handle, FontHandle** result);
 
@@ -112,11 +115,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref FontHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_ToFont(Type0FontHandle* handle, FontHandle** result);
 
     /**
     * \brief Convert \ref ObjectHandle to \ref Type0FontHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Type0Font_FromFont(FontHandle* handle, Type0FontHandle** result);
 

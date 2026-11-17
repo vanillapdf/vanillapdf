@@ -101,11 +101,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTree_ToUnknown(DestinationNameTreeHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref DestinationNameTreeHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTree_FromUnknown(IUnknownHandle* handle, DestinationNameTreeHandle** result);
 
@@ -158,11 +160,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_ToUnknown(DestinationNameTreeIteratorHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref DestinationNameTreeIteratorHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DestinationNameTreeIterator_FromUnknown(IUnknownHandle* handle, DestinationNameTreeIteratorHandle** result);
 

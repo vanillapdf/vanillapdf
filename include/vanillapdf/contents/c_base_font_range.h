@@ -78,11 +78,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_ToUnknown(BaseFontRangeHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref BaseFontRangeHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION BaseFontRange_FromUnknown(IUnknownHandle* handle, BaseFontRangeHandle** result);
 

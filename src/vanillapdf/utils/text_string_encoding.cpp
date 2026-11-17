@@ -123,7 +123,7 @@ TextStringEncoding::Type TextStringEncoding::Detect(std::string_view data) {
     return Type::PDFDocEncoding;
 }
 
-char32_t TextStringEncoding::PDFDocEncodingByteToUnicode(uint8_t byte) {
+char32_t TextStringEncoding::PDFDocEncodingByteToUnicode(uint8_t byte) noexcept {
     return PDF_DOC_ENCODING_TO_UNICODE[byte];
 }
 

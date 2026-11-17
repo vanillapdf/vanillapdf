@@ -34,6 +34,7 @@ extern "C"
 
     /**
     * \brief Return size of an array
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_GetSize(BufferArrayHandle* handle, size_type* result);
 
@@ -59,11 +60,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_ToUnknown(BufferArrayHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref BufferArrayHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_FromUnknown(IUnknownHandle* handle, BufferArrayHandle** result);
 

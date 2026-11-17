@@ -34,11 +34,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION NullObject_ToObject(NullObjectHandle* handle, ObjectHandle** result);
 
     /**
     * \brief Convert \ref ObjectHandle to \ref NullObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION NullObject_FromObject(ObjectHandle* handle, NullObjectHandle** result);
 

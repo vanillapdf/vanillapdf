@@ -118,11 +118,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_ToUnknown(DigitalSignatureHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref DigitalSignatureHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_FromUnknown(IUnknownHandle* handle, DigitalSignatureHandle** result);
 

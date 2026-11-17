@@ -309,6 +309,21 @@ SafeObjectConvert<SourceT, DestT>(from, result)  // dynamic_cast + AddRef
 ObjectRelease<T>(handle)                          // Cast + Release
 ```
 
+### Trivial Functions (`\trivial`)
+
+A function tagged `\trivial` in its public header doc comment promises: no lock, no allocation or free, no exception, no logging, no application callback, no I/O or parsing, no `Errors::SetLastError`, bounded work. The user-facing definition is `doc/src/input/trivial_functions.dox` (and the "Trivial functions" section of `doc/sphinx/c_api.rst`); the `\trivial` alias is defined in both `doc/doxyfile.in` and `doc/Doxyfile-xml`.
+
+Bindings depend on it: the .NET binding calls these functions with `[SuppressGCTransition]`. Removing the tag, or adding work that breaks the promise, is a breaking change — a lock can deadlock with the garbage collector, and a log line can call the managed logger callback.
+
+Rules for a `\trivial` wrapper:
+- No `try` / `CATCH_VANILLAPDF_EXCEPTIONS` (the catch logs). Everything it calls must be `noexcept`, so the compiler backs the "no exception" part.
+- It calls only `noexcept` members that read or write a plain field, return a constant (`GetXxxType` overrides), or do `SafeObjectConvert` / `IUnknown::AddRef`.
+- Failures return an error code directly; do not call `Errors::SetLastError` (the error state is `thread_local`, and the first access on a new thread can allocate).
+- Never tag `*_Release` / `ObjectRelease`: `Release` can delete the object, and destructors lock, free and log.
+- Never tag functions on objects guarded by `_access_lock` (`DictionaryObject`, `StreamObject`, string objects, `IndirectReferenceObject`), lazy semantic getters, or setters that call `UpdateObject` / `IncrementVersion`.
+
+Every conversion built on `SafeObjectConvert` is trivial, so a new `Xxx_ToYyy` / `Xxx_FromYyy` gets the tag.
+
 ### Error Translation Flow
 
 1. C++ exception thrown in core code

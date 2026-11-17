@@ -98,11 +98,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Matrix_ToUnknown(MatrixHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref MatrixHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Matrix_FromUnknown(IUnknownHandle* handle, MatrixHandle** result);
 

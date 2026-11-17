@@ -102,6 +102,7 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION CryptoSettings_ToUnknown(
         CryptoSettingsHandle* handle,
@@ -110,6 +111,7 @@ extern "C"
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref CryptoSettingsHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION CryptoSettings_FromUnknown(
         IUnknownHandle* handle,

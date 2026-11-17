@@ -67,11 +67,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureFlags_ToUnknown(SignatureFlagsHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref SignatureFlagsHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureFlags_FromUnknown(IUnknownHandle* handle, SignatureFlagsHandle** result);
 

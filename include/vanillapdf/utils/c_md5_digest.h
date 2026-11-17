@@ -61,6 +61,7 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION MD5Digest_ToUnknown(
         MD5DigestHandle* handle,
@@ -69,6 +70,7 @@ extern "C"
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref MD5DigestHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION MD5Digest_FromUnknown(
         IUnknownHandle* handle,

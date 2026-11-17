@@ -65,6 +65,7 @@ extern "C"
 
     /**
     * \brief Get year represented by this object
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Date_GetYear(DateHandle* handle, integer_type* result);
 
@@ -75,6 +76,7 @@ extern "C"
 
     /**
     * \brief Get month in specified year represented by this object. Range of values (1-12)
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMonth(DateHandle* handle, integer_type* result);
 
@@ -85,6 +87,7 @@ extern "C"
 
     /**
     * \brief Get day index in month represented by this object. Range of values (1-31)
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Date_GetDay(DateHandle* handle, integer_type* result);
 
@@ -95,6 +98,7 @@ extern "C"
 
     /**
     * \brief Get hours in day represented by this object. Range of values (0-23)
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Date_GetHour(DateHandle* handle, integer_type* result);
 
@@ -105,6 +109,7 @@ extern "C"
 
     /**
     * \brief Get minutes represented by this object. Range of values (0-59)
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinute(DateHandle* handle, integer_type* result);
 
@@ -115,6 +120,7 @@ extern "C"
 
     /**
     * \brief Get seconds represented by this object. Range of values (0-59)
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Date_GetSecond(DateHandle* handle, integer_type* result);
 
@@ -125,6 +131,7 @@ extern "C"
 
     /**
     * \brief \copybrief TimezoneType
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Date_GetTimezone(DateHandle* handle, TimezoneType* result);
 
@@ -135,6 +142,7 @@ extern "C"
 
     /**
     * \brief Get hour offset represented by this object. Range of values (0-23)
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Date_GetHourOffset(DateHandle* handle, integer_type* result);
 
@@ -145,6 +153,7 @@ extern "C"
 
     /**
     * \brief Get minute offset represented by this object. Range of values (0-59)
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Date_GetMinuteOffset(DateHandle* handle, integer_type* result);
 
@@ -155,11 +164,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Date_ToUnknown(DateHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref DateHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Date_FromUnknown(IUnknownHandle* handle, DateHandle** result);
 

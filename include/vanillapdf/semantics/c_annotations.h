@@ -347,16 +347,19 @@ extern "C"
     * \brief Get annotation type of object \p handle
     * \param handle a handle to the annotation class
     * \param result a pointer to variable will be filled with annotation type upon success, unchanged on failure
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAnnotationType(AnnotationHandle* handle, AnnotationType* result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Annotation_ToUnknown(AnnotationHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref PageAnnotationsHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Annotation_FromUnknown(IUnknownHandle* handle, AnnotationHandle** result);
 
@@ -538,11 +541,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_ToBaseAnnotation(TextAnnotationHandle* handle, AnnotationHandle** result);
 
     /**
     * \brief Convert \ref AnnotationHandle to \ref TextAnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_FromBaseAnnotation(AnnotationHandle* handle, TextAnnotationHandle** result);
 
@@ -617,11 +622,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_ToBaseAnnotation(HighlightAnnotationHandle* handle, AnnotationHandle** result);
 
     /**
     * \brief Convert \ref AnnotationHandle to \ref HighlightAnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_FromBaseAnnotation(AnnotationHandle* handle, HighlightAnnotationHandle** result);
 
@@ -692,11 +699,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_ToBaseAnnotation(FreeTextAnnotationHandle* handle, AnnotationHandle** result);
 
     /**
     * \brief Convert \ref AnnotationHandle to \ref FreeTextAnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_FromBaseAnnotation(AnnotationHandle* handle, FreeTextAnnotationHandle** result);
 
@@ -780,11 +789,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_ToBaseAnnotation(UnderlineAnnotationHandle* handle, AnnotationHandle** result);
 
     /**
     * \brief Convert \ref AnnotationHandle to \ref UnderlineAnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_FromBaseAnnotation(AnnotationHandle* handle, UnderlineAnnotationHandle** result);
 
@@ -868,11 +879,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_ToBaseAnnotation(StrikeOutAnnotationHandle* handle, AnnotationHandle** result);
 
     /**
     * \brief Convert \ref AnnotationHandle to \ref StrikeOutAnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_FromBaseAnnotation(AnnotationHandle* handle, StrikeOutAnnotationHandle** result);
 
@@ -956,11 +969,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_ToBaseAnnotation(SquigglyAnnotationHandle* handle, AnnotationHandle** result);
 
     /**
     * \brief Convert \ref AnnotationHandle to \ref SquigglyAnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_FromBaseAnnotation(AnnotationHandle* handle, SquigglyAnnotationHandle** result);
 
@@ -1045,11 +1060,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_ToBaseAnnotation(InkAnnotationHandle* handle, AnnotationHandle** result);
 
     /**
     * \brief Convert \ref AnnotationHandle to \ref InkAnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_FromBaseAnnotation(AnnotationHandle* handle, InkAnnotationHandle** result);
 
@@ -1102,11 +1119,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref AnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_ToBaseAnnotation(WidgetAnnotationHandle* handle, AnnotationHandle** result);
 
     /**
     * \brief Convert \ref AnnotationHandle to \ref WidgetAnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_FromBaseAnnotation(AnnotationHandle* handle, WidgetAnnotationHandle** result);
 
@@ -1134,11 +1153,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_ToBaseAnnotation(LinkAnnotationHandle* handle, AnnotationHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref LinkAnnotationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_FromBaseAnnotation(AnnotationHandle* handle, LinkAnnotationHandle** result);
 
@@ -1192,11 +1213,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_ToUnknown(PageAnnotationsHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref PageAnnotationsHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_FromUnknown(IUnknownHandle* handle, PageAnnotationsHandle** result);
 
