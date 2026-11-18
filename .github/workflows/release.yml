@@ -465,6 +465,13 @@ jobs:
           name: vanillapdf-dmg
           path: ./packages/dmg
 
+      - name: Download binary archives
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          pattern: vanillapdf-archive.*
+          path: ./packages/archive
+          merge-multiple: true
+
       - name: Attest build provenance
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8  # v4.2.2
         with:
@@ -473,6 +480,8 @@ jobs:
             ./packages/deb/*.deb
             ./packages/rpm/*.rpm
             ./packages/dmg/*.dmg
+            ./packages/archive/*.zip
+            ./packages/archive/*.tar.gz
 
   verify-attest:
     name: Verify Artifact Attestations
@@ -506,6 +515,13 @@ jobs:
           name: vanillapdf-dmg
           path: ./packages/dmg
 
+      - name: Download binary archives
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          pattern: vanillapdf-archive.*
+          path: ./packages/archive
+          merge-multiple: true
+
       - name: Verify attestations
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -514,7 +530,7 @@ jobs:
             echo "Verifying: $pkg"
             gh attestation verify "$pkg" --repo "${{ github.repository }}"
           done
-          find ./packages -name "*.deb" -o -name "*.rpm" -o -name "*.dmg" | while read -r pkg; do
+          find ./packages -name "*.deb" -o -name "*.rpm" -o -name "*.dmg" -o -name "*.zip" -o -name "*.tar.gz" | while read -r pkg; do
             echo "Verifying: $pkg"
             gh attestation verify "$pkg" --repo "${{ github.repository }}"
           done
