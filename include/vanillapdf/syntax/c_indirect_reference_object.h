@@ -64,11 +64,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_ToObject(IndirectReferenceObjectHandle* handle, ObjectHandle** result);
 
     /**
     * \brief Convert \ref ObjectHandle to \ref IndirectReferenceObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_FromObject(ObjectHandle* handle, IndirectReferenceObjectHandle** result);
 

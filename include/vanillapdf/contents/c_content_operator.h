@@ -142,6 +142,7 @@ extern "C"
 
     /**
     * \brief Get derived type of current object
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetOperatorType(ContentOperatorHandle* handle, ContentOperatorType* result);
 
@@ -152,11 +153,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_ToUnknown(ContentOperatorHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref ContentOperatorHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_FromUnknown(IUnknownHandle* handle, ContentOperatorHandle** result);
 

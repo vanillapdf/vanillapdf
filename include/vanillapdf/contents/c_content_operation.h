@@ -174,28 +174,33 @@ extern "C"
 
     /**
     * \brief Get derived type of current object
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_GetOperationType(ContentOperationHandle* handle, ContentOperationType* result);
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationBeginTextHandle
     * \deprecated Use ContentOperationBeginText_FromContentOperation instead
+    * \trivial
     */
     VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToBeginText(ContentOperationHandle* handle, ContentOperationBeginTextHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationEndTextHandle
     * \deprecated Use ContentOperationEndText_FromContentOperation instead
+    * \trivial
     */
     VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToEndText(ContentOperationHandle* handle, ContentOperationEndTextHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ContentInstructionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_ToInstruction(ContentOperationHandle* handle, ContentInstructionHandle** result);
 
     /**
     * \brief Convert \ref ContentInstructionHandle to \ref ContentOperationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperation_FromInstruction(ContentInstructionHandle* handle, ContentOperationHandle** result);
 
@@ -229,11 +234,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_ToContentOperation(ContentOperationGenericHandle* handle, ContentOperationHandle** result);
 
     /**
     * \brief Convert \ref ContentOperationHandle to \ref ContentOperationGenericHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationGeneric_FromContentOperation(ContentOperationHandle* handle, ContentOperationGenericHandle** result);
 
@@ -262,11 +269,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_ToContentOperation(ContentOperationTextShowHandle* handle, ContentOperationHandle** result);
 
     /**
     * \brief Convert \ref ContentOperationHandle to \ref ContentOperationTextShowHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShow_FromContentOperation(ContentOperationHandle* handle, ContentOperationTextShowHandle** result);
 
@@ -301,11 +310,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_ToContentOperation(ContentOperationTextShowArrayHandle* handle, ContentOperationHandle** result);
 
     /**
     * \brief Convert \ref ContentOperationHandle to \ref ContentOperationTextShowArrayHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextShowArray_FromContentOperation(ContentOperationHandle* handle, ContentOperationTextShowArrayHandle** result);
 
@@ -354,11 +365,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_ToContentOperation(ContentOperationTextFontHandle* handle, ContentOperationHandle** result);
 
     /**
     * \brief Convert \ref ContentOperationHandle to \ref ContentOperationTextFontHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationTextFont_FromContentOperation(ContentOperationHandle* handle, ContentOperationTextFontHandle** result);
 
@@ -382,11 +395,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationBeginText_ToContentOperation(ContentOperationBeginTextHandle* handle, ContentOperationHandle** result);
 
     /**
     * \brief Convert \ref ContentOperationHandle to \ref ContentOperationBeginTextHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationBeginText_FromContentOperation(ContentOperationHandle* handle, ContentOperationBeginTextHandle** result);
 
@@ -410,11 +425,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationEndText_ToContentOperation(ContentOperationEndTextHandle* handle, ContentOperationHandle** result);
 
     /**
     * \brief Convert \ref ContentOperationHandle to \ref ContentOperationEndTextHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentOperationEndText_FromContentOperation(ContentOperationHandle* handle, ContentOperationEndTextHandle** result);
 

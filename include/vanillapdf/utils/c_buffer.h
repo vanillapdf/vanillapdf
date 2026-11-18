@@ -39,6 +39,7 @@ extern "C"
 
     /**
     * \brief Get data content from buffer
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Buffer_GetData(const BufferHandle* handle, string_type* data, size_type* size);
 
@@ -69,11 +70,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Buffer_ToUnknown(BufferHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref BufferHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Buffer_FromUnknown(IUnknownHandle* handle, BufferHandle** result);
 

@@ -83,11 +83,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_ToUnknown(SigningKeyHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref BufferHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_FromUnknown(IUnknownHandle* handle, SigningKeyHandle** result);
 

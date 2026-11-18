@@ -58,6 +58,7 @@ extern "C"
     * \param[out] codepoint The corresponding Unicode code point.
     *             Undefined bytes (e.g. 0x00–0x07) map to U+FFFD (replacement character).
     * \ingroup group_utils
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_PDFDocEncodingByteToUnicode(uint8_t byte, uint32_t* codepoint);
 

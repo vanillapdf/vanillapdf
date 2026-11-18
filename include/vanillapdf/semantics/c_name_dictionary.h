@@ -63,11 +63,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION NameDictionary_ToUnknown(NameDictionaryHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref NameDictionaryHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION NameDictionary_FromUnknown(IUnknownHandle* handle, NameDictionaryHandle** result);
 

@@ -164,11 +164,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_ToUnknown(DocumentSignatureSettingsHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref DocumentSignatureSettingsHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_FromUnknown(IUnknownHandle* handle, DocumentSignatureSettingsHandle** result);
 

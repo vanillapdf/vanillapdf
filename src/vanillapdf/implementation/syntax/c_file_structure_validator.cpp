@@ -174,11 +174,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetObjectNumber(
     RETURN_ERROR_PARAM_VALUE_IF_NULL(issue);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-    if (!issue->HasObjectContext()) {
+    auto object_number = issue->GetObjectNumber();
+    if (!object_number.has_value()) {
         return VANILLAPDF_ERROR_OBJECT_MISSING;
     }
 
-    *result = issue->GetObjectNumber().value();
+    *result = *object_number;
     return VANILLAPDF_ERROR_SUCCESS;
 }
 
@@ -189,11 +190,12 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetGenerationNum
     RETURN_ERROR_PARAM_VALUE_IF_NULL(issue);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-    if (!issue->HasObjectContext()) {
+    auto generation_number = issue->GetGenerationNumber();
+    if (!generation_number.has_value()) {
         return VANILLAPDF_ERROR_OBJECT_MISSING;
     }
 
-    *result = issue->GetGenerationNumber().value();
+    *result = *generation_number;
     return VANILLAPDF_ERROR_SUCCESS;
 }
 

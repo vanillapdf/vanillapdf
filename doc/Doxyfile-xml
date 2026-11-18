@@ -17,6 +17,12 @@ GENERATE_XML           = YES
 GENERATE_HTML          = NO
 GENERATE_LATEX         = NO
 
+# Aliases
+# \trivial marks a C API function that keeps the trivial function contract,
+# defined in src/input/trivial_functions.dox and in the "Trivial functions"
+# section of sphinx/c_api.rst. Keep in step with doxyfile.in.
+ALIASES                = "trivial=\xrefitem trivial \"Trivial function\" \"List of trivial functions\" Does not lock, allocate, throw or log. See Trivial functions in the C API guide."
+
 # Preprocessing
 # Expand these markers to nothing so the declarations Breathe parses are clean
 # C signatures. A bare name (no "=") would expand to "1", which corrupts e.g.

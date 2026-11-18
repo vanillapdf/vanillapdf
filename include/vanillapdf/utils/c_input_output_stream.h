@@ -86,31 +86,37 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref InputStreamHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ToInputStream(InputOutputStreamHandle* handle, InputStreamHandle** result);
 
     /**
     * \brief Convert \ref InputStreamHandle to \ref InputOutputStreamHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_FromInputStream(InputStreamHandle* handle, InputOutputStreamHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref OutputStreamHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ToOutputStream(InputOutputStreamHandle* handle, OutputStreamHandle** result);
 
     /**
     * \brief Convert \ref InputStreamHandle to \ref InputOutputStreamHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_FromOutputStream(OutputStreamHandle* handle, InputOutputStreamHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_ToUnknown(InputOutputStreamHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref InputOutputStreamHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION InputOutputStream_FromUnknown(IUnknownHandle* handle, InputOutputStreamHandle** result);
 

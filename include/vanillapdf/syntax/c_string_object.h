@@ -67,6 +67,7 @@ extern "C"
 
     /**
     * \brief Get derived type from current string
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetStringType(StringObjectHandle* handle, StringType* result);
 
@@ -82,11 +83,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION StringObject_ToObject(StringObjectHandle* handle, ObjectHandle** result);
 
     /**
     * \brief Convert \ref ObjectHandle to \ref StringObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION StringObject_FromObject(ObjectHandle* handle, StringObjectHandle** result);
 
@@ -139,11 +142,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref StringObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_ToStringObject(LiteralStringObjectHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref LiteralStringObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION LiteralStringObject_FromStringObject(StringObjectHandle* handle, LiteralStringObjectHandle** result);
 
@@ -196,11 +201,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref StringObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_ToStringObject(HexadecimalStringObjectHandle* handle, StringObjectHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref HexadecimalStringObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION HexadecimalStringObject_FromStringObject(StringObjectHandle* handle, HexadecimalStringObjectHandle** result);
 

@@ -144,31 +144,37 @@ extern "C"
 
     /**
     * \brief Algorithm to be used for document encryption
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetAlgorithm(DocumentEncryptionSettingsHandle* handle, EncryptionAlgorithmType* result);
 
     /**
-    * \copydoc DocumentEncryptionSettings_GetAlgorithm
+    * \copybrief DocumentEncryptionSettings_GetAlgorithm
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetAlgorithm(DocumentEncryptionSettingsHandle* handle, EncryptionAlgorithmType encryption_algorithm);
 
     /**
     * \brief Length of the key for document encryption
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetKeyLength(DocumentEncryptionSettingsHandle* handle, integer_type* result);
 
     /**
-    * \copydoc DocumentEncryptionSettings_GetKeyLength
+    * \copybrief DocumentEncryptionSettings_GetKeyLength
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetKeyLength(DocumentEncryptionSettingsHandle* handle, integer_type key_length);
 
     /**
     * \brief Permissions for user, when opening the document with user password
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetUserAccessPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags* result);
 
     /**
-    * \copydoc DocumentEncryptionSettings_GetUserAccessPermissions
+    * \copybrief DocumentEncryptionSettings_GetUserAccessPermissions
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetUserAccessPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags user_permissions);
 
@@ -194,11 +200,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_ToUnknown(DocumentEncryptionSettingsHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref DocumentEncryptionSettingsHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_FromUnknown(IUnknownHandle* handle, DocumentEncryptionSettingsHandle** result);
 

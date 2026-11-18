@@ -296,11 +296,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_ToUnknown(FieldTreeHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref FieldTreeHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_FromUnknown(IUnknownHandle* handle, FieldTreeHandle** result);
 

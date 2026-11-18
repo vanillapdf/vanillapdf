@@ -34,6 +34,7 @@ extern "C"
 
     /**
     * \brief Return current boolean value
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle* handle, boolean_type* result);
 
@@ -44,11 +45,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_ToObject(BooleanObjectHandle* handle, ObjectHandle** result);
 
     /**
     * \brief Convert \ref ObjectHandle to \ref BooleanObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_FromObject(ObjectHandle* handle, BooleanObjectHandle** result);
 

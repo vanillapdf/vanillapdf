@@ -49,6 +49,7 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION RealObject_ToObject(RealObjectHandle* handle, ObjectHandle** result);
 

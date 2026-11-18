@@ -73,16 +73,19 @@ extern "C"
 
     /**
     * \brief Get derived type of current object
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_GetCharacterMapType(CharacterMapHandle* handle, CharacterMapType* result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_ToUnknown(CharacterMapHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref FontHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION CharacterMap_FromUnknown(IUnknownHandle* handle, CharacterMapHandle** result);
 
@@ -109,11 +112,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref CharacterMapHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_ToCharacterMap(UnicodeCharacterMapHandle* handle, CharacterMapHandle** result);
 
     /**
     * \brief Convert \ref CharacterMapHandle to \ref UnicodeCharacterMapHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION UnicodeCharacterMap_FromCharacterMap(CharacterMapHandle* handle, UnicodeCharacterMapHandle** result);
 
@@ -131,11 +136,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref CharacterMapHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION EmbeddedCharacterMap_ToCharacterMap(EmbeddedCharacterMapHandle* handle, CharacterMapHandle** result);
 
     /**
     * \brief Convert \ref CharacterMapHandle to \ref EmbeddedCharacterMapHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION EmbeddedCharacterMap_FromCharacterMap(CharacterMapHandle* handle, EmbeddedCharacterMapHandle** result);
 

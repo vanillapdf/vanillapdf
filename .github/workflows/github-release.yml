@@ -138,11 +138,19 @@ jobs:
           name: vanillapdf-dmg
           path: ./packages/dmg
 
+      # One ZIP or .tar.gz per platform, built by the NuGet jobs
+      - name: Download binary archives
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          pattern: vanillapdf-archive.*
+          path: ./packages/archive
+          merge-multiple: true
+
       - name: Upload packages to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          for file in ./packages/deb/*.deb ./packages/rpm/*.rpm ./packages/dmg/*.dmg; do
+          for file in ./packages/deb/*.deb ./packages/rpm/*.rpm ./packages/dmg/*.dmg ./packages/archive/*.zip ./packages/archive/*.tar.gz; do
             if [ -f "$file" ]; then
               echo "Uploading: $file"
               gh release upload ${{ inputs.tag }} "$file"
@@ -157,6 +165,8 @@ jobs:
             ./packages/deb/*.deb
             ./packages/rpm/*.rpm
             ./packages/dmg/*.dmg
+            ./packages/archive/*.zip
+            ./packages/archive/*.tar.gz
 
       - name: Upload provenance to release
         # Attach the signed provenance bundle as a release asset. The attestation

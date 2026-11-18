@@ -87,16 +87,19 @@ extern "C"
 
     /**
     * \brief Get derived type of current object attribute
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_GetAttributeType(BaseObjectAttributeHandle* handle, ObjectAttributeType* result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_ToUnknown(BaseObjectAttributeHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref BaseObjectAttributeHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION BaseObjectAttribute_FromUnknown(IUnknownHandle* handle, BaseObjectAttributeHandle** result);
 
@@ -119,51 +122,61 @@ extern "C"
 
     /**
     * \brief Get number of color components inside the associated image
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_GetColorComponents(ImageMetadataObjectAttributeHandle* handle, integer_type* result);
 
     /**
     * \brief Set number of color components inside the associated image
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_SetColorComponents(ImageMetadataObjectAttributeHandle* handle, integer_type data);
 
     /**
     * \brief Get color space of the associated image
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_GetColorSpace(ImageMetadataObjectAttributeHandle* handle, ImageColorSpaceType* result);
 
     /**
     * \brief Set color space of the associated image
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_SetColorSpace(ImageMetadataObjectAttributeHandle* handle, ImageColorSpaceType data);
 
     /**
     * \brief Get image width in pixels
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_GetWidth(ImageMetadataObjectAttributeHandle* handle, integer_type* result);
 
     /**
     * \brief Set image width in pixels
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_SetWidth(ImageMetadataObjectAttributeHandle* handle, integer_type data);
 
     /**
     * \brief Get image height in pixels
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_GetHeight(ImageMetadataObjectAttributeHandle* handle, integer_type* result);
 
     /**
     * \brief Set image height in pixels
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_SetHeight(ImageMetadataObjectAttributeHandle* handle, integer_type data);
 
     /**
     * \brief Reinterpret current object as \ref BaseObjectAttributeHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_ToBaseAttribute(ImageMetadataObjectAttributeHandle* handle, BaseObjectAttributeHandle** result);
 
     /**
     * \brief Convert \ref BaseObjectAttributeHandle to \ref ImageMetadataObjectAttributeHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ImageMetadataObjectAttribute_FromBaseAttribute(BaseObjectAttributeHandle* handle, ImageMetadataObjectAttributeHandle** result);
 
@@ -191,11 +204,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref BaseObjectAttributeHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SerializationOverrideObjectAttribute_ToBaseAttribute(SerializationOverrideObjectAttributeHandle* handle, BaseObjectAttributeHandle** result);
 
     /**
     * \brief Convert \ref BaseObjectAttributeHandle to \ref SerializationOverrideObjectAttributeHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SerializationOverrideObjectAttribute_FromBaseAttribute(BaseObjectAttributeHandle* handle, SerializationOverrideObjectAttributeHandle** result);
 

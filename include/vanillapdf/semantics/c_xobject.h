@@ -76,6 +76,7 @@ extern "C"
 
     /**
     * \brief Get derived type of current object.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION XObject_GetXObjectType(XObjectHandle* handle, XObjectType* result);
 
@@ -89,11 +90,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION XObject_ToUnknown(XObjectHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref XObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION XObject_FromUnknown(IUnknownHandle* handle, XObjectHandle** result);
 
@@ -167,11 +170,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref XObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_ToBaseXObject(FormXObjectHandle* handle, XObjectHandle** result);
 
     /**
     * \brief Convert \ref XObjectHandle to \ref FormXObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_FromBaseXObject(XObjectHandle* handle, FormXObjectHandle** result);
 

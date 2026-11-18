@@ -44,7 +44,7 @@ public:
      *
      * Undefined bytes (e.g. 0x00-0x07) map to U+FFFD (replacement character).
      */
-    static char32_t PDFDocEncodingByteToUnicode(uint8_t byte);
+    static char32_t PDFDocEncodingByteToUnicode(uint8_t byte) noexcept;
 
     /**
      * @brief Decode a PDF text string to a UTF-8 std::string.

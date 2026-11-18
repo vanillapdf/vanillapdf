@@ -245,6 +245,7 @@ extern "C"
     * its widget annotation, which usually carries /FT on the parent only,
     * report its type. Ask \ref Field_IsTerminal whether a field is a
     * logical field or a group; the type does not answer that.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle* handle, FieldType* result);
 
@@ -486,34 +487,40 @@ extern "C"
     /**
     * \brief Reinterpret current object as \ref ButtonFieldHandle.
     * \deprecated Use ButtonField_FromField instead
+    * \trivial
     */
     VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Field_ToButton(FieldHandle* handle, ButtonFieldHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref TextFieldHandle.
     * \deprecated Use TextField_FromField instead
+    * \trivial
     */
     VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Field_ToText(FieldHandle* handle, TextFieldHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ChoiceFieldHandle.
     * \deprecated Use ChoiceField_FromField instead
+    * \trivial
     */
     VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Field_ToChoice(FieldHandle* handle, ChoiceFieldHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref SignatureFieldHandle.
     * \deprecated Use SignatureField_FromField instead
+    * \trivial
     */
     VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION Field_ToSignature(FieldHandle* handle, SignatureFieldHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_ToUnknown(FieldHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref FieldHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Field_FromUnknown(IUnknownHandle* handle, FieldHandle** result);
 
@@ -543,11 +550,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref FieldHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_ToField(ButtonFieldHandle* handle, FieldHandle** result);
 
     /**
     * \brief Convert \ref FieldHandle to \ref ButtonFieldHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_FromField(FieldHandle* handle, ButtonFieldHandle** result);
 
@@ -586,11 +595,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref FieldHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TextField_ToField(TextFieldHandle* handle, FieldHandle** result);
 
     /**
     * \brief Convert \ref FieldHandle to \ref TextFieldHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TextField_FromField(FieldHandle* handle, TextFieldHandle** result);
 
@@ -632,11 +643,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref FieldHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_ToField(ChoiceFieldHandle* handle, FieldHandle** result);
 
     /**
     * \brief Convert \ref FieldHandle to \ref ChoiceFieldHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_FromField(FieldHandle* handle, ChoiceFieldHandle** result);
 
@@ -677,11 +690,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref FieldHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_ToField(SignatureFieldHandle* handle, FieldHandle** result);
 
     /**
     * \brief Convert \ref FieldHandle to \ref SignatureFieldHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_FromField(FieldHandle* handle, SignatureFieldHandle** result);
 

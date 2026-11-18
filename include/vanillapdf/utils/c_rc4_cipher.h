@@ -59,6 +59,7 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION RC4Cipher_ToUnknown(
         RC4CipherHandle* handle,
@@ -67,6 +68,7 @@ extern "C"
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref RC4CipherHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION RC4Cipher_FromUnknown(
         IUnknownHandle* handle,

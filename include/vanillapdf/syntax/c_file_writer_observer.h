@@ -108,11 +108,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileWriterObserver_ToUnknown(FileWriterObserverHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref FileWriterObserverHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileWriterObserver_FromUnknown(IUnknownHandle* handle, FileWriterObserverHandle** result);
 

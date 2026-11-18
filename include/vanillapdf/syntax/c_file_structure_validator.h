@@ -113,6 +113,7 @@ extern "C"
 
     /**
     * \brief Get the total number of issues found.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureValidationResult_GetIssueCount(
         FileStructureValidationResultHandle* handle,
@@ -130,6 +131,7 @@ extern "C"
 
     /**
     * \brief Check if the file is structurally valid (no errors).
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureValidationResult_IsValid(
         FileStructureValidationResultHandle* handle,
@@ -138,6 +140,7 @@ extern "C"
 
     /**
     * \brief Get the number of error-severity issues.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureValidationResult_GetErrorCount(
         FileStructureValidationResultHandle* handle,
@@ -146,6 +149,7 @@ extern "C"
 
     /**
     * \brief Get the number of warning-severity issues.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureValidationResult_GetWarningCount(
         FileStructureValidationResultHandle* handle,
@@ -154,6 +158,7 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureValidationResult_ToUnknown(
         FileStructureValidationResultHandle* handle,
@@ -162,6 +167,7 @@ extern "C"
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref FileStructureValidationResultHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureValidationResult_FromUnknown(
         IUnknownHandle* handle,
@@ -185,6 +191,7 @@ extern "C"
 
     /**
     * \brief Get the severity of the issue.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetSeverity(
         FileStructureIssueHandle* handle,
@@ -193,6 +200,7 @@ extern "C"
 
     /**
     * \brief Get the issue code.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetCode(
         FileStructureIssueHandle* handle,
@@ -211,6 +219,7 @@ extern "C"
     * \brief Check whether this issue carries an object context (object and generation number).
     * \note Call this before \ref FileStructureIssue_GetObjectNumber or
     *       \ref FileStructureIssue_GetGenerationNumber. File-level issues have no object context.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_HasObjectContext(
         FileStructureIssueHandle* handle,
@@ -221,6 +230,7 @@ extern "C"
     * \brief Get the object number associated with this issue.
     * \note Returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the issue has no object context.
     *       Check \ref FileStructureIssue_HasObjectContext first.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetObjectNumber(
         FileStructureIssueHandle* handle,
@@ -231,6 +241,7 @@ extern "C"
     * \brief Get the generation number associated with this issue.
     * \note Returns \ref VANILLAPDF_ERROR_OBJECT_MISSING if the issue has no object context.
     *       Check \ref FileStructureIssue_HasObjectContext first.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetGenerationNumber(
         FileStructureIssueHandle* handle,
@@ -239,6 +250,7 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_ToUnknown(
         FileStructureIssueHandle* handle,
@@ -247,6 +259,7 @@ extern "C"
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref FileStructureIssueHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_FromUnknown(
         IUnknownHandle* handle,

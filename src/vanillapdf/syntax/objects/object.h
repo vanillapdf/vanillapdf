@@ -14,7 +14,7 @@
 namespace vanillapdf {
 namespace syntax {
 
-class Object : public Versionable, public IWeakReferenceable<Object> {
+class Object : public Versionable {
 public:
     enum class Type {
         Undefined = 0,
@@ -89,6 +89,17 @@ public:
 
     bool Identity(ObjectPtr other) const;
 
+    // Same interface as IWeakReferenceable<Object>, which Object used to derive from
+    WeakReference<Object> GetWeakReference() {
+
+        // Created on the first call and shared by every weak reference to this object
+        auto counter = m_weak_reference_counter.GetCounter();
+
+        // The counter is deactivated when this object is destroyed,
+        // and every weak reference created here then reports inactive
+        return WeakReference<Object>(this, counter);
+    }
+
     virtual size_t Hash() const = 0;
     virtual bool Equals(ObjectPtr other) const = 0;
     virtual Object* Clone(void) const = 0;
@@ -106,6 +117,10 @@ protected:
     bool m_encryption_exempted = false;
 
     AttributeListPtr m_attributes;
+
+private:
+    // A member instead of the IWeakReferenceable base, see WeakReferenceCounterHolder
+    WeakReferenceCounterHolder m_weak_reference_counter;
 };
 
 class ObjectPtr : public Deferred<Object> {

@@ -86,11 +86,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TransparencyGroup_ToUnknown(TransparencyGroupHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref TransparencyGroupHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TransparencyGroup_FromUnknown(IUnknownHandle* handle, TransparencyGroupHandle** result);
 
