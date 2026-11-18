@@ -26,7 +26,7 @@ jobs:
           dnf install -y epel-release dnf-plugins-core
           dnf config-manager --set-enabled crb
           dnf install -y \
-            git gcc gcc-c++ cmake ninja-build rpm-build \
+            git gcc gcc-c++ cmake ninja-build rpm-build python3 \
             openssl-devel libjpeg-turbo-devel openjpeg2-devel zlib-devel \
             spdlog-devel nlohmann-json-devel gtest-devel
 
@@ -60,6 +60,9 @@ jobs:
 
       - name: Package
         run: cd build && cpack -G RPM
+
+      - name: Verify package contents
+        run: python3 scripts/verify_linux_packages.py --format rpm --directory build
 
       - name: Upload Artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
