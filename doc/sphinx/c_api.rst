@@ -356,7 +356,7 @@ Logging
 Logging is on by default: the library writes its log to standard output at the
 ``Info`` level, which includes errors, warnings and informational messages,
 such as each file being opened and closed. Set the level with
-:cpp:func:`Logging_SetSeverity`, from the least to the most verbose: ``Off``,
+:cpp:func:`Logging_SetSeverity <Logging::Logging_SetSeverity>`, from the least to the most verbose: ``Off``,
 ``Critical``, ``Error``, ``Warning``, ``Info``, ``Debug``, ``Trace``.
 
 .. code-block:: c
@@ -365,8 +365,8 @@ such as each file being opened and closed. Set the level with
    Logging_SetSeverity(LoggingSeverity_Debug);   /* more detail */
 
 To send the log elsewhere, write it to size-limited files with
-:cpp:func:`Logging_SetRotatingFileLogger`, or pass each entry to your own
-logging with :cpp:func:`Logging_SetCallbackLogger`. The text passed to the
+:cpp:func:`Logging_SetRotatingFileLogger <Logging::Logging_SetRotatingFileLogger>`, or pass each entry to your own
+logging with :cpp:func:`Logging_SetCallbackLogger <Logging::Logging_SetCallbackLogger>`. The text passed to the
 callback is not terminated by a NUL character, so use its length:
 
 .. code-block:: c
@@ -383,8 +383,8 @@ callback is not terminated by a NUL character, so use its length:
    Logging_SetCallbackLogger(on_log, on_flush, NULL);
 
 Each of the two loggers can be set once per process; a second call fails.
-:cpp:func:`Logging_SetPattern` changes the format of each entry.
-:cpp:func:`Logging_Shutdown` flushes and closes the log, and must be the last
+:cpp:func:`Logging_SetPattern <Logging::Logging_SetPattern>` changes the format of each entry.
+:cpp:func:`Logging_Shutdown <Logging::Logging_Shutdown>` flushes and closes the log, and must be the last
 call: any later library call that writes to the log crashes.
 
 Debugger visualizers

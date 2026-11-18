@@ -1,7 +1,7 @@
 Building from source
 ====================
 
-This page explains how to clone, configure, build, test, and troubleshoot
+This page explains how to clone, configure, build, package, and troubleshoot
 Vanilla.PDF from source. For pre-built installation methods see
 :doc:`installation`.
 
@@ -96,7 +96,7 @@ Choose a preset matching your toolchain:
 
    cmake --preset windows-x64-msvc-18
    cmake --build --preset windows-x64-msvc-18
-   ctest --preset windows-x64-msvc-18
+   ctest --preset windows-x64-msvc-18 --build-config Debug
 
 **Windows build notes:**
 

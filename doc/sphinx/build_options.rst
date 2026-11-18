@@ -30,22 +30,25 @@ are handled automatically — no manual installation required.
 Using your own vcpkg instance
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You may manage vcpkg yourself and install the required packages manually:
+By default the build uses the vcpkg submodule in ``external/vcpkg``. To use
+your own vcpkg instead, clone and bootstrap it:
 
 .. code-block:: bash
 
    git clone https://github.com/microsoft/vcpkg.git
    cd vcpkg
    ./bootstrap-vcpkg.sh
-   ./vcpkg install openssl libjpeg-turbo
 
-Configure Vanilla.PDF with the vcpkg toolchain:
+Then point the build at its toolchain file:
 
 .. code-block:: bash
 
    cmake -S . -B build/vcpkg \
      -DCMAKE_TOOLCHAIN_FILE=</path/to/vcpkg>/scripts/buildsystems/vcpkg.cmake
    cmake --build build/vcpkg
+
+The configure step generates ``vcpkg.json`` from the enabled features, and
+vcpkg installs the dependencies it lists into the build directory.
 
 Using system dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -92,7 +95,7 @@ Build configuration options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - ``-DVANILLAPDF_INTERNAL_VCPKG=ON/OFF`` — Enable internal vcpkg dependency management (default: ON)
-- ``-DVANILLAPDF_ENABLE_PACKAGING=ON/OFF`` — Enable packaging features like CPack (auto-detected)
+- ``-DVANILLAPDF_ENABLE_PACKAGING=ON/OFF`` — Enable packaging features like CPack (default: OFF)
 - ``-DVANILLAPDF_ENABLE_TESTS=ON/OFF`` — Build and run test scenarios (default: OFF)
 - ``-DVANILLAPDF_ENABLE_BENCHMARK=ON/OFF`` — Include benchmarking project (default: OFF)
 - ``-DVANILLAPDF_USE_STATIC_CRT=ON/OFF`` — Use static MSVC runtime (/MT) instead of dynamic (/MD) (default: OFF)
@@ -120,7 +123,11 @@ External dependency options
 - ``-DVANILLAPDF_EXTERNAL_OPENJPEG=ON/OFF`` — Use system OpenJPEG instead of vcpkg (default: OFF)
 - ``-DVANILLAPDF_EXTERNAL_ZLIB=ON/OFF`` — Use system zlib instead of vcpkg (default: OFF)
 - ``-DVANILLAPDF_EXTERNAL_SPDLOG=ON/OFF`` — Use system spdlog instead of vcpkg (default: OFF)
+- ``-DVANILLAPDF_EXTERNAL_FMT=ON/OFF`` — Use system fmt instead of vcpkg (default: OFF)
 - ``-DVANILLAPDF_EXTERNAL_NLOHMANN_JSON=ON/OFF`` — Use system nlohmann-json instead of vcpkg (default: OFF)
+- ``-DVANILLAPDF_EXTERNAL_MIMALLOC=ON/OFF`` — Use system mimalloc instead of vcpkg (default: OFF)
+- ``-DVANILLAPDF_EXTERNAL_GTEST=ON/OFF`` — Use system GoogleTest instead of vcpkg (default: OFF)
+- ``-DVANILLAPDF_EXTERNAL_BENCHMARK=ON/OFF`` — Use system Google Benchmark instead of vcpkg (default: OFF)
 
 OpenSSL legacy provider
 -----------------------
