@@ -27,8 +27,10 @@ static error_type verify_signature(DocumentHandle* document, DigitalSignatureHan
     CHECK(SignatureVerificationResult_GetStatus(result, &status));
     CHECK(SignatureVerificationResult_IsDocumentIntact(result, &document_intact));
 
-    /* The signer is unknown when the certificate has no common name, or the
-       signature is too damaged to identify it */
+    /*
+    * The signer is unknown when the certificate has no common name, or the
+    * signature is too damaged to identify it.
+    */
     rc = SignatureVerificationResult_GetSignerCommonName(result, &signer);
     if (rc == VANILLAPDF_ERROR_SUCCESS) {
         CHECK(Buffer_GetData(signer, &signer_name, &signer_name_size));

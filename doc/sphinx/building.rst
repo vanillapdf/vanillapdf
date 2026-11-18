@@ -11,26 +11,8 @@ Build requirements
 **CMake** (minimum version 3.28) —
 Download from https://cmake.org/download/
 
-**Supported compilers:**
-
-.. list-table::
-   :header-rows: 1
-
-   * - Platform
-     - Compilers
-     - Architectures
-   * - Windows
-     - Visual Studio 2026, 2022
-     - x86, x64, ARM64
-   * - Linux
-     - GCC 8.1+, Clang 10+
-     - x64, ARM64, ARM
-   * - macOS
-     - AppleClang 15+ (Xcode 15)
-     - x64, ARM64
-   * - Android
-     - NDK toolchain
-     - arm64, armv7, x86, x86_64
+**A C++17 compiler** — see :ref:`supported-platforms` for the compilers
+and platforms tested by the CI.
 
 Clone and setup
 ---------------
@@ -164,14 +146,22 @@ Dependency management
 Vanilla.PDF uses **vcpkg** for automatic dependency management. Dependencies
 are handled automatically — no manual installation required.
 
-**Automatic dependencies:**
+**Always installed** (the four feature libraries can be turned off with the
+:ref:`feature options <feature-options>`):
 
 - OpenSSL (encryption and digital signatures)
-- libjpeg-turbo (JPEG image support)
-- OpenJPEG (JPEG2000 support)
-- zlib (compression)
-- spdlog (logging)
-- nlohmann-json (configuration)
+- libjpeg-turbo (JPEG images)
+- OpenJPEG (JPEG 2000 images)
+- zlib (Flate compression)
+- spdlog and fmt (logging)
+
+**Installed only when the option is on:**
+
+- mimalloc — ``VANILLAPDF_ENABLE_MIMALLOC``
+- nlohmann-json — ``VANILLAPDF_ENABLE_LICENSING``
+- CLI11 — ``VANILLAPDF_ENABLE_TOOLS``
+- GoogleTest — ``VANILLAPDF_ENABLE_TESTS``
+- Google Benchmark — ``VANILLAPDF_ENABLE_BENCHMARK``
 
 Using your own vcpkg instance
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -214,7 +204,7 @@ the rest:
      -DVANILLAPDF_EXTERNAL_JPEG=ON
    cmake --build build
 
-Options exist for OpenSSL, libjpeg-turbo, openjpeg, zlib, spdlog,
+Options exist for OpenSSL, libjpeg-turbo, openjpeg, zlib, spdlog, fmt,
 nlohmann-json, mimalloc, GTest, and Google Benchmark. When ``VANILLAPDF_EXTERNAL_*``
 options are set, the corresponding packages will not be installed by vcpkg and
 CMake will search for them on your system instead.
@@ -377,22 +367,26 @@ The library loads the legacy provider by default. Two switches control it:
 
 - **At build time**, ``-DVANILLAPDF_ENABLE_OPENSSL_LEGACY_PROVIDER=OFF`` leaves
   the provider out entirely, when building the library from source.
-- **At runtime**, the legacy algorithms policy of ``CryptoSettings``, applied
-  with :cpp:func:`CryptoUtils_Initialize <CryptoUtils::CryptoUtils_Initialize>` before any other call:
+- **At runtime**, the legacy algorithms policy of :cpp:class:`CryptoSettingsHandle`, applied
+  with :cpp:func:`CryptoUtils_Initialize <CryptoUtils::CryptoUtils_Initialize>` before any other call.
+  The policies are the values of :cpp:enum:`LegacyAlgorithmsPolicyType`. When the
+  provider cannot be loaded under ``Required``, the call fails with
+  ``VANILLAPDF_ERROR_NOT_SUPPORTED``.
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
 
    * - Policy
      - Legacy provider
      - When it cannot be loaded
-   * - ``LegacyAlgorithmsPolicy_Optional`` (default)
+   * - :cpp:enumerator:`Optional <LegacyAlgorithmsPolicyType::LegacyAlgorithmsPolicy_Optional>` (default)
      - Loaded
      - A warning is logged and the library continues without it
-   * - ``LegacyAlgorithmsPolicy_Required``
+   * - :cpp:enumerator:`Required <LegacyAlgorithmsPolicyType::LegacyAlgorithmsPolicy_Required>`
      - Loaded
-     - :cpp:func:`CryptoUtils_Initialize <CryptoUtils::CryptoUtils_Initialize>` fails with ``VANILLAPDF_ERROR_NOT_SUPPORTED``
-   * - ``LegacyAlgorithmsPolicy_Disabled``
+     - The initialization fails
+   * - :cpp:enumerator:`Disabled <LegacyAlgorithmsPolicyType::LegacyAlgorithmsPolicy_Disabled>`
      - Not loaded
      - \-
 

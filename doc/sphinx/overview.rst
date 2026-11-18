@@ -7,6 +7,10 @@ languages through a C foreign function interface (FFI). It is licensed
 under the permissive Apache 2.0 license, suitable for both private and
 commercial use.
 
+**Using .NET?** See `vanillapdf.net <https://github.com/vanillapdf/vanillapdf.net>`_,
+the managed .NET wrapper with its own NuGet package and samples. This
+documentation covers the native C API.
+
 - **Create & modify** — pages, text, images, vector graphics, form fields
 - **Sign & verify** — CMS/PKCS#7 signatures with certificate chain validation
 - **Encrypt & decrypt** — AES or RC4, with passwords or certificates
@@ -19,8 +23,8 @@ Where to go next
 
 **Getting started** — install the library and create your first PDF:
 
-- :doc:`quickstart` — Create a PDF document in a few lines of C code
 - :doc:`installation` — All package manager options with copy-paste commands
+- :doc:`quickstart` — Build and run a first program, then create a PDF document
 
 **Developer guide** — build from source and understand the internals:
 
@@ -66,6 +70,7 @@ Functionality
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 30 70
 
    * - Operation
@@ -124,6 +129,7 @@ The library is organized into three layers:
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 20 80
 
    * - Layer
@@ -151,6 +157,7 @@ Vanilla.PDF follows `Semantic Versioning <https://semver.org/>`_:
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 20 80
 
    * - Component
@@ -181,11 +188,13 @@ Nightly builds use a patch override (999) and a build suffix
 Optional dependencies
 ---------------------
 
-All dependencies are managed automatically via vcpkg. Each can be disabled or
-replaced with a system package:
+All dependencies are managed automatically via vcpkg. Each can be replaced
+with a system package, and the first four can also be turned off with the
+:ref:`feature options <feature-options>`:
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 25 55 20
 
    * - Library
@@ -206,64 +215,97 @@ replaced with a system package:
    * - spdlog
      - Diagnostic logging
      - ``EXTERNAL_SPDLOG``
+   * - fmt
+     - String formatting
+     - ``EXTERNAL_FMT``
    * - nlohmann-json
-     - Configuration file parsing
+     - License metadata (optional)
      - ``EXTERNAL_NLOHMANN_JSON``
+   * - mimalloc
+     - Faster allocator (optional)
+     - ``EXTERNAL_MIMALLOC``
+
+nlohmann-json and mimalloc are only used when ``VANILLAPDF_ENABLE_LICENSING`` or
+``VANILLAPDF_ENABLE_MIMALLOC`` is on; both are off by default.
+
+.. _supported-platforms:
 
 Supported platforms
 -------------------
 
+Every platform below is built and tested by the nightly CI:
+
 .. list-table::
    :header-rows: 1
-   :widths: 20 40 40
+   :class: wrap
+   :widths: 15 30 30 25
 
    * - Platform
+     - Versions
      - Compilers
      - Architectures
    * - Windows
-     - Visual Studio 2026 (MSVC 18.x), Visual Studio 2022 (MSVC 17.x)
+     - Windows Server 2022, 2025; Windows 11
+     - Visual Studio 2026, 2022
      - x86, x64, ARM64
-   * - Linux
-     - GCC 8.1+, Clang 10+
-     - x64, ARM64, ARM
+   * - Ubuntu
+     - 22.04, 24.04, 26.04
+     - GCC 11, 13, 15; Clang 21
+     - x64, ARM64
+   * - Rocky Linux
+     - 8, 9, 10
+     - GCC 8, 11, 14
+     - x64, ARM64
+   * - Fedora
+     - 44, 45
+     - GCC 16
+     - x64, ARM64
    * - macOS
-     - AppleClang 15+ (Xcode 15)
+     - 15, 26, 27
+     - AppleClang 17+ (Xcode 16.4+)
      - x64, ARM64
    * - Android
-     - NDK toolchain
-     - arm64-v8a, armeabi-v7a, x86, x86_64
+     - API level 28, 36
+     - NDK r28+
+     - x86_64
+
+- The oldest compiler tested is GCC 8.5, on Rocky Linux 8.
+- Clang is tested on Ubuntu 26.04 x64 only, by the fuzzing workflow.
+- Ubuntu 22.04 is tested on x64 only.
+- macOS 27 is tested on ARM64 only, because it does not run on Intel Macs.
+- Windows ARM64 is tested on Windows 11.
+- The library targets Android API level 28 and later. Presets for arm64-v8a,
+  armeabi-v7a and x86 are available, but the CI builds and tests x86_64 only.
 
 Package availability
 --------------------
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 25 40 35
 
    * - Format
      - Install command
      - Notes
-   * - vcpkg
+   * - :ref:`vcpkg <install-vcpkg>`
      - ``vcpkg install vanillapdf``
-     - Recommended; pre-built binaries
-   * - FetchContent
-     - ``FetchContent_Declare(vanillapdf ...)``
+     - Recommended
+   * - :ref:`FetchContent <install-fetchcontent>`
+     - ``FetchContent_Declare``
      - No external tools; caller manages dependencies
-   * - NuGet
-     - ``dotnet add package vanillapdf.net``
-     - .NET wrapper with native runtime; see the
-       `vanillapdf.net repository <https://github.com/vanillapdf/vanillapdf.net>`_
-   * - Debian
+   * - :doc:`Debian <packaging>`
      - ``dpkg -i vanillapdf_*.deb``
-     - Built via :doc:`packaging`
-   * - RPM
+     -
+   * - :doc:`RPM <packaging>`
      - ``rpm -i vanillapdf_*.rpm``
-     - Built via :doc:`packaging`
-   * - Source
+     -
+   * - :doc:`Source <building>`
      - ``cmake --preset <platform>``
-     - See :doc:`building`
+     -
 
-Conan Center and Homebrew packages are in progress and not yet available; see
+See :doc:`installation` for the full instructions of each method. Conan
+Center and Homebrew packages are in progress and not yet available; see
 :ref:`upcoming-packages`.
 
 External resources

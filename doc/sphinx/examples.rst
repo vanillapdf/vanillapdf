@@ -34,9 +34,22 @@ under a new name.
 Sign a document
 ---------------
 
-Signing a document with a key from a PKCS#12 file is shown in the
-:ref:`quickstart <quickstart-signing>`; the program is in
-`examples/signing/ <https://github.com/vanillapdf/vanillapdf/tree/main/examples/signing>`_.
+Sign an existing document with a key from a PKCS#12 file (``.p12`` or
+``.pfx``), which holds the signer's certificate and private key. The program
+loads the key with :cpp:func:`PKCS12Key_CreateFromFile <PKCS12KeyHandle::PKCS12Key_CreateFromFile>`,
+describes the signature with :cpp:class:`DocumentSignatureSettingsHandle` and
+writes the signed copy to a new file with :cpp:func:`Document_Sign <DocumentHandle::Document_Sign>`.
+Signing requires a library built with the encryption feature, which is on by
+default.
+
+.. literalinclude:: ../../examples/signing/main.c
+   :language: c
+
+Run it with the document, the output file, the key file and its password:
+
+.. code-block:: bash
+
+   ./build/signing input.pdf signed.pdf signer.p12 password
 
 Verify signatures
 -----------------

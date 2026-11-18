@@ -1,0 +1,7 @@
+/* The theme keeps table cells on one line, so a long cell makes the
+   whole table scroll sideways. Tables with the "wrap" class wrap the
+   text instead. */
+.wy-table-responsive table.wrap td,
+.wy-table-responsive table.wrap th {
+    white-space: normal;
+}

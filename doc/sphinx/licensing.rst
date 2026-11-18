@@ -35,6 +35,7 @@ under its own license, which applies to binaries that include it. The
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 25 35 40
 
    * - Library

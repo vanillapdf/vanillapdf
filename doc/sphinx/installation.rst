@@ -4,6 +4,8 @@ Installation
 This page covers how to add Vanilla.PDF to your project as a pre-built
 dependency. To build from source instead, see :doc:`building`.
 
+.. _install-vcpkg:
+
 vcpkg (recommended)
 -------------------
 
@@ -26,6 +28,8 @@ The port builds the library with every feature: encryption and signing
 compression (zlib). It has no vcpkg features to leave them out. To build
 without one of these dependencies, build from source with the
 :ref:`feature options <feature-options>`.
+
+.. _install-fetchcontent:
 
 CMake FetchContent
 ------------------
@@ -79,22 +83,6 @@ Run it:
    cmake --build --preset windows-x64-debug
    ctest --preset windows-x64-debug --output-on-failure
 
-NuGet (.NET interop)
---------------------
-
-For .NET projects, install the NuGet package:
-
-.. code-block:: bash
-
-   dotnet add package vanillapdf.net
-
-The correct native runtime is included automatically based on your target
-platform and RID. No manual DLL management is required.
-
-The ``vanillapdf.net`` package is a managed .NET wrapper around the C API. It
-is developed in its own repository, `vanillapdf.net
-<https://github.com/vanillapdf/vanillapdf.net>`_.
-
 Linking with CMake
 ------------------
 
@@ -110,32 +98,8 @@ Regardless of installation method, use ``find_package`` in your CMakeLists.txt:
    add_executable(myapp main.c)
    target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 
-Verify it works with a minimal ``main.c``:
-
-.. code-block:: c
-
-   #include <stdio.h>
-   #include <vanillapdf/c_vanillapdf_api.h>
-
-   int main(void) {
-       DocumentHandle* doc = NULL;
-       error_type rc = Document_Create("test.pdf", &doc);
-       if (rc != VANILLAPDF_ERROR_SUCCESS || doc == NULL) {
-           printf("Failed to create document\n");
-           return 1;
-       }
-       Document_Release(doc);
-       printf("vanillapdf is working.\n");
-       return 0;
-   }
-
-Build and run:
-
-.. code-block:: bash
-
-   cmake -S . -B build
-   cmake --build build
-   ./build/myapp
+To check the installation, build and run the first program of the
+:doc:`quickstart`.
 
 For building the library from source (cloning, presets, CMake options, tests,
 and troubleshooting), see :doc:`building`.

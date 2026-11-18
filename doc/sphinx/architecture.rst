@@ -17,6 +17,7 @@ sits alongside all three and maps internal C++ objects to opaque handles.
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 18 30 52
 
    * - Layer
@@ -278,6 +279,7 @@ customize behavior without modifying the library itself.
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 35 65
 
    * - Interface
@@ -397,6 +399,7 @@ Dependencies
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 25 75
 
    * - Library
@@ -411,8 +414,15 @@ Dependencies
      - JPEG2000 image support
    * - `spdlog <https://github.com/gabime/spdlog>`_
      - Logging
+   * - `fmt <https://fmt.dev/>`_
+     - String formatting
    * - `nlohmann-json <https://github.com/nlohmann/json>`_
-     - Configuration parsing
+     - License metadata (optional)
+   * - `mimalloc <https://github.com/microsoft/mimalloc>`_
+     - Allocator of the reference counted objects (optional)
+
+nlohmann-json and mimalloc are only used when ``VANILLAPDF_ENABLE_LICENSING`` or
+``VANILLAPDF_ENABLE_MIMALLOC`` is on; both are off by default.
 
 All dependencies are managed automatically via vcpkg. See :doc:`building` for
 details on using system packages instead.

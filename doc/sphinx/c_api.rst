@@ -35,6 +35,7 @@ Common handle types:
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 35 65
 
    * - Handle

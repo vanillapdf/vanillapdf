@@ -23,8 +23,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    /* The user password opens the document, the owner password also lifts
-       the access restrictions */
+    /*
+    * The user password opens the document, the owner password also lifts
+    * the access restrictions.
+    */
     CHECK(Buffer_CreateFromData(argv[3], strlen(argv[3]), &user_password));
     CHECK(Buffer_CreateFromData(argv[4], strlen(argv[4]), &owner_password));
 
@@ -34,9 +36,11 @@ int main(int argc, char* argv[]) {
     CHECK(DocumentEncryptionSettings_SetUserPassword(settings, user_password));
     CHECK(DocumentEncryptionSettings_SetOwnerPassword(settings, owner_password));
 
-    /* Readers opening the document with the user password may only print it.
-       PrintFaithful allows printing at full quality, together with PrintDegraded,
-       which allows printing at all. */
+    /*
+    * Readers opening the document with the user password may only print it.
+    * PrintFaithful allows printing at full quality, together with PrintDegraded,
+    * which allows printing at all.
+    */
     CHECK(DocumentEncryptionSettings_SetUserAccessPermissions(settings,
         UserAccessPermissionFlag_PrintDegraded | UserAccessPermissionFlag_PrintFaithful));
 

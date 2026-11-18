@@ -1,104 +1,72 @@
 Quickstart
 ==========
 
-Create your first PDF document in a few lines of C code.
+Build and run a first program with Vanilla.PDF, then extend it to create a PDF
+document.
 
 Prerequisites
 -------------
 
 Install Vanilla.PDF using one of the methods in the
-:doc:`installation guide <installation>`. The simplest option:
+:doc:`installation guide <installation>`.
 
-.. code-block:: bash
+Your first program
+------------------
 
-   vcpkg install vanillapdf
-
-Create a PDF document
----------------------
-
-The following example creates a PDF document with a single blank page and
-writes it to disk. Both files are in `examples/quickstart/
+The following program prints the version of the library it runs with. It is in
+`examples/quickstart/
 <https://github.com/vanillapdf/vanillapdf/tree/main/examples/quickstart>`_,
-and the library's test suite builds and runs the program.
+and the library's test suite builds and runs it.
 
 .. literalinclude:: ../../examples/quickstart/main.c
    :language: c
 
-**Key patterns to notice:**
-
-- **Single header** — ``<vanillapdf/c_vanillapdf_api.h>`` includes the entire C API.
-- **Handle-based** — Every object is an opaque pointer (:cpp:class:`DocumentHandle* <DocumentHandle>`,
-  :cpp:class:`CatalogHandle* <CatalogHandle>`, etc.). The internal C++ implementation is never exposed.
-- **Error codes** — Every function returns ``error_type``. Check against
-  ``VANILLAPDF_ERROR_SUCCESS``; the ``CHECK`` macro jumps to the cleanup on
-  the first failure, where :cpp:func:`Errors_GetLastErrorMessage <Errors::Errors_GetLastErrorMessage>` explains it.
-- **Manual cleanup** — Each handle obtained from the library must be released.
-  Initialize to ``NULL`` and release in reverse order.
+``<vanillapdf/c_vanillapdf_api.h>`` includes the entire C API. Every function
+returns an ``error_type``, which is ``VANILLAPDF_ERROR_SUCCESS`` when the call
+succeeded.
 
 Build and run
 -------------
 
-Create a ``CMakeLists.txt``:
+Create a ``CMakeLists.txt`` next to ``main.c``:
 
 .. literalinclude:: ../../examples/quickstart/CMakeLists.txt
    :language: cmake
 
-Build:
+Build and run the program:
 
 .. code-block:: bash
+   :substitutions:
 
    cmake -S . -B build
    cmake --build build
-   ./build/quickstart    # creates output.pdf
+   ./build/quickstart    # prints Vanilla.PDF |release|
 
-.. _quickstart-signing:
-
-Sign the document
------------------
-
-The next program signs an existing document with a key from a PKCS#12 file
-(``.p12`` or ``.pfx``), which holds the signer's certificate and private key.
-It loads the key with :cpp:func:`PKCS12Key_CreateFromFile <PKCS12KeyHandle::PKCS12Key_CreateFromFile>`,
-describes the signature with :cpp:class:`DocumentSignatureSettingsHandle` and
-writes the signed copy with :cpp:func:`Document_Sign <DocumentHandle::Document_Sign>`.
-It is in `examples/signing/
-<https://github.com/vanillapdf/vanillapdf/tree/main/examples/signing>`_ and
-the test suite runs it as well.
-
-.. literalinclude:: ../../examples/signing/main.c
-   :language: c
-
-Run it with the document, the output file, the key file and its password:
-
-.. code-block:: bash
-
-   ./build/signing input.pdf signed.pdf signer.p12 password
-
-Signing requires a library built with the encryption feature, which is on by
-default. Signatures are checked with :cpp:func:`DigitalSignatureExtensions_Verify`;
-see :doc:`signature_verification` for trust stores, settings and result handling.
-
-Query library version
+Create a PDF document
 ---------------------
 
-To check which version of the library a program runs with:
+The next program creates a PDF document with a single blank page and writes it
+to ``output.pdf``. It is in `examples/create/
+<https://github.com/vanillapdf/vanillapdf/tree/main/examples/create>`_, and the
+test suite runs it as well. Build it with the same ``CMakeLists.txt``, with
+``create`` in place of ``quickstart``.
 
-.. code-block:: c
+.. literalinclude:: ../../examples/create/main.c
+   :language: c
 
-   integer_type major = 0;
-   integer_type minor = 0;
-   integer_type patch = 0;
+**Key patterns to notice:**
 
-   LibraryInfo_GetVersionMajor(&major);
-   LibraryInfo_GetVersionMinor(&minor);
-   LibraryInfo_GetVersionPatch(&patch);
-
-   printf("Vanilla.PDF %d.%d.%d\n", (int) major, (int) minor, (int) patch);
+- **Handle-based** — Every object is an opaque pointer (:cpp:class:`DocumentHandle* <DocumentHandle>`,
+  :cpp:class:`CatalogHandle* <CatalogHandle>`, etc.). The internal C++ implementation is never exposed.
+- **Error codes** — The ``CHECK`` macro jumps to the cleanup on the first
+  failure, where :cpp:func:`Errors_GetLastErrorMessage <Errors::Errors_GetLastErrorMessage>` explains it.
+- **Manual cleanup** — Each handle obtained from the library must be released.
+  Initialize to ``NULL`` and release in reverse order.
 
 Next steps
 ----------
 
 - :doc:`c_api` — Handle system, memory management, error handling, debugging
-- :doc:`examples` — Inspecting, merging, verifying, encrypting and validating documents
+- :doc:`examples` — Inspecting, merging, signing, verifying, encrypting and validating documents
 - :doc:`signature_verification` — Verify digital signatures with trust stores
 - :doc:`pdf_format` — Understand PDF syntax: objects, XRef tables, trailers

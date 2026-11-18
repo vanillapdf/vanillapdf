@@ -23,6 +23,7 @@ including modern EdDSA curves rarely supported by other PDF libraries:
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 25 25 50
 
    * - Key Type
@@ -59,6 +60,7 @@ The verification result includes a status code indicating the outcome:
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 30 70
 
    * - Status

@@ -6,11 +6,13 @@
 
 | Distribution | CI & Quality | Security |
 |:---:|:---:|:---:|
-| [![NuGet](https://img.shields.io/nuget/v/vanillapdf?color=blue)](https://www.nuget.org/packages/vanillapdf) [![Downloads](https://img.shields.io/nuget/dt/vanillapdf?color=blue)](https://www.nuget.org/packages/vanillapdf) [![Docs](https://readthedocs.org/projects/vanillapdf/badge/?version=latest)](https://vanillapdf.readthedocs.io/) [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE.txt) | [![Build](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml) [![Coverage](https://codecov.io/gh/vanillapdf/vanillapdf/branch/main/graph/badge.svg?token=1UO4W5XGTL)](https://codecov.io/gh/vanillapdf/vanillapdf) [![Fuzzing](https://github.com/vanillapdf/vanillapdf/actions/workflows/fuzzing.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/fuzzing.yml) [![CodeQL](https://github.com/vanillapdf/vanillapdf/actions/workflows/codeql.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/codeql.yml) [![Sanitizers](https://github.com/vanillapdf/vanillapdf/actions/workflows/sanitizers.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/sanitizers.yml) | [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/vanillapdf/vanillapdf/badge)](https://scorecard.dev/viewer/?uri=github.com/vanillapdf/vanillapdf) [![SLSA 2](https://slsa.dev/images/gh-badge-level2.svg)](https://slsa.dev) |
+| [![vcpkg](https://img.shields.io/vcpkg/v/vanillapdf?color=blue)](https://vcpkg.io/en/package/vanillapdf) [![Docs](https://readthedocs.org/projects/vanillapdf/badge/?version=latest)](https://vanillapdf.readthedocs.io/) [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE.txt) | [![Build](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/nightly-check.yml) [![Coverage](https://codecov.io/gh/vanillapdf/vanillapdf/branch/main/graph/badge.svg?token=1UO4W5XGTL)](https://codecov.io/gh/vanillapdf/vanillapdf) [![Fuzzing](https://github.com/vanillapdf/vanillapdf/actions/workflows/fuzzing.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/fuzzing.yml) [![CodeQL](https://github.com/vanillapdf/vanillapdf/actions/workflows/codeql.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/codeql.yml) [![Sanitizers](https://github.com/vanillapdf/vanillapdf/actions/workflows/sanitizers.yml/badge.svg)](https://github.com/vanillapdf/vanillapdf/actions/workflows/sanitizers.yml) | [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/vanillapdf/vanillapdf/badge)](https://scorecard.dev/viewer/?uri=github.com/vanillapdf/vanillapdf) [![SLSA 2](https://slsa.dev/images/gh-badge-level2.svg)](https://slsa.dev) |
 
 </div>
 
 **Vanilla.PDF** is an open-source C++17 library with a plain C API, usable across multiple languages through a C foreign function interface (FFI). It is licensed under the permissive Apache 2.0 license, suitable for both private and commercial use.
+
+> **Using .NET?** See [vanillapdf.net](https://github.com/vanillapdf/vanillapdf.net), the managed .NET wrapper with its own NuGet package and samples. This repository covers the native C API.
 
 - 📄 **Create & modify** — pages, text, images, vector graphics, form fields
 - 🔏 **Sign & verify** — CMS/PKCS#7 signatures with certificate chain validation
@@ -40,7 +42,6 @@ target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
 
 ### Other methods
 
-- **NuGet** (.NET wrapper) — `dotnet add package vanillapdf.net`, see the [vanillapdf.net](https://github.com/vanillapdf/vanillapdf.net) repository
 - **Build from source** — clone with submodules, then configure with a CMake preset
 
 🚧 **In progress:** Conan Center and Homebrew packages are not published yet.
@@ -75,16 +76,22 @@ int main(void) {
 }
 ```
 
-See the [quickstart guide](https://vanillapdf.readthedocs.io/en/latest/quickstart.html) for the full example with error handling and the `CMakeLists.txt` to build it. The source is in [`examples/quickstart/`](examples/quickstart/), which the test suite builds and runs.
+See the [quickstart guide](https://vanillapdf.readthedocs.io/en/latest/quickstart.html) for the full example with error handling and the `CMakeLists.txt` to build it. The source is in [`examples/create/`](examples/create/), which the test suite builds and runs.
 
 ## Platforms
 
-| Platform | Compilers | Architectures |
-|----------|-----------|---------------|
-| Windows | Visual Studio 2026, 2022 | x86, x64, ARM64 |
-| Linux | GCC 8.1+, Clang 10+ | x64, ARM64, ARM |
-| macOS | AppleClang 15+ (Xcode 15) | x64, ARM64 |
-| Android | NDK toolchain | arm64, armv7, x86, x86_64 |
+Every platform below is built and tested by the nightly CI:
+
+| Platform | Versions | Compilers | Architectures |
+|----------|----------|-----------|---------------|
+| Windows | Windows Server 2022, 2025; Windows 11 | Visual Studio 2026, 2022 | x86, x64, ARM64 |
+| Ubuntu | 22.04, 24.04, 26.04 | GCC 11, 13, 15; Clang 21 | x64, ARM64 |
+| Rocky Linux | 8, 9, 10 | GCC 8, 11, 14 | x64, ARM64 |
+| Fedora | 44, 45 | GCC 16 | x64, ARM64 |
+| macOS | 15, 26, 27 | AppleClang 17+ (Xcode 16.4+) | x64, ARM64 |
+| Android | API level 28, 36 | NDK r28+ | x86_64 |
+
+See [Supported platforms](https://vanillapdf.readthedocs.io/en/latest/overview.html#supported-platforms) for the exceptions per architecture.
 
 ## Features
 
@@ -132,7 +139,7 @@ Full documentation is hosted on **[Read the Docs](https://vanillapdf.readthedocs
 |-------|-------------|
 | [Overview](https://vanillapdf.readthedocs.io/en/latest/overview.html) | Design philosophy, scope, and project goals |
 | [Quickstart](https://vanillapdf.readthedocs.io/en/latest/quickstart.html) | Create your first PDF document step by step |
-| [Installation](https://vanillapdf.readthedocs.io/en/latest/installation.html) | vcpkg, FetchContent, NuGet |
+| [Installation](https://vanillapdf.readthedocs.io/en/latest/installation.html) | vcpkg, FetchContent |
 | [C API Guide](https://vanillapdf.readthedocs.io/en/latest/c_api.html) | Handles, memory management, error handling |
 | [Architecture](https://vanillapdf.readthedocs.io/en/latest/architecture.html) | Three-layer design, object model, memory model, thread safety |
 | [Signature Verification](https://vanillapdf.readthedocs.io/en/latest/signature_verification.html) | Trust stores, chain validation, weak-algorithm detection |

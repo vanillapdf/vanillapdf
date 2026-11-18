@@ -201,6 +201,7 @@ endfunction()
 set(VANILLAPDF_EXAMPLE_FIXTURES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures")
 
 vanillapdf_add_example(quickstart)
+vanillapdf_add_example(create)
 
 vanillapdf_add_example(merge
     "example-merged.pdf"

@@ -10,9 +10,11 @@
         } \
     } while (0)
 
-/* Print a text entry of the document information dictionary. The bytes are
-   printed as stored, in the encoding of the text string: PDFDocEncoding,
-   UTF-16BE or UTF-8 */
+/*
+* Print a text entry of the document information dictionary. The bytes are
+* printed as stored, in the encoding of the text string: PDFDocEncoding,
+* UTF-16BE or UTF-8.
+*/
 static error_type print_entry(const char* label, StringObjectHandle* value) {
     BufferHandle* buffer = NULL;
     string_type data = NULL;
@@ -53,8 +55,10 @@ int main(int argc, char* argv[]) {
 
     printf("Pages: %llu\n", (unsigned long long) page_count);
 
-    /* The information dictionary and each of its entries are optional,
-       a missing one is reported as VANILLAPDF_ERROR_OBJECT_MISSING */
+    /*
+    * The information dictionary and each of its entries are optional,
+    * a missing one is reported as VANILLAPDF_ERROR_OBJECT_MISSING.
+    */
     rc = Document_GetDocumentInfo(document, &info);
     if (rc == VANILLAPDF_ERROR_OBJECT_MISSING) {
         rc = VANILLAPDF_ERROR_SUCCESS;

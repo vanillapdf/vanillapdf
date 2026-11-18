@@ -60,10 +60,10 @@ A complete working example with cross-platform testing is available in the
 Download from <https://cmake.org/download/>
 
 <b>Supported Compilers:</b>
-- **Windows:** Visual Studio 2026 (MSVC 18.x) or Visual Studio 2022 (MSVC 17.x)
-- **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
-- **macOS:** AppleClang 15+ (Xcode 15)
-- **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
+- **Windows:** Visual Studio 2026 or 2022 (x86, x64, ARM64)
+- **Linux:** GCC 8.5+ or Clang 21 (x64, ARM64), tested on Ubuntu, Rocky Linux and Fedora
+- **macOS:** AppleClang 17+ (Xcode 16.4+) (x64, ARM64)
+- **Android:** NDK r28+, API level 28+ (x86_64 tested)
 
 \section install_source Build from Source
 
