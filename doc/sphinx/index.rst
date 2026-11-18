@@ -58,4 +58,5 @@ The source code, issue tracker and releases are on
    api/contents
    api/utils
    api/types
+   api/trivial
    api/deprecated

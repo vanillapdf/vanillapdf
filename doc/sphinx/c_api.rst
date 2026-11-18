@@ -303,6 +303,8 @@ Any handle can be shared between threads without caller-side locking, and the
 last error is stored per thread, so a failing call on one thread never
 overwrites another thread's error. See :ref:`thread-safety` for the details.
 
+.. _trivial-functions:
+
 Trivial functions
 -----------------
 
