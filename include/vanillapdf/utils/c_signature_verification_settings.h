@@ -161,6 +161,7 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_ToUnknown(
         SignatureVerificationSettingsHandle* handle,
@@ -169,6 +170,7 @@ extern "C"
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref SignatureVerificationSettingsHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationSettings_FromUnknown(
         IUnknownHandle* handle,

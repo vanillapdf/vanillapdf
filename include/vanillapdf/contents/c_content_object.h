@@ -68,22 +68,26 @@ extern "C"
 
     /**
     * \brief Get derived type of current object
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_GetObjectType(ContentObjectHandle* handle, ContentObjectType* result);
 
     /**
     * \brief Reinterpret current object as \ref ContentObjectInlineImageHandle
     * \deprecated Use ContentObjectInlineImage_FromContentObject instead
+    * \trivial
     */
     VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInlineImage(ContentObjectHandle* handle, ContentObjectInlineImageHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref ContentInstructionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_ToInstruction(ContentObjectHandle* handle, ContentInstructionHandle** result);
 
     /**
     * \brief Convert \ref ContentInstructionHandle to \ref ContentObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_FromInstruction(ContentInstructionHandle* handle, ContentObjectHandle** result);
 
@@ -112,11 +116,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ContentObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_ToContentObject(ContentObjectTextHandle* handle, ContentObjectHandle** result);
 
     /**
     * \brief Convert \ref ContentObjectTextHandle to \ref ContentObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectText_FromContentObject(ContentObjectHandle* handle, ContentObjectTextHandle** result);
 
@@ -161,11 +167,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ContentObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_ToContentObject(ContentObjectInlineImageHandle* handle, ContentObjectHandle** result);
 
     /**
     * \brief Convert \ref ContentObjectHandle to \ref ContentObjectInlineImageHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentObjectInlineImage_FromContentObject(ContentObjectHandle* handle, ContentObjectInlineImageHandle** result);
 

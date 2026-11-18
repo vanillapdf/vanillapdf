@@ -63,22 +63,26 @@ extern "C"
 
     /**
     * \brief Get derived type of current object
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_GetInstructionType(ContentInstructionHandle* handle, ContentInstructionType* result);
 
     /**
     * \brief Reinterpret current object as \ref ContentOperationHandle
     * \deprecated Use ContentOperation_FromInstruction instead
+    * \trivial
     */
     VANILLAPDF_DEPRECATED VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_ToOperation(ContentInstructionHandle* handle, ContentOperationHandle** result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_ToUnknown(ContentInstructionHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref ContentInstructionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_FromUnknown(IUnknownHandle* handle, ContentInstructionHandle** result);
 
@@ -134,11 +138,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_ToUnknown(ContentInstructionCollectionHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref ContentInstructionCollectionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollection_FromUnknown(IUnknownHandle* handle, ContentInstructionCollectionHandle** result);
 
@@ -182,11 +188,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_ToUnknown(ContentInstructionCollectionIteratorHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref ContentInstructionCollectionIteratorHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentInstructionCollectionIterator_FromUnknown(IUnknownHandle* handle, ContentInstructionCollectionIteratorHandle** result);
 

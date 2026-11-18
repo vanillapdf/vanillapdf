@@ -101,6 +101,7 @@ extern "C"
 
     /**
     * \brief Get derived type of current object
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Object_GetObjectType(ObjectHandle* handle, ObjectType* result);
 
@@ -111,6 +112,7 @@ extern "C"
 
     /**
     * \brief Get input file offset where this object was found
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle* handle, offset_type* result);
 
@@ -136,11 +138,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Object_ToUnknown(ObjectHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref ObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Object_FromUnknown(IUnknownHandle* handle, ObjectHandle** result);
 

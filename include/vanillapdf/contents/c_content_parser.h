@@ -41,11 +41,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentParser_ToUnknown(ContentParserHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref ContentParserHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ContentParser_FromUnknown(IUnknownHandle* handle, ContentParserHandle** result);
 

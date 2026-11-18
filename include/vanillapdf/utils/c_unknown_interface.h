@@ -28,6 +28,7 @@ extern "C"
 
     /**
     * \brief Increment the internal reference counter.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_AddRef(IUnknownHandle* handle);
 

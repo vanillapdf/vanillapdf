@@ -59,11 +59,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_ToUnknown(OutputStreamHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref OutputStreamHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutputStream_FromUnknown(IUnknownHandle* handle, OutputStreamHandle** result);
 

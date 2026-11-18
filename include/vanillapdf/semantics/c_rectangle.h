@@ -122,11 +122,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_ToUnknown(RectangleHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref ObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Rectangle_FromUnknown(IUnknownHandle* handle, RectangleHandle** result);
 

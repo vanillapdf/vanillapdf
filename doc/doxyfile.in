@@ -290,7 +290,9 @@ TAB_SIZE               = 4
 # with the commands \{ and \} for these it is advised to use the version @{ and
 # @} or use a double escape (\\{ and \\})
 
-ALIASES                =
+# \trivial marks a C API function that keeps the trivial function contract,
+# defined in src/input/trivial_functions.dox. Keep in step with Doxyfile-xml.
+ALIASES                = "trivial=\xrefitem trivial \"Trivial function\" \"List of trivial functions\" Does not lock, allocate, throw or log. See \ref page_trivial_functions."
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
 # only. Doxygen will then generate output that is more tailored for C. For

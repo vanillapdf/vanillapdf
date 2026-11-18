@@ -103,6 +103,7 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_ToUnknown(
         TrustedCertificateStoreHandle* handle,
@@ -111,6 +112,7 @@ extern "C"
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref TrustedCertificateStoreHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TrustedCertificateStore_FromUnknown(
         IUnknownHandle* handle,
@@ -244,6 +246,7 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_ToUnknown(
         SignatureVerificationResultHandle* handle,
@@ -252,6 +255,7 @@ extern "C"
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref SignatureVerificationResultHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_FromUnknown(
         IUnknownHandle* handle,

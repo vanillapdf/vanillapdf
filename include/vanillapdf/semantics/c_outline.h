@@ -85,16 +85,19 @@ extern "C"
 
     /**
     * \brief Get derived type of current object
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetOutlineType(OutlineBaseHandle* handle, OutlineType* result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_ToUnknown(OutlineBaseHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref CatalogHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_FromUnknown(IUnknownHandle* handle, OutlineBaseHandle** result);
 
@@ -137,11 +140,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref OutlineBaseHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Outline_ToOutlineBase(OutlineHandle* handle, OutlineBaseHandle** result);
 
     /**
     * \brief Convert \ref OutlineBaseHandle to \ref OutlineItemHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Outline_FromOutlineBase(OutlineBaseHandle* handle, OutlineHandle** result);
 
@@ -225,11 +230,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref OutlineBaseHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_ToOutlineBase(OutlineItemHandle* handle, OutlineBaseHandle** result);
 
     /**
     * \brief Convert \ref OutlineBaseHandle to \ref OutlineItemHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_FromOutlineBase(OutlineBaseHandle* handle, OutlineItemHandle** result);
 
@@ -262,11 +269,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_ToUnknown(OutlineItemColorHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref OutlineItemColorHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemColor_FromUnknown(IUnknownHandle* handle, OutlineItemColorHandle** result);
 
@@ -295,11 +304,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_ToUnknown(OutlineItemFlagsHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref OutlineItemFlagsHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION OutlineItemFlags_FromUnknown(IUnknownHandle* handle, OutlineItemFlagsHandle** result);
 

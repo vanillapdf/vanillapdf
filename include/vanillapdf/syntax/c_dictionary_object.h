@@ -70,11 +70,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_ToUnknown(DictionaryObjectIteratorHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref DictionaryObjectIteratorHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObjectIterator_FromUnknown(IUnknownHandle* handle, DictionaryObjectIteratorHandle** result);
 
@@ -145,11 +147,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_ToObject(DictionaryObjectHandle* handle, ObjectHandle** result);
 
     /**
     * \brief Convert \ref ObjectHandle to \ref DictionaryObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_FromObject(ObjectHandle* handle, DictionaryObjectHandle** result);
 

@@ -69,11 +69,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_ToObject(ArrayObjectHandle* handle, ObjectHandle** result);
 
     /**
     * \brief Convert \ref ObjectHandle to \ref ArrayObjectHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_FromObject(ObjectHandle* handle, ArrayObjectHandle** result);
 

@@ -109,16 +109,19 @@ extern "C"
 
     /**
     * \brief Get action type of object \p handle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Action_GetActionType(ActionHandle* handle, ActionType* result);
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Action_ToUnknown(ActionHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref ActionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Action_FromUnknown(IUnknownHandle* handle, ActionHandle** result);
 
@@ -149,11 +152,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ActionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION GoToAction_ToAction(GoToActionHandle* handle, ActionHandle** result);
 
     /**
     * \brief Convert \ref ActionHandle to \ref GoToActionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION GoToAction_FromAction(ActionHandle* handle, GoToActionHandle** result);
 
@@ -176,11 +181,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ActionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION URIAction_ToAction(URIActionHandle* handle, ActionHandle** result);
 
     /**
     * \brief Convert \ref ActionHandle to \ref URIActionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION URIAction_FromAction(ActionHandle* handle, URIActionHandle** result);
 
@@ -208,11 +215,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ActionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION GoToRemoteAction_ToAction(GoToRemoteActionHandle* handle, ActionHandle** result);
 
     /**
     * \brief Convert \ref ActionHandle to \ref GoToRemoteActionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION GoToRemoteAction_FromAction(ActionHandle* handle, GoToRemoteActionHandle** result);
 
@@ -235,11 +244,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref ActionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION NamedAction_ToAction(NamedActionHandle* handle, ActionHandle** result);
 
     /**
     * \brief Convert \ref ActionHandle to \ref NamedActionHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION NamedAction_FromAction(ActionHandle* handle, NamedActionHandle** result);
 

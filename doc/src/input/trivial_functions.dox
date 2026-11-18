@@ -1,0 +1,67 @@
+/*!
+\page page_trivial_functions Trivial functions
+\tableofcontents
+
+A trivial function is a C API function that only reads or writes a value that is already in memory.
+It does no other work.
+The reference documentation marks each trivial function with a "Trivial function" note.
+The \ref trivial "list of trivial functions" shows all of them.
+
+\section section_trivial_guarantees Guarantees
+
+While a trivial function runs, it:
+
+<ul>
+<li>does not acquire a lock and does not wait for another thread,
+<li>does not allocate or free memory,
+<li>does not raise an internal C++ exception,
+<li>does not write to the log, so it never calls the callback set with \ref Logging::Logging_SetCallbackLogger,
+<li>does not call any other callback that the application supplied,
+<li>does not read files or streams, and does not parse, decode or encode data,
+<li>does not change the last error of the thread, see below,
+<li>returns after a small, fixed amount of work.
+</ul>
+
+\section section_trivial_errors Error reporting
+
+A trivial function can still fail. It then returns an error code, for example:
+
+<ul>
+<li>\ref VANILLAPDF_ERROR_PARAMETER_VALUE when a handle or an output pointer is \b NULL, or when a conversion such as \ref ButtonFieldHandle::ButtonField_FromField gets an object of a different type,
+<li>\ref VANILLAPDF_ERROR_GENERAL when an input value is not a member of the enumeration.
+</ul>
+
+A trivial function does not store an error message.
+After it fails, \ref Errors::Errors_GetLastError and \ref Errors::Errors_GetLastErrorMessage still return the values of the last function that stored an error.
+Use the return code of the trivial function.
+
+\section section_trivial_limits What trivial does not mean
+
+<ul>
+<li>A trivial function adds no synchronization.
+It is safe on an object that no other thread changes at the same time.
+If another thread calls a setter on the same object at the same time, the result is a data race, as with every other function.
+<li>A trivial function does not check that a handle is still valid.
+A handle that was already released causes undefined behavior, as with every other function.
+<li>Not every getter is trivial.
+Many getters take a lock (for example on dictionaries, streams and strings) or load data on demand.
+Only the functions with the "Trivial function" note keep this contract.
+</ul>
+
+\section section_trivial_bindings Use in language bindings
+
+The contract lets a language binding call these functions in a cheaper way.
+For example, .NET can call a native function with the <tt>[SuppressGCTransition]</tt> attribute.
+The runtime then does not switch the thread from managed to native mode, which saves a few nanoseconds per call.
+This is only safe when the native function returns quickly, never blocks and never calls back into managed code.
+The trivial function contract gives these guarantees.
+The Vanilla.PDF .NET binding uses this attribute for the trivial functions.
+
+\section section_trivial_stability Stability
+
+The "Trivial function" note is part of the API contract.
+A function that has the note keeps it in all later versions with the same major version.
+Only a new major version can remove the note, or remove the function.
+New functions can get the note in a minor version.
+
+*/

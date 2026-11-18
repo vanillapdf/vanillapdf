@@ -226,11 +226,13 @@ extern "C"
 
     /**
     * \brief Reinterpret current object as \ref IUnknownHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Destination_ToUnknown(DestinationHandle* handle, IUnknownHandle** result);
 
     /**
     * \brief Convert \ref IUnknownHandle to \ref DestinationHandle
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Destination_FromUnknown(IUnknownHandle* handle, DestinationHandle** result);
 
@@ -251,11 +253,13 @@ extern "C"
     /**
     * \brief Convert destination to XYZ destination if the type matches.
     * \return VANILLAPDF_ERROR_SUCCESS if destination is XYZ type, error otherwise
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION XYZDestination_FromDestination(DestinationHandle* handle, XYZDestinationHandle** result);
 
     /**
     * \brief Convert XYZ destination back to base destination.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION XYZDestination_ToDestination(XYZDestinationHandle* handle, DestinationHandle** result);
 
@@ -293,11 +297,13 @@ extern "C"
     /**
     * \brief Convert destination to Fit destination if the type matches.
     * \return VANILLAPDF_ERROR_SUCCESS if destination is Fit type, error otherwise
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FitDestination_FromDestination(DestinationHandle* handle, FitDestinationHandle** result);
 
     /**
     * \brief Convert Fit destination back to base destination.
+    * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FitDestination_ToDestination(FitDestinationHandle* handle, DestinationHandle** result);
 
@@ -314,7 +320,16 @@ extern "C"
     * @{
     */
 
+    /**
+    * \brief Convert destination to FitHorizontal destination if the type matches.
+    * \trivial
+    */
     VANILLAPDF_API error_type CALLING_CONVENTION FitHorizontalDestination_FromDestination(DestinationHandle* handle, FitHorizontalDestinationHandle** result);
+
+    /**
+    * \brief Convert FitHorizontal destination back to base destination.
+    * \trivial
+    */
     VANILLAPDF_API error_type CALLING_CONVENTION FitHorizontalDestination_ToDestination(FitHorizontalDestinationHandle* handle, DestinationHandle** result);
 
     /**
@@ -332,7 +347,16 @@ extern "C"
     * @{
     */
 
+    /**
+    * \brief Convert destination to FitVertical destination if the type matches.
+    * \trivial
+    */
     VANILLAPDF_API error_type CALLING_CONVENTION FitVerticalDestination_FromDestination(DestinationHandle* handle, FitVerticalDestinationHandle** result);
+
+    /**
+    * \brief Convert FitVertical destination back to base destination.
+    * \trivial
+    */
     VANILLAPDF_API error_type CALLING_CONVENTION FitVerticalDestination_ToDestination(FitVerticalDestinationHandle* handle, DestinationHandle** result);
 
     /**
@@ -350,7 +374,16 @@ extern "C"
     * @{
     */
 
+    /**
+    * \brief Convert destination to FitRectangle destination if the type matches.
+    * \trivial
+    */
     VANILLAPDF_API error_type CALLING_CONVENTION FitRectangleDestination_FromDestination(DestinationHandle* handle, FitRectangleDestinationHandle** result);
+
+    /**
+    * \brief Convert FitRectangle destination back to base destination.
+    * \trivial
+    */
     VANILLAPDF_API error_type CALLING_CONVENTION FitRectangleDestination_ToDestination(FitRectangleDestinationHandle* handle, DestinationHandle** result);
 
     /**
@@ -386,8 +419,18 @@ extern "C"
     * @{
     */
 
+    /**
+    * \brief Convert destination to FitBoundingBox destination if the type matches.
+    * \trivial
+    */
     VANILLAPDF_API error_type CALLING_CONVENTION FitBoundingBoxDestination_FromDestination(DestinationHandle* handle, FitBoundingBoxDestinationHandle** result);
+
+    /**
+    * \brief Convert FitBoundingBox destination back to base destination.
+    * \trivial
+    */
     VANILLAPDF_API error_type CALLING_CONVENTION FitBoundingBoxDestination_ToDestination(FitBoundingBoxDestinationHandle* handle, DestinationHandle** result);
+
     VANILLAPDF_API error_type CALLING_CONVENTION FitBoundingBoxDestination_Release(FitBoundingBoxDestinationHandle* handle);
 
     /** @} */
@@ -397,7 +440,16 @@ extern "C"
     * @{
     */
 
+    /**
+    * \brief Convert destination to FitBoundingBoxHorizontal destination if the type matches.
+    * \trivial
+    */
     VANILLAPDF_API error_type CALLING_CONVENTION FitBoundingBoxHorizontalDestination_FromDestination(DestinationHandle* handle, FitBoundingBoxHorizontalDestinationHandle** result);
+
+    /**
+    * \brief Convert FitBoundingBoxHorizontal destination back to base destination.
+    * \trivial
+    */
     VANILLAPDF_API error_type CALLING_CONVENTION FitBoundingBoxHorizontalDestination_ToDestination(FitBoundingBoxHorizontalDestinationHandle* handle, DestinationHandle** result);
 
     /**
@@ -415,7 +467,16 @@ extern "C"
     * @{
     */
 
+    /**
+    * \brief Convert destination to FitBoundingBoxVertical destination if the type matches.
+    * \trivial
+    */
     VANILLAPDF_API error_type CALLING_CONVENTION FitBoundingBoxVerticalDestination_FromDestination(DestinationHandle* handle, FitBoundingBoxVerticalDestinationHandle** result);
+
+    /**
+    * \brief Convert FitBoundingBoxVertical destination back to base destination.
+    * \trivial
+    */
     VANILLAPDF_API error_type CALLING_CONVENTION FitBoundingBoxVerticalDestination_ToDestination(FitBoundingBoxVerticalDestinationHandle* handle, DestinationHandle** result);
 
     /**
