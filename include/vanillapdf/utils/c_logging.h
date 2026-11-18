@@ -81,13 +81,11 @@ extern "C"
     */
 
     /**
-    * \ingroup group_utils
     * \brief This function is invoked for every log entry when custom callback logger is used
     */
     typedef void(CALLING_CONVENTION *Sink_Log_Function)(void* user_data, LoggingSeverity level, string_type payload, size_type length);
 
     /**
-    * \ingroup group_utils
     * \brief This function is invoked when the data are about to be flushed to the persistent storage
     */
     typedef void(CALLING_CONVENTION *Sink_Flush_Function)(void* user_data);
