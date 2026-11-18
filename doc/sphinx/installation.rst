@@ -21,36 +21,11 @@ Then point CMake at your vcpkg toolchain:
      -DCMAKE_TOOLCHAIN_FILE=<vcpkg-root>/scripts/buildsystems/vcpkg.cmake
    cmake --build build
 
-vcpkg supports feature selection to control optional dependencies:
-
-.. code-block:: bash
-
-   vcpkg install vanillapdf[openssl,zlib,spdlog]
-
-Available features:
-
-.. list-table::
-   :header-rows: 1
-   :widths: 25 75
-
-   * - Feature
-     - Description
-   * - ``openssl``
-     - Enable encryption and decryption of secure PDF documents
-   * - ``libjpeg-turbo``
-     - Decode JPEG images into bitmaps
-   * - ``openjpeg``
-     - Support JPEG-2000 images through the OpenJPEG codec
-   * - ``zlib``
-     - Decompress PDF objects compressed with zlib
-   * - ``spdlog``
-     - High-performance logging for diagnostics and debugging
-   * - ``nlohmann-json``
-     - Parse application configuration from JSON files
-   * - ``tests``
-     - Enable unit and integration tests (includes GTest)
-   * - ``benchmarks``
-     - Enable performance benchmarking tools (includes Google Benchmark)
+The port builds the library with every feature: encryption and signing
+(OpenSSL), JPEG images (libjpeg-turbo), JPEG 2000 images (OpenJPEG) and Flate
+compression (zlib). It has no vcpkg features to leave them out. To build
+without one of these dependencies, build from source with the
+:ref:`feature options <feature-options>`.
 
 CMake FetchContent
 ------------------
@@ -60,7 +35,7 @@ Self-contained approach without external package managers:
 .. code-block:: cmake
    :substitutions:
 
-   cmake_minimum_required(VERSION 3.20)
+   cmake_minimum_required(VERSION 3.28)
    project(MyApp)
 
    include(FetchContent)

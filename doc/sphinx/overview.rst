@@ -1,11 +1,11 @@
 Overview
 ========
 
-**Vanilla.PDF** is the C and C++ library for creating, editing, signing and
-validating PDF documents. It is an open-source C++17 library with a plain C
-API, usable across multiple languages through a C foreign function interface
-(FFI). It is licensed under the permissive Apache 2.0 license, suitable for
-both private and commercial use.
+**Vanilla.PDF** is an open-source C++17 library with a plain C API for creating,
+editing, signing and validating PDF documents, usable across multiple
+languages through a C foreign function interface (FFI). It is licensed
+under the permissive Apache 2.0 license, suitable for both private and
+commercial use.
 
 - **Create & modify** — pages, text, images, vector graphics, form fields
 - **Sign & verify** — CMS/PKCS#7 signatures with certificate chain validation
@@ -255,6 +255,9 @@ Package availability
        `vanillapdf.net repository <https://github.com/vanillapdf/vanillapdf.net>`_
    * - Debian
      - ``dpkg -i vanillapdf_*.deb``
+     - Built via :doc:`packaging`
+   * - RPM
+     - ``rpm -i vanillapdf_*.rpm``
      - Built via :doc:`packaging`
    * - Source
      - ``cmake --preset <platform>``

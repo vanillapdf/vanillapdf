@@ -1,9 +1,9 @@
 Vanilla.PDF documentation
 =========================
 
-Vanilla.PDF is a cross-platform C++17 library for creating, modifying, signing
-and encrypting PDF documents. It is used through an ABI-stable C API, so it can
-be called from C, C++ and any language with a C foreign function interface.
+Vanilla.PDF is an open-source C++17 library with a plain C API for creating,
+editing, signing and validating PDF documents, usable across multiple
+languages through a C foreign function interface (FFI).
 
 Start here
 ----------
@@ -15,11 +15,10 @@ Start here
 - :doc:`api/documents` — the API reference, starting with documents and pages
 
 The source code, issue tracker and releases are on
-`GitHub <https://github.com/vanillapdf/vanillapdf>`_. Vanilla.PDF is licensed
-under the Apache License 2.0; see :doc:`licensing`.
+`GitHub <https://github.com/vanillapdf/vanillapdf>`_.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Getting started
 
    overview
@@ -28,7 +27,7 @@ under the Apache License 2.0; see :doc:`licensing`.
    licensing
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Developer guide
 
    building
@@ -38,14 +37,14 @@ under the Apache License 2.0; see :doc:`licensing`.
    packaging
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Learning
 
    pdf_format
    examples
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: API reference
 
    api/documents

@@ -384,9 +384,10 @@ correctness lines:
   the parser, content streams, and decompression filters (Flate, DCT, JPX,
   ASCII85, ASCIIHex) against a seed corpus. Continuously run via
   ``.github/workflows/fuzzing.yml``.
-- **External conformance.** ``scripts/conformance_check.py`` runs a qpdf-based
-  PDF conformance suite over generated output to catch malformed files that
-  pass the library's own checks. Continuously run via
+- **External conformance.** ``scripts/conformance_check.py`` re-saves selected
+  files of the test corpus and checks the output with
+  `qpdf <https://qpdf.readthedocs.io/>`_ (``qpdf --check``) to catch malformed
+  files that pass the library's own checks. Continuously run via
   ``.github/workflows/conformance-check.yml``.
 
 Both feed back into the test corpus when they find issues.
@@ -420,12 +421,14 @@ Build system
 ------------
 
 The build uses CMake with platform-specific presets defined in
-``cmake/presets/``. CMake also integrates CPack for generating installable
-packages:
+``cmake/presets/``. CPack generates the installable packages:
 
-- Debian ``.deb`` packages
-- Homebrew packages
-- NuGet packages
+- Debian ``.deb`` and RPM ``.rpm`` packages on Linux
+- ``.tar.gz`` archives on Linux and macOS, and a ``.dmg`` disk image on macOS
+- ``.zip`` archives on Windows
+
+NuGet packages are built with ``dotnet pack`` from ``nuget/``, and the
+Homebrew formula is generated from ``homebrew/vanillapdf.rb.in``.
 
 See :doc:`building` for build instructions and :doc:`packaging` for package
 generation.

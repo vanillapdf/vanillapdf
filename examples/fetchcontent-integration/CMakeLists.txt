@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.28)
 
 # Set up vcpkg toolchain before project() call - standard practice
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)

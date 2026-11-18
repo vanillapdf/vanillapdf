@@ -8,15 +8,29 @@ Vanilla.PDF from source. For pre-built installation methods see
 Build requirements
 ------------------
 
-**CMake** (minimum version 3.20) --
+**CMake** (minimum version 3.28) —
 Download from https://cmake.org/download/
 
 **Supported compilers:**
 
-- **Windows:** Visual Studio 2026 (MSVC 18.x) or Visual Studio 2022 (MSVC 17.x) — x86, x64, ARM64
-- **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
-- **macOS:** AppleClang 15+ (Xcode 15)
-- **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
+.. list-table::
+   :header-rows: 1
+
+   * - Platform
+     - Compilers
+     - Architectures
+   * - Windows
+     - Visual Studio 2026, 2022
+     - x86, x64, ARM64
+   * - Linux
+     - GCC 8.1+, Clang 10+
+     - x64, ARM64, ARM
+   * - macOS
+     - AppleClang 15+ (Xcode 15)
+     - x64, ARM64
+   * - Android
+     - NDK toolchain
+     - arm64, armv7, x86, x86_64
 
 Clone and setup
 ---------------
@@ -208,12 +222,15 @@ CMake will search for them on your system instead.
 Build configuration
 -------------------
 
+.. _feature-options:
+
 Feature enable/disable options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - ``-DVANILLAPDF_ENABLE_ENCRYPTION=ON/OFF`` — PDF encryption/decryption support (default: ON)
 - ``-DVANILLAPDF_ENABLE_JPEG=ON/OFF`` — JPEG image support (default: ON)
 - ``-DVANILLAPDF_ENABLE_JPEG2000=ON/OFF`` — JPEG2000 support (default: ON)
+- ``-DVANILLAPDF_ENABLE_ZLIB=ON/OFF`` — zlib (Flate) compression support (default: ON)
 - ``-DVANILLAPDF_ENABLE_MIMALLOC=ON/OFF`` — Serve the reference counted objects from mimalloc instead of the default allocator (default: OFF)
 - ``-DVANILLAPDF_ENABLE_CRTDBG=ON/OFF`` — Track allocations through the debug heap of the Microsoft C runtime in the Debug configuration; cannot be combined with mimalloc (default: OFF)
 
@@ -296,8 +313,9 @@ Sources live in ``src/vanillapdf.fuzzer/``. Enable with Clang:
 External conformance check
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Vanilla.PDF runs an external PDF conformance suite (qpdf-based) over its test
-corpus to catch malformed output. The script lives at
+Vanilla.PDF re-saves selected files of its test corpus and checks the output
+with `qpdf <https://qpdf.readthedocs.io/>`_ (``qpdf --check``) to catch
+malformed output. The script lives at
 ``scripts/conformance_check.py`` and runs automatically in CI via
 ``.github/workflows/conformance-check.yml``. To run locally:
 

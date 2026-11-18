@@ -194,10 +194,17 @@ Usage with ``goto`` cleanup:
 Leak detection
 ^^^^^^^^^^^^^^
 
-For debugging missing ``_Release`` calls, the ObjectDiagnostics API reports
-the live allocation count per object type. Snapshot before and after a unit
-of work, compare, and any non-zero delta points at a leaked handle. See the
-``ObjectDiagnostics_*`` functions in ``c_object_diagnostics.h``.
+A missing ``_Release`` call keeps the object, and every object it references,
+alive. :cpp:func:`ObjectDiagnostics_GetActiveObjectCount <ObjectDiagnostics::ObjectDiagnostics_GetActiveObjectCount>`
+returns the number of live library objects in the process. Read it before and
+after a unit of work that releases all of its handles: a higher count
+afterwards points at a leaked handle. The count covers the whole process, so
+take both readings while no other thread uses the library.
+
+To find where the leaked memory was allocated, use LeakSanitizer
+(``-fsanitize=address`` with GCC or Clang on Linux), or on Windows the debug
+heap of the C runtime, which a source build supports with
+``VANILLAPDF_ENABLE_CRTDBG`` (see :doc:`building`).
 
 Text strings
 ------------
