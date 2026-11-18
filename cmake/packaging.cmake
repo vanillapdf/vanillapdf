@@ -61,8 +61,8 @@ set(CPACK_PACKAGE_ICON					${CMAKE_CURRENT_SOURCE_DIR}/cmake/vanilla_logo.ico)
 set(CPACK_PACKAGE_CHECKSUM				SHA256)
 
 # Component-based packaging (used by DEB and RPM generators)
-# Licenses and Documentation were part of Runtime; listed so the packages keep
-# the same contents. Symbols is omitted, it is MSVC-only.
+# Licenses and Documentation were part of Runtime; they are packaged with it
+# through the component groups below. Symbols is omitted, it is MSVC-only.
 set(CPACK_COMPONENTS_ALL Runtime Development Licenses Documentation)
 set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "Vanilla.PDF Runtime")
 set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "Shared library")
@@ -75,6 +75,22 @@ set(CPACK_COMPONENT_LICENSES_DESCRIPTION "License and notice texts required for 
 set(CPACK_COMPONENT_LICENSES_REQUIRED ON)
 set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Vanilla.PDF Documentation")
 set(CPACK_COMPONENT_DOCUMENTATION_DESCRIPTION "Readme bundled with the installation")
+
+# The DEB and RPM generators build one package per component group, not per
+# component. Licenses and Documentation join Runtime, so libvanillapdf ships
+# LICENSE.txt and NOTICE.md with the library (Apache-2.0 section 4(d)) and no
+# packages appear that nothing depends on. The group names match the
+# component names, so the CPACK_DEBIAN_RUNTIME_* and CPACK_RPM_RUNTIME_*
+# settings below name the group packages.
+set(CPACK_COMPONENTS_GROUPING ONE_PER_GROUP)
+set(CPACK_COMPONENT_RUNTIME_GROUP "Runtime")
+set(CPACK_COMPONENT_LICENSES_GROUP "Runtime")
+set(CPACK_COMPONENT_DOCUMENTATION_GROUP "Runtime")
+set(CPACK_COMPONENT_DEVELOPMENT_GROUP "Development")
+set(CPACK_COMPONENT_GROUP_RUNTIME_DISPLAY_NAME "Vanilla.PDF Runtime")
+set(CPACK_COMPONENT_GROUP_RUNTIME_DESCRIPTION "Shared library, license and notice")
+set(CPACK_COMPONENT_GROUP_DEVELOPMENT_DISPLAY_NAME "Vanilla.PDF Development")
+set(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION "Headers, static libraries, and CMake config files")
 
 # DEB and RPM use '~' for pre-release (sorts before release version)
 set(PACKAGE_VERSION_NAME_DEB_RPM "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
