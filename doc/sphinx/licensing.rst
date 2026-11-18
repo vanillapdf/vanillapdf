@@ -23,8 +23,8 @@ modified or not, in source or binary form. In particular:
 
 The CMake install step places ``LICENSE.txt`` and ``NOTICE.md`` in
 ``share/vanillapdf``. Packagers can choose another directory with
-``VANILLAPDF_INSTALL_LICENSEDIR``. The Debian and RPM packages carry both files
-in their required ``Licenses`` component.
+``VANILLAPDF_INSTALL_LICENSEDIR``. The Debian and RPM packages ship both files
+with the library in the runtime package ``libvanillapdf``.
 
 Third-party libraries
 ---------------------
