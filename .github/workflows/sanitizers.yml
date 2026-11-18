@@ -25,12 +25,12 @@ env:
   VCPKG_DISABLE_METRICS: 1
   VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/external/vcpkg/bincache,readwrite"
   BUILD_PRESET: linux-x64-gcc
-  RUNNER_IMAGE: ubuntu-24.04
+  RUNNER_IMAGE: ubuntu-26.04
 
 jobs:
   vcpkg-setup:
     name: Install vcpkg dependencies
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 90
 
     steps:
@@ -49,9 +49,9 @@ jobs:
           path: |
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-ubuntu-26.04-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-
+            vcpkg-${{ runner.os }}-ubuntu-26.04-x64-gcc-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
@@ -76,13 +76,13 @@ jobs:
       matrix:
         include:
           - name: ASan
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             cmake_flag: VANILLAPDF_ENABLE_ASAN
           - name: UBSan
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             cmake_flag: VANILLAPDF_ENABLE_UBSAN
           - name: TSan
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             cmake_flag: VANILLAPDF_ENABLE_TSAN
 
     steps:
@@ -101,9 +101,9 @@ jobs:
           path: |
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-ubuntu-26.04-x64-gcc-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-ubuntu-24.04-x64-gcc-
+            vcpkg-${{ runner.os }}-ubuntu-26.04-x64-gcc-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh

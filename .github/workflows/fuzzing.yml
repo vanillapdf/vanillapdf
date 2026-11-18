@@ -31,7 +31,7 @@ env:
 
 jobs:
   fuzz:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 90
     name: fuzz (${{ matrix.name }})
     strategy:
@@ -82,9 +82,9 @@ jobs:
           path: |
             external/vcpkg/downloads
             external/vcpkg/bincache
-          key: vcpkg-${{ runner.os }}-ubuntu-24.04-x64-clang-${{ hashFiles('vcpkg.json.in') }}
+          key: vcpkg-${{ runner.os }}-ubuntu-26.04-x64-clang-${{ hashFiles('vcpkg.json.in') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-ubuntu-24.04-x64-clang-
+            vcpkg-${{ runner.os }}-ubuntu-26.04-x64-clang-
 
       - name: Bootstrap vcpkg
         run: ./external/vcpkg/bootstrap-vcpkg.sh
