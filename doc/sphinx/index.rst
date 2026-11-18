@@ -13,6 +13,7 @@ Start here
 ----------
 
 - :doc:`installation` — install the library with vcpkg or CMake FetchContent
+- :doc:`building` — build the library from source with the CMake presets
 - :doc:`quickstart` — build and run a first program, then create a PDF document
 - :doc:`overview` — what the library does, and what it does not
 - :doc:`c_api` — handles, memory management and error handling in the C API
@@ -27,6 +28,7 @@ The source code, issue tracker and releases are on
 
    overview
    installation
+   building
    quickstart
    licensing
 
@@ -34,17 +36,17 @@ The source code, issue tracker and releases are on
    :maxdepth: 1
    :caption: Developer guide
 
-   building
-   c_api
    architecture
-   signature_verification
-   packaging
+   c_api
+   build_options
+   testing
 
 .. toctree::
    :maxdepth: 1
    :caption: Learning
 
    pdf_format
+   signature_verification
    examples
 
 .. toctree::

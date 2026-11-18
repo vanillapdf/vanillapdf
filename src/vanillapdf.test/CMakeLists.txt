@@ -226,6 +226,13 @@ if(VANILLAPDF_ENABLE_ENCRYPTION)
     # Verifies the document signed by the signing example
     vanillapdf_add_example(verification "example-signed.pdf")
 
+    vanillapdf_add_example(visible-signature
+        "${VANILLAPDF_EXAMPLE_FIXTURES}/sample-document.pdf"
+        "example-visible-signed.pdf"
+        "${VANILLAPDF_EXAMPLE_FIXTURES}/certificates/Test_EC384_SHA512.pfx"
+        "test"
+    )
+
     vanillapdf_add_example(encryption
         "${VANILLAPDF_EXAMPLE_FIXTURES}/sample-document.pdf"
         "example-encrypted.pdf"
@@ -249,6 +256,18 @@ if(NOT CMAKE_CROSSCOMPILING)
         set_tests_properties(Examples.verification PROPERTIES
             FIXTURES_REQUIRED ExampleSigned
             PASS_REGULAR_EXPRESSION "Document intact: yes"
+        )
+
+        # The verification example finds the one signature, in the visible field
+        set_tests_properties(Examples.visible-signature PROPERTIES FIXTURES_SETUP ExampleVisibleSigned)
+        add_test(
+            NAME Examples.visible-signature.verification
+            COMMAND vanillapdf.example.verification "example-visible-signed.pdf"
+            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+        )
+        set_tests_properties(Examples.visible-signature.verification PROPERTIES
+            FIXTURES_REQUIRED ExampleVisibleSigned
+            PASS_REGULAR_EXPRESSION "Document intact: yes.*Verified 1 signature"
         )
     endif()
 endif()

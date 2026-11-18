@@ -101,8 +101,8 @@ Regardless of installation method, use ``find_package`` in your CMakeLists.txt:
 To check the installation, build and run the first program of the
 :doc:`quickstart`.
 
-For building the library from source (cloning, presets, CMake options, tests,
-and troubleshooting), see :doc:`building`.
+For building the library from source, see :doc:`building`; the CMake options are
+described in :doc:`build_options`.
 
 .. _upcoming-packages:
 

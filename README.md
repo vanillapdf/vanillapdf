@@ -138,14 +138,16 @@ Full documentation is hosted on **[Read the Docs](https://vanillapdf.readthedocs
 | Guide | Description |
 |-------|-------------|
 | [Overview](https://vanillapdf.readthedocs.io/en/latest/overview.html) | Design philosophy, scope, and project goals |
-| [Quickstart](https://vanillapdf.readthedocs.io/en/latest/quickstart.html) | Create your first PDF document step by step |
 | [Installation](https://vanillapdf.readthedocs.io/en/latest/installation.html) | vcpkg, FetchContent |
-| [C API Guide](https://vanillapdf.readthedocs.io/en/latest/c_api.html) | Handles, memory management, error handling |
-| [Architecture](https://vanillapdf.readthedocs.io/en/latest/architecture.html) | Three-layer design, object model, memory model, thread safety |
-| [Signature Verification](https://vanillapdf.readthedocs.io/en/latest/signature_verification.html) | Trust stores, chain validation, weak-algorithm detection |
 | [Building](https://vanillapdf.readthedocs.io/en/latest/building.html) | Build from source with CMake presets |
-| [Examples](https://vanillapdf.readthedocs.io/en/latest/examples.html) | Tested programs for merging, signing, verification, encryption and validation |
+| [Quickstart](https://vanillapdf.readthedocs.io/en/latest/quickstart.html) | Create your first PDF document step by step |
+| [Architecture](https://vanillapdf.readthedocs.io/en/latest/architecture.html) | Three-layer design, object model, memory model, thread safety |
+| [C API Guide](https://vanillapdf.readthedocs.io/en/latest/c_api.html) | Handles, memory management, error handling |
+| [Build Options](https://vanillapdf.readthedocs.io/en/latest/build_options.html) | Dependencies, feature and development options |
+| [Testing](https://vanillapdf.readthedocs.io/en/latest/testing.html) | Tests, test data, fuzzing and coverage |
 | [PDF Format](https://vanillapdf.readthedocs.io/en/latest/pdf_format.html) | PDF syntax, objects, and document structure |
+| [Signature Verification](https://vanillapdf.readthedocs.io/en/latest/signature_verification.html) | Trust stores, chain validation, weak-algorithm detection |
+| [Examples](https://vanillapdf.readthedocs.io/en/latest/examples.html) | Tested programs for merging, signing, verification, encryption and validation |
 
 See the [Changelog](CHANGELOG.md) for release notes.
 

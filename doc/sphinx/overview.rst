@@ -21,21 +21,23 @@ documentation covers the native C API.
 Where to go next
 ----------------
 
-**Getting started** — install the library and create your first PDF:
+**Getting started** — install or build the library and create your first PDF:
 
 - :doc:`installation` — All package manager options with copy-paste commands
+- :doc:`building` — Clone, configure and build with the CMake presets
 - :doc:`quickstart` — Build and run a first program, then create a PDF document
 
-**Developer guide** — build from source and understand the internals:
+**Developer guide** — understand the internals and the build:
 
-- :doc:`building` — Clone, configure, build, and test
-- :doc:`c_api` — Handle system, memory management, error handling
 - :doc:`architecture` — Three-layer design, object model, memory model, thread safety
-- :doc:`signature_verification` — Trust stores, chain validation, weak-algorithm detection
+- :doc:`c_api` — Handle system, memory management, error handling
+- :doc:`build_options` — Dependencies, feature and development options
+- :doc:`testing` — Tests, test data, fuzzing and coverage
 
-**Learning** — understand the PDF format and see examples:
+**Learning** — understand the PDF format and signatures, and see examples:
 
 - :doc:`pdf_format` — PDF syntax, objects, and document structure
+- :doc:`signature_verification` — Trust stores, chain validation, weak-algorithm detection
 - :doc:`examples` — Code samples showing the C API in use
 
 Scope and non-goals
@@ -294,10 +296,10 @@ Package availability
    * - :ref:`FetchContent <install-fetchcontent>`
      - ``FetchContent_Declare``
      - No external tools; caller manages dependencies
-   * - :doc:`Debian <packaging>`
+   * - :ref:`Debian <create-packages>`
      - ``dpkg -i vanillapdf_*.deb``
      -
-   * - :doc:`RPM <packaging>`
+   * - :ref:`RPM <create-packages>`
      - ``rpm -i vanillapdf_*.rpm``
      -
    * - :doc:`Source <building>`

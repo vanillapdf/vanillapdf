@@ -5,9 +5,6 @@ This page describes the internal design of Vanilla.PDF: the layered
 architecture, object model, memory model, thread-safety invariants, and
 extension points.
 
-For the public C API conventions (handles, error codes, cleanup patterns), see
-:doc:`c_api`.
-
 Three-layer architecture
 ------------------------
 
@@ -424,8 +421,8 @@ Dependencies
 nlohmann-json and mimalloc are only used when ``VANILLAPDF_ENABLE_LICENSING`` or
 ``VANILLAPDF_ENABLE_MIMALLOC`` is on; both are off by default.
 
-All dependencies are managed automatically via vcpkg. See :doc:`building` for
-details on using system packages instead.
+All dependencies are managed automatically via vcpkg. See :doc:`build_options`
+for details on using system packages instead.
 
 Build system
 ------------
@@ -440,5 +437,5 @@ The build uses CMake with platform-specific presets defined in
 NuGet packages are built with ``dotnet pack`` from ``nuget/``, and the
 Homebrew formula is generated from ``homebrew/vanillapdf.rb.in``.
 
-See :doc:`building` for build instructions and :doc:`packaging` for package
-generation.
+See :doc:`building` for build instructions and :ref:`create-packages` for
+package generation.

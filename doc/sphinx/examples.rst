@@ -38,9 +38,9 @@ Sign an existing document with a key from a PKCS#12 file (``.p12`` or
 ``.pfx``), which holds the signer's certificate and private key. The program
 loads the key with :cpp:func:`PKCS12Key_CreateFromFile <PKCS12KeyHandle::PKCS12Key_CreateFromFile>`,
 describes the signature with :cpp:class:`DocumentSignatureSettingsHandle` and
-writes the signed copy to a new file with :cpp:func:`Document_Sign <DocumentHandle::Document_Sign>`.
-Signing requires a library built with the encryption feature, which is on by
-default.
+writes the signed copy to a new file with :cpp:func:`Document_Sign <DocumentHandle::Document_Sign>`, which
+creates an invisible signature field of its own on the first page. Signing
+requires a library built with the encryption feature, which is on by default.
 
 .. literalinclude:: ../../examples/signing/main.c
    :language: c
@@ -50,6 +50,31 @@ Run it with the document, the output file, the key file and its password:
 .. code-block:: bash
 
    ./build/signing input.pdf signed.pdf signer.p12 password
+
+Sign a visible signature field
+------------------------------
+
+Add a signature field that a viewer shows as a rectangle on the first page, and
+sign into it. A visible signature consists of two objects. The signature field
+joins the field hierarchy of the interactive form and holds the signature. Its
+widget annotation is what a viewer shows: a rectangle on a page with an
+appearance, a form XObject that the application draws into. The page lists the
+widget among its annotations, and :cpp:func:`Field_AddWidget <FieldHandle::Field_AddWidget>` links it
+to the field. :cpp:func:`Document_SignField <DocumentHandle::Document_SignField>` then finds the field by its fully
+qualified name and signs into it.
+
+.. literalinclude:: ../../examples/visible-signature/main.c
+   :language: c
+
+Run it like the previous example:
+
+.. code-block:: bash
+
+   ./build/visible-signature input.pdf signed.pdf signer.p12 password
+
+A document that already carries a signature is refused with
+``VANILLAPDF_ERROR_NOT_SUPPORTED``: the signed file is written whole, which
+would invalidate the existing signature.
 
 Verify signatures
 -----------------

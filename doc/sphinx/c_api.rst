@@ -205,7 +205,7 @@ take both readings while no other thread uses the library.
 To find where the leaked memory was allocated, use LeakSanitizer
 (``-fsanitize=address`` with GCC or Clang on Linux), or on Windows the debug
 heap of the C runtime, which a source build supports with
-``VANILLAPDF_ENABLE_CRTDBG`` (see :doc:`building`).
+``VANILLAPDF_ENABLE_CRTDBG`` (see :doc:`build_options`).
 
 Text strings
 ------------
@@ -350,132 +350,69 @@ Query the version at runtime:
 Debugging
 ---------
 
-Enable diagnostic logging to get internal trace output:
+Logging
+^^^^^^^
+
+Logging is on by default: the library writes its log to standard output at the
+``Info`` level, which includes errors, warnings and informational messages,
+such as each file being opened and closed. Set the level with
+:cpp:func:`Logging_SetSeverity`, from the least to the most verbose: ``Off``,
+``Critical``, ``Error``, ``Warning``, ``Info``, ``Debug``, ``Trace``.
 
 .. code-block:: c
 
-   #include "vanillapdf/utils/c_logging.h"
+   Logging_SetSeverity(LoggingSeverity_Off);     /* no log at all */
+   Logging_SetSeverity(LoggingSeverity_Debug);   /* more detail */
 
-   Logging_SetSeverity(LoggingSeverity_Debug);
-
-Log levels from least to most verbose: ``Off``, ``Critical``, ``Error``,
-``Warning``, ``Info``, ``Debug``, ``Trace``.
-
-Common operations
------------------
-
-**Open an existing PDF:**
+To send the log elsewhere, write it to size-limited files with
+:cpp:func:`Logging_SetRotatingFileLogger`, or pass each entry to your own
+logging with :cpp:func:`Logging_SetCallbackLogger`. The text passed to the
+callback is not terminated by a NUL character, so use its length:
 
 .. code-block:: c
 
-   FileHandle* file = NULL;
-   File_Open("input.pdf", &file);
+   static void CALLING_CONVENTION on_log(void* user_data, LoggingSeverity level,
+       string_type payload, size_type length) {
+       fprintf(stderr, "vanillapdf: %.*s\n", (int) length, payload);
+   }
 
-   DocumentHandle* doc = NULL;
-   Document_Open("input.pdf", &doc);
+   static void CALLING_CONVENTION on_flush(void* user_data) {
+       fflush(stderr);
+   }
 
-**Create a new PDF with a page:**
+   Logging_SetCallbackLogger(on_log, on_flush, NULL);
 
-.. code-block:: c
+Each of the two loggers can be set once per process; a second call fails.
+:cpp:func:`Logging_SetPattern` changes the format of each entry.
+:cpp:func:`Logging_Shutdown` flushes and closes the log, and must be the last
+call: any later library call that writes to the log crashes.
 
-   DocumentHandle* doc = NULL;
-   CatalogHandle* cat = NULL;
-   PageTreeHandle* pages = NULL;
-   PageObjectHandle* page = NULL;
+Debugger visualizers
+^^^^^^^^^^^^^^^^^^^^
 
-   Document_Create("new.pdf", &doc);
-   Document_GetCatalog(doc, &cat);
-   Catalog_GetPages(cat, &pages);
-   PageObject_CreateFromDocument(doc, &page);
-   PageTree_AppendPage(pages, page);
-   Document_Save(doc, "new.pdf");
+The library includes two visualizer files for the Visual Studio debugger:
 
-**Sign a document:**
+- ``public.natvis`` — the object handles of the C API, such as
+  :cpp:class:`DictionaryObjectHandle` and :cpp:class:`BufferHandle`
+- ``vanillapdf.natvis`` — the internal C++ classes, for work on the library
+  itself
 
-.. code-block:: c
+Built with Visual Studio, the library embeds both files in its program database
+(``.pdb``). Only the vcpkg port installs the program database; the ZIP, TGZ and
+NuGet packages do not include it. There are no pretty printers for GDB or LLDB,
+which show the handles as plain pointers.
 
-   PKCS12KeyHandle* pkcs12 = NULL;
-   SigningKeyHandle* key = NULL;
+Other diagnostics
+^^^^^^^^^^^^^^^^^
 
-   DocumentSignatureSettingsHandle* settings = NULL;
+- `Error handling`_ — the message of the last failed call
+- `Leak detection`_ — handles that were never released
+- :ref:`Sanitizers <development-options>` — AddressSanitizer,
+  UndefinedBehaviorSanitizer and ThreadSanitizer builds of the library
 
-   PKCS12Key_CreateFromFile("key.p12", "password", &pkcs12);
-   PKCS12Key_ToSigningKey(pkcs12, &key);
+API reference
+-------------
 
-   DocumentSignatureSettings_Create(&settings);
-   DocumentSignatureSettings_SetSigningKey(settings, key);
-   DocumentSignatureSettings_SetDigest(settings, MessageDigestAlgorithmType_SHA256);
-
-   Document_Sign(doc, destination, settings);
-
-:cpp:func:`Document_Sign <DocumentHandle::Document_Sign>` creates an invisible signature field of its own on the
-first page.
-
-**Sign a visible signature field:**
-
-A visible signature is a signature field whose widget annotation sits on a
-page with a rectangle and an appearance. The field and the widget are
-separate objects: the field joins the form's field hierarchy and carries the
-signature, the widget is linked to it through :cpp:func:`Field_AddWidget <FieldHandle::Field_AddWidget>` and to the
-page through its annotations.
-
-.. code-block:: c
-
-   SignatureFieldHandle* signature_field = NULL;
-   FieldHandle* field = NULL;
-   SignatureField_CreateFromDocument(doc, field_name, &signature_field);
-   SignatureField_ToField(signature_field, &field);
-
-   WidgetAnnotationHandle* widget = NULL;
-   AnnotationHandle* annotation = NULL;
-   WidgetAnnotation_CreateFromDocument(doc, &widget);
-   WidgetAnnotation_ToBaseAnnotation(widget, &annotation);
-
-   RectangleHandle* rect = NULL;
-   Rectangle_Create(&rect);
-   Rectangle_SetLowerLeftXReal(rect, 100);
-   Rectangle_SetLowerLeftYReal(rect, 100);
-   Rectangle_SetUpperRightXReal(rect, 300);
-   Rectangle_SetUpperRightYReal(rect, 160);
-   Annotation_SetRect(annotation, rect);
-
-   /* The appearance is a form XObject the caller draws into */
-   FormXObjectHandle* appearance = NULL;
-   FormXObject_CreateFromDocument(doc, &appearance);
-   Annotation_SetAppearance(annotation, AppearanceType_Normal, appearance);
-
-   /* From PageObject_GetAnnotations, or PageAnnotations_Create and
-      PageObject_SetAnnotations for a page without annotations */
-   PageAnnotations_Append(page_annotations, annotation);
-   Field_AddWidget(field, widget);
-
-   const char* signature_name = "Signature1";
-   Document_SignField(doc, destination, signature_name, strlen(signature_name), settings);
-
-``field_name`` is a :cpp:class:`StringObjectHandle` holding the partial field name
-(``Signature1`` here). The field sits at the root of the hierarchy, so the
-same name is its fully qualified name, which :cpp:func:`Document_SignField <DocumentHandle::Document_SignField>` resolves
-the field by. The name is UTF-8 with its size in bytes given explicitly,
-because a partial field name may contain U+0000. A document that already carries a signature is refused with
-``VANILLAPDF_ERROR_NOT_SUPPORTED``: the signed file is written whole, which
-would invalidate the existing signature.
-
-**Verify a signature:**
-
-.. code-block:: c
-
-   TrustedCertificateStoreHandle* store = NULL;
-   TrustedCertificateStore_Create(&store);
-   TrustedCertificateStore_LoadSystemDefaults(store);
-
-   SignatureVerificationResultHandle* result = NULL;
-   DigitalSignatureExtensions_Verify(sig, doc, store, settings, &result);
-
-   SignatureVerificationStatusType status;
-   SignatureVerificationResult_GetStatus(result, &status);
-
-See :doc:`signature_verification` for the full verification guide and
-:doc:`examples` for more code samples.
-
-For the complete API reference, see :doc:`api/documents`, :doc:`api/files`,
-:doc:`api/contents`, and :doc:`api/utils`.
+Task-based programs are on the :doc:`examples` page. For the complete API
+reference, see :doc:`api/documents`, :doc:`api/files`, :doc:`api/contents`,
+and :doc:`api/utils`.

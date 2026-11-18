@@ -97,6 +97,7 @@ int process_verify(const VerifyOptions& options) {
         printf("Checking certificate validity at signing time\n");
         RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetCheckSigningTimeFlag(settings, VANILLAPDF_RV_TRUE));
     }
+    //! [Configure verification settings]
 
     /* TODO: CRL/OCSP revocation checking (https://github.com/vanillapdf/vanillapdf/issues/157)
     if (options.check_revocation) {
@@ -104,7 +105,6 @@ int process_verify(const VerifyOptions& options) {
         RETURN_ERROR_IF_NOT_SUCCESS(SignatureVerificationSettings_SetCheckRevocationFlag(settings, VANILLAPDF_RV_TRUE));
     }
     */
-    //! [Configure verification settings]
 
     // Iterate through all fields and verify signature fields
     size_type signature_count = 0;

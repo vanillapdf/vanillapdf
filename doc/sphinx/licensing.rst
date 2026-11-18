@@ -31,7 +31,7 @@ Third-party libraries
 
 The library links the following open source libraries. Each is distributed
 under its own license, which applies to binaries that include it. The
-:doc:`building` guide describes how to turn the optional ones off.
+:doc:`build_options` page describes how to turn the optional ones off.
 
 .. list-table::
    :header-rows: 1
