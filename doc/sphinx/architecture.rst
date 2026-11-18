@@ -215,11 +215,13 @@ out-of-memory errors.
 protect concurrent access. Each object owns its mutex via
 ``std::unique_ptr<std::recursive_mutex>``:
 
-- ``DictionaryObject``
-- ``StreamObject``
-- ``StringObjectBase`` (literal and hexadecimal)
-- ``IndirectReferenceObject``
-- ``XrefUsedEntryBase``
+- ``DictionaryObject`` (:cpp:class:`DictionaryObjectHandle`)
+- ``StreamObject`` (:cpp:class:`StreamObjectHandle`)
+- ``StringObjectBase`` (:cpp:class:`LiteralStringObjectHandle` and
+  :cpp:class:`HexadecimalStringObjectHandle`)
+- ``IndirectReferenceObject`` (:cpp:class:`IndirectReferenceObjectHandle`)
+- ``XrefUsedEntryBase`` (:cpp:class:`XrefUsedEntryHandle` and
+  :cpp:class:`XrefCompressedEntryHandle`)
 
 **Reference counting is atomic.** ``IUnknown::m_ref_counter`` uses
 ``std::atomic<uint32_t>``, and ``WeakReferenceCounter::m_active`` uses
@@ -310,7 +312,9 @@ For signing, the standard approach uses PKCS#12 key files
 
 When the private key resides on a smart card or HSM, implement
 :cpp:class:`SigningKeyHandle` directly and provide your own signing logic.
-See ``sign_custom.c`` for an example.
+See `sign_custom.cpp
+<https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign_custom.cpp>`_
+for an example.
 
 File layer internals
 --------------------

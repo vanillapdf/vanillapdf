@@ -23,15 +23,15 @@ Object types
 ^^^^^^^^^^^^
 
 A PDF file is a sequence of objects of a few basic types:
-``BooleanObject``,
-``IntegerObject``,
-``RealObject``,
-``StringObject``,
-``NameObject``,
-``ArrayObject``,
-``DictionaryObject``,
-``StreamObject`` and
-``NullObject``.
+:cpp:class:`BooleanObject <BooleanObjectHandle>`,
+:cpp:class:`IntegerObject <IntegerObjectHandle>`,
+:cpp:class:`RealObject <RealObjectHandle>`,
+:cpp:class:`StringObject <StringObjectHandle>`,
+:cpp:class:`NameObject <NameObjectHandle>`,
+:cpp:class:`ArrayObject <ArrayObjectHandle>`,
+:cpp:class:`DictionaryObject <DictionaryObjectHandle>`,
+:cpp:class:`StreamObject <StreamObjectHandle>` and
+:cpp:class:`NullObject <NullObjectHandle>`.
 
 .. code-block:: text
 

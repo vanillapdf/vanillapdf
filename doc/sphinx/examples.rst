@@ -101,12 +101,29 @@ password that also lifts the access restrictions.
 Validate the file structure
 ---------------------------
 
-Check the cross-reference tables, trailers and streams of a file and list the
-problems found. The program exits with ``2`` when the file has structural
-errors.
+Check that the structure of a file is sound, for example in a script that
+accepts documents from other systems. The program works on the file layer
+only, so it does not read the pages. It opens the file with
+:cpp:func:`File_Open <FileHandle::File_Open>` and
+:cpp:func:`File_Initialize <FileHandle::File_Initialize>`, then passes it to
+:cpp:func:`FileStructureValidator_Validate <FileStructureValidator::FileStructureValidator_Validate>`.
+The returned :cpp:class:`FileStructureValidationResultHandle` lists the
+problems found in the header, the trailer and the cross-reference tables, such
+as an entry that points beyond the end of the file. The program prints each
+problem with its severity and message.
 
 .. literalinclude:: ../../examples/validation/main.c
    :language: c
+
+Run it with the document:
+
+.. code-block:: bash
+
+   ./build/validation input.pdf
+
+The program exits with ``0`` when the file is valid and with ``2`` when it has
+structural errors, so a script can tell them apart from a file that cannot be
+opened at all, which exits with ``1``.
 
 More code in the repository
 ---------------------------
