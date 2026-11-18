@@ -282,6 +282,79 @@ private:
     std::shared_ptr<WeakReferenceCounter> m_weak_ref;
 };
 
+// The weak reference counter of IWeakReferenceable, held as a member instead
+// of a base class. A class with many instances (syntax::Object) uses it to
+// stay single inheritance: with MSVC a second base makes every dynamic_cast
+// in that hierarchy about 4x slower (measurements in
+// https://github.com/vanillapdf/vanillapdf/issues/630).
+//
+// syntax::Object moved from the IWeakReferenceable<Object> base to this member.
+// Windows 11 x64, Intel Core i7-10700KF, MSVC 18, Release. The same
+// vanillapdf.benchmark executable with the library DLL swapped,
+// 3 alternating rounds of 5 repetitions, mean:
+//
+// | Benchmark                             | Base     | Member   | Diff   |
+// |---------------------------------------|----------|----------|--------|
+// | BaseFontRange_GetMappedValue          |   396 ns |   343 ns | -13.3% |
+// | UnicodeCharacterMap_GetMappedValue    |   446 ns |   396 ns | -11.3% |
+// | PageTreeSingleAccess/1450             |   529 ns |   483 ns |  -8.9% |
+// | FieldTreeAppendRootChildren/5000      | 99.1 ms  | 90.8 ms  |  -8.4% |
+// | PageTreeSequentialAccess/500          | 0.249 ms | 0.235 ms |  -5.9% |
+// | TokenizerParse100Objects              |   165 us |   156 us |  -5.5% |
+// | FileOpen/Memory_sample                |   267 us |   255 us |  -4.3% |
+// | XrefFind/50                           |   127 ns |   123 ns |  -3.4% |
+// | XrefContains/500                      |  7.52 ns |  7.90 ns |  +5.1% |
+//
+// The same DLL run against itself differs by up to 4%, and every other
+// benchmark changed by less than that.
+//
+// XrefContains is not slower because of this change. Its code is byte-identical
+// in both DLLs and only starts 16 to 32 bytes later. In the new position, the
+// null check in Xref_Contains (a test and je pair) crosses a 32-byte boundary.
+// The Intel JCC erratum microcode (Skylake to Comet Lake) does not keep such
+// a jump in the decoded instruction cache. With both DLLs built with
+// /QIntel-jcc-erratum, which keeps jumps off 32-byte boundaries,
+// 6 alternating rounds of 10 repetitions, median:
+//
+// | Benchmark                             | Base     | Member   | Diff   |
+// |---------------------------------------|----------|----------|--------|
+// | XrefContains/50                       |  7.32 ns |  7.37 ns |  +0.6% |
+// | XrefContains/500                      |  8.16 ns |  8.25 ns |  +1.1% |
+// | XrefContains/5000                     | 13.13 ns | 13.07 ns |  -0.4% |
+//
+// With the padding the difference is within the noise. Any change that moves
+// code can move a jump onto such a boundary, so a benchmark that changes by a
+// few percent without a code change on its path is likely this effect.
+// The library is not built with /QIntel-jcc-erratum. If this effect causes
+// a measurable slowdown in real use, consider enabling it for release builds.
+class WeakReferenceCounterHolder {
+public:
+    WeakReferenceCounterHolder() noexcept = default;
+    WeakReferenceCounterHolder(const WeakReferenceCounterHolder&) noexcept = default;
+    WeakReferenceCounterHolder& operator= (const WeakReferenceCounterHolder&) noexcept = default;
+
+    WeakReferenceCounterHolder(WeakReferenceCounterHolder&&) noexcept = default;
+    WeakReferenceCounterHolder& operator= (WeakReferenceCounterHolder&&) noexcept = default;
+
+    ~WeakReferenceCounterHolder() {
+        if (m_weak_ref) {
+            m_weak_ref->Deactivate();
+        }
+    }
+
+    // Created on demand, as in IWeakReferenceable
+    std::shared_ptr<WeakReferenceCounter> GetCounter() {
+        if (!m_weak_ref) {
+            m_weak_ref = std::make_shared<WeakReferenceCounter>();
+        }
+
+        return m_weak_ref;
+    }
+
+private:
+    std::shared_ptr<WeakReferenceCounter> m_weak_ref;
+};
+
 template<typename T>
 class IUnknownDeleter {
 public:
