@@ -43,7 +43,8 @@ Verify signatures
 
 Find the signed signature fields of a document and verify each signature
 against a store of trusted certificates. The program exits with ``2`` when a
-signature does not verify, so scripts can tell a bad signature from an error.
+signature does not verify or the document has none, so scripts can tell a bad
+signature from an error.
 See :doc:`signature_verification` for the verification settings and the
 meaning of each status.
 

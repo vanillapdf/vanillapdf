@@ -26,10 +26,20 @@ static error_type verify_signature(DocumentHandle* document, DigitalSignatureHan
 
     CHECK(SignatureVerificationResult_GetStatus(result, &status));
     CHECK(SignatureVerificationResult_IsDocumentIntact(result, &document_intact));
-    CHECK(SignatureVerificationResult_GetSignerCommonName(result, &signer));
-    CHECK(Buffer_GetData(signer, &signer_name, &signer_name_size));
 
-    printf("Signer: %.*s\n", (int) signer_name_size, signer_name);
+    /* The signer is unknown when the certificate has no common name, or the
+       signature is too damaged to identify it */
+    rc = SignatureVerificationResult_GetSignerCommonName(result, &signer);
+    if (rc == VANILLAPDF_ERROR_SUCCESS) {
+        CHECK(Buffer_GetData(signer, &signer_name, &signer_name_size));
+        printf("Signer: %.*s\n", (int) signer_name_size, signer_name);
+    } else if (rc == VANILLAPDF_ERROR_OBJECT_MISSING) {
+        rc = VANILLAPDF_ERROR_SUCCESS;
+        printf("Signer: unknown\n");
+    } else {
+        goto cleanup;
+    }
+
     printf("Document intact: %s\n", document_intact ? "yes" : "no");
     printf("Status: %s\n", status == SignatureStatus_Valid ? "valid" : "not valid");
 
@@ -73,7 +83,16 @@ int main(int argc, char* argv[]) {
     /* Signatures are the values of the signature fields of the interactive form */
     CHECK(Document_Open(argv[1], &document));
     CHECK(Document_GetCatalog(document, &catalog));
-    CHECK(Catalog_GetAcroForm(catalog, &form));
+
+    /* A document without an interactive form has no signatures */
+    rc = Catalog_GetAcroForm(catalog, &form);
+    if (rc == VANILLAPDF_ERROR_OBJECT_MISSING) {
+        rc = VANILLAPDF_ERROR_SUCCESS;
+        printf("Verified 0 signature(s)\n");
+        goto cleanup;
+    }
+
+    CHECK(rc);
     CHECK(InteractiveForm_GetFieldTree(form, &fields));
     CHECK(FieldTree_GetFieldCount(fields, &field_count));
 

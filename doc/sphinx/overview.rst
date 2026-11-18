@@ -50,7 +50,7 @@ entries. It is not a rendering engine.
 - Encrypt and decrypt with AES/RC4 (password and certificate-based); compatible with FIPS-enabled OpenSSL
 - Fill and read interactive form fields
 - Extract embedded images (JPEG, JPEG2000)
-- Parse and encode content streams (PostScript-style page instructions)
+- Parse and encode content streams (the operators that draw a page)
 - Low-level access to XRef tables, indirect objects, and file trailers
 
 **What it does not do:**

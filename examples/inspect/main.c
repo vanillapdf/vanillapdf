@@ -10,7 +10,9 @@
         } \
     } while (0)
 
-/* Print a text entry of the document information dictionary, if present */
+/* Print a text entry of the document information dictionary. The bytes are
+   printed as stored, in the encoding of the text string: PDFDocEncoding,
+   UTF-16BE or UTF-8 */
 static error_type print_entry(const char* label, StringObjectHandle* value) {
     BufferHandle* buffer = NULL;
     string_type data = NULL;

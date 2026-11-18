@@ -34,8 +34,11 @@ int main(int argc, char* argv[]) {
     CHECK(DocumentEncryptionSettings_SetUserPassword(settings, user_password));
     CHECK(DocumentEncryptionSettings_SetOwnerPassword(settings, owner_password));
 
-    /* Readers opening the document with the user password may only print it */
-    CHECK(DocumentEncryptionSettings_SetUserAccessPermissions(settings, UserAccessPermissionFlag_PrintFaithful));
+    /* Readers opening the document with the user password may only print it.
+       PrintFaithful allows printing at full quality, together with PrintDegraded,
+       which allows printing at all. */
+    CHECK(DocumentEncryptionSettings_SetUserAccessPermissions(settings,
+        UserAccessPermissionFlag_PrintDegraded | UserAccessPermissionFlag_PrintFaithful));
 
     /* Every object is encrypted when the document is saved */
     CHECK(Document_Open(argv[1], &document));
