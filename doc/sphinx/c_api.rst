@@ -284,6 +284,8 @@ buffers so concurrent threads never interfere with each other.
 See :doc:`architecture` for the full list of protected objects and
 implementation details.
 
+.. _trivial-functions:
+
 Trivial functions
 -----------------
 
