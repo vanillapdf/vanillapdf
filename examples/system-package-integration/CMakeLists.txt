@@ -21,15 +21,14 @@ find_package(vanillapdf CONFIG REQUIRED)
 add_executable(system_package_test main.cpp)
 target_link_libraries(system_package_test PRIVATE vanillapdf::vanillapdf)
 
-# Windows has no run path: the loader looks for DLLs next to the executable.
-# Copy every DLL the executable links next to it. Elsewhere the list is empty,
-# copy -t (CMake 3.26) with no files does nothing, and the run path CMake
-# records finds the library.
-add_custom_command(TARGET system_package_test POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different -t $<TARGET_FILE_DIR:system_package_test>
-            $<TARGET_RUNTIME_DLLS:system_package_test>
-    COMMAND_EXPAND_LISTS
-)
+if(WIN32)
+    # Windows has no run path: copy every DLL the test links next to it
+    add_custom_command(TARGET system_package_test POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different -t $<TARGET_FILE_DIR:system_package_test>
+                $<TARGET_RUNTIME_DLLS:system_package_test>
+        COMMAND_EXPAND_LISTS
+    )
+endif()
 
 enable_testing()
 add_test(NAME system_package_integration_test
