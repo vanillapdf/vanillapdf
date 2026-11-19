@@ -15,6 +15,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_utils
     * \brief Encoding types for PDF text strings (PDF spec 7.9.2.2).
     *
     * PDF text strings can be encoded as PDFDocEncoding (no BOM),

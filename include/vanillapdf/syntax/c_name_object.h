@@ -20,7 +20,7 @@ extern "C"
     * \extends ObjectHandle
     * \ingroup group_objects
     * \brief A name object is an atomic symbol uniquely defined by a sequence of characters
-    * \see \ref group_name_constants
+    * \see The predefined NameConstant_* values in the name constants group
     */
 
     /**

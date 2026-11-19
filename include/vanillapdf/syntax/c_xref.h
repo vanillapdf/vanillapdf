@@ -89,6 +89,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_xref
     * \brief Required for conversion to derived types.
     */
     typedef enum {

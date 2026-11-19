@@ -36,6 +36,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_documents
     * \brief Numbering style types.
     */
     typedef enum {

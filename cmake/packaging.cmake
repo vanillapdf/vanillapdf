@@ -149,7 +149,7 @@ endif()
 #set(CPACK_NUGET_PACKAGE_AUTHORS						"Vanilla.PDF Labs s.r.o.")
 #set(CPACK_NUGET_PACKAGE_OWNERS							"Vanilla.PDF Labs s.r.o.")
 #set(CPACK_NUGET_PACKAGE_TITLE							"vanillapdf.runtime.${PLATFORM_IDENTIFIER}")
-#set(CPACK_NUGET_PACKAGE_COPYRIGHT						"Copyright 2018-2022 Vanilla.PDF Labs s.r.o.")
+#set(CPACK_NUGET_PACKAGE_COPYRIGHT						"Copyright 2018-2026 Vanilla.PDF Labs s.r.o.")
 #set(CPACK_NUGET_PACKAGE_TAGS							"pdf parsing sign native")
 
 # I am not able to use NuGet generator since it bundles a lot of unnecessary

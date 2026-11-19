@@ -1,8 +1,9 @@
-C API Guide
+C API guide
 ===========
 
 Vanilla.PDF is written in C++17 but exposes only an **ANSI C interface**,
-ensuring ABI stability across compilers and easy interop with other languages.
+ensuring ABI stability across compilers and a binding surface for any language
+with a C foreign function interface.
 
 This page covers the core concepts you need to use the API effectively:
 handles, types, memory management, error handling, and versioning.
@@ -26,7 +27,7 @@ Link with CMake:
 Handle system
 -------------
 
-All objects are represented as **opaque handles** -- typed pointers to internal
+All objects are represented as **opaque handles** — typed pointers to internal
 C++ structures. You never access fields directly; all interaction goes through
 API functions.
 
@@ -34,33 +35,30 @@ Common handle types:
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 35 65
 
    * - Handle
      - Represents
-   * - ``DocumentHandle``
+   * - :cpp:class:`DocumentHandle`
      - A PDF document (create, open, save, sign)
-   * - ``FileHandle``
+   * - :cpp:class:`FileHandle`
      - Low-level file access (XRef, trailers, objects)
-   * - ``CatalogHandle``
+   * - :cpp:class:`CatalogHandle`
      - The document root (page tree, outlines, names)
-   * - ``PageTreeHandle``
+   * - :cpp:class:`PageTreeHandle`
      - The page tree node containing all pages
-   * - ``PageObjectHandle``
+   * - :cpp:class:`PageObjectHandle`
      - A single page (content stream, media box, annotations)
-   * - ``InteractiveFormHandle`` / ``FormFieldHandle``
+   * - :cpp:class:`InteractiveFormHandle` / :cpp:class:`FieldHandle`
      - AcroForm tree and individual fields (read/write values)
-   * - ``FileStructureValidatorHandle``
-     - Walks the PDF structure and reports xref/trailer/stream issues
-   * - ``IoStrategyHandle``
-     - Pluggable backend for file I/O (in-memory buffer or file stream)
-   * - ``ObjectDiagnosticsHandle``
-     - Per-type allocation counters for leak detection in tests
-   * - ``PKCS12KeyHandle``
+   * - :cpp:class:`FileStructureValidationResultHandle`
+     - Xref, trailer and stream issues reported by :cpp:func:`FileStructureValidator_Validate <FileStructureValidator::FileStructureValidator_Validate>`
+   * - :cpp:class:`PKCS12KeyHandle`
      - A PKCS#12 key for signing
-   * - ``SigningKeyHandle``
+   * - :cpp:class:`SigningKeyHandle`
      - Abstract signing interface (for custom/smart card signing)
-   * - ``TrustedCertificateStoreHandle``
+   * - :cpp:class:`TrustedCertificateStoreHandle`
      - Certificate store for signature verification
 
 Typical usage pattern:
@@ -197,19 +195,29 @@ Usage with ``goto`` cleanup:
 Leak detection
 ^^^^^^^^^^^^^^
 
-For debugging missing ``_Release`` calls, the ObjectDiagnostics API reports
-the live allocation count per object type. Snapshot before and after a unit
-of work, compare, and any non-zero delta points at a leaked handle. See the
-``ObjectDiagnostics_*`` functions in ``c_object_diagnostics.h``.
+A missing ``_Release`` call keeps the object, and every object it references,
+alive. :cpp:func:`ObjectDiagnostics_GetActiveObjectCount <ObjectDiagnostics::ObjectDiagnostics_GetActiveObjectCount>`
+returns the number of live library objects in the process. Read it before and
+after a unit of work that releases all of its handles: a higher count
+afterwards points at a leaked handle. The count covers the whole process, so
+take both readings while no other thread uses the library.
+
+To find where the leaked memory was allocated, use LeakSanitizer
+(``-fsanitize=address`` with GCC or Clang on Linux), or on Windows the debug
+heap of the C runtime, which a source build supports with
+``VANILLAPDF_ENABLE_CRTDBG`` (see :doc:`build_options`).
 
 Text strings
 ------------
 
-PDF text strings are not bare UTF-8; they use PDFDocEncoding by default and
-UTF-16BE when prefixed with a byte-order mark. The ``c_text_string_encoding.h``
-helpers (``TextStringEncoding_DetectEncoding``, ``TextStringEncoding_ToUtf8``,
-``TextStringEncoding_FromUtf8``) handle detection and conversion so callers can
-work with plain UTF-8 at the boundary.
+PDF text strings are not bare UTF-8: they use PDFDocEncoding by default, and
+UTF-16BE or (since PDF 2.0) UTF-8 when prefixed with a byte order mark.
+Functions that document a UTF-8 result, such as
+:cpp:func:`Field_GetQualifiedName <FieldHandle::Field_GetQualifiedName>`,
+normalize the text for you. To interpret the raw bytes of a string object,
+:cpp:func:`TextStringEncoding_Detect` reports which encoding they use and
+:cpp:func:`TextStringEncoding_PDFDocEncodingByteToUnicode` maps a
+PDFDocEncoding byte to its Unicode code point.
 
 Error handling
 --------------
@@ -218,13 +226,27 @@ Every function returns ``error_type``. On success, the value is
 ``VANILLAPDF_ERROR_SUCCESS``. Any other value indicates an error whose message
 is stored in a thread-local buffer.
 
-Retrieve the last error:
+Retrieve the last error of the calling thread:
 
-.. literalinclude:: ../../src/vanillapdf.test/utils.c
-   :language: c
-   :start-after: //! [Print last error]
-   :end-before: //! [Print last error]
-   :dedent:
+.. code-block:: c
+
+   error_type error = VANILLAPDF_ERROR_SUCCESS;
+   size_type message_length = 0;
+
+   Errors_GetLastError(&error);
+
+   /* The length includes the terminating NUL character */
+   Errors_GetLastErrorMessageLength(&message_length);
+
+   if (message_length > 0) {
+       char* message = (char*) malloc(message_length);
+
+       if (message != NULL && Errors_GetLastErrorMessage(message, message_length) == VANILLAPDF_ERROR_SUCCESS) {
+           fprintf(stderr, "Error %u: %.*s\n", (unsigned) error, (int) message_length, message);
+       }
+
+       free(message);
+   }
 
 Error codes
 ^^^^^^^^^^^
@@ -260,7 +282,7 @@ All error codes are defined as ``extern const error_type`` in ``c_values.h``:
    * - ``VANILLAPDF_ERROR_FILE_DISPOSED``
      - File handle already disposed
    * - ``VANILLAPDF_ERROR_FILE_NOT_INITIALIZED``
-     - File not yet initialized (call ``File_Initialize`` first)
+     - File not yet initialized (call :cpp:func:`File_Initialize <FileHandle::File_Initialize>` first)
    * - ``VANILLAPDF_ERROR_OBJECT_MISSING``
      - Required dependent object not found in file
    * - ``VANILLAPDF_ERROR_PARSE_EXCEPTION``
@@ -277,12 +299,11 @@ All error codes are defined as ``extern const error_type`` in ``c_values.h``:
 Thread safety
 -------------
 
-Vanilla.PDF is thread-safe. Key internal objects are protected by mutexes,
-reference counting is atomic, and error context is stored in ``thread_local``
-buffers so concurrent threads never interfere with each other.
+Any handle can be shared between threads without caller-side locking, and the
+last error is stored per thread, so a failing call on one thread never
+overwrites another thread's error. See :ref:`thread-safety` for the details.
 
-See :doc:`architecture` for the full list of protected objects and
-implementation details.
+.. _trivial-functions:
 
 Trivial functions
 -----------------
@@ -342,11 +363,17 @@ changing existing ones, patch releases contain only fixes.
 
 Query the version at runtime:
 
-.. literalinclude:: ../../src/vanillapdf.test/utils.c
-   :language: c
-   :start-after: //! [Print library info]
-   :end-before: //! [Print library info]
-   :dedent:
+.. code-block:: c
+
+   integer_type major = 0;
+   integer_type minor = 0;
+   integer_type patch = 0;
+
+   LibraryInfo_GetVersionMajor(&major);
+   LibraryInfo_GetVersionMinor(&minor);
+   LibraryInfo_GetVersionPatch(&patch);
+
+   printf("Vanilla.PDF %d.%d.%d\n", (int) major, (int) minor, (int) patch);
 
 .. list-table::
    :header-rows: 1
@@ -354,153 +381,89 @@ Query the version at runtime:
 
    * - Function
      - Returns
-   * - ``LibraryInfo_GetVersionMajor``
+   * - :cpp:func:`LibraryInfo_GetVersionMajor <LibraryInfo::LibraryInfo_GetVersionMajor>`
      - Major version (backward-incompatible changes)
-   * - ``LibraryInfo_GetVersionMinor``
+   * - :cpp:func:`LibraryInfo_GetVersionMinor <LibraryInfo::LibraryInfo_GetVersionMinor>`
      - Minor version (new features, backward-compatible)
-   * - ``LibraryInfo_GetVersionPatch``
+   * - :cpp:func:`LibraryInfo_GetVersionPatch <LibraryInfo::LibraryInfo_GetVersionPatch>`
      - Patch version (bug fixes only)
-   * - ``LibraryInfo_GetVersionBuild``
+   * - :cpp:func:`LibraryInfo_GetVersionBuild <LibraryInfo::LibraryInfo_GetVersionBuild>`
      - Build metadata (no functional impact)
-   * - ``LibraryInfo_GetAuthor``
+   * - :cpp:func:`LibraryInfo_GetAuthor <LibraryInfo::LibraryInfo_GetAuthor>`
      - Library author name
-   * - ``LibraryInfo_GetBuildDay``
+   * - :cpp:func:`LibraryInfo_GetBuildDay <LibraryInfo::LibraryInfo_GetBuildDay>`
      - Day of month when library was compiled
-   * - ``LibraryInfo_GetBuildMonth``
+   * - :cpp:func:`LibraryInfo_GetBuildMonth <LibraryInfo::LibraryInfo_GetBuildMonth>`
      - Month when library was compiled
-   * - ``LibraryInfo_GetBuildYear``
+   * - :cpp:func:`LibraryInfo_GetBuildYear <LibraryInfo::LibraryInfo_GetBuildYear>`
      - Year when library was compiled
 
 Debugging
 ---------
 
-Enable diagnostic logging to get internal trace output:
+Logging
+^^^^^^^
+
+Logging is on by default: the library writes its log to standard output at the
+``Info`` level, which includes errors, warnings and informational messages,
+such as each file being opened and closed. Set the level with
+:cpp:func:`Logging_SetSeverity <Logging::Logging_SetSeverity>`, from the least to the most verbose: ``Off``,
+``Critical``, ``Error``, ``Warning``, ``Info``, ``Debug``, ``Trace``.
 
 .. code-block:: c
 
-   #include "vanillapdf/c_logging.h"
+   Logging_SetSeverity(LoggingSeverity_Off);     /* no log at all */
+   Logging_SetSeverity(LoggingSeverity_Debug);   /* more detail */
 
-   Logging_Enable();
-   Logging_SetSeverity(LoggingSeverity_Debug);
-
-Log levels from least to most verbose: ``Error``, ``Warning``, ``Info``,
-``Debug``.
-
-Common operations
------------------
-
-**Open an existing PDF:**
+To send the log elsewhere, write it to size-limited files with
+:cpp:func:`Logging_SetRotatingFileLogger <Logging::Logging_SetRotatingFileLogger>`, or pass each entry to your own
+logging with :cpp:func:`Logging_SetCallbackLogger <Logging::Logging_SetCallbackLogger>`. The text passed to the
+callback is not terminated by a NUL character, so use its length:
 
 .. code-block:: c
 
-   FileHandle* file = NULL;
-   File_Open("input.pdf", &file);
+   static void CALLING_CONVENTION on_log(void* user_data, LoggingSeverity level,
+       string_type payload, size_type length) {
+       fprintf(stderr, "vanillapdf: %.*s\n", (int) length, payload);
+   }
 
-   DocumentHandle* doc = NULL;
-   Document_Open("input.pdf", &doc);
+   static void CALLING_CONVENTION on_flush(void* user_data) {
+       fflush(stderr);
+   }
 
-**Create a new PDF with a page:**
+   Logging_SetCallbackLogger(on_log, on_flush, NULL);
 
-.. code-block:: c
+Each of the two loggers can be set once per process; a second call fails.
+:cpp:func:`Logging_SetPattern <Logging::Logging_SetPattern>` changes the format of each entry.
+:cpp:func:`Logging_Shutdown <Logging::Logging_Shutdown>` flushes and closes the log, and must be the last
+call: any later library call that writes to the log crashes.
 
-   DocumentHandle* doc = NULL;
-   CatalogHandle* cat = NULL;
-   PageTreeHandle* pages = NULL;
-   PageObjectHandle* page = NULL;
+Debugger visualizers
+^^^^^^^^^^^^^^^^^^^^
 
-   Document_Create("new.pdf", &doc);
-   Document_GetCatalog(doc, &cat);
-   Catalog_GetPages(cat, &pages);
-   PageObject_CreateFromDocument(doc, &page);
-   PageTree_AppendPage(pages, page);
-   Document_Save(doc, "new.pdf");
+The library includes two visualizer files for the Visual Studio debugger:
 
-**Sign a document:**
+- ``public.natvis`` — the object handles of the C API, such as
+  :cpp:class:`DictionaryObjectHandle` and :cpp:class:`BufferHandle`
+- ``vanillapdf.natvis`` — the internal C++ classes, for work on the library
+  itself
 
-.. code-block:: c
+Built with Visual Studio, the library embeds both files in its program database
+(``.pdb``). Only the vcpkg port installs the program database; the ZIP, TGZ and
+NuGet packages do not include it. There are no pretty printers for GDB or LLDB,
+which show the handles as plain pointers.
 
-   PKCS12KeyHandle* pkcs12 = NULL;
-   SigningKeyHandle* key = NULL;
+Other diagnostics
+^^^^^^^^^^^^^^^^^
 
-   DocumentSignatureSettingsHandle* settings = NULL;
+- `Error handling`_ — the message of the last failed call
+- `Leak detection`_ — handles that were never released
+- :ref:`Sanitizers <development-options>` — AddressSanitizer,
+  UndefinedBehaviorSanitizer and ThreadSanitizer builds of the library
 
-   PKCS12Key_CreateFromFile("key.p12", "password", &pkcs12);
-   PKCS12Key_ToSigningKey(pkcs12, &key);
+API reference
+-------------
 
-   DocumentSignatureSettings_Create(&settings);
-   DocumentSignatureSettings_SetSigningKey(settings, key);
-   DocumentSignatureSettings_SetDigest(settings, MessageDigestAlgorithmType_SHA256);
-
-   Document_Sign(doc, destination, settings);
-
-``Document_Sign`` creates an invisible signature field of its own on the
-first page.
-
-**Sign a visible signature field:**
-
-A visible signature is a signature field whose widget annotation sits on a
-page with a rectangle and an appearance. The field and the widget are
-separate objects: the field joins the form's field hierarchy and carries the
-signature, the widget is linked to it through ``Field_AddWidget`` and to the
-page through its annotations.
-
-.. code-block:: c
-
-   SignatureFieldHandle* signature_field = NULL;
-   FieldHandle* field = NULL;
-   SignatureField_CreateFromDocument(doc, field_name, &signature_field);
-   SignatureField_ToField(signature_field, &field);
-
-   WidgetAnnotationHandle* widget = NULL;
-   AnnotationHandle* annotation = NULL;
-   WidgetAnnotation_CreateFromDocument(doc, &widget);
-   WidgetAnnotation_ToBaseAnnotation(widget, &annotation);
-
-   RectangleHandle* rect = NULL;
-   Rectangle_Create(&rect);
-   Rectangle_SetLowerLeftXReal(rect, 100);
-   Rectangle_SetLowerLeftYReal(rect, 100);
-   Rectangle_SetUpperRightXReal(rect, 300);
-   Rectangle_SetUpperRightYReal(rect, 160);
-   Annotation_SetRect(annotation, rect);
-
-   /* The appearance is a form XObject the caller draws into */
-   FormXObjectHandle* appearance = NULL;
-   FormXObject_CreateFromDocument(doc, &appearance);
-   Annotation_SetAppearance(annotation, AppearanceType_Normal, appearance);
-
-   /* From PageObject_GetAnnotations, or PageAnnotations_Create and
-      PageObject_SetAnnotations for a page without annotations */
-   PageAnnotations_Append(page_annotations, annotation);
-   Field_AddWidget(field, widget);
-
-   const char* signature_name = "Signature1";
-   Document_SignField(doc, destination, signature_name, strlen(signature_name), settings);
-
-``field_name`` is a ``StringObjectHandle`` holding the partial field name
-(``Signature1`` here). The field sits at the root of the hierarchy, so the
-same name is its fully qualified name, which ``Document_SignField`` resolves
-the field by. The name is UTF-8 with its size in bytes given explicitly,
-because a partial field name may contain U+0000. A document that already carries a signature is refused with
-``VANILLAPDF_ERROR_NOT_SUPPORTED``: the signed file is written whole, which
-would invalidate the existing signature.
-
-**Verify a signature:**
-
-.. code-block:: c
-
-   TrustedCertificateStoreHandle* store = NULL;
-   TrustedCertificateStore_Create(&store);
-   TrustedCertificateStore_LoadSystemDefaults(store);
-
-   SignatureVerificationResultHandle* result = NULL;
-   DigitalSignatureExtensions_Verify(sig, doc, store, settings, &result);
-
-   SignatureVerificationStatusType status;
-   SignatureVerificationResult_GetStatus(result, &status);
-
-See :doc:`signature_verification` for the full verification guide and
-:doc:`examples` for more code samples.
-
-For the complete API reference, see :doc:`api/documents`, :doc:`api/files`,
-:doc:`api/contents`, and :doc:`api/utils`.
+Task-based programs are on the :doc:`examples` page. For the complete API
+reference, see :doc:`api/documents`, :doc:`api/files`, :doc:`api/contents`,
+and :doc:`api/utils`.

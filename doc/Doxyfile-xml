@@ -20,8 +20,10 @@ GENERATE_LATEX         = NO
 # Aliases
 # \trivial marks a C API function that keeps the trivial function contract,
 # defined in src/input/trivial_functions.dox and in the "Trivial functions"
-# section of sphinx/c_api.rst. Keep in step with doxyfile.in.
-ALIASES                = "trivial=\xrefitem trivial \"Trivial function\" \"List of trivial functions\" Does not lock, allocate, throw or log. See Trivial functions in the C API guide."
+# section of sphinx/c_api.rst. Keep in step with doxyfile.in, except for the
+# link to the contract: sphinx/api/trivial.rst renders the list page and links
+# to the C API guide once, instead of a sentence repeated on every entry.
+ALIASES                = "trivial=\xrefitem trivial \"Trivial function\" \"List of trivial functions\" Does not lock, allocate, throw or log."
 
 # Preprocessing
 # Expand these markers to nothing so the declarations Breathe parses are clean

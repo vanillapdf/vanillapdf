@@ -5,9 +5,6 @@ This page describes the internal design of Vanilla.PDF: the layered
 architecture, object model, memory model, thread-safety invariants, and
 extension points.
 
-For the public C API conventions (handles, error codes, cleanup patterns), see
-:doc:`c_api`.
-
 Three-layer architecture
 ------------------------
 
@@ -17,6 +14,7 @@ sits alongside all three and maps internal C++ objects to opaque handles.
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 18 30 52
 
    * - Layer
@@ -61,7 +59,7 @@ Object model
 Handle types
 ^^^^^^^^^^^^
 
-All objects exposed through the C API are opaque handles -- typed pointers to
+All objects exposed through the C API are opaque handles — typed pointers to
 internal C++ structures. Handles are declared using the
 ``DECLARE_OBJECT_HANDLE`` macro, which creates a forward-declared struct tag:
 
@@ -71,46 +69,45 @@ internal C++ structures. Handles are declared using the
    #define DECLARE_OBJECT_HANDLE(x) \
        typedef struct x##HandleTag x##Handle
 
-This ensures that ``DocumentHandle*`` and ``FileHandle*`` are distinct pointer
+This ensures that :cpp:class:`DocumentHandle* <DocumentHandle>` and :cpp:class:`FileHandle* <FileHandle>` are distinct pointer
 types at the compiler level, preventing accidental misuse.
 
 The handles fall into four categories matching the three layers plus utilities:
 
-**Syntax layer handles** -- PDF primitive objects and file structure:
+**Syntax layer handles** — PDF primitive objects and file structure:
 
-- ``ObjectHandle``, ``ArrayObjectHandle``, ``BooleanObjectHandle``,
-  ``NameObjectHandle``, ``IntegerObjectHandle``, ``RealObjectHandle``,
-  ``StringObjectHandle``, ``StreamObjectHandle``, ``DictionaryObjectHandle``,
-  ``NullObjectHandle``
-- ``FileHandle``, ``FileWriterHandle``, ``XrefHandle``, ``XrefEntryHandle``
-- Filter handles: ``FlateDecodeFilterHandle``, ``DCTDecodeFilterHandle``,
-  ``ASCII85DecodeFilterHandle``, ``ASCIIHexDecodeFilterHandle``,
-  ``LZWDecodeFilterHandle``, ``JPXDecodeFilterHandle``
+- :cpp:class:`ObjectHandle`, :cpp:class:`ArrayObjectHandle`, :cpp:class:`BooleanObjectHandle`,
+  :cpp:class:`NameObjectHandle`, :cpp:class:`IntegerObjectHandle`, :cpp:class:`RealObjectHandle`,
+  :cpp:class:`StringObjectHandle`, :cpp:class:`StreamObjectHandle`, :cpp:class:`DictionaryObjectHandle`,
+  :cpp:class:`NullObjectHandle`
+- :cpp:class:`FileHandle`, :cpp:class:`FileWriterHandle`, :cpp:class:`XrefHandle`, :cpp:class:`XrefEntryHandle`
+- Filter handles: :cpp:class:`FlateDecodeFilterHandle`, :cpp:class:`DCTDecodeFilterHandle`,
+  :cpp:class:`ASCII85DecodeFilterHandle`, :cpp:class:`ASCIIHexDecodeFilterHandle`,
+  :cpp:class:`LZWDecodeFilterHandle`, :cpp:class:`JPXDecodeFilterHandle`
 
-**Semantics layer handles** -- document-level objects:
+**Semantics layer handles** — document-level objects:
 
-- ``DocumentHandle``, ``CatalogHandle``, ``PageTreeHandle``,
-  ``PageObjectHandle``, ``PageContentsHandle``
-- ``DigitalSignatureHandle``, ``DocumentSignerHandle``,
-  ``DocumentSignatureSettingsHandle``
-- ``InteractiveFormHandle``, ``FieldHandle``, ``SignatureFieldHandle``
-- ``OutlineHandle``, ``AnnotationHandle``, ``NamedDestinationsHandle``
-- ``FontHandle``, ``ResourceDictionaryHandle``, ``DateHandle``,
-  ``RectangleHandle``
+- :cpp:class:`DocumentHandle`, :cpp:class:`CatalogHandle`, :cpp:class:`PageTreeHandle`,
+  :cpp:class:`PageObjectHandle`, :cpp:class:`PageContentsHandle`
+- :cpp:class:`DigitalSignatureHandle`, :cpp:class:`DocumentSignatureSettingsHandle`
+- :cpp:class:`InteractiveFormHandle`, :cpp:class:`FieldHandle`, :cpp:class:`SignatureFieldHandle`
+- :cpp:class:`OutlineHandle`, :cpp:class:`AnnotationHandle`, :cpp:class:`NamedDestinationsHandle`
+- :cpp:class:`FontHandle`, :cpp:class:`ResourceDictionaryHandle`, :cpp:class:`DateHandle`,
+  :cpp:class:`RectangleHandle`
 
-**Contents layer handles** -- content stream objects:
+**Contents layer handles** — content stream objects:
 
-- ``ContentObjectHandle``, ``ContentOperationHandle``,
-  ``ContentInstructionHandle``, ``ContentParserHandle``
-- Text operations: ``ContentOperationTextFontHandle``,
-  ``ContentOperationTextShowHandle``, ``ContentOperationBeginTextHandle``
+- :cpp:class:`ContentObjectHandle`, :cpp:class:`ContentOperationHandle`,
+  :cpp:class:`ContentInstructionHandle`, :cpp:class:`ContentParserHandle`
+- Text operations: :cpp:class:`ContentOperationTextFontHandle`,
+  :cpp:class:`ContentOperationTextShowHandle`, :cpp:class:`ContentOperationBeginTextHandle`
 
-**Utility handles** -- I/O, buffers, cryptography:
+**Utility handles** — I/O, buffers, cryptography:
 
-- ``BufferHandle``, ``InputStreamHandle``, ``OutputStreamHandle``
-- ``SigningKeyHandle``, ``EncryptionKeyHandle``, ``PKCS12KeyHandle``
-- ``TrustedCertificateStoreHandle``,
-  ``SignatureVerificationResultHandle``
+- :cpp:class:`BufferHandle`, :cpp:class:`InputStreamHandle`, :cpp:class:`OutputStreamHandle`
+- :cpp:class:`SigningKeyHandle`, :cpp:class:`EncryptionKeyHandle`, :cpp:class:`PKCS12KeyHandle`
+- :cpp:class:`TrustedCertificateStoreHandle`,
+  :cpp:class:`SignatureVerificationResultHandle`
 
 Internal class hierarchy
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -137,9 +134,9 @@ Semantics-layer objects use a template wrapper:
        // Wraps a syntax-layer object with semantic meaning
    };
 
-This separation means the semantic layer (``DocumentHandle``,
-``PageObjectHandle``) operates on top of the syntax layer
-(``DictionaryObjectHandle``, ``StreamObjectHandle``) without exposing the
+This separation means the semantic layer (:cpp:class:`DocumentHandle`,
+:cpp:class:`PageObjectHandle`) operates on top of the syntax layer
+(:cpp:class:`DictionaryObjectHandle`, :cpp:class:`StreamObjectHandle`) without exposing the
 lower-level structure to callers.
 
 Memory model
@@ -152,8 +149,8 @@ The library uses **intrusive reference counting**. The reference counter is
 embedded directly inside each object, not in a separate control block. This
 gives two advantages over ``std::shared_ptr``:
 
-1. **Single allocation** -- object and counter are allocated together
-2. **Single dereference** -- accessing the object does not require a second
+1. **Single allocation** — object and counter are allocated together
+2. **Single dereference** — accessing the object does not require a second
    pointer hop through a control block
 
 When an API function returns a handle through an output parameter, the caller
@@ -191,11 +188,15 @@ objects without preventing their destruction. Weak reference counters use
        std::atomic<bool> m_active;
    };
 
+.. _thread-safety:
+
 Thread safety
 -------------
 
-Vanilla.PDF is thread-safe. The library does not use global mutable state,
-and key internal objects are protected by mutexes and atomics.
+Vanilla.PDF provides fine-grained thread safety: the **same object** can be
+accessed concurrently from multiple threads — including objects that initialize
+lazily on first access — without any caller-side locking. Internally, objects
+are protected by mutexes and atomics.
 
 **Error context is thread-local.** Each thread maintains its own error code
 and message buffer:
@@ -214,24 +215,27 @@ out-of-memory errors.
 protect concurrent access. Each object owns its mutex via
 ``std::unique_ptr<std::recursive_mutex>``:
 
-- ``DictionaryObject``
-- ``StreamObject``
-- ``StringObjectBase`` (literal and hexadecimal)
-- ``IndirectReferenceObject``
-- ``XrefUsedEntryBase``
+- ``DictionaryObject`` (:cpp:class:`DictionaryObjectHandle`)
+- ``StreamObject`` (:cpp:class:`StreamObjectHandle`)
+- ``StringObjectBase`` (:cpp:class:`LiteralStringObjectHandle` and
+  :cpp:class:`HexadecimalStringObjectHandle`)
+- ``IndirectReferenceObject`` (:cpp:class:`IndirectReferenceObjectHandle`)
+- ``XrefUsedEntryBase`` (:cpp:class:`XrefUsedEntryHandle` and
+  :cpp:class:`XrefCompressedEntryHandle`)
 
 **Reference counting is atomic.** ``IUnknown::m_ref_counter`` uses
 ``std::atomic<uint32_t>``, and ``WeakReferenceCounter::m_active`` uses
 ``std::atomic<bool>``, so reference management is safe across threads.
 
 **Document opening is thread-safe.** ``Document::OpenFile`` atomically
-returns the existing document or creates a new one for a given file,
-preventing race conditions when multiple threads open the same file.
+returns the document already associated with a ``File`` instance, or creates
+one, so threads that open the same ``File`` concurrently always receive the
+same ``Document``. Each ``File::Open`` call creates a new ``File``, so opening
+the same path twice yields two independent documents.
 
 **Logging is thread-safe.** The logging subsystem uses ``spdlog``
 multi-threaded sinks (``rotating_logger_mt``, ``custom_callback_sink_mt``
-with internal ``std::mutex``). Calling ``Logging_Enable()`` or writing log
-output from any thread is safe.
+with internal ``std::mutex``). Writing log output from any thread is safe.
 
 Error handling
 --------------
@@ -274,28 +278,24 @@ customize behavior without modifying the library itself.
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 35 65
 
    * - Interface
      - Purpose
-   * - ``SigningKeyHandle``
+   * - :cpp:class:`SigningKeyHandle`
      - Custom signing implementation for smart cards or HSMs where the
        private key is not directly accessible. Override instead of using
-       ``PKCS12KeyHandle`` when keys cannot be exported.
-   * - ``EncryptionKeyHandle``
+       :cpp:class:`PKCS12KeyHandle` when keys cannot be exported.
+   * - :cpp:class:`EncryptionKeyHandle`
      - Custom encryption key provider for certificate-based decryption
        or external key management systems.
-   * - ``FileWriterObserverHandle``
+   * - :cpp:class:`FileWriterObserverHandle`
      - Callback interface invoked during PDF file writing. Allows callers
        to monitor or modify the output process.
-   * - ``IoStrategyHandle``
-     - Pluggable file I/O backend. Two implementations ship in-box: an
-       in-memory ``MemoryBuffer`` strategy and a ``FileStream`` strategy
-       that reads from disk. Custom implementations can route reads through
-       arbitrary transports (e.g. encrypted blob stores, network).
 
 For signing, the standard approach uses PKCS#12 key files
-(`RFC 7292 <https://tools.ietf.org/html/rfc7292>`_):
+(`RFC 7292 <https://www.rfc-editor.org/rfc/rfc7292>`_):
 
 .. code-block:: c
 
@@ -311,8 +311,10 @@ For signing, the standard approach uses PKCS#12 key files
    Document_Sign(doc, destination, settings);
 
 When the private key resides on a smart card or HSM, implement
-``SigningKeyHandle`` directly and provide your own signing logic.
-See ``sign_custom.c`` for an example.
+:cpp:class:`SigningKeyHandle` directly and provide your own signing logic.
+See `sign_custom.cpp
+<https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign_custom.cpp>`_
+for an example.
 
 File layer internals
 --------------------
@@ -325,12 +327,15 @@ IO streams
 The library uses C++ I/O streams internally. The public interface exposes
 two stream types:
 
-- ``InputStreamHandle`` -- for reading source files
-- ``OutputStreamHandle`` -- for writing output files
+- :cpp:class:`InputStreamHandle` — for reading source files
+- :cpp:class:`OutputStreamHandle` — for writing output files
 
-For custom I/O backends (memory-mapped files, network streams, encrypted blob
-stores), implement ``IoStrategyHandle``. Two ship in-box: an in-memory buffer
-strategy and a file-stream strategy.
+How a file is read and written is selected with :cpp:enum:`IOStrategyType`, passed to
+:cpp:func:`File_OpenWithStrategy <FileHandle::File_OpenWithStrategy>`, :cpp:func:`File_CreateWithStrategy <FileHandle::File_CreateWithStrategy>`,
+:cpp:func:`Document_OpenWithStrategy <DocumentHandle::Document_OpenWithStrategy>` and :cpp:func:`Document_CreateWithStrategy <DocumentHandle::Document_CreateWithStrategy>`. The default
+uses C++ ``fstream``; ``IOStrategy_FileStream`` uses ``FILE*`` based streaming.
+The in-memory and memory-mapped strategies are reserved and not yet supported.
+Custom I/O backends cannot be plugged in.
 
 Tokenizer
 ^^^^^^^^^
@@ -367,8 +372,8 @@ indirect reference is three tokens: object number, generation number, ``R``).
 Indirect references
 ^^^^^^^^^^^^^^^^^^^
 
-``IndirectReferenceObjectHandle`` must often be resolved to access the
-referenced object. For example, ``StreamObjectHandle`` frequently stores its
+:cpp:class:`IndirectReferenceObjectHandle` must often be resolved to access the
+referenced object. For example, :cpp:class:`StreamObjectHandle` frequently stores its
 ``Length`` as an indirect reference. The file layer resolves these references
 transparently during parsing.
 
@@ -382,9 +387,10 @@ correctness lines:
   the parser, content streams, and decompression filters (Flate, DCT, JPX,
   ASCII85, ASCIIHex) against a seed corpus. Continuously run via
   ``.github/workflows/fuzzing.yml``.
-- **External conformance.** ``scripts/conformance_check.py`` runs a qpdf-based
-  PDF conformance suite over generated output to catch malformed files that
-  pass the library's own checks. Continuously run via
+- **External conformance.** ``scripts/conformance_check.py`` re-saves selected
+  files of the test corpus and checks the output with
+  `qpdf <https://qpdf.readthedocs.io/>`_ (``qpdf --check``) to catch malformed
+  files that pass the library's own checks. Continuously run via
   ``.github/workflows/conformance-check.yml``.
 
 Both feed back into the test corpus when they find issues.
@@ -394,13 +400,14 @@ Dependencies
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 25 75
 
    * - Library
      - Purpose
    * - `OpenSSL <https://www.openssl.org/>`_
      - Encryption, decryption, and digital signatures
-   * - `zlib <http://www.zlib.net/>`_
+   * - `zlib <https://zlib.net/>`_
      - Flate compression
    * - `libjpeg-turbo <https://libjpeg-turbo.org/>`_
      - JPEG image decoding
@@ -408,22 +415,31 @@ Dependencies
      - JPEG2000 image support
    * - `spdlog <https://github.com/gabime/spdlog>`_
      - Logging
+   * - `fmt <https://fmt.dev/>`_
+     - String formatting
    * - `nlohmann-json <https://github.com/nlohmann/json>`_
-     - Configuration parsing
+     - License metadata (optional)
+   * - `mimalloc <https://github.com/microsoft/mimalloc>`_
+     - Allocator of the reference counted objects (optional)
 
-All dependencies are managed automatically via vcpkg. See :doc:`building` for
-details on using system packages instead.
+nlohmann-json and mimalloc are only used when ``VANILLAPDF_ENABLE_LICENSING`` or
+``VANILLAPDF_ENABLE_MIMALLOC`` is on; both are off by default.
+
+All dependencies are managed automatically via vcpkg. See :doc:`build_options`
+for details on using system packages instead.
 
 Build system
 ------------
 
 The build uses CMake with platform-specific presets defined in
-``cmake/presets/``. CMake also integrates CPack for generating installable
-packages:
+``cmake/presets/``. CPack generates the installable packages:
 
-- Debian ``.deb`` packages
-- Homebrew packages
-- NuGet packages
+- Debian ``.deb`` and RPM ``.rpm`` packages on Linux
+- ``.tar.gz`` archives on Linux and macOS, and a ``.dmg`` disk image on macOS
+- ``.zip`` archives on Windows
 
-See :doc:`building` for build instructions and :doc:`packaging` for package
-generation.
+NuGet packages are built with ``dotnet pack`` from ``nuget/``, and the
+Homebrew formula is generated from ``homebrew/vanillapdf.rb.in``.
+
+See :doc:`building` for build instructions and :ref:`create-packages` for
+package generation.

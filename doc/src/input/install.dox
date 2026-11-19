@@ -22,8 +22,8 @@ cmake -S . -B build \
 cmake --build build
 \endcode
 
-Benefits include fastest builds with pre-compiled binaries, feature control via
-`vcpkg install vanillapdf[openssl,jpeg,jpeg2000]`, and shared binary cache across projects.
+Benefits include fastest builds with pre-compiled binaries and shared binary cache
+across projects. The port builds the library with every feature.
 
 \subsection install_fetchcontent FetchContent Integration (Alternative)
 
@@ -31,7 +31,7 @@ For users who prefer not to introduce external tools into their build chain,
 use CMake's FetchContent mechanism:
 
 \code{.cmake}
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.28)
 project(MyApp)
 
 include(FetchContent)
@@ -56,14 +56,14 @@ A complete working example with cross-platform testing is available in the
 
 \section install_requirements Build Requirements
 
-<b>CMake</b> (minimum version 3.20)
+<b>CMake</b> (minimum version 3.28)
 Download from <https://cmake.org/download/>
 
 <b>Supported Compilers:</b>
-- **Windows:** Visual Studio 2026 (MSVC 18.x) or Visual Studio 2022 (MSVC 17.x)
-- **Linux:** GCC 8.1+ or Clang 10+ (x64, ARM64, ARM)
-- **macOS:** AppleClang 15+ (Xcode 15)
-- **Android:** NDK toolchain (arm64-v8a, armeabi-v7a, x86, x86_64)
+- **Windows:** Visual Studio 2026 or 2022 (x86, x64, ARM64)
+- **Linux:** GCC 8.5+ or Clang 21 (x64, ARM64), tested on Ubuntu, Rocky Linux and Fedora
+- **macOS:** AppleClang 17+ (Xcode 16.4+) (x64, ARM64)
+- **Android:** NDK r28+, API level 28+ (x86_64 tested)
 
 \section install_source Build from Source
 

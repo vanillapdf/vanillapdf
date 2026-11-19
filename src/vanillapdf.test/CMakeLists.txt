@@ -161,3 +161,113 @@ endforeach()
 # MPK_SLOVLEX.pdf: 9.5 MB, 1,450 pages — takes 600-1500s under sanitizers and
 # dominates CI time, so it is disabled.
 set_tests_properties(MPK_SLOVLEX.pdf PROPERTIES DISABLED TRUE)
+
+# The examples shown in the documentation. They are built and run here so that
+# the published code cannot stop compiling or working unnoticed.
+function(vanillapdf_add_example EXAMPLE_NAME)
+    set(EXAMPLE_TARGET "vanillapdf.example.${EXAMPLE_NAME}")
+
+    add_executable(${EXAMPLE_TARGET} "${VANILLAPDF_SOLUTION_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.c")
+    vanillapdf_target_compile_defaults(${EXAMPLE_TARGET})
+    target_link_libraries(${EXAMPLE_TARGET} PRIVATE vanillapdf)
+
+    # A static vanillapdf needs the C++ runtime, see vanillapdf.test above
+    set_target_properties(${EXAMPLE_TARGET} PROPERTIES LINKER_LANGUAGE CXX)
+
+    if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+        vanillapdf_configure_msvc_runtime(${EXAMPLE_TARGET})
+    endif()
+
+    if(WIN32)
+        add_custom_command(
+            TARGET ${EXAMPLE_TARGET} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "$<TARGET_FILE_DIR:vanillapdf>"
+            "$<TARGET_FILE_DIR:${EXAMPLE_TARGET}>"
+        )
+    endif(WIN32)
+
+    # The examples write their output into the working directory, which only
+    # exists on the host. A cross-compiled build (Android) still compiles them.
+    if(NOT CMAKE_CROSSCOMPILING)
+        add_test(
+            NAME Examples.${EXAMPLE_NAME}
+            COMMAND ${EXAMPLE_TARGET} ${ARGN}
+            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+        )
+    endif()
+endfunction()
+
+set(VANILLAPDF_EXAMPLE_FIXTURES "${VANILLAPDF_SOLUTION_SOURCE_DIR}/fixtures")
+
+vanillapdf_add_example(quickstart)
+vanillapdf_add_example(create)
+
+vanillapdf_add_example(merge
+    "example-merged.pdf"
+    "${VANILLAPDF_EXAMPLE_FIXTURES}/sample-document.pdf"
+    "${VANILLAPDF_EXAMPLE_FIXTURES}/nested-pages.pdf"
+)
+
+# Inspects the merged document, which shows that the merge kept every page
+vanillapdf_add_example(inspect "example-merged.pdf")
+
+vanillapdf_add_example(validation "${VANILLAPDF_EXAMPLE_FIXTURES}/sample-document.pdf")
+
+# Signing and encryption need OpenSSL, which the encryption feature brings in
+if(VANILLAPDF_ENABLE_ENCRYPTION)
+    vanillapdf_add_example(signing
+        "${VANILLAPDF_EXAMPLE_FIXTURES}/sample-document.pdf"
+        "example-signed.pdf"
+        "${VANILLAPDF_EXAMPLE_FIXTURES}/certificates/Test_EC384_SHA512.pfx"
+        "test"
+    )
+
+    # Verifies the document signed by the signing example
+    vanillapdf_add_example(verification "example-signed.pdf")
+
+    vanillapdf_add_example(visible-signature
+        "${VANILLAPDF_EXAMPLE_FIXTURES}/sample-document.pdf"
+        "example-visible-signed.pdf"
+        "${VANILLAPDF_EXAMPLE_FIXTURES}/certificates/Test_EC384_SHA512.pfx"
+        "test"
+    )
+
+    vanillapdf_add_example(encryption
+        "${VANILLAPDF_EXAMPLE_FIXTURES}/sample-document.pdf"
+        "example-encrypted.pdf"
+        "user"
+        "owner"
+    )
+endif()
+
+if(NOT CMAKE_CROSSCOMPILING)
+    set_tests_properties(Examples.merge PROPERTIES FIXTURES_SETUP ExampleMerged)
+    set_tests_properties(Examples.inspect PROPERTIES
+        FIXTURES_REQUIRED ExampleMerged
+        PASS_REGULAR_EXPRESSION "Pages: 7"
+    )
+
+    if(VANILLAPDF_ENABLE_ENCRYPTION)
+        set_tests_properties(Examples.signing PROPERTIES FIXTURES_SETUP ExampleSigned)
+
+        # The test certificate does not chain to a trusted root, so the example
+        # reports the signature as not valid; the signed content must be intact
+        set_tests_properties(Examples.verification PROPERTIES
+            FIXTURES_REQUIRED ExampleSigned
+            PASS_REGULAR_EXPRESSION "Document intact: yes"
+        )
+
+        # The verification example finds the one signature, in the visible field
+        set_tests_properties(Examples.visible-signature PROPERTIES FIXTURES_SETUP ExampleVisibleSigned)
+        add_test(
+            NAME Examples.visible-signature.verification
+            COMMAND vanillapdf.example.verification "example-visible-signed.pdf"
+            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+        )
+        set_tests_properties(Examples.visible-signature.verification PROPERTIES
+            FIXTURES_REQUIRED ExampleVisibleSigned
+            PASS_REGULAR_EXPRESSION "Document intact: yes.*Verified 1 signature"
+        )
+    endif()
+endif()

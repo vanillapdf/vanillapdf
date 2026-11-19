@@ -301,7 +301,7 @@ extern "C"
     * otherwise; a field merged with its widget annotation carries both /T
     * and /Subtype /Widget and is a child field.
     *
-    * This is independent of \ref Field_GetType: a group can report a
+    * This is independent of \ref Field_GetType - a group can report a
     * typed field type through its own or an inherited /FT, and a terminal
     * field without any resolvable /FT reports \ref FieldType_NonTerminal.
     */

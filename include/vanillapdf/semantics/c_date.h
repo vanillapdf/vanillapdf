@@ -23,6 +23,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_common_data_structures
     * \brief Relationship of local time to Universal Time (UT).
     */
     typedef enum {

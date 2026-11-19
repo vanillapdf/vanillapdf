@@ -4,7 +4,9 @@ Installation
 This page covers how to add Vanilla.PDF to your project as a pre-built
 dependency. To build from source instead, see :doc:`building`.
 
-vcpkg (Recommended)
+.. _install-vcpkg:
+
+vcpkg (recommended)
 -------------------
 
 Install with `vcpkg <https://github.com/microsoft/vcpkg>`_:
@@ -21,36 +23,13 @@ Then point CMake at your vcpkg toolchain:
      -DCMAKE_TOOLCHAIN_FILE=<vcpkg-root>/scripts/buildsystems/vcpkg.cmake
    cmake --build build
 
-vcpkg supports feature selection to control optional dependencies:
+The port builds the library with every feature: encryption and signing
+(OpenSSL), JPEG images (libjpeg-turbo), JPEG 2000 images (OpenJPEG) and Flate
+compression (zlib). It has no vcpkg features to leave them out. To build
+without one of these dependencies, build from source with the
+:ref:`feature options <feature-options>`.
 
-.. code-block:: bash
-
-   vcpkg install vanillapdf[openssl,zlib,spdlog]
-
-Available features:
-
-.. list-table::
-   :header-rows: 1
-   :widths: 25 75
-
-   * - Feature
-     - Description
-   * - ``openssl``
-     - Enable encryption and decryption of secure PDF documents
-   * - ``libjpeg-turbo``
-     - Decode JPEG images into bitmaps
-   * - ``openjpeg``
-     - Support JPEG-2000 images through the OpenJPEG codec
-   * - ``zlib``
-     - Decompress PDF objects compressed with zlib
-   * - ``spdlog``
-     - High-performance logging for diagnostics and debugging
-   * - ``nlohmann-json``
-     - Parse application configuration from JSON files
-   * - ``tests``
-     - Enable unit and integration tests (includes GTest)
-   * - ``benchmarks``
-     - Enable performance benchmarking tools (includes Google Benchmark)
+.. _install-fetchcontent:
 
 CMake FetchContent
 ------------------
@@ -60,7 +39,7 @@ Self-contained approach without external package managers:
 .. code-block:: cmake
    :substitutions:
 
-   cmake_minimum_required(VERSION 3.20)
+   cmake_minimum_required(VERSION 3.28)
    project(MyApp)
 
    include(FetchContent)
@@ -104,15 +83,43 @@ Run it:
    cmake --build --preset windows-x64-debug
    ctest --preset windows-x64-debug --output-on-failure
 
+Linking with CMake
+------------------
+
+Regardless of installation method, use ``find_package`` in your CMakeLists.txt:
+
+.. code-block:: cmake
+
+   cmake_minimum_required(VERSION 3.20)
+   project(MyApp C)
+
+   find_package(vanillapdf CONFIG REQUIRED)
+
+   add_executable(myapp main.c)
+   target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
+
+To check the installation, build and run the first program of the
+:doc:`quickstart`.
+
+For building the library from source, see :doc:`building`; the CMake options are
+described in :doc:`build_options`.
+
+.. _upcoming-packages:
+
+In progress
+-----------
+
+.. warning::
+
+   The packages below are **not available yet**. Their recipes are maintained
+   in the repository, but they cannot be installed until Conan Center and
+   Homebrew core accept them. Use one of the methods above in the meantime.
+
 Conan
------
+^^^^^
 
-.. note::
-
-   **Coming soon.** The ``vanillapdf`` package is not yet published to Conan
-   Center. The instructions below will apply once it is available.
-
-Install via `Conan <https://conan.io/>`_:
+The ``vanillapdf`` package is not yet published to Conan Center. Once it is,
+install via `Conan <https://conan.io/>`_:
 
 .. code-block:: bash
    :substitutions:
@@ -143,76 +150,15 @@ A working Conan integration example is available in
 <https://github.com/vanillapdf/vanillapdf/tree/main/examples/conan-integration>`_.
 
 Homebrew (macOS)
-----------------
+^^^^^^^^^^^^^^^^
 
-.. note::
-
-   **Coming soon.** The Homebrew formula is not yet live in Homebrew core. The
-   instructions below will apply once it is available.
-
-Install via `Homebrew <https://brew.sh/>`_:
+The formula is not yet in Homebrew core. Once it is, install via
+`Homebrew <https://brew.sh/>`_:
 
 .. code-block:: bash
 
    brew install vanillapdf
 
-The formula installs the shared library, headers, and CLI tools. Dependencies
+The formula installs the shared library and headers. Dependencies
 (OpenSSL, jpeg-turbo, openjpeg, spdlog, nlohmann-json) are pulled
 automatically.
-
-NuGet (.NET interop)
---------------------
-
-For .NET projects, install the NuGet package:
-
-.. code-block:: bash
-
-   dotnet add package vanillapdf.net
-
-The correct native runtime is included automatically based on your target
-platform and RID. No manual DLL management is required.
-
-Linking with CMake
-------------------
-
-Regardless of installation method, use ``find_package`` in your CMakeLists.txt:
-
-.. code-block:: cmake
-
-   cmake_minimum_required(VERSION 3.20)
-   project(MyApp C)
-
-   find_package(vanillapdf CONFIG REQUIRED)
-
-   add_executable(myapp main.c)
-   target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
-
-Verify it works with a minimal ``main.c``:
-
-.. code-block:: c
-
-   #include <stdio.h>
-   #include <vanillapdf/c_vanillapdf_api.h>
-
-   int main(void) {
-       DocumentHandle* doc = NULL;
-       error_type rc = Document_Create("test.pdf", &doc);
-       if (rc != VANILLAPDF_ERROR_SUCCESS || doc == NULL) {
-           printf("Failed to create document\n");
-           return 1;
-       }
-       Document_Release(doc);
-       printf("vanillapdf is working.\n");
-       return 0;
-   }
-
-Build and run:
-
-.. code-block:: bash
-
-   cmake -S . -B build
-   cmake --build build
-   ./build/myapp
-
-For building the library from source (cloning, presets, CMake options, tests,
-and troubleshooting), see :doc:`building`.

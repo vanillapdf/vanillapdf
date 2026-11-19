@@ -1,9 +1,7 @@
-Signature Verification Guide
+Signature verification guide
 ============================
 
 This guide explains how to verify digital signatures in PDF documents using the Vanilla.PDF C API.
-
-For a complete working example, see ``verify.cpp``.
 
 Overview
 --------
@@ -15,7 +13,7 @@ PDF digital signatures use CMS (Cryptographic Message Syntax) format to store cr
 3. **Algorithm strength check** - Detect weak algorithms (MD5, SHA-1, small keys)
 4. **Time validation** - Optionally validate certificate at signing time
 
-Supported Signing Algorithms
+Supported signing algorithms
 ----------------------------
 
 Vanilla.PDF supports signing and verification with a wide range of key types,
@@ -23,6 +21,7 @@ including modern EdDSA curves rarely supported by other PDF libraries:
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 25 25 50
 
    * - Key Type
@@ -52,33 +51,34 @@ Signatures are validated end-to-end by the CI interoperability check against
 for RSA, ECDSA and DSA, and against `pyHanko <https://github.com/MatthiasValvekens/pyHanko>`_
 for RSA, ECDSA and Ed25519.
 
-Verification Status Codes
+Verification status codes
 --------------------------
 
 The verification result includes a status code indicating the outcome:
 
 .. list-table::
    :header-rows: 1
+   :class: wrap
    :widths: 30 70
 
    * - Status
      - Description
-   * - ``SignatureStatus_Valid``
+   * - :cpp:enumerator:`SignatureStatus_Valid <SignatureVerificationStatusType::SignatureStatus_Valid>`
      - Signature is cryptographically valid and certificate chain is trusted
-   * - ``SignatureStatus_Invalid``
+   * - :cpp:enumerator:`SignatureStatus_Invalid <SignatureVerificationStatusType::SignatureStatus_Invalid>`
      - Signature verification failed (content modified or wrong key)
-   * - ``SignatureStatus_CertificateExpired``
+   * - :cpp:enumerator:`SignatureStatus_CertificateExpired <SignatureVerificationStatusType::SignatureStatus_CertificateExpired>`
      - Signing certificate has expired
-   * - ``SignatureStatus_CertificateNotYetValid``
+   * - :cpp:enumerator:`SignatureStatus_CertificateNotYetValid <SignatureVerificationStatusType::SignatureStatus_CertificateNotYetValid>`
      - Certificate not yet valid (future start date)
-   * - ``SignatureStatus_CertificateUntrusted``
+   * - :cpp:enumerator:`SignatureStatus_CertificateUntrusted <SignatureVerificationStatusType::SignatureStatus_CertificateUntrusted>`
      - Certificate chain does not lead to a trusted root
-   * - ``SignatureStatus_WeakAlgorithm``
+   * - :cpp:enumerator:`SignatureStatus_WeakAlgorithm <SignatureVerificationStatusType::SignatureStatus_WeakAlgorithm>`
      - Weak cryptographic algorithm detected
-   * - ``SignatureStatus_DocumentModified``
+   * - :cpp:enumerator:`SignatureStatus_DocumentModified <SignatureVerificationStatusType::SignatureStatus_DocumentModified>`
      - Document modified after signing
 
-Weak Algorithm Detection
+Weak algorithm detection
 -------------------------
 
 The verifier detects the following weak algorithms:
@@ -100,7 +100,7 @@ The verifier detects the following weak algorithms:
 - DSA keys < 2048 bits
 - EC keys < 256 bits
 
-Creating a Trust Store
+Creating a trust store
 ----------------------
 
 Create a trusted certificate store and load certificates:
@@ -111,7 +111,7 @@ Create a trusted certificate store and load certificates:
    :end-before: //! [Create trust store]
    :dedent:
 
-Configuring Verification Settings
+Configuring verification settings
 ----------------------------------
 
 Configure verification behavior with custom settings:
@@ -124,11 +124,11 @@ Configure verification behavior with custom settings:
 
 Available settings:
 
-- ``SetSkipCertificateValidation`` - Skip X509 chain validation (testing only)
-- ``SetAllowWeakAlgorithmsFlag`` - Allow MD5, SHA-1, small keys
-- ``SetCheckSigningTimeFlag`` - Validate cert at signing time instead of current time
+- :cpp:func:`SetSkipCertificateValidation <SignatureVerificationSettingsHandle::SignatureVerificationSettings_SetSkipCertificateValidation>` - Skip X509 chain validation (testing only)
+- :cpp:func:`SetAllowWeakAlgorithmsFlag <SignatureVerificationSettingsHandle::SignatureVerificationSettings_SetAllowWeakAlgorithmsFlag>` - Allow MD5, SHA-1, small keys
+- :cpp:func:`SetCheckSigningTimeFlag <SignatureVerificationSettingsHandle::SignatureVerificationSettings_SetCheckSigningTimeFlag>` - Validate cert at signing time instead of current time
 
-Verifying a Signature
+Verifying a signature
 ---------------------
 
 Call the verification API and inspect the results:
@@ -139,11 +139,14 @@ Call the verification API and inspect the results:
    :end-before: //! [Verify signature]
    :dedent:
 
-Security Recommendations
+Security recommendations
 ------------------------
 
-1. **Always use system trust store** — Let the OS manage trusted root certificates (``TrustedCertificateStore_LoadSystemDefaults``)
-2. **Avoid** ``SetSkipCertificateValidation`` — Only use for testing self-signed certificates
-3. **Avoid** ``SetAllowWeakAlgorithmsFlag`` — Only enable when absolutely necessary for legacy documents
-4. **Use** ``SetCheckSigningTimeFlag`` — For old documents where certificates may have expired
+1. **Always use system trust store** — Let the OS manage trusted root certificates (:cpp:func:`TrustedCertificateStore_LoadSystemDefaults <TrustedCertificateStoreHandle::TrustedCertificateStore_LoadSystemDefaults>`)
+2. **Avoid** :cpp:func:`SetSkipCertificateValidation <SignatureVerificationSettingsHandle::SignatureVerificationSettings_SetSkipCertificateValidation>` — Only use for testing self-signed certificates
+3. **Avoid** :cpp:func:`SetAllowWeakAlgorithmsFlag <SignatureVerificationSettingsHandle::SignatureVerificationSettings_SetAllowWeakAlgorithmsFlag>` — Only enable when absolutely necessary for legacy documents
+4. **Use** :cpp:func:`SetCheckSigningTimeFlag <SignatureVerificationSettingsHandle::SignatureVerificationSettings_SetCheckSigningTimeFlag>` — For old documents where certificates may have expired
 5. **Keep certificates updated** — Ensure your system's certificate store is current
+
+For a complete working example, see `verify.cpp
+<https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/verify.cpp>`_.

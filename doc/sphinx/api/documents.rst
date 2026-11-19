@@ -5,7 +5,7 @@ Documents
    :content-only:
    :members:
 
-Common Data Structures
+Common data structures
 ----------------------
 
 .. doxygengroup:: group_common_data_structures
@@ -44,5 +44,12 @@ Destinations
 ------------
 
 .. doxygengroup:: group_destinations
+   :content-only:
+   :members:
+
+Actions
+-------
+
+.. doxygengroup:: group_actions
    :content-only:
    :members:

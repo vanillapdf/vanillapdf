@@ -26,6 +26,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_documents
     * \brief Page layout which shall be used when the document is opened.
     */
     typedef enum {
@@ -175,8 +176,10 @@ extern "C"
     * \brief Get the open action entry from the catalog.
     *
     * The returned object can be either an array (destination) or a dictionary (action).
-    * Use \ref Object_GetType to determine the type, then convert using
-    * \ref Destination_FromObject or \ref Action_FromDictionary.
+    * Use \ref ObjectHandle::Object_GetObjectType "Object_GetObjectType" to determine
+    * the type, then convert using
+    * \ref DestinationHandle::Destination_CreateFromArray "Destination_CreateFromArray" or
+    * \ref ActionHandle::Action_CreateFromDictionary "Action_CreateFromDictionary".
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOpenAction(CatalogHandle* handle, ObjectHandle** result);
 

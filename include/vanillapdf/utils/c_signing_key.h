@@ -33,6 +33,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_utils
     * \brief Initialize signing engine using selected digest algorithm
     *
     * This function should reset all previous settings and prepare
@@ -41,6 +42,7 @@ extern "C"
     typedef error_type (CALLING_CONVENTION *SigningKey_Initialize_Function)(void* user_data, MessageDigestAlgorithmType algorithm);
 
     /**
+    * \ingroup group_utils
     * \brief Insert data into engine for digest calculation
     *
     * This function can be called multiple times,
@@ -49,6 +51,7 @@ extern "C"
     typedef error_type (CALLING_CONVENTION *SigningKey_Update_Function)(void* user_data, const BufferHandle* data);
 
     /**
+    * \ingroup group_utils
     * \brief Finish the digest calculation and return signed hash
     *
     * This function should allocate buffer, filled with data.
@@ -59,6 +62,7 @@ extern "C"
     typedef error_type (CALLING_CONVENTION *SigningKey_Final_Function)(void* user_data, BufferHandle** result);
 
     /**
+    * \ingroup group_utils
     * \brief Cleanup all dependencies after the signing process has finished
     *
     * This function is called when the signing of a file has been finished

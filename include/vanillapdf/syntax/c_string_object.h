@@ -37,6 +37,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_objects
     * \brief Derived types of \ref StringObjectHandle
     */
     typedef enum {

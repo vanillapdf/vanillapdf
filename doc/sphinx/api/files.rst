@@ -27,14 +27,14 @@ Objects
    :content-only:
    :members:
 
-Cross-Reference Tables and Streams
+Cross-reference tables and streams
 -----------------------------------
 
 .. doxygengroup:: group_xref
    :content-only:
    :members:
 
-Name Constants
+Name constants
 --------------
 
 .. doxygengroup:: group_name_constants

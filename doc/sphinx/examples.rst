@@ -1,88 +1,142 @@
 Examples
 ========
 
-API Usage Examples
+Each example is a complete C program in the
+`examples/ <https://github.com/vanillapdf/vanillapdf/tree/main/examples>`_
+directory of the repository, with a ``CMakeLists.txt`` that builds it against
+an installed library, as shown in the :doc:`quickstart`. The library's test
+suite builds and runs every one of them, so the code on this page always
+compiles and works with the current release.
+
+All examples follow the same pattern: the ``CHECK`` macro stores the result of
+each call and jumps to the cleanup on the first failure, where the error
+message is printed and every handle obtained so far is released.
+
+Inspect a document
 ------------------
 
-- `merge.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/merge.cpp>`_ — File merge
-- `extract.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/extract.cpp>`_ — Image extraction
-- `filter.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/filter.cpp>`_ — Compression filters
-- `sign.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign.cpp>`_ — Digital signature
-- `sign_custom.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign_custom.cpp>`_ — Custom digital signature using interface callbacks
-- `verify.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/verify.cpp>`_ — Signature verification
-- `validate.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/validate.cpp>`_ — File structure validation
-- `decrypt.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/decrypt.cpp>`_ — File decryption
-- `write_custom.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/write_custom.cpp>`_ — Custom file writer callbacks
+Open a document, count its pages and read entries of its document information
+dictionary. Entries a document does not have are reported as
+``VANILLAPDF_ERROR_OBJECT_MISSING``.
 
-Utilities
----------
-
-Print library info
-^^^^^^^^^^^^^^^^^^
-
-.. literalinclude:: ../../src/vanillapdf.test/utils.c
+.. literalinclude:: ../../examples/inspect/main.c
    :language: c
-   :start-after: //! [Print library info]
-   :end-before: //! [Print library info]
-   :dedent:
 
-Print last error
-^^^^^^^^^^^^^^^^
+Merge documents
+---------------
 
-.. literalinclude:: ../../src/vanillapdf.test/utils.c
+Append the pages of several documents to the first one and save the result
+under a new name.
+
+.. literalinclude:: ../../examples/merge/main.c
    :language: c
-   :start-after: //! [Print last error]
-   :end-before: //! [Print last error]
-   :dedent:
 
-Print buffer
-^^^^^^^^^^^^
+Sign a document
+---------------
 
-.. literalinclude:: ../../src/vanillapdf.test/utils.c
+Sign an existing document with a key from a PKCS#12 file (``.p12`` or
+``.pfx``), which holds the signer's certificate and private key. The program
+loads the key with :cpp:func:`PKCS12Key_CreateFromFile <PKCS12KeyHandle::PKCS12Key_CreateFromFile>`,
+describes the signature with :cpp:class:`DocumentSignatureSettingsHandle` and
+writes the signed copy to a new file with :cpp:func:`Document_Sign <DocumentHandle::Document_Sign>`, which
+creates an invisible signature field of its own on the first page. Signing
+requires a library built with the encryption feature, which is on by default.
+
+.. literalinclude:: ../../examples/signing/main.c
    :language: c
-   :start-after: //! [Print buffer]
-   :end-before: //! [Print buffer]
-   :dedent:
 
-Test logging
-^^^^^^^^^^^^
+Run it with the document, the output file, the key file and its password:
 
-.. literalinclude:: ../../src/vanillapdf.test/utils.c
+.. code-block:: bash
+
+   ./build/signing input.pdf signed.pdf signer.p12 password
+
+Sign a visible signature field
+------------------------------
+
+Add a signature field that a viewer shows as a rectangle on the first page, and
+sign into it. A visible signature consists of two objects. The signature field
+joins the field hierarchy of the interactive form and holds the signature. Its
+widget annotation is what a viewer shows: a rectangle on a page with an
+appearance, a form XObject that the application draws into. The page lists the
+widget among its annotations, and :cpp:func:`Field_AddWidget <FieldHandle::Field_AddWidget>` links it
+to the field. :cpp:func:`Document_SignField <DocumentHandle::Document_SignField>` then finds the field by its fully
+qualified name and signs into it.
+
+.. literalinclude:: ../../examples/visible-signature/main.c
    :language: c
-   :start-after: //! [Test logging]
-   :end-before: //! [Test logging]
-   :dedent:
 
-Print date
-^^^^^^^^^^
+Run it like the previous example:
 
-.. literalinclude:: ../../src/vanillapdf.test/documents.c
+.. code-block:: bash
+
+   ./build/visible-signature input.pdf signed.pdf signer.p12 password
+
+A document that already carries a signature is refused with
+``VANILLAPDF_ERROR_NOT_SUPPORTED``: the signed file is written whole, which
+would invalidate the existing signature.
+
+Verify signatures
+-----------------
+
+Find the signed signature fields of a document and verify each signature
+against a store of trusted certificates. The program exits with ``2`` when a
+signature does not verify or the document has none, so scripts can tell a bad
+signature from an error.
+See :doc:`signature_verification` for the verification settings and the
+meaning of each status.
+
+.. literalinclude:: ../../examples/verification/main.c
    :language: c
-   :start-after: //! [Print date]
-   :end-before: //! [Print date]
-   :dedent:
 
-Validate file structure
-^^^^^^^^^^^^^^^^^^^^^^^
+Encrypt a document
+------------------
 
-.. literalinclude:: ../../src/vanillapdf.tools/validate.cpp
-   :language: cpp
-   :start-after: //! [Validate file structure]
-   :end-before: //! [Validate file structure]
-   :dedent:
+Protect a document with AES-256, a user password that opens it and an owner
+password that also lifts the access restrictions.
 
-Enumerate xref
-^^^^^^^^^^^^^^
-
-.. literalinclude:: ../../src/vanillapdf.test/files.c
+.. literalinclude:: ../../examples/encryption/main.c
    :language: c
-   :start-after: //! [Enumerate xref]
-   :end-before: //! [Enumerate xref]
-   :dedent:
 
-Additional Resources
---------------------
+Validate the file structure
+---------------------------
 
-- `main.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/main.cpp>`_ -- Main file for command-line application vanillapdf.tools
-- `tools.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/tools.h>`_ -- Tools project header file including macro definitions
-- `handle_guard.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/handle_guard.h>`_ -- RAII wrapper releasing C API handles at scope exit
+Check that the structure of a file is sound, for example in a script that
+accepts documents from other systems. The program works on the file layer
+only, so it does not read the pages. It opens the file with
+:cpp:func:`File_Open <FileHandle::File_Open>` and
+:cpp:func:`File_Initialize <FileHandle::File_Initialize>`, then passes it to
+:cpp:func:`FileStructureValidator_Validate <FileStructureValidator::FileStructureValidator_Validate>`.
+The returned :cpp:class:`FileStructureValidationResultHandle` lists the
+problems found in the header, the trailer and the cross-reference tables, such
+as an entry that points beyond the end of the file. The program prints each
+problem with its severity and message.
+
+.. literalinclude:: ../../examples/validation/main.c
+   :language: c
+
+Run it with the document:
+
+.. code-block:: bash
+
+   ./build/validation input.pdf
+
+The program exits with ``0`` when the file is valid and with ``2`` when it has
+structural errors, so a script can tell them apart from a file that cannot be
+opened at all, which exits with ``1``.
+
+More code in the repository
+---------------------------
+
+The repository also contains ``vanillapdf.tools``, an internal test tool that
+is not part of the distributed packages. Its sources cover topics the examples
+above do not:
+
+- `sign_custom.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/sign_custom.cpp>`_ — signing through callbacks, for keys the library cannot load itself, such as keys in a hardware token
+- `write_custom.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/write_custom.cpp>`_ — callbacks invoked at each stage of writing a file, with access to the output stream
+- `extract.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/extract.cpp>`_ — extracting images from page resources
+- `filter.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/filter.cpp>`_ — encoding and decoding data with the stream filters
+- `decrypt.cpp <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/decrypt.cpp>`_ — removing encryption with a password or a certificate
+
+They are written in C++ and release handles with the RAII wrapper in
+`handle_guard.h <https://github.com/vanillapdf/vanillapdf/blob/main/src/vanillapdf.tools/handle_guard.h>`_.

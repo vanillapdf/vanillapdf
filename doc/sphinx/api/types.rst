@@ -5,14 +5,14 @@ Types
    :content-only:
    :members:
 
-Boolean Types
+Boolean types
 -------------
 
 .. doxygengroup:: group_boolean_types
    :content-only:
    :members:
 
-Error Types
+Error types
 -----------
 
 .. doxygengroup:: group_error_types

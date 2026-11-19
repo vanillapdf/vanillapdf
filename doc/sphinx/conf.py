@@ -63,6 +63,24 @@ breathe_projects = {
 }
 breathe_default_project = "vanillapdf"
 
+# The "#include" line of every class links to Doxygen's header file page, which
+# Breathe does not render. Consumers include c_vanillapdf_api.h anyway.
+breathe_show_include = False
+
+# Report every cross-reference that does not resolve. Read the Docs builds with
+# fail_on_warning, so a renamed or removed API name fails the build instead of
+# silently turning its links into plain text.
+nitpicky = True
+
+# Standard C integer types used by the public typedefs have no page to link to
+nitpick_ignore = [
+    ("cpp:identifier", name)
+    for name in (
+        "int8_t", "int16_t", "int32_t", "int64_t",
+        "uint8_t", "uint16_t", "uint32_t", "uint64_t",
+    )
+]
+
 # -- Options for HTML output -----------------------------------------------
 
 html_theme = "sphinx_rtd_theme"
@@ -70,6 +88,7 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 html_logo = "_static/logo.png"
 html_favicon = "_static/favicon.ico"
+html_css_files = ["custom.css"]
 
 html_theme_options = {
     "logo_only": False,

@@ -43,6 +43,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_documents
     * \brief Available types of character maps.
     */
     typedef enum {

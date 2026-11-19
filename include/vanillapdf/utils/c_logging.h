@@ -30,6 +30,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_utils
     * \brief Available severity settings
     */
     typedef enum {

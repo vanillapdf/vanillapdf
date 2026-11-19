@@ -44,6 +44,7 @@ extern "C"
     */
 
     /**
+    * \ingroup group_documents
     * \brief
     * The document's page mode, specifying how to display
     * the document on exiting full-screen mode.
@@ -73,6 +74,7 @@ extern "C"
     } NonFullScreenPageMode;
 
     /**
+    * \ingroup group_documents
     * \brief The predominant reading order for text.
     */
     typedef enum {
@@ -92,6 +94,7 @@ extern "C"
     } ReadingOrder;
 
     /**
+    * \ingroup group_documents
     * \brief
     * The page scaling option that shall be selected when
     * a print dialog is displayed for this document.
@@ -112,6 +115,7 @@ extern "C"
     } PrintScaling;
 
     /**
+    * \ingroup group_documents
     * \brief
     * The paper handling option that shall be used
     * when printing the file from the print dialog.
