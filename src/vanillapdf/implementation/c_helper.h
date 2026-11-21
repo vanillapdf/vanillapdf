@@ -35,24 +35,35 @@
         return VANILLAPDF_ERROR_GENERAL; \
     }
 
-// Contract: every *_To* / *_From* function built on this template is a trivial
-// function (\trivial in the public headers, see doc/src/input/trivial_functions.dox).
-// The body must not lock, allocate, throw, log or set the thread error state.
+// Trivial functions
+//
+// A C API function tagged \trivial in its public header keeps the trivial
+// function contract (doc/src/input/trivial_functions.dox): while it runs it does
+// not lock, allocate or free, throw, log, call an application callback, do I/O or
+// parsing, or set the thread error state, and it does a small, fixed amount of
+// work. A failure is reported only through the return code.
 //
 // Language bindings rely on this. The .NET binding calls these functions with
 // [SuppressGCTransition], which keeps the calling thread in managed mode, so the
 // garbage collector cannot suspend it until the call returns:
 //   - A lock can deadlock: the thread that holds it may already be suspended by
-//     the garbage collector, which in turn waits for this thread.
+//     the garbage collector, which in turn waits for this thread. An allocation
+//     counts as a lock, because the heap allocator takes its own locks.
 //   - A log line can call the callback set with Logging_SetCallbackLogger, which
 //     is managed code. Calling managed code without the transition is illegal.
-//   - Errors::SetLastError is not allowed either: the error state is thread_local,
-//     and the first access to it on a new thread can allocate.
+//   - An exception would leave the extern "C" function: a trivial function has
+//     no try/catch, because CATCH_VANILLAPDF_EXCEPTIONS logs.
+//   - Errors::SetLastError breaks the documented promise that the last error of
+//     the thread is kept. The error state is also thread_local, and the first
+//     access to it on a new thread can allocate.
 //
-// Today the body is null checks, a pointer dynamic_cast (never throws, takes no
-// lock, allocates nothing) and the atomic increment in IUnknown::AddRef. There is
-// deliberately no try/catch: nothing here can throw, and CATCH_VANILLAPDF_EXCEPTIONS
-// would add logging. Changing any of this is a breaking change for the bindings.
+// The tag is part of the API contract. Removing it, or adding work that breaks
+// the contract, is allowed only in a new major version.
+
+// Every conversion built on this template is a trivial function, see
+// "Trivial functions" above. The body is null checks, a pointer dynamic_cast
+// (never throws, takes no lock, allocates nothing) and the atomic increment in
+// IUnknown::AddRef, and must stay that way.
 template <
     typename SourceT,
     typename DestT,

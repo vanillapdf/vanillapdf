@@ -169,9 +169,8 @@ public:
 
     uint32_t UseCount() const noexcept;
 
-    // Must stay a plain atomic increment: no lock, no allocation, no logging.
-    // IUnknown_AddRef and every conversion built on SafeObjectConvert are trivial
-    // functions and call this; see the contract on SafeObjectConvert in c_helper.h.
+    // Must stay a plain atomic increment. Trivial functions call it, so it is
+    // bound by their contract, see "Trivial functions" in implementation/c_helper.h.
     void AddRef() noexcept;
 
     // Not trivial: at zero this deletes the object, and the destructors can
