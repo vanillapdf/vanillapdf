@@ -305,8 +305,6 @@ overwrites another thread's error. See :ref:`thread-safety` for the details.
 
 .. _trivial-functions:
 
-.. _trivial-functions:
-
 Trivial functions
 -----------------
 
