@@ -391,7 +391,9 @@ SOFTWARE.
 
 https://github.com/microsoft/mimalloc
 
-Only included with `VANILLAPDF_ENABLE_MIMALLOC`, which is off by default.
+Only included with `VANILLAPDF_ENABLE_MIMALLOC`, which is off by default. The
+NuGet packages, the ZIP and TGZ archives attached to GitHub releases, and the
+vcpkg, Conan and Homebrew packages turn it on.
 
 MIT License
 

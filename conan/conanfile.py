@@ -27,10 +27,12 @@ class VanillaPDFConan(ConanFile):
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
+        "with_mimalloc": [True, False],
     }
     default_options = {
         "shared": False,
         "fPIC": True,
+        "with_mimalloc": True,
     }
 
     # cci-strip-begin
@@ -75,6 +77,11 @@ class VanillaPDFConan(ConanFile):
         self.requires("zlib/[>=1.2 <2]")
         self.requires("libjpeg-turbo/[>=2.0 <4]")
         self.requires("openjpeg/[>=2.5 <3]")
+        if self.options.with_mimalloc:
+            # Serves only the reference counted objects. 2.x is still
+            # maintained and is what arrow and libtorch require, so allowing
+            # it keeps a shared graph resolvable.
+            self.requires("mimalloc/[>=2.2.4 <4]")
 
     def layout(self):
         # cci-strip-begin
@@ -109,6 +116,8 @@ class VanillaPDFConan(ConanFile):
         tc.cache_variables["VANILLAPDF_EXTERNAL_ZLIB"] = True
         tc.cache_variables["VANILLAPDF_EXTERNAL_SPDLOG"] = True
         tc.cache_variables["VANILLAPDF_EXTERNAL_FMT"] = True
+        tc.cache_variables["VANILLAPDF_ENABLE_MIMALLOC"] = bool(self.options.with_mimalloc)
+        tc.cache_variables["VANILLAPDF_EXTERNAL_MIMALLOC"] = True
 
         # Conan's CMakeDeps generates its own find_package config files
         tc.cache_variables["VANILLAPDF_SKIP_CMAKE_CONFIG_INSTALL"] = True
@@ -155,3 +164,5 @@ class VanillaPDFConan(ConanFile):
             "spdlog::spdlog",
             "fmt::fmt",
         ]
+        if self.options.with_mimalloc:
+            self.cpp_info.requires.append("mimalloc::mimalloc")
