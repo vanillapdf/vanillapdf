@@ -52,7 +52,9 @@ extern "C"
     *
     * An isolated group is composited against a fully transparent backdrop
     * rather than the backdrop of the group it is painted into.
-    * When absent, the group is not isolated.
+    * When absent, the group is not isolated. The default is not substituted.
+    *
+    * \return VANILLAPDF_ERROR_OBJECT_MISSING if the /I entry is absent, VANILLAPDF_ERROR_SUCCESS otherwise
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TransparencyGroup_GetIsolated(TransparencyGroupHandle* handle, boolean_type* result);
 
@@ -67,7 +69,9 @@ extern "C"
     *
     * In a knockout group every element is composited with the group's
     * initial backdrop, overriding the elements painted before it.
-    * When absent, the group is not a knockout group.
+    * When absent, the group is not a knockout group. The default is not substituted.
+    *
+    * \return VANILLAPDF_ERROR_OBJECT_MISSING if the /K entry is absent, VANILLAPDF_ERROR_SUCCESS otherwise
     */
     VANILLAPDF_API error_type CALLING_CONVENTION TransparencyGroup_GetKnockout(TransparencyGroupHandle* handle, boolean_type* result);
 
