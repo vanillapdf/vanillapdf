@@ -195,11 +195,16 @@ extern "C"
     * Only the page's own entry is read. The entry is inheritable,
     * but a value inherited from the page tree is not resolved.
     * When absent from the page and its ancestors, the page is not rotated.
+    *
+    * The default is not substituted. Because inheritance is not resolved,
+    * a missing entry does not mean that the page is not rotated.
+    *
+    * \return VANILLAPDF_ERROR_OBJECT_MISSING if the page has no /Rotate entry of its own, VANILLAPDF_ERROR_SUCCESS otherwise
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetRotate(PageObjectHandle* handle, bigint_type* result);
 
     /**
-    * \copydoc PageObject_GetRotate
+    * \copybrief PageObject_GetRotate
     *
     * The setter always writes the entry on the page itself and stores
     * the value as given. A value that is not a multiple of 90 is rejected.
@@ -213,12 +218,14 @@ extern "C"
     * A positive number that shall give the size of default user space units,
     * in multiples of 1/72 inch (see 14.11.6, "User Space").
     *
-    * When absent, one unit is 1/72 inch.
+    * When absent, one unit is 1/72 inch. The default is not substituted.
+    *
+    * \return VANILLAPDF_ERROR_OBJECT_MISSING if the /UserUnit entry is absent, VANILLAPDF_ERROR_SUCCESS otherwise
     */
     VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetUserUnit(PageObjectHandle* handle, real_type* result);
 
     /**
-    * \copydoc PageObject_GetUserUnit
+    * \copybrief PageObject_GetUserUnit
     * \param handle a handle to the page object
     * \param data the unit size, which shall be positive
     */

@@ -48,6 +48,10 @@ extern "C"
     * \brief
     * Get the number of degrees by which the widget is rotated
     * counterclockwise relative to the page (R entry).
+    *
+    * When absent, the widget is not rotated. The default is not substituted.
+    *
+    * \return VANILLAPDF_ERROR_OBJECT_MISSING if the /R entry is absent, VANILLAPDF_ERROR_SUCCESS otherwise
     */
     VANILLAPDF_API error_type CALLING_CONVENTION AppearanceCharacteristics_GetRotation(AppearanceCharacteristicsHandle* handle, bigint_type* result);
 
