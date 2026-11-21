@@ -9,6 +9,7 @@ class Vanillapdf < Formula
   depends_on "cmake" => :build
   depends_on "fmt"
   depends_on "jpeg-turbo"
+  depends_on "mimalloc"
   depends_on "openjpeg"
   depends_on "openssl@4"
   depends_on "spdlog"
@@ -24,6 +25,8 @@ class Vanillapdf < Formula
       -DVANILLAPDF_EXTERNAL_ZLIB=ON
       -DVANILLAPDF_EXTERNAL_SPDLOG=ON
       -DVANILLAPDF_EXTERNAL_FMT=ON
+      -DVANILLAPDF_ENABLE_MIMALLOC=ON
+      -DVANILLAPDF_EXTERNAL_MIMALLOC=ON
     ]
 
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
