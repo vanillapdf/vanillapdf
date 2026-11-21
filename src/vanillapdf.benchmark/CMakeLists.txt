@@ -15,6 +15,7 @@ set(VANILLAPDF_BENCHMARK_SOURCES
     content_stream.cpp
     field_tree.cpp
     filters.cpp
+    flate.cpp
     io_strategy.cpp
     objects.cpp
     page_tree.cpp
