@@ -209,6 +209,8 @@ extern "C"
 
     /**
     * \brief Get the human-readable issue message.
+    *
+    * The buffer contains the text of the message without a null terminator.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetMessage(
         FileStructureIssueHandle* handle,

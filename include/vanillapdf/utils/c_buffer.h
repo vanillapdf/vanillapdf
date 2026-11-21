@@ -20,6 +20,9 @@ extern "C"
     * \extends IUnknownHandle
     * \ingroup group_utils
     * \brief Represents memory stored data
+    *
+    * A buffer is a container of bytes and does not interpret them.
+    * The function that returns a buffer specifies what the bytes mean.
     */
 
     /**
@@ -39,6 +42,11 @@ extern "C"
 
     /**
     * \brief Get data content from buffer
+    *
+    * The size is the number of bytes in the buffer.
+    * By default, buffer data does not include a null terminator.
+    * Callers that treat the data as a string must not assume null termination
+    * unless the function that returned the buffer specifies it.
     * \trivial
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Buffer_GetData(const BufferHandle* handle, string_type* data, size_type* size);

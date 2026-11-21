@@ -176,6 +176,8 @@ extern "C"
 
     /**
     * \brief Get human-readable message describing verification result
+    *
+    * The buffer contains the text of the message without a null terminator.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetMessage(
         SignatureVerificationResultHandle* handle,
@@ -238,6 +240,9 @@ extern "C"
 
     /**
     * \brief Get signer's common name from certificate
+    *
+    * The buffer contains the bytes of the common name as stored in the certificate,
+    * without conversion and without a null terminator.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetSignerCommonName(
         SignatureVerificationResultHandle* handle,
