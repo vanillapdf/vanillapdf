@@ -158,4 +158,48 @@ TEST(FileStructureValidator, UninitializedFileReturnsError) {
     EXPECT_NE(FileStructureValidator_Validate(file, result.out()), VANILLAPDF_ERROR_SUCCESS);
 }
 
+TEST(FileStructureValidator, IssueMessageHasNoTrailingNull) {
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    CreateValidPdf(file, io_stream);
+
+    // Remove /Root from the first trailer, so the validator reports issues
+    HandleGuard<XrefChainHandle, XrefChain_Release> chain;
+    HandleGuard<XrefChainIteratorHandle, XrefChainIterator_Release> iterator;
+    HandleGuard<XrefHandle, Xref_Release> xref;
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> trailer;
+    ASSERT_EQ(File_XrefChain(file, chain.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(XrefChain_GetIterator(chain, iterator.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(XrefChainIterator_GetValue(iterator, xref.out()), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(Xref_GetTrailerDictionary(xref, trailer.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    boolean_type removed = VANILLAPDF_RV_FALSE;
+    ASSERT_EQ(DictionaryObject_Remove(trailer, NameConstant_Root, &removed), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_EQ(removed, VANILLAPDF_RV_TRUE);
+
+    HandleGuard<FileStructureValidationResultHandle, FileStructureValidationResult_Release> result;
+    ASSERT_EQ(FileStructureValidator_Validate(file, result.out()), VANILLAPDF_ERROR_SUCCESS);
+
+    size_type issue_count = 0;
+    ASSERT_EQ(FileStructureValidationResult_GetIssueCount(result, &issue_count), VANILLAPDF_ERROR_SUCCESS);
+    ASSERT_GT(issue_count, static_cast<size_type>(0));
+
+    for (size_type i = 0; i < issue_count; i++) {
+        HandleGuard<FileStructureIssueHandle, FileStructureIssue_Release> issue;
+        ASSERT_EQ(FileStructureValidationResult_GetIssueAt(result, i, issue.out()), VANILLAPDF_ERROR_SUCCESS);
+
+        HandleGuard<BufferHandle, Buffer_Release> message;
+        ASSERT_EQ(FileStructureIssue_GetMessage(issue, message.out()), VANILLAPDF_ERROR_SUCCESS);
+
+        string_type data = nullptr;
+        size_type size = 0;
+        ASSERT_EQ(Buffer_GetData(message, &data, &size), VANILLAPDF_ERROR_SUCCESS);
+
+        // The message must not count a null terminator in its size
+        ASSERT_NE(data, nullptr);
+        ASSERT_GT(size, static_cast<size_type>(0));
+        EXPECT_NE(data[size - 1], '\0');
+    }
+}
+
 } // namespace file_structure_validator

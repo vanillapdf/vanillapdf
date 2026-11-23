@@ -65,15 +65,14 @@ public:
     BufferPtr Clone(void) const { return make_deferred_container<Buffer>(begin(), end()); }
 
     /**
-     * @brief Create a null-terminated buffer from a string view
+     * @brief Create a buffer holding the characters of a string view
      *
-     * Use this when the buffer will be used as a C string (e.g., with printf).
-     * The returned buffer includes the null terminator in its size.
+     * The buffer is not null-terminated, like every other buffer:
+     * its size is the length of the text. Callers read it as data and size,
+     * for example with printf("%.*s").
      */
     static BufferPtr CreateFromString(std::string_view str) {
-        auto buffer = make_deferred_container<Buffer>(str.begin(), str.end());
-        buffer->push_back('\0');
-        return buffer;
+        return make_deferred_container<Buffer>(str.begin(), str.end());
     }
 
     std::string ToString(void) const { return std::string(begin(), end()); }

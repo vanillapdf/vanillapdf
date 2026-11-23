@@ -12,7 +12,7 @@ paths:
 |------|--------|---------|
 | `error_type` | `uint32_t` | Return value for all functions |
 | `boolean_type` | `int8_t` | Boolean (`VANILLAPDF_RV_TRUE` / `VANILLAPDF_RV_FALSE`) |
-| `string_type` | `const char*` | Null-terminated UTF-8 string |
+| `string_type` | `const char*` | Pointer to character data; termination and encoding are specified by each function |
 | `byte_array_type` | `char*` | Writeable byte array |
 | `real_type` | `double` | Floating-point |
 | `ushort_type` | `uint16_t` | 16-bit unsigned |
@@ -279,6 +279,13 @@ error_type Xxx_CreateCustom(CallbackFunction cb1, CallbackFunction cb2, void* us
 ```c
 error_type Xxx_Release(XxxHandle* handle);  // Wrapper around IUnknown_Release
 ```
+
+### Buffers
+
+- `BufferHandle` is a container of bytes and does not interpret its content.
+- A function that returns a buffer documents what the bytes mean in its header comment: text or binary data, encoding, and termination.
+- Text returned in a buffer is **not** null-terminated: the size is the length of the text (`Buffer::CreateFromString` does not append `'\0'`).
+- When a caller needs a guaranteed C string, use the caller-allocated pattern of `Errors_GetLastErrorMessage` (`_Length` first, then copy) or the planned `StringBuffer` handle type.
 
 ## Implementation Bridge Layer (src/vanillapdf/implementation/)
 

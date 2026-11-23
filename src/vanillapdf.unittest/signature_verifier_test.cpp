@@ -837,6 +837,20 @@ TEST_P(WeakAlgorithmTest, AllowWeakAlgorithmsFlag_Integration) {
     // Must fail with WeakAlgorithm status
     EXPECT_EQ(status, SignatureStatus_WeakAlgorithm);
 
+    // The message must not count a null terminator in its size
+    HandleGuard<BufferHandle, Buffer_Release> verification_message;
+    ASSERT_EQ(SignatureVerificationResult_GetMessage(verify_result, verification_message.out()),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    string_type verification_message_data = nullptr;
+    size_type verification_message_size = 0;
+    ASSERT_EQ(Buffer_GetData(verification_message, &verification_message_data, &verification_message_size),
+              VANILLAPDF_ERROR_SUCCESS);
+
+    ASSERT_NE(verification_message_data, nullptr);
+    ASSERT_GT(verification_message_size, static_cast<size_type>(0));
+    EXPECT_NE(verification_message_data[verification_message_size - 1], '\0');
+
     boolean_type is_signature_valid = VANILLAPDF_RV_FALSE;
     ASSERT_EQ(SignatureVerificationResult_IsSignatureValid(verify_result, &is_signature_valid),
               VANILLAPDF_ERROR_SUCCESS);

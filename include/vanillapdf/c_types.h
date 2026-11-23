@@ -77,7 +77,10 @@ typedef int64_t bigint_type;
 typedef uint64_t biguint_type;
 
 /**
-* \brief C-Style string
+* \brief Pointer to character data
+*
+* Each function specifies whether the data is null-terminated text
+* or a sequence of bytes with an explicit size.
 */
 typedef const char* string_type;
 
