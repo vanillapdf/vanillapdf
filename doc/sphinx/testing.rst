@@ -51,15 +51,16 @@ Documentation examples
 The programs shown in this documentation are not part of the test suite. They
 are built the way a user builds them: ``examples/documentation-integration``
 is a separate CMake project that builds every example from its own
-``CMakeLists.txt`` against the library installed by the vcpkg port, and runs
-them as ``Examples.*`` tests. The ``Examples Integration`` workflow runs it on
-Linux, Windows and macOS. To run it locally, install the port first:
+``CMakeLists.txt`` against an installed library, and runs them as
+``Examples.*`` tests. The ``Examples Integration`` workflow runs it on Linux,
+Windows and macOS against the library installed by the vcpkg port. To run it
+locally, install the port first and pass the vcpkg toolchain file:
 
 .. code-block:: bash
 
    ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports
    cd examples/documentation-integration
-   cmake --preset linux-x64-debug
+   cmake --preset linux-x64-debug -DCMAKE_TOOLCHAIN_FILE=../../external/vcpkg/scripts/buildsystems/vcpkg.cmake
    cmake --build --preset linux-x64-debug
    ctest --preset linux-x64-debug
 

@@ -260,7 +260,10 @@ jobs:
 
       - name: Configure documentation examples
         working-directory: examples/documentation-integration
-        run: cmake --preset ${{ matrix.preset }}
+        run: >-
+          cmake --preset ${{ matrix.preset }}
+          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/external/vcpkg/scripts/buildsystems/vcpkg.cmake
+          -DVCPKG_TARGET_TRIPLET=x64-linux
 
       - name: Build documentation examples
         working-directory: examples/documentation-integration
@@ -387,7 +390,10 @@ jobs:
 
       - name: Configure documentation examples
         working-directory: examples/documentation-integration
-        run: cmake --preset ${{ matrix.preset }}
+        run: >-
+          cmake --preset ${{ matrix.preset }}
+          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/external/vcpkg/scripts/buildsystems/vcpkg.cmake
+          -DVCPKG_TARGET_TRIPLET=x64-windows
 
       - name: Build documentation examples
         working-directory: examples/documentation-integration
@@ -505,7 +511,10 @@ jobs:
 
       - name: Configure documentation examples
         working-directory: examples/documentation-integration
-        run: cmake --preset ${{ matrix.preset }}
+        run: >-
+          cmake --preset ${{ matrix.preset }}
+          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/external/vcpkg/scripts/buildsystems/vcpkg.cmake
+          -DVCPKG_TARGET_TRIPLET=arm64-osx
 
       - name: Build documentation examples
         working-directory: examples/documentation-integration
