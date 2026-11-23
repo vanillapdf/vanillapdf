@@ -14,7 +14,7 @@ cmake_minimum_required(VERSION 3.20)
 #   cmake --build --preset linux-x64-debug
 #   ctest --preset linux-x64-debug
 
-project(DocumentationIntegrationTest C)
+project(DocumentationIntegrationTest C CXX)
 
 enable_testing()
 

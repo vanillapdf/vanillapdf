@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(Create C)
+project(Create C CXX)
 
 find_package(vanillapdf CONFIG REQUIRED)
 
