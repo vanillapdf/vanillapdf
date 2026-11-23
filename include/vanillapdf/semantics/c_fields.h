@@ -370,7 +370,7 @@ extern "C"
     * \ref PageAnnotations_Append. Create the widget with
     * \ref WidgetAnnotation_CreateFromDocument, as both arrays hold
     * indirect references.
-    * \returns \ref VANILLAPDF_ERROR_PARAMETER_VALUE when the field has
+    * \returns \ref VANILLAPDF_ERROR_INVALID_OPERATION when the field has
     * child fields or is merged with its widget annotation, when the widget
     * already belongs to a field or to another document, or when either is
     * not an indirect object.

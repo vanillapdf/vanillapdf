@@ -26,6 +26,7 @@ public:
         IOError,
         CryptoError,
         ImageCodecError,
+        InvalidOperation,
 
         // syntax
         Conversion = 0x00010000,
@@ -144,6 +145,13 @@ public:
     explicit ImageCodecErrorException(const char * const & msg);
     explicit ImageCodecErrorException(const std::string& msg);
     virtual Type code() const noexcept override { return Type::ImageCodecError; }
+};
+
+class InvalidOperationException : public ExceptionBase {
+public:
+    explicit InvalidOperationException(const char * const & msg);
+    explicit InvalidOperationException(const std::string& msg);
+    virtual Type code() const noexcept override { return Type::InvalidOperation; }
 };
 
 class InvalidLicenseException : public ExceptionBase {

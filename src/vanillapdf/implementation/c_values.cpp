@@ -20,6 +20,7 @@ VANILLAPDF_API const error_type VANILLAPDF_ERROR_DATA_CORRUPTION		= static_cast<
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_IO						= static_cast<error_type>(vanillapdf::ExceptionBase::Type::IOError);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_CRYPTO					= static_cast<error_type>(vanillapdf::ExceptionBase::Type::CryptoError);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_IMAGE_CODEC			= static_cast<error_type>(vanillapdf::ExceptionBase::Type::ImageCodecError);
+VANILLAPDF_API const error_type VANILLAPDF_ERROR_INVALID_OPERATION		= static_cast<error_type>(vanillapdf::ExceptionBase::Type::InvalidOperation);
 VANILLAPDF_API const error_type VANILLAPDF_ERROR_GENERAL				= static_cast<error_type>(vanillapdf::ExceptionBase::Type::General);
 
 // syntax errors

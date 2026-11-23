@@ -52,8 +52,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_GetReferenc
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-    *result = obj->GetReferencedObjectNumber();
-    return VANILLAPDF_ERROR_SUCCESS;
+    try {
+        *result = obj->GetReferencedObjectNumber();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_GetReferencedGenerationNumber(IndirectReferenceObjectHandle* handle, ushort_type* result)
@@ -62,8 +64,10 @@ VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_GetReferenc
     RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
     RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
 
-    *result = obj->GetReferencedGenerationNumber();
-    return VANILLAPDF_ERROR_SUCCESS;
+    try {
+        *result = obj->GetReferencedGenerationNumber();
+        return VANILLAPDF_ERROR_SUCCESS;
+    } CATCH_VANILLAPDF_EXCEPTIONS
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION IndirectReferenceObject_SetObjectNumber(IndirectReferenceObjectHandle* handle, biguint_type value) {
