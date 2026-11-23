@@ -76,7 +76,7 @@ int main(void) {
 }
 ```
 
-See the [quickstart guide](https://vanillapdf.readthedocs.io/en/latest/quickstart.html) for the full example with error handling and the `CMakeLists.txt` to build it. The source is in [`examples/create/`](examples/create/), which the test suite builds and runs.
+See the [quickstart guide](https://vanillapdf.readthedocs.io/en/latest/quickstart.html) for the full example with error handling and the `CMakeLists.txt` to build it. The source is in [`examples/create/`](examples/create/), which continuous integration builds and runs.
 
 ## Platforms
 

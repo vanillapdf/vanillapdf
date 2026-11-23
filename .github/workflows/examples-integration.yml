@@ -14,6 +14,8 @@ on:
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'include/**'
+      - 'src/vanillapdf/**'
+      - 'fixtures/**'
       - 'vcpkg.json.in'
       - 'ports/**'
       - 'homebrew/**'
@@ -27,6 +29,8 @@ on:
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'include/**'
+      - 'src/vanillapdf/**'
+      - 'fixtures/**'
       - 'vcpkg.json.in'
       - 'ports/**'
       - 'homebrew/**'
@@ -254,6 +258,18 @@ jobs:
         working-directory: examples/vcpkg-port-integration
         run: ctest --preset ${{ matrix.preset }} --output-on-failure
 
+      - name: Configure documentation examples
+        working-directory: examples/documentation-integration
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build documentation examples
+        working-directory: examples/documentation-integration
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Test documentation examples
+        working-directory: examples/documentation-integration
+        run: ctest --preset ${{ matrix.preset }} --output-on-failure
+
   # The Windows consumers share one vcpkg binary cache, filled by this job and
   # restored by the jobs below, as in sanitizers.yml. vcpkg never caches a
   # --head build, so every job still builds vanillapdf itself, but restores
@@ -369,6 +385,18 @@ jobs:
         working-directory: examples/vcpkg-port-integration
         run: ctest --preset ${{ matrix.preset }} -C ${{ matrix.build_type }} --output-on-failure
 
+      - name: Configure documentation examples
+        working-directory: examples/documentation-integration
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build documentation examples
+        working-directory: examples/documentation-integration
+        run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.build_type }}
+
+      - name: Test documentation examples
+        working-directory: examples/documentation-integration
+        run: ctest --preset ${{ matrix.preset }} -C ${{ matrix.build_type }} --output-on-failure
+
   # The same port, consumed through the vcpkg MSBuild integration instead of
   # CMake: no package config and no compile definitions, only the installed
   # headers and the import library.
@@ -473,6 +501,18 @@ jobs:
 
       - name: Test
         working-directory: examples/vcpkg-port-integration
+        run: ctest --preset ${{ matrix.preset }} --output-on-failure
+
+      - name: Configure documentation examples
+        working-directory: examples/documentation-integration
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build documentation examples
+        working-directory: examples/documentation-integration
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Test documentation examples
+        working-directory: examples/documentation-integration
         run: ctest --preset ${{ matrix.preset }} --output-on-failure
 
   # =============================================================================

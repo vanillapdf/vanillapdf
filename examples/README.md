@@ -4,10 +4,11 @@ This directory contains practical examples demonstrating Vanilla.PDF integration
 
 ## Available Examples
 
-- **[`quickstart/`](quickstart/)** - The first program of the quickstart guide, which prints the library version; built and run by the library's test suite
-- **[`create/`](create/)** - Creates a PDF document with a blank page, as shown at the end of the quickstart guide; built and run by the library's test suite
-- **[`inspect/`](inspect/)**, **[`merge/`](merge/)**, **[`signing/`](signing/)**, **[`visible-signature/`](visible-signature/)**, **[`verification/`](verification/)**, **[`encryption/`](encryption/)**, **[`validation/`](validation/)** - The task examples of the [examples page](https://vanillapdf.readthedocs.io/en/latest/examples.html); built and run by the library's test suite
+- **[`quickstart/`](quickstart/)** - The first program of the quickstart guide, which prints the library version; built and run by [`documentation-integration/`](documentation-integration/)
+- **[`create/`](create/)** - Creates a PDF document with a blank page, as shown at the end of the quickstart guide; built and run by [`documentation-integration/`](documentation-integration/)
+- **[`inspect/`](inspect/)**, **[`merge/`](merge/)**, **[`signing/`](signing/)**, **[`visible-signature/`](visible-signature/)**, **[`verification/`](verification/)**, **[`encryption/`](encryption/)**, **[`validation/`](validation/)** - The task examples of the [examples page](https://vanillapdf.readthedocs.io/en/latest/examples.html); built and run by [`documentation-integration/`](documentation-integration/)
 - **[`fetchcontent-integration/`](fetchcontent-integration/)** - Complete CMake FetchContent integration example with cross-platform testing
+- **[`documentation-integration/`](documentation-integration/)** - Builds each documentation example above from its own `CMakeLists.txt` against the vcpkg port and runs it
 - **[`vcpkg-port-integration/`](vcpkg-port-integration/)** - Consuming Vanilla.PDF via its vcpkg port
 - **[`vcpkg-msbuild-integration/`](vcpkg-msbuild-integration/)** - Consuming the vcpkg port from a Visual Studio project through the vcpkg MSBuild integration, without CMake
 - **[`conan-integration/`](conan-integration/)** - Consuming Vanilla.PDF via its Conan recipe
