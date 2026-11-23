@@ -22,7 +22,7 @@ extern "C"
     * This class contains additional informations about last error occurred
     *
     * The error code and message is stored in the thread-local storage and
-    * does not clear until another error occurrs on the same thread.
+    * does not clear until another error occurs on the same thread.
     *
     * Every function that returns a code other than \ref VANILLAPDF_ERROR_SUCCESS
     * stores the same code and a message here. Trivial functions
