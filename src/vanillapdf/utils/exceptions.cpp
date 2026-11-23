@@ -60,5 +60,8 @@ CryptoErrorException::CryptoErrorException(const std::string& msg) : ExceptionBa
 ImageCodecErrorException::ImageCodecErrorException(const char * const & msg) : ExceptionBase(msg) {}
 ImageCodecErrorException::ImageCodecErrorException(const std::string& msg) : ExceptionBase(msg) {}
 
+InvalidOperationException::InvalidOperationException(const char * const & msg) : ExceptionBase(msg) {}
+InvalidOperationException::InvalidOperationException(const std::string& msg) : ExceptionBase(msg) {}
+
 } // vanillapdf
 

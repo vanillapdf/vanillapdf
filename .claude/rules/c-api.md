@@ -33,6 +33,7 @@ paths:
 - `VANILLAPDF_ERROR_USER_CANCELLED` - User cancelled
 - `VANILLAPDF_ERROR_GENERAL` - Unknown error (check logging)
 - `VANILLAPDF_ERROR_INSUFFICIENT_SPACE` - Buffer too small
+- `VANILLAPDF_ERROR_INVALID_OPERATION` - Valid parameters, but a precondition the caller can query does not hold (e.g. `Object_GetObjectNumber` on a direct object); null handles stay `PARAMETER_VALUE`
 - `VANILLAPDF_ERROR_ZLIB_DATA` - Corrupted compressed data
 
 **License:**

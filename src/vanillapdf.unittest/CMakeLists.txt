@@ -59,6 +59,7 @@ set(VANILLAPDF_UNITTEST_SOURCES
 # Tests are gradually being moved out of the flat list above
 # into folders mirroring the library layers - syntax, semantics, contents and utils
 set(VANILLAPDF_UNITTEST_SYNTAX_SOURCES
+    syntax/indirect_reference_test.cpp
     syntax/xref_test.cpp
 )
 

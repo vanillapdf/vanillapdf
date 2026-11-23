@@ -160,42 +160,34 @@ bool Object::HasOwner() const noexcept {
 
 types::big_uint Object::GetObjectNumber() const {
 
-    bool is_indirect = IsIndirect();
-    bool has_owner = HasOwner();
-
-    assert(is_indirect || has_owner);
-    assert(!(is_indirect && has_owner));
-
-    if (is_indirect) {
+    // An indirect object inserted directly into a container is also owned,
+    // and its own xref entry still determines the number
+    if (IsIndirect()) {
         XrefEntryBasePtr entry = m_entry.GetReference();
         return entry->GetObjectNumber();
     }
 
-    if (has_owner) {
-        LOG_ERROR_AND_THROW(InvalidParameterException, "Object is not an indirect object, but is a composite of another object");
+    if (HasOwner()) {
+        LOG_ERROR_AND_THROW(InvalidOperationException, "Object is not an indirect object, but is a composite of another object");
     }
 
-    LOG_ERROR_AND_THROW(InvalidParameterException, "Object does not have assigned object number");
+    LOG_ERROR_AND_THROW(InvalidOperationException, "Object does not have assigned object number");
 }
 
 types::ushort Object::GetGenerationNumber() const {
 
-    bool is_indirect = IsIndirect();
-    bool has_owner = HasOwner();
-
-    assert(is_indirect || has_owner);
-    assert(!(is_indirect && has_owner));
-
-    if (is_indirect) {
+    // An indirect object inserted directly into a container is also owned,
+    // and its own xref entry still determines the number
+    if (IsIndirect()) {
         XrefEntryBasePtr entry = m_entry.GetReference();
         return entry->GetGenerationNumber();
     }
 
-    if (has_owner) {
-        LOG_ERROR_AND_THROW(InvalidParameterException, "Object is not an indirect object, but is a composite of another object");
+    if (HasOwner()) {
+        LOG_ERROR_AND_THROW(InvalidOperationException, "Object is not an indirect object, but is a composite of another object");
     }
 
-    LOG_ERROR_AND_THROW(InvalidParameterException, "Object does not have assigned generation number");
+    LOG_ERROR_AND_THROW(InvalidOperationException, "Object does not have assigned generation number");
 }
 
 types::big_uint Object::GetRootObjectNumber() const {

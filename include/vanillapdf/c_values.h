@@ -120,6 +120,18 @@ extern "C"
     VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_IMAGE_CODEC;
 
     /**
+    * rief
+    * The operation is not valid in the current state of the object.
+    *
+    * The parameters are well formed, but a precondition does not hold,
+    * which the caller can check beforehand, for example
+    * with ef ObjectHandle::Object_IsIndirect "Object_IsIndirect".
+    * An invalid handle, such as a null pointer,
+    * is reported with ef VANILLAPDF_ERROR_PARAMETER_VALUE instead.
+    */
+    VANILLAPDF_API extern const error_type VANILLAPDF_ERROR_INVALID_OPERATION;
+
+    /**
     * \brief
     * An unknown error has occurred.
     *

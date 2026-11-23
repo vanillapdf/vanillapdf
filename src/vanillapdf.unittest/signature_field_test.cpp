@@ -173,7 +173,7 @@ TEST(SignatureField, AddAndRemoveWidget) {
     EXPECT_EQ(has_parent, VANILLAPDF_RV_TRUE);
 
     // A widget belongs to one field
-    EXPECT_EQ(Field_AddWidget(field, widget), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Field_AddWidget(field, widget), VANILLAPDF_ERROR_INVALID_OPERATION);
 
     boolean_type removed = VANILLAPDF_RV_FALSE;
     ASSERT_EQ(Field_RemoveWidget(field, widget, &removed), VANILLAPDF_ERROR_SUCCESS);
@@ -209,7 +209,7 @@ TEST(SignatureField, WidgetOfAnotherDocumentIsRejected) {
 
     HandleGuard<WidgetAnnotationHandle, WidgetAnnotation_Release> widget;
     CreateWidget(other_document, 200, widget);
-    EXPECT_EQ(Field_AddWidget(field, widget), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Field_AddWidget(field, widget), VANILLAPDF_ERROR_INVALID_OPERATION);
 
     size_type widget_count = 1;
     ASSERT_EQ(Field_GetWidgetCount(field, &widget_count), VANILLAPDF_ERROR_SUCCESS);
@@ -293,7 +293,7 @@ TEST(SignatureField, MergedFieldIsItsOwnWidget) {
 
     HandleGuard<WidgetAnnotationHandle, WidgetAnnotation_Release> another;
     CreateWidget(document, 300, another);
-    EXPECT_EQ(Field_AddWidget(field, another), VANILLAPDF_ERROR_PARAMETER_VALUE);
+    EXPECT_EQ(Field_AddWidget(field, another), VANILLAPDF_ERROR_INVALID_OPERATION);
 
     boolean_type removed = VANILLAPDF_RV_TRUE;
     ASSERT_EQ(Field_RemoveWidget(field, merged, &removed), VANILLAPDF_ERROR_SUCCESS);

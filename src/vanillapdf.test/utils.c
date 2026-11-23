@@ -159,6 +159,7 @@ error_type process_constants() {
     dummy_error = VANILLAPDF_ERROR_IO;
     dummy_error = VANILLAPDF_ERROR_CRYPTO;
     dummy_error = VANILLAPDF_ERROR_IMAGE_CODEC;
+    dummy_error = VANILLAPDF_ERROR_INVALID_OPERATION;
     dummy_error = VANILLAPDF_ERROR_GENERAL;
 
     // Syntax errors
