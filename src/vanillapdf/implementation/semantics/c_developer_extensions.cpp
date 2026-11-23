@@ -36,7 +36,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DeveloperExtension_GetBaseVersion(D
         case Version::PDF20:
             *result = PDFVersion_20; break;
         default:
-            return VANILLAPDF_ERROR_NOT_SUPPORTED;
+            return Errors::SetLastError(VANILLAPDF_ERROR_NOT_SUPPORTED, "Unknown PDF version");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;

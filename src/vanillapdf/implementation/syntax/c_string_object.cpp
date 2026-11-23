@@ -11,8 +11,8 @@ using namespace vanillapdf::syntax;
 VANILLAPDF_API error_type CALLING_CONVENTION StringObject_GetStringType(StringObjectHandle* handle, StringType* result)
 {
     StringObjectBase* obj = reinterpret_cast<StringObjectBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (obj->GetStringType()) {
     case StringObjectBase::StringType::Undefined:

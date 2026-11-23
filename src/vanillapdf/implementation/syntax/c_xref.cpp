@@ -98,8 +98,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetTrailerDictionary(XrefHandl
 VANILLAPDF_API error_type CALLING_CONVENTION Xref_GetLastXrefOffset(XrefHandle* handle, offset_type* result)
 {
     XrefBase* xref = reinterpret_cast<XrefBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(xref);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(xref);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = xref->GetLastXrefOffset();
     return VANILLAPDF_ERROR_SUCCESS;
@@ -234,7 +234,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XrefEntry_GetType(XrefEntryHandle* 
     case XrefEntryBase::Usage::Null:
         *result = XrefEntryType_Null; break;
     default:
-        return VANILLAPDF_ERROR_GENERAL;
+        return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown cross-reference entry type");
     }
 
     return VANILLAPDF_ERROR_SUCCESS;

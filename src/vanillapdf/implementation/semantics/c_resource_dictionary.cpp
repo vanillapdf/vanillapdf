@@ -50,7 +50,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_GetFontMap(Resou
     {
         OutputFontMapPtr font;
         bool contains = obj->Font(font);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = font.AddRefGet();
         *result = reinterpret_cast<FontMapHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -98,7 +98,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ResourceDictionary_FindXObject(Reso
         OutputXObjectPtr xobject;
         bool found = obj->TryFindXObject(*name_object, xobject);
         if (!found) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = xobject.AddRefGet();

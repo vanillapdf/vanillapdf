@@ -1,21 +1,20 @@
 #ifndef _ERRORS_H
 #define _ERRORS_H
 
-#include <string>
+#include <string_view>
 
 namespace vanillapdf {
 
 class Errors {
 public:
     static uint32_t GetLastError() noexcept;
-    static void SetLastError(uint32_t value) noexcept;
+
+    // Stores the code and the message as the last error of the thread.
+    // Returns the code, so that a C API function can return it in one statement.
+    static uint32_t SetLastError(uint32_t value, std::string_view message) noexcept;
 
     static size_type GetLastErrorMessageLength() noexcept;
     static const char* GetLastErrorMessage() noexcept;
-
-    static void SetLastErrorMessage(const char * value) noexcept;
-    static void SetLastErrorMessage(const char * value, size_type length) noexcept;
-    static void SetLastErrorMessage(const std::string& value) noexcept;
 
 private:
     static thread_local uint32_t m_error;

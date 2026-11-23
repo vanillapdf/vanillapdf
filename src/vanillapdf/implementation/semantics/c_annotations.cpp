@@ -18,8 +18,8 @@ using namespace vanillapdf::semantics;
 VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAnnotationType(AnnotationHandle* handle, AnnotationType* result)
 {
     AnnotationBase* obj = reinterpret_cast<AnnotationBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (obj->GetAnnotationType()) {
     case AnnotationBase::Type::Text:
@@ -104,7 +104,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetDestination(LinkA
         OutputDestinationPtr destination;
         bool contains = obj->Destination(destination);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = destination.AddRefGet();
@@ -124,7 +124,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION LinkAnnotation_GetAction(LinkAnnota
         OutputActionPtr action;
         bool contains = obj->Action(action);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = action.AddRefGet();
@@ -225,7 +225,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetRect(AnnotationHandle
         OutputRectanglePtr rect;
         bool contains = obj->GetRect(rect);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = rect.AddRefGet();
@@ -259,7 +259,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetContents(AnnotationHa
         OutputLiteralStringObjectPtr contents;
         bool contains = obj->GetContents(contents);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = contents.AddRefGet();
@@ -293,7 +293,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetColor(AnnotationHandl
         OutputColorPtr color;
         bool contains = obj->GetColor(color);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = color.AddRefGet();
@@ -362,13 +362,13 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAppearance(Annotation
             case AppearanceType_Down:
                 appearance_type = AnnotationBase::AppearanceType::Down; break;
             default:
-                return VANILLAPDF_ERROR_PARAMETER_VALUE;
+                return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Unknown annotation appearance type");
         }
 
         OutputFormXObjectPtr appearance;
         bool contains = obj->GetAppearance(appearance_type, appearance);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = appearance.AddRefGet();
@@ -395,7 +395,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_SetAppearance(Annotation
             case AppearanceType_Down:
                 appearance_type = AnnotationBase::AppearanceType::Down; break;
             default:
-                return VANILLAPDF_ERROR_PARAMETER_VALUE;
+                return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Unknown annotation appearance type");
         }
 
         obj->SetAppearance(appearance_type, appearance);
@@ -414,7 +414,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Annotation_GetAppearanceState(Annot
         OutputNameObjectPtr state;
         bool contains = obj->GetAppearanceState(state);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = state.AddRefGet();
@@ -497,7 +497,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetAuthor(TextAnnota
         OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = author.AddRefGet();
@@ -531,7 +531,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetModificationDate(
         OutputDatePtr date;
         bool contains = obj->GetModificationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -565,7 +565,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextAnnotation_GetCreationDate(Text
         OutputDatePtr date;
         bool contains = obj->GetCreationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -641,7 +641,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetQuadPoints(H
         MixedArrayObjectPtr quadPoints;
         bool contains = obj->GetQuadPoints(quadPoints);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = quadPoints.AddRefGet();
@@ -675,7 +675,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetAuthor(Highl
         OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = author.AddRefGet();
@@ -709,7 +709,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetModification
         OutputDatePtr date;
         bool contains = obj->GetModificationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -743,7 +743,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION HighlightAnnotation_GetCreationDate
         OutputDatePtr date;
         bool contains = obj->GetCreationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -810,7 +810,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetDefaultAppear
         LiteralStringObjectPtr da;
         bool contains = obj->GetDefaultAppearance(da);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = da.AddRefGet();
@@ -844,7 +844,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetAuthor(FreeTe
         OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = author.AddRefGet();
@@ -878,7 +878,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetModificationD
         OutputDatePtr date;
         bool contains = obj->GetModificationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -912,7 +912,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FreeTextAnnotation_GetCreationDate(
         OutputDatePtr date;
         bool contains = obj->GetCreationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -988,7 +988,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetQuadPoints(U
         MixedArrayObjectPtr quadPoints;
         bool contains = obj->GetQuadPoints(quadPoints);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = quadPoints.AddRefGet();
@@ -1022,7 +1022,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetAuthor(Under
         OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = author.AddRefGet();
@@ -1056,7 +1056,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetModification
         OutputDatePtr date;
         bool contains = obj->GetModificationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -1090,7 +1090,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION UnderlineAnnotation_GetCreationDate
         OutputDatePtr date;
         bool contains = obj->GetCreationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -1166,7 +1166,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetQuadPoints(S
         MixedArrayObjectPtr quadPoints;
         bool contains = obj->GetQuadPoints(quadPoints);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = quadPoints.AddRefGet();
@@ -1200,7 +1200,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetAuthor(Strik
         OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = author.AddRefGet();
@@ -1234,7 +1234,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetModification
         OutputDatePtr date;
         bool contains = obj->GetModificationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -1268,7 +1268,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION StrikeOutAnnotation_GetCreationDate
         OutputDatePtr date;
         bool contains = obj->GetCreationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -1344,7 +1344,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetQuadPoints(Sq
         MixedArrayObjectPtr quadPoints;
         bool contains = obj->GetQuadPoints(quadPoints);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = quadPoints.AddRefGet();
@@ -1378,7 +1378,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetAuthor(Squigg
         OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = author.AddRefGet();
@@ -1412,7 +1412,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetModificationD
         OutputDatePtr date;
         bool contains = obj->GetModificationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -1446,7 +1446,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SquigglyAnnotation_GetCreationDate(
         OutputDatePtr date;
         bool contains = obj->GetCreationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -1522,7 +1522,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetInkList(InkAnnotat
         MixedArrayObjectPtr inkList;
         bool contains = obj->GetInkList(inkList);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = inkList.AddRefGet();
@@ -1556,7 +1556,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetAuthor(InkAnnotati
         OutputStringObjectPtr author;
         bool contains = obj->GetAuthor(author);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = author.AddRefGet();
@@ -1590,7 +1590,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetModificationDate(I
         OutputDatePtr date;
         bool contains = obj->GetModificationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -1624,7 +1624,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InkAnnotation_GetCreationDate(InkAn
         OutputDatePtr date;
         bool contains = obj->GetCreationDate(date);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -1687,7 +1687,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION WidgetAnnotation_GetAppearanceChara
         OutputAppearanceCharacteristicsPtr characteristics;
         bool contains = obj->GetAppearanceCharacteristics(characteristics);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = characteristics.AddRefGet();
@@ -1733,7 +1733,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageAnnotations_Remove(PageAnnotati
     {
         bool removed = obj->Remove(at);
         if (!removed) {
-            return VANILLAPDF_ERROR_GENERAL;
+            return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Annotation could not be removed");
         }
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS

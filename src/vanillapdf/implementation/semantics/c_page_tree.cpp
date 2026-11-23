@@ -103,7 +103,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageTree_FindPageIndex(PageTreeHand
         types::size_type index = 0;
         bool found = obj->FindPageIndex(page_dict, index);
         if (!found) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         *result = index;

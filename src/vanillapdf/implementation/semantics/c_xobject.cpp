@@ -16,8 +16,8 @@ using namespace vanillapdf::semantics;
 VANILLAPDF_API error_type CALLING_CONVENTION XObject_GetXObjectType(XObjectHandle* handle, XObjectType* result)
 {
     XObjectBase* obj = reinterpret_cast<XObjectBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (obj->GetXObjectType()) {
     case XObjectBase::Type::Form:
@@ -86,7 +86,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_GetBoundingBox(FormXObj
         OutputRectanglePtr bounding_box;
         bool contains = obj->GetBoundingBox(bounding_box);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = bounding_box.AddRefGet();
@@ -120,7 +120,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_GetMatrix(FormXObjectHa
         OutputMatrixPtr matrix;
         bool contains = obj->GetMatrix(matrix);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = matrix.AddRefGet();
@@ -154,7 +154,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_GetResources(FormXObjec
         OutputResourceDictionaryPtr resources;
         bool contains = obj->GetResources(resources);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = resources.AddRefGet();
@@ -188,7 +188,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FormXObject_GetGroup(FormXObjectHan
         OutputTransparencyGroupPtr group;
         bool contains = obj->GetGroup(group);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = group.AddRefGet();

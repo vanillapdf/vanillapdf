@@ -22,7 +22,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_CreateFromData(string_type d
     // A null pointer is a valid representation of an empty buffer.
     // Only reject it when the caller also claims a non-zero length.
     if (data == nullptr && size > 0) {
-        return VANILLAPDF_ERROR_PARAMETER_VALUE;
+        return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Parameter \"data\" is null, but \"size\" is not zero");
     }
 
     try {
@@ -38,9 +38,9 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_CreateFromData(string_type d
 VANILLAPDF_API error_type CALLING_CONVENTION Buffer_GetData(const BufferHandle* handle, string_type* data, size_type* size)
 {
     const Buffer* obj = reinterpret_cast<const Buffer*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(size);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(data);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(size);
 
     *data = obj->data();
     *size = obj->size();
@@ -55,7 +55,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_SetData(BufferHandle* handle
     // A null pointer is a valid representation of an empty buffer.
     // Only reject it when the caller also claims a non-zero length.
     if (data == nullptr && size > 0) {
-        return VANILLAPDF_ERROR_PARAMETER_VALUE;
+        return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Parameter \"data\" is null, but \"size\" is not zero");
     }
 
     try
@@ -74,7 +74,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Buffer_CopyTo(BufferHandle* handle,
     try
     {
         if (size < obj->size()) {
-            return VANILLAPDF_ERROR_INSUFFICIENT_SPACE;
+            return Errors::SetLastError(VANILLAPDF_ERROR_INSUFFICIENT_SPACE, "Destination buffer is too small");
         }
 
         std::copy(obj->data(), obj->data() + obj->size(), data);

@@ -54,7 +54,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Prefix(PageLabelHandle* h
     {
         syntax::StringObjectPtr prefix;
         auto contains = obj->Prefix(prefix);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = prefix.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -70,7 +70,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Start(PageLabelHandle* ha
     {
         syntax::IntegerObjectPtr start;
         auto contains = obj->Start(start);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = start.AddRefGet();
         *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -86,7 +86,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle* ha
     {
         PageLabel::NumberingStyle style;
         auto contains = obj->Style(style);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         switch (style) {
         case PageLabel::NumberingStyle::Decimal:
             *result = NumberingStyle_Decimal; break;
@@ -99,7 +99,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageLabel_Style(PageLabelHandle* ha
         case PageLabel::NumberingStyle::LowerLetters:
             *result = NumberingStyle_LowerLetters; break;
         default:
-            return VANILLAPDF_ERROR_GENERAL;
+            return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown numbering style");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;

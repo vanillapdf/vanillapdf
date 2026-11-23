@@ -20,8 +20,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Create(BufferArrayHandl
 
 VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_GetSize(BufferArrayHandle* handle, size_type* result) {
     BufferArray* obj = reinterpret_cast<BufferArray*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = obj->GetSize();
     return VANILLAPDF_ERROR_SUCCESS;
@@ -73,7 +73,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION BufferArray_Remove(BufferArrayHandl
     try {
         bool removed = obj->Remove(at);
         if (!removed) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;

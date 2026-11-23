@@ -163,7 +163,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_GetCatalog(DocumentHandle*
         OutputCatalogPtr catalog;
         bool found = document->GetDocumentCatalog(catalog);
         if (!found) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = catalog.AddRefGet();
@@ -183,7 +183,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Document_GetDocumentInfo(DocumentHa
         OutputDocumentInfoPtr info;
         bool found = document->GetDocumentInfo(info);
         if (!found) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = info.AddRefGet();

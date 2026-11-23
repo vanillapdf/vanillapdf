@@ -160,7 +160,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetMess
     try {
         auto buffer = vr->GetMessage();
         if (buffer->empty()) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = buffer.AddRefGet();
@@ -222,7 +222,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetSign
     try {
         auto cert = vr->GetSignerCertificate();
         if (cert->empty()) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = cert.AddRefGet();
@@ -273,7 +273,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureVerificationResult_GetSign
     try {
         auto buffer = vr->GetSignerCommonName();
         if (buffer->empty()) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = buffer.AddRefGet();

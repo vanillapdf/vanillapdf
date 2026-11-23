@@ -131,7 +131,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Logging_GetSeverity(LoggingSeverity
         case spdlog::level::off:
             *level = LoggingSeverity_Off; break;
         default:
-            return VANILLAPDF_ERROR_GENERAL;
+            return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown logging severity");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -159,7 +159,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Logging_SetSeverity(LoggingSeverity
         case LoggingSeverity_Off:
             spdlog::set_level(spdlog::level::off); break;
         default:
-            return VANILLAPDF_ERROR_GENERAL;
+            return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown logging severity");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;

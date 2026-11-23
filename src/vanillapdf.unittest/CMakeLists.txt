@@ -63,6 +63,7 @@ set(VANILLAPDF_UNITTEST_SYNTAX_SOURCES
 )
 
 set(VANILLAPDF_UNITTEST_UTILS_SOURCES
+    utils/last_error_test.cpp
     utils/md5_digest_test.cpp
     utils/openssl_legacy_test.cpp
     utils/rc4_cipher_test.cpp

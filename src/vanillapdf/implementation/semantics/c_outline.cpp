@@ -13,8 +13,8 @@ using namespace vanillapdf::semantics;
 VANILLAPDF_API error_type CALLING_CONVENTION OutlineBase_GetOutlineType(OutlineBaseHandle* handle, OutlineType* result)
 {
     OutlineBase* obj = reinterpret_cast<OutlineBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (obj->GetOutlineType()) {
     case OutlineBase::Type::Outline:
@@ -50,7 +50,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetFirst(OutlineHandle* han
     {
         OutputOutlineItemPtr direct;
         auto contains = obj->First(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<OutlineItemHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -67,7 +67,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetLast(OutlineHandle* hand
     {
         OutputOutlineItemPtr direct;
         auto contains = obj->Last(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<OutlineItemHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -84,7 +84,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Outline_GetCount(OutlineHandle* han
     {
         syntax::IntegerObjectPtr direct;
         auto contains = obj->Count(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -143,7 +143,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetPrev(OutlineItemHand
     {
         OutputOutlineItemPtr direct;
         auto contains = obj->Prev(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<OutlineItemHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -160,7 +160,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetNext(OutlineItemHand
     {
         OutputOutlineItemPtr direct;
         auto contains = obj->Next(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<OutlineItemHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -177,7 +177,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFirst(OutlineItemHan
     {
         OutputOutlineItemPtr direct;
         auto contains = obj->First(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<OutlineItemHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -194,7 +194,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetLast(OutlineItemHand
     {
         OutputOutlineItemPtr direct;
         auto contains = obj->Last(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<OutlineItemHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -211,7 +211,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetCount(OutlineItemHan
     {
         syntax::IntegerObjectPtr direct;
         auto contains = obj->Count(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -228,7 +228,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetDestination(OutlineI
     {
         OutputDestinationPtr direct;
         auto contains = obj->Destination(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<DestinationHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -245,7 +245,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetAction(OutlineItemHa
     {
         OutputActionPtr action;
         auto contains = obj->Action(action);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = action.AddRefGet();
         *result = reinterpret_cast<ActionHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -262,7 +262,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetColor(OutlineItemHan
     {
         OutputOutlineItemColorPtr direct;
         auto contains = obj->Color(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<OutlineItemColorHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -279,7 +279,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION OutlineItem_GetFlags(OutlineItemHan
     {
         OutputOutlineItemFlagsPtr direct;
         auto contains = obj->Flags(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<OutlineItemFlagsHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

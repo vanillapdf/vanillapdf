@@ -11,8 +11,8 @@ using namespace vanillapdf::semantics;
 VANILLAPDF_API error_type CALLING_CONVENTION Action_GetActionType(ActionHandle* handle, ActionType* result)
 {
     ActionBase* obj = reinterpret_cast<ActionBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (obj->GetActionType()) {
     case ActionBase::Type::GoTo:
@@ -72,7 +72,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION GoToAction_GetDestination(GoToActio
         OutputDestinationPtr destination;
         bool contains = obj->Destination(destination);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = destination.AddRefGet();
@@ -131,7 +131,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION GoToRemoteAction_GetDestination(GoT
         OutputDestinationPtr destination;
         bool contains = obj->Destination(destination);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = destination.AddRefGet();

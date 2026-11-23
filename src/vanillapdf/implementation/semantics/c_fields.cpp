@@ -30,8 +30,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_CreateFromDictionary(Dictiona
 
 VANILLAPDF_API error_type CALLING_CONVENTION Field_GetType(FieldHandle* handle, FieldType* result) {
     Field* obj = reinterpret_cast<Field*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (obj->GetFieldType()) {
         case Field::Type::NonTerminal:
@@ -59,7 +59,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetName(FieldHandle* handle, 
     try {
         OutputStringObjectPtr direct;
         bool contains = obj->GetName(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -74,7 +74,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetAlternateName(FieldHandle*
     try {
         OutputStringObjectPtr direct;
         bool contains = obj->GetAlternateName(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -89,7 +89,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetFieldFlags(FieldHandle* ha
     try {
         types::big_int flags;
         bool contains = obj->GetFieldFlags(flags);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         *result = static_cast<FieldFlags>(flags);
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
@@ -155,7 +155,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_SetQuadding(FieldHandle* hand
             case QuaddingType_RightJustified:
                 quadding = Field::Quadding::RightJustified; break;
             default:
-                return VANILLAPDF_ERROR_PARAMETER_VALUE;
+                return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Unknown quadding type");
         }
 
         obj->SetQuadding(quadding);
@@ -268,7 +268,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetParent(FieldHandle* handle
     try {
         OuputFieldPtr parent;
         bool contains = obj->GetParent(parent);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = parent.AddRefGet();
         *result = reinterpret_cast<FieldHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -283,7 +283,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetValue(FieldHandle* handle,
     try {
         OutputObjectPtr value;
         bool contains = obj->GetValueObject(value);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = value.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -298,7 +298,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetDefaultValue(FieldHandle* 
     try {
         OutputObjectPtr value;
         bool contains = obj->GetDefaultValueObject(value);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = value.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -313,7 +313,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetDefaultAppearance(FieldHan
     try {
         OutputStringObjectPtr direct;
         bool contains = obj->GetDefaultAppearance(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -328,7 +328,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetQuadding(FieldHandle* hand
     try {
         Field::Quadding quadding = Field::Quadding::LeftJustified;
         bool contains = obj->GetQuadding(quadding);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
 
         switch (quadding) {
             case Field::Quadding::LeftJustified:
@@ -338,7 +338,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Field_GetQuadding(FieldHandle* hand
             case Field::Quadding::RightJustified:
                 *result = QuaddingType_RightJustified; break;
             default:
-                return VANILLAPDF_ERROR_GENERAL;
+                return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown quadding type");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -366,7 +366,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ButtonField_GetValue(ButtonFieldHan
     try {
         OutputNameObjectPtr direct;
         bool contains = obj->GetValue(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<NameObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -393,7 +393,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetValue(TextFieldHandle*
     try {
         OutputStringObjectPtr direct;
         bool contains = obj->GetValue(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -420,7 +420,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetDefaultValue(TextField
     try {
         OutputStringObjectPtr direct;
         bool contains = obj->GetDefaultValue(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -435,7 +435,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextField_GetMaxLength(TextFieldHan
     try {
         OutputIntegerObjectPtr direct;
         bool contains = obj->GetMaxLength(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -450,7 +450,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetValue(ChoiceFieldHan
     try {
         OutputStringObjectPtr direct;
         bool contains = obj->GetValue(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -477,7 +477,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionCount(ChoiceFi
     try {
         types::size_type count;
         bool contains = obj->GetOptionCount(count);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         *result = count;
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
@@ -491,7 +491,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ChoiceField_GetOptionAt(ChoiceField
     try {
         OutputContainableObjectPtr direct;
         bool contains = obj->GetOptionAt(index, direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -545,7 +545,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SignatureField_GetValue(SignatureFi
     try {
         OuputDigitalSignaturePtr direct;
         bool contains = field->Value(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<DigitalSignatureHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

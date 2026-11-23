@@ -31,7 +31,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_Detect(string_ty
 
 VANILLAPDF_API error_type CALLING_CONVENTION TextStringEncoding_PDFDocEncodingByteToUnicode(uint8_t byte, uint32_t* codepoint)
 {
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(codepoint);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(codepoint);
 
     *codepoint = static_cast<uint32_t>(TextStringEncoding::PDFDocEncodingByteToUnicode(byte));
     return VANILLAPDF_ERROR_SUCCESS;

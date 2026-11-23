@@ -10,8 +10,8 @@ using namespace vanillapdf::contents;
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentObject_GetObjectType(ContentObjectHandle* handle, ContentObjectType* result) {
     ContentObjectBase* obj = reinterpret_cast<ContentObjectBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (obj->GetObjectType()) {
         case ContentObjectBase::Type::TextObject:

@@ -2,7 +2,7 @@
 
 #include "utils/errors.h"
 
-#include <cstring>
+#include <algorithm>
 
 namespace vanillapdf {
 
@@ -14,8 +14,18 @@ uint32_t Errors::GetLastError() noexcept {
     return m_error;
 }
 
-void Errors::SetLastError(uint32_t value) noexcept {
+uint32_t Errors::SetLastError(uint32_t value, std::string_view message) noexcept {
+    auto copied_length = std::min<size_type>(message.size(), constant::MAX_MESSAGE_SIZE - 1);
+
+    std::copy_n(message.data(), copied_length, m_message);
+    m_message[copied_length] = '\0';
+
     m_error = value;
+
+    // The length includes the terminating NUL character
+    m_message_length = copied_length + 1;
+
+    return value;
 }
 
 size_type Errors::GetLastErrorMessageLength() noexcept {
@@ -24,24 +34,6 @@ size_type Errors::GetLastErrorMessageLength() noexcept {
 
 const char * Errors::GetLastErrorMessage() noexcept {
     return m_message;
-}
-
-void Errors::SetLastErrorMessage(const std::string& value) noexcept {
-    SetLastErrorMessage(value.c_str(), value.size() + 1);
-}
-
-void Errors::SetLastErrorMessage(const char * value) noexcept {
-    auto length = std::strlen(value);
-    SetLastErrorMessage(value, length + 1);
-}
-
-void Errors::SetLastErrorMessage(const char * value, size_type length) noexcept {
-    auto limited_length = std::min<size_type>(length, constant::MAX_MESSAGE_SIZE - 1);
-
-    std::memcpy(m_message, value, limited_length);
-    m_message[limited_length] = '\0';
-
-    m_message_length = limited_length;
 }
 
 } // vanillapdf

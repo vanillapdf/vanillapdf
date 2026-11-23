@@ -9,30 +9,49 @@
 
 #include <type_traits>
 
-#define RETURN_ERROR_IF_NULL(var, error_code) do { if (nullptr == var) return error_code; } while(0)
-#define RETURN_ERROR_PARAM_VALUE_IF_NULL(var) RETURN_ERROR_IF_NULL(var, VANILLAPDF_ERROR_PARAMETER_VALUE)
+// Last error
+//
+// Every C API function that returns a code other than VANILLAPDF_ERROR_SUCCESS
+// stores the same code and a message as the last error of the thread, so that
+// Errors_GetLastError and Errors_GetLastErrorMessage describe this failure, and
+// not an earlier one. CATCH_VANILLAPDF_EXCEPTIONS does this for exceptions. A
+// failure that the function returns directly uses
+//   return Errors::SetLastError(VANILLAPDF_ERROR_..., "message");
+//
+// Trivial functions and the Errors_* functions never change the last error, see
+// "Trivial functions" below. They return the code directly and use the
+// RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL null check.
+#define RETURN_ERROR_PARAM_VALUE_IF_NULL(var) \
+    do { \
+        if (var == nullptr) { \
+            return vanillapdf::Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Parameter \"" #var "\" is null"); \
+        } \
+    } while(0)
+
+// Trivial and Errors_* functions: keeps the last error
+#define RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(var) \
+    do { \
+        if (var == nullptr) { \
+            return VANILLAPDF_ERROR_PARAMETER_VALUE; \
+        } \
+    } while(0)
 
 #define CATCH_VANILLAPDF_EXCEPTIONS \
     catch (vanillapdf::ExceptionBase& e) \
     { \
         spdlog::error("{}", e.what()); \
         error_type code = static_cast<error_type>(e.code()); \
-        vanillapdf::Errors::SetLastError(code); \
-        vanillapdf::Errors::SetLastErrorMessage(e.what()); \
-        return code; \
+        return vanillapdf::Errors::SetLastError(code, e.what()); \
     } \
     catch (std::exception& e) \
     { \
         spdlog::error("{}", e.what()); \
-        vanillapdf::Errors::SetLastError(VANILLAPDF_ERROR_GENERAL); \
-        vanillapdf::Errors::SetLastErrorMessage(e.what()); \
-        return VANILLAPDF_ERROR_GENERAL; \
+        return vanillapdf::Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, e.what()); \
     } \
     catch (...) \
     { \
         spdlog::error("Caught unknown exception"); \
-        vanillapdf::Errors::SetLastError(VANILLAPDF_ERROR_GENERAL); \
-        return VANILLAPDF_ERROR_GENERAL; \
+        return vanillapdf::Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown exception"); \
     }
 
 // Trivial functions
@@ -55,7 +74,8 @@
 //     no try/catch, because CATCH_VANILLAPDF_EXCEPTIONS logs.
 //   - Errors::SetLastError breaks the documented promise that the last error of
 //     the thread is kept. The error state is also thread_local, and the first
-//     access to it on a new thread can allocate.
+//     access to it on a new thread can allocate. A trivial function therefore
+//     uses RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL and never Errors::SetLastError.
 //
 // The tag is part of the API contract. Removing it, or adding work that breaks
 // the contract, is allowed only in a new major version.
@@ -77,11 +97,11 @@ template <
 >
 error_type SafeObjectConvert(SourceHandleT* from, DestHandleT** result) {
     SourceT* obj = reinterpret_cast<SourceT*>(from);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     DestT* converted = dynamic_cast<DestT*>(obj);
-    if (nullptr == converted) {
+    if (converted == nullptr) {
         return VANILLAPDF_ERROR_PARAMETER_VALUE;
     }
 

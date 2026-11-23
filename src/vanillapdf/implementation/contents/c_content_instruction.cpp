@@ -12,8 +12,8 @@ using namespace vanillapdf::contents;
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentInstruction_GetInstructionType(ContentInstructionHandle* handle, ContentInstructionType* result) {
     InstructionBase* obj = reinterpret_cast<InstructionBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (obj->GetInstructionType()) {
         case InstructionBase::Type::Object:

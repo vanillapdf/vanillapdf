@@ -34,8 +34,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureValidationResult_GetIs
     FileStructureValidationResultHandle* handle,
     size_type* result) {
     FileStructureValidationResult* validation_result = reinterpret_cast<FileStructureValidationResult*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(validation_result);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(validation_result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = validation_result->GetIssueCount();
     return VANILLAPDF_ERROR_SUCCESS;
@@ -61,8 +61,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureValidationResult_IsVal
     FileStructureValidationResultHandle* handle,
     boolean_type* result) {
     FileStructureValidationResult* validation_result = reinterpret_cast<FileStructureValidationResult*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(validation_result);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(validation_result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = validation_result->IsValid() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
     return VANILLAPDF_ERROR_SUCCESS;
@@ -72,8 +72,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureValidationResult_GetEr
     FileStructureValidationResultHandle* handle,
     size_type* result) {
     FileStructureValidationResult* validation_result = reinterpret_cast<FileStructureValidationResult*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(validation_result);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(validation_result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = validation_result->GetErrorCount();
     return VANILLAPDF_ERROR_SUCCESS;
@@ -83,8 +83,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureValidationResult_GetWa
     FileStructureValidationResultHandle* handle,
     size_type* result) {
     FileStructureValidationResult* validation_result = reinterpret_cast<FileStructureValidationResult*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(validation_result);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(validation_result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = validation_result->GetWarningCount();
     return VANILLAPDF_ERROR_SUCCESS;
@@ -113,8 +113,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetSeverity(
     FileStructureIssueHandle* handle,
     FileStructureIssueSeverityType* result) {
     FileStructureIssue* issue = reinterpret_cast<FileStructureIssue*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(issue);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(issue);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (issue->GetSeverity()) {
     case FileStructureIssueSeverity::Info:
@@ -134,8 +134,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetCode(
     FileStructureIssueHandle* handle,
     FileStructureIssueCodeType* result) {
     FileStructureIssue* issue = reinterpret_cast<FileStructureIssue*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(issue);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(issue);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = static_cast<FileStructureIssueCodeType>(issue->GetCode());
     return VANILLAPDF_ERROR_SUCCESS;
@@ -160,8 +160,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_HasObjectContext
     FileStructureIssueHandle* handle,
     boolean_type* result) {
     FileStructureIssue* issue = reinterpret_cast<FileStructureIssue*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(issue);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(issue);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = issue->HasObjectContext() ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
     return VANILLAPDF_ERROR_SUCCESS;
@@ -171,8 +171,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetObjectNumber(
     FileStructureIssueHandle* handle,
     biguint_type* result) {
     FileStructureIssue* issue = reinterpret_cast<FileStructureIssue*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(issue);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(issue);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     auto object_number = issue->GetObjectNumber();
     if (!object_number.has_value()) {
@@ -187,8 +187,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION FileStructureIssue_GetGenerationNum
     FileStructureIssueHandle* handle,
     ushort_type* result) {
     FileStructureIssue* issue = reinterpret_cast<FileStructureIssue*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(issue);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(issue);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     auto generation_number = issue->GetGenerationNumber();
     if (!generation_number.has_value()) {

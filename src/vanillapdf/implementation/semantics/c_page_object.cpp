@@ -21,7 +21,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetContents(PageObjectHa
     {
         OutputPageContentsPtr contents;
         auto contains = obj->GetContents(contents);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = contents.AddRefGet();
         *result = reinterpret_cast<PageContentsHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -98,7 +98,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetResources(PageObjectH
         OutputResourceDictionaryPtr resources;
         bool contains = obj->GetResources(resources);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = resources.AddRefGet();
@@ -132,7 +132,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetAnnotations(PageObjec
         OutputPageAnnotationsPtr annots;
         bool contains = obj->GetAnnotations(annots);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = annots.AddRefGet();
@@ -166,7 +166,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetMediaBox(PageObjectHa
         OutputRectanglePtr media_box;
         bool contains = obj->GetMediaBox(media_box);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = media_box.AddRefGet();
@@ -200,7 +200,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetCropBox(PageObjectHan
         OutputRectanglePtr crop_box;
         bool contains = obj->GetCropBox(crop_box);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = crop_box.AddRefGet();
@@ -234,7 +234,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetBleedBox(PageObjectHa
         OutputRectanglePtr bleed_box;
         bool contains = obj->GetBleedBox(bleed_box);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = bleed_box.AddRefGet();
@@ -268,7 +268,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetTrimBox(PageObjectHan
         OutputRectanglePtr trim_box;
         bool contains = obj->GetTrimBox(trim_box);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = trim_box.AddRefGet();
@@ -302,7 +302,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetArtBox(PageObjectHand
         OutputRectanglePtr art_box;
         bool contains = obj->GetArtBox(art_box);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = art_box.AddRefGet();
@@ -336,7 +336,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetRotate(PageObjectHand
         types::big_int rotate = 0;
         bool contains = obj->GetRotate(rotate);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         *result = rotate;
@@ -367,7 +367,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetUserUnit(PageObjectHa
         types::real user_unit = 0;
         bool contains = obj->GetUserUnit(user_unit);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         *result = user_unit;
@@ -398,7 +398,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION PageObject_GetGroup(PageObjectHandl
         OutputTransparencyGroupPtr group;
         bool contains = obj->GetGroup(group);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = group.AddRefGet();

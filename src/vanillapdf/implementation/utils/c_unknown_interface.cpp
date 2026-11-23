@@ -9,7 +9,7 @@ using namespace vanillapdf;
 VANILLAPDF_API error_type CALLING_CONVENTION IUnknown_AddRef(IUnknownHandle* handle)
 {
     IUnknown* obj = reinterpret_cast<IUnknown*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
 
     obj->AddRef();
     return VANILLAPDF_ERROR_SUCCESS;

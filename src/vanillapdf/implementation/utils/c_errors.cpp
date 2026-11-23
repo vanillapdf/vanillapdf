@@ -59,14 +59,14 @@ namespace {
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetLastError(error_type* result) {
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = Errors::GetLastError();
     return VANILLAPDF_ERROR_SUCCESS;
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetPrintableErrorTextLength(error_type value, size_type* size) {
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(size);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(size);
 
     string_type value_data = nullptr;
     size_type value_data_size = 0;
@@ -82,7 +82,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetPrintableErrorTextLength(
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetPrintableErrorText(error_type value, char* data, size_type size) {
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(data);
 
     string_type value_data = nullptr;
     size_type value_data_size = 0;
@@ -105,14 +105,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetPrintableErrorText(error_
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessageLength(size_type* result) {
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = Errors::GetLastErrorMessageLength();
     return VANILLAPDF_ERROR_SUCCESS;
 }
 
 VANILLAPDF_API error_type CALLING_CONVENTION Errors_GetLastErrorMessage(char* data, size_type size) {
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(data);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(data);
 
     auto message = Errors::GetLastErrorMessage();
     auto message_size = Errors::GetLastErrorMessageLength();

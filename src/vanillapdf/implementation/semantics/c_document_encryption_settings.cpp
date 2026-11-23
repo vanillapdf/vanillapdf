@@ -35,8 +35,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_Create(D
 
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetAlgorithm(DocumentEncryptionSettingsHandle* handle, EncryptionAlgorithmType* result) {
     DocumentEncryptionSettings* obj = reinterpret_cast<DocumentEncryptionSettings*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (obj->GetEncryptionAlgorithm()) {
     case EncryptionAlgorithm::Undefined:
@@ -56,7 +56,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetAlgor
 
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetAlgorithm(DocumentEncryptionSettingsHandle* handle, EncryptionAlgorithmType encryption_algorithm) {
     DocumentEncryptionSettings* obj = reinterpret_cast<DocumentEncryptionSettings*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
 
     switch (encryption_algorithm) {
     case EncryptionAlgorithmType_Undefined:
@@ -76,8 +76,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetAlgor
 
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetKeyLength(DocumentEncryptionSettingsHandle* handle, integer_type* result) {
     DocumentEncryptionSettings* obj = reinterpret_cast<DocumentEncryptionSettings*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = obj->GetKeyLength();
     return VANILLAPDF_ERROR_SUCCESS;
@@ -85,7 +85,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetKeyLe
 
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetKeyLength(DocumentEncryptionSettingsHandle* handle, integer_type key_length) {
     DocumentEncryptionSettings* obj = reinterpret_cast<DocumentEncryptionSettings*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
 
     obj->SetKeyLength(key_length);
     return VANILLAPDF_ERROR_SUCCESS;
@@ -93,8 +93,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetKeyLe
 
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetUserAccessPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags* result) {
     DocumentEncryptionSettings* obj = reinterpret_cast<DocumentEncryptionSettings*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     // The values between internal and public enum match exactly allowing to make this conversion
     *result = static_cast<UserAccessPermissionFlags>(obj->GetUserPermissions());
@@ -103,7 +103,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_GetUserA
 
 VANILLAPDF_API error_type CALLING_CONVENTION DocumentEncryptionSettings_SetUserAccessPermissions(DocumentEncryptionSettingsHandle* handle, UserAccessPermissionFlags user_permissions) {
     DocumentEncryptionSettings* obj = reinterpret_cast<DocumentEncryptionSettings*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
 
     // The values between internal and public enum match exactly allowing to make this conversion
     auto user_permissions_converted = static_cast<DocumentEncryptionSettings::UserAccessPermissionFlags>(user_permissions);

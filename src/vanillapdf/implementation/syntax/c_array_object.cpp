@@ -44,7 +44,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_SetValue(ArrayObjectHan
     try {
         auto containable_ptr = static_cast<ContainableObject*>(data);
         if (containable_ptr == nullptr) {
-            return VANILLAPDF_ERROR_PARAMETER_VALUE;
+            return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Object cannot be stored in an array");
         }
 
         obj->SetValue(at, containable_ptr);
@@ -76,7 +76,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Append(ArrayObjectHandl
     {
         auto containable_ptr = static_cast<ContainableObject*>(data);
         if (containable_ptr == nullptr) {
-            return VANILLAPDF_ERROR_PARAMETER_VALUE;
+            return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Object cannot be stored in an array");
         }
 
         obj->Append(containable_ptr);
@@ -95,7 +95,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Insert(ArrayObjectHandl
     {
         auto containable_ptr = static_cast<ContainableObject*>(data);
         if (containable_ptr == nullptr) {
-            return VANILLAPDF_ERROR_PARAMETER_VALUE;
+            return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Object cannot be stored in an array");
         }
 
         obj->Insert(at, containable_ptr);
@@ -112,7 +112,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ArrayObject_Remove(ArrayObjectHandl
     {
         bool removed = obj->Remove(at);
         if (!removed) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
