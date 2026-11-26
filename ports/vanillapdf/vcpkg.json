@@ -8,6 +8,10 @@
   "dependencies": [
     "fmt",
     "libjpeg-turbo",
+    {
+      "name": "mimalloc",
+      "platform": "!uwp"
+    },
     "openjpeg",
     "openssl",
     "spdlog",

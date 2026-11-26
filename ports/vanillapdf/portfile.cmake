@@ -8,11 +8,20 @@ vcpkg_from_github(
 
 string(COMPARE EQUAL "${VCPKG_CRT_LINKAGE}" "static" VANILLAPDF_USE_STATIC_CRT)
 
+# mimalloc serves only the library's own reference counted objects and adds no
+# API, so it is always on where the mimalloc port is supported
+if(VCPKG_TARGET_IS_UWP)
+    set(VANILLAPDF_ENABLE_MIMALLOC OFF)
+else()
+    set(VANILLAPDF_ENABLE_MIMALLOC ON)
+endif()
+
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
       -DVANILLAPDF_INTERNAL_VCPKG=OFF
       -DVANILLAPDF_USE_STATIC_CRT=${VANILLAPDF_USE_STATIC_CRT}
+      -DVANILLAPDF_ENABLE_MIMALLOC=${VANILLAPDF_ENABLE_MIMALLOC}
 )
 
 vcpkg_cmake_install()

@@ -64,7 +64,9 @@ under its own license, which applies to binaries that include it. The
      - Only with ``VANILLAPDF_ENABLE_LICENSING``, off by default
    * - `mimalloc <https://github.com/microsoft/mimalloc>`_
      - MIT
-     - Only with ``VANILLAPDF_ENABLE_MIMALLOC``, off by default
+     - Only with ``VANILLAPDF_ENABLE_MIMALLOC``, off by default; on in the
+       NuGet, vcpkg, Conan and Homebrew packages and the ZIP and TGZ release
+       archives
 
 vcpkg installs the license of each port it builds as
 ``share/<port>/copyright`` in the installed tree, which is where to collect

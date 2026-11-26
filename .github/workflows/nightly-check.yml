@@ -93,10 +93,11 @@ jobs:
             platform: linux/arm64
             preset: linux-arm64-gcc
 
-          # VANILLAPDF_ENABLE_MIMALLOC is off in every other build, so these
-          # rows are the only coverage the allocator gets. It swaps an allocator
-          # rather than adding its own code paths, so one row per platform is
-          # enough.
+          # VANILLAPDF_ENABLE_MIMALLOC is off in every other build of this
+          # matrix. The NuGet builds (build-nuget.yml, run nightly by
+          # nightly-nuget.yml) turn it on and run the tests on every platform
+          # they ship. It swaps an allocator rather than adding its own code
+          # paths, so one row per platform is enough here.
           - name: ubuntu.24.04-x64-mimalloc
             os: ubuntu-26.04
             image: ghcr.io/vanillapdf/vanillapdf-ubuntu-amd64:24.04
