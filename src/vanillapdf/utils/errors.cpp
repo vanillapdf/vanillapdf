@@ -15,15 +15,14 @@ uint32_t Errors::GetLastError() noexcept {
 }
 
 uint32_t Errors::SetLastError(uint32_t value, std::string_view message) noexcept {
-    auto copied_length = std::min<size_type>(message.size(), constant::MAX_MESSAGE_SIZE - 1);
+    auto message_length = std::min<size_type>(message.size() + 1, constant::MAX_MESSAGE_SIZE - 1);
+    auto copied_length = std::min<size_type>(message.size(), message_length);
 
     std::copy_n(message.data(), copied_length, m_message);
     m_message[copied_length] = '\0';
 
     m_error = value;
-
-    // The length includes the terminating NUL character
-    m_message_length = copied_length + 1;
+    m_message_length = message_length;
 
     return value;
 }

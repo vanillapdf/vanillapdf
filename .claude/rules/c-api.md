@@ -331,7 +331,7 @@ Every conversion built on `SafeObjectConvert` is trivial, so a new `Xxx_ToYyy` /
 1. C++ exception thrown in core code
 2. `CATCH_VANILLAPDF_EXCEPTIONS` catches it
 3. `e.code()` → cast to `error_type`
-4. Message stored via `Errors::SetLastErrorMessage()`
+4. `Errors::SetLastError(code, e.what())` stores the code and the message, and returns the code
 5. Error code returned to C caller
 
 ## Export Macros (c_export.h)

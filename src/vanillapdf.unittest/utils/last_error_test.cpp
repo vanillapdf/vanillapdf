@@ -22,7 +22,8 @@ std::string GetLastErrorMessage() {
     std::string message(message_length, '\0');
     EXPECT_EQ(Errors_GetLastErrorMessage(message.data(), message_length), VANILLAPDF_ERROR_SUCCESS);
 
-    // The length includes the terminating NUL character
+    // The length of a message shorter than the message buffer includes the
+    // terminating NUL character. The tests use only such messages.
     if (message_length > 0) {
         message.resize(message_length - 1);
     }

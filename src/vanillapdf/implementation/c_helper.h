@@ -23,7 +23,7 @@
 // RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL null check.
 #define RETURN_ERROR_PARAM_VALUE_IF_NULL(var) \
     do { \
-        if (var == nullptr) { \
+        if ((var) == nullptr) { \
             return vanillapdf::Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Parameter \"" #var "\" is null"); \
         } \
     } while(0)
@@ -31,7 +31,7 @@
 // Trivial and Errors_* functions: keeps the last error
 #define RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(var) \
     do { \
-        if (var == nullptr) { \
+        if ((var) == nullptr) { \
             return VANILLAPDF_ERROR_PARAMETER_VALUE; \
         } \
     } while(0)
