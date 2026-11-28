@@ -1,6 +1,8 @@
 #include "unittest.h"
 #include "handle_guard.h"
 
+#include <cstdlib>
+
 namespace utils {
 
 class BufferParamTest : public ::testing::TestWithParam<std::string_view> {
@@ -129,6 +131,48 @@ TEST(Logging, Severity) {
     SetCheckLoggingSeverity(LoggingSeverity_Critical);
     SetCheckLoggingSeverity(LoggingSeverity_Off);
 }
+
+#if GTEST_HAS_DEATH_TEST
+
+// Releases a file after Logging_Shutdown. The file destructor logs, which
+// crashed when the shutdown left no default logger.
+static void UseLibraryAfterShutdown() {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    if (InputOutputStream_CreateFromMemory(io_stream.out()) != VANILLAPDF_ERROR_SUCCESS) {
+        std::exit(1);
+    }
+
+    FileHandle* file = nullptr;
+    if (File_CreateStream(io_stream, "logging-shutdown", &file) != VANILLAPDF_ERROR_SUCCESS) {
+        std::exit(2);
+    }
+
+    if (Logging_Shutdown() != VANILLAPDF_ERROR_SUCCESS) {
+        std::exit(3);
+    }
+
+    if (File_Release(file) != VANILLAPDF_ERROR_SUCCESS) {
+        std::exit(4);
+    }
+
+    LoggingSeverity logging_severity = LoggingSeverity_Undefined;
+    if (Logging_GetSeverity(&logging_severity) != VANILLAPDF_ERROR_SUCCESS) {
+        std::exit(5);
+    }
+
+    if (Logging_Shutdown() != VANILLAPDF_ERROR_SUCCESS) {
+        std::exit(6);
+    }
+
+    std::exit(0);
+}
+
+// Runs in a child process, so that the shutdown does not affect the other tests
+TEST(Logging, UseAfterShutdown) {
+    EXPECT_EXIT(UseLibraryAfterShutdown(), ::testing::ExitedWithCode(0), "");
+}
+
+#endif // GTEST_HAS_DEATH_TEST
 
 TEST(ObjectDiagnostics, NullCheck) {
     EXPECT_EQ(ObjectDiagnostics_GetActiveObjectCount(nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);

@@ -92,6 +92,12 @@ extern "C"
 
     /**
     * \brief Set a logger, that will invoke sink_callback and sink_flush_callback passing user_data
+    *
+    * \warning
+    * This function replaces the logger that all library functions use.
+    * Do not call it while another thread calls a library function,
+    * because that thread can still use the old logger after it is released.
+    * Set the logger once, before the first use of the library.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Logging_SetCallbackLogger(
         Sink_Log_Function sink_callback,
@@ -100,6 +106,12 @@ extern "C"
 
     /**
     * \brief Set a logger using rotating file sink based on size
+    *
+    * \warning
+    * This function replaces the logger that all library functions use.
+    * Do not call it while another thread calls a library function,
+    * because that thread can still use the old logger after it is released.
+    * Set the logger once, before the first use of the library.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Logging_SetRotatingFileLogger(
         string_type filename,
@@ -193,6 +205,15 @@ extern "C"
 
     /**
     * \brief Gracefully terminate the entire logging ecosystem
+    *
+    * Flushes and closes all loggers. Library functions called after the
+    * shutdown, for example the release of an object, work normally,
+    * but log nothing. A new logger can be set with
+    * \ref Logging_SetCallbackLogger or \ref Logging_SetRotatingFileLogger.
+    *
+    * \warning
+    * Do not call this function while another thread calls a library function,
+    * because that thread can still use a logger after it is released.
     */
     VANILLAPDF_API error_type CALLING_CONVENTION Logging_Shutdown();
 
