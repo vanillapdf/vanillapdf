@@ -69,6 +69,37 @@ TEST(TextStringEncoding, PDFDocEncodingUndefinedByteIsReplacementChar) {
     EXPECT_EQ(cp, 0xFFFDu);
 }
 
+static uint32_t PDFDocEncodingByteToUnicode(uint8_t byte) {
+    uint32_t codepoint = 0;
+    EXPECT_EQ(TextStringEncoding_PDFDocEncodingByteToUnicode(byte, &codepoint), VANILLAPDF_ERROR_SUCCESS);
+    return codepoint;
+}
+
+TEST(TextStringEncoding, PDFDocEncodingControlCharacters) {
+    // ISO 32000 Table D.2: TAB, LF and CR are the only defined codes below 0x18
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x09), 0x0009u);
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x0A), 0x000Au);
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x0D), 0x000Du);
+}
+
+TEST(TextStringEncoding, PDFDocEncodingUndefinedControlCode) {
+    // 0x08 and 0x0F are undefined in PDFDocEncoding → U+FFFD
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x08), 0xFFFDu);
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x0F), 0xFFFDu);
+}
+
+TEST(TextStringEncoding, PDFDocEncodingSpacingAccents) {
+    // ISO 32000 Table D.2: 0x18-0x1F are the spacing accents
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x18), 0x02D8u);
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x19), 0x02C7u);
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x1A), 0x02C6u);
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x1B), 0x02D9u);
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x1C), 0x02DDu);
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x1D), 0x02DBu);
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x1E), 0x02DAu);
+    EXPECT_EQ(PDFDocEncodingByteToUnicode(0x1F), 0x02DCu);
+}
+
 TEST(TextStringEncoding, PDFDocEncodingNullResultParam) {
     EXPECT_EQ(TextStringEncoding_PDFDocEncodingByteToUnicode(0x41, nullptr), VANILLAPDF_ERROR_PARAMETER_VALUE);
 }
