@@ -171,6 +171,14 @@ VANILLAPDF_API error_type CALLING_CONVENTION Logging_Shutdown()
     try
     {
         spdlog::shutdown();
+
+        // spdlog::shutdown drops every logger, including the default one.
+        // The library logs through the default logger without a null check,
+        // also from destructors, so a call after the shutdown would read a
+        // null pointer. A logger that discards everything keeps such calls safe.
+        auto null_logger = spdlog::null_logger_mt("null_logger");
+        spdlog::set_default_logger(null_logger);
+
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
