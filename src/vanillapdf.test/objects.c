@@ -285,7 +285,23 @@ error_type process_object(ObjectHandle* obj, int nested) {
     BufferHandle* topdf_buffer = NULL;
     ObjectAttributeListHandle* object_attribute_list = NULL;
 
+    boolean_type is_indirect = VANILLAPDF_RV_FALSE;
+    biguint_type object_number = 0;
+    ushort_type generation_number = 0;
+
     RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectType(obj, &type));
+
+    // Object IsIndirect, GetObjectNumber and GetGenerationNumber
+    RETURN_ERROR_IF_NOT_SUCCESS(Object_IsIndirect(obj, &is_indirect));
+
+    if (is_indirect == VANILLAPDF_RV_TRUE) {
+        RETURN_ERROR_IF_NOT_SUCCESS(Object_GetObjectNumber(obj, &object_number));
+        RETURN_ERROR_IF_NOT_SUCCESS(Object_GetGenerationNumber(obj, &generation_number));
+
+        print_spaces(nested);
+        unsigned long long object_number_converted = object_number;
+        print_text("Indirect object: %llu %d\n", object_number_converted, generation_number);
+    }
 
     // Object ToString
     RETURN_ERROR_IF_NOT_SUCCESS(Object_ToString(obj, &tostring_buffer));
