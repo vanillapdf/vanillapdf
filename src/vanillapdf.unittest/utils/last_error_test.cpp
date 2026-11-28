@@ -22,8 +22,7 @@ std::string GetLastErrorMessage() {
     std::string message(message_length, '\0');
     EXPECT_EQ(Errors_GetLastErrorMessage(message.data(), message_length), VANILLAPDF_ERROR_SUCCESS);
 
-    // The length of a message shorter than the message buffer includes the
-    // terminating NUL character. The tests use only such messages.
+    // The length includes the terminating NUL character
     if (message_length > 0) {
         message.resize(message_length - 1);
     }
@@ -89,6 +88,28 @@ TEST(LastError, ObjectMissingAfterException) {
     ASSERT_EQ(DocumentSignatureSettings_GetName(settings, name.out()), VANILLAPDF_ERROR_OBJECT_MISSING);
 
     EXPECT_EQ(GetLastErrorCode(), VANILLAPDF_ERROR_OBJECT_MISSING);
+}
+
+TEST(LastError, TruncatedMessageIsTerminated) {
+
+    // The exception message contains the path, so it is longer than the message buffer
+    std::string path(300, 'a');
+    path.append(".pdf");
+
+    HandleGuard<FileHandle, File_Release> file;
+    ASSERT_EQ(File_Open(path.c_str(), file.out()), VANILLAPDF_ERROR_IO);
+
+    size_type message_length = 0;
+    ASSERT_EQ(Errors_GetLastErrorMessageLength(&message_length), VANILLAPDF_ERROR_SUCCESS);
+
+    // 255 characters and the terminating NUL character
+    ASSERT_EQ(message_length, 256u);
+
+    std::string message(512, 'X');
+    ASSERT_EQ(Errors_GetLastErrorMessage(message.data(), message.size()), VANILLAPDF_ERROR_SUCCESS);
+
+    EXPECT_EQ(message[message_length - 1], '\0');
+    EXPECT_EQ(std::strlen(message.c_str()), message_length - 1);
 }
 
 TEST(LastError, TrivialFunctionKeepsLastError) {
