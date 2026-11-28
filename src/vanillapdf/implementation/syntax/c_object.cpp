@@ -64,6 +64,47 @@ VANILLAPDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle* hand
     return VANILLAPDF_ERROR_SUCCESS;
 }
 
+VANILLAPDF_API error_type CALLING_CONVENTION Object_IsIndirect(ObjectHandle* handle, boolean_type* result) {
+    Object* obj = reinterpret_cast<Object*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        if (obj->IsIndirect()) {
+            *result = VANILLAPDF_RV_TRUE;
+        } else {
+            *result = VANILLAPDF_RV_FALSE;
+        }
+
+        return VANILLAPDF_ERROR_SUCCESS;
+    }
+    CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Object_GetObjectNumber(ObjectHandle* handle, biguint_type* result) {
+    Object* obj = reinterpret_cast<Object*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        *result = obj->GetObjectNumber();
+        return VANILLAPDF_ERROR_SUCCESS;
+    }
+    CATCH_VANILLAPDF_EXCEPTIONS
+}
+
+VANILLAPDF_API error_type CALLING_CONVENTION Object_GetGenerationNumber(ObjectHandle* handle, ushort_type* result) {
+    Object* obj = reinterpret_cast<Object*>(handle);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+
+    try {
+        *result = obj->GetGenerationNumber();
+        return VANILLAPDF_ERROR_SUCCESS;
+    }
+    CATCH_VANILLAPDF_EXCEPTIONS
+}
+
 VANILLAPDF_API error_type CALLING_CONVENTION Object_GetAttributeList(ObjectHandle* handle, ObjectAttributeListHandle** result) {
 
     Object* obj = reinterpret_cast<Object*>(handle);

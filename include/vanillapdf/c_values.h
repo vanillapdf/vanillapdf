@@ -124,7 +124,8 @@ extern "C"
     * The operation is not valid in the current state of the object.
     *
     * The parameters are well formed, but a precondition does not hold,
-    * which the caller can check beforehand.
+    * which the caller can check beforehand, for example
+    * with \ref ObjectHandle::Object_IsIndirect "Object_IsIndirect".
     * An invalid handle, such as a null pointer,
     * is reported with \ref VANILLAPDF_ERROR_PARAMETER_VALUE instead.
     */
