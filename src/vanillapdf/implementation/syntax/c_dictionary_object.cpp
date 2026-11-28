@@ -214,7 +214,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_Insert(DictionaryO
     {
         auto containable_ptr = static_cast<ContainableObject*>(obj);
         if (containable_ptr == nullptr) {
-            return VANILLAPDF_ERROR_PARAMETER_VALUE;
+            return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Object cannot be stored in a dictionary");
         }
 
         dictionary->Insert(name, containable_ptr, overwrite);
@@ -233,7 +233,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DictionaryObject_InsertConst(Dictio
     try {
         auto containable_ptr = static_cast<ContainableObject*>(obj);
         if (containable_ptr == nullptr) {
-            return VANILLAPDF_ERROR_PARAMETER_VALUE;
+            return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Object cannot be stored in a dictionary");
         }
 
         dictionary->Insert(*name, containable_ptr, overwrite);

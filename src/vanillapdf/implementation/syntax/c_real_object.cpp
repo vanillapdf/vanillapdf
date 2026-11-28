@@ -70,7 +70,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION RealObject_FromObject(ObjectHandle*
         bool converted = false;
         auto integer = ConversionHelper<RealObjectPtr>::Get(obj, converted);
         if (!converted) {
-            return VANILLAPDF_ERROR_PARAMETER_VALUE;
+            return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Object is not a real number");
         }
 
         auto ptr = integer.AddRefGet();

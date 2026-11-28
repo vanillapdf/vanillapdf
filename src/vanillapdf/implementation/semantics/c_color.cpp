@@ -81,7 +81,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Color_GetColorSpace(ColorHandle* ha
             *result = ColorSpace_DeviceCMYK;
             break;
         default:
-            return VANILLAPDF_ERROR_GENERAL;
+            return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown color space");
         }
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS

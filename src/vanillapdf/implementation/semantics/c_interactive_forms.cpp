@@ -49,7 +49,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFieldTree(Intera
     try {
         OutputFieldTreePtr tree;
         bool contains = form->GetFieldTree(tree);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = tree.AddRefGet();
         *result = reinterpret_cast<FieldTreeHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -77,7 +77,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetFields(Interacti
         OuputFieldCollectionPtr fields;
         bool contains = form->GetFields(fields);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = fields.AddRefGet();
@@ -95,7 +95,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetSignatureFlags(I
         OutputSignatureFlagsPtr flags;
         bool contains = form->GetSignatureFlags(flags);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = flags.AddRefGet();
@@ -124,7 +124,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetNeedAppearances(
     try {
         bool value;
         bool contains = form->GetNeedAppearances(value);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         *result = value ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
         return VANILLAPDF_ERROR_SUCCESS;
     } CATCH_VANILLAPDF_EXCEPTIONS
@@ -149,7 +149,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetDefaultAppearanc
         OutputStringObjectPtr appearance;
         bool contains = form->GetDefaultAppearance(appearance);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = appearance.AddRefGet();
@@ -184,7 +184,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_SetQuadding(Interac
             case QuaddingType_RightJustified:
                 quadding = Field::Quadding::RightJustified; break;
             default:
-                return VANILLAPDF_ERROR_PARAMETER_VALUE;
+                return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Unknown quadding type");
         }
 
         form->SetQuadding(quadding);
@@ -201,7 +201,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetQuadding(Interac
         Field::Quadding quadding = Field::Quadding::LeftJustified;
         bool contains = form->GetQuadding(quadding);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         switch (quadding) {
@@ -212,7 +212,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_GetQuadding(Interac
             case Field::Quadding::RightJustified:
                 *result = QuaddingType_RightJustified; break;
             default:
-                return VANILLAPDF_ERROR_GENERAL;
+                return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown quadding type");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -230,7 +230,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_ResolveDefaultAppea
         OutputStringObjectPtr appearance;
         bool contains = form->ResolveDefaultAppearance(resolved_field, appearance);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = appearance.AddRefGet();
@@ -257,7 +257,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION InteractiveForm_ResolveQuadding(Int
             case Field::Quadding::RightJustified:
                 *result = QuaddingType_RightJustified; break;
             default:
-                return VANILLAPDF_ERROR_GENERAL;
+                return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown quadding type");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;

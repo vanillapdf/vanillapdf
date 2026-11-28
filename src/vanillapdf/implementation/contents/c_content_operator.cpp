@@ -10,8 +10,8 @@ using namespace vanillapdf::contents;
 
 VANILLAPDF_API error_type CALLING_CONVENTION ContentOperator_GetOperatorType(ContentOperatorHandle* handle, ContentOperatorType* result) {
     OperatorBase* obj = reinterpret_cast<OperatorBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (obj->GetOperatorType()) {
         case OperatorBase::Type::Unknown:

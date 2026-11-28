@@ -18,7 +18,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetContactInfo(Dig
     try {
         OutputStringObjectPtr direct;
         bool contains = signature->ContactInfo(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -33,7 +33,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetReason(DigitalS
     try {
         OutputStringObjectPtr direct;
         bool contains = signature->Reason(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -48,7 +48,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetLocation(Digita
     try {
         OutputStringObjectPtr direct;
         bool contains = signature->Location(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -63,7 +63,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetSigningTime(Dig
     try {
         OutputDatePtr direct;
         bool contains = signature->SigningTime(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<DateHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -78,7 +78,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetName(DigitalSig
     try {
         OutputStringObjectPtr direct;
         bool contains = signature->Name(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -93,7 +93,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetRevision(Digita
     try {
         OutputIntegerObjectPtr direct;
         bool contains = signature->Revision(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -108,7 +108,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetCertificate(Dig
     try {
         OutputStringObjectPtr direct;
         bool contains = signature->Certificate(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -136,7 +136,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetByteRange(Digit
     try {
         OuputByteRangeCollectionPtr direct;
         bool contains = signature->ByteRange(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ByteRangeCollectionHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -151,7 +151,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DigitalSignature_GetSubFilter(Digit
     try {
         OutputNameObjectPtr direct;
         bool contains = signature->SubFilter(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<NameObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

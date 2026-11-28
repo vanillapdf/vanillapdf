@@ -22,8 +22,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_Create(BooleanObjectH
 VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_GetValue(BooleanObjectHandle* handle, boolean_type* result)
 {
     BooleanObject* obj = reinterpret_cast<BooleanObject*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = obj->GetValue();
     return VANILLAPDF_ERROR_SUCCESS;
@@ -39,7 +39,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION BooleanObject_SetValue(BooleanObjec
     else if (value == VANILLAPDF_RV_FALSE)
         obj->SetValue(false);
     else
-        return VANILLAPDF_ERROR_GENERAL;
+        return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown boolean value");
 
     return VANILLAPDF_ERROR_SUCCESS;
 }

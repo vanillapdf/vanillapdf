@@ -85,7 +85,9 @@ This code style may seem repulsive for some developers, they are free to use any
 \section section_errors Error handling
 
 Every function throughout the interface returns \ref error_type. On success, the return value should be \ref VANILLAPDF_ERROR_SUCCESS.
-In every other case it means that an error has occurred and it's error message is stored. The next section explains how to gather this message.
+In every other case it means that an error has occurred. The function then stores the same code and a message as the last error of the calling thread. The next section explains how to gather this message.
+
+\ref page_trivial_functions and the \ref Errors functions never change the last error. They report a failure only through the return code.
 
 \subsection section_errors_message Extended error information
 

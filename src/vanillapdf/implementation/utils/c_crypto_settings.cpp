@@ -39,7 +39,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION CryptoSettings_GetLegacyAlgorithmsP
             case CryptoSettings::LegacyAlgorithmsPolicy::Required:
                 *result = LegacyAlgorithmsPolicy_Required; break;
             default:
-                return VANILLAPDF_ERROR_GENERAL;
+                return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown legacy algorithms policy");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -62,7 +62,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION CryptoSettings_SetLegacyAlgorithmsP
             case LegacyAlgorithmsPolicy_Required:
                 settings->SetLegacyAlgorithmsPolicy(CryptoSettings::LegacyAlgorithmsPolicy::Required); break;
             default:
-                return VANILLAPDF_ERROR_PARAMETER_VALUE;
+                return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Unknown legacy algorithms policy");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;

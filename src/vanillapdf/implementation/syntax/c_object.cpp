@@ -23,8 +23,8 @@ VANILLAPDF_API error_type Object_TypeName(ObjectType type, string_type* result)
 VANILLAPDF_API error_type CALLING_CONVENTION Object_GetObjectType(ObjectHandle* handle, ObjectType* result)
 {
     Object* obj = reinterpret_cast<Object*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (obj->GetObjectType()) {
     case Object::Type::Array:
@@ -57,8 +57,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION Object_GetObjectType(ObjectHandle* 
 VANILLAPDF_API error_type CALLING_CONVENTION Object_GetOffset(ObjectHandle* handle, offset_type* result)
 {
     Object* obj = reinterpret_cast<Object*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     *result = obj->GetOffset();
     return VANILLAPDF_ERROR_SUCCESS;

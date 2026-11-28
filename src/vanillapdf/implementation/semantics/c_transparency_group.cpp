@@ -28,7 +28,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TransparencyGroup_GetIsolated(Trans
         bool isolated = false;
         bool contains = obj->GetIsolated(isolated);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         *result = isolated ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;
@@ -55,7 +55,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION TransparencyGroup_GetKnockout(Trans
         bool knockout = false;
         bool contains = obj->GetKnockout(knockout);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         *result = knockout ? VANILLAPDF_RV_TRUE : VANILLAPDF_RV_FALSE;

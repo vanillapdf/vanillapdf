@@ -115,7 +115,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XYZDestination_GetLeft(XYZDestinati
     {
         ObjectPtr direct;
         auto contains = obj->GetLeft(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -132,7 +132,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XYZDestination_GetTop(XYZDestinatio
     {
         ObjectPtr direct;
         auto contains = obj->GetTop(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -149,7 +149,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION XYZDestination_GetZoom(XYZDestinati
     {
         ObjectPtr direct;
         auto contains = obj->GetZoom(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -313,7 +313,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FitHorizontalDestination_GetTop(Fit
     {
         ObjectPtr direct;
         auto contains = obj->GetTop(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -330,7 +330,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FitVerticalDestination_GetLeft(FitV
     {
         ObjectPtr direct;
         auto contains = obj->GetLeft(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -347,7 +347,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FitRectangleDestination_GetLeft(Fit
     {
         ObjectPtr direct;
         auto contains = obj->GetLeft(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -364,7 +364,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FitRectangleDestination_GetBottom(F
     {
         ObjectPtr direct;
         auto contains = obj->GetBottom(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -381,7 +381,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FitRectangleDestination_GetRight(Fi
     {
         ObjectPtr direct;
         auto contains = obj->GetRight(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -398,7 +398,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FitRectangleDestination_GetTop(FitR
     {
         ObjectPtr direct;
         auto contains = obj->GetTop(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -415,7 +415,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FitBoundingBoxHorizontalDestination
     {
         ObjectPtr direct;
         auto contains = obj->GetTop(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -432,7 +432,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FitBoundingBoxVerticalDestination_G
     {
         ObjectPtr direct;
         auto contains = obj->GetLeft(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<ObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

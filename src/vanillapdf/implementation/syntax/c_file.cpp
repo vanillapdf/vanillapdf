@@ -149,7 +149,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_GetVersion(FileHandle* handle,
         case Version::PDF20:
             *result = PDFVersion_20; break;
         default:
-            return VANILLAPDF_ERROR_NOT_SUPPORTED;
+            return Errors::SetLastError(VANILLAPDF_ERROR_NOT_SUPPORTED, "Unknown PDF version");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -259,7 +259,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionPassword(FileHand
             return VANILLAPDF_ERROR_SUCCESS;
         }
         else {
-            return VANILLAPDF_ERROR_INVALID_PASSWORD;
+            return Errors::SetLastError(VANILLAPDF_ERROR_INVALID_PASSWORD, "Invalid password");
         }
     } CATCH_VANILLAPDF_EXCEPTIONS
 }
@@ -279,7 +279,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION File_SetEncryptionKey(FileHandle* h
             return VANILLAPDF_ERROR_SUCCESS;
         }
         else {
-            return VANILLAPDF_ERROR_INVALID_PASSWORD;
+            return Errors::SetLastError(VANILLAPDF_ERROR_INVALID_PASSWORD, "Invalid encryption key");
         }
     } CATCH_VANILLAPDF_EXCEPTIONS
 }

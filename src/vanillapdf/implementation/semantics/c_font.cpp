@@ -29,8 +29,8 @@ VANILLAPDF_API error_type CALLING_CONVENTION Font_CreateFromObject(DictionaryObj
 VANILLAPDF_API error_type CALLING_CONVENTION Font_GetFontType(FontHandle* handle, FontType* result)
 {
     FontBase* obj = reinterpret_cast<FontBase*>(handle);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(obj);
-    RETURN_ERROR_PARAM_VALUE_IF_NULL(result);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(obj);
+    RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(result);
 
     switch (obj->GetFontType()) {
     case FontBase::Type::Type0:
@@ -64,7 +64,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Font_GetUnicodeMap(FontHandle* hand
     {
         OuputUnicodeCharacterMapPtr map;
         bool contains = obj->ToUnicode(map);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = map.AddRefGet();
         *result = reinterpret_cast<UnicodeCharacterMapHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

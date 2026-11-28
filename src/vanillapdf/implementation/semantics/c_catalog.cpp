@@ -21,7 +21,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPages(CatalogHandle* han
         OutputPageTreePtr pages;
         bool found = obj->Pages(pages);
         if (!found) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = pages.AddRefGet();
@@ -41,7 +41,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle* h
         Version version;
         auto contains = obj->Version(version);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         switch (version) {
@@ -64,7 +64,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetVersion(CatalogHandle* h
         case Version::PDF20:
             *result = PDFVersion_20; break;
         default:
-            return VANILLAPDF_ERROR_NOT_SUPPORTED;
+            return Errors::SetLastError(VANILLAPDF_ERROR_NOT_SUPPORTED, "Unknown PDF version");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -82,7 +82,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetExtensions(CatalogHandle
         OutputDeveloperExtensionsPtr extensions;
         auto contains = obj->Extensions(extensions);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = extensions.AddRefGet();
@@ -102,7 +102,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPageLabels(CatalogHandle
         OutputPageLabelsPtr labels;
         auto contains = obj->PageLabels(labels);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = labels.AddRefGet();
@@ -122,7 +122,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle
         Catalog::PageLayoutType layout;
         auto contains = obj->PageLayout(layout);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         switch (layout) {
@@ -139,7 +139,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetPageLayout(CatalogHandle
         case semantics::Catalog::PageLayoutType::TwoPageRight:
             *result = PageLayout_TwoPageRight; break;
         default:
-            return VANILLAPDF_ERROR_NOT_SUPPORTED;
+            return Errors::SetLastError(VANILLAPDF_ERROR_NOT_SUPPORTED, "Unknown page layout");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -157,7 +157,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetViewerPreferences(Catalo
         OutputViewerPreferencesPtr direct;
         auto contains = obj->ViewerPreferences(direct);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = direct.AddRefGet();
@@ -177,7 +177,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOutlines(CatalogHandle* 
         OutputOutlinePtr direct;
         auto contains = obj->Outlines(direct);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = direct.AddRefGet();
@@ -197,7 +197,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetDestinations(CatalogHand
         OutputNamedDestinationsPtr direct;
         auto contains = obj->Destinations(direct);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = direct.AddRefGet();
@@ -217,7 +217,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetNames(CatalogHandle* han
         OutputNameDictionaryPtr names;
         auto contains = obj->Names(names);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = names.AddRefGet();
@@ -261,7 +261,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetAcroForm(CatalogHandle* 
         OuputInteractiveFormPtr direct;
         auto contains = obj->AcroForm(direct);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = direct.AddRefGet();
@@ -279,7 +279,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION Catalog_GetOpenAction(CatalogHandle
         syntax::ObjectPtr open_action;
         bool found = obj->GetOpenAction(open_action);
         if (!found) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = open_action.AddRefGet();

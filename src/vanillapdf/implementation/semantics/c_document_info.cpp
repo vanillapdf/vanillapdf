@@ -35,7 +35,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTitle(DocumentInfoH
     {
         OutputStringObjectPtr title;
         auto contains = obj->Title(title);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = title.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -52,7 +52,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetAuthor(DocumentInfo
     {
         OutputStringObjectPtr author;
         auto contains = obj->Author(author);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = author.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -69,7 +69,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetSubject(DocumentInf
     {
         OutputStringObjectPtr subject;
         auto contains = obj->Subject(subject);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = subject.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -86,7 +86,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetKeywords(DocumentIn
     {
         OutputStringObjectPtr keywords;
         auto contains = obj->Keywords(keywords);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = keywords.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -103,7 +103,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreator(DocumentInf
     {
         OutputStringObjectPtr creator;
         auto contains = obj->Creator(creator);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = creator.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -120,7 +120,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetProducer(DocumentIn
     {
         OutputStringObjectPtr producer;
         auto contains = obj->Producer(producer);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = producer.AddRefGet();
         *result = reinterpret_cast<StringObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -137,7 +137,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetCreationDate(Docume
     {
         OutputDatePtr date;
         auto contains = obj->CreationDate(date);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = date.AddRefGet();
         *result = reinterpret_cast<DateHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -154,7 +154,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetModificationDate(Do
     {
         OutputDatePtr date;
         auto contains = obj->ModificationDate(date);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = date.AddRefGet();
         *result = reinterpret_cast<DateHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -171,7 +171,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInf
     {
         vanillapdf::semantics::DocumentTrapped trapped;
         auto contains = obj->Trapped(trapped);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
 
         switch (trapped)
         {
@@ -182,7 +182,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_GetTrapped(DocumentInf
         case vanillapdf::semantics::DocumentTrapped::False:
             *result = DocumentTrappedType_False; break;
         default:
-            return VANILLAPDF_ERROR_GENERAL;
+            return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown trapped type");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -319,7 +319,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentInfo_SetTrapped(DocumentInf
         case DocumentTrappedType_False:
             trapped = vanillapdf::semantics::DocumentTrapped::False; break;
         default:
-            return VANILLAPDF_ERROR_PARAMETER_VALUE;
+            return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Unknown trapped type");
         }
 
         obj->SetTrapped(trapped);

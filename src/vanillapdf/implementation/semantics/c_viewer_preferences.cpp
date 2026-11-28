@@ -18,7 +18,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideToolbar(Vi
     {
         syntax::BooleanObjectPtr direct;
         auto contains = obj->HideToolbar(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<BooleanObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -35,7 +35,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideMenubar(Vi
     {
         syntax::BooleanObjectPtr direct;
         auto contains = obj->HideMenubar(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<BooleanObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -52,7 +52,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetHideWindowUI(V
     {
         syntax::BooleanObjectPtr direct;
         auto contains = obj->HideWindowUI(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<BooleanObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -69,7 +69,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetFitWindow(View
     {
         syntax::BooleanObjectPtr direct;
         auto contains = obj->FitWindow(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<BooleanObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -86,7 +86,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetCenterWindow(V
     {
         syntax::BooleanObjectPtr direct;
         auto contains = obj->CenterWindow(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<BooleanObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -103,7 +103,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDisplayDocTitl
     {
         syntax::BooleanObjectPtr direct;
         auto contains = obj->DisplayDocTitle(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<BooleanObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -120,7 +120,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenP
     {
         ViewerPreferences::NonFullScreenPageModeType mode;
         auto contains = obj->NonFullScreenPageMode(mode);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
 
         switch (mode)
         {
@@ -133,7 +133,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNonFullScreenP
         case ViewerPreferences::NonFullScreenPageModeType::UseOC:
             *result = NonFullScreenPageMode_UseOC; break;
         default:
-            return VANILLAPDF_ERROR_GENERAL;
+            return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown non full screen page mode");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -150,7 +150,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(View
     {
         ViewerPreferences::ReadingOrderType order;
         auto contains = obj->Direction(order);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
 
         switch (order)
         {
@@ -159,7 +159,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDirection(View
         case ViewerPreferences::ReadingOrderType::RightToLeft:
             *result = ReadingOrder_RightToLeft; break;
         default:
-            return VANILLAPDF_ERROR_GENERAL;
+            return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown reading order");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -176,7 +176,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewArea(Viewe
     {
         syntax::NameObjectPtr direct;
         auto contains = obj->ViewArea(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<NameObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -193,7 +193,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetViewClip(Viewe
     {
         syntax::NameObjectPtr direct;
         auto contains = obj->ViewClip(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<NameObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -210,7 +210,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintArea(View
     {
         syntax::NameObjectPtr direct;
         auto contains = obj->PrintArea(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<NameObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -227,7 +227,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintClip(View
     {
         syntax::NameObjectPtr direct;
         auto contains = obj->PrintClip(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<NameObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -244,7 +244,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling(V
     {
         ViewerPreferences::PrintScalingType scaling;
         auto contains = obj->PrintScaling(scaling);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
 
         switch (scaling)
         {
@@ -253,7 +253,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintScaling(V
         case ViewerPreferences::PrintScalingType::None:
             *result = PrintScaling_None; break;
         default:
-            return VANILLAPDF_ERROR_GENERAL;
+            return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown print scaling");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -270,7 +270,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(ViewerP
     {
         ViewerPreferences::DuplexType duplex;
         auto contains = obj->Duplex(duplex);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
 
         switch (duplex)
         {
@@ -281,7 +281,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetDuplex(ViewerP
         case ViewerPreferences::DuplexType::DuplexFlipLongEdge:
             *result = Duplex_DuplexFlipLongEdge; break;
         default:
-            return VANILLAPDF_ERROR_GENERAL;
+            return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown duplex mode");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -298,7 +298,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPickTrayByPDFS
     {
         syntax::BooleanObjectPtr direct;
         auto contains = obj->PickTrayByPDFSize(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<BooleanObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -315,7 +315,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetPrintPageRange
     {
         OutputPageRangePtr direct;
         auto contains = obj->PrintPageRange(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<PageRangeHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;
@@ -332,7 +332,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION ViewerPreferences_GetNumCopies(View
     {
         syntax::IntegerObjectPtr direct;
         auto contains = obj->NumCopies(direct);
-        if (!contains) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!contains) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = direct.AddRefGet();
         *result = reinterpret_cast<IntegerObjectHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

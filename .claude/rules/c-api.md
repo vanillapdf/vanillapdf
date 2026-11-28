@@ -305,10 +305,12 @@ auto ptr = file.AddRefGet();  // Increments refcount
 ### Helper Macros (c_helper.h)
 
 ```cpp
-RETURN_ERROR_IF_NULL(var, error_code)         // Null check with specific error
-RETURN_ERROR_PARAM_VALUE_IF_NULL(var)          // Null check with PARAMETER_VALUE error
-CATCH_VANILLAPDF_EXCEPTIONS                    // Catches ExceptionBase → error code + stores message
+RETURN_ERROR_PARAM_VALUE_IF_NULL(var)         // Null check with PARAMETER_VALUE error, stores the last error
+RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL(var) // Same, keeps the last error: trivial and Errors_* functions only
+CATCH_VANILLAPDF_EXCEPTIONS                   // Catches ExceptionBase → error code + stores message
 ```
+
+**Last error contract:** every C API function that returns a code other than `VANILLAPDF_ERROR_SUCCESS` stores the same code and a message as the thread's last error. Never write a bare `return VANILLAPDF_ERROR_*;` in a normal function — use `return Errors::SetLastError(VANILLAPDF_ERROR_*, "message");`, which stores the code and message and returns the code. Trivial functions and the `Errors_*` functions are the exception: they return the code directly and use `RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL`.
 
 ### Template Helpers
 
@@ -326,7 +328,7 @@ Bindings depend on it: the .NET binding calls these functions with `[SuppressGCT
 Rules for a `\trivial` wrapper:
 - No `try` / `CATCH_VANILLAPDF_EXCEPTIONS` (the catch logs). Everything it calls must be `noexcept`, so the compiler backs the "no exception" part.
 - It calls only `noexcept` members that read or write a plain field, return a constant (`GetXxxType` overrides), or do `SafeObjectConvert` / `IUnknown::AddRef`.
-- Failures return an error code directly; do not call `Errors::SetLastError` (the error state is `thread_local`, and the first access on a new thread can allocate).
+- Failures return an error code directly; do not call `Errors::SetLastError`, and use `RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL` for null checks (the error state is `thread_local`, and the first access on a new thread can allocate).
 - Never tag `*_Release` / `ObjectRelease`: `Release` can delete the object, and destructors lock, free and log.
 - Never tag functions on objects guarded by `_access_lock` (`DictionaryObject`, `StreamObject`, string objects, `IndirectReferenceObject`), lazy semantic getters, or setters that call `UpdateObject` / `IncrementVersion`.
 
@@ -337,7 +339,7 @@ Every conversion built on `SafeObjectConvert` is trivial, so a new `Xxx_ToYyy` /
 1. C++ exception thrown in core code
 2. `CATCH_VANILLAPDF_EXCEPTIONS` catches it
 3. `e.code()` → cast to `error_type`
-4. Message stored via `Errors::SetLastErrorMessage()`
+4. `Errors::SetLastError(code, e.what())` stores the code and the message, and returns the code
 5. Error code returned to C caller
 
 ## Export Macros (c_export.h)
@@ -360,7 +362,7 @@ VANILLAPDF_DEPRECATED   // __declspec(deprecated) or __attribute__((deprecated))
 2. Use pattern: `VANILLAPDF_API error_type CALLING_CONVENTION FunctionName(...);`
 3. Implement wrapper in `src/vanillapdf/implementation/*/c_*.cpp`
 4. Use `reinterpret_cast` for handle conversion
-5. Use `RETURN_ERROR_PARAM_VALUE_IF_NULL` for parameter validation
+5. Use `RETURN_ERROR_PARAM_VALUE_IF_NULL` for parameter validation (`RETURN_ERROR_PARAM_VALUE_IF_NULL_TRIVIAL` in a `\trivial` function), and `return Errors::SetLastError(code, "message");` for any other error returned directly
 6. Use `CATCH_VANILLAPDF_EXCEPTIONS` around C++ calls
 7. Return handles via output parameter with `AddRefGet()`
 8. Include header in `c_vanillapdf_api.h`

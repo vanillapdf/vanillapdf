@@ -59,7 +59,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION FieldTree_FindField(FieldTreeHandle
     try {
         OuputFieldPtr field;
         bool found = tree->TryFindField(std::string_view(qualified_name, size), field);
-        if (!found) return VANILLAPDF_ERROR_OBJECT_MISSING;
+        if (!found) return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         auto ptr = field.AddRefGet();
         *result = reinterpret_cast<FieldHandle*>(ptr);
         return VANILLAPDF_ERROR_SUCCESS;

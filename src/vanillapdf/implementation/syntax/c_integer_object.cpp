@@ -106,7 +106,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION IntegerObject_FromObject(ObjectHand
         bool converted = false;
         auto integer = ConversionHelper<IntegerObjectPtr>::Get(obj, converted);
         if (!converted) {
-            return VANILLAPDF_ERROR_PARAMETER_VALUE;
+            return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Object is not an integer");
         }
 
         auto ptr = integer.AddRefGet();

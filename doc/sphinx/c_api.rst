@@ -223,8 +223,13 @@ Error handling
 --------------
 
 Every function returns ``error_type``. On success, the value is
-``VANILLAPDF_ERROR_SUCCESS``. Any other value indicates an error whose message
-is stored in a thread-local buffer.
+``VANILLAPDF_ERROR_SUCCESS``. Any other value indicates an error. The function
+then stores the same code and a message as the last error of the calling
+thread. A successful call does not clear the last error.
+
+Two groups of functions never change the last error, and report a failure only
+through the return code: :ref:`trivial functions <trivial-functions>`, and the
+``Errors_*`` functions that read the last error.
 
 Retrieve the last error of the calling thread:
 

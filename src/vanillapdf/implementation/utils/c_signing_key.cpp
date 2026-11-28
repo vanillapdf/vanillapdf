@@ -195,7 +195,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION SigningKey_SignInitialize(
             case MessageDigestAlgorithmType_WHIRLPOOL:
                 cpp_algorithm = MessageDigestAlgorithm::WHIRLPOOL; break;
             default:
-                return VANILLAPDF_ERROR_PARAMETER_VALUE;
+                return Errors::SetLastError(VANILLAPDF_ERROR_PARAMETER_VALUE, "Unknown message digest algorithm");
         }
 
         key->SignInitialize(cpp_algorithm);

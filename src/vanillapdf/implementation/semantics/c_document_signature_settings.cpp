@@ -54,7 +54,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetDigest
             case MessageDigestAlgorithm::WHIRLPOOL:
                 *result = MessageDigestAlgorithmType_WHIRLPOOL; break;
             default:
-                return VANILLAPDF_ERROR_GENERAL;
+                return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown message digest algorithm");
         }
 
         return VANILLAPDF_ERROR_SUCCESS;
@@ -96,7 +96,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_SetDigest
             case MessageDigestAlgorithmType_WHIRLPOOL:
                 algorithm = MessageDigestAlgorithm::WHIRLPOOL; break;
             default:
-                return VANILLAPDF_ERROR_GENERAL;
+                return Errors::SetLastError(VANILLAPDF_ERROR_GENERAL, "Unknown message digest algorithm");
         }
 
         obj->SetDigest(algorithm);
@@ -113,7 +113,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetSignin
         OutputPointer<ISigningKeyPtr> key;
         bool has_key = obj->GetSigningKey(key);
         if (!has_key) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = key.AddRefGet();
@@ -143,7 +143,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetName(D
         OutputPointer<LiteralStringObjectPtr> name;
         bool has_name = obj->GetName(name);
         if (!has_name) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = name.AddRefGet();
@@ -173,7 +173,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetLocati
         OutputPointer<LiteralStringObjectPtr> location;
         bool has_name = obj->GetLocation(location);
         if (!has_name) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = location.AddRefGet();
@@ -203,7 +203,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetReason
         OutputPointer<LiteralStringObjectPtr> reason;
         bool has_name = obj->GetReason(reason);
         if (!has_name) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = reason.AddRefGet();
@@ -233,7 +233,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetSignin
         OutputPointer<DatePtr> date;
         bool has_time = obj->GetSigningTime(date);
         if (!has_time) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = date.AddRefGet();
@@ -263,7 +263,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION DocumentSignatureSettings_GetCertif
         OutputPointer<HexadecimalStringObjectPtr> certificate;
         bool has_name = obj->GetCertificate(certificate);
         if (!has_name) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = certificate.AddRefGet();

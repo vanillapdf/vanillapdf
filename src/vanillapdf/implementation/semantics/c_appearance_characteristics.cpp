@@ -31,7 +31,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION AppearanceCharacteristics_GetRotati
         types::big_int rotation = 0;
         bool contains = obj->GetRotation(rotation);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         *result = rotation;
@@ -62,7 +62,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION AppearanceCharacteristics_GetBorder
         OutputColorPtr color;
         bool contains = obj->GetBorderColor(color);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = color.AddRefGet();
@@ -96,7 +96,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION AppearanceCharacteristics_GetBackgr
         OutputColorPtr color;
         bool contains = obj->GetBackgroundColor(color);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = color.AddRefGet();
@@ -130,7 +130,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION AppearanceCharacteristics_GetNormal
         OutputStringObjectPtr caption;
         bool contains = obj->GetNormalCaption(caption);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = caption.AddRefGet();
@@ -164,7 +164,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION AppearanceCharacteristics_GetRollov
         OutputStringObjectPtr caption;
         bool contains = obj->GetRolloverCaption(caption);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = caption.AddRefGet();
@@ -198,7 +198,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION AppearanceCharacteristics_GetDownCa
         OutputStringObjectPtr caption;
         bool contains = obj->GetDownCaption(caption);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = caption.AddRefGet();

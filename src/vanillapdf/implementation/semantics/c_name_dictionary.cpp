@@ -53,7 +53,7 @@ VANILLAPDF_API error_type CALLING_CONVENTION NameDictionary_GetDestinations(Name
         OutputNameTreePtr<DestinationPtr> dests;
         bool contains = obj->Dests(dests);
         if (!contains) {
-            return VANILLAPDF_ERROR_OBJECT_MISSING;
+            return Errors::SetLastError(VANILLAPDF_ERROR_OBJECT_MISSING, "Object is missing");
         }
 
         auto ptr = dests.AddRefGet();
