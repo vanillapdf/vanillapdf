@@ -16,7 +16,7 @@ Your first program
 The following program prints the version of the library it runs with. It is in
 `examples/quickstart/
 <https://github.com/vanillapdf/vanillapdf/tree/main/examples/quickstart>`_,
-and the library's test suite builds and runs it.
+and continuous integration builds and runs it.
 
 .. literalinclude:: ../../examples/quickstart/main.c
    :language: c
@@ -48,7 +48,7 @@ Create a PDF document
 The next program creates a PDF document with a single blank page and writes it
 to ``output.pdf``. It is in `examples/create/
 <https://github.com/vanillapdf/vanillapdf/tree/main/examples/create>`_, and the
-test suite runs it as well. Build it with the same ``CMakeLists.txt``, with
+continuous integration runs it as well. Build it with the same ``CMakeLists.txt``, with
 ``create`` in place of ``quickstart``.
 
 .. literalinclude:: ../../examples/create/main.c

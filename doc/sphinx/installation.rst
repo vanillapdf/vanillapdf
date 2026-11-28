@@ -91,12 +91,18 @@ Regardless of installation method, use ``find_package`` in your CMakeLists.txt:
 .. code-block:: cmake
 
    cmake_minimum_required(VERSION 3.20)
-   project(MyApp C)
+   project(MyApp C CXX)
 
    find_package(vanillapdf CONFIG REQUIRED)
 
    add_executable(myapp main.c)
    target_link_libraries(myapp PRIVATE vanillapdf::vanillapdf)
+
+.. note::
+
+   The project enables C++ in addition to C. Vanilla.PDF is implemented in
+   C++, and a static build of the library requires the C++ standard library
+   at link time. CMake adds it to the link only for projects that enable C++.
 
 To check the installation, build and run the first program of the
 :doc:`quickstart`.

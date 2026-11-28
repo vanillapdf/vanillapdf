@@ -4,9 +4,9 @@ Examples
 Each example is a complete C program in the
 `examples/ <https://github.com/vanillapdf/vanillapdf/tree/main/examples>`_
 directory of the repository, with a ``CMakeLists.txt`` that builds it against
-an installed library, as shown in the :doc:`quickstart`. The library's test
-suite builds and runs every one of them, so the code on this page always
-compiles and works with the current release.
+an installed library, as shown in the :doc:`quickstart`. Continuous
+integration builds every one of them that way and runs it, so the code on this
+page always compiles and works with the current release.
 
 All examples follow the same pattern: the ``CHECK`` macro stores the result of
 each call and jumps to the cleanup on the first failure, where the error

@@ -17,14 +17,13 @@ suite:
 
    ctest --preset <your-preset> --output-on-failure
 
-The suite has four kinds of tests:
+The suite has three kinds of tests:
 
 - **Unit tests** — the GoogleTest cases of ``vanillapdf.unittest``, named
   ``Suite.Case``
 - **Corpus tests** — one test for each document of the test data, named after
   the file, for example ``AdobeXMLFormsSamples.pdf``
 - **Tools tests** — the commands of ``vanillapdf.tools``, named ``Tools.*``
-- **Examples** — the programs shown in this documentation, named ``Examples.*``
 
 Run one kind with a name filter:
 
@@ -32,8 +31,7 @@ Run one kind with a name filter:
 
    ctest --preset <your-preset> -R "\.(pdf|PDF)$"    # Corpus tests
    ctest --preset <your-preset> -R "^Tools\."        # Tools tests
-   ctest --preset <your-preset> -R "^Examples\."     # Examples
-   ctest --preset <your-preset> -E "\.(pdf|PDF)$|^Tools\.|^Examples\."    # Unit tests
+   ctest --preset <your-preset> -E "\.(pdf|PDF)$|^Tools\."    # Unit tests
 
 Benchmarks are not part of the test suite. Build them with
 ``-DVANILLAPDF_ENABLE_BENCHMARK=ON`` and run the ``vanillapdf.benchmark``
@@ -44,8 +42,27 @@ so you must specify a build configuration:
 
 .. code-block:: bash
 
-   ctest --preset windows-x64-msvc-18 --build-config Debug -R "^Examples\."
+   ctest --preset windows-x64-msvc-18 --build-config Debug -R "^Tools\."
    ctest --preset windows-x64-msvc-18 --build-config Release
+
+Documentation examples
+----------------------
+
+The programs shown in this documentation are not part of the test suite. They
+are built the way a user builds them: ``examples/documentation-integration``
+is a separate CMake project that builds every example from its own
+``CMakeLists.txt`` against an installed library, and runs them as
+``Examples.*`` tests. The ``Examples Integration`` workflow runs it on Linux,
+Windows and macOS against the library installed by the vcpkg port. To run it
+locally, install the port first and pass the vcpkg toolchain file:
+
+.. code-block:: bash
+
+   ./external/vcpkg/vcpkg install vanillapdf --head --overlay-ports=./ports
+   cd examples/documentation-integration
+   cmake --preset linux-x64-debug -DCMAKE_TOOLCHAIN_FILE=../../external/vcpkg/scripts/buildsystems/vcpkg.cmake
+   cmake --build --preset linux-x64-debug
+   ctest --preset linux-x64-debug
 
 .. _test-data:
 
