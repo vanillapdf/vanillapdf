@@ -1296,4 +1296,19 @@ TEST(FieldTree, SignSkipsNameTakenByGroup) {
     EXPECT_EQ(type, FieldType_Signature);
 }
 
+// The qualified name decodes a PDFDocEncoded /T to UTF-8 (ISO 32000 Table D.2)
+TEST(FieldTree, QualifiedNameDecodesPDFDocEncoding) {
+    HandleGuard<InputOutputStreamHandle, InputOutputStream_Release> io_stream;
+    HandleGuard<FileHandle, File_Release> file;
+    HandleGuard<DocumentHandle, Document_Release> document;
+    CreateMemoryDocument(io_stream, file, document);
+
+    // 0x0A is LF, 0x18 is the breve U+02D8 (UTF-8 0xCB 0x98)
+    HandleGuard<DictionaryObjectHandle, DictionaryObject_Release> dictionary;
+    HandleGuard<FieldHandle, Field_Release> field;
+    CreateTextFieldDictionary(file, "line\x0A" "breve\x18", dictionary, field);
+
+    EXPECT_EQ(GetQualifiedName(field), "line\n" "breve\xCB\x98");
+}
+
 } // namespace field_tree
